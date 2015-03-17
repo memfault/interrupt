@@ -1,0 +1,237 @@
+/*- General Layout -*/
+
+/* Navigation */
+
+nav {
+  width: 14rem;
+  position: fixed;
+  background-color: $main-color;
+  top: 0;
+  bottom: 0;
+  right:-14rem;
+  color: $background-color;
+  opacity: 0.95;
+  transition: all 0.3s ease-in;
+  z-index: 1;
+  padding: 72px 0;
+  text-align: center;
+  a {
+    display: block;
+    color: $background-color;
+    padding: 0.33334em 0;
+    font-size: 1.5em;
+    font-weight: 400;
+    @media (min-width: 940px) {
+      font-size: 1em;
+    }
+    &:hover {
+      background-color: lighten($main-color, 5%);
+    }
+  }
+  span {
+      font-weight: 200;
+    }
+}
+
+nav.menu-open {
+  transform: translateX(-14rem);
+  width: 100%;
+  @media (min-width: 940px) {
+    width: 30%;
+  }
+}
+
+#nav-list:after {
+  display: block;
+  content: '';
+  width: 5rem;
+  height: 1px;
+  margin: 23px auto;
+  background-color: $background-color;
+}
+
+#nav-menu {
+  display: block;
+  position: absolute;
+  top: 35px;
+  right: 25px;
+  z-index: 10;
+  height: 24px;
+}
+
+/* Icon menu */
+
+#menu {
+  height: 4px;
+  width: 1.5em;
+  background-color: lighten($text-color, 35%);
+  margin-top: 8px;
+  &:after, &:before {
+    content: "";
+    display: block;
+    position: relative;
+    height: 4px;
+    width: 1.5em;
+    background-color: lighten($text-color, 35%);
+    transition: all 0.3s ease-in;
+  }
+  &:before {
+    top: -8px;
+  }
+  &:after {
+    top: 4px;
+  }
+  &.btn-close {
+    background: none;
+  }
+  &.btn-close:before {
+    top: 0;
+    transform: rotate(-45deg);
+    background-color: $background-color;
+  }
+  &.btn-close:after {
+    top: -4px;
+    transform: rotate(45deg);
+    background-color: $background-color;
+  }
+}
+
+/* Main content */
+
+.fixed {
+  position: fixed;
+  @media (min-width: 940px) {
+    position: static;
+  }
+}
+
+#container {
+	margin:0 auto;
+	max-width: 730px;
+	padding: 0 1.5rem;
+}
+
+#header {
+	text-align: center;
+  padding: 24px 0;
+  position: relative;
+  a {
+  	text-decoration: none;
+  	color: $text-color;
+  	display: inline-block;
+  }
+  img {
+  	max-height: 72px;
+  	margin: 0 auto;
+  	display: block;
+  }
+  h1 {
+  	font-family: 'Signika', sans-serif; //Emerald logo font
+    font-weight: 600;
+  }
+  &:after {
+  	display: block;
+    content: '';
+    width: 5rem;
+    height: 1px;
+    margin: 23px auto;
+    background-color: lighten($text-color, 70%);
+  }
+}
+
+/* Posts */
+
+#posts {
+  li {
+    list-style-type: none;
+  }
+}
+
+#post-page {
+  margin-bottom: 1.5em;
+  @media (min-width: 940px) {
+      margin-bottom: 1.3334em;
+    }
+}
+
+.post+.post:before {
+    display: block;
+    content: '';
+    width: 5rem;
+    height: 1px;
+    margin: 23px auto;
+    background-color: lighten($text-color, 70%);
+  }
+
+.by-line {
+  display: block;
+  color: lighten($text-color, 25%);
+  line-height: 1.5em; /* 24px/16px */
+  margin-bottom: 1.5em; /* 24px/16px */
+  font-weight: 200;
+  @media (min-width: 940px) {
+    display: block;
+    color: lighten($text-color, 25%);
+    line-height: 1.3334em; /* 24px/18px */
+    margin-bottom: 1.3334em; /* 24px/18px */
+    font-weight: 200;
+  }
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 24px;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+img[title="Emerald"] {
+    box-shadow: 0 2px 6px #ddd;
+  }
+
+code {
+  color: lighten($text-color, 35%);
+  background-color: lighten($background-color, 35%);
+}
+
+/* Set the vertical rhythm for lists inside post content */
+.content ul {
+  line-height: 1.5em; /* 24px/16px */
+  @media (min-width: 940px) {
+    line-height: 1.33334em; /* 24px/18px */
+  }
+}
+
+/* Paginator */
+.pagination {
+  text-align: center;
+  margin: 1.33334em;
+  span {
+    background-color: darken($background-color, 5%);
+    color: $text-color;
+  }
+  a:hover {
+    background-color: lighten($main-color, 5%);
+  }
+}
+.page-item {
+  background-color: $main-color;
+  color: $background-color;
+  padding: 4px 8px;
+  font-weight: 400;
+  padding: 0.5em 1em;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+/* Footer */
+footer {
+  background-color: $main-color;
+  color: $background-color;
+  text-align: center;
+  padding: 0.6667em 0;
+}
