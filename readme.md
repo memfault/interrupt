@@ -17,6 +17,10 @@ Emerald è stato pensato per essere utilizzato principalmente attraverso Github,
 ### Typografia
 Per i contenuti e per mantenere il ritmo verticale, è stata applicata una la scala tipografica come scala modulare e un valore di 24px come baseline. Per mantenere il giusto ritmo verticale, occorre inserire immagini e altri contenuti, tenendo come riferimento per l'altezza un 24 o un multiplo di 24.
 
+## Development
+
+La [versione demo di Emerald](http://www.jacoporabolini.com/emerald/) è in hosting su [Github Pages](https://pages.github.com/), motivo per il quale sono presenti due branch: ``master`` e ``gh-pages``. Per lo sviluppo di Emerald il riferimento è ``master``, mentre ``gh-pages`` viene utilizzato solo come hosting per il sito.
+
 ## Author
 
 ### Jacopo Rabolini
