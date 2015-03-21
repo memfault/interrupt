@@ -1,8 +1,4 @@
----
-layout: default
-title: Emerald License
----
-## License
+## Released under MIT License
 
 Copyright (c) 2015 Jacopo Rabolini
 
