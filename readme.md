@@ -10,7 +10,7 @@ After extracting the content from the folder into the selected directory, you ca
 
 Additionally it is possible to fork the repository and using Github Pages as hosting. By following this way it will enough change the ``baseurl`` value into the ``_config.yml`` file, with the directory name of your project (for example /blog) or with a simply "/" (slash) if you want install Emerald in the root.
 
-## Branch
+### Branch
 Emerald has two branch: 
 - ``master``: is for developing pourpose.
 - ``gh-pages``: is only for demo site.  
