@@ -1,7 +1,7 @@
 ---
 title: Code Syntax
 ---
-Per inserire del codice in evidenza all'interno di un post è sufficente utilizzare alcuni tag particolari, come descritto direttamente all'interno della [documentazione di Jekyll](http://jekyllrb.com/docs/templates/#code-snippet-highlighting). Così facendo il codice verrà racchiuso all'interno di una classe CSS ``.highlight`` e verrà evidenziato secondo lo stile presente nel file [syntax.scss](https://github.com/mojombo/tpw/blob/master/css/syntax.css). Questo file è lo stile standard adottato direttamente da **Github** per evidenziare il codice. 
+To insert highlight code inside of a post, it's enough to use some specific tags, has directly described into the [Jekyll documentation](http://jekyllrb.com/docs/templates/#code-snippet-highlighting). In this way the code will be included into a ``.highlight`` CSS class and will be highlight according to the [syntax.scss](https://github.com/mojombo/tpw/blob/master/css/syntax.css) file. This is the standard style adopted by **Github** to highlight the code. 
 
 This is a CSS example:
 {% highlight css linenos %}

@@ -3,18 +3,19 @@ layout: default
 title: About Emerald
 ---
 ## About
-Emerald è un tema minimale realizzato per Jekyll. Lo scopo principale di Emerald è quello di fornire un tema chiaro e pulito per chi desidera un blog pronto all'uso e che punti ad essere facilmente fruibile in primo luogo dai dispositivi mobili.
+Emerald is a minimal theme created for Jekyll. The main purpose of Emerald is to provide a clear theme for those who want a blog ready to use, focused on the content and mobil-first.
 
-Per maggiori informazioni su Emerald visitate il [repository su Github](https://github.com/KingFelix/emerald/).
+For further details on Emerald, please visit the [repository on Github](https://github.com/KingFelix/emerald/).
 
 ![Emerald](/img/Emerald01.png "Emerald")
 
 ### Setup
-Emerald può essere installato semplicemente [scaricando dal repository](https://github.com/KingFelix/emerald/archive/master.zip) la cartella .zip che lo contiene.
-Una volta estratto il contenuto dalla cartella nella directory prescelta, è sufficiente lanciare ``jekyll serve`` da terminale per visualizzarlo in locale all'indirizzo ``0.0.0.0:4000/emerald/``.
+Emerald may be installed by simply downloading the .zip folder frome the [repository on Github](https://github.com/KingFelix/emerald/archive/master.zip).
 
-In alternativa è possibile eseguire un fork del repository direttamente da Github e utilizzare Github Pages come hosting. Utilizzando questa opzione sarà sufficiente modificare il valore di ``baseurl`` all'interno del file ``_config.yml``, sostituendolo con la directory nel quale si desidera installare Emerald o semplicemente lasciare il simbolo "/" (lo slash), qual ora si desiderasse installare Emerald nella root del proprio progetto.
+After extracting the content from the folder into the selected directory, you can type ``jekyll serve`` from the terminal, than open your browser to ``0.0.0.0:4000/emerald/`` and you will find there.
 
-Come ultima cosa, per saperne di più su Jekyll il miglior punto di partenza è la [documentazione sul sito ufficiale](http://jekyllrb.com)!
+Additionally it is possible to fork the repository and using Github Pages as hosting. By following this way it will enough change the ``baseurl`` value into the ``_config.yml`` file, with the directory name of your project (for example /blog) or with a simply "/" (slash) if you want install Emerald in the root. 
+
+Last but not last: the [Jekyll documentation](http://jekyllrb.com) is the best starting point!
 
 Enjoy!

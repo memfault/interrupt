@@ -1,25 +1,23 @@
 ## About
-Emerald è un tema minimale realizzato per Jekyll. Lo scopo principale di Emerald è quello di fornire un tema chiaro e pulito per chi desidera un blog pronto all’uso e che punti ad essere facilmente fruibile in primo luogo dai dispositivi mobili.
+Emerald is a minimal theme created for Jekyll. The main purpose of Emerald is to provide a clear theme for those who want a blog ready to use, focused on the content and mobil-first.
 
 ![Emerald](/img/Emerald01.png "Emerald")
 
-### Setup
-Emerald può essere installato semplicemente [scaricando dal repository](https://github.com/KingFelix/emerald/archive/master.zip) la cartella .zip che lo contiene.
-Una volta estratto il contenuto dalla cartella nella directory prescelta, è sufficiente lanciare ``jekyll serve`` da terminale per visualizzarlo in locale all'indirizzo ``0.0.0.0:4000/emerald/``.
+## Setup
+Emerald may be installed by simply downloading the .zip folder frome the [repository on Github](https://github.com/KingFelix/emerald/archive/master.zip).
 
-In alternativa è possibile eseguire un fork del repository direttamente da Github e utilizzare Github Pages come hosting. Utilizzando questa opzione sarà sufficiente modificare il valore di ``baseurl`` all'interno del file ``_config.yml``, sostituendolo con la directory nel quale si desidera installare Emerald o semplicemente lasciare il simbolo "/" (lo slash), qual ora si desiderasse installare Emerald nella root del proprio progetto.
+After extracting the content from the folder into the selected directory, you can type ``jekyll serve`` from the terminal, than open your browser to ``0.0.0.0:4000/emerald/`` and you will find there.
 
-Come ultima cosa, per saperne di più su Jekyll il miglior punto di partenza è la [documentazione sul sito ufficiale](http://jekyllrb.com)!
+Additionally it is possible to fork the repository and using Github Pages as hosting. By following this way it will enough change the ``baseurl`` value into the ``_config.yml`` file, with the directory name of your project (for example /blog) or with a simply "/" (slash) if you want install Emerald in the root. 
+
+Last but not last: the [Jekyll documentation](http://jekyllrb.com) is the best starting point!
 
 ### Baseurl
-Emerald è stato pensato per essere utilizzato principalmente attraverso Github, in special modo all'interno di [project site](https://pages.github.com/). Per questo motivo sono stati inseriti diversi tag ``{{ site.baseurl }}`` all'interno del sito. Se si desidera utilizzare Emerald, ad esempio, come sistema di blog all'interno di un sito personale ad esempio, è sufficiente modificare la voce "baseurl" nel file ``config.yml`, sostituendo il valore "/emerald" con, ad esempio "/blog", o qualsiasi cosa si desideri.
+Emerald was tought to be used mainly with Github, in particular into [project site](https://pages.github.com/). For this reason they have been included several tags ``{{ site.baseurl }}`` to refer to the "/emerald/" directory.
+You can change the "baseurl" value into the ``config.yml`` file, to match your directory (for example "/blog/") or the root of your project. In that case you must set the "baseurl" value to "/".
 
 ### Typografia
-Per i contenuti e per mantenere il ritmo verticale, è stata applicata una la scala tipografica come scala modulare e un valore di 24px come baseline. Per mantenere il giusto ritmo verticale, occorre inserire immagini e altri contenuti, tenendo come riferimento per l'altezza un 24 o un multiplo di 24.
-
-## Development
-
-La [versione demo di Emerald](http://www.jacoporabolini.com/emerald/) è in hosting su [Github Pages](https://pages.github.com/), motivo per il quale sono presenti due branch: ``master`` e ``gh-pages``. Per lo sviluppo di Emerald il riferimento è ``master``, mentre ``gh-pages`` viene utilizzato solo come hosting per il sito.
+To maintain the vertical rythm, it has been applied a **Typographic scale** as a modular scale, with a baseline set to 24px. To maintain this rythm you need to insert elements like image, video or other contents with a 24px (or multiple) height as refer. 
 
 ## Author
 

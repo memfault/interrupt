@@ -197,9 +197,10 @@ code {
   background-color: lighten($background-color, 35%);
 }
 
-/* Set the vertical rhythm for lists inside post content */
-.content ul {
+/* Set the vertical rhythm (and padding-left) for lists inside post content */
+.content ul, .content ol {
   line-height: 1.5em; /* 24px/16px */
+  padding-left: 1.5em;
   @media (min-width: 940px) {
     line-height: 1.33334em; /* 24px/18px */
   }
