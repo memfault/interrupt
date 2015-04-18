@@ -21,9 +21,11 @@ title: Emerald | A Jekyll blog
 	    {% include header.html %}
 
     <!-- Main content -->
-	  <main id="container">
-
-	  	{{ content }}
+	  <div id="container">
+		  
+		<main>
+			{{ content }}
+	  	</main>
 		
 		  <!-- Pagination links -->
       {% if paginator.total_pages > 1 %}
@@ -54,7 +56,7 @@ title: Emerald | A Jekyll blog
         </div>
         {% endif %}
 
-	  </main>
+	  </div>
 	    
 	    <!-- Footer -->
 	    {% include footer.html %}
