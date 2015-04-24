@@ -1,13 +1,13 @@
 ---
 layout: default
 ---
-<div id="post-page">
+<article id="post-page">
 	<h2>{{ page.title }}</h2>		
-	<span class="by-line">{{ page.date | date_to_string }}</span>
+	<time datetime="{{ page.date | date_to_xmlschema }}" class="by-line">{{ page.date | date_to_string }}</time>
 	<div class="content">
 
 		{{ content }}
 		
 	</div>
-</div>
+</article>
 
