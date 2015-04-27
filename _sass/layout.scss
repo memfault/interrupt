@@ -34,6 +34,8 @@ nav {
 }
 
 nav.menu-open {
+  -ms-transform: translateX(-14rem);
+  -webkit-transform: translateX(-14rem);
   transform: translateX(-14rem);
   width: 100%;
   @media (min-width: 940px) {
@@ -86,11 +88,15 @@ nav.menu-open {
   }
   &.btn-close:before {
     top: 0;
+    -ms-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
     background-color: $background-color;
   }
   &.btn-close:after {
     top: -4px;
+    -ms-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
     background-color: $background-color;
   }
