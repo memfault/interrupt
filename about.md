@@ -19,7 +19,3 @@ Additionally it is possible to fork the repository and use Github Pages as hosti
 Last but not least: the [Jekyll documentation](http://jekyllrb.com) is the best starting point!
 
 Enjoy!
-
-- uno
-- due
-- tre

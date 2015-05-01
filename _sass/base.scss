@@ -16,11 +16,13 @@ html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, img {
   border: 0;
 }
 
-/*- Base settings -*/
+/*- Base color -*/
 
 $main-color: #008A3C;
 $background-color: #FDFDFD;
 $text-color: #222222;
+
+/*- Base settings -*/
 
 html {
 	background-color: $background-color;

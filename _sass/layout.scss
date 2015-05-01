@@ -11,7 +11,10 @@ nav {
   right:-14rem;
   color: $background-color;
   opacity: 0.95;
-  transition: all 0.3s ease-in;
+  -webkit-transition: all 0.3s ease-in;
+     -moz-transition: all 0.3s ease-in;
+      -ms-transition: all 0.3s ease-in;
+          transition: all 0.3s ease-in;
   z-index: 1;
   padding: 72px 0;
   text-align: center;
@@ -34,9 +37,10 @@ nav {
 }
 
 nav.menu-open {
-  -ms-transform: translateX(-14rem);
   -webkit-transform: translateX(-14rem);
-  transform: translateX(-14rem);
+     -moz-transform: translateX(-14rem);
+      -ms-transform: translateX(-14rem);
+          transform: translateX(-14rem);
   width: 100%;
   @media (min-width: 940px) {
     width: 30%;
@@ -88,16 +92,18 @@ nav.menu-open {
   }
   &.btn-close:before {
     top: 0;
-    -ms-transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
-    transform: rotate(-45deg);
+       -moz-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+            transform: rotate(-45deg);
     background-color: $background-color;
   }
   &.btn-close:after {
     top: -4px;
-    -ms-transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
-    transform: rotate(45deg);
+       -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
     background-color: $background-color;
   }
 }
@@ -191,6 +197,7 @@ img {
   margin-bottom: 24px;
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
+      -ms-border-radius: 4px;
           border-radius: 4px;
 }
 
@@ -237,6 +244,7 @@ code {
   padding: 0.5em 1em;
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
+      -ms-border-radius: 4px;
           border-radius: 4px;
 }
 

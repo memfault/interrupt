@@ -33,15 +33,17 @@ h3, h4, h5, h6 {
 	line-height: 1.3334em; /* 24px/18px */
 	padding: 0.66667em 0; /* 12px/18px * 2 (Use padding instead of margin to maintain proximity with paragraph) */
 }
+
 blockquote {
 	font-style: italic;
 	margin: 1.5em; /* 24px/18px */
 	-webkit-border-radius: 4px;
-     -moz-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	    -ms-border-radius: 4px;
           border-radius: 4px;
 	background-color: darken($background-color, 5%);
 	padding: 0 1.5em; /* 24px/18px */
-	p {
+	p, ul, ol {
 		padding: 1.5em 0; /* 24px/18px */
 	}
 }
@@ -50,7 +52,7 @@ blockquote {
 
 @media (min-width: 940px) { //Breakpoint set to 940px
 
-p {
+p, ul, ol {
 	font-size: 1em; /* 18px */
 	line-height: 1.3334em; /* 24px/18px */
 	margin-bottom: 1.3334em; /* 24px/18px */
@@ -78,11 +80,12 @@ blockquote {
 	font-style: italic;
 	margin: 1.3334em; /* 24px/18px */
 	-webkit-border-radius: 4px;
-     -moz-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	    -ms-border-radius: 4px;
           border-radius: 4px;
 	background-color: darken($background-color, 5%);
 	padding: 0 1.33334em; /* 24px/18px */
-	p {
+	p, ul, ol {
 		padding: 1.33334em 0; /* 24px/18px */
 	}
 }
