@@ -212,6 +212,11 @@ code {
   }
 }
 
+/* Pages */
+#page ul, #page ol {
+  padding-left: 1.5em;
+}
+
 /* Paginator */
 .pagination {
   text-align: center;

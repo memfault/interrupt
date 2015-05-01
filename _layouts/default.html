@@ -1,6 +1,3 @@
----
-title: Emerald | A Jekyll blog
----
 <!DOCTYPE html>
 <html>
 
@@ -18,14 +15,20 @@ title: Emerald | A Jekyll blog
 	  </a>
 
       <!-- Header -->
-	    {% include header.html %}
+      {% if site.custom_header == true %}
+        {% include header-custom.html %}
+      {% else %}
+        {% include header.html %}
+      {% endif %}
 
     <!-- Main content -->
 	  <div id="container">
 		  
 		<main>
+
 			{{ content }}
-	  	</main>
+
+	  </main>
 		
 		  <!-- Pagination links -->
       {% if paginator.total_pages > 1 %}

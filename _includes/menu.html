@@ -5,5 +5,12 @@
 	  <a href="https://github.com/KingFelix/emerald/archive/master.zip">Download</a>
 	  <a href="https://github.com/KingFelix/emerald">Project on Github</a>
 	</div>
-	<span>version {{ site.version }}</span>
+  
+  <!-- Nav footer -->
+	{% if site.custom_nav_footer == true %}
+	  {% include nav-footer-custom.html %}
+	{% else %}
+	  {% include nav-footer.html %}
+	{% endif %}
+
 </nav>
