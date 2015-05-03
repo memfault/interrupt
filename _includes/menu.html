@@ -1,4 +1,4 @@
-<nav id="nav">
+<nav {% if site.reverse == true %}id="nav-left"{% else %}id="nav"{% endif %}>
 	<div id="nav-list">
 		<a href="{{ site.baseurl }}">Home</a>
 	  <a href="{{ site.baseurl }}about.html">About Emerald</a>

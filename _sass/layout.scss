@@ -1,23 +1,8 @@
-/*- General Layout -*/
+/* -- General Layout -- */
 
 /* Navigation */
 
-nav {
-  width: 14rem;
-  position: fixed;
-  background-color: $main-color;
-  top: 0;
-  bottom: 0;
-  right:-14rem;
-  color: $background-color;
-  opacity: 0.95;
-  -webkit-transition: all 0.3s ease-in;
-     -moz-transition: all 0.3s ease-in;
-      -ms-transition: all 0.3s ease-in;
-          transition: all 0.3s ease-in;
-  z-index: 1;
-  padding: 72px 0;
-  text-align: center;
+#nav, #nav-left { 
   a {
     display: block;
     color: $background-color;
@@ -36,16 +21,25 @@ nav {
     }
 }
 
-nav.menu-open {
-  -webkit-transform: translateX(-14rem);
-     -moz-transform: translateX(-14rem);
-      -ms-transform: translateX(-14rem);
-          transform: translateX(-14rem);
-  width: 100%;
-  @media (min-width: 940px) {
-    width: 30%;
-  }
+#nav {
+  @include nav-position(right);
 }
+
+#nav-left {
+  @include nav-position(left);
+}
+
+/* Toggle class to open menu */
+
+#nav.menu-open {
+  @include open(-14rem);
+}
+
+#nav-left.menu-open-left {
+  @include open(14rem);
+}
+
+/* Separator after menu */
 
 #nav-list:after {
   display: block;
@@ -56,16 +50,15 @@ nav.menu-open {
   background-color: $background-color;
 }
 
+/* Icon menu */
+
 #nav-menu {
-  display: block;
-  position: absolute;
-  top: 35px;
-  right: 25px;
-  z-index: 10;
-  height: 24px;
+  @include icon-position(right);
 }
 
-/* Icon menu */
+#nav-menu-left {
+  @include icon-position(left);
+}
 
 #menu {
   height: 4px;
@@ -211,6 +204,7 @@ code {
 }
 
 /* Set the vertical rhythm (and padding-left) for lists inside post content */
+
 .content ul, .content ol {
   line-height: 1.5em; /* 24px/16px */
   padding-left: 1.5em;
@@ -220,11 +214,13 @@ code {
 }
 
 /* Pages */
+
 #page ul, #page ol {
   padding-left: 1.5em;
 }
 
 /* Paginator */
+
 .pagination {
   text-align: center;
   margin: 2.666668em;
@@ -249,6 +245,7 @@ code {
 }
 
 /* Footer */
+
 footer {
   background-color: $main-color;
   color: $background-color;
