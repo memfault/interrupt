@@ -8,7 +8,7 @@ author:
   url: "http://www.jacoporabolini.com"
 
 # Build settings
-baseurl: /emerald/ # Change this to your relative path (ex: /blog/), or leave just a /
+baseurl: /emerald # Change this to your relative path (ex: /blog/), or leave just a /
 markdown: kramdown
 source: .
 destination: ./_site
@@ -24,6 +24,10 @@ defaults:
       type: "posts"
     values:
       layout: "post"
+
+# Plugins
+gems:
+  - jekyll-paginate
 
 # Custom variables
 version: "1.1.0"
