@@ -1,7 +1,7 @@
 # Site settings
 title: Emerald | A simple Jekyll blog
 description: "A minimal blog template, build with Jekyll."
-url: "http://localhost:4000"
+url: "https://quirky-hugle-cc47ab.netlify.com"
 author:
   name: "Jacopo Rabolini"
   email: "hello@jacoporabolini.com"
