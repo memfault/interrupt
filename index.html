@@ -4,13 +4,19 @@ layout: default
 <!-- Posts -->
 <ul id="posts">
 
-	{% for post in paginator.posts %}
+    {% for post in paginator.posts %}
 
-	  <li class="post">
-	  	<h2><a href="{% if site.baseurl == "/" %}{{ post.url }}{% else %}{{ post.url | prepend: site.baseurl }}{% endif %}">{{ post.title }}</a></h2>
-	  	<time datetime="{{ post.date | date_to_xmlschema }}" class="by-line">{{ post.date | date_to_string }}</time>
-	  	<p>{{ post.content | strip_html | truncatewords:50 }}</p>
-	  </li>
+    <li class="post">
+        <h2><a href="{% if site.baseurl == "/" %}{{ post.url }}{% else %}{{ post.url | prepend: site.baseurl }}{% endif %}">{{ post.title }}</a></h2> 
+        <div class="by-line">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
+            {% assign author = site.data.authors[post.author] %}
+            {% if author %}
+            <span>by <a href="{{ author.web }}">{{ author.name }}</a></span>
+            {% endif %}
+        </div>
+        <p>{{ post.content | strip_html | truncatewords:50 }}</p>
+    </li>
 
     {% endfor %}
 

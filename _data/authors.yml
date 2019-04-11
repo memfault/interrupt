@@ -1,0 +1,18 @@
+# Author Details
+francois:
+    name: François Baldassari
+    email: francois@memfault.com
+    web: https://twitter.com/baldassarifr
+    image: /img/author/francois.jpg
+    blurb: is the founder and CEO of Memfault. Prior to founding Memfault, François worked on the embedded software teams at Sun, Pebble, and Oculus.
+chris:
+    name: Chris Coleman
+    email: chris@memfault.com
+    image: /img/author/chris.jpg
+    blurb: is the founder and CTO of Memfault. Prior to founding Memfault, Chris worked on the embedded software teams at Sun, Pebble, and Fitbit.
+tyler:
+    name: Tyler Hoffman
+    email: tyler@memfault.com
+    web: https://twitter.com/ty_hoff
+    image: /img/author/tyler.jpg
+    blurb: is the founder and CPO of Memfault. Prior to founding Memfault, Tyler worked on the embedded software teams at Pebble and Fitbit.

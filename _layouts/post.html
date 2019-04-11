@@ -9,6 +9,15 @@ layout: default
 		{{ content }}
 		
 	</div>
+    {% assign author = site.data.authors[page.author] %}
+    {% if author %}
+        <div class="author">
+            {% if author.image %}
+            <img src="{{ author.image | prepend: site.baseurl | replace: '//', '/' }}"  />
+            {% endif %}
+            <span><a href="{{ author.web }}">{{ author.name }}</a> {{ author.blurb }}</span>
+        </div>
+    {% endif %}
     <div id='discourse-comments'></div>
 </article>
 <script type="text/javascript">
