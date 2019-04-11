@@ -1,5 +1,6 @@
 var normal = document.getElementById("nav-menu");
 var reverse = document.getElementById("nav-menu-left");
+var html = document.documentElement;
 
 var icon = normal !== null ? normal : reverse;
 
@@ -38,4 +39,23 @@ function menuClick() {
 	}
 }
 
+function darkModeSetup() {
+    if (getCookie("theme") == "dark") {
+        html.addClass("dark");
+    }
+    toggle = document.getElementById("theme-toggle");
+    toggle.click(function(e) {
+        e.preventDefault();
+        html.toggleClass("dark");
+        if (html.hasClass("dark")){
+            document.cookie = "theme=dark;path=/";
+        }
+        else {
+            document.cookie = "theme=light;path=/";
+        }
+    })
+}
+
+// TODO dark mode
+// darkModeSetup();
 menuClick();

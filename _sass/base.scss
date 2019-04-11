@@ -22,6 +22,11 @@ $main-color: #141845;
 $background-color: #FDFDFD;
 $text-color: #222222;
 
+// Dark theme (not used)
+$main-color-dark: #FDFDFD;
+$background-color-dark: #141845;
+$text-color-dark: #FDFDFD;
+
 /*- Base settings -*/
 
 html {
@@ -33,7 +38,6 @@ html {
 	line-height: 1.5;
 	color: $text-color;
 }
-
 
 /*- Link -*/
 a {
