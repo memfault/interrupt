@@ -123,7 +123,7 @@ html, body {
 }
 
 #header {
-	text-align: center;
+  text-align: center;
   padding: 24px 0;
   position: relative;
   a {
@@ -132,8 +132,9 @@ html, body {
   	display: inline-block;
   }
   img {
-  	max-height: 72px;
-  	margin: 0 auto;
+  	max-height: 60px;
+    margin-top: 10px;
+    margin-bottom: 10px;
   	display: block;
   }
   h1 {
