@@ -1,5 +1,11 @@
 ## Released under MIT License
 
+### Interrupt fork & content
+
+Copyright (c) 2019 Memfault, Inc.
+
+### Original Jekyll Template
+
 Copyright (c) 2015 Jacopo Rabolini
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
