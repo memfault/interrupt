@@ -2,17 +2,16 @@
 title: "From zero to main(): Bare metal C"
 author: francois
 ---
-Working on embedded software, one quickly develops a quasi religious respect for
+Working on embedded software, one quickly develops a quasi-religious respect for
 the axioms of embedded C programming:
 
 1. The entry point of thy program shall be named "main".
-2. Thou shall initialize thy static variables, else The Machine shall set them
+2. Thou shalt initialize thy static variables, else The Machine shall set them
    to zero.
-3. Thou shall implement The Interrupts. HardFault_Handler chief among them, but
+3. Thou shalt implement The Interrupts. HardFault_Handler chief among them, but
    also SysTick_Handler.
 
-Ask an engineer where those rules come from, and they'll wave towards cryptic
-startup files implemented in assembly. Often times those files are copy-pasted
+Ask an engineer where those rules come from, and they'll wave towards cryptic startup files implemented in assembly. Often times those files are copy-pasted
 from project to project. Seldom are they ever read, let alone modified.
 
 <!-- excerpt start -->
@@ -30,10 +29,9 @@ is a Cortex-M0+ chip found on several affordable development boards.
 Specifically, we are using:
 
 - Adafruit's [Metro M0 Express](https://www.adafruit.com/product/3505) as our
-  development board
-- A simple [CMSIS-DAP Adapter](https://www.adafruit.com/product/2764)
-- OpenOCD for programming (the [Arduino
-  fork](https://github.com/arduino/OpenOCD))
+  development board,
+- a simple [CMSIS-DAP Adapter](https://www.adafruit.com/product/2764)
+- OpenOCD (the [Arduino fork](https://github.com/arduino/OpenOCD)) for programming
 
 In each case, we'll implement a simple blinking LED application. It is not
 particularly interesting in itself, but for the sake of completeness you can
@@ -43,6 +41,8 @@ find the code reproduced below.
 #include <samd21g18a.h>
 
 #include <port.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 #define LED_0_PIN PIN_PA17
 
@@ -58,7 +58,7 @@ int main() {
   set_output(LED_0_PIN);
   while (true) {
     port_pin_toggle_output_level(LED_0_PIN);
-    for (int i = 0; i < 100000; ++i) {}
+    for (volatile int i = 0; i < 100000; ++i) {}
   }
 }
 ```
@@ -71,7 +71,8 @@ power to the board and our code started executing. There must be behavior
 intrinsic to the chip that defines how code is executed.
 
 And indeed, there is! Digging into the [ARMv6-M Technical Reference
-Manual](https://static.docs.arm.com/ddi0419/d/DDI0419D_armv6m_arm.pdf) we can
+Manual](https://static.docs.arm.com/ddi0419/d/DDI0419D_armv6m_arm.pdf), which is
+the underlying architecture manual for the Cortex-M0+, we can
 find some pseudo-code that describes reset behavior:
 
 ```c
@@ -114,17 +115,17 @@ Let us check.
 First, we dump our `bin` file to see what address `0x0000000` and `0x00000004` contain:
 
 ```terminal
-francois-mba:minimal francois$ hexdump -C build/minimal.bin  | head
-00000000  00 20 00 20 c1 00 00 00  b5 00 00 00 bb 00 00 00  |. . ............|
-00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-*
-000000b0  00 00 00 00 80 b5 00 af  fe e7 80 b5 00 af fe e7  |................|
-000000c0  80 b5 84 b0 00 af 18 4b  fb 60 18 4b bb 60 fa 68  |.......K.`.K.`.h|
-000000d0  bb 68 9a 42 0c d0 07 e0  fa 68 13 1d fb 60 bb 68  |.h.B.....h...`.h|
-000000e0  19 1d b9 60 12 68 1a 60  ba 68 11 4b 9a 42 f3 d3  |...`.h.`.h.K.B..|
-000000f0  10 4b 7b 60 04 e0 7b 68  1a 1d 7a 60 00 22 1a 60  |.K{`..{h..z`.".`|
-00000100  7a 68 0d 4b 9a 42 f6 d3  0c 4b 3b 60 3a 68 0c 4b  |zh.K.B...K;`:h.K|
-00000110  ff 21 8a 43 9a 60 0b 4a  53 68 80 21 0b 43 53 60  |.!.C.`.JSh.!.CS`|
+francois-mba:zero-to-main francois$ xxd build/minimal/minimal.bin  | head
+00000000: 0020 0020 c100 0000 b500 0000 bb00 0000  . . ............
+00000010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000020: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000030: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000040: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000050: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000060: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000080: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000090: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 ```
 
 If I'm reading this correctly, our inital SP is `0x20002000`, and our start
@@ -153,7 +154,8 @@ That's odd! Our main function is found at `0x000002ac`. No symbol at `0x000000c1
 
 It turns out that the lowest bit of the PC is used to indicate thumb2
 instructions, which is one of the two instruction sets supported by ARM
-processors, so `Reset_Handler` is what we're looking for.
+processors, so `Reset_Handler` is what we're looking for (for more details check
+out section A4.1.1 in the ARMv6-M manual).
 
 ### Writing a Reset_Handler
 
@@ -302,7 +304,7 @@ void Reset_Handler(void)
 ```
 
 You will note that we added two things:
-1. An infinite loop after main(), so we do not run off into the weeds if the
+1. An infinite loop after `main()`, so we do not run off into the weeds if the
    main function returns
 2. Workaround for chip bugs which are best taken care of before our program
    starts. Sometimes these are wrapped in a `SystemInit` function called by the
@@ -319,7 +321,7 @@ example:
 2. Relocatable code must be copied over
 3. More complex memory layouts can add a few copy / zero loops
 
-We'll talk about all of those in future posts. But before that, 
+We'll cover all of them in future posts. But before that, 
 we'll talk about how the magical memory region variables come about, 
 how our `Reset_Handler`'s address ends up at `0x00000004`, and how to write a
 linker script in our next post!
