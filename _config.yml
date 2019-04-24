@@ -8,13 +8,15 @@ author:
   url: "http://memfault.com"
 
 # Build settings
-baseurl: / # Change this to your relative path (ex: /blog/), or leave just a /
-markdown: kramdown
-source: .
+baseurl: /blog
 destination: ./_site
+include: 
+    - _redirects
+markdown: kramdown
 permalink: /:title
 paginate: 8
 paginate_path: /page:num/
+source: .
 
 # Default values
 defaults:
