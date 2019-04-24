@@ -15,9 +15,11 @@ Ask an engineer where those rules come from, and they'll wave towards cryptic
 startup files implemented in assembly. Often times those files are copy-pasted
 from project to project. Seldom are they ever read, let alone modified.
 
-In this series of post, we will demystify what happens between when power is applied
+<!-- excerpt start -->
+In this series of posts, we will demystify what happens between when power is applied
 and your main function is called. In the process, we'll learn how to bootstrap a
 C environment, implement a bootloader, relocate code, and more!
+<!-- excerpt end -->
 
 ### Setting the stage
 

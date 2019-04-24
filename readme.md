@@ -16,6 +16,9 @@ Conduct](https://interrupt.memfault.com/code-of-conduct).
 To submit your content, either email us at
 interrupt@memfault.com, or open a pull request!
 
+See [Contributing](https://interrupt.memfault.com/contributing) for more
+information.
+
 ## Acknowledgements
 
 Interrupt is based on the Emerald theme by [www.jacoporabolini](Jacopo
