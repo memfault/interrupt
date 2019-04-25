@@ -291,8 +291,7 @@ void Reset_Handler(void)
         *bss_ptr++ = 0;
     }
 
-    /* Overwriting the default value of the NVMCTRL.CTRLB.MANW bit
-       (rata reference 13134) */
+    /* Overwriting the default value of the NVMCTRL.CTRLB.MANW bit (errata reference 13134) */
     NVMCTRL->CTRLB.bit.MANW = 1;
 
     /* Branch to main function */
