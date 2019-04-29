@@ -1,7 +1,7 @@
 # Site settings
 title: Interrupt | Modern embedded software.
 description: "A community for embedded software makers."
-url: "https://quirky-hugle-cc47ab.netlify.com"
+url: "https://interrupt.memfault.com"
 author:
   name: "Memfault"
   email: "interrupt@memfault.com"
