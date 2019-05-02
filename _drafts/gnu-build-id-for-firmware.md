@@ -1,4 +1,4 @@
----
+hhg--
 title: "GNU Build IDs for Firmware"
 author: francois
 ---
@@ -166,11 +166,11 @@ To add a section to our binary, we must specify an address for it in our linker
 script. Assuming your linker script declares the following memory layout:
 
 ```
-MEMORY¬
-{¬
-  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00040000¬
-  ram      (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000¬
-}¬
+MEMORY
+{
+  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00040000
+  ram      (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000
+}
 ```
 
 You can add the build ID to your flash memory with:
