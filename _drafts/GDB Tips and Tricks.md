@@ -1,21 +1,14 @@
-# Debugging with GDB: Tips and Tricks
 
-## Sections in this post:
+---
+title: "Debugging with GDB: Tips & Tricks (nRF52 use case)"
+author: mafaneh
+---
 
-- <a href="##Introduction">Introduction</a>
-- The GNU Debugger (GDB)
-- Hardware Required
-- Software Required
-- Executing the example application
-- GDB Commands
-- Summary and Closing
-- References and Useful Resources
-
-## Introduction
-
+<!-- excerpt start -->
 If I had to choose one significant aspect that I was not aware of before starting my career as a firmware developer, it would be how much time is spent **not actually developing** firmware, and instead **debugging**!
 
 Not convinced? I'll leave you with a few figures taken from the 2017 Embedded/EETimes **Embedded Markets Study** survey which showcase the significance of debugging in the professional life of a firmware developer.
+<!-- excerpt end -->
 
 <center>
 ![](Graphics/Job-Functions.png)
@@ -161,8 +154,8 @@ In order to access the necessary commands that we'll be utilizing from anywhere 
 
 To do that, open up a Terminal and type the following:
 
-```
-mafaneh$ sudo vi /etc/paths
+```terminal
+$ sudo vi /etc/paths
 ```
 
 You will be prompted to enter your administrator password. Once you've done that, go ahead and add the following lines to the bottom of the file:
@@ -178,8 +171,8 @@ We don't need to add any paths for the SEGGER J-Link software because it ran as 
 
 After you're done editing and saving the `paths` file, close the Terminal and then start a new session to make sure the updated `paths` file gets loaded. To verify, you can type the following command:
 
-```bash
-mafaneh$ echo $PATH
+```terminal
+$ echo $PATH
 /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/mafaneh/Memfault/nRF-Command-Line-Tools_9_8_1_OSX/nrfjprog:/Users/mafaneh/Memfault/gcc-arm-none-eabi-7-2017-q4-major/bin
 ``` 
 
@@ -232,8 +225,8 @@ We simply commented out the optimization flags and added the `-ggdb` option whic
 
 Now, we can go ahead and build the project. To do this, simply run the following command:
 
-```bash
-mafaneh$ make
+```terminal
+$ make
 ```
 
 The output should look something like this:
@@ -254,14 +247,14 @@ Here are the steps to accomplish this:
 	- **Power** set to "ON"
 - Erase the development kit by running the following command:
 
-	```bash
-	mafaneh$ nrfjprog -f NRF52 --eraseall
+	```terminal
+	$ nrfjprog -f NRF52 --eraseall
 	```
 	
 - The final step is to flash the development kit with the example binary. To do so, run the following command from the folder `<nRF5_SDK_Folder>/examples/peripheral/blinky/pca10056/blank/armgcc`.
 
-	```bash
-	mafaneh$ nrfjprog -f NRF52 --program _build/nrf52840_xxaa.hex --chiperase
+	```terminal
+	$ nrfjprog -f NRF52 --program _build/nrf52840_xxaa.hex --chiperase
 	```
 	
 That's it!
@@ -290,8 +283,8 @@ There are three parts to get this working:
 	
 	You may not see any output since the program probably started before you connected. To reset the development board, we can simply run the following command from the Terminal:
 	
-	```bash
-	mafaneh$ nrfjprog -f NRF52 --reset
+	```terminal
+	$ nrfjprog -f NRF52 --reset
 	```
 	
 	If all goes well, you should see the following printed in the Terminal window:
@@ -312,8 +305,8 @@ There are a few steps to get this working.
 	
 	To start the J-Link GDB Server, run the following command:
 	
-	```bash
-	mafaneh$ JLinkGDBServerCL -device nrf52840_xxaa -if swd -port 2331
+	```terminal
+	$ JLinkGDBServerCL -device nrf52840_xxaa -if swd -port 2331
 	```
 	
 	The output should look something like this:
@@ -328,8 +321,8 @@ There are a few steps to get this working.
 	
 	To make things easier, run the following command from the output folder where the binary images for the compiled example are located (`<nRF5_SDK_Folder>/examples/peripheral/uart/pca10056/blank/armgcc/_build/`).
 	
-	```bash
-	mafaneh$ arm-none-eabi-gdb
+	```terminal
+	$ arm-none-eabi-gdb
 	```
 	
 	<center>
