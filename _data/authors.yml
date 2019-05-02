@@ -4,7 +4,7 @@ francois:
     email: francois@memfault.com
     web: https://twitter.com/baldassarifr
     image: /img/author/francois.jpg
-    blurb: has worked on the embedded software teams at Sun, Pebble, and Oculus. He is currently the CEO of Memfault.
+    blurb: has worked on the embedded software teams at Sun, Pebble, and Oculus. He is currently the CEO of <a href='https://memfault.com'>Memfault</a>.
 chris:
     name: Chris Coleman
     email: chris@memfault.com
