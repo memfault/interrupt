@@ -26,7 +26,7 @@ Debugging is **generally difficult**, and it gets even more difficult for firmwa
 
 This is due to a few factors, some of which are:
 
-- Limited availability of resources for debugging. For example, some bugs such as memory corruption are very difficult to diagnose using software breakpoints. In those scenarios, you would rely on hardware breakpoints and usually there is a limited number of hardware breakpoints for a specific architecture. This makes debugging complex bugs a challenging task.
+- Limited availability of resources for debugging. For example, some bugs are very difficult to diagnose using software breakpoints. In those scenarios, you would rely on hardware breakpoints and usually there is a limited number of hardware breakpoints for a specific architecture. This makes debugging complex bugs a challenging task.
 - Time-dependency in real-time/time-critical applications. For example, setting breakpoints can interfere with the timing of operations. If a bug is timing-related, then the debugging process may even cause the bug to disappear!
 - Challenges in setting up the debugging environment (cross-platform development environment). There is a variety of visual IDEs and integrated debuggers available, but for some scenarios you may need an automated debugging setup and this can prove to be a challenging task.
 - High cost of some debugging hardware tools.
@@ -150,21 +150,25 @@ In order to access the necessary commands that we'll be calling from anywhere in
 To do that, open up a Terminal session and type the following:
 
 ```terminal
-$ sudo vi /etc/paths
+$ vi ~/.bash_profile
 ```
 
-You will be prompted to enter your administrator password. Once you've done that, go ahead and add the following lines to the bottom of the file:
+Once you've done that, go ahead and add the following lines to the bottom of the file:
 
 ```
-<Your Folder>/nRF-Command-Line-Tools_9_8_1_OSX/nrfjprog
-<Your Folder>/gcc-arm-none-eabi-7-2017-q4-major/bin
+export PATH = "<Your Folder>/nRF-Command-Line-Tools_9_8_1_OSX/nrfjprog":$PATH
+export PATH = "<Your Folder>/gcc-arm-none-eabi-7-2017-q4-major/bin":$PATH
 ``` 
 
-Make sure to replace the `<Your Folder>` part with the appropriate folder name where you placed those packages on your system.
+Make sure to replace `<Your Folder>` with the appropriate folder name where you placed those packages on your system.
 
 We don't need to add any paths for the SEGGER J-Link software because it ran as an installer and would have already added the necessary binaries to our system.
 
-After you're done editing and saving the `paths` file, close the Terminal and then start a new session to make sure the updated `paths` file gets loaded.
+After you're done editing and saving the `paths` file, close the Terminal and then start a new session to make sure the updated `paths` file gets loaded. Alternatively, you could just execute the following command to reload `.bash_profile`:
+
+```terminal
+$ source ~/.bash_profile
+```
 
 To verify, you can type the following command:
 
@@ -195,30 +199,41 @@ Before we build the example, let's make sure we have the right compiler flags fo
 
 To check the compiler flags, edit the `Makefile` located at `<nRF5_SDK_Folder>/examples/peripheral/uart/pca10056/blank/armgcc`.
 
-In the Makefile, look for the "common C flags" section:
+In the Makefile, look for the "Optimization flags" section:
 
 ```bash
+# Optimization flags
+OPT = -O3 -g3
+# Uncomment the line below to enable link time optimization
+#OPT += -flto
+
 # C flags common to all targets
 CFLAGS += $(OPT)
-CFLAGS += -DBOARD_PCA10056
-CFLAGS += -DBSP_DEFINES_ONLY
-CFLAGS += -DCONFIG_GPIO_AS_PINRESET
-CFLAGS += -DFLOAT_ABI_HARD
-CFLAGS += -DNRF52840_XXAA
-CFLAGS += -mcpu=cortex-m4
-CFLAGS += -mthumb -mabi=aapcs
-CFLAGS += -Wall -Werror
 ```
 
 Let's modify this to reflect the following changes:
 
 ```bash
+# Optimization flags
+OPT = -Og -g3
+# Uncomment the line below to enable link time optimization
+#OPT += -flto
+
 # C flags common to all targets
-#CFLAGS += $(OPT)
-CFLAGS += -ggdb
+CFLAGS += $(OPT)
 ```
 
-We commented out the optimization flags and added the `-ggdb` option which includes all debugging symbols needed for GDB.
+We changed the compiler's optimization level to "-Og", which optimizes the debugging experience. According to GDB's [documentation for Optimization](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html):
+
+>
+Turning on optimization flags makes the compiler attempt to improve the performance and/or code size at the expense of compilation time and possibly the ability to debug the program.
+>
+
+and
+
+>
+-Og should be the optimization level of choice for the standard edit-compile-debug cycle, offering a reasonable level of optimization while maintaining fast compilation and a good debugging experience. It is a better choice than -O0 for producing debuggable code because some compiler passes that collect debug information are disabled at -O0.
+>
 
 Now, we can go ahead and build the project. To do this, run the following command:
 
@@ -310,8 +325,11 @@ There are a few steps to get this working.
 	$ JLinkGDBServerCL -device nrf52840_xxaa -if swd -port 2331
 	```
 	
-	The output should look something like this:
+	- "**-device**" specifies the device type ("nrf52840_xxaa" in our case).
+	- "**-if**" specifies the debug interface ("swd" refers to Serial Wire Debug which is an alternative to JTAG that is relatively recent and is used for ARM processors. Keep in mind that some chipsets may not support SWD and will require JTAG instead.)
+	- "**-port**" specifies the network port where the GDB Server will be accessible by the GDB Client.
 	
+	The output should look something like this:
 	
 	![](Graphics/GDB_Server_Run.png)
 	
