@@ -9,19 +9,15 @@ If I had to choose one significant aspect that I was not aware of before startin
 Not convinced? I'll leave you with a few figures taken from the 2017 Embedded/EETimes **Embedded Markets Study** survey which showcase the significance of debugging in the professional life of a firmware developer.
 <!-- excerpt end -->
 
-<center>
 ![](./Graphics/Job-Functions.png)
-</center>
 <br>
 
-<center>
+
 ![](./Graphics/Design-time.png)
-</center>
 <br>
 
-<center>
+
 ![](./Graphics/Tool-improvement.png)
-</center>
 <br>
 
 Let's face it..
@@ -86,9 +82,9 @@ Installation of the nRF5 SDK is straightforward. All you need to do is download 
 
 Once you extract it, you should see the following directory structure:
 
-<center>
+
 ![](././Graphics/nRF5_SDK_folder.png)
-</center>
+
 
 #### 2. nRF5 Command Line Tools
 Next, we need to install the nRF5 Command Line Tools. These include **nrfjprog**, which is a tool for programming your nRF52 development kit via Segger J-LINK and needed in our case for working from the command line.
@@ -97,16 +93,15 @@ Next, we need to install the nRF5 Command Line Tools. These include **nrfjprog**
 
 First, make sure you select the appropriate operating system (macOS in our case).
 
-<center>
+
 ![](././Graphics/nRF5_Command_Line_Tools.png)
-</center>
 <br/>
 
 Select the latest version, and then click "Download File".
 
-<center>
+
 ![](././Graphics/nRF5_Command_Line_Tools_Folder.png)
-</center>
+
 #### 3. SEGGER J-Link
 The SEGGER J-Link software is needed for the GDB Server interface to the nRF52 chipset on the development kit.
 
@@ -114,32 +109,30 @@ So let's go ahead and download the software.
 
 [**Link to download SEGGER J-Link Software**](https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack)
 
-<center>
+
 ![](././Graphics/J-Link_Software_Download.png)
-</center>
 <br/>
 
 This download (for macOS) is a .**pkg** installer file. Once you download it, simply double-click it and go through the installation process.
 
-<center>
+
 ![](././Graphics/J-Link_Installation.png)
-</center>
+
 
 #### 4. GNU Arm Embedded Toolchain
 The next software package that we need to install is the GNU Arm Embedded Toolchain which includes the compiler (gcc) and debugger (gdb).
 
 **[Direct link to download the GNU Arm Embedded Toolchain (version 7-2017-q4-major)](https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2017q4/gcc-arm-none-eabi-7-2017-q4-major-mac.tar.bz2?revision=7f453378-b2c3-4c0d-8eab-e7d5db8ea32e?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Mac%20OS%20X,7-2017-q4-major)**
 
-<center>
+
 ![](././Graphics/GNU_Arm_Embedded_Download.png)
-</center>
 <br/>
 
 After you download the package, simply extract it to your folder of choice.
 
-<center>
+
 ![](././Graphics/GNU_Arm_Download_Folder.png)
-</center>
+
 
 #### 5. Serial Terminal Program
 My choice for a terminal program that I use across projects is a program called **CoolTerm**. What I like about this program is its simplicity and that it supports all the major platforms (Windows, macOS, and Linux).
@@ -190,9 +183,8 @@ In our tutorial, we'll be using the UART example included as part of the nRF5 SD
 
 You'll notice there are many subfolders in that folder. We are mostly interested in the following highlighted folder in the screenshot:
 
-<center>
+
 ![](././Graphics/uart_folder.png)
-</center>
 <br/>
 
 Before we build the example, let's make sure we have the right compiler flags for debugging. This is necessary to include debugging symbols that help gdb better understand and present debugging information to the user. 
@@ -230,9 +222,9 @@ $ make
 
 The output should look something like this:
 
-<center>
+
 ![](././Graphics/Make_Output.png)
-</center>
+
 
 ### 2. Hardware Setup
 The second step is to get the hardware set up to run the example.
@@ -268,17 +260,17 @@ There are three parts to get this working:
 - Run the CoolTerm application
 - Make sure the serial port settings are correct (listed at [this link](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fcom.nordic.infocenter.sdk52.v0.9.1%2Fuart_example.html)):\
  
-	<center>
+	
 	![](././Graphics/CoolTerm_Settings.png)
-	</center>
+	
 \
 	Now, hit **OK**. 
 
 - Finally, connecting to the serial port by hitting the "Connect" button:
 
-	<center>
+	
 	![](././Graphics/CoolTerm_Connect.png)
-	</center>
+	
 	
 	You may not see any output since the program probably started before you connected. To reset the development board, we can simply run the following command from the Terminal:
 	
@@ -288,9 +280,9 @@ There are three parts to get this working:
 	
 	If all goes well, you should see the following printed in the Terminal window:
 	
-	<center>
+	
 	![](././Graphics/CoolTerm_Output.png)
-	</center>
+	
 
 ## Debugging the Program
 Now that we have the application running properly, let's go ahead and set up the debugger.
@@ -310,9 +302,9 @@ There are a few steps to get this working.
 	
 	The output should look something like this:
 	
-	<center>
+	
 	![](././Graphics/GDB_Server_Run.png)
-	</center>
+	
 	
 - **Running GDB**
 
@@ -324,9 +316,9 @@ There are a few steps to get this working.
 	$ arm-none-eabi-gdb
 	```
 	
-	<center>
+	
 	![](././Graphics/arm_gdb_run.png)
-	</center>
+	
 
 	Next, we want to tell GDB what output file is used for the program running on the development kit. We do so with the following command within the GDB console:
 	
@@ -334,9 +326,9 @@ There are a few steps to get this working.
 	(gdb) file nrf52840_xxaa.out
 	```
 
-	<center>
+	
 	![](././Graphics/arm_gdb_file.png)
-	</center>
+	
 	
 - **Connecting GDB to the Remote Target**
 	
@@ -346,15 +338,15 @@ There are a few steps to get this working.
 	(gdb) target remote localhost:2331
 	```
 	
-	<center>
+	
 	![](././Graphics/arm_gdb_target.png)
-	</center>
+	
 	
 	The GDB Server (which should be left running in another Terminal window) will show something like the following:
 	
-	<center>
+	
 	![](././Graphics/GDB_Server_connected.png)
-	</center>
+	
 
 ### 2. GDB Commands
 Now that we've been able to connect the debugger to the nRF52 chipset on the development kit, it's time to start having some fun!
@@ -368,32 +360,31 @@ The first command you should be aware of is the **help** command. You can use **
 
 For example, let's run **help** for the "breakpoint" command:
 
-<center>
+
 ![](././Graphics/gdb_help.png)
-</center>
+
 
 #### Breakpoint
 The Breakpoint command is used to set a breakpoint at a location telling the debugger to halt the application when the program reaches that line of code. You can use the shortcut **b** instead of spelling out the full name, too.
 
-<center>
+
 ![](././Graphics/gdb_breakpoint.png)
-</center>
+
 
 #### Continue
 The **Continue** command is used to continue execution after a breakpoint was hit. You can simply use the shortcut **c** instead of spelling out the full word.
 
-<center>
+
 ![](././Graphics/gdb_continue.png)
-</center>
+
 
 #### Breakpoints with Condition
 Breakpoints are very useful, but sometimes you don't want the application to stop running unless a certain condition has occurred. This is where **Breakpoint with condition** come in.
 
 In our example program, the code at main.c line 175 checks the character sent from the UART to see if it matches the `q` or `Q` character:
 
-<center>
+
 ![](././Graphics/main_code_175.png)
-</center>
 <br/>
 
 We can set a breakpoint that only stops the program if we receive a  character other than `q` or `Q`, for example: `s`.
@@ -404,18 +395,18 @@ We can set a breakpoint that only stops the program if we receive a  character o
 
 Now, if we set this breakpoint, we can run the program as normal and then type the character `s` in the CoolTerm program to send this character to the nRF52 chipset. We'll see that the application halts only if that character is sent across the UART.
 
-<center>
+
 ![](././Graphics/gdb_conditional_breakpoint_halt.png)
-</center>
+
 
 #### Backtrace
 The Backtrace command is used to show the call stack of the program at the current pointer. In simple terms, it shows you a summary of how your program got to the point it's currently at.
 
 Here's what the output of **backtrace** looks like when adding the "full" option to show all the local variables as well:
 
-<center>
+
 ![](././Graphics/gdb_bt_full.png)
-</center>
+
 
 If you want to make it look "pretty" with some basic formatting, you could use the following command:
 
@@ -425,25 +416,24 @@ If you want to make it look "pretty" with some basic formatting, you could use t
 
 Here's a screenshot showing the difference between the output with "pretty" being **on** or **off**:
 
-<center>
+
 ![](././Graphics/gdb_pretty_bt_full.png)
-</center>
+
 
 #### Step
 The **Step** command is used to *step* through and execute your source code during debugging. It **will** step into any functions in its path, however it **will not** step into functions that do not contain debugging information.
 
 For reference, here's our code again from main.c:
 
-<center>
+
 ![](././Graphics/main_code_175.png)
-</center>
 <br/>
 
 Let's take a look at how the Step command behaves after hitting the breakpoint at main.c:175 that we had set.
 
-<center>
+
 ![](././Graphics/gdb_step.png)
-</center>
+
  
 Notice that GDB stepped into the function **app_uart_get()** after reaching line 172.
 
@@ -452,9 +442,9 @@ The **List** command shows the source code for the current Program Counter (PC).
 
 Here's an example of using **List** after we hit our breakpoint at main.c:175.
 
-<center>
+
 ![](././Graphics/gdb_list.png)
-</center>
+
 
 #### Info
 The **Info** command has many uses, but as the name implies, it is used to display more information for specific elements.
@@ -463,20 +453,20 @@ Here are some examples for uses of **Info**.
 
 - **Info locals**: shows information about all local variables.
 	
-	<center>
+	
 	![](././Graphics/gdb_info_locals.png)
-	</center>
+	
 
 - **Info variables**: shows information about all types of variables (local and global).
 
-	<center>
+	
 	![](././Graphics/gdb_info_variables.png)
-	</center>
+	
 	
 - **Info files**: shows information about all files being debugged. 
-	<center>
+	
 	![](././Graphics/gdb_info_files.png)
-	</center>
+	
 
 #### Logging
 One useful feature within GDB is the ability to log all output to a text file. This makes it much easier to share with others or to simply save the output for later reference.
