@@ -4,7 +4,7 @@ author: francois
 ---
 
 <!-- excerpt start -->
-In this post, we demonstrate how you how to use the GNU Build ID to uniquely
+In this post, we demonstrate how to use the GNU Build ID to uniquely
 identify a build. We explain what the GNU build ID is, how it is enabled,
 and how it is used in a firmware context.
 <!-- excerpt end -->
@@ -66,7 +66,7 @@ In the case of the GNU build ID:
 
 ## Adding the GNU build ID to your builds
 
-For this post, we'll use the
+**Note**: all of our example are based on the 
 [minimal](https://github.com/memfault/zero-to-main/tree/master/minimal) program from our Zero to main()
 series. 
 
@@ -74,7 +74,9 @@ In GCC, you can enable build IDs with the `-Wl,--build-id` which passes the
 `--build-id` flag to the linker. You can then read it back by dumping the notes
 section of the resulting elf file with `readelf -n`.
 
-```
+By default, this is not enabled:
+
+```terminal
 francois-mba:minimal francois$ make clean all
 ...
 arm-none-eabi-size build/minimal.elf
@@ -83,6 +85,10 @@ arm-none-eabi-size build/minimal.elf
 ...
 francois-mba:minimal francois$ arm-none-eabi-readelf -n build/minimal.elf
 [No output]
+```
+
+But a small change to the CFLAGS is all it takes:
+```terminal
 francois-mba:minimal francois$ CFLAGS="-Wl,--build-id" make clean all
 build/minimal.elf
 ...
@@ -108,12 +114,12 @@ Firmware on the other hand typically deals with binaries which are assembling by
 copying relevant sections of the elf at the right offset in a file.
 
 This is typically accomplished with objcopy:
-```
+```terminal
 $ arm-none-eabi-objcopy firmware.elf firmware.bin -O binary
 ```
 
-This will take every elf section with an address and placing them at that offset
-in the bin file. In the process, most debug sections are stripped out.
+This takes every elf section earmarked to be loaded and places them at 
+the correct offset in the bin file. In the process, most debug sections are stripped out.
 
 Dumping the elf sections of the resulting `minimal.elf` gives us:
 
@@ -183,7 +189,6 @@ This instructs the linker to append the contents of `.note.gnu.build-id` to the
 Let's check our elf sections now:
 
 ```
-
 build/minimal.elf:     file format elf32-littlearm
 
 Sections:
@@ -221,15 +226,20 @@ Idx Name          Size      VMA       LMA       File off  Algn
 As you can see, our build ID now has an address assigned to it and is marked
 with the `LOAD` attribute.
 
+**Note**: Make sure to declare the `.gnu_build_id` section after the `.text`
+section, otherwise the build ID will be set to address `0x0` and the firmware
+will not boot.
+
 ## Reading the build ID in firmware
 
 Once the build ID is in our binary, we need to modify our firmware to read it
 and, at the very least, print it over serial at boot.
 
 From the linker script, we know that we will find the build ID section at
-`&g_note_build_id`. From the spec, we know the structure of the section.
+`&g_note_build_id`. From the spec, we know the structure of the section and can
+write down a typedef:
 
-```
+```c
 typedef struct {
     uint32_t namesz;
     uint32_t descsz;
@@ -240,9 +250,9 @@ typedef struct {
 extern const ElfNoteSection_t *g_note_build_id;
 ```
 
-We can now simply need to index into the data field and print the build ID data.
+We can now simply index into the data field and print the build ID data.
 
-```
+```c
 void print_build_id(void) {
     const uint8_t *build_id_data = &g_note_build_id->data[g_note_build_id->namesz];
 
@@ -254,18 +264,7 @@ void print_build_id(void) {
 }
 ```
 
-## Conclusion
-
-In this post, we've explained:
-1. why you may want to include the GNU build ID in
-2. how to enable it in your GCC builds
-3. and how to read it from command line or firmware
-
-Do you 
-
 ## References
 
-- Original build ID proposal:
-  https://fedoraproject.org/wiki/RolandMcGrath/BuildID
-- Elf Note section description:
-  https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-18048.html
+- [Original build ID proposal](https://fedoraproject.org/wiki/RolandMcGrath/BuildID)
+- [Elf Note section description](https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-18048.html)
