@@ -3,6 +3,10 @@ title: "GNU Build IDs for Firmware"
 author: francois
 ---
 
+In this post, we will talk about how to use the GNU Build ID to uniquely
+identify a build. We will explain what the GNU build ID is, how it is enabled,
+and how it is used in a firmware context.
+
 Much has been written on how to craft a firmware version. From Embedded
 Artistry's excellent [blog
 post](https://embeddedartistry.com/blog/2016/10/27/giving-you-build-a-version),
@@ -15,14 +19,13 @@ Versions do not - however - identify a specific binary all that well. For
 example, you could have multiple binaries for a given version in order to
 accommodate different variants of your hardware in the field.
 
+For this, we need something else. This is where the GNU build ID comes in.
+
 Why would we want to identify a specific binaries? A few cases:
 
 * To match a set of debug symbols to a given binary when trying to debug a
   device
 * To verify that two binaries are in fact the same build
-
-In this post, we will talk about how to use the GNU Build ID to uniquely
-identify a build.
 
 ## What is the GNU Build ID
 
@@ -59,7 +62,13 @@ In the case of the GNU build ID:
 * `desc` is our 160-bit SHA1 value, which gives us `descsz` = 20
 * `type` is 3
 
-In GCC, you can enable build IDs with the `-Wl,--build-id` which passed the
+## Adding the GNU build ID to your builds
+
+For this post, we'll use the
+[minimal](https://github.com/memfault/zero-to-main/tree/master/minimal) program from our Zero to main()
+series. 
+
+In GCC, you can enable build IDs with the `-Wl,--build-id` which passes the
 `--build-id` flag to the linker. You can then read it back by dumping the notes
 section of the resulting elf file with `readelf -n`.
 
@@ -87,6 +96,9 @@ bitstring)
     Build ID: bab6b09f86b3c3017499d8e386447a610c559bd5
 ```
 
+As you can see, our binary now contains the build id
+`bab6b09f86b3c3017499d8e386447a610c559bd5`.
+
 ## Bundling the GNU build ID in firmware bin files
 
 Getting the build ID in your executables on Linux is easy: they are ELF files!
@@ -101,8 +113,7 @@ $ arm-none-eabi-objcopy firmware.elf firmware.bin -O binary
 This will take every elf section with an address and placing them at that offset
 in the bin file. In the process, most debug sections are stripped out.
 
-For this post, we'll use our "minimal" program from our [Zero to main()](XXX)
-series. Dumping the elf sections of the resulting `minimal.elf` gives us:
+Dumping the elf sections of the resulting `minimal.elf` gives us:
 
 ```
 build/minimal.elf:     file format elf32-littlearm
@@ -159,13 +170,13 @@ You can add the build ID to your flash memory with:
 ```
 .gnu_build_id :
 {
-  PROVIDE(g_gnu_build_id = .);
+  PROVIDE(g_note_build_id = .);
   *(.note.gnu.build-id)
 } > rom
 ```
 
 This instructs the linker to append the contents of `.note.gnu.build-id` to the
-`rom` region of memory and create a symbol (`g_gnu_build_id`) to point to it.
+`rom` region of memory and create a symbol (`g_note_build_id`) to point to it.
 
 Let's check our elf sections now:
 
@@ -209,3 +220,50 @@ As you can see, our build ID now has an address assigned to it and is marked
 with the `LOAD` attribute.
 
 ## Reading the build ID in firmware
+
+Once the build ID is in our binary, we need to modify our firmware to read it
+and, at the very least, print it over serial at boot.
+
+From the linker script, we know that we will find the build ID section at
+`&g_note_build_id`. From the spec, we know the structure of the section.
+
+```
+typedef struct {
+    uint32_t namesz;
+    uint32_t descsz;
+    uint32_t type;
+    uint8_t data[];
+} ElfNoteSection_t;
+
+extern const ElfNoteSection_t *g_note_build_id;
+```
+
+We can now simply need to index into the data field and print the build ID data.
+
+```
+void print_build_id(void) {
+    const uint8_t *build_id_data = &g_note_build_id->data[g_note_build_id->namesz];
+
+    printf("Build ID: ");
+    for (int i = 0; i < g_note_build_id->descsz; ++i) {
+        printf("%02x", build_id_data[i]);
+    }
+    printf("\n");
+}
+```
+
+## Conclusion
+
+In this post, we've explained:
+1. why you may want to include the GNU build ID in
+2. how to enable it in your GCC builds
+3. and how to read it from command line or firmware
+
+Do you 
+
+## References
+
+- Original build ID proposal:
+  https://fedoraproject.org/wiki/RolandMcGrath/BuildID
+- Elf Note section description:
+  https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-18048.html
