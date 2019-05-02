@@ -271,7 +271,7 @@ As we mentioned earlier, we'll be using a program called CoolTerm.
 There are three parts to get this working:
 
 - Run the CoolTerm application
-- Make sure the serial port settings are correct (listed at [this link](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fcom.nordic.infocenter.sdk52.v0.9.1%2Fuart_example.html)):\
+- Make sure the serial port settings are correct (listed at [this link](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fcom.nordic.infocenter.sdk52.v0.9.1%2Fuart_example.html)):
  
 	
 	![](Graphics/CoolTerm_Settings.png)
