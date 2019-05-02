@@ -3,9 +3,11 @@ title: "GNU Build IDs for Firmware"
 author: francois
 ---
 
-In this post, we will talk about how to use the GNU Build ID to uniquely
-identify a build. We will explain what the GNU build ID is, how it is enabled,
+<!-- excerpt start -->
+In this post, we demonstrate how you how to use the GNU Build ID to uniquely
+identify a build. We explain what the GNU build ID is, how it is enabled,
 and how it is used in a firmware context.
+<!-- excerpt end -->
 
 Much has been written on how to craft a firmware version. From Embedded
 Artistry's excellent [blog
