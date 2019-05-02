@@ -1,4 +1,3 @@
-
 ---
 title: "Debugging with GDB: Tips & Tricks (nRF52 use case)"
 author: mafaneh
