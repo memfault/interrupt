@@ -23,7 +23,7 @@ accommodate different variants of your hardware in the field.
 
 For this, we need something else. This is where the GNU build ID comes in.
 
-Why would we want to identify a specific binaries? A few cases:
+Why would we want to identify a specific binary? A few cases:
 
 * To match a set of debug symbols to a given binary when trying to debug a
   device
@@ -110,7 +110,7 @@ As you can see, our binary now contains the build id
 ## Bundling the GNU build ID in firmware bin files
 
 Getting the build ID in your executables on Linux is easy: they are ELF files!
-Firmware on the other hand typically deals with binaries which are assembling by
+Firmware on the other hand typically deals with binaries which are assembled by
 copying relevant sections of the elf at the right offset in a file.
 
 This is typically accomplished with objcopy:
@@ -124,6 +124,8 @@ the correct offset in the bin file. In the process, most debug sections are stri
 Dumping the elf sections of the resulting `minimal.elf` gives us:
 
 ```
+$ arm-none-eabi-objdump -h build/minimal.elf
+
 build/minimal.elf:     file format elf32-littlearm
 
 Sections:
@@ -189,6 +191,8 @@ This instructs the linker to append the contents of `.note.gnu.build-id` to the
 Let's check our elf sections now:
 
 ```
+$ arm-none-eabi-objdump -h build/minimal.elf
+
 build/minimal.elf:     file format elf32-littlearm
 
 Sections:
@@ -262,9 +266,19 @@ void print_build_id(void) {
     }
     printf("\n");
 }
+
+Calling this code on boot, we get:
+```
+...
+Build ID: 8d7aec8b900dce6c14afe557dc8889230518be3e
+...
+```
+
 ```
 
 ## References
 
 - [Original build ID proposal](https://fedoraproject.org/wiki/RolandMcGrath/BuildID)
 - [Elf Note section description](https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-18048.html)
+- [GNU LD source code for Build
+  ID](https://github.com/bminor/binutils-gdb/blob/4de283e4b5f21207fe12f99913d1f28d4f07843c/ld/emultempl/elf32.em#L1165)
