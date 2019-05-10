@@ -1,5 +1,5 @@
 ---
-title: "Firmware size optimizations: measuring"
+title: "Code size: first, measure it!"
 author: francois
 ---
 
@@ -19,7 +19,7 @@ But first, let's talk about measuring code size.
 
 <!-- excerpt end -->
 
-## Why measure?
+### Why measure?
 
 Optimization is often counter intuitive. Don't take my word for it: this is one
 of the topics [Microsoft's Raymond
@@ -30,7 +30,7 @@ agree on!
 So before you do anything, measure where your code size is going. You may be
 surprised!
 
-## Measuring overall code size
+### Measuring overall code size
 
 The simplest way to measure code size is to inspect the different sections of
 your elf file. The ARM GCC toolchain comes with a handy utility to do just that:
@@ -142,7 +142,7 @@ RAM used: 8376 / 32768 (25%)
 Stick that in your Makefiles, and you'll have the size as you build
 your firmware.
 
-## Digging into functions
+### Digging into functions
 
 The above tells us *how much* code space we are using, but not *why*. To answer
 the latter, we need to go deeper.
@@ -191,7 +191,7 @@ francois-mba:with-libc francois$ arm-none-eabi-nm --print-size --size-sort --rad
 00000430 00000692 t _usart_set_config
 ```
 
-## Using puncover
+### Puncover
 
 Although you can get quite far with the ARM GNU tools, my favorite tool for code
 size analysis by far is [Puncover](https://github.com/memfault/puncover).
