@@ -5,7 +5,7 @@ author: francois
 
 <!-- excerpt start -->
 
-Every firmware engineer has run out of code size at some point or another.
+Every firmware engineer has run out of code space at some point or another.
 Whether they are trying to cram in another feature, or to make enough space for
 [A/B firmware
 updates](https://sbabic.github.io/swupdate/overview.html#double-copy-with-fall-back)
