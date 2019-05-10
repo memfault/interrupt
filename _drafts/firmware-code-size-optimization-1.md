@@ -83,7 +83,7 @@ collect2: error: ld returned 1 exit status
 make: *** [build/with-libc.elf] Error 1
 ```
 
-The 104 bytes overflow hints at the reason: we are overflowing our flash by
+The 104 bytes overflow hints at the cause: we are overflowing our flash by
 the size of our `data` section. This is because initialization values for our
 initialized static variables are stored in flash as well.
 
@@ -190,6 +190,9 @@ francois-mba:with-libc francois$ arm-none-eabi-nm --print-size --size-sort --rad
 00007544 00000620 T _vfprintf_r
 00000430 00000692 t _usart_set_config
 ```
+
+Here we see that our largest symbol is `_usart_set_config` which is takes 692
+bytes of flash.
 
 ### Puncover
 
