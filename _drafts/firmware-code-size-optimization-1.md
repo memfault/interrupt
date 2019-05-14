@@ -1,5 +1,5 @@
 ---
-title: "Code size: first, measure it!"
+title: "Code space: first, measure it!"
 author: francois
 ---
 
@@ -47,7 +47,7 @@ francois-mba:with-libc francois$ arm-none-eabi-size build/with-libc.elf
 So in this program we have:
 * 10800 bytes of `text`, which is code
 * 104 bytes of `data`, which is statically initalized memory
-* 8272 bytes of `bcc`, which is zero-initialized memory
+* 8272 bytes of `bss`, which is zero-initialized memory
 
 Unfortunately, the output of this tool is a little misleading. You may think
 that your program will occupy `10800` bytes of flash, but this is not the case.
@@ -142,6 +142,19 @@ RAM used: 8376 / 32768 (25%)
 Stick that in your Makefiles, and you'll have the size as you build
 your firmware.
 
+Note that an alternative to running `size` is to add the `-Wl,--print-memory-usage`
+link-time flag which will give you something that looks like this:
+
+```terminal
+Memory region         Used Size  Region Size  %age Used
+             rom:       10800 B       256 KB      4.12%
+             ram:        8376 B        32 KB     25.56%
+```
+
+This falls into the same pitfall as `size` in that it does not count `data`
+against ROM, and gives us less info since it does not break RAM out into `data`
+and `bss`.
+
 ### Digging into functions
 
 The above tells us *how much* code space we are using, but not *why*. To answer
@@ -191,7 +204,9 @@ francois-mba:with-libc francois$ arm-none-eabi-nm --print-size --size-sort --rad
 00000430 00000692 t _usart_set_config
 ```
 
-Here we see that our largest symbol is `_usart_set_config` which is takes 692
+Note: you can also add `-l` to get filename & line # for each symbol.
+
+Here we see that our largest symbol is `_usart_set_config` which uses 692
 bytes of flash.
 
 ### Puncover
@@ -298,5 +313,23 @@ Now open your favorite web browser at localhost:5000, and enjoy!
 
 Note: You may notice that some code size will be attributed to symbols under
 `<Unknown>`. If you dig into those, you will see that they are all symbols
-provided by the compiler or libc, such as `__aeabi_idiv0` or `_printf_i`.
+provided by the compiler or libc, such as `__aeabi_idiv0` or `_printf_i`. These
+symbols do not come with file information as newlib is not compiled with `-g` in
+most distributions. If you built your own newlib from source, you could fix
+that!
 
+### Epilogue
+
+Upon reviewing this blog post, a friend suggested I look at Bloaty by Google.
+You can check it out on [Github](https://github.com/google/bloaty) or just
+download it from brew.
+
+Bloaty is a nifty tool that wraps all the objdump analysis into a nice CLI
+client, and can even tell you what sections, symbols, and files grew or shrunk
+between two ELFs which would be very useful for a CI system.
+
+What tools and technique do you use to debug code size? Let us know in the
+comments!
+
+Next in the series, we'll talk about compiler settings you can use to optimize
+for code size.
