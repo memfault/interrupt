@@ -26,6 +26,9 @@ Since they are not standardized, those things need to be specified somewhere in
 our project. In the case of projects linked with a Unix-`ld` like, that
 somewhere is the linker script.
 
+Once again, we will use our simple "minimal" program, available [on
+Github](https://github.com/memfault/zero-to-main/blob/master/minimal).
+
 ### A brief primer on linking
 
 Linking is the last stage in compiling a program. It takes a number of compiled
@@ -42,6 +45,39 @@ The linker takes all of those object files, and merges them together along with
 external dependencies like the C Standard Library into your program. To figure
 out what bits go where, the linker relies on a linker script - a blueprint for
 your program. Lastly, all placeholders are replaced by addresses.
+
+We can see this at play in our minimal program. Let's follow what happens to
+our `main` function in `minimal.c` for example. The compiler builds it into
+an object file with:
+
+```
+arm-none-eabi-gcc -c -o build/objs/a/b/c/minimal.o minimal.c <CFLAGS>
+```
+
+We can dump symbols in `minimal.o` to look at `main` within it:
+
+```
+francois-mba:minimal francois$ arm-none-eabi-nm build/objs/a/b/c/minimal.o
+...
+00000000 T main
+...
+```
+
+As expected, it does not have addresses yet. We then link everything with:
+```
+arm-none-eabi-gcc <LDFLAGS> build/objs/a/b/c/minimal.o <other object files> -o build/minimal.elf
+```
+
+And dump the symbols in the resulting `elf` file:
+
+```
+francois-mba:minimal francois$ arm-none-eabi-nm build/minimal.elf
+...
+00000294 T main
+...
+```
+
+The linker has done its job, and our `main` symbol has been assign an address.
 
 The linker often does a bit more than that. For example, it can generate debug
 information, garbage collect unused sections of code, or run whole-program
@@ -111,6 +147,7 @@ in table 10-1, reproduced below.
     </tbody>
 </table>
 <br/>
+
 Transcribed into a `MEMORY` section, this gives us:
 
 ```
@@ -141,8 +178,8 @@ Our linker script concerns itself with two more things:
 By convention, we name those sections as follow:
 1. `.text` for code & constants
 2. `.bss` for unintialized data
-3. `.data` for initialized data
 4. `.stack` for our stack
+3. `.data` for initialized data
 
 The [elf spec](http://refspecs.linuxbase.org/elf/elf.pdf) holds a full list.
 Your firmware will work just fine if you call them anything else, but your
@@ -150,39 +187,198 @@ colleagues may be confused and some tools may fail in odd ways. The only
 constraint is that you may not call your section `/DISCARD/`, which is a
 reserved keyword.
 
-The linker script syntax to define those sections is as follow:
+First, let's look at what happens to our symbols if we do not define any of
+those sections in the linker script. 
 
 ```
-section [address] [NOLOAD] :
-  [AT(lma)]
-  [ALIGN(section_align)]
-  {
-    output-section-command
-    output-section-command
-    …
-  } [>region] [AT>lma_region]
+MEMORY
+{
+  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00040000
+  ram      (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000
+}
+
+SECTIONS
+{
+    /* empty! */
+}
 ```
 
-Note that I've removed rarely-used options, you can find the full details in the
+The linker is perfectly happy to link our program with this. Probing the
+resulting elf file with objdump, we see the following:
+
+```
+francois-mbo:minimal francois$ arm-none-eabi-objdump -h build/minimal.elf
+build/minimal.elf:     file format elf32-littlearm
+
+SYMBOL TABLE:
+no symbols
+```
+
+No symbols! Indeed there is no default: things don't get linked in if the linker
+file doesn't explictly state they should be linked in.
+
+Let's start by adding our `.text` section. We want that section in ROM. The
+syntax is simple:
+
+```
+SECTIONS
+{
+    .text :
+    {
+
+    } > rom
+}
+```
+
+This defines a section named `.text`, and adds it to the ROM. We now need to
+tell the linker what to put in that section. This is accomplished by listing all
+of the sections from our input object files we want in `.text`.
+
+To find out what sections are in our object file, we can once again use
+`objdump`:
+```
+francois-mba:minimal francois$ arm-none-eabi-objdump -h
+build/objs/a/b/c/minimal.o:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000000  00000000  00000000  00000034  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00000000  00000000  00000034  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000000  00000000  00000000  00000034  2**0
+                  ALLOC
+  3 .bss.cpu_irq_critical_section_counter 00000004  00000000  00000000  00000034
+2**2
+                  ALLOC
+  4 .bss.cpu_irq_prev_interrupt_state 00000001  00000000  00000000  00000034
+2**0
+                  ALLOC
+  5 .text.system_pinmux_get_group_from_gpio_pin 0000005c  00000000  00000000
+00000034  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  6 .text.port_get_group_from_gpio_pin 00000020  00000000  00000000  00000090
+2**1
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  7 .text.port_get_config_defaults 00000022  00000000  00000000  000000b0  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  8 .text.port_pin_set_output_level 0000004e  00000000  00000000  000000d2  2**1
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+  9 .text.port_pin_toggle_output_level 00000038  00000000  00000000  00000120
+2**1
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+ 10 .text.set_output 00000040  00000000  00000000  00000158  2**1
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+ 11 .text.main    0000002c  00000000  00000000  00000198  2**2
+                  CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
+```
+
+We see that each of our symbol has a section. This is due to the fact
+that we compile our firmware with the `-ffunction-sections` and `-fdata-sections` flags.
+Had, we not included them, the compiler would have been free to merge several
+functions into a single `text.<some identifier>` section.
+
+To put all of our functions in the `.text` section in our linker script, we use
+the following syntax: `<filename>(<section>)`. Where `filename` is the
+name of the input files whose symbols we want to include, and `section` is the
+name of the input sections. Since we want all `.text...` sections in all files,
+we use the wildcard `*`:
+
+```
+.text :
+{
+    KEEP(*(.vector*))
+    *(.text*)
+} > rom
+```
+
+<!-- FIXME figure out what to say about vector table -->
+
+Dumping our elf file, we now see all of our functions (but no data)!
+
+```terminal
+francois-mba:minimal francois$ arm-none-eabi-objdump -t build/minimal.elf
+
+build/minimal.elf:     file format elf32-littlearm
+
+SYMBOL TABLE:
+00000000 l    d  .text  00000000 .text
+...
+00000000 l    df *ABS*  00000000 minimal.c
+00000000 l     F .text  0000005c system_pinmux_get_group_from_gpio_pin
+0000005c l     F .text  00000020 port_get_group_from_gpio_pin
+0000007c l     F .text  00000022 port_get_config_defaults
+0000009e l     F .text  0000004e port_pin_set_output_level
+000000ec l     F .text  00000038 port_pin_toggle_output_level
+00000124 l     F .text  00000040 set_output
+00000000 l    df *ABS*  00000000 port.c
+00000190 l     F .text  00000028 system_pinmux_get_config_defaults
+00000000 l    df *ABS*  00000000 pinmux.c
+00000208 l     F .text  0000005c system_pinmux_get_group_from_gpio_pin
+00000264 l     F .text  00000110 _system_pinmux_config
+00000164 g     F .text  0000002c main
+000001b8 g     F .text  0000004e port_pin_set_config
+00000374 g     F .text  00000040 system_pinmux_pin_set_config
+...
+```
+
+Now, let's take care of our `.bss`. Remember, that is the section we put
+uninitialized static memory in. `.bss` must be reserved in the memory map, but there
+is nothing to load, as all variables are initialized to zero. As such, this is
+what it should look like:
+
+```
+SECTION {
+    ...
+    .bss (NOLOAD) :
+    {
+        *(.bss*)
+        *(COMMON)
+    } > ram
+}
+```
+
+We indicate that this section is not loaded with the `NOLOAD` property. This is
+the only section property used in modern linker scripts.
+
+<!-- FIXME blurb about the COMMON input section -->
+
+We do the same thing for our `.stack` memory, since it is in RAM and not loaded.
+As the stack contains no symbols, we must explicitly reserve space for it by
+indicating its size. We also must align the stack on an 8-byte boundary per ARM
+v7M requirements <!-- FIXME add link -->.
+
+In order to achieve these goals, we turn to a special variable `.`, also known
+as the "location counter". The location counter tracks the current offset into a
+given memory region. As sections are added, the location counter increments
+accordingly. You can force alignemnt or gaps by setting the location counter
+forward. You may not set it backwards, and the linker will throw an error if you
+try.
+
+We set the location counter with the `ALIGN` function, to align the section, and
+use simple assignment and arithmetic to set the sectio size:
+
+```
+STACK_SIZE = 0x2000; /* 8 kB */
+
+SECTION {
+    ...
+    .stack (NOLOAD) :
+    {
+        . = ALIGN(8);
+        . = . + STACK_SIZE;
+        . = ALIGN(8);
+    } > ram
+    ...
+}
+```
+
+Only one to go! 
+
+
+You can find the full details on linker script sections syntax in the
 [ld
 manual](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/sections.html#OUTPUT-SECTION-DESCRIPTION).
-
-Let's go over the syntax above briefly:
-* `section` is the name you want to give to your section. lists a set of common section
-names which may hold special meaning for your operating system. On embedded, you
-may use whichever names you would like.
-* `address` (optional) the virtual address for this section.
-* `NOLOAD` (optional) marks a section as not loaded, as in no data needs to be
-  copied to that memory region to load the program. This is used for memory
-regions you want to reserve such as a stack.
-* `AT(...)` what address the section needs to be loaded to. We discuss this in
-  details below.
-* `ALIGN` the memory alignment, in bytes, of the section. ARM requires stack
-  memory to be 8-byte aligned for example, this is where you specify this.
-* `>region` specifies which of the regions from the `MEMORY` definition this
-  section should be added to. This sets the VMA.
-* `AT>lma_region` similarly, region from the `MEMORY` definition this section
-  should be *loaded* to.
 
 **A note on LMA and VMA**
 
@@ -191,20 +387,13 @@ address (VMA). In a firmware context, the LMA is where your JTAG loader needs to
 place the section and the VMA is where the section is found during execution.
 
 You can think of the LMA as the address "at rest" and the VMA the address during
-execution, when the device is on the and the program is running.
+execution i.e. when the device is on and the program is running.
 
 How can the section be at a different address at execution than at load? There
 are a few options, but the most common by far is code or data in RAM. Since RAM
 isn't persisted while power is off, those sections need to be loaded in flash.
 At boot, the `Reset_Handler` copies the data from its LMA in flash to its VMA
 in RAM before your `main` function is called (we covered this in our previous article).
-
-So with that in mind, let's write our sections!
-
-First, the text section. This section contains the code
-
-
-
 
 
 ### Relocation
