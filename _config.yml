@@ -30,7 +30,6 @@ defaults:
 # Plugins
 plugins:
   - jekyll-paginate
-  - jekyll-feed
 
 # Custom variables
 version: "1.1.0"
