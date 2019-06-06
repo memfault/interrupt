@@ -1,5 +1,5 @@
 ---
-title: "Code space: first, measure it!"
+title: "How to Dig into Firmware Code Size"
 author: francois
 ---
 
