@@ -77,7 +77,7 @@ francois-mba:minimal francois$ arm-none-eabi-nm build/minimal.elf
 ...
 ```
 
-The linker has done its job, and our `main` symbol has been assign an address.
+The linker has done its job, and our `main` symbol has been assigned an address.
 
 The linker often does a bit more than that. For example, it can generate debug
 information, garbage collect unused sections of code, or run whole-program
@@ -89,7 +89,7 @@ Overflow](https://stackoverflow.com/questions/3322911/what-do-linkers-do).
 
 ### Anatomy of a linker script
 
-The linker script contains four things:
+A linker script contains four things:
 * Memory layout: what memory is available where
 * Section defitions: what part of a program should go where
 * Options: commands to specify architecture, entry point, ...etc. if needed
@@ -215,7 +215,7 @@ no symbols
 ```
 
 No symbols! Indeed there is no default: things don't get linked in if the linker
-file doesn't explictly state they should be linked in.
+script doesn't explictly state they should be linked in.
 
 Let's start by adding our `.text` section. We want that section in ROM. The
 syntax is simple:
@@ -356,7 +356,7 @@ forward. You may not set it backwards, and the linker will throw an error if you
 try.
 
 We set the location counter with the `ALIGN` function, to align the section, and
-use simple assignment and arithmetic to set the sectio size:
+use simple assignment and arithmetic to set the section size:
 
 ```
 STACK_SIZE = 0x2000; /* 8 kB */
@@ -373,27 +373,100 @@ SECTION {
 }
 ```
 
-Only one to go! 
+Only one to go!
 
+The `.data` section contains static variables which have an
+initial value at boot. You will remember from our previous article that since RAM
+isn't persisted while power is off, those sections need to be loaded in flash.
+At boot, the `Reset_Handler` copies the data from flash to RAM before the `main`
+function is called.
+
+To make this possible, every section in our linker script has two addresses,
+its *load* address (LMA) and its *virtual* address (VMA). In a firmware context,
+the LMA is where your JTAG loader needs to place the section and the VMA is
+where the section is found during execution.
+
+You can think of the LMA as the address "at rest" and the VMA the address during
+execution i.e. when the device is on and the program is running.
+
+The syntax to specify the LMA is relatively straightforward: every address is
+two part: <VMA> AT <LMA>. In our case it looks like this:
+
+```
+.data :
+{
+    *(.data*);
+} > ram AT > rom /* "> ram" is the VMA, "> rom" is the LMA */
+```
+
+Note that instead of appending a section to a memory region, you can explicity
+specify an address like so:
+
+```
+.data ORIGIN(ram) /* VMA */ : AT(ORIGIN(rom)) /* LMA */
+{
+    . = ALIGN(4);
+    _sdata = .;
+    *(.data*);
+    . = ALIGN(4);
+    _edata = .;
+}
+```
+
+Where `ORIGIN(<region>)` is a simple way to specify the start of a region. You
+can enter an address in hex as well.
+
+And we're done! Here's our complete linker script with every section:
+
+```
+MEMORY
+{
+  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00040000
+  ram      (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000
+}
+
+STACK_SIZE = 0x2000;
+
+/* Section Definitions */
+SECTIONS
+{
+    .text :
+    {
+        KEEP(*(.vectors .vectors.*))
+        *(.text*)
+        *(.rodata*)
+    } > rom
+
+    /* .bss section which is used for uninitialized data */
+    .bss (NOLOAD) :
+    {
+        *(.bss*)
+        *(COMMON)
+    } > ram
+
+    .data ORIGIN(ram) : AT(ORIGIN(rom))
+    {
+        *(.data*);
+    }
+
+    /* stack section */
+    .stack (NOLOAD):
+    {
+        . = ALIGN(8);
+        . = . + STACK_SIZE;
+        . = ALIGN(8);
+    } > ram
+
+    _end = . ;
+}
+```
 
 You can find the full details on linker script sections syntax in the
 [ld
 manual](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/sections.html#OUTPUT-SECTION-DESCRIPTION).
 
-**A note on LMA and VMA**
+### Variables
 
-Every section has two addresses, its *load* address (LMA) and its *virtual*
-address (VMA). In a firmware context, the LMA is where your JTAG loader needs to
-place the section and the VMA is where the section is found during execution.
-
-You can think of the LMA as the address "at rest" and the VMA the address during
-execution i.e. when the device is on and the program is running.
-
-How can the section be at a different address at execution than at load? There
-are a few options, but the most common by far is code or data in RAM. Since RAM
-isn't persisted while power is off, those sections need to be loaded in flash.
-At boot, the `Reset_Handler` copies the data from its LMA in flash to its VMA
-in RAM before your `main` function is called (we covered this in our previous article).
 
 
 ### Relocation
