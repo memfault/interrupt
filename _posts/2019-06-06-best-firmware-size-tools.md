@@ -39,7 +39,7 @@ your elf file. The ARM GCC toolchain comes with a handy utility to do just that:
 Let's try running it on one of our ELF files:
 
 ```terminal
-francois-mba:with-libc francois$ arm-none-eabi-size build/with-libc.elf
+$ arm-none-eabi-size build/with-libc.elf
    text    data     bss     dec     hex filename
   10800     104    8272   19176    4ae8 build/with-libc.elf
 ```
@@ -73,7 +73,7 @@ index a07cc82b..f49e73e2 100644
 We end up overflowing our flash!
 
 ```terminal
-francois-mba:with-libc francois$ make
+$ make
 [...]
 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/bin/ld:
 build/with-libc.elf section `.data' will not fit in region `rom'
@@ -133,7 +133,7 @@ print_region $ram $max_ram "RAM"
 
 which gives us:
 ```terminal
-francois-mba:with-libc francois$ ./get-fw-size build/with-libc.elf 0x40000
+$ ./get-fw-size build/with-libc.elf 0x40000
 0x8000
 Flash used: 10904 / 262144 (4%)
 RAM used: 8376 / 32768 (25%)
@@ -171,7 +171,7 @@ So if we want to dig into what symbols consume the most code space, we simply
 do:
 
 ```terminal
-francois-mba:with-libc francois$ arm-none-eabi-nm --print-size --size-sort --radix=d build/with-libc.elf | tail -30
+$ arm-none-eabi-nm --print-size --size-sort --radix=d build/with-libc.elf | tail -30
 00004420 00000100 T _write
 00006948 00000112 T __sinit
 00002096 00000118 T _sercom_get_sync_baud_val
@@ -213,7 +213,7 @@ bytes of flash.
 
 Although you can get quite far with the ARM GNU tools, my favorite tool for code
 size analysis by far is [Puncover](https://github.com/memfault/puncover).
-Originally built by [Heiko Behrens](https://heikobehrens.net/), my former
+It was built by [Heiko Behrens](https://heikobehrens.net/), my former
 coworker at Pebble.
 
 Puncover will give you a full hierarchical view of both code size and static
@@ -253,22 +253,25 @@ setup a virtualenv, and install the dependencies.
 
 ```terminal
 # Clone
-francois-mba:code francois$ git clone git@github.com:memfault/puncover.git
+$ git clone git@github.com:memfault/puncover.git
 Cloning into 'puncover'...
 remote: Enumerating objects: 1, done.
 remote: Counting objects: 100% (1/1), done.
 remote: Total 609 (delta 0), reused 0 (delta 0), pack-reused 608
 Receiving objects: 100% (609/609), 1.22 MiB | 1.39 MiB/s, done.
 Resolving deltas: 100% (325/325), done.
+$ cd puncover
+
 # Setup venv
-francois-mba:puncover francois$ python2.7 -m virtualenv venv
+$ python2.7 -m virtualenv venv
 New python executable in /Users/francois/code/puncover/venv/bin/python2.7
 Also creating executable in /Users/francois/code/puncover/venv/bin/python
 Installing setuptools, pip, wheel...
 done.
+
 # Install dependencies
-francois-mba:puncover francois$ source venv/bin/activate
-(venv) francois-mba:puncover francois$ pip install -r requirements.txt
+$ source venv/bin/activate
+(venv) $ pip install -r requirements.txt
 [...]
 Successfully installed Flask-0.10.1 Jinja2-2.10.1 MarkupSafe-1.1.1
 Werkzeug-0.15.2 argparse-1.4.0 certifi-2019.3.9 chardet-3.0.4 codecov-2.0.5
@@ -293,7 +296,7 @@ file. For me that's `/usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/`.
 If all goes well, you should see that puncover has spun up a webserver:
 
 ```terminal
-(venv) francois-mba:puncover francois$ python runner.py
+(venv) $ python runner.py
 --arm_tools_dir=/usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/ --e_file
 ~/code/zero-to-main/with-libc/build/with-libc.elf
 DEPRECATED: argument --arm_tools_dir will be removed, use --gcc_tools_base
