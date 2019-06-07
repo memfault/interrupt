@@ -29,6 +29,9 @@ somewhere is the linker script.
 Once again, we will use our simple "minimal" program, available [on
 Github](https://github.com/memfault/zero-to-main/blob/master/minimal).
 
+*Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
+posts straight to your mailbox*
+
 ### A brief primer on linking
 
 Linking is the last stage in compiling a program. It takes a number of compiled
@@ -292,7 +295,9 @@ we use the wildcard `*`:
 } > rom
 ```
 
-<!-- FIXME figure out what to say about vector table -->
+Note the `.vector` input section, which contains functions we want to keep at
+the very start of our `.text` section so the `Reset_Handler` is where the chip
+expects it to be. We'll talk more about the vector table in a future post.
 
 Dumping our elf file, we now see all of our functions (but no data)!
 
@@ -338,15 +343,20 @@ SECTION {
 }
 ```
 
+You'll note that the `.bss` section also includess `*(COMMON)`. This is a
+special input section where the compiler puts global unitialized variables that
+go beyond file scope. `int foo;` goes there, while `static int foo;` does not.
+This allows the linker to merge multiple definitions into one symbol if they
+have the same name.
+
 We indicate that this section is not loaded with the `NOLOAD` property. This is
 the only section property used in modern linker scripts.
-
-<!-- FIXME blurb about the COMMON input section -->
 
 We do the same thing for our `.stack` memory, since it is in RAM and not loaded.
 As the stack contains no symbols, we must explicitly reserve space for it by
 indicating its size. We also must align the stack on an 8-byte boundary per ARM
-v7M requirements <!-- FIXME add link -->.
+Procedure Call Standards
+([AAPCS](https://static.docs.arm.com/ddi0403/ec/DDI0403E_c_armv7m_arm.pdf)).
 
 In order to achieve these goals, we turn to a special variable `.`, also known
 as the "location counter". The location counter tracks the current offset into a
@@ -444,10 +454,10 @@ SECTIONS
         *(COMMON)
     } > ram
 
-    .data ORIGIN(ram) : AT(ORIGIN(rom))
+    .data :
     {
         *(.data*);
-    }
+    } > ram AT >rom
 
     /* stack section */
     .stack (NOLOAD):
@@ -467,9 +477,60 @@ manual](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4
 
 ### Variables
 
+In the first post, our ResetHandler relied on seemingly magic variables to know
+the address of each of our sections of memory. It turns out, those variable came
+from the linker script!
 
+In order to make section addresses available to code, the linker is able
+too generate symbols and add them to the program. 
 
-### Relocation
+You can find the syntax in the [linker
+documentation](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/assignments.html),
+it looks exactly like a C assignment: `symbol = expression;`
 
+Here, we need:
+1. `_etext` the end of the code in `.text` section in flash.
+2. `_sdata` the start of the `.data` section in RAM
+3. `_edata` the end of the `.data` section in RAM
+4. `_sbss` the start of the `.bss` section in RAM
+5. `_ebss` the end of the `.bss` section in RAM
 
+They are all relatively straightforward: we can assign our symbols to the value
+of the location counter (`.`) at the start and at the end of each section
+definition.
 
+The code is below:
+```
+    .text :
+    {
+        KEEP(*(.vectors .vectors.*))
+        *(.text.*)
+        *(.rodata.*)
+        _etext = .;
+    } > rom
+
+    .bss (NOLOAD) :
+    {
+        _sbss = . ;
+        *(.bss .bss.*)
+        *(COMMON)
+        _ebss = . ;
+    } > ram
+
+    .data :
+    {
+        _sdata = .;
+        *(.data*);
+        _edata = .;
+    } > ram AT >rom
+```
+
+One quirk of these linker-provided symbols: you typically want to use a reference to
+them, never the variable themselves. For example, the following gets us a
+pointer to the start of the `.data` section:
+
+```c
+uint8_t *data_byte = &_sdata;
+```
+
+##
