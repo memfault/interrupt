@@ -23,7 +23,7 @@ But first, let's talk about measuring code size.
 
 Optimization is often counter intuitive. Don't take my word for it: this is one
 of the topics [Microsoft's Raymond
-Wong](https://devblogs.microsoft.com/oldnewthing/20041216-00/?p=36973) and [Unix
+Chen](https://devblogs.microsoft.com/oldnewthing/20041216-00/?p=36973) and [Unix
 programmers](https://homepage.cs.uri.edu/~thenry/resources/unix_art/ch12s02.html)
 agree on!
 
