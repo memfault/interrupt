@@ -31,6 +31,6 @@ $ jekyll serve -b / -D
 
 ## Acknowledgements
 
-Interrupt is based on the Emerald theme by [www.jacoporabolini](Jacopo
-Rabolini). Emerald is available on
-[https://github.com/KingFelix/emerald](Github).
+Interrupt is based on the Emerald theme by [Jacopo
+Rabolini](https://www.jacoporabolini.com/). Emerald is available on
+[Github](https://github.com/KingFelix/emerald).
