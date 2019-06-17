@@ -124,7 +124,7 @@ html, body {
 
 #header {
   text-align: center;
-  padding: 24px 0;
+  padding: 24px 0 0 0;
   position: relative;
   a {
   	text-decoration: none;
@@ -264,6 +264,10 @@ footer {
   color: $background-color;
   text-align: center;
   padding: 0.6667em 0;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
 }
 
 #wrap {
@@ -272,12 +276,16 @@ footer {
 	padding-bottom: 105px;
 }
 
-.footer {
-	padding: 25px 0;
-	background-color: $main-color;
-	color: $background-color;
-	text-align: center;
-	position: absolute;
-  width: 100%;
-  bottom: 0;
+.footer-links {
+  padding: 0 0 16px 0;
+
+  a {
+    color: $background-color;
+    text-decoration: none;
+    font-weight: 500;
+    &:hover,
+    &:focus {
+      color: darken($background-color, 20%);
+    }
+  }
 }
