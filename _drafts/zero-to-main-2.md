@@ -4,16 +4,16 @@ author: francois
 ---
 
 <!-- excerpt start -->
-[Last time](https://interrupt.memfault.com/blog/zero-to-main-1) we talked about
+[Last time](https://interrupt.memfault.com/blog/zero-to-main-1), we talked about
 bootstrapping a C environment on an MCU before invoking our `main` function. One
-thing we took for granted was the fact that functions and data end up in the
+thing we took for granted was the fact that functions and data ended up in the
 right place in our binary. Today, we're going to dig into how that happens by
 learning about memory regions and linker scripts.
 <!-- excerpt end -->
 
 You may remember the following things happening auto-magically:
 1. We used variables like `&_ebss`, `&_sdata`, ...etc. to know where each of our
-   section was placed in flash, and where some needed to go in RAM.
+   sections was placed in flash and to define where some needed to go in RAM.
 2. A pointer to our `ResetHandler` was found at address 0x00000004 for the MCU
    to find.
 
@@ -44,9 +44,9 @@ addresses as (1) it does not know where the code will end up within the broader
 structure of the program and (2) it knows nothing about symbols outside of the
 current file or compilation unit.
 
-The linker takes all of those object files, and merges them together along with
+The linker takes all of those object files and merges them together along with
 external dependencies like the C Standard Library into your program. To figure
-out what bits go where, the linker relies on a linker script - a blueprint for
+out which bits go where, the linker relies on a linker script - a blueprint for
 your program. Lastly, all placeholders are replaced by addresses.
 
 We can see this at play in our minimal program. Let's follow what happens to
@@ -54,13 +54,13 @@ our `main` function in `minimal.c` for example. The compiler builds it into
 an object file with:
 
 ```
-arm-none-eabi-gcc -c -o build/objs/a/b/c/minimal.o minimal.c <CFLAGS>
+$ arm-none-eabi-gcc -c -o build/objs/a/b/c/minimal.o minimal.c <CFLAGS>
 ```
 
 We can dump symbols in `minimal.o` to look at `main` within it:
 
 ```
-francois-mba:minimal francois$ arm-none-eabi-nm build/objs/a/b/c/minimal.o
+$ arm-none-eabi-nm build/objs/a/b/c/minimal.o
 ...
 00000000 T main
 ...
@@ -68,13 +68,13 @@ francois-mba:minimal francois$ arm-none-eabi-nm build/objs/a/b/c/minimal.o
 
 As expected, it does not have addresses yet. We then link everything with:
 ```
-arm-none-eabi-gcc <LDFLAGS> build/objs/a/b/c/minimal.o <other object files> -o build/minimal.elf
+$ arm-none-eabi-gcc <LDFLAGS> build/objs/a/b/c/minimal.o <other object files> -o build/minimal.elf
 ```
 
 And dump the symbols in the resulting `elf` file:
 
 ```
-francois-mba:minimal francois$ arm-none-eabi-nm build/minimal.elf
+$ arm-none-eabi-nm build/minimal.elf
 ...
 00000294 T main
 ...
@@ -175,8 +175,8 @@ in bulk:
 2. Uninitialized static variables which must be zeroed.
 
 Our linker script concerns itself with two more things:
-1. Code and constant data, which can live in read only memory (e.g. flash)
-2. Reserved sections of ram, like a stack or a heap
+1. Code and constant data, which can live in read-only memory (e.g. flash)
+2. Reserved sections of RAM, like a stack or a heap
 
 By convention, we name those sections as follow:
 1. `.text` for code & constants
@@ -210,7 +210,7 @@ The linker is perfectly happy to link our program with this. Probing the
 resulting elf file with objdump, we see the following:
 
 ```
-francois-mbo:minimal francois$ arm-none-eabi-objdump -h build/minimal.elf
+$ arm-none-eabi-objdump -h build/minimal.elf
 build/minimal.elf:     file format elf32-littlearm
 
 SYMBOL TABLE:
@@ -219,6 +219,8 @@ no symbols
 
 No symbols! Indeed there is no default: things don't get linked in if the linker
 script doesn't explictly state they should be linked in.
+
+#### .text
 
 Let's start by adding our `.text` section. We want that section in ROM. The
 syntax is simple:
@@ -240,7 +242,7 @@ of the sections from our input object files we want in `.text`.
 To find out what sections are in our object file, we can once again use
 `objdump`:
 ```
-francois-mba:minimal francois$ arm-none-eabi-objdump -h
+$ arm-none-eabi-objdump -h
 build/objs/a/b/c/minimal.o:     file format elf32-littlearm
 
 Sections:
@@ -277,12 +279,12 @@ Idx Name          Size      VMA       LMA       File off  Algn
 ```
 
 We see that each of our symbol has a section. This is due to the fact
-that we compile our firmware with the `-ffunction-sections` and `-fdata-sections` flags.
-Had, we not included them, the compiler would have been free to merge several
+that we compiled our firmware with the `-ffunction-sections` and `-fdata-sections` flags.
+Had we not included them, the compiler would have been free to merge several
 functions into a single `text.<some identifier>` section.
 
 To put all of our functions in the `.text` section in our linker script, we use
-the following syntax: `<filename>(<section>)`. Where `filename` is the
+the following syntax: `<filename>(<section>)`, where `filename` is the
 name of the input files whose symbols we want to include, and `section` is the
 name of the input sections. Since we want all `.text...` sections in all files,
 we use the wildcard `*`:
@@ -296,13 +298,13 @@ we use the wildcard `*`:
 ```
 
 Note the `.vector` input section, which contains functions we want to keep at
-the very start of our `.text` section so the `Reset_Handler` is where the chip
+the very start of our `.text` section. This is so the `Reset_Handler` is where the MCU
 expects it to be. We'll talk more about the vector table in a future post.
 
 Dumping our elf file, we now see all of our functions (but no data)!
 
 ```terminal
-francois-mba:minimal francois$ arm-none-eabi-objdump -t build/minimal.elf
+$ arm-none-eabi-objdump -t build/minimal.elf
 
 build/minimal.elf:     file format elf32-littlearm
 
@@ -327,7 +329,9 @@ SYMBOL TABLE:
 ...
 ```
 
-Now, let's take care of our `.bss`. Remember, that is the section we put
+#### .bss
+
+Now, let's take care of our `.bss`. Remember, this is the section we put
 uninitialized static memory in. `.bss` must be reserved in the memory map, but there
 is nothing to load, as all variables are initialized to zero. As such, this is
 what it should look like:
@@ -351,6 +355,8 @@ have the same name.
 
 We indicate that this section is not loaded with the `NOLOAD` property. This is
 the only section property used in modern linker scripts.
+
+#### .stack
 
 We do the same thing for our `.stack` memory, since it is in RAM and not loaded.
 As the stack contains no symbols, we must explicitly reserve space for it by
@@ -383,11 +389,13 @@ SECTION {
 }
 ```
 
-Only one to go!
+Only one more section to go!
+
+#### .data
 
 The `.data` section contains static variables which have an
 initial value at boot. You will remember from our previous article that since RAM
-isn't persisted while power is off, those sections need to be loaded in flash.
+isn't persisted while power is off, those sections need to be loaded from flash.
 At boot, the `Reset_Handler` copies the data from flash to RAM before the `main`
 function is called.
 
@@ -399,14 +407,14 @@ where the section is found during execution.
 You can think of the LMA as the address "at rest" and the VMA the address during
 execution i.e. when the device is on and the program is running.
 
-The syntax to specify the LMA is relatively straightforward: every address is
+The syntax to specify the LMA and VMA is relatively straightforward: every address is
 two part: <VMA> AT <LMA>. In our case it looks like this:
 
 ```
 .data :
 {
     *(.data*);
-} > ram AT > rom /* "> ram" is the VMA, "> rom" is the LMA */
+} > ram AT > rom  /* "> ram" is the VMA, "> rom" is the LMA */
 ```
 
 Note that instead of appending a section to a memory region, you can explicity
@@ -427,6 +435,8 @@ Where `ORIGIN(<region>)` is a simple way to specify the start of a region. You
 can enter an address in hex as well.
 
 And we're done! Here's our complete linker script with every section:
+
+#### Complete Linker Script
 
 ```
 MEMORY
@@ -477,12 +487,12 @@ manual](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4
 
 ### Variables
 
-In the first post, our ResetHandler relied on seemingly magic variables to know
+In the first post, our `ResetHandler` relied on seemingly magic variables to know
 the address of each of our sections of memory. It turns out, those variable came
 from the linker script!
 
 In order to make section addresses available to code, the linker is able
-too generate symbols and add them to the program. 
+to generate symbols and add them to the program. 
 
 You can find the syntax in the [linker
 documentation](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/assignments.html),
@@ -532,5 +542,3 @@ pointer to the start of the `.data` section:
 ```c
 uint8_t *data_byte = &_sdata;
 ```
-
-##
