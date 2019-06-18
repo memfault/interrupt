@@ -6,7 +6,7 @@ author: francois
 <!-- excerpt start -->
 [Last time](https://interrupt.memfault.com/blog/zero-to-main-1), we talked about
 bootstrapping a C environment on an MCU before invoking our `main` function. One
-thing we took for granted was the fact that functions and data ended up in the
+thing we took for granted was the fact that functions and data end up in the
 right place in our binary. Today, we're going to dig into how that happens by
 learning about memory regions and linker scripts.
 <!-- excerpt end -->
