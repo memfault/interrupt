@@ -1,7 +1,9 @@
 ---
-title: "From zero to main(): Memory Layout"
+title: "Demistifying Firmware Linker Scripts"
 author: francois
 ---
+
+This is the second post in our "Zero to main()" series.
 
 <!-- excerpt start -->
 [Last time](https://interrupt.memfault.com/blog/zero-to-main-1), we talked about
