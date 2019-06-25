@@ -1,5 +1,5 @@
 ---
-title: "Demistifying Firmware Linker Scripts"
+title: "Demystifying Firmware Linker Scripts"
 author: francois
 ---
 
