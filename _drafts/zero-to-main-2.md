@@ -23,7 +23,7 @@ MCUs have different memory maps, some startup scripts name those variables
 differently, and some programs have more or less segments.
 
 Since they are not standardized, those things need to be specified somewhere in
-our project. In the case of projects linked with a Unix-`ld` like, that
+our project. In the case of projects linked with a Unix-`ld`-like tool, that
 somewhere is the linker script.
 
 Once again, we will use our simple "minimal" program, available [on
@@ -85,7 +85,7 @@ The linker has done its job, and our `main` symbol has been assigned an address.
 The linker often does a bit more than that. For example, it can generate debug
 information, garbage collect unused sections of code, or run whole-program
 optimization (also known as Link-Time Optimization, or LTO). For the sake of
-this conversation, those activities are less important.
+this conversation, we will not cover these topics.
 
 For more information on the linker, there's a great thread on [Stack
 Overflow](https://stackoverflow.com/questions/3322911/what-do-linkers-do).
@@ -94,7 +94,7 @@ Overflow](https://stackoverflow.com/questions/3322911/what-do-linkers-do).
 
 A linker script contains four things:
 * Memory layout: what memory is available where
-* Section defitions: what part of a program should go where
+* Section definitions: what part of a program should go where
 * Options: commands to specify architecture, entry point, ...etc. if needed
 * Symbols: variables to inject into the program at link time
 
@@ -105,7 +105,7 @@ available, and at what addresses that memory exists. This is what the `MEMORY`
 section of the linker script is for.
 
 The syntax for the memory section is defined in the [binutils
-docs](https://sourceware.org/binutils/docs/ld/index.html#SEC_Contents) and is as follow:
+docs](https://sourceware.org/binutils/docs/ld/MEMORY.html#MEMORY) and is as follow:
 
 ```
 MEMORY
@@ -191,7 +191,7 @@ constraint is that you may not call your section `/DISCARD/`, which is a
 reserved keyword.
 
 First, let's look at what happens to our symbols if we do not define any of
-those sections in the linker script. 
+those sections in the linker script.
 
 ```
 MEMORY
@@ -217,8 +217,9 @@ SYMBOL TABLE:
 no symbols
 ```
 
-No symbols! Indeed there is no default: things don't get linked in if the linker
-script doesn't explictly state they should be linked in.
+No symbols! While the linker is able to make asumptions that will allow it to
+link in symbols with little information, but it at least needs to know either
+what the entry point should be, or what symbols to put in the text section.
 
 #### .text
 
@@ -347,7 +348,7 @@ SECTION {
 }
 ```
 
-You'll note that the `.bss` section also includess `*(COMMON)`. This is a
+You'll note that the `.bss` section also includes `*(COMMON)`. This is a
 special input section where the compiler puts global unitialized variables that
 go beyond file scope. `int foo;` goes there, while `static int foo;` does not.
 This allows the linker to merge multiple definitions into one symbol if they
@@ -417,7 +418,7 @@ two part: <VMA> AT <LMA>. In our case it looks like this:
 } > ram AT > rom  /* "> ram" is the VMA, "> rom" is the LMA */
 ```
 
-Note that instead of appending a section to a memory region, you can explicity
+Note that instead of appending a section to a memory region, you could also explicity
 specify an address like so:
 
 ```
@@ -535,10 +536,13 @@ The code is below:
     } > ram AT >rom
 ```
 
-One quirk of these linker-provided symbols: you typically want to use a reference to
+One quirk of these linker-provided symbols: you must use a reference to
 them, never the variable themselves. For example, the following gets us a
 pointer to the start of the `.data` section:
 
 ```c
 uint8_t *data_byte = &_sdata;
 ```
+
+You can read more details about this in the [binutils
+docs](https://sourceware.org/binutils/docs/ld/Source-Code-Reference.html).
