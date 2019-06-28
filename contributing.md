@@ -3,11 +3,18 @@ layout: page
 title: Contributing
 ---
 # Contributing
-<br >
-Interrupt welcomes submissions on embedded software topics.
 
-Prior to getting in touch, you should get yourself acquainted with our [Code of
-Conduct](/code-of-conduct).
+Interrupt is first and foremost a community of embedded software engineers,
+and as such we'd be thrilled to showcase your work, promote your projects, and
+learn from your experiences.
+
+We welcome all embedded software content, from beginner tutorials to bleeding
+edge technology demonstrations.
+
+We believe good technical content is worth paying for, so we will gladly
+compensate you for your time spent writing for interrupt. We also provide
+editorial support, and promote your posts across social media and our
+newsletter.
 
 To get in touch about contributing, simply submit the form below. You may also
 email us at  [interrupt@memfault.com](mailto:interrupt@memfault.com), or open a
