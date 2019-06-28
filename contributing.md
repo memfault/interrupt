@@ -12,7 +12,7 @@ We welcome all embedded software content, from beginner tutorials to bleeding
 edge technology demonstrations.
 
 We believe good technical content is worth paying for, so we will gladly
-compensate you for your time spent writing for interrupt. We also provide
+compensate you for your time spent writing for Interrupt. We also provide
 editorial support, and promote your posts across social media and our
 newsletter.
 
