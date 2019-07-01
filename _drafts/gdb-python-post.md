@@ -13,7 +13,7 @@ When a system hits a failure state, you will often find yourself looking at simi
 
 Perhaps you are guilty of doing things like this to determine how much memory was burned up in a linked list:
 
-```c
+```
 (gdb) p s_list_head
 $5 = (UuidListNode *) 0x200070c0
 (gdb) p s_list_head->next
@@ -26,9 +26,9 @@ $8 = (struct UuidListNode *) 0x20007070
 $5 = (struct ListNode *) 0x0
 ```
 
-While all this manual typing may be fine for debugging one crash or issue, it does not scale. When a new firmware is being QA'd for the first time on hundreds of devices internally, it's important to be able to quickly classify if the issue is known or not so debug doesn't cause the schedule to slip. Even once a product makes it into the wild, an issue that appears on .1% of devices in a one million device fleet would generate 1000 reports per month!
+While all this manual typing may be fine for debugging one crash or issue, it does not scale. When a new firmware is being QA'd for the first time on hundreds of devices, it's important to be able to quickly classify the issue so time spent debugging doesn't cause the schedule to slip. Even once a product makes it into the wild, an issue that appears on .1% of devices in a one million device fleet would generate 1000 reports per month!
 
-Manually inspecting hundreds of crashes is no fun ... but fortunately, GDB has several facilities built in that allow you to [extend](https://sourceware.org/gdb/onlinedocs/gdb/Extending-GDB.html#Extending-GDB) its core functionality, including Python, the scripting language of choice for many embedded projects. This allows one to accelerate and in many cases even **automate** debug!
+Manually inspecting hundreds of crashes is no fun ... but fortunately, GDB allows users to extend its core functionality in a number of ways, including via its [Python API](https://sourceware.org/gdb/onlinedocs/gdb/Extending-GDB.html#Extending-GDB) . This allows one to accelerate and in many cases even **automate** debug!
 
 In this series of posts we will explore some of the GDB Python APIs and how they can be used.
 
@@ -59,7 +59,7 @@ To use it you just need python installed on your system (i.e On ubuntu, `apt-get
 
 Let's walk through a trivial example snippet of code to get an idea of how some of the APIs work!
 
-The snippet tracks UUIDs in RAM in a linked list. On a real embedded system, we may have a bunch of items, identified by their UUID, stored on an external flash. If the list of items are looked at frequently, it may make sense for the list may be cached in RAM for faster lookup (since flash access can be slow) and better power (since reading from external flash consumes more power than a RAM read).
+The snippet tracks UUIDs in RAM in a linked list. On a real embedded system, we may have a bunch of items, identified by their UUID, stored on an external flash. If the list of items is looked at frequently, it may be cached in RAM for faster access and better power.
 
 ```c
 #include <inttypes.h>
@@ -77,14 +77,12 @@ typedef struct UuidListNode {
 
 static UuidListNode *s_list_head = NULL;
 
-void list_add_uuid(const Uuid *fake_uuid) {
+void list_add_uuid(const Uuid *uuid) {
   UuidListNode *node_to_add = malloc(sizeof(UuidListNode));
-  if (node_to_add == NULL) {
-    return;
-  }
+  assert(node_to_add != NULL);
 
   *node_to_add = (UuidListNode) {
-    .uuid = *fake_uuid,
+    .uuid = *uuid,
   };
 
   // Add entry to the front of the list
@@ -121,7 +119,7 @@ int main(void) {
 
 ### GDB Pretty Printers
 
-When we print a structure, GDB will by default will display each of the individual fields. The `s_list_head` in the code above would look something like this:
+When we print a structure, GDB will display each of the individual fields. The `s_list_head` in the code above would look something like this:
 
 ```
 (gdb) p s_list_head
@@ -133,6 +131,7 @@ $2 = {next = 0x200070a8, uuid = {bytes = "\235]D@\213Z#^\251\357\354?\221\234zA"
 We can clean it up a little by enabling pretty printing which will put each field on a newline:
 
 ```
+(gdb) set print pretty
 (gdb) p s_list_head
 $4 = (UuidListNode *) 0x200070c0
 (gdb) p *s_list_head
@@ -164,7 +163,7 @@ import gdb
 import uuid
 
 class UuidPrettyPrinter(object):
-    """Print a Uuid struct as a string 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'"""
+    """Print 'struct Uuid' as 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'"""
 
     def __init__(self, val):
         self.val = val
@@ -172,21 +171,27 @@ class UuidPrettyPrinter(object):
     def to_string(self):
         return "TODO: Implement"
 
+
 class CustomPrettyPrinterLocator(PrettyPrinter):
-    """Searches for user provided custom pretty printers given a gdb.Value"""
+    """Given a gdb.Value, search for a custom pretty printer"""
 
     def __init__(self):
-        super(CustomPrettyPrinterLocator, self).__init__("my_pretty_printers", [])
+        super(CustomPrettyPrinterLocator, self).__init__(
+            "my_pretty_printers", []
+        )
 
     def __call__(self, val):
         """Return the custom formatter if the type can be handled"""
 
-        typename = gdb.types.get_basic_type(val.type).tag if not None else val.type.name
-        if typename == 'Uuid':
+        typename = gdb.types.get_basic_type(val.type).tag
+        if typename is None:
+            typename = val.type.name
+
+        if typename == "Uuid":
             return UuidPrettyPrinter(val)
 ```
 
-We then need to register the custom pretty print detector with gdb.
+We then need to register the custom pretty print detector with gdb by appending the following to our script:
 
 ```python
 register_pretty_printer(None, CustomPrettyPrinterLocator(), replace=True)
@@ -217,10 +222,12 @@ Great! We see the pretty printer got called for `Uuid` and _"TODO: Implement"_ w
 
 ```python
     def to_string(self):
-        # gdb.Value can be accessed just like they would be in C. Since this is a Uuid struct we
-        # can index into "bytes" and then grab the value from each entry in the array
+        # gdb.Value can be accessed just like they would be in C. Since
+        # this is a Uuid struct we can index into "bytes" and grab the
+        # value from each entry in the array
         array = self.val["bytes"]
-        # Convert from byte array to hex string so we can use Python's UUID lib to get a string
+        # Format the byte array as a hex string so python uuid module can
+        # be used to get the string
         uuid_bytes = "".join(
             ["%02x" % int(array[i]) for i in range(0, array.type.sizeof)]
         )
@@ -272,46 +279,48 @@ We can use the `gdb.parser_and_eval` utility to convert arbitrary arguments pass
 
 ```python
 class UuidListDumpCmd(gdb.Command):
-   """Prints the ListNode from our example in a nice format!"""
+    """Prints the ListNode from our example in a nice format!"""
 
-   def __init__(self):
-       super(UuidListDumpCmd, self).__init__("uuid_list_dump", gdb.COMMAND_USER)
+    def __init__(self):
+        super(UuidListDumpCmd, self).__init__(
+            "uuid_list_dump", gdb.COMMAND_USER
+        )
 
-   def _uuid_list_to_str(self, val):
-       """Walk through the list by following the 'next' pointers until we encounter NULL
+    def _uuid_list_to_str(self, val):
+        """Walk through the UuidListNode list.
 
-       We can access value info by looking at:
-         https://sourceware.org/gdb/onlinedocs/gdb/Values-From-Inferior.html#Values-From-Inferior
-       """
-       count = 0
-       node_ptr = val
-       result = ""
-       while node_ptr != 0:
-           result += ("\n%d: Addr: 0x%x, uuid: %s" %
-                      (count, node_ptr, node_ptr['uuid']))
-           node_ptr = node_ptr['next']
-           count += 1
-       result = ("Found a Linked List with %d nodes:" % count) + result
-       return result
+        We will simply follow the 'next' pointers until we encounter NULL
+        """
+        idx = 0
+        node_ptr = val
+        result = ""
+        while node_ptr != 0:
+            uuid = node_ptr["uuid"]
+            result += "\n%d: Addr: 0x%x, uuid: %s" % (idx, node_ptr, uuid)
+            node_ptr = node_ptr["next"]
+            idx += 1
+        result = ("Found a Linked List with %d nodes:" % idx) + result
+        return result
 
-   def complete(self, text, word):
-       # We expect the argument passed to be a symbol so fallback to the internal tab-completion
-       # handler for symbols
-       return gdb.COMPLETE_SYMBOL
+    def complete(self, text, word):
+        # We expect the argument passed to be a symbol so fallback to the
+        # internal tab-completion handler for symbols
+        return gdb.COMPLETE_SYMBOL
 
-   def invoke(self, args, from_tty):
-       # We can pass args here and use python CLI utilities like argparse to do argument parsing
-       print "Args Passed: %s" % args
+    def invoke(self, args, from_tty):
+        # We can pass args here and use python CLI utilities like argparse
+        # to do argument parsing
+        print("Args Passed: %s" % args)
 
-       node_ptr_val = gdb.parse_and_eval(args)
-       if str(node_ptr_val.type) != "UuidListNode *":
-           print("Expected pointer argument of type (UuidListNode *)")
-           return
+        node_ptr_val = gdb.parse_and_eval(args)
+        if str(node_ptr_val.type) != "UuidListNode *":
+            print("Expected pointer argument of type (UuidListNode *)")
+            return
 
-       print(self._uuid_list_to_str(node_ptr_val))
+        print(self._uuid_list_to_str(node_ptr_val))
 ```
 
-To actually load the command all we need to do is instantiate the object by adding:
+To actually load the command all we need to do is instantiate the object by adding the following to the end of `custom_gdb_extensions.py`:
 
 ```python
 UuidListDumpCmd()
@@ -376,3 +385,5 @@ Alternatively, you could also get this to run automatically when gdb is started 
 We hope this post gave you a useful overview of how to add custom GDB commands and pretty printers using the Python API. Sometimes adding GDB commands like these can even be used to reduce [code size](https://interrupt.memfault.com/blog/best-firmware-size-tools) by replacing a on-device CLI command that would display the same information!
 
 Do you already have some ideas about how the python API could be applied to automate parts of your debugging flow ... perhaps a command to walk custom heaps or display the contents in a memory-mapped filesystem? Or maybe you are already have some great examples of how you have used GDB Python? Either way, let us know in the discussion area below!
+
+_All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-post/). See anything you'd like to change? Submit a pull request!_
