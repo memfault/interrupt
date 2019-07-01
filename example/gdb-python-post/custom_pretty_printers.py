@@ -14,7 +14,7 @@ class UuidPrettyPrinter(object):
         # this is a Uuid struct we can index into "bytes" and grab the
         # value from each entry in the array
         array = self.val["bytes"]
-        # Format the byte array as a hex string so python uuid module can
+        # Format the byte array as a hex string so Python uuid module can
         # be used to get the string
         uuid_bytes = "".join(
             ["%02x" % int(array[i]) for i in range(0, array.type.sizeof)]
@@ -74,7 +74,7 @@ class UuidListDumpCmd(gdb.Command):
         return gdb.COMPLETE_SYMBOL
 
     def invoke(self, args, from_tty):
-        # We can pass args here and use python CLI utilities like argparse
+        # We can pass args here and use Python CLI utilities like argparse
         # to do argument parsing
         print("Args Passed: %s" % args)
 

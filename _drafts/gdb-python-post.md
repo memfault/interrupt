@@ -1,5 +1,5 @@
 ---
-title: "More Efficient Debugging with GDB Python API"
+title: "Better Debugging using GDB Python API"
 author: chris
 ---
 
@@ -28,7 +28,7 @@ $5 = (struct ListNode *) 0x0
 
 While all this manual typing may be fine for debugging one crash or issue, it does not scale. When a new firmware is being QA'd for the first time on hundreds of devices, it's important to be able to quickly classify the issue so time spent debugging doesn't cause the schedule to slip. Even once a product makes it into the wild, an issue that appears on .1% of devices in a one million device fleet would generate 1000 reports per month!
 
-Manually inspecting hundreds of crashes is no fun ... but fortunately, GDB allows users to extend its core functionality in a number of ways, including via its [Python API](https://sourceware.org/gdb/onlinedocs/gdb/Extending-GDB.html#Extending-GDB) . This allows one to accelerate and in many cases even **automate** debug!
+Manually inspecting hundreds of crashes is no fun ... but fortunately, GDB allows users to extend its core functionality in a number of ways, including via its [Python API](https://sourceware.org/gdb/onlinedocs/gdb/Extending-GDB.html#Extending-GDB) . This allows one to accelerate and in many cases even **automate** debugging!
 
 In this series of posts we will explore some of the GDB Python APIs and how they can be used.
 
@@ -39,7 +39,7 @@ posts straight to your mailbox_
 
 GDB's [Python API](https://sourceware.org/gdb/onlinedocs/gdb/Python.html#Python) was introduced as part of GDB 7.0 (all the way back in 2009!) and continues to receive new features and improvements as gdb is updated (look for "Python" in the [gdb release notes](https://www.gnu.org/software/gdb/news/))
 
-### Check if GDB was compiled with python support
+### Check if GDB was compiled with Python support
 
 The GDB Python API is a GDB compile time option that can be enabled (with the `--with-python` configuration argument). We can easily check if gdb has this feature enabled by checking:
 
@@ -53,7 +53,7 @@ This GDB was configured as follows:
 
 If you are doing any type of ARM Cortex-M development, you are in luck, the [official ARM Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) publishes a GDB variant with Python enabled at `./bin/arm-none-eabi-gdb-py` in each release!
 
-To use it you just need python installed on your system (i.e On ubuntu, `apt-get install python2.7 python-dev` or on OSX at the moment, the pre-installed system python is used)
+To use it you just need Python installed on your system (i.e On ubuntu, `apt-get install python2.7 python-dev` or on OSX at the moment, the pre-installed system Python is used)
 
 ## Example Usage
 
@@ -218,7 +218,7 @@ $1 = {
 }
 ```
 
-Great! We see the pretty printer got called for `Uuid` and _"TODO: Implement"_ was returned which matches the current `to_string` implementation. Now let's fill it in with an actual implementation and re-source the script
+Great! We see the pretty printer got called for `Uuid` and _"TODO: Implement"_ was returned which matches the current `to_string` implementation. Now let's fill it in with an actual implementation:
 
 ```python
     def to_string(self):
@@ -226,7 +226,7 @@ Great! We see the pretty printer got called for `Uuid` and _"TODO: Implement"_ w
         # this is a Uuid struct we can index into "bytes" and grab the
         # value from each entry in the array
         array = self.val["bytes"]
-        # Format the byte array as a hex string so python uuid module can
+        # Format the byte array as a hex string so Python uuid module can
         # be used to get the string
         uuid_bytes = "".join(
             ["%02x" % int(array[i]) for i in range(0, array.type.sizeof)]
@@ -275,7 +275,7 @@ Instead, let's add a custom GDB command that can do the work for us!
 
 New CLI commands can be added via a Python script by creating a new subclass of [gdb.Command](https://sourceware.org/gdb/onlinedocs/gdb/Commands-In-Python.html#Commands-In-Python)
 
-We can use the `gdb.parser_and_eval` utility to convert arbitrary arguments passed to the command into a `gdb.Value`. From there we can index into C struct members to traverse the object. In this example we will parse a `UuidListNode` pointer and following the `next` pointer until we reach the end of the list. Let's add the following to our `custom_gdb_extensions.py` script:
+We can use the `gdb.parse_and_eval` utility to convert arbitrary arguments passed to the command into a `gdb.Value`. From there we can index into C struct members to traverse the object. In this example we will parse a `UuidListNode` pointer and following the `next` pointer until we reach the end of the list. Let's add the following to our `custom_gdb_extensions.py` script:
 
 ```python
 class UuidListDumpCmd(gdb.Command):
@@ -308,7 +308,7 @@ class UuidListDumpCmd(gdb.Command):
         return gdb.COMPLETE_SYMBOL
 
     def invoke(self, args, from_tty):
-        # We can pass args here and use python CLI utilities like argparse
+        # We can pass args here and use Python CLI utilities like argparse
         # to do argument parsing
         print("Args Passed: %s" % args)
 
@@ -384,6 +384,6 @@ Alternatively, you could also get this to run automatically when gdb is started 
 
 We hope this post gave you a useful overview of how to add custom GDB commands and pretty printers using the Python API. Sometimes adding GDB commands like these can even be used to reduce [code size](https://interrupt.memfault.com/blog/best-firmware-size-tools) by replacing a on-device CLI command that would display the same information!
 
-Do you already have some ideas about how the python API could be applied to automate parts of your debugging flow ... perhaps a command to walk custom heaps or display the contents in a memory-mapped filesystem? Or maybe you are already have some great examples of how you have used GDB Python? Either way, let us know in the discussion area below!
+Do you already have some ideas about how the Python API could be applied to automate parts of your debugging flow ... perhaps a command to walk custom heaps or display the contents in a memory-mapped filesystem? Or maybe you are already have some great examples of how you have used GDB Python? Either way, let us know in the discussion area below!
 
 _All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-post/). See anything you'd like to change? Submit a pull request!_
