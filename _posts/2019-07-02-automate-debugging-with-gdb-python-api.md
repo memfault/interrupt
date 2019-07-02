@@ -1,5 +1,5 @@
 ---
-title: "Better Debugging using GDB Python API"
+title: "Automate Debugging with GDB Python API"
 author: chris
 ---
 
