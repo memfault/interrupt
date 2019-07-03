@@ -30,7 +30,7 @@ Most compilers have an option to enable the same kind of file, `--map` for ARM c
 
 What's better than our good old friend to explain the basics of the map file?
 
-In order to learn about map files, let's compile a simple LED-blink program, and modify it to add a call to `atoi`. We will then use the map file to dissect the difference between both programs. The main file, available [here](../example/linker-map-post/main.c) for you to play with it, can be used as a replacement for the Blinky example from the nRF5 SDK.
+In order to learn about map files, let's compile a simple LED-blink program, and modify it to add a call to `atoi`. We will then use the map file to dissect the difference between both programs. The main file, available [here](../example/linker-map-post/main.c) for you to play with, can be used as a replacement for the Blinky example from the nRF5 SDK.
 
 Let's build the simplest version of that project:
 ```c
@@ -75,9 +75,9 @@ Compiling:
     DONE nrf52840_xxaa
 ```
 
-The generated map file is 563-line long 😮, even if it does nothing more than blink an LED. That many lines cannot be left unseen, there must be some serious information in there...
+The generated map file is 563-line long 😮, even if it does nothing more than blink LEDs. That many lines cannot be left unseen, there must be some serious information in there...
 
-Let's now modify our program to add a call to atoi. Instead of using an integer directly for the delay, we'll encode it as a string and decode it with atoi.
+Let's now modify our program to add a call to `atoi`. Instead of using an integer directly for the delay, we'll encode it as a string and decode it with `atoi`.
 
 ```c
 
@@ -117,7 +117,7 @@ After compilation, the whole program goes from 1840 bytes to 2396 bytes.
        2256	    112	     28	   2396	    95c	_build/nrf52840_xxaa.out
 ```
 
-We expected more code to come with calling atoi, but a 30% increase in our program size is huge!
+We expected more code to come with calling `atoi`, but a 30% increase in our program size is huge!
 
 Now that I have two map files, I want to know the differences between the two.
 
