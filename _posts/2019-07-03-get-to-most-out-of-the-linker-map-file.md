@@ -9,7 +9,7 @@ In this article, I wanted to highlight how simple map files are and how much the
 
 <!-- excerpt end -->
 
-I noticed recently that the *map* file generated during the build process and before the creation of the ELF file, is not used enough by some of us, Firmware developers 🤔.
+I noticed recently that the *map* file generated during the build process and before the creation of the ELF file doesn't always come to mind by other Firmware engineers when debugging, even when the answer lies in that particular file.
 
 The map file provides valuable information that helps understand and optimize memory. I highly recommend keeping that file for any firmware running in production. This is one of the few artifacts I keep in [my CD pipeline](https://medium.com/equisense/firmware-quality-assurance-continuous-delivery-125884194ea5).
 The map file is a symbol table for the whole program. Let's dive into it to see how simple it is and how you can effectively use it. I will try to illustrate with some examples, all described with GNU binutils.
@@ -18,10 +18,19 @@ The map file is a symbol table for the whole program. Let's dive into it to see 
 
 To get started, make sure you generate the map file.
 
-Using GNU binutils, the generation of the map file must be explicitly requested by setting the right flag. To print the map to *output.map* with GCC:
+Using GNU binutils, the generation of the map file must be explicitly requested by setting the right flag. To print the map to *output.map* with LD:
 
 ```Makefile
-    -Wl,-Map=output.map
+LDFLAGS += -Wl,-Map=output.map
+```
+
+As an example for a simple program, you would link the compilation units using those commands:
+
+```bash
+# Compile/assemble source files without linking
+$ gcc -c sourcefile1.c sourcefile2.c
+# Link together following the linker script specs and outputs map file with the link results
+$ ld -Map output.map -T linker_script.ld -N -o output.elf sourcefile1.o sourcefile2.o   
 ```
 
 Most compilers have an option to enable the same kind of file, `--map` for ARM compiler for example.
@@ -30,9 +39,9 @@ Most compilers have an option to enable the same kind of file, `--map` for ARM c
 
 What's better than our good old friend to explain the basics of the map file?
 
-In order to learn about map files, let's compile a simple LED-blink program, and modify it to add a call to `atoi`. We will then use the map file to dissect the difference between both programs. The main file, available [here](../example/linker-map-post/main.c) for you to play with, can be used as a replacement for the Blinky example from the nRF5 SDK.
+In order to learn about map files, let's compile a simple LED-blink program, and modify it to add a call to `atoi`. We will then use the map file to dissect the difference between both programs. The main file, available [here](../example/linker-map-post/main.c) for you to play with, can be used as a replacement for the Blinky example from the nRF5 SDK. Looking at the main.c file, 3 configurations are possible: `NO_ATOI`, `STD_ATOI`, `CUSTOM_ATOI`.
 
-Let's build the simplest version of that project:
+Let's build the simplest version of that project (`NO_ATOI`), equivalent to that piece of code:
 ```c
 
 #include <stdbool.h>
@@ -78,6 +87,7 @@ Compiling:
 The generated map file is 563-line long 😮, even if it does nothing more than blink LEDs. That many lines cannot be left unseen, there must be some serious information in there...
 
 Let's now modify our program to add a call to `atoi`. Instead of using an integer directly for the delay, we'll encode it as a string and decode it with `atoi`.
+Here is the code using the configuration `STD_ATOI`:
 
 ```c
 
@@ -122,6 +132,8 @@ We expected more code to come with calling `atoi`, but a 30% increase in our pro
 Now that I have two map files, I want to know the differences between the two.
 
 ## Digging into the map files
+
+The differences between the two files are available in [std_atoi_map.diff](../example/linker-map-post/std_atoi_map.diff).
 
 ### Archives linked
 
@@ -209,12 +221,64 @@ My constant string `_delay_ms_str` is obviously included in the program as it is
     	              0x00000000000017b8        0x4 _build/nrf52840_xxaa/main.c.o
 ```
 
-I also noticed that the inclusion of `_ctype_` added 0x101 bytes of read-only data in the `text` area 😯.
+I also noticed that the inclusion of `_ctype_` added 0x101 bytes of read-only data in the `text` area 😯. 
 
 ```
     .rodata._ctype_
                     0x00000000000017c0      **0x101** /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-ctype_.o)
                     0x00000000000017c0                **_ctype_**
+```
+
+As standard libraries are open-source ([link](https://sourceware.org/git/gitweb.cgi?p=newlib-cygwin.git;a=tree;f=newlib;hb=HEAD)), we can easily find out why it's taking that much space. I dived into the inner-working of `atoi` (`atoi_r` in its reentrant version, see below), which calls directly `strtol_r`:
+
+```c
+int
+_DEFUN (_atoi_r, (s),
+  struct _reent *ptr _AND
+  _CONST char *s)
+{
+  return (int) _strtol_r (ptr, s, NULL, 10);
+}
+```
+
+When it comes to `strtol_r`, it is actually more complex than only converting characters into integers because if performs type checking, using `ctype`. The way `ctype` works is by using a table where the ASCII symbol types are stored into an array. Here are the main parts of `ctype`, annotated with my comments:
+
+```c
+// Flags indicating the symbol type
+#define _U  01    // Uppercase letter
+#define _L  02    // Lowercase letter
+#define _N  04    // Numeric
+#define _S  010
+#define _P  020   // Ponctuation
+#define _C  040   // Control characters
+#define _X  0100  // Hexadecimal 
+#define _B  0200
+
+// ASCII table types
+#define _CTYPE_DATA_0_127 \
+  _C, _C, _C, _C, _C, _C, _C, _C, \
+  _C, _C|_S, _C|_S, _C|_S,  _C|_S,  _C|_S,  _C, _C, \
+  _C, _C, _C, _C, _C, _C, _C, _C, \
+  _C, _C, _C, _C, _C, _C, _C, _C, \
+  _S|_B,  _P, _P, _P, _P, _P, _P, _P, \
+  _P, _P, _P, _P, _P, _P, _P, _P, \
+  _N, _N, _N, _N, _N, _N, _N, _N, \
+  _N, _N, _P, _P, _P, _P, _P, _P, \
+  _P, _U|_X,  _U|_X,  _U|_X,  _U|_X,  _U|_X,  _U|_X,  _U, \
+  _U, _U, _U, _U, _U, _U, _U, _U, \
+  _U, _U, _U, _U, _U, _U, _U, _U, \
+  _U, _U, _U, _P, _P, _P, _P, _P, \
+  _P, _L|_X,  _L|_X,  _L|_X,  _L|_X,  _L|_X,  _L|_X,  _L, \
+  _L, _L, _L, _L, _L, _L, _L, _L, \
+  _L, _L, _L, _L, _L, _L, _L, _L, \
+  _L, _L, _L, _P, _P, _P, _P, _C
+
+// _ctype_ structure takes 257 (0x101) bytes, as seen on the map file (.rodata._ctype_)
+_CONST char _ctype_[1 + 256] = {
+  0,
+  _CTYPE_DATA_0_127,
+  _CTYPE_DATA_128_255
+};
 ```
 
 Interestingly, the addition of `atoi` not only increased our code size (the `text` area), but also our data size (the `data` area) I used a diff tool to make things simpler and discovered data that was before discarded by the linker:
@@ -223,6 +287,15 @@ Interestingly, the addition of `atoi` not only increased our code size (the `tex
     .data._impure_ptr
     								0x0000000000000000        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
 ```
+
+Now you may have noticed the function names finishing by `_r`, when calling `strtol_r` for example. That suffix indicates reentrancy. Documentation about reentrancy can be found [in newlib source code](https://sourceware.org/git/gitweb.cgi?p=newlib-cygwin.git;a=blob_plain;f=newlib/libc/reent/reent.tex;hb=HEAD). To sum-up, reentrant functions can be called even when the same function is already in execution in another process, without intervening the execution. From the documentation:
+
+```tex
+Each function which uses the global reentrancy structure uses the global
+variable @code{_impure_ptr}, which points to a reentrancy structure.
+```
+
+In our case, we need that new global variable to call the reentrant function: `atoi_r`.
 
 One last piece of information to keep in mind: initialized variables have to be kept in Flash but they appear in `RAM` in the map file because they are copied into RAM before entering the `main` function. Here, symbols `__data_start__` and `__data_end__` keep track of the area used in RAM to keep initialized variables. Those values are stored in Flash starting at `0x00000000000018d0`:
 
@@ -235,7 +308,14 @@ One last piece of information to keep in mind: initialized variables have to be 
 
 ### Discarded sections
 
-Note that symbols that are compiled but not needed are also listed in the map file in the `Discarded input sections` part.
+Functions and variables that are compiled to be included into the program aren't always part of the final binary if the linker doesn't find any reference to them. They are removed but still appear in the map file under the `Discarded input sections` part. As an example, here are some functions defined in `boards.c` that are never called and thus discarded:
+
+```
+ .text.bsp_board_led_state_get
+                0x0000000000000000       0x28 _build/nrf52840_xxaa/boards.c.o
+ .text.bsp_board_led_on
+                0x0000000000000000       0x24 _build/nrf52840_xxaa/boards.c.o
+```
 
 Several usages of the map file are possible. Most of the time, you will have an address and you will want to know which function or data is being used. But some other times, it will be useful for debugging...
 
@@ -258,7 +338,7 @@ Using the previous example, let's say I now have only 0x800 bytes of Flash. Comp
 
 That's annoying! `atoi` is such a simple function... But as we have seen, it takes more Flash than we would expect using `libc_nano.a`.
 
-Let's try to to implement our own version of `atoi`, it's not that difficult after all. Here is the result after compilation:
+Let's try to to implement our own version of `atoi`, it's not that difficult after all. Here is the result after compilation (config `CUSTOM_ATOI`):
 
 ```
     Linking target: _build/nrf52840_xxaa.out
@@ -279,3 +359,5 @@ Feel free to share your story with any interesting usage of the map files.
 [https://stackoverflow.com/questions/755783/whats-the-use-of-map-files-the-linker-produces](https://stackoverflow.com/questions/755783/whats-the-use-of-map-files-the-linker-produces)
 
 [https://sourceware.org/binutils/docs/ld/Options.html#index-_002d_002dprint_002dmap](https://sourceware.org/binutils/docs/ld/Options.html#index-_002d_002dprint_002dmap)
+
+[https://www.oreilly.com/library/view/programming-embedded-systems/0596009836/ch04.html](https://www.oreilly.com/library/view/programming-embedded-systems/0596009836/ch04.html)
