@@ -39,7 +39,7 @@ Most compilers have an option to enable the same kind of file, `--map` for ARM c
 
 What's better than our good old friend to explain the basics of the map file?
 
-In order to learn about map files, let's compile a simple LED-blink program, and modify it to add a call to `atoi`. We will then use the map file to dissect the difference between both programs. The main file, available [here](../example/linker-map-post/main.c) for you to play with, can be used as a replacement for the Blinky example from the nRF5 SDK. Looking at the main.c file, 3 configurations are possible: `NO_ATOI`, `STD_ATOI`, `CUSTOM_ATOI`.
+In order to learn about map files, let's compile a simple LED-blink program, and modify it to add a call to `atoi`. We will then use the map file to dissect the difference between both programs. The main file, available [here](../example/linker-map-post/main.c) for you to play with, can be used as a replacement for the Blinky example from the nRF5 SDK. Looking at the `main.c` file, 3 configurations are possible: `NO_ATOI`, `STD_ATOI`, `CUSTOM_ATOI`.
 
 Let's build the simplest version of that project (`NO_ATOI`), equivalent to that piece of code:
 ```c
@@ -133,7 +133,7 @@ Now that I have two map files, I want to know the differences between the two.
 
 ## Digging into the map files
 
-The differences between the two files are available in [std_atoi_map.diff](../example/linker-map-post/std_atoi_map.diff).
+You can check the differences in that file: [std_atoi_map.diff](../example/linker-map-post/std_atoi_map.diff).
 
 ### Archives linked
 
@@ -212,7 +212,7 @@ Following that table is the `Linker script and memory map` which directly indica
                     0x00000000000012f0                bsp_board_led_invert
 ```
 
-Those lines give us the address of each function and its size. Above, you can read the address of `bsp_board_led_invert`, coming from `boards.c.o` (compilation unit of `board.c` as you guessed) which as a size of 0x34 bytes in the `text` area. That way, we are able to locate each function used in the program.
+Those lines give us the address of each function and its size. Above, you can read the address of `bsp_board_led_invert`, coming from `boards.c.o` (compilation unit of `board.c` as you guessed) which has a size of 0x34 bytes in the `text` area. That way, we are able to locate each function used in the program.
 
 My constant string `_delay_ms_str` is obviously included in the program as it is initialized. Read-only data are saved as `rodata` and kept in the `FLASH` region as per my linker script (stored in Flash and not copied in RAM as it is constant). I can find it under that line:
 
@@ -241,7 +241,7 @@ _DEFUN (_atoi_r, (s),
 }
 ```
 
-When it comes to `strtol_r`, it is actually more complex than only converting characters into integers because if performs type checking, using `ctype`. The way `ctype` works is by using a table where the ASCII symbol types are stored into an array. Here are the main parts of `ctype`, annotated with my comments:
+When it comes to `strtol_r`, it is actually more complex than only converting characters into an integer because if performs type checking, using `ctype`. The way `ctype` works is by using a table where the ASCII symbol types are stored into an array. Here are the main parts of `ctype`, annotated with my comments:
 
 ```c
 // Flags indicating the symbol type
@@ -281,7 +281,7 @@ _CONST char _ctype_[1 + 256] = {
 };
 ```
 
-Interestingly, the addition of `atoi` not only increased our code size (the `text` area), but also our data size (the `data` area) I used a diff tool to make things simpler and discovered data that was before discarded by the linker:
+Interestingly, the addition of `atoi` not only increased our code size (the `text` area), but also our data size (the `data` area). With the diff file, I can easily discover data that was before discarded by the linker:
 
 ```
     .data._impure_ptr
