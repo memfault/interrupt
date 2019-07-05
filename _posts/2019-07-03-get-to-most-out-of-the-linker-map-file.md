@@ -133,7 +133,7 @@ Now that I have two map files, I want to know the differences between the two.
 
 ## Digging into the map files
 
-You can check the differences in that file: [std_atoi_map.diff](../example/linker-map-post/std_atoi_map.diff).
+You can check the differences in that file: [std_atoi_map.diff](../example/linker-map-post/std_atoi_map.diff). In the following parts, I'll use snippets to explain the different sections of the map file.
 
 ### Archives linked
 
@@ -317,7 +317,11 @@ Functions and variables that are compiled to be included into the program aren't
                 0x0000000000000000       0x24 _build/nrf52840_xxaa/boards.c.o
 ```
 
-Several usages of the map file are possible. Most of the time, you will have an address and you will want to know which function or data is being used. But some other times, it will be useful for debugging...
+---
+
+Several usages of the map file are possible. Most of the time, you will have an address and you will want to resolve the function behind. It can be the Program Counter in the Hard Fault handler for example. Some other times you will be debugging some undefined behavior to finally find out that your program is accidentally writing into an out-of-bounds array. Whenever you have the ELF file, `arm-none-eabi-nm` is pretty useful for those things too, and it comes with options to sort symbols by size, [check out that article from François](https://interrupt.memfault.com/blog/best-firmware-size-tools).
+
+But some other times, it will be useful even before you have an executable ready...
 
 ## Debugging a linking error
 
