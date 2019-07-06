@@ -5,11 +5,11 @@ author: cyril
 
 <!-- excerpt start -->
 
-In this article, I wanted to highlight how simple map files are and how much they can teach you about the program you are working on. 
+In this article, I wanted to highlight how simple linker map files are and how much they can teach you about the program you are working on. 
 
 <!-- excerpt end -->
 
-I noticed recently that the *map* file generated during the build process and before the creation of the ELF file doesn't always come to mind by other Firmware engineers when debugging, even when the answer lies in that particular file.
+I noticed recently that the map file generated during the build process and before the creation of the ELF file doesn't always come to mind by other Firmware engineers when debugging, even when the answer lies in that particular file.
 
 The map file provides valuable information that helps understand and optimize memory. I highly recommend keeping that file for any firmware running in production. This is one of the few artifacts I keep in [my CD pipeline](https://medium.com/equisense/firmware-quality-assurance-continuous-delivery-125884194ea5).
 The map file is a symbol table for the whole program. Let's dive into it to see how simple it is and how you can effectively use it. I will try to illustrate with some examples, all described with GNU binutils.
@@ -18,7 +18,7 @@ The map file is a symbol table for the whole program. Let's dive into it to see 
 
 To get started, make sure you generate the map file.
 
-Using GNU binutils, the generation of the map file must be explicitly requested by setting the right flag. To print the map to *output.map* with LD:
+Using GNU binutils, the generation of the map file must be explicitly requested by setting the right flag. To print the map to `output.map` with LD:
 
 ```Makefile
 LDFLAGS += -Wl,-Map=output.map
@@ -37,9 +37,9 @@ Most compilers have an option to enable the same kind of file, `--map` for ARM c
 
 ## Blinky
 
-What's better than our good old friend to explain the basics of the map file?
+👨‍🦳 What's better than our good old friend to explain the basics of the map file?
 
-In order to learn about map files, let's compile a simple LED-blink program, and modify it to add a call to `atoi`. We will then use the map file to dissect the difference between both programs. The main file, available [here](../example/linker-map-post/main.c) for you to play with, can be used as a replacement for the Blinky example from the nRF5 SDK. Looking at the `main.c` file, 3 configurations are possible: `NO_ATOI`, `STD_ATOI`, `CUSTOM_ATOI`.
+In order to learn about map files, let's compile a simple LED-blink program, and modify it to add a call to `atoi`. We will then use the map file to dissect the differences between both programs. The main file, available [here](../example/linker-map-post/main.c) for you to play with, can be used as a replacement for the Blinky example from the nRF5 SDK. Looking at the `main.c` file, 3 configurations are possible: `NO_ATOI`, `STD_ATOI`, `CUSTOM_ATOI`.
 
 Let's build the simplest version of that project (`NO_ATOI`), equivalent to that piece of code:
 ```c
@@ -127,7 +127,7 @@ After compilation, the whole program goes from 1840 bytes to 2396 bytes.
        2256	    112	     28	   2396	    95c	_build/nrf52840_xxaa.out
 ```
 
-We expected more code to come with calling `atoi`, but a 30% increase in our program size is huge!
+We expected more code to come with calling `atoi`, but a 30% increase in our program size is huge! 🤔
 
 Now that I have two map files, I want to know the differences between the two.
 
@@ -139,7 +139,7 @@ You can check the differences in that file: [std_atoi_map.diff](../example/linke
 
 What? An archive in my binary? I'm only blinking an LED!
 
-Don't be afraid, the good news is that the map file does mention **the specific symbols which caused the archive members to be brought in**, in the first lines of the file.
+Don't be afraid, the good news is that the map file does mention the specific symbols which caused the archive members to be brought in, in the first lines of the file.
 
 Here is my first lines:
 
@@ -174,9 +174,9 @@ Now, comparing the two generated map files, the first difference spotted is that
 
 We now have a better sense of the files actually included into our program, and the reason why they are there. What's more inside that file?
 
-### Memory map
+### Memory configuration
 
-The most straightforward pieces of information in the map file are the actual memory regions:
+The most straightforward pieces of information in the map file are the actual memory regions, with location, size and access rights granted to those regions:
 
 ```
     Memory Configuration
@@ -187,7 +187,9 @@ The most straightforward pieces of information in the map file are the actual me
     *default*        0x0000000000000000 0xffffffffffffffff
 ```
 
-Following that table is the `Linker script and memory map` which directly indicates the `text` area size and its content (`text` is our compiled code, as opposed to `data` which is program data). As always, the interrupt vectors (here under section `.isr_vector`) are present at the beginning of the executable, defined in `gcc_startup_nrf52840.S`:
+### Linker script and memory map
+
+Following the memory configuration is the **Linker script and memory map**. That one is interesting as it gives detailed information about the symbols in your program. In our case, it first indicates the `text` area size and its content (`text` is our compiled code, as opposed to `data` which is program data). Here, the interrupt vectors (here under section `.isr_vector`) are present at the beginning of the executable, defined in `gcc_startup_nrf52840.S`:
 
 ```
     Linker script and memory map
@@ -229,7 +231,7 @@ I also noticed that the inclusion of `_ctype_` added 0x101 bytes of read-only da
                     0x00000000000017c0                **_ctype_**
 ```
 
-As standard libraries are open-source ([link](https://sourceware.org/git/gitweb.cgi?p=newlib-cygwin.git;a=tree;f=newlib;hb=HEAD)), we can easily find out why it's taking that much space. I dived into the inner-working of `atoi` (`atoi_r` in its reentrant version, see below), which calls directly `strtol_r`:
+As standard libraries are open-source ([link](https://sourceware.org/git/gitweb.cgi?p=newlib-cygwin.git;a=tree;f=newlib;hb=HEAD)), we can easily find out why it's taking that much space. I dived into the inner-working of `atoi` (`atoi_r` in its **reentrant** version, see below), which calls directly `strtol_r`:
 
 ```c
 int
@@ -292,7 +294,7 @@ Now you may have noticed the function names finishing by `_r`, when calling `str
 
 ```tex
 Each function which uses the global reentrancy structure uses the global
-variable @code{_impure_ptr}, which points to a reentrancy structure.
+variable _impure_ptr, which points to a reentrancy structure.
 ```
 
 In our case, we need that new global variable to call the reentrant function: `atoi_r`.
@@ -316,6 +318,14 @@ Functions and variables that are compiled to be included into the program aren't
  .text.bsp_board_led_on
                 0x0000000000000000       0x24 _build/nrf52840_xxaa/boards.c.o
 ```
+
+### Common symbols
+
+That section does not appear in our map file but it deserves its own paragraph. 
+
+Common symbols are non-constant global variables that can be used everywhere in your code. You might know that using global variables is usually not a good practice as they make the code harder to maintain. Indeed, the scope is global and each extern module can modify the value of any global variable, which must be taken into account when accessed. Isolation of variables into a module, using the `static` keyword, is often better to make sure the module creating the variable is entirely responsible of its state.
+
+Now if you want to make your program safer and prevent accessibility of some global variables, go take a look into that map file section. If some variables don't need to be declared as global, you might want to convert them to static variables.
 
 ---
 
@@ -350,9 +360,11 @@ Let's try to to implement our own version of `atoi`, it's not that difficult aft
        1740	    108	     28	   1876	    754	_build/nrf52840_xxaa.out
 ```
 
-Way better! The code can now be crammed into 0x800 bytes to meet our (fake) requirements 🥳
+Way better! The code can now be crammed into 0x800 bytes to meet our (fake) requirements 🥳.
 
-Reading the map file will teach you a lot about the code you are working on, and it is the first step to better Firmware. Some tools are available to parse map files and have a summarized view of your program. I should mention Adafruit [using that source code](https://github.com/adafruit/linker-map-summary) for example.
+---
+
+Reading the map file will teach you a lot about the code you are working on, and it is the first step to better Firmware. Some tools are available to parse map files and have a summarized view of your program. I should mention Adafruit's, [using that source code](https://github.com/adafruit/linker-map-summary), for example.
 
 Feel free to share your story with any interesting usage of the map files.
 
