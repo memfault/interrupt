@@ -352,7 +352,7 @@ Let's try to to implement our own version of `atoi`, it's not that difficult aft
 
 Way better! The code can now be crammed into 0x800 bytes to meet our (fake) requirements 🥳
 
-Reading the map file will teach you a lot about the code you are working on, and it is the first step to better Firmware.
+Reading the map file will teach you a lot about the code you are working on, and it is the first step to better Firmware. Some tools are available to parse map files and have a summarized view of your program. I should mention Adafruit [using that source code](https://github.com/adafruit/linker-map-summary) for example.
 
 Feel free to share your story with any interesting usage of the map files.
 
