@@ -5,7 +5,7 @@ author: cyril
 
 <!-- excerpt start -->
 
-In this article, I wanted to highlight how simple linker map files are and how
+In this article, I want to highlight how simple linker map files are and how
 much they can teach you about the program you are working on.
 
 <!-- excerpt end -->
@@ -23,7 +23,7 @@ I will try to illustrate with some examples, all described with GNU binutils.
 
 ## Generating the map file
 
-To get started, make sure you generate the map file.
+To get started, make sure you generate the map file as part of your build.
 
 Using GNU binutils, the generation of the map file must be explicitly requested by setting the right flag. To print the map to `output.map` with LD:
 
@@ -93,7 +93,7 @@ Compiling:
 
 The generated map file is 563-line long 😮, even if it does nothing more than blink LEDs. That many lines cannot be left unseen, there must be some serious information in there...
 
-Let's now modify our program to add a call to `atoi`. Instead of using an integer directly for the delay, we'll encode it as a string and decode it with `atoi`.
+Now let's modify our program to add a call to `atoi`. Instead of using an integer directly for the delay, we'll encode it as a string and decode it with `atoi`.
 Here is the code using the configuration `STD_ATOI`:
 
 ```c
