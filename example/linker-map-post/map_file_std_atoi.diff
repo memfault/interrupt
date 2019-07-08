@@ -1,0 +1,420 @@
+2a3,4
+> /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o)
+>                               _build/nrf52840_xxaa/main.c.o (atoi)
+10a13,16
+> /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>                               /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o) (_strtol_r)
+> /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-ctype_.o)
+>                               /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o) (_ctype_)
+169a176,177
+>  .group         0x0000000000000000        0xc _build/nrf52840_xxaa/main.c.o
+>  .group         0x0000000000000000        0xc _build/nrf52840_xxaa/main.c.o
+273a282,285
+>  .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o)
+>  .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o)
+>  .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o)
+>  .text._atoi_r  0x0000000000000000        0x8 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o)
+280,281d291
+<  .data._impure_ptr
+<                 0x0000000000000000        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
+287a298,307
+>  .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>  .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>  .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>  .text._strtol_r
+>                 0x0000000000000000        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>  .text.strtol_l
+>                 0x0000000000000000       0x14 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>  .text          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-ctype_.o)
+>  .data          0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-ctype_.o)
+>  .bss           0x0000000000000000        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-ctype_.o)
+308c328
+< .text           0x0000000000001000      0x6a0
+---
+> .text           0x0000000000001000      0x8c8
+379c399
+<                 0x00000000000013f8       0x30 _build/nrf52840_xxaa/main.c.o
+---
+>                 0x00000000000013f8       0x3c _build/nrf52840_xxaa/main.c.o
+382,385c402,407
+<                 0x0000000000001428      0x1c4 _build/nrf52840_xxaa/system_nrf52840.c.o
+<                 0x0000000000001428                SystemInit
+<  .text.exit     0x00000000000015ec       0x28 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-exit.o)
+<                 0x00000000000015ec                exit
+---
+>                 0x0000000000001434      0x1c4 _build/nrf52840_xxaa/system_nrf52840.c.o
+>                 0x0000000000001434                SystemInit
+>  .text.atoi     0x00000000000015f8        0x8 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o)
+>                 0x00000000000015f8                atoi
+>  .text.exit     0x0000000000001600       0x28 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-exit.o)
+>                 0x0000000000001600                exit
+387,392c409,418
+<                 0x0000000000001614       0x48 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-init.o)
+<                 0x0000000000001614                __libc_init_array
+<  .text.memset   0x000000000000165c       0x10 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-memset.o)
+<                 0x000000000000165c                memset
+<  .text._exit    0x000000000000166c        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libnosys.a(_exit.o)
+<                 0x000000000000166c                _exit
+---
+>                 0x0000000000001628       0x48 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-init.o)
+>                 0x0000000000001628                __libc_init_array
+>  .text.memset   0x0000000000001670       0x10 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-memset.o)
+>                 0x0000000000001670                memset
+>  .text._strtol_l.isra.0
+>                 0x0000000000001680       0xf0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>  .text.strtol   0x0000000000001770       0x14 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>                 0x0000000000001770                strtol
+>  .text._exit    0x0000000000001784        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libnosys.a(_exit.o)
+>                 0x0000000000001784                _exit
+394,396c420,422
+<  .init          0x0000000000001670        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crti.o
+<                 0x0000000000001670                _init
+<  .init          0x0000000000001674        0x8 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtn.o
+---
+>  .init          0x0000000000001788        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crti.o
+>                 0x0000000000001788                _init
+>  .init          0x000000000000178c        0x8 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtn.o
+398,400c424,426
+<  .fini          0x000000000000167c        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crti.o
+<                 0x000000000000167c                _fini
+<  .fini          0x0000000000001680        0x8 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtn.o
+---
+>  .fini          0x0000000000001794        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crti.o
+>                 0x0000000000001794                _fini
+>  .fini          0x0000000000001798        0x8 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtn.o
+413,414c439,440
+<                 0x0000000000001688        0x4 _build/nrf52840_xxaa/boards.c.o
+<  *fill*         0x000000000000168c        0x4 
+---
+>                 0x00000000000017a0        0x4 _build/nrf52840_xxaa/boards.c.o
+>  *fill*         0x00000000000017a4        0xc 
+416,417c442,445
+<                 0x0000000000001690        0x6 _build/nrf52840_xxaa/main.c.o
+<  *fill*         0x0000000000001696        0x2 
+---
+>                 0x00000000000017b0        0x6 _build/nrf52840_xxaa/main.c.o
+>  *fill*         0x00000000000017b6        0x2 
+>  .rodata.main.str1.4
+>                 0x00000000000017b8        0x4 _build/nrf52840_xxaa/main.c.o
+419,420c447,451
+<                 0x0000000000001698        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
+<                 0x0000000000001698                _global_impure_ptr
+---
+>                 0x00000000000017bc        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
+>                 0x00000000000017bc                _global_impure_ptr
+>  .rodata._ctype_
+>                 0x00000000000017c0      0x101 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-ctype_.o)
+>                 0x00000000000017c0                _ctype_
+422,423c453,455
+<  .eh_frame      0x000000000000169c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+<  .eh_frame      0x000000000000169c        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtend.o
+---
+>  *fill*         0x00000000000018c1        0x3 
+>  .eh_frame      0x00000000000018c4        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+>  .eh_frame      0x00000000000018c4        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtend.o
+425,426c457,458
+< .glue_7         0x00000000000016a0        0x0
+<  .glue_7        0x00000000000016a0        0x0 linker stubs
+---
+> .glue_7         0x00000000000018c8        0x0
+>  .glue_7        0x00000000000018c8        0x0 linker stubs
+428,429c460,461
+< .glue_7t        0x00000000000016a0        0x0
+<  .glue_7t       0x00000000000016a0        0x0 linker stubs
+---
+> .glue_7t        0x00000000000018c8        0x0
+>  .glue_7t       0x00000000000018c8        0x0 linker stubs
+431,432c463,464
+< .vfp11_veneer   0x00000000000016a0        0x0
+<  .vfp11_veneer  0x00000000000016a0        0x0 linker stubs
+---
+> .vfp11_veneer   0x00000000000018c8        0x0
+>  .vfp11_veneer  0x00000000000018c8        0x0 linker stubs
+434,435c466,467
+< .v4_bx          0x00000000000016a0        0x0
+<  .v4_bx         0x00000000000016a0        0x0 linker stubs
+---
+> .v4_bx          0x00000000000018c8        0x0
+>  .v4_bx         0x00000000000018c8        0x0 linker stubs
+437,438c469,470
+< .iplt           0x00000000000016a0        0x0
+<  .iplt          0x00000000000016a0        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+---
+> .iplt           0x00000000000018c8        0x0
+>  .iplt          0x00000000000018c8        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+443c475
+<                 0x00000000000016a0        0x0
+---
+>                 0x00000000000018c8        0x0
+448c480
+< .log_backends   0x00000000000016a0        0x0
+---
+> .log_backends   0x00000000000018c8        0x0
+453c485
+< .nrf_balloc     0x00000000000016a0        0x0
+---
+> .nrf_balloc     0x00000000000018c8        0x0
+460c492
+<                 0x00000000000016a0                __exidx_start = .
+---
+>                 0x00000000000018c8                __exidx_start = .
+462c494
+< .ARM.exidx      0x00000000000016a0        0x8
+---
+> .ARM.exidx      0x00000000000018c8        0x8
+464,466c496,498
+<  .ARM.exidx     0x00000000000016a0        0x8 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/crt0.o
+<                 0x00000000000016a8                __exidx_end = .
+<                 0x00000000000016a8                __etext = .
+---
+>  .ARM.exidx     0x00000000000018c8        0x8 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/crt0.o
+>                 0x00000000000018d0                __exidx_end = .
+>                 0x00000000000018d0                __etext = .
+468,469c500,501
+< .rel.dyn        0x00000000000016a8        0x0
+<  .rel.iplt      0x00000000000016a8        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+---
+> .rel.dyn        0x00000000000018d0        0x0
+>  .rel.iplt      0x00000000000018d0        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+471c503
+< .data           0x0000000020000008       0x6c load address 0x00000000000016a8
+---
+> .data           0x0000000020000008       0x70 load address 0x00000000000018d0
+477a510,512
+>  .data._impure_ptr
+>                 0x000000002000000c        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
+>                 0x000000002000000c                _impure_ptr
+479,481c514,516
+<                 0x000000002000000c       0x60 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
+<                 0x000000002000006c                . = ALIGN (0x4)
+<                 0x000000002000006c                PROVIDE (__preinit_array_start = .)
+---
+>                 0x0000000020000010       0x60 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
+>                 0x0000000020000070                . = ALIGN (0x4)
+>                 0x0000000020000070                PROVIDE (__preinit_array_start = .)
+483,485c518,520
+<                 0x000000002000006c                PROVIDE (__preinit_array_end = .)
+<                 0x000000002000006c                . = ALIGN (0x4)
+<                 0x000000002000006c                PROVIDE (__init_array_start = .)
+---
+>                 0x0000000020000070                PROVIDE (__preinit_array_end = .)
+>                 0x0000000020000070                . = ALIGN (0x4)
+>                 0x0000000020000070                PROVIDE (__init_array_start = .)
+488,490c523,525
+<  .init_array    0x000000002000006c        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+<                 0x0000000020000070                PROVIDE (__init_array_end = .)
+<                 0x0000000020000070                . = ALIGN (0x4)
+---
+>  .init_array    0x0000000020000070        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+>                 0x0000000020000074                PROVIDE (__init_array_end = .)
+>                 0x0000000020000074                . = ALIGN (0x4)
+494c529
+<  .fini_array    0x0000000020000070        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+---
+>  .fini_array    0x0000000020000074        0x4 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+497,498c532,533
+<                 0x0000000020000074                . = ALIGN (0x4)
+<                 0x0000000020000074                __data_end__ = .
+---
+>                 0x0000000020000078                . = ALIGN (0x4)
+>                 0x0000000020000078                __data_end__ = .
+526,528c561,563
+< .igot.plt       0x0000000020000074        0x0 load address 0x0000000000001714
+<  .igot.plt      0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+<                 0x0000000020000074                . = ALIGN (0x4)
+---
+> .igot.plt       0x0000000020000078        0x0 load address 0x0000000000001940
+>  .igot.plt      0x0000000020000078        0x0 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+>                 0x0000000020000078                . = ALIGN (0x4)
+533c568
+<                 0x0000000020000074        0x0
+---
+>                 0x0000000020000078        0x0
+539c574
+<                 0x0000000020000074        0x0
+---
+>                 0x0000000020000078        0x0
+544,546c579,581
+< .bss            0x0000000020000074       0x1c load address 0x0000000000001714
+<                 0x0000000020000074                . = ALIGN (0x4)
+<                 0x0000000020000074                __bss_start__ = .
+---
+> .bss            0x0000000020000078       0x1c load address 0x0000000000001940
+>                 0x0000000020000078                . = ALIGN (0x4)
+>                 0x0000000020000078                __bss_start__ = .
+548c583
+<  .bss           0x0000000020000074       0x1c /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+---
+>  .bss           0x0000000020000078       0x1c /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtbegin.o
+550,551c585,586
+<                 0x0000000020000090                . = ALIGN (0x4)
+<                 0x0000000020000090                __bss_end__ = .
+---
+>                 0x0000000020000094                . = ALIGN (0x4)
+>                 0x0000000020000094                __bss_end__ = .
+553,555c588,590
+< .heap           0x0000000020000090     0x2000
+<                 0x0000000020000090                __HeapBase = .
+<                 0x0000000020000090                __end__ = .
+---
+> .heap           0x0000000020000098     0x2000
+>                 0x0000000020000098                __HeapBase = .
+>                 0x0000000020000098                __end__ = .
+558,559c593,594
+<  .heap          0x0000000020000090     0x2000 _build/nrf52840_xxaa/gcc_startup_nrf52840.S.o
+<                 0x0000000020002090                __HeapLimit = .
+---
+>  .heap          0x0000000020000098     0x2000 _build/nrf52840_xxaa/gcc_startup_nrf52840.S.o
+>                 0x0000000020002098                __HeapLimit = .
+561c596
+< .stack_dummy    0x0000000020000090     0x2000
+---
+> .stack_dummy    0x0000000020000098     0x2000
+563c598
+<  .stack         0x0000000020000090     0x2000 _build/nrf52840_xxaa/gcc_startup_nrf52840.S.o
+---
+>  .stack         0x0000000020000098     0x2000 _build/nrf52840_xxaa/gcc_startup_nrf52840.S.o
+565c600
+<                 0x0000000020002090                __StackLimit = __HeapLimit
+---
+>                 0x0000000020002098                __StackLimit = __HeapLimit
+568,570c603,605
+<                 0x000000000000006c                DataInitFlashUsed = (__bss_start__ - __data_start__)
+<                 0x00000000000006a8                CodeFlashUsed = (__etext - ORIGIN (FLASH))
+<                 0x0000000000000714                TotalFlashUsed = (CodeFlashUsed + DataInitFlashUsed)
+---
+>                 0x0000000000000070                DataInitFlashUsed = (__bss_start__ - __data_start__)
+>                 0x00000000000008d0                CodeFlashUsed = (__etext - ORIGIN (FLASH))
+>                 0x0000000000000940                TotalFlashUsed = (CodeFlashUsed + DataInitFlashUsed)
+591c626,632
+<                 0x000000000000012a       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-exit.o)
+---
+>                 0x000000000000012a       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o)
+>  .ARM.attributes
+>                 0x000000000000015e       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-exit.o)
+>  .ARM.attributes
+>                 0x0000000000000192       0x32 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
+>  .ARM.attributes
+>                 0x00000000000001c4       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-init.o)
+593c634
+<                 0x000000000000015e       0x32 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-impure.o)
+---
+>                 0x00000000000001f8       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-memset.o)
+595c636
+<                 0x0000000000000190       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-init.o)
+---
+>                 0x000000000000022c       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+597c638
+<                 0x00000000000001c4       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-memset.o)
+---
+>                 0x0000000000000260       0x32 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-ctype_.o)
+599c640
+<                 0x00000000000001f8       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libnosys.a(_exit.o)
+---
+>                 0x0000000000000292       0x34 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libnosys.a(_exit.o)
+601c642
+<                 0x000000000000022c       0x32 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtend.o
+---
+>                 0x00000000000002c6       0x32 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtend.o
+603c644
+<                 0x000000000000025e       0x1e /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtn.o
+---
+>                 0x00000000000002f8       0x1e /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/thumb/v7e-m+fp/hard/crtn.o
+611c652
+< .debug_line     0x0000000000000000     0x1f84
+---
+> .debug_line     0x0000000000000000     0x1f97
+614,615c655,656
+<  .debug_line    0x00000000000010db      0x821 _build/nrf52840_xxaa/main.c.o
+<  .debug_line    0x00000000000018fc      0x688 _build/nrf52840_xxaa/system_nrf52840.c.o
+---
+>  .debug_line    0x00000000000010db      0x834 _build/nrf52840_xxaa/main.c.o
+>  .debug_line    0x000000000000190f      0x688 _build/nrf52840_xxaa/system_nrf52840.c.o
+617c658
+< .debug_info     0x0000000000000000     0x4111
+---
+> .debug_info     0x0000000000000000     0x4158
+620,621c661,662
+<  .debug_info    0x00000000000020f7      0xb2c _build/nrf52840_xxaa/main.c.o
+<  .debug_info    0x0000000000002c23     0x14ee _build/nrf52840_xxaa/system_nrf52840.c.o
+---
+>  .debug_info    0x00000000000020f7      0xb73 _build/nrf52840_xxaa/main.c.o
+>  .debug_info    0x0000000000002c6a     0x14ee _build/nrf52840_xxaa/system_nrf52840.c.o
+623c664
+< .debug_abbrev   0x0000000000000000      0x9ad
+---
+> .debug_abbrev   0x0000000000000000      0x9d0
+626,627c667,668
+<  .debug_abbrev  0x00000000000004bd      0x2c1 _build/nrf52840_xxaa/main.c.o
+<  .debug_abbrev  0x000000000000077e      0x22f _build/nrf52840_xxaa/system_nrf52840.c.o
+---
+>  .debug_abbrev  0x00000000000004bd      0x2e4 _build/nrf52840_xxaa/main.c.o
+>  .debug_abbrev  0x00000000000007a1      0x22f _build/nrf52840_xxaa/system_nrf52840.c.o
+639c680
+< .debug_str      0x0000000000000000    0x845c8
+---
+> .debug_str      0x0000000000000000    0x8466d
+641c682
+<  .debug_str     0x00000000000000b1    0x8402c _build/nrf52840_xxaa/boards.c.o
+---
+>  .debug_str     0x00000000000000b1    0x84021 _build/nrf52840_xxaa/boards.c.o
+643,645c684,686
+<  .debug_str     0x00000000000840dd       0xed _build/nrf52840_xxaa/main.c.o
+<                                       0x84bf5 (size before relaxing)
+<  .debug_str     0x00000000000841ca      0x3fe _build/nrf52840_xxaa/system_nrf52840.c.o
+---
+>  .debug_str     0x00000000000840d2      0x19d _build/nrf52840_xxaa/main.c.o
+>                                       0x84ca5 (size before relaxing)
+>  .debug_str     0x000000000008426f      0x3fe _build/nrf52840_xxaa/system_nrf52840.c.o
+648c689
+< .debug_loc      0x0000000000000000      0xf46
+---
+> .debug_loc      0x0000000000000000      0xf81
+650c691
+<  .debug_loc     0x0000000000000ebf       0x87 _build/nrf52840_xxaa/main.c.o
+---
+>  .debug_loc     0x0000000000000ebf       0xc2 _build/nrf52840_xxaa/main.c.o
+652c693
+< .debug_ranges   0x0000000000000000      0x868
+---
+> .debug_ranges   0x0000000000000000      0x850
+654,655c695,696
+<  .debug_ranges  0x0000000000000800       0x28 _build/nrf52840_xxaa/main.c.o
+<  .debug_ranges  0x0000000000000828       0x40 _build/nrf52840_xxaa/system_nrf52840.c.o
+---
+>  .debug_ranges  0x0000000000000800       0x10 _build/nrf52840_xxaa/main.c.o
+>  .debug_ranges  0x0000000000000810       0x40 _build/nrf52840_xxaa/system_nrf52840.c.o
+657c698
+< .debug_macro    0x0000000000000000    0x167cb
+---
+> .debug_macro    0x0000000000000000    0x1682e
+720,722c761,765
+<  .debug_macro   0x0000000000016344      0x37a _build/nrf52840_xxaa/main.c.o
+<  .debug_macro   0x00000000000166be       0x1c _build/nrf52840_xxaa/main.c.o
+<  .debug_macro   0x00000000000166da       0xf1 _build/nrf52840_xxaa/system_nrf52840.c.o
+---
+>  .debug_macro   0x0000000000016344      0x3a5 _build/nrf52840_xxaa/main.c.o
+>  .debug_macro   0x00000000000166e9       0x1c _build/nrf52840_xxaa/main.c.o
+>  .debug_macro   0x0000000000016705       0x16 _build/nrf52840_xxaa/main.c.o
+>  .debug_macro   0x000000000001671b       0x22 _build/nrf52840_xxaa/main.c.o
+>  .debug_macro   0x000000000001673d       0xf1 _build/nrf52840_xxaa/system_nrf52840.c.o
+724c767
+< .debug_frame    0x0000000000000000      0x1fc
+---
+> .debug_frame    0x0000000000000000      0x294
+726,731c769,776
+<  .debug_frame   0x00000000000000fc       0x2c _build/nrf52840_xxaa/main.c.o
+<  .debug_frame   0x0000000000000128       0x40 _build/nrf52840_xxaa/system_nrf52840.c.o
+<  .debug_frame   0x0000000000000168       0x28 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-exit.o)
+<  .debug_frame   0x0000000000000190       0x2c /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-init.o)
+<  .debug_frame   0x00000000000001bc       0x20 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-memset.o)
+<  .debug_frame   0x00000000000001dc       0x20 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libnosys.a(_exit.o)
+---
+>  .debug_frame   0x00000000000000fc       0x30 _build/nrf52840_xxaa/main.c.o
+>  .debug_frame   0x000000000000012c       0x40 _build/nrf52840_xxaa/system_nrf52840.c.o
+>  .debug_frame   0x000000000000016c       0x30 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-atoi.o)
+>  .debug_frame   0x000000000000019c       0x28 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-exit.o)
+>  .debug_frame   0x00000000000001c4       0x2c /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-init.o)
+>  .debug_frame   0x00000000000001f0       0x20 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-memset.o)
+>  .debug_frame   0x0000000000000210       0x64 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-strtol.o)
+>  .debug_frame   0x0000000000000274       0x20 /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libnosys.a(_exit.o)
