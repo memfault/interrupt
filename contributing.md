@@ -20,7 +20,7 @@ To get in touch about contributing, simply submit the form below. You may also
 email us at  [interrupt@memfault.com](mailto:interrupt@memfault.com), or open a
 pull request on [Github](https://github.com/memfault/interrupt).
 
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfOrn7QxNZmuIDhHYf_aSbVzd-zUZUxHiPc56ecukt53LhWJw/viewform?embedded=true" width="640" height="854" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+<iframe class="form-contribute" src="https://docs.google.com/forms/d/e/1FAIpQLSfOrn7QxNZmuIDhHYf_aSbVzd-zUZUxHiPc56ecukt53LhWJw/viewform?embedded=true" width="640" height="854" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
 
 ## Post formatting
 
