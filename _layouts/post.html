@@ -16,7 +16,19 @@ layout: default
             {% if author.image %}
             <img src="{{ author.image | prepend: site.baseurl | replace: '//', '/' }}"  />
             {% endif %}
-            <span><a href="{{ author.web }}">{{ author.name }}</a> {{ author.blurb }}</span>
+            <span>
+                <a href="{{ author.web }}">{{ author.name }}</a> {{ author.blurb }}<br />
+                {% if author.twitter %}
+                <a href="https://twitter.com/{{ author.twitter }}"><svg class="svg-icon twitter"><use xlink:href="{{ 'img/social-icons.svg#twitter' | relative_url }}"></use></svg></a>
+                {% endif %}
+                {% if author.linkedin %}
+                <a href="{{ author.linkedin }}"><svg class="svg-icon linkedin"><use xlink:href="{{ 'img/social-icons.svg#linkedin' | relative_url }}"></use></svg></a>
+                {% endif %}
+                {% if author.github %}
+                <a href="https://github.com/{{ author.github }}"><svg class="svg-icon github"><use xlink:href="{{ 'img/social-icons.svg#github' | relative_url }}"></use></svg></a>
+                {% endif %}
+            </span>
+
         </div>
     {% endif %}
     <div id='discourse-comments'></div>
