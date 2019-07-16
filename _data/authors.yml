@@ -5,17 +5,26 @@ francois:
     web: https://twitter.com/baldassarifr
     image: /img/author/francois.jpg
     blurb: has worked on the embedded software teams at Sun, Pebble, and Oculus. He is currently the CEO of <a href='https://memfault.com'>Memfault</a>.
+    twitter: baldassarifr
+    linkedin: https://www.linkedin.com/in/fran%C3%A7ois-baldassari-63a8b91a/
+    github: franc0is
 chris:
     name: Chris Coleman
     email: chris@memfault.com
+    web: https://www.linkedin.com/in/christopher-coleman-812aa06b/
     image: /img/author/chris.jpg
     blurb: is the founder and CTO of Memfault. Prior to founding Memfault, Chris worked on the embedded software teams at Sun, Pebble, and Fitbit.
+    github: chrisc11
+    linkedin: https://www.linkedin.com/in/christopher-coleman-812aa06b/
 tyler:
     name: Tyler Hoffman
     email: tyler@memfault.com
-    web: https://twitter.com/ty_hoff
+    web: https://www.linkedin.com/in/tyhoff/
     image: /img/author/tyler.jpg
     blurb: is the founder and CPO of Memfault. Prior to founding Memfault, Tyler worked on the embedded software teams at Pebble and Fitbit.
+    twitter: ty_hoff
+    linkedin: https://www.linkedin.com/in/tyhoff/
+    github: tyhoff
 mafaneh:
     name: Mohammad Afaneh
     email: mohammad@novelbits.io

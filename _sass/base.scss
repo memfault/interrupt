@@ -27,8 +27,6 @@ $main-color-dark: #FDFDFD;
 $background-color-dark: #141845;
 $text-color-dark: #FDFDFD;
 
-$orange-color: #f66a0a !default;
-
 /*- Base settings -*/
 
 html {
@@ -50,20 +48,4 @@ a {
 	&:focus {
 		color: darken($main-color, 5%);
 	}
-}
-
-/*- Icons -*/
-
-.orange {
-  color: $orange-color;
-}
-
-.svg-icon {
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  fill: currentColor;
-  padding: 6px 4px 3px 5px;
-  vertical-align: text-bottom;
-  box-sizing: content-box;
 }
