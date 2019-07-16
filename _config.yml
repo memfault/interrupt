@@ -1,11 +1,12 @@
 # Site settings
-title: Interrupt | Modern embedded software.
-description: "A community for embedded software makers."
+title: Interrupt
+description: "A community and blog for embedded software makers"
 url: "https://interrupt.memfault.com"
 author:
   name: "Memfault"
   email: "interrupt@memfault.com"
-  url: "http://memfault.com"
+  url: "https://memfault.com"
+google_site_verification: 2qyLRd8BiI5o3XnqssLvbzPDJ-2S6ytb9iLoNoz1Z9M
 
 # Build settings
 baseurl: /blog
@@ -30,6 +31,7 @@ defaults:
 # Plugins
 plugins:
   - jekyll-paginate
+  - jekyll-seo-tag
 
 # Custom variables
 version: "1.1.0"

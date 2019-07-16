@@ -1,5 +1,6 @@
 ---
-title: " Programming the ATSAMD21 with IBDAP"
+title: "Programming the ATSAMD21 with IBDAP"
+description: "How to flash the Atmel SAM D21 using the IBDAP programmer"
 author: francois
 ---
 
