@@ -5,7 +5,7 @@ Protection Unit (MPU) to improve firmware security and stability."
 author: chris
 ---
 
-On a computer when when an application dereferences a NULL pointer or tries to access kernel memory we can catch it pretty easily thanks to the features provided by the [MMU](https://en.wikipedia.org/wiki/Memory_management_unit#Benefits) on the chip.
+On a computer when an application dereferences a NULL pointer or tries to access kernel memory we can catch it pretty easily thanks to the features provided by the [MMU](https://en.wikipedia.org/wiki/Memory_management_unit#Benefits) on the chip.
 
 For embedded development on MCUs, we aren't always so lucky. A bad memory access from a task responsible for reading an accelerometer could corrupt a buffer being used elsewhere in the system to update a display! Fortunately, not all hope is lost ...
 
