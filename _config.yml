@@ -2,6 +2,7 @@
 title: Interrupt
 description: "A community and blog for embedded software makers"
 url: "https://interrupt.memfault.com"
+logo: /img/interrupt-logo-1200px.png
 author:
   name: "Memfault"
   email: "interrupt@memfault.com"
@@ -27,6 +28,7 @@ defaults:
       type: "posts"
     values:
       layout: "post"
+      image: /img/interrupt-logo-512px.png
 
 # Plugins
 plugins:
