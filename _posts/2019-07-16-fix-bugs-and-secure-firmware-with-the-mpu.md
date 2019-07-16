@@ -1,6 +1,7 @@
 ---
-title: "Catching Bugs and Preventing Security Exploits with the ARM MPU"
-description: "Example usage of securing your embedded system using the ARM Cortex M Memory Protection Unit (MPU)"
+title: "Fix Bugs and Secure Firmware with the MPU"
+description: "Step-by-step examples of how to use the ARM Cortex M Memory
+Protection Unit (MPU) to improve firmware security and stability."
 author: chris
 ---
 
@@ -10,7 +11,8 @@ For embedded development on MCUs, we aren't always so lucky. A bad memory access
 
 <!-- excerpt start -->
 
-Many ARM MCUs implement an optional unit, known as the **Memory Protection Unit (MPU)**, which lets you safeguard how regions of memory are accessed.
+Many ARM MCUs implement an optional unit, known as the **Memory Protection Unit
+(MPU)**, which lets you control how regions of memory are accessed.
 In this article, we will deep dive into the unit and walk through a few practical examples of how it can be used to prevent bad memory accesses and security exploits on _Cortex-M_ devices.
 
 <!-- excerpt end -->
