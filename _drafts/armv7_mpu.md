@@ -1,5 +1,6 @@
 ---
 title: "Catching Bugs and Preventing Security Exploits with the ARM MPU"
+description: "Example usage of securing your embedded system using the ARM Cortex M Memory Protection Unit (MPU)"
 author: chris
 ---
 
