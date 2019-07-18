@@ -2,7 +2,7 @@
 
 ## About
 
-Interrupt it a community for embedded software makers.
+Interrupt is a community for embedded software makers.
 
 Interrupt is sponsored by [Memfault](https://memfault.com)
 
