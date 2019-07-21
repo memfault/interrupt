@@ -1,5 +1,6 @@
 ---
-title: "Using the GDB Python API with PyPi Packages"
+title: "Using Python PyPi packages with GDB scripts"
+description: "How to setup GDB and Python to use PyPi packages with GDB Python scripts"
 author: tyler
 ---
 
@@ -76,7 +77,7 @@ x.add_row(["Value 1", ...])
 print(x)
 ```
 
-Lets go ahead and try it out!
+Let's go ahead and try it out!
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
 posts straight to your mailbox_
@@ -91,20 +92,32 @@ continue from [here](#setting-syspath-within-gdbinit).
 Throughout this tutorial, I will be using:
 
 - macOS 10.14 using Python 2.7.15 installed using [Brew](https://brew.sh/) along
-  with a Virtual Environment
+  with a [Virtual Environment](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
 - `arm-none-eabi-gdb-py` which is GDB 8.2 compiled against the macOS System
   Python 2.7.10.
 
 Even though the tutorial is written on macOS, the steps mentioned apply directly
 to Linux and likely Windows as well.
 
+#### Virtual Environment
+
+When installing Python packages, it's always best to use a virtual environment. This is stressed in probably every Python tutorial, and I'll summarize their advice here:
+
+- Think twice before using `sudo pip`. The only place this may be appropriate is within a disposable environment, such as a virtual machine or a Docker image, or for installing the `virtualenv` package.
+- If on a normal operating system installation, use a virtual environment. [This guide](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv) is a good starting point.
+- If using macOS, use [Brew to install Python](https://docs.brew.sh/Homebrew-and-Python) and don't touch your system Python at all (**never** use `sudo`)
+
+In this post, we will be using a Python 2.7 virtual environment.
+
+
 ### Installing PTable and Initial Test
 
-The first thing we need to do is install the package. Lets activate our virtual
+The first thing we need to do is install the package. Let's create and activate our virtual
 environment and install PTable using `pip`.
 
 ```
-$ source activate venv
+$ virtualenv -p /usr/bin/python2.7 venv
+$ source venv/bin/activate
 (venv)
 $ pip install PTable
 Collecting ptable
@@ -235,17 +248,19 @@ We need three things:
 
 #### 1. Modifying GDB on launch
 
-To modify every instance of GDB that is launched, we can edit our `~/.gdbinit`
-file.
+To modify every instance of GDB that is launched, we will edit our `~/.gdbinit` file. However, there are *many* other ways to modify how GDB is launched, and those are covered in detail [here](http://sourceware.org/gdb/onlinedocs/gdb/Startup.html) in GDB's documentation. In summary, here is the order of steps GDB takes during launch:
 
-Do note that GDB will look in the working directly for a `.gdbinit` file and
-that a file can be loaded using the `--init-command=FILE` argument when
-launching GDB. This is useful for working on team projects!
+- Read and execute the system `gdbinit` file located at `/usr/share/gdb/gdbinit` or similar
+- Read and execute `~/.gdbinit`
+- Execute commands provided by args `-ix` and `-iex`
+- Read and execute the local `.gdbinit` file in the current directory, provided `set auto-load local-gdbinit` is set to `on`
+- Execute commands provided by args `-ex` and `-x`
+
+A tip to readers would be to use a combination of these setup steps, such as a project `.gdbinit` file that is committed to the repo so that a team can share common scripts!
 
 #### 2. Extract `sys.path` values from `venv`
 
-To output the value of `sys.path` in a shell, we can actually launch Python in
-"command mode" and have it print a value to standard out. Below, we import `sys`
+To output the value of `sys.path` in a shell, we can actually launch Python [with a given command](https://docs.python.org/2/using/cmdline.html#cmdoption-c) and have it print a value to standard out. Below, we import `sys`
 and immediately print `sys.path` to standard out.
 
 ```python
