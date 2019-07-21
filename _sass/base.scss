@@ -21,6 +21,7 @@ html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, img {
 $main-color: #141845;
 $background-color: #FDFDFD;
 $text-color: #222222;
+$link-color: #1390CF;
 
 // Dark theme (not used)
 $main-color-dark: #FDFDFD;
@@ -46,6 +47,6 @@ a {
 	font-weight: 700;
 	&:hover,
 	&:focus {
-		color: darken($main-color, 5%);
+		color: darken($link-color, 5%);
 	}
 }
