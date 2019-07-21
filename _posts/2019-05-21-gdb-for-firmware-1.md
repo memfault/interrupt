@@ -491,7 +491,7 @@ One useful feature within GDB is the ability to log all output to a text file. T
 It's done as follows:
 
 - `(gdb) set logging on` to start logging
-- `(gdb) set logging on` to stop logging
+- `(gdb) set logging off` to stop logging
 - The default output log filename is `gdb.txt` and it is saved to the same folder where the execution of GDB was initiated from.
 
 ## Closing and Summary
