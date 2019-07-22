@@ -18,7 +18,7 @@ layout: null
                 {{ post.url | prepend: site.url }}
             </link>
             <description>
-                {{ post.content | split:'<!-- excerpt end -->' | first | split:'<!-- excerpt start -->' | last | escape }}
+                {{ post.excerpt | xml_escape }}
             </description>
             {% assign author = site.data.authors[post.author] %}
             {% if author %}
