@@ -10,7 +10,21 @@ $linkedin-color: #0077B5;
 
 /*- formatting -*/
 
+%colored-links {
+  a {
+    color: $link-color;
+    text-decoration: none;
+    font-weight: 700;
+    &:hover,
+    &:focus {
+      color: darken($link-color, 5%);
+    }
+  }
+}
+
 .content {
+  @extend %colored-links;
+
   &:after {
     display: block;
     content: '';
@@ -22,6 +36,8 @@ $linkedin-color: #0077B5;
 }
 
 div.author {
+  @extend %colored-links;
+
   display: flex;
   padding-bottom: 20px;
 
