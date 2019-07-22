@@ -6,20 +6,20 @@ layout: null
 <rss version="2.0">
 
     <channel>
-        <title>{{ site.title }}</title>
-        <link>{{ site.url }}</link>
-        <description>{{ site.description }}</description>
-        <pubDate>{{ site.posts[0].date | date_to_rfc822 }}</pubDate>
-        <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
+        <title>{{ site.title | xml_escape }}</title>
+        <link>{{ site.url | xml_escape }}</link>
+        <description>{{ site.description | xml_escape }}</description>
+        <pubDate>{{ site.posts[0].date | date_to_xmlschema }}</pubDate>
+        <lastBuildDate>{{ site.time | date_to_xmlschema }}</lastBuildDate>
         {% for post in site.posts %}
         <item>
-            <title>{{ post.title }}</title>
-            <link>
-                {{ post.url | prepend: site.url }}
-            </link>
+            <title>{{ post.title | xml_escape }}</title>
+            <link>{{ post.url | absolute_url | xml_escape }}</link>
             <description>
                 {{ post.excerpt | xml_escape }}
             </description>
+            <guid>{{ post.url | absolute_url | xml_escape }}</guid>
+            <pubDate>{{ post.date | date_to_xmlschema }}</pubDate>
             {% assign author = site.data.authors[post.author] %}
             {% if author %}
                 <author>
@@ -27,10 +27,6 @@ layout: null
                     <uri>{{ author.web | xml_escape }}</uri>
                 </author>
             {% endif %}
-                <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
-            <guid>
-                {{ post.url | prepend: site.url }}
-            </guid>
         </item>
         {% endfor %}
     </channel>
