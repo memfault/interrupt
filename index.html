@@ -15,7 +15,7 @@ layout: default
             <span>by <a href="{{ author.web }}">{{ author.name }}</a></span>
             {% endif %}
         </div>
-        <p>{{ post.content | split:'<!-- excerpt end -->' | first | split:'<!-- excerpt start -->' | last }}</p>
+        <p>{{ post.excerpt }}</p>
     </li>
 
     {% endfor %}

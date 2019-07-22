@@ -19,6 +19,7 @@ permalink: /:title
 paginate: 8
 paginate_path: /page:num/
 source: .
+excerpt_separator: "<!-- excerpt end -->"
 
 # Default values
 defaults:
