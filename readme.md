@@ -26,7 +26,7 @@ see your drafts.
 
 We recommend:
 ```terminal
-$ jekyll serve -b / -D
+$ bundle install jekyll serve -b / -D
 ```
 
 ## Acknowledgements
