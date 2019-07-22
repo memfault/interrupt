@@ -17,6 +17,12 @@ layout: null
             <link>{{ post.url | absolute_url | xml_escape }}</link>
             <description>
                 {{ post.excerpt | xml_escape }}
+                {% capture continue_reading %}
+                <p>
+                <a href="{{ post.url | absolute_url | xml_escape }}"><strong>Continue reading…</strong></a>
+                <p>
+                {% endcapture %}
+                {{ continue_reading | xml_escape }}
             </description>
             <guid>{{ post.url | absolute_url | xml_escape }}</guid>
             <pubDate>{{ post.date | date_to_xmlschema }}</pubDate>
