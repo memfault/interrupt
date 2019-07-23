@@ -84,7 +84,7 @@ posts straight to your mailbox_
 
 ## Setting up GDB's Python and PyPi
 
-> If you want to know the solution right now and skip over our investigation step,
+> If you want to know the solution right now and skip over our investigation,
 continue from [here](#setting-syspath-within-gdbinit).
 
 ### Environment
@@ -244,7 +244,7 @@ We need three things:
 
 1. Find a way to modify GDB on initialization
 2. Extract our virtual environment's `sys.path` values
-3. append these paths to GDB's Python `sys.path` value.
+3. Append these paths to GDB's Python `sys.path` value.
 
 #### 1. Modifying GDB on launch
 
@@ -280,6 +280,7 @@ GDB's `sys.path`
 In my local `~/.gdbinit` script, I will place the following code snippet at the
 bottom.
 
+
 ```python
 # Update GDB's Python paths with the `sys.path` values of the local 
 #  Python installation, whether that is brew'ed Python, a virtualenv, 
@@ -301,6 +302,8 @@ end
 
 This will allow any Python packages installed in the local installation or
 virtual environment (the one active when launching GDB) to be accessible to GDB!
+
+The snippet above can also be found in this [gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
 
 ### Test Importing PrettyTable within GDB
 
