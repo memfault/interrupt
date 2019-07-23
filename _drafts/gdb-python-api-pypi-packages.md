@@ -1,6 +1,7 @@
 ---
 title: "Using Python PyPi packages with GDB scripts"
-description: "How to setup GDB and Python to use PyPi packages with GDB Python scripts"
+description:
+  "How to setup GDB and Python to use PyPi packages with GDB Python scripts"
 author: tyler
 ---
 
@@ -67,7 +68,8 @@ Found a Linked List with 10 nodes:
 +-----+-------------+--------------------------------------+
 ```
 
-This is incredibly easy to do using the [PTable](https://pypi.org/project/PTable/) package:
+This is incredibly easy to do using the
+[PTable](https://pypi.org/project/PTable/) package:
 
 ```python
 x = PrettyTable()
@@ -79,20 +81,21 @@ print(x)
 
 Let's go ahead and try it out!
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
+straight to your mailbox_
 
 ## Setting up GDB's Python and PyPi
 
 > If you want to know the solution right now and skip over our investigation,
-continue from [here](#setting-syspath-within-gdbinit).
+> continue from [here](#setting-syspath-within-gdbinit).
 
 ### Environment
 
 Throughout this tutorial, I will be using:
 
 - macOS 10.14 using Python 2.7.15 installed using [Brew](https://brew.sh/) along
-  with a [Virtual Environment](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
+  with a
+  [Virtual Environment](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
 - `arm-none-eabi-gdb-py` which is GDB 8.2 compiled against the macOS System
   Python 2.7.10.
 
@@ -101,19 +104,26 @@ to Linux and likely Windows as well.
 
 #### Virtual Environment
 
-When installing Python packages, it's always best to use a virtual environment. This is stressed in probably every Python tutorial, and I'll summarize their advice here:
+When installing Python packages, it's always best to use a virtual environment.
+This is stressed in probably every Python tutorial, and I'll summarize their
+advice here:
 
-- Think twice before using `sudo pip`. The only place this may be appropriate is within a disposable environment, such as a virtual machine or a Docker image, or for installing the `virtualenv` package.
-- If on a normal operating system installation, use a virtual environment. [This guide](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv) is a good starting point.
-- If using macOS, use [Brew to install Python](https://docs.brew.sh/Homebrew-and-Python) and don't touch your system Python at all (**never** use `sudo`)
+- Think twice before using `sudo pip`. The only place this may be appropriate is
+  within a disposable environment, such as a virtual machine or a Docker image,
+  or for installing the `virtualenv` package.
+- If on a normal operating system installation, use a virtual environment.
+  [This guide](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
+  is a good starting point.
+- If using macOS, use
+  [Brew to install Python](https://docs.brew.sh/Homebrew-and-Python) and don't
+  touch your system Python at all (**never** use `sudo`)
 
 In this post, we will be using a Python 2.7 virtual environment.
 
-
 ### Installing PTable and Initial Test
 
-The first thing we need to do is install the package. Let's create and activate our virtual
-environment and install PTable using `pip`.
+The first thing we need to do is install the package. Let's create and activate
+our virtual environment and install PTable using `pip`.
 
 ```
 $ virtualenv -p /usr/bin/python2.7 venv
@@ -154,7 +164,8 @@ Traceback (most recent call last):
 ImportError: No module named prettytable
 ```
 
-> NOTE: One can also use the GDB command `pi` , which is short for `python-interactive`
+> NOTE: One can also use the GDB command `pi` , which is short for
+> `python-interactive`
 
 ### Investigation into `sys.path`
 
@@ -199,7 +210,8 @@ Python 2.7.15 (default, Feb 12 2019, 11:00:12)
 ```
 
 My shell's Python2 is from the Brew Python 2.7.15 installation and is importing
-packages from the `site-packages/` directory within the virtual environment that I have activated. This is perfect.
+packages from the `site-packages/` directory within the virtual environment that
+I have activated. This is perfect.
 
 #### GDB
 
@@ -248,20 +260,30 @@ We need three things:
 
 #### 1. Modifying GDB on launch
 
-To modify every instance of GDB that is launched, we will edit our `~/.gdbinit` file. However, there are *many* other ways to modify how GDB is launched, and those are covered in detail [here](http://sourceware.org/gdb/onlinedocs/gdb/Startup.html) in GDB's documentation. In summary, here is the order of steps GDB takes during launch:
+To modify every instance of GDB that is launched, we will edit our `~/.gdbinit`
+file. However, there are _many_ other ways to modify how GDB is launched, and
+those are covered in detail
+[here](http://sourceware.org/gdb/onlinedocs/gdb/Startup.html) in GDB's
+documentation. In summary, here is the order of steps GDB takes during launch:
 
-- Read and execute the system `gdbinit` file located at `/usr/share/gdb/gdbinit` or similar
+- Read and execute the system `gdbinit` file located at `/usr/share/gdb/gdbinit`
+  or similar
 - Read and execute `~/.gdbinit`
 - Execute commands provided by args `-ix` and `-iex`
-- Read and execute the local `.gdbinit` file in the current directory, provided `set auto-load local-gdbinit` is set to `on` (default)
+- Read and execute the local `.gdbinit` file in the current directory, provided
+  `set auto-load local-gdbinit` is set to `on` (default)
 - Execute commands provided by args `-ex` and `-x`
 
-A tip to readers would be to use a combination of these setup steps, such as a project `.gdbinit` file that is committed to the repo so that a team can share common scripts!
+A tip to readers would be to use a combination of these setup steps, such as a
+project `.gdbinit` file that is committed to the repo so that a team can share
+common scripts!
 
 #### 2. Extract `sys.path` values from `venv`
 
-To output the value of `sys.path` in a shell, we can actually launch Python [with a given command](https://docs.python.org/2/using/cmdline.html#cmdoption-c) and have it print a value to standard out. Below, we import `sys`
-and immediately print `sys.path` to standard out.
+To output the value of `sys.path` in a shell, we can actually launch Python
+[with a given command](https://docs.python.org/2/using/cmdline.html#cmdoption-c)
+and have it print a value to standard out. Below, we import `sys` and
+immediately print `sys.path` to standard out.
 
 ```python
 (venv)
@@ -274,16 +296,16 @@ list.
 
 #### 3. Append `sys.path` to GDB's Python
 
-Now we need to take the values from `sys.path` in [Step #2](#2-extract-syspath-values-from-venv) and append them to
-GDB's `sys.path`
+Now we need to take the values from `sys.path` in
+[Step #2](#2-extract-syspath-values-from-venv) and append them to GDB's
+`sys.path`
 
 In my local `~/.gdbinit` script, I will place the following code snippet at the
 bottom.
 
-
 ```python
-# Update GDB's Python paths with the `sys.path` values of the local 
-#  Python installation, whether that is brew'ed Python, a virtualenv, 
+# Update GDB's Python paths with the `sys.path` values of the local
+#  Python installation, whether that is brew'ed Python, a virtualenv,
 #  or another system python.
 
 # Convert GDB to interpret in Python
@@ -291,9 +313,9 @@ python
 import sys
 import os
 import subprocess
-# Execute a Python using the user's shell and pull out the sys.path 
+# Execute a Python using the user's shell and pull out the sys.path
 #  from that version
-paths = eval(subprocess.check_output('python -c "import sys;print(sys.path)"', 
+paths = eval(subprocess.check_output('python -c "import sys;print(sys.path)"',
                                      shell=True).strip())
 # Extend the current GDB instance's Python paths
 sys.path.extend(paths)
@@ -303,7 +325,8 @@ end
 This will allow any Python packages installed in the local installation or
 virtual environment (the one active when launching GDB) to be accessible to GDB!
 
-The snippet above can also be found in this [gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
+The snippet above can also be found in this
+[gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
 
 ### Test Importing PrettyTable within GDB
 
@@ -329,7 +352,7 @@ and we will use the same `.c` example located
 [here]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}#example-usage)
 
 > If you need to get the previous `.c` file compiled and running to test out the
-> following commands, refer to the [previous
+> following commands, refer to the [previous >
 > post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) for
 > instructions.
 
@@ -448,9 +471,17 @@ Found a Linked List with 10 nodes:
 
 ## Closing
 
-As we've said [before]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) and will continue to stress, using the GDB Python API takes debugging to another level by allowed one to automate tedious tasks and make complex ones reproducible and shareable across teams. 
+As we've said
+[before]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) and
+will continue to stress, using the GDB Python API takes debugging to another
+level by allowed one to automate tedious tasks and make complex ones
+reproducible and shareable across teams.
 
-The above steps will get any GDB up and running using third-party PyPi packages. If you want a simple snippet to use or share with teammates about how to set up their GDB for PyPi package use, you can use [this gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
+The above steps will get any GDB up and running using third-party PyPi packages.
+If you want a simple snippet to use or share with teammates about how to set up
+their GDB for PyPi package use, you can use
+[this gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
 
-
-_All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-prettytable-post/). See anything you'd like to change? Submit a pull request!_
+_All the code used in this blog post is available on
+[Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-prettytable-post/).
+See anything you'd like to change? Submit a pull request!_
