@@ -154,12 +154,12 @@ Traceback (most recent call last):
 ImportError: No module named prettytable
 ```
 
-> NOTE: One can also use `pi` , which is short for `python-interactive`
+> NOTE: One can also use the GDB command `pi` , which is short for `python-interactive`
 
 ### Investigation into `sys.path`
 
 Usually, when one experiences issues with Python package imports, the list of
-paths within `sys.path` is invalid, missing entries, or contains the wrong
+paths within `sys.path` is invalid, has missing entries, or contains the wrong
 package locations. This can be caused by two common reasons:
 
 - Using the wrong Python executable, e.g. Mac's system Python at
@@ -199,7 +199,7 @@ Python 2.7.15 (default, Feb 12 2019, 11:00:12)
 ```
 
 My shell's Python2 is from the Brew Python 2.7.15 installation and is importing
-packages from my virtual environment that I have activated. This is perfect.
+packages from the `site-packages/` directory within the virtual environment that I have activated. This is perfect.
 
 #### GDB
 
@@ -253,7 +253,7 @@ To modify every instance of GDB that is launched, we will edit our `~/.gdbinit` 
 - Read and execute the system `gdbinit` file located at `/usr/share/gdb/gdbinit` or similar
 - Read and execute `~/.gdbinit`
 - Execute commands provided by args `-ix` and `-iex`
-- Read and execute the local `.gdbinit` file in the current directory, provided `set auto-load local-gdbinit` is set to `on`
+- Read and execute the local `.gdbinit` file in the current directory, provided `set auto-load local-gdbinit` is set to `on` (default)
 - Execute commands provided by args `-ex` and `-x`
 
 A tip to readers would be to use a combination of these setup steps, such as a project `.gdbinit` file that is committed to the repo so that a team can share common scripts!
@@ -274,23 +274,26 @@ list.
 
 #### 3. Append `sys.path` to GDB's Python
 
-Now we need to take the values from `sys.path` in step #2 and append them to
+Now we need to take the values from `sys.path` in [Step #2](#2-extract-syspath-values-from-venv) and append them to
 GDB's `sys.path`
 
 In my local `~/.gdbinit` script, I will place the following code snippet at the
 bottom.
 
 ```python
-# Update GDB's Python paths with the `sys.path` values of the local Python installation,
-#  whether that is brew'ed Python, a virtualenv, or another system python.
+# Update GDB's Python paths with the `sys.path` values of the local 
+#  Python installation, whether that is brew'ed Python, a virtualenv, 
+#  or another system python.
 
 # Convert GDB to interpret in Python
 python
 import sys
 import os
 import subprocess
-# Execute a Python using the user's shell and pull out the sys.path from that version
-paths = eval(subprocess.check_output('python -c "import sys;print(sys.path)"', shell=True).strip())
+# Execute a Python using the user's shell and pull out the sys.path 
+#  from that version
+paths = eval(subprocess.check_output('python -c "import sys;print(sys.path)"', 
+                                     shell=True).strip())
 # Extend the current GDB instance's Python paths
 sys.path.extend(paths)
 end
@@ -324,8 +327,8 @@ and we will use the same `.c` example located
 
 > If you need to get the previous `.c` file compiled and running to test out the
 > following commands, refer to the [previous
-> post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) to get
-> it up and running.
+> post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) for
+> instructions.
 
 Below, I've removed some of the previous code and added comments about what
 we'll need to do to format our Linked List with PrettyTable. Most of the
