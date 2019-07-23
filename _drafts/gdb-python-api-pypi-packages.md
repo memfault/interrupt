@@ -483,5 +483,5 @@ their GDB for PyPi package use, you can use
 [this gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
 
 _All the code used in this blog post is available on
-[Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-prettytable-post/).
+[Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-pypi-post/).
 See anything you'd like to change? Submit a pull request!_
