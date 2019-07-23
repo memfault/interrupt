@@ -1,7 +1,7 @@
 ---
-title: "Using Python PyPi packages with GDB scripts"
+title: "Supercharge GDB with Python PyPi packages"
 description:
-  "How to setup GDB and Python to use PyPi packages with GDB Python scripts"
+  "How to setup GDB and Python to use PyPi packages in GDB scripts"
 author: tyler
 ---
 
@@ -10,8 +10,8 @@ author: tyler
 [In a previous
 post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}), we
 discussed how to automate some of the more tedious parts of debugging firmware
-using the
-[GDB Python API](https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html). To
+using 
+[Python in GDB Scripts](https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html). To
 make these commands more powerful, one could use third-party packages from
 Python's [PyPi](https://pypi.org/) repository. In this post, we will discuss how
 to properly setup GDB and Python and then modify the `uuid_list_dump` command
