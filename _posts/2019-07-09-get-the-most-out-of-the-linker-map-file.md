@@ -377,10 +377,7 @@ Feel free to share your story with any interesting usage of the map files.
 
 ## Sources
 
-[https://www.embeddedrelated.com/showarticle/900.php](https://www.embeddedrelated.com/showarticle/900.php)
-
-[https://stackoverflow.com/questions/755783/whats-the-use-of-map-files-the-linker-produces](https://stackoverflow.com/questions/755783/whats-the-use-of-map-files-the-linker-produces)
-
-[https://sourceware.org/binutils/docs/ld/Options.html#index-_002d_002dprint_002dmap](https://sourceware.org/binutils/docs/ld/Options.html#index-_002d_002dprint_002dmap)
-
-[https://www.oreilly.com/library/view/programming-embedded-systems/0596009836/ch04.html](https://www.oreilly.com/library/view/programming-embedded-systems/0596009836/ch04.html)
+- [https://www.embeddedrelated.com/showarticle/900.php](https://www.embeddedrelated.com/showarticle/900.php)
+- [https://stackoverflow.com/questions/755783/whats-the-use-of-map-files-the-linker-produces](https://stackoverflow.com/questions/755783/whats-the-use-of-map-files-the-linker-produces)
+- [https://sourceware.org/binutils/docs/ld/Options.html#index-_002d_002dprint_002dmap](https://sourceware.org/binutils/docs/ld/Options.html#index-_002d_002dprint_002dmap)
+- [https://www.oreilly.com/library/view/programming-embedded-systems/0596009836/ch04.html](https://www.oreilly.com/library/view/programming-embedded-systems/0596009836/ch04.html)

@@ -16,12 +16,14 @@ html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, img {
   border: 0;
 }
 
+$baseline-height: 2rem;
+
 /*- Base color -*/
 
 $main-color: #141845;
 $background-color: #FDFDFD;
 $text-color: #222222;
-$link-color: #1390CF;
+$link-color: $main-color;
 
 // Dark theme (not used)
 $main-color-dark: #FDFDFD;
@@ -32,21 +34,29 @@ $text-color-dark: #FDFDFD;
 
 html {
 	background-color: $background-color;
-	font-size: 16px;
 	@media (min-width: 940px) {
 		font-size: 18px;
 	}
-	line-height: 1.5;
+	line-height: $baseline-height;
 	color: $text-color;
 }
 
 /*- Link -*/
 a {
-	color: $main-color;
+	color: $link-color;
 	text-decoration: none;
 	font-weight: 700;
 	&:hover,
 	&:focus {
 		color: darken($link-color, 5%);
+	}
+}
+
+article .content a {
+	font-weight: normal;
+	border-bottom: 1px solid rgba($link-color, 0.35);
+
+	&:hover, &:focus {
+		border-bottom-color: $link-color;
 	}
 }
