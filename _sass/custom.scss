@@ -33,6 +33,13 @@ $linkedin-color: #0077B5;
     margin: 23px auto;
     background-color: lighten($text-color, 70%);
   }
+
+  ul, ol {
+    ul, ol {
+      margin-left: 4ex;
+      margin-bottom: 0;
+    }
+  }
 }
 
 div.author {

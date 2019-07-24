@@ -134,6 +134,11 @@ html, body {
   img {
   	display: block;
   }
+  h1 {
+    font-size: 2.5rem;
+    line-height: 3rem;
+    padding: 0.25rem 0;
+  }
   #logo {
   	max-height: 66px;
     margin-top: 6px;
@@ -214,16 +219,6 @@ img[title="Emerald"] {
 
 code {
   color: lighten($text-color, 35%);
-}
-
-/* Set the vertical rhythm (and padding-left) for lists inside post content */
-
-.content ul, .content ol {
-  line-height: 1.5em; /* 24px/16px */
-  padding-left: 1.5em;
-  @media (min-width: 940px) {
-    line-height: 1.33334em; /* 24px/18px */
-  }
 }
 
 /* Pages */
