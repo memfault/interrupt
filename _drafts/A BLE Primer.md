@@ -3,38 +3,6 @@ title: "A BLE Primer"
 author: mafaneh
 ---
 
-## Introduction (.. and a personal story)
-I used to be obsessed with audio quality and finding the best sounding headphones and earphones. I was a Westone customer for many years (a US-based company known for their high quality products in different applications including: hearing aids, music, hearing protection, and military). In fact, if you're looking for great quality sounding earphones, I would highly recommend you check them out (no affiliation, just a happy customer!): www.westone.com.
-
-When Apple released the AirPods in December of 2016, I jumped on the bandwagon and pre-ordered them right off the bat. Apple sold me on the simplicity of connectivity, the relatively long battery life, and reliability.
-
-Fast forward 2.5 years and I have no regrets! Sure, there were tradeoffs and I miss the high fidelity sound from my Westone earphones (which I still carry in my backpack), but for me the benefits outweighed the drawbacks. I sacrificed quality in favor of convenience and practicality. I suspect there are others who would do the same and still be happy!
-
-So you may be asking, where am I going with all this? 
-
-In my opinion, this is what will help wireless succeed in the marketplace (especially for consumer products). For industrial, enterprise, and commercial, it will have to prove its robustness, reliability, and more importantly its ROI.
-
-People are willing to sacrifice some quality and other aspects (they wouldn't consider sacrificing) when they try wireless. The convenience factor is huge! Unfortunately, it sometimes comes at a steep price (like in the AirPods example). Over time, however, wireless will only get cheaper and more affordable.
-
-Wireless is changing the world, and it's providing many benefits that help make our lives easier. I'm not talking just about the consumer applications, but rather applications that make your life simpler and easier and completely in the background. Technology is best utilized when it happens in the background without the user ever being aware of its existence.
-
-Wireless provides the following benefits:
-
-- Removing wires.
-- Freedom and flexibility.
-- New use cases. Objects that cannot be connected with a wire, due to design factors or physical size limitations, can still be connected to other devices via wireless technologies.
-- Convenience, especially with remote or long-distance access.
-- It has the potential of saving lives! Think of a use case where an array of sensors are placed on the top of an electric pole, on the edge of a cliff, or even in a dam. Having the ability to collect data and control devices placed in these unsafe areas can reduce the safety risk significantly. 
-
-Of course nothing is perfect, so wireless has its drawbacks too:
-
-- Sacrificing quality in some cases (due to compression and limited bandwidth).
-- Reliability concerns.
-- Security (easier to sniff packets and listen in on communication when you don't need physical access to the device).
-- From a developer's perspective, it's much harder to develop and test wireless systems.
-- High power consumption (in some use cases).
-- Lack of interoperability in many cases (especially across different protocols and standards). This leads to more complicated integration between wireless networks.
-
 ## Wireless Technologies and the Internet of Things (IoT)
 You've probably heard of the term IoT (Internet of Things) many times, and likely seen the hype in the media surrounding this somewhat confusing term. In basic terms, IoT refers to connecting devices to each other and to the Internet/Cloud (whether it's private or the mass Internet). It also implies wireless connectivity for devices and potentially adding connectivity to a slew of devices that were never connected before (even [flip-flops](https://www.geek.com/tech/smart-flip-flops-keep-brand-buyers-connected-1694504/)!).
 
@@ -49,9 +17,11 @@ Wireless technologies are a dime a dozen, each with their own quirks and feature
 - NFC
 - Infrared (IR)
 
+<!-- excerpt start -->
 Most of these focus on the low-power aspect and are suitable for embedding into devices that need to run on small batteries for long periods of time. Applications include: industrial sensors, medical devices, wearables, and more.
 
 In today's post, we'll be covering one of the most popular low-power IoT technologies: Bluetooth Low Energy (BLE). We'll go over:
+<!-- excerpt end -->
 
 - The basics of Bluetooth Low Energy
 - A comparison between BLE and Bluetooth Classic
@@ -69,7 +39,7 @@ Bluetooth Low Energy (BLE) is a low power wireless technology used for connectin
 
 Bluetooth started as a short-distance cable replacement technology. For example, to replace wires in devices such as a mouse, keyboard, or a PC communicating with a Personal Digital Assistant (PDA) which were popular in the late 1990s and early 2000s. The first official version of Bluetooth was released by Ericsson in 1994, named after King Harald “Bluetooth” Gormsson of Denmark who helped unify warring factions in the 10th century CE.
 
-Bluetooth Low Energy (BLE), however, was introduced in the 4.0 version of the Bluetooth specification in 2010. The original Bluetooth defined in the previous versions is referred to as Bluetooth Classic. BLE was not an upgrade to the original Bluetooth: Bluetooth Classic, but rather it’s a new technology that utilizes the Bluetooth brand but focuses on the Internet of Things (IoT) applications where small amounts of data are transferred at lower speeds. It’s important to note that there’s a big difference between Bluetooth Classic and Bluetooth Low Energy in terms of technical specification, implementation and the types of applications they’re each suitable for.
+Bluetooth Low Energy (BLE) was introduced in the 4.0 version of the Bluetooth specification in 2010. The original Bluetooth defined in the previous versions is referred to as Bluetooth Classic. BLE was not an upgrade to Bluetooth Classic, but rather it’s a new technology that utilizes the Bluetooth brand but focuses on the Internet of Things (IoT) applications where small amounts of data are transferred at lower speeds. It’s important to note that there’s a big difference between Bluetooth Classic and Bluetooth Low Energy in terms of technical specification, implementation and the types of applications they’re each suitable for.
 
 ## Bluetooth Classic vs. Bluetooth Low Energy
 Itʼs important to note that thereʼs a big difference between Bluetooth Classic and Bluetooth Low Energy in terms of technical specification, implementation, and the types of applications to which theyʼre each suited. This is in addition to the fact that they are **incompatible** with each other.
@@ -100,12 +70,14 @@ Every technology has its own benefits and limitations, and BLE is no exception. 
 - Lower cost of modules and chipsets, even when compared to other similar technologies.
 - Most importantly, its existence in most smartphones in the market.
 ### Drawbacks and limitations
-- Data Throughput: the data throughput of BLE is limited by the physical radio layer (PHY) data rate, which is the rate at which the radio transmits data. This rate depends on the Bluetooth version used. For Bluetooth 4.2 and earlier, the rate is fixed at 1 Mbps. For Bluetooth 5 and later, however, the rate varies depending on the mode and PHY used. The rate can be 1 Mbps like earlier versions, or 2 Mbps when utilizing the high-speed feature.
-- Range: Bluetooth Low Energy (and Bluetooth in general) was designed for short range applications and hence its range of operation is limited. There are a few factors that limit the range of BLE:
-- BLE operates in the 2.4 GHz ISM spectrum which is greatly affected by obstacles that exist  all around us such as metal objects, walls, and water (especially human bodies)
-- Performance and design of the antenna of the BLE device.
-- Physical enclosure and orientation of the device.
-- Gateway Requirement for Internet Connectivity: In order to transfer data from a BLE-only device to the Internet, another BLE device that has an IP connection is needed to receive this data and then, in turn, relay it to another IP device (or to the Internet).
+- **Data Throughput**: the data throughput of BLE is limited by the physical radio layer (PHY) data rate, which is the rate at which the radio transmits data. This rate depends on the Bluetooth version used. For Bluetooth 4.2 and earlier, the rate is fixed at 1 Mbps. For Bluetooth 5 and later, however, the rate varies depending on the mode and PHY used. The rate can be 1 Mbps like earlier versions, or 2 Mbps when utilizing the high-speed feature.
+- **Range**: Bluetooth Low Energy (and Bluetooth in general) was designed for short-range applications and hence its range of operation is limited. There are a few factors that affect the range of BLE:
+
+	- BLE operates in the 2.4 GHz ISM spectrum which is greatly affected by obstacles that exist all around us such as metal objects, walls, and water (especially human bodies).
+	- Performance and design of the antenna of the BLE device.
+	- Physical enclosure and orientation of the device.
+
+- **Gateway Requirement for Internet Connectivity**: In order to transfer data from a BLE-only device to the Internet, another BLE device that has an IP connection is needed to receive this data and then, in turn, relay it to another IP device (or to the Internet).
 
 ## Bluetooth Low Energy Architecture
 Here’s a diagram showing the different levels of the architecture of BLE:
@@ -116,7 +88,7 @@ Here’s a diagram showing the different levels of the architecture of BLE:
 
 The good thing is that, as a developer looking to develop BLE applications, you won’t have to worry much about the layers below the Security Manager and Attribute Protocol. But lets at least cover the definitions of these layers:
 
-- The **physical layer (PHY)** refers to the physical radio used for communication and for modulating/demodulating the data. It operates in the ISM band (2.4 GHz spectrum).
+- The **Physical Layer (PHY)** refers to the physical radio used for communication and for modulating/demodulating the data. It operates in the ISM band (2.4 GHz spectrum).
 
 - The **Link Layer** is the layer that interfaces with the Physical Layer (Radio) and provides the higher levels an abstraction and a way to interact with the radio (through an intermediary level called the HCI layer which we’ll discuss shortly). It is responsible for managing the state of the radio as well as the timing requirements for adhering to the Bluetooth Low Energy specification.
 
@@ -172,7 +144,7 @@ In order for two BLE devices to connect to each other, the following needs to ha
 After that, the Connection is considered “created” but not yet “established”. A Connection is considered “established ” once the device receives a packet from its peer device. After a Connection becomes established, the Central becomes known as the Master, and the Peripheral becomes known as the Slave. The Master is responsible for managing the Connection, controlling the Connection Parameters and the timing of the different events within a Connection.
 
 #### Connection Events
-During a Connection Event, the Master and Slave alternate sending data packets to each other until neither side has data to send. Here are a few aspects of Connections that are very important  to know:
+During a Connection Event, the Master and Slave alternate sending data packets to each other until neither side has data to send. Here are a few aspects of Connections that are very important to know:
 
 - A Connection Event contains at least one packet sent by the Master.
 The Slave always sends a packet back if it received a packet from the Master.
@@ -196,7 +168,7 @@ The Generic Attribute Profile (GATT) defines the format of the data exposed by a
 
 There are two Roles within GATT: Server and Client. The Server is the device that exposes the data it controls or contains, and possibly some other aspects of its behavior that other devices may be able to control. A Client, on the other hand, is the device that interfaces with the Server with the purpose of reading the Server’s exposed data and/or controlling the Server’s behavior.
 
-Keep in mind that a BLE device can act as the Server and a Client at the same time. Simply put, it acts as the Server for the sake of exposing its own data, and as a Client when accessing another device’s data.
+Keep in mind that a BLE device can act as both a Server and a Client at the same time. Simply put, it acts as the Server for the sake of exposing its own data, and as a Client when accessing another device’s data.
 
 ### Services and Characteristics
 Services and Characteristics are probably the two most used terms in BLE! That’s why understanding them is crucial, especially for BLE devices that establish a connection with each other.
