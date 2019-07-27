@@ -2,6 +2,11 @@
 title: "A BLE Primer"
 author: mafaneh
 ---
+## Table of Contents
+ 
+<!-- prettier-ignore -->
+* auto-gen TOC:
+{:toc}
 
 ## Wireless Technologies and the Internet of Things (IoT)
 You've probably heard of the term IoT (Internet of Things) many times, and likely seen the hype in the media surrounding this somewhat confusing term. In basic terms, IoT refers to connecting devices to each other and to the Internet/Cloud (whether it's private or the mass Internet). It also implies wireless connectivity for devices and potentially adding connectivity to a slew of devices that were never connected before (even [flip-flops](https://www.geek.com/tech/smart-flip-flops-keep-brand-buyers-connected-1694504/)!).
