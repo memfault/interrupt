@@ -350,7 +350,7 @@ The example consists of a single source file named `main.c`, which we'll be modi
 	- A "**Button 1**" Characteristic (exposes the current state of the development kit's Button 1: pressed (0x01) or released (0x00)). The Characteristic will allow both **reads** and **notifications** to allow a client to read the value and get notified only when the value changes (instead of polling for the value waiting for a change to occur). 
 - Handling of the Button 1 events (presses and releases).
 
-Let's go through the steps and code changes needed to implement our application. All the code used in this blog post is available on [GitHub]().
+Let's go through the steps and code changes needed to implement our application. All the code used in this blog post is available on [GitHub](https://github.com/memfault/interrupt/tree/master/example/ble-primer/).
 
 #### Enabling the nRF Log Module
 
@@ -566,7 +566,7 @@ The final change we want to make in `main.c` is to change the advertised device 
 #define DEVICE_NAME   "Memfault_Example"   /**< Name of device. Will be included in the advertising data. */
 ```
 
-That's it for `main.c`! The source code for `main.c` is available on [GitHub](). 
+That's it for `main.c`! The source code for `main.c` is available on [GitHub](https://github.com/memfault/interrupt/tree/master/example/ble-primer/). 
 
 
 #### Implementation of the GATT Services and Characteristics
@@ -613,7 +613,7 @@ Now on to developing the code for our GATT Service and Characteristic.
 ##### `simple_service.h`
 <hr/>
 
-The `simple_service.h` file serves as the header file for our Simple Service. We'll cover the most important parts of the code (the full source code is available on [GitHub]() for your reference).
+The `simple_service.h` file serves as the header file for our Simple Service. We'll cover the most important parts of the code (the full source code is available on [GitHub](https://github.com/memfault/interrupt/tree/master/example/ble-primer/) for your reference).
 
 First, we'll define the macro that gets used in `main.c` to instantiate a Simple Service object:
 
@@ -1174,6 +1174,6 @@ To recap, we went over:
 
 Be sure to let us know if you have any comments or suggestions on additional BLE-related topics you'd like us to cover in the discussion section below.
 
-As a reminder, all the code used in this blog post is available on [GitHub]().
+As a reminder, all the code used in this blog post is available on [GitHub](https://github.com/memfault/interrupt/tree/master/example/ble-primer/).
 
 
