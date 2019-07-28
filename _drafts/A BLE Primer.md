@@ -390,7 +390,7 @@ In order to enable logging and see debug data, you need to do the following (som
 	#endif
 	```
 	
-That's it! Now you have logging enabled and you will be able to see log messages show up in your terminal program of choice. We'll get to configuring the terminal program in the "Debugging and Testing" section.
+That's it! Now you have logging enabled and you will be able to see log messages show up in your terminal program of choice. We'll get to configuring the terminal program in the "Testing" section.
 
 #### Handling the Button Presses
 
@@ -1073,7 +1073,7 @@ There are three parts to get this working:
 	$ nrfjprog -f NRF52 --reset
 	```
 	
-The first run you run the application you'll most likely get an error that looks something like this:
+The first time you run the application you'll most likely get an error that looks something like this:
 
 ![](img/ble-primer/ram_offset_size_error.png)
 
