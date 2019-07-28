@@ -87,9 +87,7 @@ Every technology has its own benefits and limitations, and BLE is no exception. 
 ## Bluetooth Low Energy Architecture
 Here’s a diagram showing the different levels of the architecture of BLE:
 
-<center>
 ![](img/ble-primer/ble_architecture.png)
-</center>
 
 The good thing is that, as a developer looking to develop BLE applications, you won’t have to worry much about the layers below the Security Manager and Attribute Protocol. But lets at least cover the definitions of these layers:
 
@@ -598,9 +596,7 @@ The digits in **bold** represent the 16-bit value.
 
 We can simply generate one UUID for the Service and increment it for the Characteristic, and as long as it doesn't use the same "base" as the SIG Adopted UUIDs, we'll be good!
 
-<center>
 ![](img/ble-primer/online_guid_generator.png)
-</center>
 
 So, we'll use:
 
@@ -1109,51 +1105,41 @@ Let's go through each of these tests. We'll be using LightBlue for our tests her
 #### 1. Advertisements
 Once you launch LightBlue, you'll be presented with a screen showing all the BLE devices advertising in the vicinity. *Make sure you have Bluetooth enabled on your phone first*.
 
-<center>
 ![](img/ble-primer/lightblue_main_screen.png) 
-</center>
 
 #### 2. Connection
 Now that we verified that we can discover our device ("Memfault_Example"), we can attempt to connect to it. Simply click on the device and it should initiate a connection. You should momentarily see a message similar to the following before it establishes the connection:
 
-<center>
 ![](img/ble-primer/lightblue_connecting.png)
-</center>
 
 After the connection is established, you will be presented with a screen similar to this:
 
-<center>
 ![](img/ble-primer/device_connected.png)
-</center>
 
 #### 3. GATT Service & Characteristic Discovery
 The previous screen also verifies that the Simple Service was discovered correctly and it contains our Button 1 Characteristic.
 
 If we click on the Simple Service, we should see the Button 1 Characteristic:
 
-<center>
 ![](img/ble-primer/simple_service.png)
-</center>
 
 #### 4. Characteristic Value Read
 To verify that we can read the value of the Button 1 Characteristic, we can tap on "Read again". To verify further, we can hold down Button 1 on the development board and then click "Read again". This time it should display a value of 0x01.
 
-<center>
 ![](img/ble-primer/button_read.jpeg)
-</center>
  
 #### 5. Notifications
 Finally, let's verify that we can get notified when the Button 1 state changes. We can do so by clicking on the "Listen for notifications" button.
 
 Once you click on it, you can test it by pressing Button 1 and releasing it a few times. You should see the updated values come in as you press and release the button:
 
-<center>
+Notifications disabled:
+
 ![](img/ble-primer/notifications_disabled.png)
-</center>
-<br/>
-<center>
+
+Notifications enabled:
+
 ![](img/ble-primer/notifications_working.png)
-</center>
 
 ## Closing
 That's it for this post. We covered a whole lot here!
