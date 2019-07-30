@@ -16,8 +16,8 @@ never connected before
 <!-- excerpt start -->
 In today's post, we will be covering one of the most popular low-power IoT
 technologies: Bluetooth Low Energy (BLE). We will give an overview of how BLE
-works, what the different layers are that make up the protocols, and walk you
-through an example setting up BLE on a Nordic nRF52 microcontroller.
+works, dig into each protocol layer, and walk you through an example setting
+up BLE on a Nordic nRF52 microcontroller.
 <!-- excerpt end -->
 
 ## Table of Contents
