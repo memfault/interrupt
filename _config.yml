@@ -21,6 +21,10 @@ paginate_path: /page:num/
 source: .
 excerpt_separator: "<!-- excerpt end -->"
 
+# Markdown Settings
+kramdown:
+    toc_levels: 1..3
+
 # Default values
 defaults:
   -

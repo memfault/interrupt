@@ -1,43 +1,31 @@
 ---
-title: "A BLE Primer"
+title: "Bluetooth Low Energy: A Primer"
+description: "A practical introduction to Bluetooth Low Energy (BLE) with
+examples"
 author: mafaneh
 ---
+## Introduction
+
+You've probably heard the term IoT (Internet of Things) many times, and seen
+the hype in the media surrounding it. Simply stated, IoT refers to connecting
+devices to each other and to the Internet. IoT often depends on wireless
+technologies, which have been used to add connectivity to a slew of devices that were
+never connected before
+(even [flip-flops](https://www.geek.com/tech/smart-flip-flops-keep-brand-buyers-connected-1694504/)!).
+
+<!-- excerpt start -->
+In today's post, we will be covering one of the most popular low-power IoT
+technologies: Bluetooth Low Energy (BLE). We will give an overview of how BLE
+works, what the different layers are that make up the protocols, and walk you
+through an example setting up BLE on a Nordic nRF52 microcontroller.
+<!-- excerpt end -->
+
 ## Table of Contents
+{:.no_toc}
  
 <!-- prettier-ignore -->
 * auto-gen TOC:
 {:toc}
-
-## Wireless Technologies and the Internet of Things (IoT)
-You've probably heard of the term IoT (Internet of Things) many times, and likely seen the hype in the media surrounding this somewhat confusing term. In basic terms, IoT refers to connecting devices to each other and to the Internet/Cloud (whether it's private or the mass Internet). It also implies wireless connectivity for devices and potentially adding connectivity to a slew of devices that were never connected before (even [flip-flops](https://www.geek.com/tech/smart-flip-flops-keep-brand-buyers-connected-1694504/)!).
-
-Wireless technologies are a dime a dozen, each with their own quirks and features. Some have been around for a long time, and some have only popped up recently. We'll spare the comparison between the different ones to a future post, but some of the most interesting and applicable wireless technologies to embedded developers are:
-
-- Wi-Fi
-- Bluetooth Classic & Bluetooth Low Energy
-- Zigbee
-- Z-Wave
-- LoRaWAN
-- ANT/ANT+
-- NFC
-- Infrared (IR)
-
-<!-- excerpt start -->
-Most of these focus on the low-power aspect and are suitable for embedding into devices that need to run on small batteries for long periods of time. Applications include: industrial sensors, medical devices, wearables, and more.
-
-In today's post, we'll be covering one of the most popular low-power IoT technologies: Bluetooth Low Energy (BLE). We'll go over:
-<!-- excerpt end -->
-
-- The basics of Bluetooth Low Energy
-- A comparison between BLE and Bluetooth Classic
-- Benefits and Drawbacks
-- BLE Peripherals and Centrals
-- Advertising
-- Connections
-- The Generic Access Profile (GAP)
-- The Generic Attribute Profile (GATT), including Services and Characteristics
-- Implementation of a simple BLE Peripheral application on the nRF52 development kit
-- Interacting with the BLE Peripheral from a mobile phone
 
 ## Basics of Bluetooth Low Energy (BLE)
 Bluetooth Low Energy (BLE) is a low power wireless technology used for connecting devices with each other. BLE operates in the **2.4 GHz ISM (Industrial, Scientific, and Medical)** band, and is targeted towards applications that need to consume less power and may need to run on batteries for longer periods of time — months, and even years.
