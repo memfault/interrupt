@@ -58,14 +58,14 @@ On the other hand, Bluetooth 5.1 focused on *direction finding* by utilizing Ang
 Every technology has its own benefits and limitations, and BLE is no exception. It’s important to know these pros and cons to be able to determine whether BLE is suitable for your specific application and use case or not.
 
 ### Benefits
-- Lower power consumption even when compared to other low power technologies. BLE achieves the optimized and low power consumption by keeping the radio off as much as possible and sending small amounts of data at low transfer speeds.
+- Lower power consumption even when compared to other low power technologies.
+  This is achived by keeping the radio off as much as possible and sending small amounts of data at low transfer speeds.
 - No cost to access the official specification documents. With most other wireless protocols and technologies, you would have to be a member of the official group or consortium for that technology in order to access the specification.
 - Lower cost of modules and chipsets, even when compared to other similar technologies.
 - Most importantly, its existence in most smartphones in the market.
 ### Drawbacks and limitations
 - **Data Throughput**: the data throughput of BLE is limited by the physical radio layer (PHY) data rate, which is the rate at which the radio transmits data. This rate depends on the Bluetooth version used. For Bluetooth 4.2 and earlier, the rate is fixed at 1 Mbps. For Bluetooth 5 and later, however, the rate varies depending on the mode and PHY used. The rate can be 1 Mbps like earlier versions, or 2 Mbps when utilizing the high-speed feature.
 - **Range**: Bluetooth Low Energy (and Bluetooth in general) was designed for short-range applications and hence its range of operation is limited. There are a few factors that affect the range of BLE:
-
 	- BLE operates in the 2.4 GHz ISM spectrum which is greatly affected by obstacles that exist all around us such as metal objects, walls, and water (especially human bodies).
 	- Performance and design of the antenna of the BLE device.
 	- Physical enclosure and orientation of the device.
@@ -166,10 +166,10 @@ Services and Characteristics are probably the two most used terms in BLE! That�
 
 To better understand GATT, we need to cover a few important concepts (including Services and Characteristics):
 
-- Attributes: a generic term for any type of data exposed by the Server and defines the structure of this data. For example, Services and Characteristics (both defined below) are types of Attributes.
+- **Attributes**: a generic term for any type of data exposed by the Server and defines the structure of this data. For example, Services and Characteristics (both defined below) are types of Attributes.
 - Services: a grouping of one or more Attributes (some of which are Characteristics). It’s meant to group together related Attributes that satisfy a specific functionality on the Server. For example, the SIG-adopted Battery Service contains one Characteristic called the Battery Level.
-- Characteristics: a Characteristic is always part of a Service and it represents a piece of information/data that a Server wants to expose to a client. For example, the Battery Level Characteristic represents the remaining power level of a battery in a device which can be read by a Client.
-- Profiles: Profiles are much broader in definition from Services. They are concerned with defining the behavior of both the Client and Server when it comes to Services, Characteristics and even Connections and security requirements. Services and their specifications, on the other hand, deal with the implementation of these Services and Characteristics on the Server side only.
+- **Characteristics**: a Characteristic is always part of a Service and it represents a piece of information/data that a Server wants to expose to a client. For example, the Battery Level Characteristic represents the remaining power level of a battery in a device which can be read by a Client.
+- **Profiles**: Profiles are much broader in definition from Services. They are concerned with defining the behavior of both the Client and Server when it comes to Services, Characteristics and even Connections and security requirements. Services and their specifications, on the other hand, deal with the implementation of these Services and Characteristics on the Server side only.
 
 A simplified representation of a Service:
 
@@ -344,7 +344,7 @@ In order to enable logging and see debug data, you need to do the following (som
 
 - Enable the `NRF_LOG_ENABLED` macro:
 
-	```
+	```c
 	// <e> NRF_LOG_ENABLED - nrf_log - Logger
 	//==========================================================
 	#ifndef NRF_LOG_ENABLED
@@ -354,7 +354,7 @@ In order to enable logging and see debug data, you need to do the following (som
 	
 - Set the log level to 3 (or 4 more debugging information):
 
-	```
+	```c
 	// <o> NRF_LOG_DEFAULT_LEVEL  - Default Severity level
 	 
 	// <0=> Off 
@@ -370,7 +370,7 @@ In order to enable logging and see debug data, you need to do the following (som
 	
 - Since we'll be using a terminal program (such as CoolTerm), we need to enable logging via the UART backend. This is done by enabling the `NRF_LOG_BACKEND_UART_ENABLED` as follows:
 
-	```
+	```c
 	// <e> NRF_LOG_BACKEND_UART_ENABLED - nrf_log_backend_uart - Log UART backend
 	//==========================================================
 	#ifndef NRF_LOG_BACKEND_UART_ENABLED
@@ -392,7 +392,7 @@ We will need to add three different segments of code to `main.c` to enable handl
 
 - Configure the button we'll be using (Button 1 on the dev kit). We also add a forward declaration of the function responsible for handling the button events: 
 
-	```
+	```c
 	static void button_event_handler(uint8_t pin_no, uint8_t button_action);
 	
 	#define NUM_OF_BUTTONS 1
@@ -404,7 +404,7 @@ We will need to add three different segments of code to `main.c` to enable handl
 	
 - The button event handler function. The function handles the Button 1 press and release events, and then calls a function to update our characteristic value that's associated with the button.
 
-	```
+	```c
 	static void button_event_handler(uint8_t pin_no, uint8_t button_action)
 	{
 	    switch (pin_no)
@@ -422,7 +422,7 @@ We will need to add three different segments of code to `main.c` to enable handl
 
 - The function to initialize and configure the LEDs and Buttons. We will change the following code:
 
-	```
+	```c
 	static void buttons_leds_init(bool * p_erase_bonds)
 	{
 	    ret_code_t err_code;
@@ -440,7 +440,7 @@ We will need to add three different segments of code to `main.c` to enable handl
 
 	to
 
-	```
+	```c
 	static void buttons_leds_init(bool * p_erase_bonds))
 	{
 		ret_code_t err_code;	
@@ -473,7 +473,7 @@ Those are all the changes needed to handle the Button 1 press and release events
 
 The boilerplate example provides example code to initialize your own Service (which in turn initializes its Characteristics) in the following function in `main.c`:
 
-```
+```c
 /**@brief Function for initializing services that will be used by the application.
  */
 static void services_init(void)
@@ -514,7 +514,7 @@ static void services_init(void)
 
 Let's modify this function to initialize our own service "simple_service" which we'll provide the code for in the next section.
 
-```
+```c
 /**@brief Function for initializing services that will be used by the application.
  */
 static void services_init(void)
@@ -536,19 +536,19 @@ static void services_init(void)
 
 Another change we need to make to `main.c` is to include our Service header file `simple_service.h`. We do this towards the top of `main.c`:
 
-```
+```c
 #include "simple_service.h"
 ```
 
 We also need to instantiate a variable for our Simple Service. This is done by adding the following code:
 
-```
+```c
 BLE_SIMPLE_SERVICE_DEF(m_simple_service);
 ```
 
 The final change we want to make in `main.c` is to change the advertised device name. By default, it's set to `"Nordic_Template"`. Let's change it to the following:
 
-```
+```c
 #define DEVICE_NAME   "Memfault_Example"   /**< Name of device. Will be included in the advertising data. */
 ```
 
@@ -565,7 +565,7 @@ For implementation of our Simple Service we will create two source files: `simpl
 
 Before we go through the implementation of each of these, we need to assign the GATT Service and Characteristic their own custom UUIDs (a 128-bit value), which we can simply autogenerate using an online tool called [**Online GUID Generator**](https://www.guidgenerator.com/).
 
-"A UUID is a universally unique identifier that is guaranteed to be unique across all space and all time"\
+"A UUID is a universally unique identifier that is guaranteed to be unique across all space and all time"
 *(Bluetooth 5.1 spec, Vol 3, Part B, section 2.5.1 UUID)*.
 
 The one restriction for use of a UUID for a custom BLE Service or Characteristic is that it does not overlap with the Bluetooth SIG Adopted UUIDs. Adopted UUIDs are represented with 16-bit value and its equivalent 128-bit value is computed as follows:
@@ -601,7 +601,7 @@ The `simple_service.h` file serves as the header file for our Simple Service. We
 
 First, we'll define the macro that gets used in `main.c` to instantiate a Simple Service object:
 
-```
+```c
 #define BLE_SIMPLE_SERVICE_DEF(_name)                                                               \
 static ble_simple_service_t _name;                                                                  \
 NRF_SDH_BLE_OBSERVER(_name ## _obs,                                                                 \
@@ -613,7 +613,7 @@ This is code that you'll find used in many of the Nordic examples, and we simply
 
 Next, we'll define the "base" UUID to use along with the 16-bit definitions for each of the Simple Service and the Button 1 Characteristic. The following method is the common method of defining custom (also referred to as *vendor-specific*) Services and Characteristics in Nordic nRF applications.
 
-```
+```c
 // Simple service:                     E54B0001-67F5-479E-8711-B3B99198CE6C
 //   |--> Button 1 press characteristic:    E54B0002-67F5-479E-8711-B3B99198CE6C
 
@@ -631,13 +631,13 @@ Next, we'll define the "base" UUID to use along with the 16-bit definitions for 
 
 Following that we define the data structure for the Simple Service:
 
-```
+```c
 typedef struct ble_simple_service_s ble_simple_service_t;
 ```
 
 Next, we define the events for Notifications getting enabled or disabled for the Button 1 Characteristic:
 
-```
+```c
 typedef enum
 {
     BLE_BUTTON_1_PRESS_EVT_NOTIFICATION_ENABLED,
@@ -652,13 +652,13 @@ typedef struct
 
 In the following code we define the function prototype for the BLE event handler:
 
-```
+```c
 typedef void (*ble_simple_evt_handler_t) (ble_simple_service_t * p_simple_service, ble_simple_evt_t * p_evt);
 ```
 
 We then define the actual structure of the Simple Service which holds the crucial information needed by the Service:
 
-```
+```c
 typedef struct ble_simple_service_s
 {
     uint16_t                         conn_handle;
@@ -672,7 +672,7 @@ typedef struct ble_simple_service_s
 
 Finally, we declare the APIs exposed by the Simple Service. This includes functions for: initialization, the BLE event handler (which is needed by the Nordic SoftDevice), and the function for updating the Characteristic value (called when Button 1 is pressed or released:
 
-```
+```c
 uint32_t ble_simple_service_init(ble_simple_service_t * p_simple_service, ble_simple_evt_handler_t app_evt_handler);
 
 void ble_simple_service_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context);
@@ -688,14 +688,14 @@ Let's go over the most important parts of `simple_service.c`.
 
 - A couple of global variables needed for storing the Button 1 Characteristic name and one for tracking whether Notifications are enabled or not.
 
-	```
+	```c
 	static const uint8_t Button1CharName[]   = "Button 1 press";
 	static bool button_notifications_enabled = false;
 	``` 
 
 - A function for handling the connection event. In this function, we store the connection handle and make sure the `button_notifications_enabled` boolean is disabled.
 
-	```
+	```c
 	static void on_connect(ble_simple_service_t * p_simple_service, ble_evt_t const * p_ble_evt)
 	{
 	    p_simple_service->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
@@ -705,7 +705,7 @@ Let's go over the most important parts of `simple_service.c`.
 	
 - A function for handling the disconnection event. In this function, we invalidate the connection handle and make sure the `button_notifications_enabled` boolean is disabled.
 
-	```
+	```c
 	static void on_disconnect(ble_simple_service_t * p_simple_service, ble_evt_t const * p_ble_evt)
 	{
 	    UNUSED_PARAMETER(p_ble_evt);
@@ -716,7 +716,7 @@ Let's go over the most important parts of `simple_service.c`.
 	
 - A function for handling the Characteristic Write event. In this function, we handle writing to the CCCD (Client Characteristic Configuration Descriptor) which is used for enabling or disabling Notifications. The event is then passed up to the application layer via the application event handler that's set during the initialization of the Service.
 
-	```
+	```c
 	static void on_write(ble_simple_service_t * p_simple_service, ble_evt_t const * p_ble_evt)
 	{
 	    ble_gatts_evt_write_t const * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
@@ -757,7 +757,7 @@ Let's go over the most important parts of `simple_service.c`.
 	 - Defining the size of the Characteristic value (1 byte: 0x00 for released state and 0x01 for pressed state).
 	 - Finally, calling the `sd_ble_gatts_characteristic_add()` API to add the Characteristic.
 
-	```
+	```c
 	static uint32_t button_1_press_char_add(ble_simple_service_t * p_simple_service)
 	{
 	    ble_gatts_char_md_t char_md;
@@ -828,7 +828,7 @@ Let's go over the most important parts of `simple_service.c`.
 	- Adding the Service to the BLE stack.
 	- Finally, adding the Button 1 Characteristic to the Service.
 
-	```
+	```c
 	uint32_t ble_simple_service_init(ble_simple_service_t * p_simple_service, ble_simple_evt_handler_t app_evt_handler)
 	{
 	    uint32_t   err_code;
@@ -874,7 +874,7 @@ Let's go over the most important parts of `simple_service.c`.
 
 - A function to handle the different BLE events reported by the SoftDevice. The three events handled are: the connected event, disconnected event, and the Characteristic write event.
 
-	```
+	```c
 	void ble_simple_service_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context)
 	{
 	    ble_simple_service_t * p_simple_service = (ble_simple_service_t *)p_context;
@@ -903,7 +903,7 @@ Let's go over the most important parts of `simple_service.c`.
 	- Setting the corresponding value to the Characteristic based on whether a Button 1 press or release event has occurred. This gets called by the application layer (in `main.c`).
 	- Sending a Notification along with the updated value to the Client if it has enabled Notifications.
 
-	```
+	```c
 	void button_1_characteristic_update(ble_simple_service_t * p_simple_service, uint8_t *button_action)
 	{
 	    uint32_t err_code = NRF_SUCCESS;
@@ -953,7 +953,7 @@ We need to modify a macro responsible for telling the SoftDevice (Nordic's BLE s
 
 Look for the macro named `NRF_SDH_BLE_VS_UUID_COUNT` in `sdk_config.h` and change its value from 0 to 1:
 
-```
+```c
 // <o> NRF_SDH_BLE_VS_UUID_COUNT - The number of vendor-specific UUIDs. 
 #ifndef NRF_SDH_BLE_VS_UUID_COUNT
 #define NRF_SDH_BLE_VS_UUID_COUNT 1
@@ -1067,7 +1067,14 @@ The first time you run the application you'll most likely get an error that look
 
 This is due to the fact that we modified the value of the macro for the number of vendor-specific UUIDs in the SoftDevice. The good part is that the log output tells us exactly which values we need to use for RAM offset and RAM size to fix this problem.
 
-In order to apply the fix, we need to edit the file named `ble_app_template_gcc_nrf52.ld` located at `ble_app_template/pca10056/s140/armgcc/` and modify the values of `  RAM (rwx) :  ORIGIN` and `  RAM (rwx) :  LENGTH`:
+In order to apply the fix, we need to edit the file named `ble_app_template_gcc_nrf52.ld` located at `ble_app_template/pca10056/s140/armgcc/` and modify the values of 
+```
+RAM (rwx) :  ORIGIN
+```
+and
+```
+RAM (rwx) :  LENGTH
+```
 
 ![](img/ble-primer/linker_file.png)
 
