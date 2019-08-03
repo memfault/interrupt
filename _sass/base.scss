@@ -33,30 +33,35 @@ $text-color-dark: #FDFDFD;
 /*- Base settings -*/
 
 html {
-	background-color: $background-color;
-	@media (min-width: 940px) {
-		font-size: 18px;
-	}
-	line-height: $baseline-height;
-	color: $text-color;
+        background-color: $background-color;
+        @media (min-width: 940px) {
+                font-size: 18px;
+        }
+        line-height: $baseline-height;
+        color: $text-color;
 }
 
 /*- Link -*/
 a {
-	color: $link-color;
-	text-decoration: none;
-	font-weight: 700;
-	&:hover,
-	&:focus {
-		color: darken($link-color, 5%);
-	}
+        color: $link-color;
+        text-decoration: none;
+        font-weight: 700;
+        &:hover,
+        &:focus {
+                color: darken($link-color, 5%);
+        }
 }
 
-article .content a {
-	font-weight: normal;
-	border-bottom: 1px solid rgba($link-color, 0.35);
+article .content a:not(.footnote):not(.anchorjs-link) {
+        font-weight: normal;
+        border-bottom: 1px solid rgba($link-color, 0.35);
 
-	&:hover, &:focus {
-		border-bottom-color: $link-color;
-	}
+        &:hover, &:focus {
+                border-bottom-color: $link-color;
+        }
+}
+
+article .content .footnote {
+        color: #4280E6;
+        font-weight: normal;
 }
