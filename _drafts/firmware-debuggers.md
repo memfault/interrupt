@@ -4,9 +4,9 @@ description: "A walk through of the ARM Debugger Stack from the Coresight DAP to
 author: chris
 ---
 
-Ever had issues getting a debugger to flash code? Or breakpoints don't seem to work? Or you can't step through your code? Or the debugger just seems flaky? Or just confused by all the buzzwords used around embedded debugging (i.e `SWD` vs `JTAG`, `OpenOCD` vs `pyOCD` vs `JLinkGDBServer`, `CMSIS-DAP` vs `ST-Link` vs `J-Link`, etc)
+Ever had issues getting a debugger to flash code? Do your breakpoints not seem to work? Are you hitting weird errors while stepping through your code? Does your debugger seem flaky? Are you confused by all the buzzwords used around embedded debugging (i.e `SWD` vs `JTAG`, `OpenOCD` vs `pyOCD` vs `JLinkGDBServer`, `CMSIS-DAP` vs `ST-Link` vs `J-Link`, etc)
 
-I certainly have! Having a basic understanding of the technology stack in use can be helpful for working through or around issues you may encounter with your debug setup!
+I've run into all of these issues! Having a basic understanding of the technology stack in use can be helpful for working through or around issues you may encounter with your debug setup!
 
 <!-- excerpt start -->
 
@@ -61,7 +61,7 @@ The DAP spec defines three different protocols which can be used to expose an in
 
 ### Debug Probes
 
-The next step is getting a computer to actually be able to talk to the protocol exposed via the pins coming out the the MCU. Typically another piece of hardware (often referred to as an "interfacing MCU") will be used to map from the `SWD` or `JTAG` connection to a USB protocol that can talk to the computer. Sometimes the interface will be provided via an external dongle and other times via an integrated IC on the development board being used. If you are designing your own development board, it's always a good idea to expose these debug pins to an external header to keep your options open.
+The next step is getting a computer to talk to the MCU. Typically another piece of hardware (often referred to as an "interfacing MCU") will be used to map from the `SWD` or `JTAG` connection to a USB protocol that can talk to the computer. Sometimes the interface will be provided via an external dongle and other times via an integrated IC on the development board being used. If you are designing your own development board, it's always a good idea to expose these debug pins to an external header to keep your options open.
 
 #### Debug Probe Options
 
