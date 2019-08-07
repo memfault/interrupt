@@ -134,6 +134,17 @@ For this setup we will use:
 - A nRF52840-DK running the blinky demo application from our [MPU blog post](https://interrupt.memfault.com/blog/fix-bugs-and-secure-firmware-with-the-mpu#mpu-usage-examples)
 - A saleae logic analyzer[^18]
 
+## Debug Path
+
+The end to end path of our debug setup looks like this:
+
+![](img/debuggers/debugger-nrf52840-dk.png)
+
+The following image from the ARM Debug Interface Architecture manual[^2] captures what the path
+looks like inside the NRF52840. The "physical connection" in this case is the SWD path in the image above.
+
+![](img/debuggers/debugger-dp-ap.png)
+
 ## Prepping the board
 
 On the nRF52840-DK board I see `P18` is labeled as "Debug In". Looking at the schematics[^19], I can easily see the pinout:
