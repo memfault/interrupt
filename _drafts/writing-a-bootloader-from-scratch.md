@@ -377,9 +377,11 @@ $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin $(BUILD_DIR)/$(PRO
   cat $^ > $@
 ```
 
-## Going beyond the bare minimum Our bootloader isn’t too useful so far, it only
-loads our application. We could do just as well without it. In the following
-sections, I will go through a few useful things you can do with a bootloader.
+## Going beyond the bare minimum
+
+Our bootloader isn’t too useful so far, it only loads our application. We could
+do just as well without it. In the following sections, I will go through a few
+useful things you can do with a bootloader.
 
 ### Catching reboot loops by passing data between app <-> bootloader
 
