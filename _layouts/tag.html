@@ -1,0 +1,27 @@
+---
+layout: default
+---
+<!-- Posts -->
+<ul id="posts">
+
+    <h1>{{ page.title }}</h1>
+
+    {% for post in site.posts %}
+    {% if post.tags contains page.tag %}
+
+    <li class="post">
+        <h2><a href="{% if site.baseurl == "/" %}{{ post.url }}{% else %}{{ post.url | prepend: site.baseurl }}{% endif %}">{{ post.title }}</a></h2> 
+        <div class="by-line">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
+            {% assign author = site.data.authors[post.author] %}
+            {% if author %}
+            <span>by <a href="{{ author.web }}">{{ author.name }}</a></span>
+            {% endif %}
+        </div>
+        <p>{{ post.excerpt }}</p>
+    </li>
+
+    {% endif %}
+    {% endfor %}
+
+</ul>
