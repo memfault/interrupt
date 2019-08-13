@@ -1,6 +1,7 @@
 ---
 title: "Demystifying Firmware Linker Scripts"
 author: francois
+tags: [zero-to-main]
 ---
 
 This is the second post in our "Zero to main()" series.

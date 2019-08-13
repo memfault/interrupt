@@ -1,6 +1,7 @@
 ---
 title: "From zero to main(): Bare metal C"
 author: francois
+tags: [zero-to-main]
 ---
 Working on embedded software, one quickly develops a quasi-religious respect for
 the axioms of embedded C programming:
