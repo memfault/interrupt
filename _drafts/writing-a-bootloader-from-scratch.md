@@ -200,6 +200,7 @@ We wrap those two into a `start_app` function which accepts our `pc` and `sp` as
 arguments, and get our minimal bootloader:
 
 ```c
+/* app.c */
 #include <inttypes.h>
 #include "memory_map.h"
 
@@ -280,6 +281,7 @@ of our text section, or `_stext`. To set it in our app, we add the following to
 our `Reset_Handler`:
 
 ```c
+/* startup_samd21.c */
 /* Set the vector table base address */
 uint32_t *vector_table = (uint32_t *) &_stext;
 uint32_t *vtor = (uint32_t *)0xE000ED08;
@@ -355,6 +357,7 @@ We implement those rule in our Makefile, to avoid having to type them out each
 time:
 
 ```makefile
+# Makefile
 $(BUILD_DIR)/$(PROJECT)-app.bin: $(BUILD_DIR)/$(PROJECT)-app.elf
   $(OCPY) $< $@ -O binary
   $(SZ) $<
@@ -369,6 +372,7 @@ Last but not least, we need to concatenate our two binaries. As funny as that
 may sound, this is best achieved with `cat`:
 
 ```makefile
+# Makefile
 $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin $(BUILD_DIR)/$(PROJECT)-app.bin
   cat $^ > $@
 ```
@@ -498,12 +502,16 @@ the storage region and the `>` operator to specify the load region.  This is the
 resulting linker script section:
 
 ```
+/* app.ld */
+SECTIONS {
     .text :
     {
         KEEP(*(.vectors .vectors.*))
         *(.text*)
         *(.rodata*)
     } > eram AT > approm
+    ...
+}
 ```
 
 We then update our bootloader to copy our code from one to the other before
@@ -545,6 +553,7 @@ bootloader already is! `0x4000` is 2^14 bytes.
 We add the following MPU code to our bootloader:
 
 ```c
+/* bootloader.c */
 int main(void) {
   /* ... */
   base_addr = 0x0;
