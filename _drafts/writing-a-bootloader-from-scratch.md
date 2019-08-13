@@ -7,44 +7,70 @@ author: francois
 
 This is the third post in our zero to main() series.
 
-Previously, we wrote a startup file to bootstrap our C environment, and a linker script to get the right data at the right addresses. These two will allow us to write a monolithic firmware which we can load and run on our microcontrollers.
+Previously, we wrote a startup file to bootstrap our C environment, and a linker
+script to get the right data at the right addresses. These two will allow us to
+write a monolithic firmware which we can load and run on our microcontrollers.
 
-In practice, this is not how most firmware is structured. Digging through vendor SDKs, you’ll notice that they all recommend using a *bootloader* to load your applications. A bootloader is a small program which is responsible for loading and starting your application.
+In practice, this is not how most firmware is structured. Digging through vendor
+SDKs, you’ll notice that they all recommend using a *bootloader* to load your
+applications. A bootloader is a small program which is responsible for loading
+and starting your application.
 
-<!-- excerpt start -->
-In this post, we will explain why you may want a bootloader, how to implement one, and cover a few advanced techniques you may use to make your bootloader more useful.
-<!-- excerpt end -->
+<!-- excerpt start --> In this post, we will explain why you may want a
+bootloader, how to implement one, and cover a few advanced techniques you may
+use to make your bootloader more useful.  <!-- excerpt end -->
 
-## Why you may need a bootloader
-Bootloaders serve many purposes, ranging from security to software architecture.
+## Why you may need a bootloader Bootloaders serve many purposes, ranging from
+security to software architecture.
 
-Most commonly, you may need a bootloader to load your software. Some microcontrollers like Dialog’s [DA14580](www) have little to no onboard flash and instead rely on an external device to store firmware code. In that case, it is the bootloader’s job to copy that code from non-executable storage, such as a SPI flash, to an area of memory that can be executed from, such as RAM.
+Most commonly, you may need a bootloader to load your software. Some
+microcontrollers like Dialog’s
+[DA14580](https://www.dialog-semiconductor.com/products/connectivity/bluetooth-low-energy/smartbond-da14580-and-da14583)
+have little to no onboard flash and instead rely on an external device to store
+firmware code. In that case, it is the bootloader’s job to copy code from
+non-executable storage, such as a SPI flash, to an area of memory that can be
+executed from, such as RAM.
 
-Bootloaders also allow you to decouple parts of the program that are mission critical, or that have security implications from application code which changes regularly. For example, your bootloader may contain firmware update logic so your device can recover no matter how bad a bug ships in your application firmware. 
+Bootloaders also allow you to decouple parts of the program that are mission
+critical, or that have security implications, from application code which
+changes regularly.  For example, your bootloader may contain firmware update
+logic so your device can recover no matter how bad a bug ships in your
+application firmware.
 
-Last but certainly not least, bootloaders are an essential component of a trusted boot architecture. Your bootloader can, for example, verify a cryptographic signature to make sure the application has not been replaced or tampered with.
+Last but certainly not least, bootloaders are an essential component of a
+trusted boot architecture.  Your bootloader can, for example, verify a
+cryptographic signature to make sure the application has not been replaced or
+tampered with.
 
 ## Implementing a bootloader
-Let’s build a simple bootloader together. To start, our bootloader must do two things:
+Let’s build a simple bootloader together. To start, our bootloader must do two
+things:
 
 1. Execute on MCU boot
 2. Jump to our application code
 
-We’ll need to decide on a memory map, write some bootloader code, and update our application to make it bootload-able.
+We’ll need to decide on a memory map, write some bootloader code, and update our
+application to make it bootload-able.
 
 ### Setting the stage
 
-For this example, we’ll be using the same setup as we did in our previous Zero to Main posts:
+For this example, we’ll be using the same setup as we did in our previous Zero
+to Main posts:
 * Adafruit's [Metro M0 Express](https://www.adafruit.com/product/3505) as our
   development board,
 * a simple [CMSIS-DAP Adapter](https://www.adafruit.com/product/2764)
-* OpenOCD (the [Arduino fork](https://github.com/arduino/OpenOCD)) for programming
+* OpenOCD (the [Arduino fork](https://github.com/arduino/OpenOCD)) for
+  programming
 
 ### Memory Map
 
-We must first decide on how much space we want to dedicate to our bootloader.  Code space is previous - your application may come to need more of it - and you will not be able to change this without updating your bootloader, so be make this as small as you possibly can.
+We must first decide on how much space we want to dedicate to our bootloader.
+Code space is previous - your application may come to need more of it - and you
+will not be able to change this without updating your bootloader, so be make
+this as small as you possibly can.
 
-For a very simple bootloader, a few kilobytes should be enough. I decided to go with 16kB region, leading to the following memory map:
+For a very simple bootloader, a few kilobytes should be enough. I decided to go
+with 16kB region, leading to the following memory map:
 
 ```
         0x0 +---------------------+
@@ -77,9 +103,12 @@ __approm_start__ = ORIGIN(approm);
 __approm_size__ = LENGTH(approm);
 ```
 
-Since linker scripts are composable, we will be able to `include` that memory map into the linker scripts we write for our bootloader and our application.
+Since linker scripts are composable, we will be able to `include` that memory
+map into the linker scripts we write for our bootloader and our application.
 
-You’ll notice that the linker script above declares some variables. We’ll need those for our bootloader to know where to find the application. To make them accessible in C code, we declare them in a header file:
+You’ll notice that the linker script above declares some variables. We’ll need
+those for our bootloader to know where to find the application. To make them
+accessible in C code, we declare them in a header file:
 
 ```
 /* memory_map.h */
@@ -92,11 +121,17 @@ extern int __approm_size__;
 ```
 
 ### A minimal bootloader
-Next up, let’s write some bootloader code. Our bootloader needs to start executing on boot and then jump to our app.
+Next up, let’s write some bootloader code. Our bootloader needs to start
+executing on boot and then jump to our app.
 
-We know how to do the first part from our previous post: we need a valid stack pointer at address `0x0` , and a valid `Reset_Handler`  function setting up our environment at address `0x4`. We can re-use our previous startup file and linker script, with one change: we use  `memory_map.ld` rather than define our own `MEMORY` section.
+We know how to do the first part from our previous post: we need a valid stack
+pointer at address `0x0` , and a valid `Reset_Handler`  function setting up our
+environment at address `0x4`. We can re-use our previous startup file and linker
+script, with one change: we use  `memory_map.ld` rather than define our own
+`MEMORY` section.
 
-We also need to put our code in the `bootrom` region from our memory rather than the `rom` region in our previous post.
+We also need to put our code in the `bootrom` region from our memory rather than
+the `rom` region in our previous post.
 
 Our linker script therefore looks like this:
 
@@ -118,7 +153,11 @@ SECTIONS
 }
 ```
 
-To jump into our application, we need to know where the `Reset_Handler` of the app is, and what stack pointer to load.  Again, we know from our previous post that those should be the first two 32-bit words in our binary, so we just need to dereference those addresses using the `__approm_start__` variable from our memory map.
+To jump into our application, we need to know where the `Reset_Handler` of the
+app is, and what stack pointer to load.  Again, we know from our previous post
+that those should be the first two 32-bit words in our binary, so we just need
+to dereference those addresses using the `__approm_start__` variable from our
+memory map.
 
 ```c
 /* bootloader.c */
@@ -135,13 +174,19 @@ int main(void) {
 }
 ```
 
-Next we must load that stack pointer and jump to the code. This will require a bit of assembly code.
+Next we must load that stack pointer and jump to the code. This will require a
+bit of assembly code.
 
-ARM MCUs use the [`msr` instruction ](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289882044.htm) to load immediate or register data into system registers, in this case the MSP register or “Main Stack Pointer”. 
+ARM MCUs use the [`msr` instruction
+](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289882044.htm) to
+load immediate or register data into system registers, in this case the MSP
+register or “Main Stack Pointer”. 
 
-Jumping to an address is done with a branch, in our case with a [`bx` instruction](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289866466.htm). 
+Jumping to an address is done with a branch, in our case with a [`bx`
+instruction](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289866466.htm). 
 
-We wrap those two into a `start_app` function which accepts our `pc` and `sp` as arguments, and get our minimal bootloader:
+We wrap those two into a `start_app` function which accepts our `pc` and `sp` as
+arguments, and get our minimal bootloader:
 
 ```c
 #include <inttypes.h>
@@ -164,11 +209,15 @@ int main(void) {
 }
 ```
 
-> Note: hardware resources initialized in the bootloader must be reinitialized before control is transferred to the app. Otherwise, you risk breaking assumptions the app code is making about the state of the system
+> Note: hardware resources initialized in the bootloader must be reinitialized
+> before control is transferred to the app. Otherwise, you risk breaking
+> assumptions the app code is making about the state of the system
 
 ### Making our app bootloadable
 
-We must update our app to take advantage of our new memory map. This is again done by updating our linker script to include `memory_map.ld` and changing our sections to go to the `approm` region rather than `rom`.
+We must update our app to take advantage of our new memory map. This is again
+done by updating our linker script to include `memory_map.ld` and changing our
+sections to go to the `approm` region rather than `rom`.
 
 ```
 /* app.ld */
@@ -188,11 +237,23 @@ SECTIONS
 }
 ```
 
-We also need to update the [*vector table*](https://developer.arm.com/docs/dui0552/latest/the-cortex-m3-processor/exception-model/vector-table) used by the microcontroller. The vector table contains the address of every exception and interrupt handler in our system. When an interrupt signal comes in, the arm core will call the address at the corresponding offset in the vector table.
+We also need to update the [*vector
+table*](https://developer.arm.com/docs/dui0552/latest/the-cortex-m3-processor/exception-model/vector-table)
+used by the microcontroller. The vector table contains the address of every
+exception and interrupt handler in our system. When an interrupt signal comes
+in, the arm core will call the address at the corresponding offset in the vector
+table.
 
-For example, the offset for the Hard fault handler is `0xc`, so when a hard fault is hit, the arm core will jump to the address contained in the table at that offset.
+For example, the offset for the Hard fault handler is `0xc`, so when a hard
+fault is hit, the arm core will jump to the address contained in the table at
+that offset.
 
-By default, the vector table is at address `0x0`, which means that are the start, only our bootloader can handle exceptions or interrupts! Fortunately, ARM provides the [Vector Table Offset Register](https://developer.arm.com/docs/dui0552/latest/cortex-m3-peripherals/system-control-block/vector-table-offset-register) to dynamically change the address of the vector table. The register is at address `0xE000ED08` and has a simple layout:
+By default, the vector table is at address `0x0`, which means that are the
+start, only our bootloader can handle exceptions or interrupts! Fortunately, ARM
+provides the [Vector Table Offset
+Register](https://developer.arm.com/docs/dui0552/latest/cortex-m3-peripherals/system-control-block/vector-table-offset-register)
+to dynamically change the address of the vector table. The register is at
+address `0xE000ED08` and has a simple layout:
 
 ```
 31                                  7              0
@@ -203,7 +264,9 @@ By default, the vector table is at address `0x0`, which means that are the start
 +-----------------------------------+--------------+
 ```
 
-Where `TBLOFF` is the address of the vector table. In our case, that’s the start of our text section, or `_stext`. To set it in our app, we add the following to our `Reset_Handler`:
+Where `TBLOFF` is the address of the vector table. In our case, that’s the start
+of our text section, or `_stext`. To set it in our app, we add the following to
+our `Reset_Handler`:
 
 ```c
 /* Set the vector table base address */
@@ -214,7 +277,8 @@ uint32_t *vtor = (uint32_t *)0xE000ED08;
 
 ### Putting it all together
 
-Because it is hard to witness the bootloader execute, we add a print line to each of our programs:
+Because it is hard to witness the bootloader execute, we add a print line to
+each of our programs:
 
 ```c
 /* boootloader.c */
@@ -247,16 +311,21 @@ int main() {
 }
 ```
 
-Note that the bootloader *must* deinitialize the serial peripheral before stating the app, or you’ll have a hard time trying to initialize it again.
+Note that the bootloader *must* deinitialize the serial peripheral before
+stating the app, or you’ll have a hard time trying to initialize it again.
 
- You can compile both these programs and load the resulting elf files with `gdb` which will put them at the correct address. However, the more convenient thing to do is to build a single binary which contains both programs.
+ You can compile both these programs and load the resulting elf files with `gdb`
+which will put them at the correct address. However, the more convenient thing
+to do is to build a single binary which contains both programs.
 
 To do that, you must go through the following steps:
 1. Pad the bootloader binary to the full 0x4000 bytes
 2. Create the app binary
 3. Concatenate the two
 
-As you know, creating a binary from an elf file is done with `objcopy` . To accommodate our use case, `objcopy` has some handy options: 
+As you know, creating a binary from an elf file is done with `objcopy` . To
+accommodate our use case, `objcopy` has some handy options: 
+
 ```
 $ arm-none-eabi-objcopy --help | grep -C 2 pad
   -b --byte <num>                  Select byte <num> in every interleaved block
@@ -266,9 +335,13 @@ $ arm-none-eabi-objcopy --help | grep -C 2 pad
     {--change-start|--adjust-start} <incr>
 ```
 
-The `—pad-to` option will pad the binary up to an address, and `—gap-fill` will allow you to specify the byte value to fill the gap with. Since we are writing our firmware to flash memory, we should fill with `0xFF` which is the erase value of flash, and pad to the max address of our bootloader.
+The `—pad-to` option will pad the binary up to an address, and `—gap-fill` will
+allow you to specify the byte value to fill the gap with. Since we are writing
+our firmware to flash memory, we should fill with `0xFF` which is the erase
+value of flash, and pad to the max address of our bootloader.
 
-We implement those rule in our Makefile, to avoid having to type them out each time:
+We implement those rule in our Makefile, to avoid having to type them out each
+time:
 
 ```makefile
 $(BUILD_DIR)/$(PROJECT)-app.bin: $(BUILD_DIR)/$(PROJECT)-app.elf
@@ -281,28 +354,39 @@ $(BUILD_DIR)/$(PROJECT)-boot.bin: $(BUILD_DIR)/$(PROJECT)-boot.elf
 
 ```
 
-Last but not least, we need to concatenate our two binaries. As funny as that may sound, this is best achieved with `cat`:
+Last but not least, we need to concatenate our two binaries. As funny as that
+may sound, this is best achieved with `cat`:
 
 ```makefile
 $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin $(BUILD_DIR)/$(PROJECT)-app.bin
   cat $^ > $@
 ```
 
-## Going beyond the bare minimum
-Our bootloader isn’t too useful so far, it only loads our application. We could do just as well without it. In the following sections, I will go through a few useful things you can do with a bootloader.
+## Going beyond the bare minimum Our bootloader isn’t too useful so far, it only
+loads our application. We could do just as well without it. In the following
+sections, I will go through a few useful things you can do with a bootloader.
 
 ### Catching reboot loops by passing data between app <-> bootloader
 
-A common thing to do with a bootloader is monitor stability. This can be done with a relatively simple setup:
+A common thing to do with a bootloader is monitor stability. This can be done
+with a relatively simple setup:
 1. On boot, the bootloader increments a persistent counter
-2. After the app has been stable for a while (e.g. 1 minute), it resets the counter to 0
-3. If the counter gets to 3, the bootloader does not start the app but instead signals an error.
+2. After the app has been stable for a while (e.g. 1 minute), it resets the
+   counter to 0
+3. If the counter gets to 3, the bootloader does not start the app but instead
+   signals an error.
 
-This requires shared, persistent data between the application and the bootloader which is retained across reboots. On some architectures, non volatile registers are available which make this easy. This is the case on all STM32 microcontrollers which have RTC backup registers.
+This requires shared, persistent data between the application and the bootloader
+which is retained across reboots. On some architectures, non volatile registers
+are available which make this easy. This is the case on all STM32
+microcontrollers which have RTC backup registers.
 
-More often than not, we can use a region of RAM to get the same result. As long as the system remains powered, the RAM will keep its state even if the device reboots.
+More often than not, we can use a region of RAM to get the same result. As long
+as the system remains powered, the RAM will keep its state even if the device
+reboots.
 
 First, we carve some RAM for shared data in our memory map:
+
 ```
 /* memory_map.ld
 MEMORY
@@ -318,7 +402,9 @@ _shared_data_start = ORIGIN(shared);
 */
 ```
 
-We can then create a data structure and assign it to this section, with getters to read it:
+We can then create a data structure and assign it to this section, with getters
+to read it:
+
 ```c
 /* shared.h */
 
@@ -357,13 +443,18 @@ void shared_data_reset_boot_count(void) {
 }
 ```
 
-We compile the `shared` module into both our app and our bootloader, and can read the boot count in both programs.
+We compile the `shared` module into both our app and our bootloader, and can
+read the boot count in both programs.
 
 ### Relocation
 
-More commonly, bootloaders are used to relocate applications before they are executed. Relocations involves copying the application code from place to another in order to execute it. This is useful when your application is stored in non-executable memory like a SPI flash.
+More commonly, bootloaders are used to relocate applications before they are
+executed. Relocations involves copying the application code from place to
+another in order to execute it. This is useful when your application is stored
+in non-executable memory like a SPI flash.
 
 Consider the following memory map:
+
 ```
 /* memory_map.ld */
 MEMORY
@@ -382,11 +473,18 @@ __eram_start__ = ORIGIN(eram);
 __eram_size__ = LENGTH(eram);
 ```
 
-In this case, `approm` is our app storage and `eram` is our executable RAM, where we want to copy our program. Our bootloader needs to copy the cope from `approm` to `eram` before executing it.
+In this case, `approm` is our app storage and `eram` is our executable RAM,
+where we want to copy our program. Our bootloader needs to copy the cope from
+`approm` to `eram` before executing it.
 
-We know from our previous blog post that executable code typically ends up in the `.text` section we must tell the linker that this section is **stored** in `approm` but executed from `eram` so our program can execute correctly.
+We know from our previous blog post that executable code typically ends up in
+the `.text` section we must tell the linker that this section is **stored** in
+`approm` but executed from `eram` so our program can execute correctly.
 
-This is similar to our `.data` section, which is stored in `rom` but lives in `ram` while the program is running. We use the `AT` linker command to specify the storage region and the `>` operator to specify the load region.  This is the resulting linker script section:
+This is similar to our `.data` section, which is stored in `rom` but lives in
+`ram` while the program is running. We use the `AT` linker command to specify
+the storage region and the `>` operator to specify the load region.  This is the
+resulting linker script section:
 
 ```
     .text :
@@ -397,7 +495,8 @@ This is similar to our `.data` section, which is stored in `rom` but lives in `r
     } > eram AT > approm
 ```
 
-We then update our bootloader to copy our code from one to the other before starting the app:
+We then update our bootloader to copy our code from one to the other before
+starting the app:
 
 ```c 
   /* booloader.c */
@@ -422,11 +521,15 @@ We then update our bootloader to copy our code from one to the other before star
 
 ### Locking the bootloader
 
-Last but not least, we can protect the bootloader using the memory protection unit to make it inaccessible from the app. This prevents accidentally erasing the bootloader during execution.
+Last but not least, we can protect the bootloader using the memory protection
+unit to make it inaccessible from the app. This prevents accidentally erasing
+the bootloader during execution.
 
-If do not know about the MPU, check out Chris’s excellent blog post from a few weeks ago.
+If do not know about the MPU, check out Chris’s excellent blog post from a few
+weeks ago.
 
-Remember that our MPU regions must be power-of-2 sized. Thankfully, our bootloader already is! `0x4000` is 2^14 bytes.
+Remember that our MPU regions must be power-of-2 sized. Thankfully, our
+bootloader already is! `0x4000` is 2^14 bytes.
 
 We add the following MPU code to our bootloader:
 
