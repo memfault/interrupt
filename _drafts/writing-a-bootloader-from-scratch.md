@@ -76,7 +76,7 @@ to Main posts:
 ### Memory Map
 
 We must first decide on how much space we want to dedicate to our bootloader.
-Code space is previous - your application may come to need more of it - and you
+Code space is precious - your application may come to need more of it - and you
 will not be able to change this without updating your bootloader, so be make
 this as small as you possibly can.
 
