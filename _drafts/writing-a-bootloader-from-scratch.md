@@ -80,8 +80,7 @@ Code space is precious - your application may come to need more of it - and you
 will not be able to change this without updating your bootloader, so be make
 this as small as you possibly can.
 
-For a very simple bootloader, a few kilobytes should be enough. I decided to go
-with 16kB region, leading to the following memory map:
+I decided to go with a 16kB region, leading to the following memory map:
 
 ```
         0x0 +---------------------+
