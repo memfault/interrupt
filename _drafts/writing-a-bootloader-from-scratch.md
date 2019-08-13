@@ -131,7 +131,7 @@ You’ll notice that the linker script above declares some variables. We’ll ne
 those for our bootloader to know where to find the application. To make them
 accessible in C code, we declare them in a header file:
 
-```
+```c
 /* memory_map.h */
 #pragma once
 
