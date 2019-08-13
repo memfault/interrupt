@@ -16,12 +16,23 @@ SDKs, you’ll notice that they all recommend using a *bootloader* to load your
 applications. A bootloader is a small program which is responsible for loading
 and starting your application.
 
-<!-- excerpt start --> In this post, we will explain why you may want a
+<!-- excerpt start -->
+In this post, we will explain why you may want a
 bootloader, how to implement one, and cover a few advanced techniques you may
-use to make your bootloader more useful.  <!-- excerpt end -->
+use to make your bootloader more useful.
+<!-- excerpt end -->
 
-## Why you may need a bootloader Bootloaders serve many purposes, ranging from
-security to software architecture.
+{:.no_toc}
+
+## Table of Contents
+
+<!-- prettier-ignore -->
+* auto-gen TOC:
+{:toc}
+
+## Why you may need a bootloader
+
+Bootloaders serve many purposes, ranging from security to software architecture.
 
 Most commonly, you may need a bootloader to load your software. Some
 microcontrollers like Dialog’s
