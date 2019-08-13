@@ -221,7 +221,7 @@ int main(void) {
 }
 ```
 
-> Note: hardware resources initialized in the bootloader must be reinitialized
+> Note: hardware resources initialized in the bootloader must be de-initialized
 > before control is transferred to the app. Otherwise, you risk breaking
 > assumptions the app code is making about the state of the system
 
@@ -337,8 +337,8 @@ int main() {
 }
 ```
 
-Note that the bootloader *must* deinitialize the serial peripheral before
-stating the app, or you’ll have a hard time trying to initialize it again.
+> Note that the bootloader *must* deinitialize the serial peripheral before
+> stating the app, or you’ll have a hard time trying to initialize it again.
 
  You can compile both these programs and load the resulting elf files with `gdb`
 which will put them at the correct address. However, the more convenient thing
