@@ -1,5 +1,7 @@
 ---
-title: "Demystifying Firmware Linker Scripts"
+title: "Zero to main(): Demystifying Firmware Linker Scripts"
+description: "An in depth tutorial on how to write linker scripts for firmware
+projects"
 author: francois
 tags: [zero-to-main]
 ---
