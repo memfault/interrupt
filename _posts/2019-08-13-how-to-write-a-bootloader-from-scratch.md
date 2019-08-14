@@ -1,7 +1,7 @@
 ---
-title: "Zero to main(): Writing a Bootloader"
-description: "A tutorial on bootloaders, what they are for, and how to write
-them."
+title: "Zero to main(): How to Write a Bootloader from Scratch"
+description: "An in-depth tutorial on how to write a bootloader from scratch for
+ARM cortex-m series microcontrollers."
 author: francois
 tags: [zero-to-main]
 ---
