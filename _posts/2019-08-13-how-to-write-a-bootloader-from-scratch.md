@@ -444,7 +444,7 @@ reboots.
 First, we carve some RAM for shared data in our memory map:
 
 ```
-/* memory_map.ld
+/* memory_map.ld */
 MEMORY
 {
   bootrom  (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00004000
@@ -455,7 +455,7 @@ MEMORY
 
 /* shared data starts point at the origin of the shared region */
 _shared_data_start = ORIGIN(shared);
-*/
+
 ```
 
 We can then create a data structure and assign it to this section, with getters
