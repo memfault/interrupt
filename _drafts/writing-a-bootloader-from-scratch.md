@@ -1,12 +1,14 @@
 ---
-title: "Writing a Bootloader from Scratch"
+title: "Zero to main(): Writing a Bootloader"
 description: "A tutorial on bootloaders, what they are for, and how to write
 them."
 author: francois
 tags: [zero-to-main]
 ---
 
-This is the third post in our [zero to main() series]({{ '/tag/zero-to-main' | relative_url  }}).
+This is the third post in our [zero to main() series]({{ '/tag/zero-to-main' |
+relative_url  }}), where we boostrap a working firmware from zero code on a
+cortex-M series microcontroller.
 
 Previously, [we wrote a startup file to bootstrap our C environment]({% post_url
 2019-05-14-zero-to-main-1 %}), and [a linker
@@ -83,7 +85,7 @@ to Main posts:
 
 We must first decide on how much space we want to dedicate to our bootloader.
 Code space is precious - your application may come to need more of it - and you
-will not be able to change this without updating your bootloader, so be make
+will not be able to change this without updating your bootloader, so make
 this as small as you possibly can.
 
 Another important factor is your flash sector size: you want to make sure you
@@ -263,11 +265,11 @@ We also need to update the [*vector
 table*](https://developer.arm.com/docs/dui0552/latest/the-cortex-m3-processor/exception-model/vector-table)
 used by the microcontroller. The vector table contains the address of every
 exception and interrupt handler in our system. When an interrupt signal comes
-in, the arm core will call the address at the corresponding offset in the vector
+in, the ARM core will call the address at the corresponding offset in the vector
 table.
 
 For example, the offset for the Hard fault handler is `0xc`, so when a hard
-fault is hit, the arm core will jump to the address contained in the table at
+fault is hit, the ARM core will jump to the address contained in the table at
 that offset.
 
 By default, the vector table is at address `0x0`, which means that when our chip
@@ -610,9 +612,6 @@ int main(void) {
 }
 ```
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
-
 ## Closing
 
 We hope reading this post has given you a good idea of how bootloaders work, and
@@ -624,6 +623,11 @@ What cool things does your bootloader do? Tell us all about it in the comments,
 or at [interrupt@memfault.com](mailto:interrupt@memfault.com).
 
 Next time in the series, we'll talk about bootstrapping the C library!
+
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
+posts straight to your mailbox_
+
+
 
 
 
