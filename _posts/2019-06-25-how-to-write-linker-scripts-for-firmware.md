@@ -107,9 +107,9 @@ A linker script contains four things:
 
 In order to allocate program space, the linker needs to know how much memory is
 available, and at what addresses that memory exists. This is what the `MEMORY`
-section of the linker script is for.
+definition in the linker script is for.
 
-The syntax for the memory section is defined in the [binutils
+The syntax for MEMORY is defined in the [binutils
 docs](https://sourceware.org/binutils/docs/ld/MEMORY.html#MEMORY) and is as follow:
 
 ```
@@ -121,9 +121,9 @@ MEMORY
 ```
 
 Where
-* `name` is a name you want to use for this section. Names do not carry meaning,
+* `name` is a name you want to use for this region. Names do not carry meaning,
   so you're free to use anything you want. You'll often find "flash", and "ram"
-as section names.
+as region names.
 * `(attr)` are optional attributes for the region, like whether it's writable
    (`w`), readable (`r`), or executable (`x`). Flash memory is usually `(rx)`,
 while ram is `rwx`. Marking a region as non-writable does not magically make it
@@ -156,7 +156,7 @@ in table 10-1, reproduced below.
 </table>
 <br/>
 
-Transcribed into a `MEMORY` section, this gives us:
+Transcribed into a `MEMORY` definition, this gives us:
 
 ```
 MEMORY
