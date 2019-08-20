@@ -3,6 +3,7 @@ title: "Supercharge GDB with Python PyPi Packages"
 description:
   "How to setup GDB and Python to use PyPi packages in GDB scripts"
 author: tyler
+tags: [python, gdb]
 ---
 
 <!-- excerpt start -->

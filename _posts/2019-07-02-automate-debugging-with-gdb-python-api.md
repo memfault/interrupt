@@ -2,6 +2,7 @@
 title: "Automate Debugging with GDB Python API"
 description: "How to write GDB Python scripts and Pretty Printers using the GDB Python API"
 author: chris
+tags: [python, gdb]
 ---
 
 <!-- excerpt start -->
