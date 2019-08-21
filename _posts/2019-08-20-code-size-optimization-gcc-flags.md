@@ -321,6 +321,10 @@ sys	0m3.386s
 
 So we traded 5 seconds of build time for ~3KiB of code space.
 
+> Note: /u/xenoamor on Reddit[^7] pointed out that in some cases, LTO is dropping
+> vector tables even when the KEEP commmand is used. You cand find more details,
+> as well as a workaround on Launchpad[^8].
+
 ## C Library
 
 The C library often times takes a non trivial amount of code space. Looking at
@@ -393,3 +397,5 @@ straight to your mailbox_
 [^4]: [Newlib Home](https://sourceware.org/newlib/)
 [^5]: [Newlib on Github](https://github.com/littlekernel/newlib/blob/master/libgloss/arm/elf-nano.specs)
 [^6]: [ARM GCC 4.7 Announcement](https://community.arm.com/developer/ip-products/system/b/embedded-blog/posts/shrink-your-mcu-code-size-with-gcc-arm-embedded-4-7)
+[^7]: [Reddit comment about LTO bug](https://www.reddit.com/r/embedded/comments/ctjjg3/code_size_optimization_gcc_compiler_flags/exlal31/)
+[^8]: [Launchpad: LTO Bug](https://bugs.launchpad.net/gcc-arm-embedded/+bug/1747966)
