@@ -385,9 +385,9 @@ hacks one can use to slim down code size further.
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
 
-[^1] http://chibios.org/dokuwiki/doku.php
-[^2] https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-[^3] https://en.wikipedia.org/wiki/Inline_expansion
-[^4] https://sourceware.org/newlib/
-[^5] https://github.com/littlekernel/newlib/blob/master/libgloss/arm/elf-nano.specs
-[^6] https://community.arm.com/developer/ip-products/system/b/embedded-blog/posts/shrink-your-mcu-code-size-with-gcc-arm-embedded-4-7
+[^1]: [ChibiOS Website](http://chibios.org/dokuwiki/doku.php)
+[^2]: [GCC Optimize Options](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
+[^3]: [Inline Expansion](https://en.wikipedia.org/wiki/Inline_expansion)
+[^4]: [Newlib Home](https://sourceware.org/newlib/)
+[^5]: [Newlib on Github](https://github.com/littlekernel/newlib/blob/master/libgloss/arm/elf-nano.specs)
+[^6]: [ARM GCC 4.7 Announcement](https://community.arm.com/developer/ip-products/system/b/embedded-blog/posts/shrink-your-mcu-code-size-with-gcc-arm-embedded-4-7)
