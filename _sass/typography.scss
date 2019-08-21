@@ -69,3 +69,8 @@ blockquote {
 		padding: 1.5em 0; /* 24px/18px */
 	}
 }
+
+// Make sure that our footnote markers don't affect line-height
+sup { 
+  line-height: 0;
+}
