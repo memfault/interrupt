@@ -224,17 +224,7 @@ else to remain in your program. One such example is interrupt handlers: while it
 may look to the linker like they are not called, the hardware will jump to those
 addresses and expect the code to be there.
 
-There are two ways to make sure a symbol isn’t garbage collected: with the
-`used` attribute, or with the `KEEP` linker script command.
-
-Here’s how the `used` attribute is used:
-```c
-void foo(void) __attribute__((used))
-{
-   // ...
-}
-```
-
+The linker provides the `KEEP` command to identify sections that should be kept.
 For interrupts, the typical solution is to put your vector table in a section
 called `vectors` and mark it in the linker script:
 
