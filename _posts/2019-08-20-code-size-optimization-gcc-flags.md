@@ -322,7 +322,7 @@ sys	0m3.386s
 So we traded 5 seconds of build time for ~3KiB of code space.
 
 > Note: /u/xenoamor on Reddit[^7] pointed out that in some cases, LTO is dropping
-> vector tables even when the KEEP commmand is used. You cand find more details,
+> vector tables even when the KEEP commmand is used. You can find more details,
 > as well as a workaround on Launchpad[^8].
 
 ## C Library
