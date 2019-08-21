@@ -385,6 +385,8 @@ hacks one can use to slim down code size further.
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
 
+## Reference & Links
+
 [^1]: [ChibiOS Website](http://chibios.org/dokuwiki/doku.php)
 [^2]: [GCC Optimize Options](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 [^3]: [Inline Expansion](https://en.wikipedia.org/wiki/Inline_expansion)
