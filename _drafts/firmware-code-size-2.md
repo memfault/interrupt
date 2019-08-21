@@ -8,8 +8,8 @@ tags: [fw-code-size]
 ## Introduction 
 
 This is the second post in our [Firmware Code Size Optimization]({{
-'/tag/fw-code-size | relative_url }}) series. [Last time]({% post_url
-2019-06-06-firmware-size-tools %}), we talked about measuring code size as a
+'/tag/fw-code-size' | relative_url }}) series. [Last time]({% post_url
+2019-06-06-best-firmware-size-tools %}), we talked about measuring code size as a
 precondition to improving it. Now we’ll leap from planning into action!
 
 <!-- excerpt start -->
