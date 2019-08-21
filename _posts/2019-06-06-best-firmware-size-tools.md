@@ -1,6 +1,7 @@
 ---
-title: "How to Dig into Firmware Code Size"
+title: "Code Size Optimization: Measure Twice, Cut Once"
 author: francois
+tags: [fw-code-size]
 ---
 
 <!-- excerpt start -->
