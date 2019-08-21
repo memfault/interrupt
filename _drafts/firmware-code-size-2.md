@@ -1,5 +1,5 @@
 ---
-title: "GCC Flags That Can Shrink Your Firmware"
+title: "Code Size Optimization: GCC Compiler Flags"
 description: "A walk through of GCC configuration options and flags to optimize firmware code size"
 author: francois
 tags: [fw-code-size]
