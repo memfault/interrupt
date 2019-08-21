@@ -7,7 +7,9 @@ author: francois
 ## Introduction
 This is the second post in our Firmware Code Size Optimization series. Last time, we talked about measuring code size as a precondition to improving it. Now we’ll dive leap from planning into action!
 
+<!-- excerpt start -->
 In this post, we will review compiler options that we can use to reduce firmware code size. We will focus on `arm-none-eabi-gcc`, the GCC compiler used for ARM-based microcontroller, though most of the compile-time flags we will cover are available in other GCC flavors as well as in Clang.
+<!-- excerpt end -->
 
 You would think that a single flag could be used for “make this as small as possible”, but unfortunately it isn’t so. Instead, code size optimization involves complicated trade-offs that must be considered on a case by case basis.
 
