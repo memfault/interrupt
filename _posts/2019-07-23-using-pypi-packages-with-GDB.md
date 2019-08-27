@@ -1,7 +1,7 @@
 ---
-title: "Supercharge GDB with Python PyPi Packages"
+title: "Using Python PyPi Packages with GDB"
 description:
-  "How to setup GDB and Python to use PyPi packages in GDB scripts"
+  "How to setup GDB, virtualenv, and Python to use PyPi packages in GDB scripts"
 author: tyler
 ---
 
@@ -10,13 +10,13 @@ author: tyler
 [In a previous
 post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}), we
 discussed how to automate some of the more tedious parts of debugging firmware
-using 
-[Python in GDB Scripts](https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html). To
-make these commands more powerful, one could use third-party packages from
+using
+[Python in GDB Scripts](https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html).
+To make these commands more powerful, one could use third-party packages from
 Python's [PyPi](https://pypi.org/) repository. In this post, we will discuss how
-to properly setup GDB and Python and then modify the `uuid_list_dump` command
-from the post mentioned above to make use of a third party package installed
-through PyPi.
+to properly setup GDB, Python, and optionally virtualenv and then modify the
+`uuid_list_dump` command from the post mentioned above to make use of a third
+party package installed through PyPi.
 
 <!-- excerpt end -->
 
@@ -94,8 +94,8 @@ straight to your mailbox_
 Throughout this tutorial, I will be using:
 
 - macOS 10.14 using Python 2.7.15 installed using [Brew](https://brew.sh/) along
-  with a
-  [Virtual Environment](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
+  with a virtualenv environment using
+  [virtualenv](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv).
 - `arm-none-eabi-gdb-py` which is GDB 8.2 compiled against the macOS System
   Python 2.7.10.
 
@@ -352,7 +352,7 @@ and we will use the same `.c` example located
 [here]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}#example-usage)
 
 > If you need to get the previous `.c` file compiled and running to test out the
-> following commands, refer to the [previous >
+> following commands, refer to the [previous
 > post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) for
 > instructions.
 

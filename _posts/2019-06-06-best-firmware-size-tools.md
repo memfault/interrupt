@@ -1,5 +1,6 @@
 ---
 title: "Code Size Optimization: Measure Twice, Cut Once"
+description: "Overview of useful tools such as GNU size, nm, and puncover to help reduce code size usage of an ARM firmware binary"
 author: francois
 tags: [fw-code-size]
 ---
