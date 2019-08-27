@@ -528,6 +528,9 @@ tasks and features:
   installed using `pre` tasks
 - We can run `inv --list` and `inv <command> --help` for help menus.
 
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
+straight to your mailbox_
+
 ## Final Thoughts
 
 I've thoroughly enjoyed using Invoke in my previous and current job. In
@@ -538,24 +541,25 @@ documentation, running automated tests on our devices, pushing new versions of
 our service, performing database migrations...everything. The self-documenting
 nature of the commands is indispensable.
 
-I encourage the exploration of the
-[Invoke documentation](http://docs.pyinvoke.org/) to learn more about all the
-features.
+_All the code used in this blog post is available on
+[Github](https://github.com/memfault/interrupt/tree/master/example/invoke-basic/).
+See anything you'd like to change? Submit a pull request!_
 
-For a production example of Invoke tasks, look no further than the
-[Invoke source code](https://github.com/pyinvoke/invoke/blob/master/tasks.py).
-It provides a good example of how to import tasks from other modules to create a
-centralized tasks list.
+{:.no_toc}
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+### Tips & Further Reading
 
-## Further Reading
-
+- I encourage the exploration of the
+  [Invoke documentation](http://docs.pyinvoke.org/) to learn more about all the
+  features.
+- For a production example of Invoke tasks, look no further than the
+  [Invoke source code](https://github.com/pyinvoke/invoke/blob/master/tasks.py).
+  It provides a good example of how to import tasks from other modules to create
+  a centralized tasks list.
 - I like to use a combination of Invoke and
   [Click](https://click.palletsprojects.com/en/7.x/utils/#printing-to-stdout)
   for better pretty printing and colors.
-- Invoke includes
+- Invoke also supports
   [tab-completion support](http://docs.pyinvoke.org/en/1.3/invoke.html#shell-tab-completion).
 
 ## Reference & Links
@@ -564,7 +568,3 @@ straight to your mailbox_
 [^2]: [Invoke Argument Docs](http://docs.pyinvoke.org/en/0.11.1/concepts/cli/intro.html#tasks-and-task-options)
 [^3]: [Python pdb Docs](https://docs.python.org/3/library/pdb.html)
 [^4]: [Virtualenv Tutorial](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
-
-_All the code used in this blog post is available on
-[Github](https://github.com/memfault/interrupt/tree/master/example/invoke-basic/).
-See anything you'd like to change? Submit a pull request!_
