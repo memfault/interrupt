@@ -57,7 +57,16 @@ def build(ctx, ccache=True):
     "port": "The GDB port to attach to"
 })
 def flash(ctx, elf=BLINKY_ELF, port=JLINK_GDB_PORT):
-    """Spawn GDB and flash application & softdevice"""
+    """Spawn GDB and flash application & softdevice
+    
+    Examples:
+        # Flash the default ELF file over JLink
+        $ inv flash
+
+        # Flash a given binary over a JLink on the given port
+        $ inv flash --elf /path/to/file.elf --port 12345
+
+    """
     cmd = f'{GDB_EXE} --eval-command="target remote localhost:{JLINK_GDB_PORT}"' \
           f' --ex="mon reset" --ex="load" --ex="mon reset" --se={BLINKY_ELF}'
     ctx.run(cmd)

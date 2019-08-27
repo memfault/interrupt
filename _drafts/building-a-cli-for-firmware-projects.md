@@ -84,11 +84,12 @@ helps with all of the above issues and more.
 
 ### Why Invoke and Python
 
-Some reasons to use Invoke as your CLI language are:
+My favorite tool to build a CLI for my firmware projects is Invoke. Some reasons
+to use Invoke as your CLI language are:
 
 - Configuration management through use of environment variables, arguments, and
-  config files
-- Automatic help menus and argument parsing with validation
+  config files [^1]
+- Automatic help menus and argument parsing with validation [^2]
 - Tasks can be run from any directory under the project root
 - Invoke and Python can be more easily used in a cross-platform environment
 - Easier debugging using the Python debugger and more flexible printing
@@ -97,10 +98,12 @@ Some reasons to use Invoke as your CLI language are:
 
 ### Why not Make
 
-In the firmware world, I've seen Make used as a CLI many times. I cringe most times.
+Since many firmware projects use Make as a build system, engineers tend to reach
+for it when they need additional CLI commands. Make is great at dependency
+checking and simple recipes, but it should not be used as a CLI. Let's go over a
+few reasons why.
 
-Make is great at dependency checking and simple recipes, but it shouldn't be
-used as a CLI. Here's an example.
+#### Make does not handle arguments well
 
 In the nRF5 SDK's Makefile, this is the recipe for `flash`.
 
@@ -126,29 +129,30 @@ using `make flash ELF=<path/to/hex> METHOD=gdb`, and a developer would never
 know about these unless a Wiki page is written and kept up-to-date or the source
 code is read frequently.
 
-Let's go through some other reasons why I advise against using Make as a CLI.
+#### Makes does not come with batteries included
 
-#### Writing Make recipes is hard
+The lack of argument parsing in Make is just the start. CLI commands which use
+Make will depend on system packages to do the heavy lifting.
 
-Make recipes are essentially shell commands. If you have a CLI command that does
-argument parsing, logic, environment checking, or spawns external processes and
-threads, then it's going to be incredibly difficult to do in a make recipe and
-shell command. It's also incredibly difficult to write these in a cross-platform
-manner.
+- Want to interact with a web API? You need to have cURL installed.
+- Want to parse a text or configuration file? You'll need awk or sed.
+- Want to make the CLI cross platform? You'll need to handle differences between
+  Windows, Mac and Linux packages and their shell quirks.
 
-Invoke has
-[argument parsing](http://docs.pyinvoke.org/concepts/invoking-tasks.html#task-command-line-arguments)
-logic built-in, a
-[configuration management system](http://docs.pyinvoke.org/en/1.3/concepts/configuration.html#configuration-files),
-and for all the complex logic, it's just Python!
+The list goes on.
 
 #### Make is hard to debug
 
 Debugging a CLI is mostly about debugging the variables that get passed down
 into the shell commands or into the later Python scripts that get called.
 
-To debug an Invoke task, there are two common methods: Printing out the `ctx`
-object or setting a breakpoint.
+To debug an Invoke task, there are three common methods:
+
+1. Printing out the `ctx` object to get the state and variables
+2. Invoke with the `--echo` flag, which prints out the exact command run within
+   `ctx.run()`.
+3. If all else fails, a developer can drop into Python's built in debugger
+   `pdb`[^3]
 
 ```python
 @task
@@ -157,13 +161,16 @@ def env(ctx):
     # Print out the Context, which contains most information you need
     print(ctx)
 
-    # Or set a breakpoint to get a debugger
+    # Print out the exact invocation
+    ctx.run('make', echo=True)
+
+    # Set a breakpoint to get a debugger
     import pdb
     pdb.set_trace()
 ```
 
 To debug a Make task, there is really only one easy way, and that is using
-`$(info ...)` statements
+`$(info ...)` statements.
 
 ```
 env:
@@ -199,17 +206,17 @@ Usage: inv[oke] [--core-opts] flash [--options] [other tasks here ...]
 Docstring:
   Spawn GDB and flash application & softdevice
 
+  Examples:
+      # Flash the default ELF file over JLink
+      $ inv flash
+
+      # Flash a given binary over a JLink on the given port
+      $ inv flash --elf /path/to/file.elf --port 12345
+
 Options:
   -e STRING, --elf=STRING   The elf to flash
   -p INT, --port=INT        The GDB port to attach to
 ```
-
-#### Make requires at least one expert
-
-Make is a great build system, and it has an impressive number of features, but
-trying to do too much with it will result in, to most developers other than Make
-experts or to the original author, an unintelligible mess of `include <>.mk`
-calls and variable overrides with `?=`.
 
 ## Getting Started with Invoke
 
@@ -218,11 +225,10 @@ SDK "Blinky" project.
 
 ### Installing Invoke
 
-I highly recommend using a virtual environment, which is a way to sandbox your
-python environment for your project.
-[This guide](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
-is a good starting point. In this example, I will be using Python 3.6, which has
-the `virtualenv` command available already.
+I highly recommend using a virtual environment[^4], which is a way to sandbox
+your python environment for your project. [This guide]() is a good starting
+point. In this example, I will be using Python 3.6, which has the `virtualenv`
+command available already.
 
 ```
 $ virtualenv venv
@@ -252,8 +258,8 @@ within the project, Invoke will search upwards until it finds a `tasks.py` file.
 > within that, the Blinky app located at
 > `nrf5_sdk/examples/peripheral/blinky/pca10056/blank/armgcc/`.
 
-The following is a simple `tasks.py` we have written to build
-the Blinky project.
+The following is a simple `tasks.py` we have written to build the Blinky
+project.
 
 ```python
 # /nrf5_sdk/tasks.py
@@ -286,8 +292,8 @@ Compiling file: main.c
 ```
 
 Some of you might immediately think this wrapper or abstraction is unnecessary,
-and maybe it is in the simplest case, but let's dive a bit into the inevitable future of
-this build command.
+and maybe it is in the simplest case, but let's dive a bit into the inevitable
+future of this build command.
 
 ## Iterating on our CLI
 
@@ -456,7 +462,16 @@ def build(ctx, ccache=True):
     "port": "The GDB port to attach to"
 })
 def flash(ctx, elf=BLINKY_ELF, port=JLINK_GDB_PORT):
-    """Spawn GDB and flash application & softdevice"""
+    """Spawn GDB and flash application & softdevice
+
+    Examples:
+        # Flash the default ELF file over JLink
+        $ invoke flash
+
+        # Flash a given binary over a JLink on the given port
+        $ invoke flash --elf /path/to/file.elf --port 12345
+
+    """
     cmd = f'{GDB_EXE} --eval-command="target remote localhost:{JLINK_GDB_PORT}"' \
           f' --ex="mon reset" --ex="load" --ex="mon reset" --se={BLINKY_ELF}'
     ctx.run(cmd)
@@ -519,9 +534,9 @@ I've thoroughly enjoyed using Invoke in my previous and current job. In
 Memfault's codebase, we have around 100 tasks, most of which are namespaced
 under general top-level modules. This provides our team with a centralized place
 for all of the common tasks, such as building the firmware SDK, publishing
-documentation, running automated tests on our firmware devices, pushing new
-versions of our service, performing database migrations...everything. The
-self-documenting nature of the commands is indispensable.
+documentation, running automated tests on our devices, pushing new versions of
+our service, performing database migrations...everything. The self-documenting
+nature of the commands is indispensable.
 
 I encourage the exploration of the
 [Invoke documentation](http://docs.pyinvoke.org/) to learn more about all the
@@ -542,6 +557,13 @@ straight to your mailbox_
   for better pretty printing and colors.
 - Invoke includes
   [tab-completion support](http://docs.pyinvoke.org/en/1.3/invoke.html#shell-tab-completion).
+
+## Reference & Links
+
+[^1]: [Invoke Configuration Docs](http://docs.pyinvoke.org/en/0.11.1/concepts/configuration.html)
+[^2]: [Invoke Argument Docs](http://docs.pyinvoke.org/en/0.11.1/concepts/cli/intro.html#tasks-and-task-options)
+[^3]: [Python pdb Docs](https://docs.python.org/3/library/pdb.html)
+[^4]: [Virtualenv Tutorial](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/invoke-basic/).
