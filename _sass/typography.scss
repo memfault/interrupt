@@ -45,9 +45,17 @@ h2 {
 	}
 }
 
-h3, h4, h5, h6 {
+h3 {
 	font-size: 1.25rem;
 	line-height: 2rem;
+	article .content & {
+		padding-bottom: 0.5 * $baseline-height;
+	}
+}
+
+h4, h5, h6 {
+	font-size: 1.10rem;
+	line-height: 1.75rem;
 
 	article .content & {
 		// Using padding to avoid collapse with previous element margin

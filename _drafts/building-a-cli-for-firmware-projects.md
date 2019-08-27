@@ -17,42 +17,54 @@ how to think about a project's CLI and implementing one using the
 
 <!-- excerpt end -->
 
-## Why Build A Project CLI?
+{:.no_toc}
 
-By building a CLI for a project, it becomes a single way for any developer,
-script, or continuous integration system to perform the most common operations
-are performed everyday.
+## Table of Contents
 
-For example, it helps convert launching JLinkGDBServer with the appropriate
-settings from a Wiki copy-paste of:
+<!-- prettier-ignore -->
+* auto-gen TOC:
+{:toc}
+
+## A Project CLI?
+
+Every project should have a single way for any developer, script, continuous
+integration system, or QA technician, to perform the most basic tasks. Whether
+this is building the project or documentation, running tests, or flashing a
+device, there should be only one **easy** way to do it.
+
+For example, instead of having to remember that JLinkGDBServer must be launched
+in the following manner:
 
 ```
 $ JLinkGDBServer -device Cortex-M4 -if SWD -speed 4000 -RTOSPlugin_FreeRTOS
 ```
 
-to
+I can make it:
 
 ```
-invoke jlink
+$ invoke jlink
 ```
 
-and flashing using GDB from:
+Similarly, flashing our firmware through GDB can go from:
 
 ```
 $ cd products/blinky/gcc
 $ arm-none-eabi-gdb-py -x gdbinit.jlink ../build/product.elf -x ../../common_gdb_scripts.gdbinit
 ```
 
-to
+to:
 
 ```
-invoke flash
+$ invoke flash
 ```
 
-A web service's REST API needs to be stable, easy to use, and self documenting.
-Your project's CLI should meet the same requirements.
+A web service's REST API needs to be **stable, easy to use, and self
+documenting**. Your project's CLI should meet the same requirements.
 
-## When to Build Project CLI
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
+straight to your mailbox_
+
+### When to Build a Project CLI
 
 If you or your teammates have experienced any of the following more than once,
 it may be time to write a CLI for your project.
@@ -64,22 +76,153 @@ it may be time to write a CLI for your project.
 - Scripts have **undocumented** arguments and environment variable overrides
 - Two or more teammates have **written similar scripts** for themselves but a
   common shared version doesn't exist, or is broken.
-- You check out a 3 month-old revision of your project and there is no longer
-  documentation about how to run (factory builds anyone?).
+- You check out a 3 month-old revision of your project and there is **no longer
+  documentation** about about this ancient version (factory builds anyone?).
 
 I could go on and on, but I hope the idea is clear. Building a CLI using Invoke
 helps with all of the above issues and more.
 
-## Getting started with Invoke
+### Why Invoke and Python
 
-Invoke is a "task execution tool & library" that works with Python 2.7 and 3.4+,
-and be installed using `pip`. We'll be using it today to build our project's CLI
-tool.
+Some reasons to use Invoke as your CLI language are:
 
-We'll be using a virtual environment, and I highly recommend them.
+- Configuration management through use of environment variables, arguments, and
+  config files
+- Automatic help menus and argument parsing with validation
+- Tasks can be run from any directory under the project root
+- Invoke and Python can be more easily used in a cross-platform environment
+- Easier debugging using the Python debugger and more flexible printing
+- Python is more widely known and understood among developers
+- Python gives access to a wide variety of packages to use
+
+### Why not Make
+
+In the firmware world, I've seen Make used as a CLI many times. I cringe most times.
+
+Make is great at dependency checking and simple recipes, but it shouldn't be
+used as a CLI. Here's an example.
+
+In the nRF5 SDK's Makefile, this is the recipe for `flash`.
+
+```
+# Flash the program
+flash: default
+    @echo Flashing: $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex
+    nrfjprog -f nrf52 --program $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex --sectorerase
+    nrfjprog -f nrf52 --reset
+```
+
+This uses the `nrfjprog` to flash and reset the device with the hard coded
+`.hex` file. This is great if that's **all** we wanted to do, but in the
+future...
+
+- What if we want to flash a different `.hex` file?
+- What if we have two devices plugged in and want to select a certain one?
+- What if we allowed the developer to choose between flashing with GDB or
+  `nrfjprog`?
+
+As you can see, this would require a few global variables that can be overridden
+using `make flash ELF=<path/to/hex> METHOD=gdb`, and a developer would never
+know about these unless a Wiki page is written and kept up-to-date or the source
+code is read frequently.
+
+Let's go through some other reasons why I advise against using Make as a CLI.
+
+#### Writing Make recipes is hard
+
+Make recipes are essentially shell commands. If you have a CLI command that does
+argument parsing, logic, environment checking, or spawns external processes and
+threads, then it's going to be incredibly difficult to do in a make recipe and
+shell command. It's also incredibly difficult to write these in a cross-platform
+manner.
+
+Invoke has
+[argument parsing](http://docs.pyinvoke.org/concepts/invoking-tasks.html#task-command-line-arguments)
+logic built-in, a
+[configuration management system](http://docs.pyinvoke.org/en/1.3/concepts/configuration.html#configuration-files),
+and for all the complex logic, it's just Python!
+
+#### Make is hard to debug
+
+Debugging a CLI is mostly about debugging the variables that get passed down
+into the shell commands or into the later Python scripts that get called.
+
+To debug an Invoke task, there are two common methods: Printing out the `ctx`
+object or setting a breakpoint.
+
+```python
+@task
+def env(ctx):
+    """Print out the `ctx` variable"""
+    # Print out the Context, which contains most information you need
+    print(ctx)
+
+    # Or set a breakpoint to get a debugger
+    import pdb
+    pdb.set_trace()
+```
+
+To debug a Make task, there is really only one easy way, and that is using
+`$(info ...)` statements
+
+```
+env:
+    $(info $(ARG_ELF_FILE))
+    # ...
+```
+
+#### Make commands aren't documented
+
+When working in a team environment, documentation is **critical**. When using
+Make, the Makefile and other source code is all the documentation that is
+provided.
+
+With Invoke, documentation is built in. We can print all commands available as
+well as drill down into each to find out more information. This makes it easy
+for developers to discover new commands and find what they are looking for.
+
+```
+$ inv --list
+Available tasks:
+
+  build       Build the project
+  console     Start an RTT console session
+  debug       Spawn GDB and attach to the device without flashing
+  flash       Spawn GDB and flash application & softdevice
+  gdbserver   Start JLinkGDBServer
+```
+
+```
+$ inv flash --help
+Usage: inv[oke] [--core-opts] flash [--options] [other tasks here ...]
+
+Docstring:
+  Spawn GDB and flash application & softdevice
+
+Options:
+  -e STRING, --elf=STRING   The elf to flash
+  -p INT, --port=INT        The GDB port to attach to
+```
+
+#### Make requires at least one expert
+
+Make is a great build system, and it has an impressive number of features, but
+trying to do too much with it will result in, to most developers other than Make
+experts or to the original author, an unintelligible mess of `include <>.mk`
+calls and variable overrides with `?=`.
+
+## Getting Started with Invoke
+
+Let's move onto our example CLI using Invoke to interface with the Nordic nRF5
+SDK "Blinky" project.
+
+### Installing Invoke
+
+I highly recommend using a virtual environment, which is a way to sandbox your
+python environment for your project.
 [This guide](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
-is a good starting point. I will be using Python 3.6, which has the `virtualenv`
-command available already.
+is a good starting point. In this example, I will be using Python 3.6, which has
+the `virtualenv` command available already.
 
 ```
 $ virtualenv venv
@@ -101,7 +244,7 @@ We've confirmed it's installed. To start adding tasks to Invoke, one needs to
 add a `tasks.py` file to the root of a project. No matter where the user is
 within the project, Invoke will search upwards until it finds a `tasks.py` file.
 
-## Using Invoke with the nRF5 SDK
+### Minimal Invoke script
 
 > For purposes of this example, we are going to use the Nordic nRF5 SDK version
 > 15.2.0, which can be downloaded
@@ -109,8 +252,8 @@ within the project, Invoke will search upwards until it finds a `tasks.py` file.
 > within that, the Blinky app located at
 > `nrf5_sdk/examples/peripheral/blinky/pca10056/blank/armgcc/`.
 
-The following is the most basic, but still reasonable, `tasks.py` to allow us to
-easily build our Blinky project:
+The following is a simple `tasks.py` we have written to build
+the Blinky project.
 
 ```python
 # /nrf5_sdk/tasks.py
@@ -127,25 +270,26 @@ BLINKY_DIR = os.path.join("nrf5_sdk", "examples", "peripheral",
 def build(ctx):
     """Build the project"""
     with ctx.cd(PCA10056_BLINKY_ARMGCC_DIR):
-        ctx.run("make build")
+        ctx.run("make")
 ```
 
 This sets up the proper paths, `cd`'s into the directory, and runs `make`.
 
 ```
 $ inv --echo build
-cd /Users/tyler/dev/memfault/interrupt/example/invoke-basic/nrf5_sdk/examples/peripheral/blinky/pca10056/blank/armgcc && make -j4
+cd /Users/tyler/dev/memfault/interrupt/example/invoke-basic/nrf5_sdk/examples/peripheral/blinky/pca10056/blank/armgcc && make
 mkdir _build
 cd _build && mkdir nrf52840_xxaa
 Assembling file: gcc_startup_nrf52840.S
 Compiling file: main.c
-Compiling file: nrf_log_frontend.c
-Compiling file: nrf_log_str_formatter.c
+...
 ```
 
 Some of you might immediately think this wrapper or abstraction is unnecessary,
-and maybe it is in the simplest case, but let's dive a bit into the future of
+and maybe it is in the simplest case, but let's dive a bit into the inevitable future of
 this build command.
+
+## Iterating on our CLI
 
 ### Adding Parallel Builds
 
@@ -162,9 +306,9 @@ def build(ctx):
         ctx.run("make build -j4")
 ```
 
-Now everone running `invoke build` will automatically use parallel make.
+Now everyone running `invoke build` will automatically use parallel make.
 
-### Adding `ccache`
+### Detecting and using `ccache`
 
 A few more weeks, and our build time slowed down again. This time, we've thought
 to enable `ccache`, and we want every developer to use this. It appears that the
@@ -211,7 +355,7 @@ A few things are happening above now.
 What's neat about everything here is that even though developers keep running
 `invoke build`, new functionality gets added without them knowing.
 
-### Checking for `ccache`
+### Checking environment for `ccache`
 
 A few more weeks later, we realize some developers are not using `ccache`
 because it isn't installed on their machines. One could go around from computer
@@ -241,122 +385,6 @@ Using these `check_` style routines along with `@task(pre=[...])` is an easy way
 to ensure that a developer's local environment is set up and remains set up
 correctly even as project requirements and versions change. I would argue it's
 very much required when a project upgrades `gcc` versions!
-
-## Don't use Make as your CLI
-
-I've seen Make used as a CLI many times. I cringe most times.
-
-Make is great at dependency checking and simple recipes, but it shouldn't be
-used as a CLI. Let's give an example.
-
-In the nRF5 SDK, this is the recipe for `flash`.
-
-```
-# Flash the program
-flash: default
-    @echo Flashing: $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex
-    nrfjprog -f nrf52 --program $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex --sectorerase
-    nrfjprog -f nrf52 --reset
-```
-
-This uses the `nrfjprog` to flash and reset the device with the hard coded
-`.hex` file. This is great if that's **all** we wanted to do, but in the
-future...
-
-- What if we want to flash a different `.hex` file?
-- What if we have two devices plugged in and want to select a certain one?
-- What if we allowed the developer to choose between flashing with GDB or
-  `nrfjprog`?
-
-As you can see, this would require a few global variables that can be overridden
-using `make flash ELF=<path/to/hex> METHOD=gdb`, and a developer would never
-know about these unless a Wiki page is written and kept up-to-date or the source
-code is read frequently.
-
-Let's go through some other reasons why I advice against using Make as a CLI.
-
-### Writing Make recipes is hard
-
-Make recipes are essentially shell commands. If you have a CLI command that does
-argument parsing, logic, environment checking, or spawns external processes and
-threads, then it's going to be incredibly difficult to do in a make recipe and
-shell command. It's also incredibly difficult to write these in a cross-platform
-manner.
-
-Invoke has
-[argument parsing](http://docs.pyinvoke.org/concepts/invoking-tasks.html#task-command-line-arguments)
-logic built-in, a
-[configuration management system](http://docs.pyinvoke.org/en/1.3/concepts/configuration.html#configuration-files),
-and for all the complex logic, it's just Python!
-
-### Make is hard to debug
-
-Debugging a CLI is mostly about debugging the variables that get passed down
-into the shell commands or into the later Python scripts that get called.
-
-To debug an Invoke task, there are two common methods: Printing out the `ctx`
-object or setting a breakpoint.
-
-```python
-@task
-def env(ctx):
-    """Print out the `ctx` variable"""
-    # Print out the Context, which contains most information you need
-    print(ctx)
-
-    # Or set a breakpoint to get a debugger
-    import pdb
-    pdb.set_trace()
-```
-
-To debug a Make task, there is really only one easy way, and that is using
-`$(info ...)` statements
-
-```
-env:
-    $(info $(ARG_ELF_FILE))
-    # ...
-```
-
-### Make commands aren't documented
-
-When working in a team environment, documentation is **critical**. When using
-Make, the Makefile and other source code is all the documentation that is
-provided.
-
-With Invoke, documentation is built in. We can print all commands available as
-well as drill down into each to find out more information. This makes it easy
-for developers to discover new commands and find what they are looking for.
-
-```
-$ inv --list
-Available tasks:
-
-  build       Build the project
-  console     Start an RTT console session
-  debug       Spawn GDB and attach to the device without flashing
-  flash       Spawn GDB and flash application & softdevice
-  gdbserver   Start JLinkGDBServer
-```
-
-```
-$ inv flash --help
-Usage: inv[oke] [--core-opts] flash [--options] [other tasks here ...]
-
-Docstring:
-  Spawn GDB and flash application & softdevice
-
-Options:
-  -e STRING, --elf=STRING   The elf to flash
-  -p INT, --port=INT        The GDB port to attach to
-```
-
-### Make requires at least one expert
-
-Make is a great build system, and it has an impressive number of features, but
-trying to do too much with it will result in, to most developers other than Make
-experts or to the original author, an unintelligible mess of `include <>.mk`
-calls and variable overrides with `?=`.
 
 ## A full Invoke example for Blinky
 
@@ -463,7 +491,8 @@ def console(ctx, telnet=JLINK_TELNET_PORT):
 
 # Add all tasks to the namespace
 ns = Collection(build, console, debug, flash, gdbserver)
-# Configure every task to act as a shell command (will print colors, allow interactive CLI)
+# Configure every task to act as a shell command
+#   (will print colors, allow interactive CLI)
 # Add our extra configuration file for the project
 config = Config(defaults={"run": {"pty": True}})
 ns.configure(config)
@@ -472,12 +501,14 @@ ns.configure(config)
 Given the full (but incredibly minimal) example above, we have the following
 tasks and features:
 
-- We can run: - `invoke build` to build the project with `ccache` and
-  parallelized - `invoke console` will connect to the device's serial console -
-  `invoke gdbserver` will spawn `JLinkGDBServer` with the correct
-  configuration - `invoke flash` will flash the binary through GDB and give us a
-  prompt to the device - `invoke debug` will attach to a running device using
-  GDB without flashing
+- We can run:
+  - `invoke build` to build the project with `ccache` and parallelized
+  - `invoke console` will connect to the device's serial console
+  - `invoke gdbserver` will spawn `JLinkGDBServer` with the correct
+    configuration
+  - `invoke flash` will flash the binary through GDB and give us a prompt to the
+    device
+  - `invoke debug` will attach to a running device using GDB without flashing
 - For each command, we will check that the proper binaries/packages are
   installed using `pre` tasks
 - We can run `inv --list` and `inv <command> --help` for help menus.
@@ -501,11 +532,14 @@ For a production example of Invoke tasks, look no further than the
 It provides a good example of how to import tasks from other modules to create a
 centralized tasks list.
 
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
+straight to your mailbox_
+
 ## Further Reading
 
 - I like to use a combination of Invoke and
   [Click](https://click.palletsprojects.com/en/7.x/utils/#printing-to-stdout)
-  for better pretty prining and colors.
+  for better pretty printing and colors.
 - Invoke includes
   [tab-completion support](http://docs.pyinvoke.org/en/1.3/invoke.html#shell-tab-completion).
 
