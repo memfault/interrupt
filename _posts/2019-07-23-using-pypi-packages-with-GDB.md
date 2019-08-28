@@ -3,6 +3,7 @@ title: "Using Python PyPi Packages with GDB"
 description:
   "How to setup GDB, virtualenv, and Python to use PyPi packages in GDB scripts"
 author: tyler
+tags: [python, gdb]
 ---
 
 <!-- excerpt start -->

@@ -13,7 +13,7 @@ chris:
     email: chris@memfault.com
     web: https://www.linkedin.com/in/christopher-coleman-812aa06b/
     image: /img/author/chris.jpg
-    blurb: is the founder and CTO of Memfault. Prior to founding Memfault, Chris worked on the embedded software teams at Sun, Pebble, and Fitbit.
+    blurb: is a founder and CTO at Memfault. Prior to founding Memfault, Chris worked on the embedded software teams at Sun, Pebble, and Fitbit.
     github: chrisc11
     linkedin: https://www.linkedin.com/in/christopher-coleman-812aa06b/
 tyler:
@@ -21,7 +21,7 @@ tyler:
     email: tyler@memfault.com
     web: https://www.linkedin.com/in/tyhoff/
     image: /img/author/tyler.jpg
-    blurb: is the founder and CPO of Memfault. Prior to founding Memfault, Tyler worked on the embedded software teams at Pebble and Fitbit.
+    blurb: has worked on the embedded software teams at Pebble and Fitbit. He is now a founder at <a href='https://memfault.com'>Memfault</a>.
     twitter: ty_hoff
     linkedin: https://www.linkedin.com/in/tyhoff/
     github: tyhoff
