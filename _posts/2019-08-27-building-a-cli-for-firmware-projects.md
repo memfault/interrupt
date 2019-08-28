@@ -226,7 +226,7 @@ SDK "Blinky" project.
 ### Installing Invoke
 
 I highly recommend using a virtual environment[^4], which is a way to sandbox
-your python environment for your project. [This guide]() is a good starting
+your python environment for your project. [This guide](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv) is a good starting
 point. In this example, I will be using Python 3.6, which has the `virtualenv`
 command available already.
 
