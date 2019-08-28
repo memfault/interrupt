@@ -4,6 +4,7 @@ description:
   "A walkthrough on how to build a command line interface (CLI) for a firmware
   project using the Python Invoke package."
 author: tyler
+image: /img/project-cli/project-cli.png
 tags: [python]
 ---
 
