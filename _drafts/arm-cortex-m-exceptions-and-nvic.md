@@ -680,10 +680,7 @@ If you'd like to read even more here's some other dicussions about Cortex-M exce
 that I've found to be interesting:
 
 - [Cortex-M Exception Handling](https://www.embeddedrelated.com/showarticle/878.php)
--
-
-[Cutting Through the Confusion with Arm Cortex-M Interrupt Priorities](https://community.arm.com/developer/ip-products/system/b/embedded-blog/posts/cutting-through-the-confusion-with-arm-cortex-m-interrupt-priorities?CommentId=18f96346-52cf-4869-9345-d74c796b6dcd)
-
+- [Cutting Through the Confusion with Arm Cortex-M Interrupt Priorities](https://community.arm.com/developer/ip-products/system/b/embedded-blog/posts/cutting-through-the-confusion-with-arm-cortex-m-interrupt-priorities?CommentId=18f96346-52cf-4869-9345-d74c796b6dcd)
 - [Interruptible Instructions](https://community.arm.com/developer/ip-products/processors/f/cortex-m-forum/11166/interruptible-instructions-on-cortex-m4)
 
 ## Reference Links
