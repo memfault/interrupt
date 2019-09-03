@@ -51,7 +51,7 @@ documentation, "interrupt" is used to describe a type of "exception". Exceptions
   exceptions this number is configurable. Counter-intuitively, the lower the priority number, the
   higher the precedence the exception has. So for example if an exception of priority level 2 and
   level 1 occur at the same time, the level 1 exception will be run first. When we say an exception
-  has the "highest priority", it will have the _lowest_ **Priority Number**. If two exceptions have the _same_ priority **Priority Number**, the exception with the lowest **Exception Number** will run first.
+  has the "highest priority", it will have the _lowest_ **Priority Number**. If two exceptions have the _same_ **Priority Number**, the exception with the lowest **Exception Number** will run first.
 - **Synchronous** or **Asynchronous** - As the name implies, some exceptions will fire immediately
   after an instruction is executed (i.e `SVCall`). These exceptions are referred to as
   _synchronous_. Exceptions that do not fire immediately after a particular code path is executed are
