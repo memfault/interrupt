@@ -78,6 +78,15 @@ blockquote {
 	}
 }
 
+// Indent lists so they are inside the section
+ul {
+    margin-left: 1.5em;
+}
+
+ul > ul {
+    margin-left: 1.5em;
+}
+
 // Make sure that our footnote markers don't affect line-height
 sup { 
   line-height: 0;
