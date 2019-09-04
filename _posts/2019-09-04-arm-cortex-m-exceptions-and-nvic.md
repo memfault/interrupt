@@ -2,6 +2,7 @@
 title: "ARM Cortex-M Exception Handling"
 description: "Step-by-step walkthrough of ARM Cortex-M Exception handlers & how to configure ARM
 System Fault Handlers and the Nested Vector Interrupt Controller (NVIC) with examples in C"
+image: /img/armv-m-exceptions/nvic-config-example3.png
 author: chris
 ---
 
@@ -290,7 +291,7 @@ is known as "Tail-Chaining".
 
 For example, on a Cortex-M3, when using zero
 wait state memory, it takes 12 clock cycles to start executing an ISR after it has been asserted
-and 12 cycles return from the ISR upon its completion. When the register pop and push is skipped,
+and 12 cycles to return from the ISR upon its completion. When the register pop and push is skipped,
 it only takes 6 cycles to exit from one exception and start another one, saving 18 cycles in total!
 
 ### Late-arriving Preemption
