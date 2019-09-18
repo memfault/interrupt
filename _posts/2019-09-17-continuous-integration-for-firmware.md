@@ -87,7 +87,7 @@ straight to your mailbox_
 ## Continuous Integration Systems
 
 Many tools exist today that can be used to implement Continuous Integration. You
-may have heard of Jenkins, a popular open source tool, but many other exists:
+may have heard of Jenkins, a popular open source tool, but many others exist:
 TravisCI, CircleCI, TeamCity, Bamboo, Build Bot, …
 
 Fundamentally, continuous integration systems all do roughly the same thing:
@@ -192,10 +192,10 @@ collection of steps executed sequentially in a specific environment. A
 **Workflow** is a collection of jobs executed either sequentially or in parallel
 based on more complex logic.
 
-You can read more about Steps, Jobs, and Workflows in [CircleCI’s
+You can read more about Steps, Jobs, and Workflows in CircleCI’s
 documentation[^3] 
 
-For our hello world example, we set have a single job, with the following steps:
+For our hello world example, we will have a single job, with the following steps:
 1. Check out the code repository
 2. Print “Hello, world”
 3. Print the current date and time
@@ -334,9 +334,13 @@ You should see the output of your two commands, and a successful result.
 
 ### Testing CircleCI Configs Locally
 
+When adding to a Circle CI config, it's often useful to test things out locally. This can easily be done using command line tool[^6]. For example:
+
 ```shell
 $ brew install circleci
+# Check for syntax errors in the config.yml file
 $ circleci config validate
+# Run a the config in a local docker instance
 $ circleci local execute
 ```
 
@@ -374,7 +378,7 @@ Next, we run the compilation steps we’ve previously tested locally.
       make
 ```
 
-Last but not least, we want to stash the resulting elf file so we could download
+Last but not least, we want to stash the resulting elf file so we can download
 it later. This is especially useful if you want to test a previous build of your
 codebase without having to recompile it yourself.
 
@@ -500,7 +504,7 @@ Let’s add the as a new job in CircleCI:
 version: 2
 jobs:
   build:
-    # Unchanged from previously
+    # Unchanged
     [...]
 
   unit-test:
@@ -551,9 +555,9 @@ I hope reading this post has inspired you to use CI for your next project.
 You can find our final CircleCI config on
 [Github](https://github.com/memfault/ChibiOS/blob/master/.circleci/config.yml)
 
-Of coure, setting up CI is the easy part. Writing good tests, managing cost, and
+Of course, setting up CI is the easy part. Writing good tests, managing cost, and
 keeping build time low are all challenges you will face along the way. Future
-posts will cover those topic.
+posts will cover those topics.
 
 What other techniques do you use to improve your team's productivity? Tell us
 all about it in the comments, or at
@@ -568,3 +572,4 @@ all about it in the comments, or at
 [^3]: [Circle CI Documentation - Jobs, Steps, Workflows]((https://circleci.com/docs/2.0/jobs-steps/#section=getting-started).)
 [^4]: [Checkout Step - CircleCI](https://circleci.com/docs/2.0/configuration-reference/#checkout)
 [^5]: [Storing Build Artifacts - CircleCI](https://circleci.com/docs/2.0/artifacts/)
+[^6]: [CircleCI's command-line application](https://github.com/CircleCI-Public/circleci-cli)
