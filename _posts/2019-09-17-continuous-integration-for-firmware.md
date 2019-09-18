@@ -24,7 +24,7 @@ CircleCI on a firmware project step by step.
 
 <!-- excerpt end -->
 
-This is the first post in our Building Better Firmware series. Future posts will
+This is the first post in our _Building Better Firmware_ series. Future posts will
 cover testing techniques, test driven development, fuzzing, and continuous
 deployment.
 
@@ -277,8 +277,8 @@ jobs:
 ```
 
 All that is left is setting the environment. This section defines what system
-image is used to run your job. The simplest thing to do here is to set a docker
-image from the docker registry as your base image. Any docker image will do, in
+image is used to run your job. The simplest thing to do here is to set a Docker
+image from the Docker Registry as your base image. Any Docker image will do, in
 this case we will use the latest Debian image: `debian:stretch`.
 
 Our hello world example is now complete:
@@ -340,7 +340,7 @@ When adding to a Circle CI config, it's often useful to test things out locally.
 $ brew install circleci
 # Check for syntax errors in the config.yml file
 $ circleci config validate
-# Run a the config in a local docker instance
+# Run a the config in a local Docker instance
 $ circleci local execute
 ```
 
@@ -513,7 +513,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Intall apt packages
+          name: Install apt packages
           command: 'sudo apt install libc6-dev-i386'
       - run:
           name: Build Unit Tests
