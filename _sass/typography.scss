@@ -79,15 +79,15 @@ blockquote {
 }
 
 // Indent lists so they are inside the section
-ul {
+li, ul {
     margin-left: 1.5em;
 }
 
-ul > ul {
+li > li, ul > ul {
     margin-left: 1.5em;
 }
 
 // Make sure that our footnote markers don't affect line-height
-sup { 
+sup {
   line-height: 0;
 }
