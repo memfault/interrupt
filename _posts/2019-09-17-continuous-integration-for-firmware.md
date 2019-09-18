@@ -1,6 +1,6 @@
 ---
 title: Building Better Firmware with Continuous Integration
-description: An step by step guide on how to use continuous integration for firmware projects with CircleCI
+description: A step by step guide on how to use continuous integration for firmware projects with CircleCI.
 author: francois
 tags: [better-firmware]
 ---
