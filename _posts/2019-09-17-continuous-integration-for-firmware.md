@@ -1,9 +1,8 @@
 ---
-title: Build Firmware Projects with CircleCI
-description: TODO
+title: Building Better Firmware with Continuous Integration
+description: An step by step guide on how to use continuous integration for firmware projects with CircleCI
 author: francois
-image: /img/project-cli/project-cli.png
-tags: [ci]
+tags: [better-firmware]
 ---
 
 Larger firmware projects sometimes have tens, even hundreds of engineers working
