@@ -33,7 +33,11 @@ To best understand how to optimize for BLE, it's first important to have a basic
 
 Before we get started, there's a couple pieces of terminology that we will use extensively below:
 
-- **Connection Event** - For BLE, _exactly_ two devices are talking with each other in one _connection_. Even if data is not being exchanged, the devices must exchange a packet periodically to ensure the _connection_ is still alive. Each time the devices start a conversation with one another is known as a _Connection Event_
+- **Connection Event** - For BLE, _exactly_ two devices are talking with each other in one
+  _connection_. Even if data is not being exchanged, the devices must exchange a packet
+  periodically to ensure the _connection_ is still alive. The start of every period in which two
+  devices can exchange information with one another is known as a _Connection Event_. A connection
+  itself is thus a sequence of Connection Events.
 
 - **Connection Interval** - The time between each _Connection Event_. The _Connection Interval_ can be negotiated once the two devices are connected. Longer connection intervals save power at the cost of latency. _Connection Intervals_ can range from _7.5ms_ to _4s_.
 
@@ -44,7 +48,7 @@ Before we get started, there's a couple pieces of terminology that we will use e
 For Bluetooth 4.0, the BLE Radio is capable of transmitting 1 symbol per microsecond and one bit of data can be encoded in each symbol. This gives a raw radio bitrate of 1 Megabit per second (**Mbps**). This is **not** the throughput which will be observed for several reasons:
 
 1. There is a mandatory _150μs_ delay that must be between each packet sent. This is known as the _Inter Frame Space_ (_T_IFS_)
-2. BLE is a _reliable transport_ meaning every packet of data sent from one side must be acknowledged (ACK'd) by the other. The size of an _ACK_ packet is _80bits_ and thus takes _80μs_ to transmit.
+2. The BLE Link Layer protocol is _reliable_ meaning every packet of data sent from one side must be acknowledged (ACK'd) by the other. The size of an _ACK_ packet is _80bits_ and thus takes _80μs_ to transmit.
 3. The BLE protocol has overhead for every data payload which is sent so sometime is spent sending headers, etc for data payloads
 
 > Fun Fact: As an antenna is used it heats up. As it heats up, the frequency it transmits or receives at can start to drift. The IFS allows for simpler antenna design for BLE by giving the antenna a chance to cooldown before it needs to transmit again
@@ -85,9 +89,9 @@ This yields a raw data throughput of:
 
 ### L2CAP Channels & Payloads
 
-L2CAP is the higher level protocol packed inside the **Data Payloads** of the Link Layer packets. L2CAP allows:
+L2CAP is the next layer above the Link Layer and is packed inside the **Data Payloads** of the Link Layer packets. L2CAP allows:
 
-- unrelated data flows to be multiplexed across different virtual _channels_
+- unrelated data flows to be multiplexed across different _logical channels_
 - fragmenting and de-fragmenting data across multiple LL Packets (since an L2CAP payload can span multiple LL Packets)
 
 There are only a few different L2CAP channels used for Bluetooth Low Energy:
@@ -185,7 +189,12 @@ What the connection interval _does_ impact is latency. Many higher layer protoco
 
 #### Maximum Supported ATT MTU Size
 
-As we discussed [above](#max-throughput-gatt), the ATT MTU size has an impact on the max throughput which can be realized when using GATT due to protocol overhead. Some chips only support the default size (especially older Android Phones). When first testing a chip it's important to check and make sure larger packets can be sent!
+As we discussed [above](#max-throughput-gatt), the ATT MTU size has an impact on the max throughput
+which can be realized when using GATT due to protocol overhead. Some chips only support the default
+size (especially older Android Phones). When first testing a chip it's important to check and make
+sure larger packets can be sent! It's also a good idea to see how many ATT packets you can queue up
+and receive. Some stacks will only let you queue up or receive a single MTU worth of data so it's not
+possible to keep the link saturated.
 
 {:.no_toc}
 
@@ -205,7 +214,7 @@ Counterintuitively, even though the Link Layer of BLE is _reliable_, packet loss
 
 Over the years, the Bluetooth SIG has added a number of additions to the Low Energy Specification to help improve the throughput that can be achieved. In this section we explore these settings
 
-> CAUTION: Even though some of these features have been around for a while, xssupport within the ecosystem still varies. If you are planning to leverage these features, I'd strongly recommend having away to dynamically enable/disable them in your software stack. While the Bluetooth Specification has a robust set of hardware level BLE "Direct Test"s a device must pass to be certified, there really is no thorough test of the software stack itself. This in part has contributed to very buggy BLE software stacks getting shipped and numerous interoperability issues when different Bluetooth Chips try to talk to one another.
+> CAUTION: Even though some of these features have been around for a while, support within the ecosystem still varies. If you are planning to leverage these features, I'd strongly recommend having away to dynamically enable/disable them in your software stack. While the Bluetooth Specification has a robust set of hardware level BLE "Direct Test"s a device must pass to be certified, there really is no thorough test of the software stack itself. This in part has contributed to very buggy BLE software stacks getting shipped and numerous interoperability issues when different Bluetooth Chips try to talk to one another.
 
 {: #ll-data-packet-length-extension}
 
