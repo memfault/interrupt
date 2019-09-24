@@ -1,14 +1,16 @@
 ---
 title: "A Practical Guide to BLE Throughput"
-description: "An overview of the factors which influence the throughput realized when using Bluetooth Low Energy and step-by-step instructions on how to analyze the factors limiting throughput in real applications"
+description: "An overview of the factors which influence the throughput realized when using
+Bluetooth Low Energy and step-by-step instructions on how to analyze what is limiting throughput in real applications"
+image: /img/ble-throughput/ble-throughput-preview.png
 author: chris
 ---
 
-Bluetooth Low Energy (BLE) was first added to smartphones in 2011 as part of the iPhone 4S. Since then it has become the de-facto way for smartphones to communicate with external devices. While BLE was initially intended to send small amounts of information back and forth, today many applications stream large amounts of data, such as sensor data for tracking steps, binaries for firmware updates and even audio. For these types of applications, the speed of transfer is very important.
+Bluetooth Low Energy (BLE) was first added to smartphones in 2011 as part of the iPhone 4S. Since then it has become the de-facto way for smartphones to communicate with external devices. While BLE was initially intended to send small amounts of information back and forth, today many applications stream large amounts of data, such as sensor data for tracking steps, binaries for firmware updates, and even audio. For these types of applications, the speed of transfer is very important.
 
 <!-- excerpt start -->
 
-In this article we dive into the factors which influence BLE throughput. We will walk through the BLE protocol stack from version 4.0 to 5.1. We will discuss how to audit what is limiting throughput in a BLE connection and parameters which can be tuned to improve it. Finally, we will walk through a couple practical examples where we evaluate and optimize the throughput of a connection.
+In this article, we dive into the factors which influence BLE throughput. We will walk through the BLE protocol stack from version 4.0 to 5.1. We will discuss how to audit what is limiting throughput in a BLE connection and parameters which can be tuned to improve it. Finally, we will walk through a couple practical examples where we evaluate and optimize the throughput of a connection.
 
 <!-- excerpt end -->
 
@@ -31,7 +33,7 @@ To best understand how to optimize for BLE, it's first important to have a basic
 
 ### Terminology
 
-Before we get started, there's a couple pieces of terminology that we will use extensively below:
+Before we get started, there are a couple pieces of terminology that we will use extensively below:
 
 - **Connection Event** - For BLE, _exactly_ two devices are talking with each other in one
   _connection_. Even if data is not being exchanged, the devices must exchange a packet
@@ -47,7 +49,7 @@ Before we get started, there's a couple pieces of terminology that we will use e
 
 For Bluetooth 4.0, the BLE Radio is capable of transmitting 1 symbol per microsecond and one bit of data can be encoded in each symbol. This gives a raw radio bitrate of 1 Megabit per second (**Mbps**). This is **not** the throughput which will be observed for several reasons:
 
-1. There is a mandatory _150μs_ delay that must be between each packet sent. This is known as the _Inter Frame Space_ (_T_IFS_)
+1. There is a mandatory _150μs_ delay that must be between each packet sent. This is known as the _Inter Frame Space_ (_T_IFS_).
 2. The BLE Link Layer protocol is _reliable_ meaning every packet of data sent from one side must be acknowledged (ACK'd) by the other. The size of an _ACK_ packet is _80bits_ and thus takes _80μs_ to transmit.
 3. The BLE protocol has overhead for every data payload which is sent so sometime is spent sending headers, etc for data payloads
 
@@ -70,7 +72,7 @@ All data during a BLE connection is sent via _Link Layer_ (**LL**) packets. All 
 With the three rules we mentioned about transmissions on the Bluetooth Radio in mind, let's take a look at the procedure to transmit a maximally sized LL packet.
 
 - Side A sends a maximum size LL data packet (**27** bytes of data in a **41** byte payload) which takes **328μs** (`41 bytes * 8 bits / byte * 1Mbps`) to transmit
-- Side B receieves the packet and waits `T_IFS` (**150μs**)
+- Side B receives the packet and waits `T_IFS` (**150μs**)
 - Side B ACKs the LL packet it received in **80μs** (**0** bytes of data)
 - Side A waits `T_IFS` before sending any more data
 
@@ -98,7 +100,7 @@ There are only a few different L2CAP channels used for Bluetooth Low Energy:
 
 1. **Security Manager protocol** (**SMP**) - for BLE security setup
 2. **Attribute protocol** (**ATT**) - Android & iOS both offer APIs that allow 3rd party apps to control transfers over this channel.
-3. **LE L2CAP Connection Oriented Channels** (**CoC**) - Custom channels which are advantageous for streaming applications. Apple exposed APIs for L2CAP Channels in iOS 11[^2]. Android also exposed APIs as part of Android 10 [^3]. Since both of the mobile APIs are still fairly "new" and many phones aren't running OS updates which support these features, most devices which need to talk to a mobile device still need to use ATT. If your application does not need to send data to a mobile device, it's definitely worth trying to use CoCs!
+3. **LE L2CAP Connection Oriented Channels** (**CoC**) - Custom channels which are advantageous for streaming applications. Apple exposed APIs for L2CAP Channels in iOS 11[^2]. Android also exposed APIs as part of Android 10[^3]. Since both of the mobile APIs are still fairly "new" and many phones aren't running OS updates which support these features, most devices which need to talk to a mobile device still need to use ATT. If your application does not need to send data to a mobile device, it's definitely worth trying to use CoCs!
 
 {:.no_toc}
 
@@ -110,7 +112,10 @@ Below is a diagram of the layout of an L2CAP packet. As you can see there are 4 
 
 ### Attribute Protocol (ATT) Packet
 
-In the _L2CAP Information Payload_ we have the ATT packet. This is the packet structure the _GATT_ protocol uses. For an excellent article about GATT itself, check out [this post](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer#gatt-services-and-characteristics) on the topic!
+In the _L2CAP Information Payload_ we have the ATT packet. This is the packet structure the _GATT_
+protocol uses.
+
+> NOTE: For an excellent article about GATT itself, check out Mohammad Afaneh's thorough [BLE Primer post](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer#gatt-services-and-characteristics) on the topic!
 
 ATT packets can span multiple LL packets. The size of the data unit within an ATT packet is known as the _Maximum Transmission Unit_ (**MTU**). The default size is 23 bytes (which allows the packet to fit in one LL packet) but the size can be negotiated via the _Exchange MTU Request & Response_. The maximum MTU which can be negotiated is 512 bytes.
 
@@ -230,7 +235,7 @@ We can calculate the raw data throughput and see that this modification yields g
 
 ### LE 2M PHY (BT v5.0)
 
-As part of the 5.0 Bluetooth Core Specification revision, a new feature known as "LE 2M PHY"[^4] was added. As you may recall in the section [above](#ble-radio), we discussed how the BLE Radio is capable of transmitting 1 symbol per μs for a bitrate of 1Mbit/sec. This revision to the Bluetooth Low Energy Physical Layer (PHY), allows for a symbol rate of 2Mbit/sec. This means we can transmit each individual bit in half the time. However, the 150μs IFS is still needed between transmissions. Let's take a look on how this impacts the throughput when sending packets that are using the data packet length extension feature:
+As part of the 5.0 Bluetooth Core Specification revision, a new feature known as "LE 2M PHY"[^4] was added. As you may recall in the section [above](#ble-radio), we discussed how the BLE Radio is capable of transmitting 1 symbol per μs for a bitrate of 1Mbps. This revision to the Bluetooth Low Energy Physical Layer (PHY), allows for a symbol rate of 2Mbps. This means we can transmit each individual bit in half the time. However, the 150μs IFS is still needed between transmissions. Let's take a look on how this impacts the throughput when sending packets that are using the data packet length extension feature:
 
 ![](img/ble-throughput/ble-throughput-dple-and-2m-phy.png)
 
@@ -272,7 +277,7 @@ Let's figure out if we can improve the throughput for the following application:
 
 From the examples above, we know it takes 2500μs to exchange a 251 byte data payload. This means we can fit 4 transfers in a 11.25ms connection interval. No data will be sent in the last 1.25ms of the window since it does not fit. This gives us a throughput of:
 
-`(251 * 4) / 11.25 = 89kBytes/sec = 713Mbit/sec`
+`(251 bytes * 4 packets) / 11.25 ms = 89kBytes/sec = 0.713Mbps`
 
 If we chose a slightly larger connection interval that is divisible by our transfer duration, i.e 12.5ms, we can improve our throughput by 11% because now can now fill the window and remove the 1.25ms gap.
 
