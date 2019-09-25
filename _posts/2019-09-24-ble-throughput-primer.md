@@ -178,10 +178,6 @@ The "LE Coded PHY" feature, also introduced in the 5.0 Spec [^4] provides a way 
 
 ## Auditing BLE Throughput Limiting Factors
 
-In practice, the achievable throughput rates are greatly impacted by the two Bluetooth chips involved in the connection. In the following sections we will explore some of the common items to inspect when analyzing throughput.
-
-> NOTE: If you are evaluating a Bluetooth chip for a new design, it's very important you are using a capable chip to test the new one against. If you are testing the new chip against one with the limitations described below, you may miss some of the limitations of the new chip being analyzed.
-
 ### LE Protocol Analyzers
 
 A full discussion of how to use protocol analyzers is outside the scope of this article but they can be an invaluable resource when trying to understand performance issues on your Bluetooth link. They give you detailed views of the raw packets being sent over the air and very useful visualizations of the data being sent at the different protocol layers.
@@ -200,6 +196,10 @@ connection. Furtheremore, there's several parameters that can vary widely depend
 stack of the bluetooth chip in use and have a significant impact on throughput. In the sections
 below, I'll discuss the common settings to check when trying to analyze and optimize the throughput
 of a connection.
+
+> NOTE: If you are evaluating a Bluetooth chip for a new design, it's very important you are using
+> a capable chip to test the new one against. If you are testing the new chip against one with the
+> limitations described below, you may miss some of the limitations of the new chip being analyzed.
 
 {:.no_toc}
 
