@@ -51,9 +51,11 @@ For Bluetooth 4.0, the BLE Radio is capable of transmitting 1 symbol per microse
 
 1. There is a mandatory _150μs_ delay that must be between each packet sent. This is known as the _Inter Frame Space_ (_T_IFS_).
 2. The BLE Link Layer protocol is _reliable_ meaning every packet of data sent from one side must be acknowledged (ACK'd) by the other. The size of an _ACK_ packet is _80bits_ and thus takes _80μs_ to transmit.
-3. The BLE protocol has overhead for every data payload which is sent so sometime is spent sending headers, etc for data payloads
+3. The BLE protocol has overhead for every data payload which is sent so some time is spent sending headers, etc for data payloads
 
-> Fun Fact: As an antenna is used it heats up. As it heats up, the frequency it transmits or receives at can start to drift. The IFS allows for simpler antenna design for BLE by giving the antenna a chance to cooldown before it needs to transmit again
+> Fun Fact: As an antenna is used it heats up. As it heats up, the frequency it transmits or
+> receives at can start to drift. The IFS allows for simpler antenna design for BLE by giving the
+> antenna a chance to cool down before it needs to transmit again
 
 {: #ll-packet}
 
@@ -141,6 +143,39 @@ Tabulating this information for a couple common MTU sizes we get:
 | 185 (iOS 10 max)    | 0.294             |
 | 512 (bluetooth max) | 0.301             |
 
+## Bluetooth Low Energy Specification Updates Impacting Throughput
+
+Over the years, the Bluetooth SIG has added a number of additions to the Low Energy Specification to help improve the throughput that can be achieved. In this section we explore these settings
+
+> CAUTION: Even though some of these features have been around for a while, support within the ecosystem still varies. If you are planning to leverage these features, I'd strongly recommend having away to dynamically enable/disable them in your software stack. While the Bluetooth Specification has a robust set of hardware level BLE "Direct Test"s a device must pass to be certified, there really is no thorough test of the software stack itself. This in part has contributed to very buggy BLE software stacks getting shipped and numerous interoperability issues when different Bluetooth Chips try to talk to one another.
+
+{: #ll-data-packet-length-extension}
+
+### LE Data Packet Length Extension (BT v4.2)
+
+As part of the 4.2 Bluetooth Core Specification revision, a new feature known as _LE Data Packet Length Extension_ was added [^1]. This _optional_ feature allows for a device to extend the length of the Data Payload in a [Link Layer packet](#ll-packet) from 27 up to 251 bytes! This means that instead of sending 27 bytes of data in a 41 byte payload, 251 bytes of data can now be sent in a 265 byte payload. Furthermore, we can send a lot more data with fewer `T_IFS` gaps. Let's take a look at what exchanging a maximally sized packet looks like:
+
+![](img/ble-throughput/ble-throughput-dple.png)
+
+We can calculate the raw data throughput and see that this modification yields greater than a _2x_ improvement on the maximum raw data throughput which can be achieved!
+
+`251 bytes / 2500μs = 100.4 kBytes/sec = ~0.803 Mbps`
+
+### LE 2M PHY (BT v5.0)
+
+As part of the 5.0 Bluetooth Core Specification revision, a new feature known as "LE 2M PHY"[^4] was added. As you may recall in the section [above](#ble-radio), we discussed how the BLE Radio is capable of transmitting 1 symbol per μs for a bitrate of 1Mbps. This revision to the Bluetooth Low Energy Physical Layer (PHY), allows for a symbol rate of 2Mbps. This means we can transmit each individual bit in half the time. However, the 150μs IFS is still needed between transmissions. Let's take a look on how this impacts the throughput when sending packets that are using the data packet length extension feature:
+
+![](img/ble-throughput/ble-throughput-dple-and-2m-phy.png)
+
+We can calculate this throughput and see the modification yields almost a _4x_ improvement over the original maximal raw data speed that could be achived with BLE 4.0
+
+`251 bytes / 1400μs = 179.3 kBytes/sec = ~1.434 Mbps`
+
+### LE Coded PHY (BT v5.0)
+
+The "LE Coded PHY" feature, also introduced in the 5.0 Spec [^4] provides a way to extend the range of BLE at the cost of speed. The feature works by encoding a bit across multiple symbols on the radio. This makes the bits being transmitted more resilient to noise. There are two operation modes where either two symbols or eight symbols can be used to encode a single bit. This effectively reduces the radio bitrate to
+500 kbps or 125kbps, respectively.
+
 ## Auditing BLE Throughput Limiting Factors
 
 In practice, the achievable throughput rates are greatly impacted by the two Bluetooth chips involved in the connection. In the following sections we will explore some of the common items to inspect when analyzing throughput.
@@ -158,7 +193,13 @@ My two favorite analyzers on the market today are the
 
 Both of these are built on top of a _Software Defined Radio_ (_SDR_) meaning as the BLE spec evolves, the vendors should be able to ship a software update adding the support rather than requiring you purchase new hardware. Both these analyzers already support new features that have been added as part of BLE Specification revisions (Data Packet Length Extension, Channel Selection Algorithm #2, LE 2M & Coded PHY) which are becoming must have features when analyzing communications between the latest BLE chips. The Ellysis analyzer will also let you feed external GPIO lines into the analyzer that you can see synchronized with your transmissions sent over the air, which can be super helpful for debugging classes of bugs related to RF transmit windows.
 
-### Implementation Specific Details to Check
+### Throughput Optimization Checklist
+
+Ultimately, there are a number of variables that influence the throughput achieved during a BLE
+connection. Furtheremore, there's several parameters that can vary widely depending on the software
+stack of the bluetooth chip in use and have a significant impact on throughput. In the sections
+below, I'll discuss the common settings to check when trying to analyze and optimize the throughput
+of a connection.
 
 {:.no_toc}
 
@@ -213,40 +254,24 @@ When multiple devices are sharing the same radio, the software stack on the devi
 
 #### Reliability
 
-Counterintuitively, even though the Link Layer of BLE is _reliable_, packet loss is still something to be concerned about for BLE. This is because many many stacks drop data within the software stack. For example, BLE messages get queued up in the stack and when the heap holding the packets runs out of memory, some stacks will silently drop data. This means if you are sending large amounts of data over BLE you will usually want to add some sort of reliability layer that can detect & retransmit packets when data is dropped. The way this is implemented can have sizeable impacts on throughput. For example, if every single packet sent requires an ACK before another packet is sent, you'll typically wind up adding a connection interval worth of latency getting the ACK out, effectively halving the max throughput which can be achieved.
+Counterintuitively, even though the Link Layer of BLE is _reliable_, packet loss is still something
+to be concerned about for BLE. This is because many many stacks drop data within the software
+stack. For example, BLE messages get queued up in the stack and when the heap holding the packets
+runs out of memory, some stacks will silently drop data. This means if you are sending large
+amounts of data over BLE you will usually want to add some sort of reliability layer that can
+detect & retransmit packets when data is dropped. The way this is implemented can have sizeable
+impacts on throughput. For example, if every single packet sent requires an ACK before another
+packet is sent, you'll typically wind up adding a connection interval worth of latency getting the
+ACK out, effectively halving the max throughput which can be achieved.
 
-## Bluetooth Low Energy Specification Updates Impacting Throughput
+#### Maximum Supported Link Layer Data Packet Size
 
-Over the years, the Bluetooth SIG has added a number of additions to the Low Energy Specification to help improve the throughput that can be achieved. In this section we explore these settings
-
-> CAUTION: Even though some of these features have been around for a while, support within the ecosystem still varies. If you are planning to leverage these features, I'd strongly recommend having away to dynamically enable/disable them in your software stack. While the Bluetooth Specification has a robust set of hardware level BLE "Direct Test"s a device must pass to be certified, there really is no thorough test of the software stack itself. This in part has contributed to very buggy BLE software stacks getting shipped and numerous interoperability issues when different Bluetooth Chips try to talk to one another.
-
-{: #ll-data-packet-length-extension}
-
-### LE Data Packet Length Extension (BT v4.2)
-
-As part of the 4.2 Bluetooth Core Specification revision, a new feature known as _LE Data Packet Length Extension_ was added [^1]. This _optional_ feature allows for a device to extend the length of the Data Payload in a [Link Layer packet](#ll-packet) from 27 up to 251 bytes! This means that instead of sending 27 bytes of data in a 41 byte payload, 251 bytes of data can now be sent in a 265 byte payload. Furthermore, we can send a lot more data with fewer `T_IFS` gaps. Let's take a look at what exchanging a maximally sized packet looks like:
-
-![](img/ble-throughput/ble-throughput-dple.png)
-
-We can calculate the raw data throughput and see that this modification yields greater than a _2x_ improvement on the maximum raw data throughput which can be achieved!
-
-`251 bytes / 2500μs = 100.4 kBytes/sec = ~0.803 Mbps`
-
-### LE 2M PHY (BT v5.0)
-
-As part of the 5.0 Bluetooth Core Specification revision, a new feature known as "LE 2M PHY"[^4] was added. As you may recall in the section [above](#ble-radio), we discussed how the BLE Radio is capable of transmitting 1 symbol per μs for a bitrate of 1Mbps. This revision to the Bluetooth Low Energy Physical Layer (PHY), allows for a symbol rate of 2Mbps. This means we can transmit each individual bit in half the time. However, the 150μs IFS is still needed between transmissions. Let's take a look on how this impacts the throughput when sending packets that are using the data packet length extension feature:
-
-![](img/ble-throughput/ble-throughput-dple-and-2m-phy.png)
-
-We can calculate this throughput and see the modification yields almost a _4x_ improvement over the original maximal raw data speed that could be achived with BLE 4.0
-
-`251 bytes / 1400μs = 179.3 kBytes/sec = ~1.434 Mbps`
-
-### LE Coded PHY (BT v5.0)
-
-The "LE Coded PHY" feature, also introduced in the 5.0 Spec [^4] provides a way to extend the range of BLE at the cost of speed. The feature works by encoding a bit across multiple symbols on the radio. This makes the bits being transmitted more resilient to noise. There are two operation modes where either two symbols or eight symbols can be used to encode a single bit. This effectively reduces the radio bitrate to
-500 kbps or 125kbps, respectively.
+As mentioned [above](#ll-data-packet-length-extension), as of Bluetooth 4.2, the size of a Link
+Layer data payload can be up to 251 bytes. However, not all devices support this maximal
+size. Ideally, you'll want to test the chip you are using and make sure it supports the entire
+range. For optimal throughput you'll want to make sure the connection interval is an integer
+multiple of the packet transmission time. We will walk through an example of this
+[below](#optimal-connection-interval-example)
 
 ## Examples
 
@@ -266,6 +291,8 @@ Now that we know the packets fit, we can take the duty cycle we are achieving an
 
 {:.no_toc}
 
+{: #optimal-connection-interval-example}
+
 ### Optimizing throughput Example
 
 Let's figure out if we can improve the throughput for the following application:
@@ -279,7 +306,13 @@ From the examples above, we know it takes 2500μs to exchange a 251 byte data pa
 
 `(251 bytes * 4 packets) / 11.25 ms = 89kBytes/sec = 0.713Mbps`
 
-If we chose a slightly larger connection interval that is divisible by our transfer duration, i.e 12.5ms, we can improve our throughput by 11% because now can now fill the window and remove the 1.25ms gap.
+If we chose a slightly larger connection interval that is divisible by our transfer duration
+(2500μs) we can fill the connection intercal without any gap where no data is sent. For example, in
+a 12.5ms window, we can fit 5 packets perfectly. This gives us a ~13% improvement in overall throughput:
+
+`(251 bytes * 5 packets) / 12.5 ms = 100.4kBytes/sec = 0.803Mbps`
+
+The important takeaway here is that in some scenarios a slower connection interval can actually yield faster throughput!
 
 ## Closing
 
