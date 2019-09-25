@@ -187,7 +187,18 @@ My two favorite analyzers on the market today are the
 - Frontline Sodera LE [^5]
 - Ellysis Bluetooth Explorer [^6]
 
-Both of these are built on top of a _Software Defined Radio_ (_SDR_) meaning as the BLE spec evolves, the vendors should be able to ship a software update adding the support rather than requiring you purchase new hardware. Both these analyzers already support new features that have been added as part of BLE Specification revisions (Data Packet Length Extension, Channel Selection Algorithm #2, LE 2M & Coded PHY) which are becoming must have features when analyzing communications between the latest BLE chips. The Ellysis analyzer will also let you feed external GPIO lines into the analyzer that you can see synchronized with your transmissions sent over the air, which can be super helpful for debugging classes of bugs related to RF transmit windows.
+Both of these are built on top of a _Software Defined Radio_ (_SDR_) meaning as the BLE spec
+evolves, the vendors should be able to ship a software update adding the support rather than
+requiring you purchase new hardware. Both these analyzers already support new features that have
+been added as part of BLE Specification revisions (Data Packet Length Extension, Channel Selection
+Algorithm #2, LE 2M & Coded PHY) which are becoming must have features when analyzing
+communications between the latest BLE chips. The Ellysis analyzer will also let you feed external
+GPIO lines into the analyzer that you can see synchronized with your transmissions sent over the
+air, which can be super helpful for debugging classes of bugs related to RF transmit windows.
+
+> Note: /u/introiboad on Reddit[^8] also pointed out that the Nordic BLE Sniffer[^9] can be a great
+> tool for tracing connections and is a fraction of the cost because all you need to use it is a
+> nRF52 development board.
 
 ### Throughput Optimization Checklist
 
@@ -333,3 +344,5 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 [^5]: [Sodera LE](http://www.fte.com/products/Soderale.aspx)
 [^6]: [Ellysis Bluetooth Explorer](https://www.ellisys.com/products/bex400/index.php)
 [^7]: [ Accessory Design Guidelines for Apple Devices](https://developer.apple.com/accessories/Accessory-Design-Guidelines.pdf)
+[^8]: [Reddit comment about Nordic's BLE sniffer](https://www.reddit.com/r/embedded/comments/d95obo/a_practical_guide_to_ble_throughput/f1f0q68/)
+[^9]: [nRF Sniffer For Bluetooth LE](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Sniffer-for-Bluetooth-LE)
