@@ -164,9 +164,14 @@ html, body {
 /* Posts */
 
 #posts {
+  // In topography, we've set li/ul to have margin-left so that
+  // lists are indented properly. With posts, we use a ul
+  // so we have to undo that change.
   li {
     list-style-type: none;
+    margin-left: 0;
   }
+  margin-left: 0;
 }
 
 #post-page {
