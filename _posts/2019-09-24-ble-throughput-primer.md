@@ -54,8 +54,9 @@ For Bluetooth 4.0, the BLE Radio is capable of transmitting 1 symbol per microse
 3. The BLE protocol has overhead for every data payload which is sent so some time is spent sending headers, etc for data payloads
 
 > Fun Fact: As an antenna is used it heats up. As it heats up, the frequency it transmits or
-> receives at can start to drift. The IFS allows for simpler antenna design for BLE by giving the
-> antenna a chance to cool down before it needs to transmit again
+> receives at can start to drift. The IFS allows for simpler antenna design & stabilization
+> circuitry for BLE by giving the antenna a chance to cool down before it needs to transmit or
+> receive again, which helps to keep chip costs down.
 
 {: #ll-packet}
 
@@ -117,7 +118,7 @@ Below is a diagram of the layout of an L2CAP packet. As you can see there are 4 
 In the _L2CAP Information Payload_ we have the ATT packet. This is the packet structure the _GATT_
 protocol uses.
 
-> NOTE: For an excellent article about GATT itself, check out Mohammad Afaneh's thorough [BLE Primer post](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer#gatt-services-and-characteristics) on the topic!
+> NOTE: For an excellent article about GATT itself, check out Mohammad Afaneh's thorough [BLE Primer post](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer) on the topic!
 
 ATT packets can span multiple LL packets. The size of the data unit within an ATT packet is known as the _Maximum Transmission Unit_ (**MTU**). The default size is 23 bytes (which allows the packet to fit in one LL packet) but the size can be negotiated via the _Exchange MTU Request & Response_. The maximum MTU which can be negotiated is 512 bytes.
 
@@ -270,10 +271,20 @@ to be concerned about for BLE. This is because many many stacks drop data within
 stack. For example, BLE messages get queued up in the stack and when the heap holding the packets
 runs out of memory, some stacks will silently drop data. This means if you are sending large
 amounts of data over BLE you will usually want to add some sort of reliability layer that can
-detect & retransmit packets when data is dropped. The way this is implemented can have sizeable
-impacts on throughput. For example, if every single packet sent requires an ACK before another
-packet is sent, you'll typically wind up adding a connection interval worth of latency getting the
-ACK out, effectively halving the max throughput which can be achieved.
+detect & retransmit messages when data is dropped. The way this is implemented can have sizeable
+impacts on throughput. For example, if you have designed your own protocol on top of L2CAP or GATT
+and every message sent requires an acknowledgement before another message is sent, you'll typically
+wind up adding a connection interval worth of latency getting the data sent out, effectively
+halving the max throughput which can be achieved.
+
+> NOTE: If you are using GATT and trying to optimize throughput you will want to check the GATT
+> operation types being used.[^10] From a _Server_ to a _Client_, it is favorable to send
+> **Notifications** instead of **Indications** because **Indications** require a round trip
+> **Confirmation** to be sent before another message can be sent. From a _Client_ to a _Server_ you
+> will want to use **Write Commands** instead of **Write Requests** because **Requests** require a
+> **Response** from the _Server_. In general, I'd advise not relying on **Indications** or
+> **Requests** if you need reliability because data can _still_ be dropped on many stacks before
+> making it to your application (especially on mobile).
 
 #### Maximum Supported Link Layer Data Packet Size
 
@@ -346,3 +357,4 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 [^7]: [ Accessory Design Guidelines for Apple Devices](https://developer.apple.com/accessories/Accessory-Design-Guidelines.pdf)
 [^8]: [Reddit comment about Nordic's BLE sniffer](https://www.reddit.com/r/embedded/comments/d95obo/a_practical_guide_to_ble_throughput/f1f0q68/)
 [^9]: [nRF Sniffer For Bluetooth LE](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Sniffer-for-Bluetooth-LE)
+[^10]: [More details about GATT Operations](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer#services-and-characteristics)
