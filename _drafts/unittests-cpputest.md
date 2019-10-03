@@ -53,8 +53,8 @@ software can decrease dramatically, making individuals and teams more productive
 and firmware less likely to experience functional bugs, control flow bugs, and
 even fatal issues, such as memory leaks and (gasp!) bootloops.
 
-
 {:.no_toc}
+
 ### Life Before Unit Testing
 
 Here are a few examples that I've experienced in the past that were alleviated
@@ -73,10 +73,9 @@ by the organization doubling down on unit testing our firmware.
 - Testing a majority of the firmware before pushing to master is
   **incomprehensible**.
 
-
 {:.no_toc}
-### Life After Unit Testing (Possibly)
 
+### Life After Unit Testing (Possibly)
 
 At a previous company, after scrapping most legacy code and writing new modules
 with 90%+ code coverage and through the use of TTD, this is what development
@@ -114,8 +113,8 @@ straight to your mailbox_
 ## Framework-less Unit Tests
 
 It is very common to initially write unit tests using one-off `.c` files. Below
-is an example of a test that is commonly found in firmware projects or written by
-the author of a piece of firmware code.
+is an example of a test that is commonly found in firmware projects or written
+by the author of a piece of firmware code.
 
 ```c
 #include <assert.h>
@@ -165,8 +164,8 @@ extern "C" {
 
 ## Minimal Unit Test Example
 
-Let's come up with a bare bones unit test to instrument our simple module from above,
-`my_sum.c`. The source code for this module is as follows:
+Let's come up with a bare bones unit test to instrument our simple module from
+above, `my_sum.c`. The source code for this module is as follows:
 
 A unit test generally contains the following pieces:
 
@@ -254,23 +253,34 @@ TEST_SRC_FILES = \
   $(UNITTEST_SRC_DIR)/test_my_sum.c
 ```
 
-Here, we have `SRC_FILES`, which would contain any sources files used by the test, and
-`TEST_SRC_FILES` which contains the test files that contain the tests
+Here, we have `SRC_FILES`, which would contain any sources files used by the
+test, and `TEST_SRC_FILES` which contains the test files that contain the tests
 themselves.
-
 
 ## Unit Testing Best Practices
 
-The "Minimal Example" is a contrived example and very rarely will there be a test with *no* other dependencies. Firmware is naturally coupled with other parts of hardware, and that makes it difficult at first to set up a unit test. 
+The "Minimal Example" is a contrived example and very rarely will there be a
+test with _no_ other dependencies. Firmware is naturally coupled with other
+parts of hardware, and that makes it difficult at first to set up a unit test.
 
-For example, a flash K/V storage module may call an `analytics_inc()` function to record the number of writes, a `watchdog_feed()` function during a large flash delete operation, and `timer_schedule()` to help defragment the flash later in the future. If we are testing only the flash K/V store, We *do not* want to include the analytics, watchdog, and timer source files into our unit test. 
+For example, a flash K/V storage module may call an `analytics_inc()` function
+to record the number of writes, a `watchdog_feed()` function during a large
+flash delete operation, and `timer_schedule()` to help defragment the flash
+later in the future. If we are testing only the flash K/V store, We _do not_
+want to include the analytics, watchdog, and timer source files into our unit
+test.
 
-That brings us to a few best practices to follow, especially when writing unit tests for complex and entangled code. 
+That brings us to a few best practices to follow, especially when writing unit
+tests for complex and entangled code.
 
-- Each `TEST()` within a unit test file should ideally test a single path or feature of the module. A test called `TestEverything` is an anti-pattern.
-- Each test should be *quick*. A few milliseconds is ideal, and one second is the worst case run time.
-- Each unit test should ideally include one *real* implementation of a module. The rest should be stubbed or fake versions of the modules not under test. 
-- Those stubbed and fake versions of modules should be written early, reused, and shared. 
+- Each `TEST()` within a unit test file should ideally test a single path or
+  feature of the module. A test called `TestEverything` is an anti-pattern.
+- Each test should be _quick_. A few milliseconds is ideal, and one second is
+  the worst case run time.
+- Each unit test should ideally include one _real_ implementation of a module.
+  The rest should be stubbed or fake versions of the modules not under test.
+- Those stubbed and fake versions of modules should be written early, reused,
+  and shared.
 
 Which brings us to explained what are stubs, fakes, and mocks?
 
@@ -279,9 +289,13 @@ Which brings us to explained what are stubs, fakes, and mocks?
 When starting to write unit tests, it is common to write alternate
 implementations to modules that make sense for a particular unit test.
 
-Since unit tests will be run on the host machine, they won't have hardware, such as an LED. But if a module within a unit test calls `Enable_LED()`, we could instead have a virtual LED and a state boolean value saving whether the LED is on or off. 
+Since unit tests will be run on the host machine, they won't have hardware, such
+as an LED. But if a module within a unit test calls `Enable_LED()`, we could
+instead have a virtual LED and a state boolean value saving whether the LED is
+on or off.
 
-These alternate implementations of modules have different types. Let's explain them.
+These alternate implementations of modules have different types. Let's explain
+them.
 
 - **Fakes** will be a working implementation, but will usually substitute its
   dependencies with something simpler and easier for a test environment.
@@ -301,6 +315,8 @@ follows:
 │   ├── string.h
 │   └── error_codes.h
 ├── fakes
+│   ├── fake_analytics.c
+│   ├── fake_analytics.h
 │   ├── fake_kv_store.c
 │   ├── fake_mutex.c
 │   └── fake_mutex.h
@@ -329,10 +345,9 @@ where
 - **src/** - The unit tests themselves.
 - **makefiles/** - Makefiles to build the individual unit tests.
 
-
 {:.no_toc}
-### Stubs
 
+### Stubs
 
 These are used when the implementation of specific functions or their return
 values do not matter to the module under test. They are primarily used to fix
@@ -366,11 +381,9 @@ void mutex_unlock(Mutex *mutex) {
 }
 ```
 
-
-
 {:.no_toc}
-### Fakes
 
+### Fakes
 
 A **Fake** is commonly used in firmware where it is impractical to use the real
 implementation for reasons such as:
@@ -382,9 +395,10 @@ Examples:
 - A time module which accepts an initial UTC time at the start of the test and
   allows incrementing the time manually.
 - A mutex module which checks at the end of the test that all mutexes were
-  properly unlocked.
-- A RAM based NOR flash implementation, which flips bits from `1` to `0` and
-  requires "erasing" (flipping bits to `1`) to write valid data.
+  properly unlocked (example provided later in the post).
+- A RAM based NOR flash implementation, which flips bits from `1` to `0` when
+  written to and requires "erasing" (flipping bits back to `1`) before writing
+  new data.
 - A RAM based key-value store (example shown below).
 
 ```c
@@ -413,10 +427,9 @@ bool kv_store_delete(const char *key) {
 }
 ```
 
-
 {:.no_toc}
-### Mocks
 
+### Mocks
 
 Mocks are incredibly useful if you want to declare each and every return value
 of a given function. Using many mocks in a single unit test is also the easiest
@@ -474,13 +487,12 @@ unit test firmware code.
 
 Let's come up with a more complicated example which more accurately mirrors what
 a developer on a firmware team would experience. This example uses a stub, a
-fake, `setup()` and `teardown()` functions, as well includes compiling in
-`littlefs`, a filesystem by ARM designed for microcontrollers[^4].
-
+fake, `setup()` and `teardown()` functions, and it also compiles `littlefs` in
+its entirety, a filesystem by ARM designed for microcontrollers[^4].
 
 {:.no_toc}
-### Overview
 
+### Overview
 
 We are tasked with writing a Key/Value storage module in a firmware project. The
 requirements are as follows:
@@ -498,10 +510,9 @@ write this entire module _and_ test it without actually using real hardware.
 
 Let's get started!
 
-
 {:.no_toc}
-### Basic Implementation of K/V Store
 
+### Basic Implementation of K/V Store
 
 Below is our first attempt at `kv_store.c` which is the skeleton of our file.
 
@@ -526,6 +537,12 @@ bool kv_store_delete(const char *key) {
 }
 ```
 
+Believe it or not, we are ready to create a unit test to test that things are
+working. It's usually easier to write a unit test earlier rather than later
+since the number of dependencies can grow out of hand quickly.
+
+Below is a unit test which we mainly create to test compilation and the harness.
+
 ```c++
 #include "CppUTest/TestHarness.h"
 
@@ -547,11 +564,11 @@ TEST(TestKvStore, Test_SimpleKvStore) {
 }
 ```
 
-Believe it or not, we are ready to create a unit test to test that things are
-working. It's usually easier to write a unit test earlier rather than later
-since the number of dependencies can grow out of hand quickly.
+Let's run the test and see what prints!
 
 ```
+$ cd complex/tests
+$ make
 compiling kv_store.c
 Building archive build/kv_store/lib/libkv_store.a
 Linking build/kv_store/kv_store_tests
@@ -563,10 +580,9 @@ OK (1 tests, 1 ran, 1 checks, 0 ignored, 0 filtered out, 1 ms)
 Looks like our test passes and we are ready to move onto a (more) realistic
 test.
 
-
 {:.no_toc}
-### Add littlefs implementation
 
+### Add littlefs implementation
 
 Our requirement was that our `kv_store` implementation must use littlefs to
 store its data. At first, the task seems daunting! How are we supposed to write
@@ -637,6 +653,7 @@ shown below. If we try to run the unit test without adding the source files, we
 run into linker errors telling us that symbols are missing.
 
 ```
+$ make
 Linking build/kv_store/kv_store_tests
 Undefined symbols for architecture x86_64:
   "_lfs_file_close", referenced from:
@@ -649,7 +666,8 @@ Undefined symbols for architecture x86_64:
 ```
 
 We can simply add these source files to our compilation and then all should be
-well.
+well. If these new files had dependencies of their own, we'd have to fix those
+linker errors as well.
 
 ```
 COMPONENT_NAME=kv_store
@@ -667,39 +685,13 @@ include $(CPPUTEST_MAKFILE_INFRA)
 
 ```
 
-Now let's update our unit test to actually test writing and reading a K/V pair!
-This is not an exhaustive test. What is tested here is only for demonstration
-purposes.
-
-```c++
-TEST(TestKvStore, Test_SimpleKvStore) {
-  bool rv;
-
-  const char *key = "hello";
-  const char *val = "world";
-  rv = kv_store_write(key,  (void *)val, sizeof(val));
-  CHECK(rv);
-
-  char buf[16];
-  uint32_t read_len;
-  rv = kv_store_read(key, buf, sizeof(buf), &read_len);
-  CHECK(rv);
-  STRCMP_EQUAL(val, buf);
-
-  // Buffer length too short
-  rv = kv_store_read(key, buf, 0, &read_len);
-  CHECK_FALSE(rv);
-}
-```
-
-
 {:.no_toc}
+
 ### Add littlefs in unit test
 
-
-Just because we compile the files in our unit test does not mean littlefs will
-magically work. We need to initialize the filesystem and set up and tear it down
-before and after each test respectively.
+Just because we got the files to compile in our unit test does not mean littlefs
+will magically work. We need to initialize the filesystem and set up and tear it
+down before and after each test respectively.
 
 To learn how to do this, we can go to the existing littlefs tests directory and
 take inspiration from the template and a basic file test, both linked below.
@@ -736,7 +728,7 @@ TEST_GROUP(TestKvStore) {
 };
 ```
 
-THe unit test will now, at the _start_ of every test, create a directory called
+The unit test will now, at the _start_ of every test, create a directory called
 `blocks/`, format and mount the filesystem there, and initialize the K/V store,
 and at the end of the test, destroy and unmount the filesystem so the next test
 starts with a clean environment.
@@ -746,29 +738,40 @@ test!
 
 ```c++
 TEST(TestKvStore, Test_SimpleKvStore) {
+  bool rv;
+
   const char *key = "hello";
   const char *val = "world";
-  kv_store_write(key,  (void *)val, sizeof(val));
+  rv = kv_store_write(key,  (void *)val, sizeof(val));
+  CHECK(rv);
 
   char buf[16];
-  kv_store_read(key, buf, sizeof(buf));
-
+  uint32_t read_len;
+  rv = kv_store_read(key, buf, sizeof(buf), &read_len);
+  CHECK(rv);
   STRCMP_EQUAL(val, buf);
+
+  // Buffer length too short. Should return false.
+  rv = kv_store_read(key, buf, 0, &read_len);
+  CHECK_FALSE(rv);
 }
 ```
 
 This test writes a key "hello" with the value "world", reads the value stored at
 key "hello" into a buffer, and compares it against the expected value "world".
-It passes! This means our littlefs was set up correctly, and that our initial
-logic in `kv_store.c` was mostly correct.
 
+We also check the failure case of `kv_store_read` by passing in a buffer that is
+too small.
+
+It passes! This means our littlefs was set up correctly, and that our initial
+logic in `kv_store.c` was (mostly) correct.
 
 {:.no_toc}
+
 ### Add Analytics
 
-
-Our next requirement to add analytics around how many times K/V pairs were
-written, read, and deleted. We can do this by simply creating a function
+Our next requirement was to add analytics tracking how many times K/V pairs were
+written, read, and deleted. We can do this by simply calling a function
 `analytics_inc` which will increment the count of the given key by one. The
 additions to our source code are shown below:
 
@@ -807,8 +810,8 @@ Undefined symbols for architecture x86_64:
 ```
 
 Since this isn't a core functionality of the `kv_store` module, and it's likely
-something we don't need to verify, we are going to provide a stub for this
-function, rather than use the real implementation or a fake.
+something we don't need to verify, we are going to provide a **stub** for this
+function, rather than use the real implementation or a **fake**.
 
 We can do that by creating a header called `stub_analytics.h`
 
@@ -830,10 +833,9 @@ extern "C" {
 }
 ```
 
-
 {:.no_toc}
-### Add Mutex Locking
 
+### Add Mutex Locking
 
 Almost done! We've also been advised to add locking around our filesystem calls
 to ensure that only one client can read and write to the `/kv` directory at one
@@ -853,15 +855,15 @@ void kv_store_init(lfs_t *lfs) {
 }
 
 bool kv_store_write(const char *key, const void *val, uint32_t len) {
-  mutex_lock(s_mutex);
+  mutex_lock(s_mutex); // New
   ...
-  mutex_unlock(s_mutex);
+  mutex_unlock(s_mutex); // New
   analytics_inc(kSettingsFileWrite);
   return (rv == len);
 }
 
 bool kv_store_read(const char *key, void *buf, uint32_t buf_len, uint32_t *len_read) {
-  mutex_lock(s_mutex);
+  mutex_lock(s_mutex); // New
 
   int rv = lfs_file_open(s_lfs_ptr, &s_file, prv_prefix_fname(key), LFS_O_RDONLY);
   if (rv < 0) {
@@ -877,15 +879,15 @@ bool kv_store_read(const char *key, void *buf, uint32_t buf_len, uint32_t *len_r
   lfs_file_close(s_lfs_ptr, &s_file);
   *len_read = len;
 
-  mutex_unlock(s_mutex);
+  mutex_unlock(s_mutex); // New
   analytics_inc(kSettingsFileRead);
   return true;
 }
 
 bool kv_store_delete(const char *key) {
-  mutex_lock(s_mutex);
+  mutex_lock(s_mutex); // New
   ...
-  mutex_unlock(s_mutex);
+  mutex_unlock(s_mutex); // New
   analytics_inc(kSettingsFileDelete);
   return true;
 }
@@ -896,19 +898,18 @@ symbols. Since mutexes are rather important to this module, and we wouldn't want
 to forget to unlock a mutex, we are going to try writing a **fake** mutex
 implementation instead of a **stub**.
 
-
 {:.no_toc}
+
 ### Fake Mutex Implementation
 
-
 The reason we chose to write a fake implementation for the mutex module is that
-we want to ensure that equal number of `lock` calls and `unlock` calls are made
-so that there are no bugs when we actually use the `kv_store` in a real
+we want to ensure that equal number of `lock` and `unlock` calls are made so
+that there are no bugs when we actually use the `kv_store` in a real
 environment.
 
 This may seem difficult, but it's rather easy. To create a fake, we create two
-files, `fake_mutex.h`, and `fake_mutex.c`. The reason we have a `.h` and a `.c`
-file is because the fake implementation defines new functions that are only
+files, `fake_mutex.h`, and `fake_mutex.c`. The reason for both the `.h` and `.c`
+files is because the fake implementation defines new functions that are only
 relevant to using the fake in a unit test.
 
 Here is most of the source code for `fake_mutex.c`.
@@ -1023,7 +1024,7 @@ if (rv < 0) {
 Thankfully we wrote and used our fake mutex implementation, as deadlocks are the
 worst to debug!
 
-> If you do find that deadlocks are a common issue, do check out
+> If you do find that deadlocks are a constant issue, do check out
 > [Memfault](https://memfault.com/?utm_source=interrupt&utm_medium=link&utm_campaign=unit-test).
 > It will help you track them down easily.
 
@@ -1035,12 +1036,11 @@ other than Make.
 
 No matter what anyone says, the framework you use **does not** matter. As long
 as the framework has the minimum features listed
-[here](#testing-without-a-framework), it is as good as any.
-
+[above](#testing-without-a-framework), it is as good as any.
 
 {:.no_toc}
-### Initial Setup
 
+### Initial Setup
 
 We first need to install a pre-compiled version of CppUTest so we can easily run
 tests without needing to compile the binary ourselves from source before every
@@ -1058,10 +1058,9 @@ On Ubuntu, it can be installed using `apt`:
 $ sudo apt-get install cpputest
 ```
 
-
 {:.no_toc}
-### Project CppUTest Harness
 
+### Project CppUTest Harness
 
 Since it is a decent amount of boilerplate due to the CppUTest harness setup
 required, this example will start with a clone of the example repository and
@@ -1099,12 +1098,12 @@ TARGET_PLATFORM ?=
 
 ## Tips & Tricks
 
-
 {:.no_toc}
+
 ### Debugging a Unit Test
 
-
-Most unit test frameworks will generate separate binaries for each `.cpp` unit test file written so that you can load them in a debugger (lldb or gdb).
+Most unit test frameworks will generate separate binaries for each `.cpp` unit
+test file written so that you can load them in a debugger (lldb or gdb).
 
 ```
 $ lldb build/kv_store/kv_store_tests
@@ -1118,10 +1117,9 @@ OK (1 tests, 1 ran, 5 checks, 0 ignored, 0 filtered out, 7 ms)
 Process 96031 exited with status = 0 (0x00000000)
 ```
 
-
 {:.no_toc}
-### Code Coverage
 
+### Code Coverage
 
 One of the wonderful parts about unit testing is that you can generate a code
 coverage report. This shows which paths were covered in a given set of unit
@@ -1133,15 +1131,14 @@ Note that code coverage doesn't measure the different behaviors a code path
 
 Above is a an example coverage report taken from the Memfault Public SDK[^5].
 
-
 {:.no_toc}
+
 ### Address Sanitizing
 
-
-To raise use-after-free and buffer overflow errors in unit tests, use the compiler option `-fsanitize=address` when compiling unit tests.
+To raise use-after-free and buffer overflow errors in unit tests, use the
+compiler option `-fsanitize=address` when compiling unit tests.
 
 [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer)
-
 
 ## C/C++ Unit Tests: Common Issues
 
@@ -1149,10 +1146,9 @@ Writing unit tests in C isn't as simple as writing tests in some languages. Here
 are some common errors and mistakes that everyone runs into and possible
 solutions.
 
-
 {:.no_toc}
-### Linker Error: Symbol not found
 
+### Linker Error: Symbol not found
 
 ```
 Linking build/kv_store/kv_store_tests
@@ -1178,10 +1174,9 @@ The possible solutions to the issue are:
 - Compile out the call points using a define for unit tests. e.g.
   `#if !INSIDE_UNITTESTS`
 
-
 {:.no_toc}
-### Linker Error: Duplicate symbol
 
+### Linker Error: Duplicate symbol
 
 ```
 Linking build/kv_store/kv_store_tests
@@ -1200,10 +1195,9 @@ In the example above, I had included a `fake_mutex.c` file _and_ included the
 `stub_mutex.h` header, which caused a duplicate `mutex_create` symbol. The
 solution would be to remove one or the other.
 
-
 {:.no_toc}
-### State carrying over between tests
 
+### State carrying over between tests
 
 If there is a fake or module which contains static or global state, and it is
 being used across multiple tests in a single file, then that state ideally
