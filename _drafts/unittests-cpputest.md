@@ -44,8 +44,8 @@ this post.
 
 Unit testing is a method of testing software where individual software
 components are isolated and tested for correctness. Ideally, these unit tests
-are able to cover most if not all of the code paths, argument types and bounds,
-and failure cases of the software under test.
+are able to cover most if not all of the code paths, argument bounds, and
+failure cases of the software under test.
 
 Through proper use of unit tests, and especially while using practices from Test
 Driven Development (TTD)[^0], the time it takes to **stabilize** embedded
@@ -70,8 +70,6 @@ by the organization doubling down on unit testing our firmware.
   more**[^1].
 - The first instinct when starting a new software module is to write a chunk of
   code and **test on hardware**.
-- Testing a majority of the firmware before pushing to master is
-  **incomprehensible**.
 
 {:.no_toc}
 
@@ -146,7 +144,7 @@ become a requirement.
 - Ability for a developer to create a new unit test easily and quickly.
 
 The most scalable way to write unit tests in C is using a unit testing
-framework.
+framework, such as:
 
 - [CppUTest](https://cpputest.github.io/)
 - [Unity](http://www.throwtheswitch.org/unity)
@@ -156,7 +154,7 @@ Even though CppUTest and Google Test are written in C++, they can be used to
 test C source code, as long as the C header files includes are wrapped with
 `extern "C"`.
 
-```
+```c++
 extern "C" {
   #include "my_sum.h"
 }
@@ -226,7 +224,7 @@ Running build/sum/sum_tests
 OK (1 tests, 1 ran, 1 checks, 0 ignored, 0 filtered out, 0 ms)
 ```
 
-And if the test fails (change 7 -> 6):
+And if the test fails (for example, change 7 to 6):
 
 ```
 Running build/sum/sum_tests
@@ -240,8 +238,8 @@ Errors (1 failures, 1 tests, 1 ran, 1 checks, 0 ignored, 0 filtered out, 1 ms)
 ```
 
 To build and run this unit test, we give the unit test harness the test name,
-which files to compile into the test binary, and any extra compilation flags
-necessary.
+the list of files to compile into the test binary, and any extra compilation
+flags necessary.
 
 ```
 COMPONENT_NAME=sum
@@ -263,12 +261,11 @@ The "Minimal Example" is a contrived example and very rarely will there be a
 test with _no_ other dependencies. Firmware is naturally coupled with other
 parts of hardware, and that makes it difficult at first to set up a unit test.
 
-For example, a flash K/V storage module may call an `analytics_inc()` function
-to record the number of writes, a `watchdog_feed()` function during a large
-flash delete operation, and `timer_schedule()` to help defragment the flash
-later in the future. If we are testing only the flash K/V store, We _do not_
-want to include the analytics, watchdog, and timer source files into our unit
-test.
+For example, a flash storage module may call an `analytics_inc()` function to
+record the number of writes, a `watchdog_feed()` function during a large flash
+erase operation, and `timer_schedule()` to help defragment the flash later in
+the future. If we are testing only the flash K/V store, We _do not_ want to
+include the analytics, watchdog, and timer source files into our unit test.
 
 That brings us to a few best practices to follow, especially when writing unit
 tests for complex and entangled code.
@@ -282,7 +279,7 @@ tests for complex and entangled code.
 - Those stubbed and fake versions of modules should be written early, reused,
   and shared.
 
-Which brings us to explained what are stubs, fakes, and mocks?
+Which brings us to explaining what are stubs, fakes, and mocks?
 
 ## Stubs, Fakes, and Mocks
 
@@ -355,7 +352,7 @@ the linker's `ld: symbol(s) not found` errors. These should generally have only
 a return statement that always returns `true`, `false`, `0`, `NULL`, or whatever
 makes sense in the context of the module.
 
-If there is anything more complex than a return statement, consider implemented
+If there is anything more complex than a return statement, consider implementing
 a **Fake** instead.
 
 Examples:
@@ -367,6 +364,8 @@ Examples:
 
 ```c
 #include "mutex/mutex.h"
+
+// Stubs
 
 Mutex *mutex_create(void) {
   return NULL;
@@ -405,6 +404,7 @@ Examples:
 #include "kv_store.h"
 
 #include <inttyptes.h>
+#include <stdbool.h>
 
 typedef struct {
   char *key;
@@ -415,15 +415,16 @@ typedef struct {
 static KvEntry s_kv_store[256];
 
 bool kv_store_write(const char *key, const void *val, uint32_t len) {
-  // Write value into RAM key-value store
+  // Write key/value into RAM store
 }
 
-uint32_t kv_store_read(const char *key, void *buf, uint32_t buf_len) {
-  // Read value from RAM key-value store
+bool kv_store_read(const char *key, void *buf,
+                   uint32_t buf_len, uint32_t *len_read) {
+  // Read key/value from RAM store into buffer
 }
 
 bool kv_store_delete(const char *key) {
-  // Delete value from RAM key-value store
+  // Delete key/value from RAM store
 }
 ```
 
@@ -444,14 +445,14 @@ Common mocking frameworks include:
 
 - [CppUMock](https://cpputest.github.io/mocking_manual.html)
 - [CMock](http://www.throwtheswitch.org/cmock)
-- [fff](https://github.com/meekrosoft/fff) NOTE: Although the name suggests it
-  generates fakes implementations, they are actually mocks.
+- [fff](https://github.com/meekrosoft/fff) (Although the name suggests it
+  generates fakes implementations, they are actually mocks)
 
 We are not going to cover examples of mocks and how to implement them (the topic
-is big enough for another post), but some sudo code is shown below to give an
+is big enough for another post), but some pseudo code is shown below to give an
 understanding:
 
-```c
+```c++
 
 TEST(TestKvStore, Test_InitMutexCreated) {
   // On the next call to `my_malloc`, return the value `NULL`.
@@ -497,13 +498,13 @@ its entirety, a filesystem by ARM designed for microcontrollers[^4].
 We are tasked with writing a Key/Value storage module in a firmware project. The
 requirements are as follows:
 
-- The module should have the ability to read, write, and delete K/V pairs.
-- The backing data should be stored in littlefs.
-- The number of times a K/V pair is read, written, or deleted is counted using
-  an `analytics.c` module with a function call to `analytics_increment`. This
-  might be used to track roughly how often the flash chip is written to.
+- The module should have the ability to read, write, and delete key/value pairs.
+- The backing data should be stored in `littlefs`.
+- The number of times a key/value pair is read, written, or deleted is counted
+  using an `analytics.c` module with a function call to `analytics_increment`.
+  This might be used to track roughly how often the flash chip is written to.
 - The module should be locked by a mutex so that only one consumer can be
-  writing, reading, or deleting from the `/kv` directory of littlefs.
+  writing, reading, or deleting from the `/kv` directory of `littlefs`.
 
 In an ideal world, and in our realistic one as well, it is possible for us to
 write this entire module _and_ test it without actually using real hardware.
@@ -528,8 +529,9 @@ bool kv_store_write(const char *key, const void *val, uint32_t len) {
   return true;
 }
 
-uint32_t kv_store_read(const char *key, void *buf, uint32_t buf_len) {
-  return 17;
+bool kv_store_read(const char *key, void *buf,
+                   uint32_t buf_len, uint32_t *len_read) {
+  return true;
 }
 
 bool kv_store_delete(const char *key) {
@@ -560,7 +562,7 @@ TEST_GROUP(TestKvStore) {
 
 TEST(TestKvStore, Test_SimpleKvStore) {
   // Just make sure that our file is hooked up
-  LONGS_EQUAL(17, kv_store_read(NULL, NULL, 0));
+  LONGS_EQUAL(true, kv_store_read(NULL, NULL, 0, NULL));
 }
 ```
 
@@ -584,14 +586,14 @@ test.
 
 ### Add littlefs implementation
 
-Our requirement was that our `kv_store` implementation must use littlefs to
+Our requirement was that our `kv_store` implementation must use `littlefs` to
 store its data. At first, the task seems daunting! How are we supposed to write
 to a filesystem that doesn't exist on our host machine? Also, a filesystem is a
 complicated piece of software!
 
-Thankfully, littlefs includes an _emulated_ version of its filesystem which runs
-on directly on a PC. These source files are under `littlefs/emubd`, and we can
-add them to our unit test to make a fully functional littlefs filesystem.
+Thankfully, `littlefs` includes an _emulated_ version of its filesystem which
+runs directly on a PC. These source files are under `littlefs/emubd`, and we can
+add them to our unit test to make a fully functional `littlefs` filesystem.
 
 The strategy we use to store various K/V pairs is that each `key` will be a new
 filename under the `/kv` directory, and the value will be written as the file
@@ -623,7 +625,8 @@ bool kv_store_write(const char *key, const void *val, uint32_t len) {
   return (rv == len);
 }
 
-bool kv_store_read(const char *key, void *buf, uint32_t buf_len, uint32_t *len_read) {
+bool kv_store_read(const char *key, void *buf,
+                   uint32_t buf_len, uint32_t *len_read) {
   int rv = lfs_file_open(s_lfs_ptr, &s_file, prv_prefix_fname(key), LFS_O_RDONLY);
   if (rv < 0) {
     return false;
@@ -648,7 +651,7 @@ bool kv_store_delete(const char *key) {
 
 This is a reasonable start for our module. It could use more error checking, but
 the basics are there. Let's test things out. One thing to note is that we'll
-have to add the source files for littlefs, so we add those in our Makefile as
+have to add the source files for `littlefs`, so we add those in our Makefile as
 shown below. If we try to run the unit test without adding the source files, we
 run into linker errors telling us that symbols are missing.
 
@@ -689,12 +692,12 @@ include $(CPPUTEST_MAKFILE_INFRA)
 
 ### Add littlefs in unit test
 
-Just because we got the files to compile in our unit test does not mean littlefs
-will magically work. We need to initialize the filesystem and set up and tear it
-down before and after each test respectively.
+Just because we got the files to compile in our unit test does not mean
+`littlefs` will magically work. We need to initialize the filesystem and set up
+and tear it down before and after each test respectively.
 
-To learn how to do this, we can go to the existing littlefs tests directory and
-take inspiration from the template and a basic file test, both linked below.
+To learn how to do this, we can go to the existing `littlefs` tests directory
+and take inspiration from the template and a basic file test, both linked below.
 
 - [Template](https://github.com/ARMmbed/littlefs/blob/master/scripts/template.fmt)
 - [Basic File Test](https://github.com/ARMmbed/littlefs/blob/master/tests/test_files.sh#L17-L34)
@@ -763,7 +766,7 @@ key "hello" into a buffer, and compares it against the expected value "world".
 We also check the failure case of `kv_store_read` by passing in a buffer that is
 too small.
 
-It passes! This means our littlefs was set up correctly, and that our initial
+It passes! This means our `littlefs` was set up correctly, and that our initial
 logic in `kv_store.c` was (mostly) correct.
 
 {:.no_toc}
@@ -785,7 +788,8 @@ bool kv_store_write(const char *key, const void *val, uint32_t len) {
   return (rv == len);
 }
 
-uint32_t kv_store_read(const char *key, void *buf, uint32_t buf_len) {
+bool kv_store_read(const char *key, void *buf,
+                   uint32_t buf_len, uint32_t *len_read) {
   ...
   analytics_inc(kSettingsFileRead);
   return len;
@@ -862,7 +866,8 @@ bool kv_store_write(const char *key, const void *val, uint32_t len) {
   return (rv == len);
 }
 
-bool kv_store_read(const char *key, void *buf, uint32_t buf_len, uint32_t *len_read) {
+bool kv_store_read(const char *key, void *buf,
+                   uint32_t buf_len, uint32_t *len_read) {
   mutex_lock(s_mutex); // New
 
   int rv = lfs_file_open(s_lfs_ptr, &s_file, prv_prefix_fname(key), LFS_O_RDONLY);
@@ -1240,7 +1245,6 @@ straight to your mailbox_
 
 ## Reference & Links
 
-<!-- prettier-ignore -->
 [^0]: [Test Driven Development](https://en.wikipedia.org/wiki/Test-driven_development)
 [^1]: [2017 Embedded/EETimes Embedded Markets Study](https://www.embedded.com/electronics-blogs/embedded-market-surveys/4458724/2017-Embedded-Market-Survey)
 [^2]: [Atlassian Code Coverage Overview](https://www.atlassian.com/continuous-delivery/software-testing/code-coverage)
