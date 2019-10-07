@@ -1228,7 +1228,7 @@ when writing a complicated raw flash storage to filesystem migration for our
 firmware. After having spent a month doing cycling between the **1.** Write
 Code, **2.** Setup hardware, **3.** Test, which took **10 minutes** each
 iteration, I invested 2 days writing a unit test and was able to shrink the test
-cycle down to **2 seconds**. The rest of the project took 2 days.
+cycle down to **2 seconds**. The rest of the project took two days.
 
 Everyone has a moment where unit testing finally clicks for them and this was
 mine.
