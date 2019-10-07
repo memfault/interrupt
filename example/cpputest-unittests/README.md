@@ -1,4 +1,22 @@
-Here are two examples from the Interrupt post [Embedded C/C++ Unit Testing Basics](https://memfault.com/blog/unittests-cpputest). 
+Here are two examples from the Interrupt post [Embedded C/C++ Unit Testing Basics](https://interrupt.memfault.com/blog/unittests-cpputest). 
+
+## Initial Setup
+
+```
+# macOS
+brew install cpputest
+
+# Ubutunu
+sudo apt-get install -y cpputest
+```
+
+In `MakefileWorkerOverrides.mk`, it is also necessary to define the two values, which depend
+on where CppUTest was installed on the platform.
+
+```
+CPPUTEST_HOME ?= /usr/local/Cellar/cpputest/3.8
+TARGET_PLATFORM ?= 
+```
 
 ## Minimal Example
 
@@ -12,6 +30,9 @@ $ make
 ```
 
 ## Complex Example
+
+This example includes using [littlefs](https://github.com/ARMmbed/littlefs) in a unit test so we
+need to clone the repository first
 
 The tests can be run by running:
 
