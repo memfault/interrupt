@@ -13,24 +13,25 @@ after-thought or a task that is begun after working on a project for months or
 even years.
 
 Today's firmware projects require filesystems, BLE and Wi-Fi stacks, specialized
-data structures (both in-memory and in-flash), and possibly complex algorithms,
-such as those interpreting accelerometer and gyroscope data. _All_ of these
-items and more can be easily unit tested after becoming acquainted with the best
-practices and writing a few tests of your own.
+data structures (both in-memory and in-flash), and complex algorithms, such as
+those interpreting accelerometer and gyroscope data. _All_ of these items can be
+easily unit tested after becoming acquainted with best practices and writing a
+few tests of your own.
 
 <!-- excerpt start -->
 
-In this post, we go into detail how to properly build abstractions to stub,
+In this post, we go into detail on how to properly build abstractions to stub,
 fake, and mock out implementations of low level embedded software and provide a
 full real-world example of a unit test using the CppUTest 3.8 unit test
 framework.
 
 <!-- excerpt end -->
 
-This is the second post in our _Building Better Firmware_ series, following the
-[post]({% post_url 2019-09-17-continuous-integration-for-firmware %}) about
-Continuous Integration for firmware projects, which is a wonderful pre-cursor to
-this post.
+This is the second post in our [Building Better Firmware
+series]({{ '/tag/better-firmware' |
+relative_url }}), following the [post]({% post_url 2019-09-17-continuous-integration-for-firmware %})
+about Continuous Integration for firmware projects, which is a wonderful pre-cursor
+to this post.
 
 {:.no_toc}
 
@@ -58,7 +59,7 @@ even fatal issues, such as memory leaks and (gasp!) bootloops.
 ### Life Before Unit Testing
 
 Here are a few examples that I've experienced in the past that were alleviated
-by the organization doubling down on unit testing our firmware.
+by the team doubling down on unit testing the firmware.
 
 - You find testing on target hardware **slow** and **inconvenient**, especially
   when multiple devices (e.g. a mobile phone) or prior setup (e.g. a factory
@@ -445,8 +446,8 @@ Common mocking frameworks include:
 
 - [CppUMock](https://cpputest.github.io/mocking_manual.html)
 - [CMock](http://www.throwtheswitch.org/cmock)
-- [fff](https://github.com/meekrosoft/fff) (Although the name suggests it
-  generates fakes implementations, they are actually mocks)
+- [Fake Function Framework (fff)](https://github.com/meekrosoft/fff) - _Although
+  the name suggests it generates fakes implementations, they are actually mocks_
 
 We are not going to cover examples of mocks and how to implement them (the topic
 is big enough for another post), but some pseudo code is shown below to give an
@@ -484,7 +485,7 @@ to set up your own project to run unit tests.
 For now, the concepts are more important than the framework and process used to
 unit test firmware code.
 
-## Complex Unit Test Example
+## Real World Unit Test Example
 
 Let's come up with a more complicated example which more accurately mirrors what
 a developer on a firmware team would experience. This example uses a stub, a
@@ -963,8 +964,8 @@ void mutex_unlock(Mutex *mutex) {
 Let's go over what the fake is doing.
 
 - We allocate a large number (256) of mutex slots. Since we are running our test
-  on a host, large allocations are fine. We have GB of RAM, unlike the limited
-  embedded counterparts.
+  on a host, large allocations are fine. We have gigabytes of RAM, unlike the
+  limited embedded counterparts.
 - We define a new `typedef struct Mutex` type which only stores the
   `lock_count`. If the type `Mutex` was properly hidden within a `.c` file in
   the real implementation, this should work.
@@ -1033,7 +1034,7 @@ worst to debug!
 > [Memfault](https://memfault.com/?utm_source=interrupt&utm_medium=link&utm_campaign=unit-test).
 > It will help you track them down easily.
 
-## Trying Out CppUTest
+## Setting Up CppUTest
 
 CppUTest is one of many C/C++ unit test frameworks, and the reason it was chosen
 is because of my familiarity with it and that it doesn't have any dependencies
@@ -1082,7 +1083,7 @@ $ cd examples/cpputest-unittests/minimal/tests
 $ make
 
 # Ubuntu
-make CPPUTEST_HOME=/usr TARGET_PLATFORM=x86_64-linux-gnu
+$ make CPPUTEST_HOME=/usr TARGET_PLATFORM=x86_64-linux-gnu
 
 compiling test_my_sum.cpp
 compiling AllTests.cpp
@@ -1143,7 +1144,8 @@ Above is a an example coverage report taken from the Memfault Public SDK[^5].
 To raise use-after-free and buffer overflow errors in unit tests, use the
 compiler option `-fsanitize=address` when compiling unit tests.
 
-[AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer)
+You can find out more about the Address Sanitizer by reading the
+documentation[^6].
 
 ## C/C++ Unit Tests: Common Issues
 
@@ -1239,7 +1241,6 @@ straight to your mailbox_
 
 - [Mocks Aren't Stubs by Martin Fowler](https://martinfowler.com/articles/mocksArentStubs.html)
 - [CppUTest Manual](https://cpputest.github.io/)
-- [Mocks Aren't Stubs by Martin Fowler](https://martinfowler.com/articles/mocksArentStubs.html)
 
 {:.no_toc}
 
@@ -1250,6 +1251,7 @@ straight to your mailbox_
 [^2]: [Atlassian Code Coverage Overview](https://www.atlassian.com/continuous-delivery/software-testing/code-coverage)
 [^4]: [littlefs Github page](https://github.com/ARMmbed/littlefs)
 [^5]: [Memfault Public SDK](https://github.com/memfault/memfault-firmware-sdk)
+[^6]: [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer)
 
 See anything you'd like to change? Submit a pull request or open an issue at
 [Github](https://github.com/memfault/interrupt)
