@@ -711,7 +711,7 @@ extern "C" {
   #include "lfs.h"
   #include "emubd/lfs_emubd.h"
 
-  // Contains `lfs, cfg, variables with default configuration.
+  // Contains lfs, cfg, variables with default configuration.
   #include "defs/lfs_default_config.h"
 }
 
@@ -741,22 +741,22 @@ test!
 
 ```c++
 TEST(TestKvStore, Test_SimpleKvStore) {
-  bool rv;
+  bool success;
 
   const char *key = "hello";
   const char *val = "world";
-  rv = kv_store_write(key,  (void *)val, sizeof(val));
-  CHECK(rv);
+  success = kv_store_write(key,  (void *)val, sizeof(val));
+  CHECK(success);
 
   char buf[16];
   uint32_t read_len;
-  rv = kv_store_read(key, buf, sizeof(buf), &read_len);
-  CHECK(rv);
+  success = kv_store_read(key, buf, sizeof(buf), &read_len);
+  CHECK(success);
   STRCMP_EQUAL(val, buf);
 
   // Buffer length too short. Should return false.
-  rv = kv_store_read(key, buf, 0, &read_len);
-  CHECK_FALSE(rv);
+  success = kv_store_read(key, buf, 0, &read_len);
+  CHECK_FALSE(success);
 }
 ```
 
@@ -1041,7 +1041,7 @@ other than Make.
 
 No matter what anyone says, the framework you use **does not** matter. As long
 as the framework has the minimum features listed
-[above](#testing-without-a-framework), it is as good as any.
+[above](#framework-less-unit-testsk), it is as good as any.
 
 {:.no_toc}
 
@@ -1176,8 +1176,8 @@ The possible solutions to the issue are:
 - Define the function within the unit test file itself, probably at the top of
   the file. If it is a C function being called by C code, place it within the
   `extern "C" {}` section.
-- Compile out the call points using a define for unit tests. e.g.
-  `#if !INSIDE_UNITTESTS`
+- As a last resort, one can compile out the function calls and implementations
+  using a define for unit tests. e.g. `#if !INSIDE_UNITTESTS`
 
 {:.no_toc}
 
@@ -1216,12 +1216,12 @@ should be cleared out. This is usually done by:
 
 ## Final Thoughts
 
-Unit testing was something that a co-worker of mine of mine suggested to me 4
-years ago when writing a complicated raw flash storage to filesystem migration
-for our firmware. After having spent a month doing the **1.** Write Code, **2.**
-Setup hardware, **3.** Test, cycle, which took **10 minutes** each iteration, I
-invested 2 days writing a unit test and was able to shrink the test cycle down
-to **2 seconds**. The rest of the project took 2 days.
+Unit testing was something that a co-worker of mine suggested to me 4 years ago
+when writing a complicated raw flash storage to filesystem migration for our
+firmware. After having spent a month doing cycling between the **1.** Write
+Code, **2.** Setup hardware, **3.** Test, which took **10 minutes** each
+iteration, I invested 2 days writing a unit test and was able to shrink the test
+cycle down to **2 seconds**. The rest of the project took 2 days.
 
 Everyone has a moment where unit testing finally clicks for them and this was
 mine.

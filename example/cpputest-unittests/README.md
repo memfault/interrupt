@@ -4,10 +4,10 @@ Here are two examples from the Interrupt post [Embedded C/C++ Unit Testing Basic
 
 ```
 # macOS
-brew install cpputest
+brew install cpputest lcov
 
 # Ubutunu
-sudo apt-get install -y cpputest
+sudo apt-get install -y cpputest lcov
 ```
 
 In `MakefileWorkerOverrides.mk`, it is also necessary to define the two values, which depend
