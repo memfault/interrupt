@@ -14,5 +14,5 @@ TEST_GROUP(TestMySum) {
 
 TEST(TestMySum, Test_MySumBasic) {
   int rv = my_sum(3, 4);
-  LONGS_EQUAL(6, rv);
+  LONGS_EQUAL(7, rv);
 }

@@ -1,6 +1,6 @@
 ---
 title: Embedded C/C++ Unit Testing Basics
-description:
+description: An overview of unit testing embedded software. Topics covered include fakes, mocks, and stubs, as well as setting up and using CppUTest.
 author: tyler
 tags: [better-firmware]
 ---
@@ -87,6 +87,8 @@ felt like sometimes.
 - Testing a majority of the firmware only takes **a minute**.
 - Writing and debugging code on a plane is possible! No hardware required.
 
+{:.no_toc}
+
 ## Disclaimers
 
 Unit tests in the embedded space is a controversial topics, so I want to clear
@@ -163,16 +165,11 @@ extern "C" {
 
 ## Minimal Unit Test Example
 
-Let's come up with a bare bones unit test to instrument our simple module from
-above, `my_sum.c`. The source code for this module is as follows:
+Let's come up with a bare bones unit test to instrument our simple `my_sum` module.
 
-A unit test generally contains the following pieces:
+> NOTE: Our examples use the CppUTest framework. If you want to follow along, check out the [Setting Up CppUTest](#setting-up-cpputest) section first.
 
-- Setup and Teardown functions, which run before and after each test
-  respectively.
-- Individual tests that test logical components or paths of a module.
-- Many _checks_, such as `LONGS_EQUAL` which compares integer values and
-  `STRCMP_EQUAL` which would compare string values.
+The source code for the `my_sum.c` module is as follows:
 
 ```c
 #include "my_sum.h"
@@ -181,6 +178,14 @@ int my_sum(int a, int b) {
   return (a + b);
 }
 ```
+
+A unit test generally contains the following pieces:
+
+- Setup and Teardown functions, which run before and after each test
+  respectively.
+- Individual tests that test logical components or paths of a module.
+- Many _checks_, such as `LONGS_EQUAL` which compares integer values and
+  `STRCMP_EQUAL` which would compare string values.
 
 Our basic unit test is as follows:
 
@@ -585,7 +590,7 @@ test.
 
 {:.no_toc}
 
-### Add littlefs implementation
+### Add littlefs Implementation
 
 Our requirement was that our `kv_store` implementation must use `littlefs` to
 store its data. At first, the task seems daunting! How are we supposed to write
@@ -691,7 +696,7 @@ include $(CPPUTEST_MAKFILE_INFRA)
 
 {:.no_toc}
 
-### Add littlefs in unit test
+### Add littlefs Initialization
 
 Just because we got the files to compile in our unit test does not mean
 `littlefs` will magically work. We need to initialize the filesystem and set up
@@ -1077,7 +1082,7 @@ project. It should build quite easily once some paths are patched up.
 
 ```
 $ git clone https://github.com/memfault/interrupt.git
-$ cd examples/cpputest-unittests/minimal/tests
+$ cd examples/unit-testing-basics/minimal/tests
 
 # macOS
 $ make
@@ -1133,7 +1138,7 @@ tests, so you can be sure that the piece of code was tested in some capacity.
 Note that code coverage doesn't measure the different behaviors a code path
 **could take**, but only that a particular code path **was taken**.
 
-![](img/cpputest-unittests/code_coverage.png)
+![](img/unit-testing-basics/code_coverage.png)
 
 Above is a an example coverage report taken from the Memfault Public SDK[^5].
 
@@ -1147,7 +1152,7 @@ compiler option `-fsanitize=address` when compiling unit tests.
 You can find out more about the Address Sanitizer by reading the
 documentation[^6].
 
-## C/C++ Unit Tests: Common Issues
+## Common Issues with C/C++ Unit Tests
 
 Writing unit tests in C isn't as simple as writing tests in some languages. Here
 are some common errors and mistakes that everyone runs into and possible
@@ -1232,15 +1237,10 @@ I hope this post has been useful and that it has inspired you to consider
 writing a unit test for your next new embedded software module.
 
 You can find the examples shown in this post
-[here](https://github.com/memfault/interrupt/tree/master/example/cpputest-unittests).
+[here](https://github.com/memfault/interrupt/tree/master/example/unit-testing-basics).
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
-
-## Further Reading
-
-- [Mocks Aren't Stubs by Martin Fowler](https://martinfowler.com/articles/mocksArentStubs.html)
-- [CppUTest Manual](https://cpputest.github.io/)
 
 {:.no_toc}
 
