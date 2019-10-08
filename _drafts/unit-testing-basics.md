@@ -1,6 +1,8 @@
 ---
 title: Embedded C/C++ Unit Testing Basics
-description: An overview of unit testing embedded software. Topics covered include fakes, mocks, and stubs, as well as setting up and using CppUTest.
+description:
+  An overview of unit testing embedded software. Topics covered include fakes,
+  mocks, and stubs, as well as setting up and using CppUTest.
 author: tyler
 tags: [better-firmware]
 ---
@@ -85,7 +87,8 @@ felt like sometimes.
 - Regressions are caught **immediately** when runnings tests locally or in CI.
 - Memory leaks are raised as errors in unit tests.
 - Testing a majority of the firmware only takes **a minute**.
-- Writing and debugging code on a plane is possible! No hardware required.
+- The overall codebase has better structure and cleaner boundaries between
+  modules.
 
 {:.no_toc}
 
@@ -165,9 +168,11 @@ extern "C" {
 
 ## Minimal Unit Test Example
 
-Let's come up with a bare bones unit test to instrument our simple `my_sum` module.
+Let's come up with a bare bones unit test to instrument our simple `my_sum`
+module.
 
-> NOTE: Our examples use the CppUTest framework. If you want to follow along, check out the [Setting Up CppUTest](#setting-up-cpputest) section first.
+> NOTE: Our examples use the CppUTest framework. If you want to follow along,
+> check out the [Setting Up CppUTest](#setting-up-cpputest) section first.
 
 The source code for the `my_sum.c` module is as follows:
 
@@ -270,8 +275,8 @@ parts of hardware, and that makes it difficult at first to set up a unit test.
 For example, a flash storage module may call an `analytics_inc()` function to
 record the number of writes, a `watchdog_feed()` function during a large flash
 erase operation, and `timer_schedule()` to help defragment the flash later in
-the future. If we are testing only the flash K/V store, We _do not_ want to
-include the analytics, watchdog, and timer source files into our unit test.
+the future. If we are testing only the flash key/value store, we _do not_ want
+to include the analytics, watchdog, and timer source files into our unit test.
 
 That brings us to a few best practices to follow, especially when writing unit
 tests for complex and entangled code.
@@ -302,7 +307,7 @@ them.
 
 - **Fakes** will be a working implementation, but will usually substitute its
   dependencies with something simpler and easier for a test environment.
-  Example: An in-memory key/value store vs A NOR Flash backed Key/Value store.
+  Example: an in-memory key/value store vs a NOR Flash backed Key/Value store.
 - **Stubs** will be an implementation that returns canned values, generally
   always returning valid or invalid values.
 - **Mocks** are an implementation that is controlled by the unit test. They can
@@ -397,8 +402,6 @@ implementation for reasons such as:
 
 Examples:
 
-- A time module which accepts an initial UTC time at the start of the test and
-  allows incrementing the time manually.
 - A mutex module which checks at the end of the test that all mutexes were
   properly unlocked (example provided later in the post).
 - A RAM based NOR flash implementation, which flips bits from `1` to `0` when
@@ -599,7 +602,8 @@ complicated piece of software!
 
 Thankfully, `littlefs` includes an _emulated_ version of its filesystem which
 runs directly on a PC. These source files are under `littlefs/emubd`, and we can
-add them to our unit test to make a fully functional `littlefs` filesystem.
+add them to our unit test to make a fully functional `littlefs` filesystem. In
+this example, we can imagine that the `emubd` portion of `littlefs` is a fake.
 
 The strategy we use to store various K/V pairs is that each `key` will be a new
 filename under the `/kv` directory, and the value will be written as the file
