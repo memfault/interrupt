@@ -522,7 +522,7 @@ Let's get started!
 
 {:.no_toc}
 
-### Basic Implementation of K/V Store
+### Basic Implementation of Key/Value Store
 
 Below is our first attempt at `kv_store.c` which is the skeleton of our file.
 
@@ -605,9 +605,9 @@ runs directly on a PC. These source files are under `littlefs/emubd`, and we can
 add them to our unit test to make a fully functional `littlefs` filesystem. In
 this example, we can imagine that the `emubd` portion of `littlefs` is a fake.
 
-The strategy we use to store various K/V pairs is that each `key` will be a new
-filename under the `/kv` directory, and the value will be written as the file
-data.
+The strategy we use to store various key/value pairs is that each `key` will be
+a new filename under the `/kv` directory, and the value will be written as the
+file data.
 
 Let's try writing the source code!
 
@@ -742,12 +742,12 @@ TEST_GROUP(TestKvStore) {
 ```
 
 The unit test will now, at the _start_ of every test, create a directory called
-`blocks/`, format and mount the filesystem there, and initialize the K/V store,
-and at the end of the test, destroy and unmount the filesystem so the next test
-starts with a clean environment.
+`blocks/`, format and mount the filesystem there, and initialize the key/value
+store, and at the end of the test, destroy and unmount the filesystem so the
+next test starts with a clean environment.
 
-Since we now have a filesystem backing our K/V store, we can write a simple
-test!
+Since we now have a filesystem backing our key/value store, we can write a
+simple test!
 
 ```c++
 TEST(TestKvStore, Test_SimpleKvStore) {
@@ -783,10 +783,10 @@ logic in `kv_store.c` was (mostly) correct.
 
 ### Add Analytics
 
-Our next requirement was to add analytics tracking how many times K/V pairs were
-written, read, and deleted. We can do this by simply calling a function
-`analytics_inc` which will increment the count of the given key by one. The
-additions to our source code are shown below:
+Our next requirement was to add analytics tracking how many times key/value
+pairs were written, read, and deleted. We can do this by simply calling a
+function `analytics_inc` which will increment the count of the given key by one.
+The additions to our source code are shown below:
 
 ```c
 ...
