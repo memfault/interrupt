@@ -32,7 +32,7 @@ The **DAP** is an implementation of the **ARM Debug Interface Architecture Speci
 
 #### Access Port
 
-The **Debug Port** can be used to configure transactions and read or write to one or more **Access Port**s (**AP**). An **Access Port** exposes an interface to different parts of the MCU. There only requirements for an **AP** are that they must:
+The **Debug Port** can be used to configure transactions and read or write to one or more **Access Port**s (**AP**). An **Access Port** exposes an interface to different parts of the MCU. The only requirements for an **AP** are that they must:
 
 - expose an Identification Register so a debugger can skip over it if it doesn't understand the type
 - Must be selectable via the Debug Port
