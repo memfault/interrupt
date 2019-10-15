@@ -120,7 +120,13 @@ protocol uses.
 
 > NOTE: For an excellent article about GATT itself, check out Mohammad Afaneh's thorough [BLE Primer post](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer) on the topic!
 
-ATT packets can span multiple LL packets. The size of the data unit within an ATT packet is known as the _Maximum Transmission Unit_ (**MTU**). The default size is 23 bytes (which allows the packet to fit in one LL packet) but the size can be negotiated via the _Exchange MTU Request & Response_. The maximum MTU which can be negotiated is 512 bytes.
+ATT packets can span multiple LL packets. The size of the data unit within an ATT packet is known
+as the _Maximum Transmission Unit_ (**MTU**). The default size is 23 bytes (which allows the packet
+to fit in one LL packet) but the size can be negotiated via the _Exchange MTU Request & Response_.
+
+Per the Bluetooth Core Specification, the maximum allowed length of an attribute value (the ATT payload) is 512
+bytes[^11]. While this technically means the MTU size can be slightly larger than 512 bytes (to
+accomodate for the ATT protocol overhead), most bluetooth stacks support a maximum MTU value of 512 bytes.
 
 The packet looks like this:
 
@@ -138,11 +144,11 @@ Tabulating this information for a couple common MTU sizes we get:
 
 {: #max-throughput-gatt}
 
-| MTU size (bytes)    | Throughput (Mbps) |
-| ------------------- | ----------------- |
-| 23 (default)        | 0.226             |
-| 185 (iOS 10 max)    | 0.294             |
-| 512 (bluetooth max) | 0.301             |
+| MTU size (bytes) | Throughput (Mbps) |
+| ---------------- | ----------------- |
+| 23 (default)     | 0.226             |
+| 185 (iOS 10 max) | 0.294             |
+| 512              | 0.301             |
 
 ## Bluetooth Low Energy Specification Updates Impacting Throughput
 
@@ -346,6 +352,13 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 
 {:.no_toc}
 
+## Further Reading
+
+For iOS specifically, a few readers[^12] pointed out this
+[slide deck](https://devstreaming-cdn.apple.com/videos/wwdc/2017/712jqzhsxoww3zn/712/712_whats_new_in_core_bluetooth.pdf)
+and [video](https://developer.apple.com/videos/play/wwdc2017/712/) from 2017 WWDC. The
+presentation provides an excellent overview of how to get the most out of iOS Core Bluetooth.
+
 ## Reference Links
 
 [^1]: [Bluetooth SIG Specification Archives](https://www.bluetooth.com/specifications/archived-specifications/)
@@ -358,3 +371,5 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 [^8]: [Reddit comment about Nordic's BLE sniffer](https://www.reddit.com/r/embedded/comments/d95obo/a_practical_guide_to_ble_throughput/f1f0q68/)
 [^9]: [nRF Sniffer For Bluetooth LE](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Sniffer-for-Bluetooth-LE)
 [^10]: [More details about GATT Operations](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer#services-and-characteristics)
+[^11]: See "3.2.9 Long Attribute Values" of the [Bluetooth 5.1 Core Specification](https://www.bluetooth.com/specifications/bluetooth-core-specification/)
+[^12]: See comment from _/u/writtenabode_ on [Reddit](https://www.reddit.com/r/embedded/comments/d95obo/a_practical_guide_to_ble_throughput/f22udsz/) and _oflannabhra_ on [HN](https://news.ycombinator.com/item?id=21082583)
