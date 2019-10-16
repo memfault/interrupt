@@ -413,7 +413,7 @@ Examples:
 ```c
 #include "kv_store.h"
 
-#include <inttyptes.h>
+#include <inttypes.h>
 #include <stdbool.h>
 
 typedef struct {
