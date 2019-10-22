@@ -1,8 +1,8 @@
 ---
 title: Embedded C/C++ Unit Testing Basics
 description:
-  An overview of unit testing embedded software. Topics covered include fakes,
-  mocks, and stubs, as well as setting up and using CppUTest.
+  An overview of unit testing embedded software and firmware. Topics covered
+  include fakes, mocks, and stubs, as well as setting up and using CppUTest.
 author: tyler
 image: /img/unit-testing-basics/cover.png
 tags: [better-firmware]
