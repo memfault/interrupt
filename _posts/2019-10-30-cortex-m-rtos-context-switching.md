@@ -1,5 +1,5 @@
 ---
-title: "A Practical Guide to ARM Cortex-M RTOS Context Switching"
+title: "ARM Cortex-M RTOS Context Switching"
 description: "A deep dive into how the ARM Cortex-M architecture makes multi-tasking with an RTOS
 possible with a step-by-step walk through of the FreeRTOS implementation as an example"
 author: chris
@@ -45,8 +45,6 @@ Interface_ (**ABI**) a compiler must abide by for ARM.
 
 > NOTE: If you already have a good understanding of these concepts, feel free to
 > [switch over](#context-switching) this section (pun intended).
-
-{: #cortex-m-privilege-modes}
 
 ### Cortex-M Operation Modes
 
@@ -253,7 +251,7 @@ The reference manual has a great picture of what the stack looks like after this
 state saving takes place:
 
 {: #basic-context-state-frame}
-![](img/context-switching/context-state-stacking-basic.md)
+![](img/context-switching/context-state-stacking-basic.png)
 
 {: #psr-alignment}
 
@@ -315,7 +313,7 @@ On exception entry, the ARM reference manual pseudocode for the value stored in 
 {: #exception-entry-pseudocode}
 ![](img/context-switching/lr-exc-return-exception-entry.png)
 
-It described the current stack frame in use (**Extended** vs **Basic**) as well as what the active
+It describes the current stack frame in use (**Extended** vs **Basic**) as well as what the active
 stack pointer was prior to the exception taking place.
 
 When returning from an exception, the possible values and behavior for `EXC_RETURN` are:
@@ -351,7 +349,7 @@ Schedulers usually come in two main varieties:
 
 When an RTOS scheduler decides a different task should be run than what is currently running, it
 will trigger a **context switch**. When switching from one task to another, the "state" of the current
-task needs to be preserved in some way. This includes items such as the execution state of the task
+task needs to be preserved in some way. This includes information such as the execution state of the task
 (i.e blocked on a mutex, sleeping, etc) and the values of the active hardware registers.
 
 As we alluded to in our
@@ -364,7 +362,7 @@ works, you will be able to pretty easily learn how any other one works!
 In the sections that follow we will walk through step-by-step how the context switcher within
 **FreeRTOS**[^3] works for Cortex-M devices. **FreeRTOS** is a very popular (and open source!) RTOS
 found in numerous commercial products. It has a great track record and has been around since
-~2003 by Real Time Engineers Ltd. In 2017 the company was acquired by Amazon, who know manages the project.
+~2003 by Real Time Engineers Ltd. In 2017 the company was acquired by Amazon, who now manages the project.
 
 ## Demystifying the FreeRTOS Context Switcher
 
@@ -759,7 +757,7 @@ the C function. From **FreeRTOS** documentation we can conclude what will happen
  portDONT_DISCARD void vTaskSwitchContext( void ) PRIVILEGED_FUNCTION;
 ```
 
-Basically upon return, `pxCurrentTCB` should be populated with the new task to switch to.
+So when the function returns `pxCurrentTCB` should be populated with the new task to switch to.
 Let's try it out!
 
 ```
@@ -787,7 +785,7 @@ off the stack. No synchronization instructions are required for the `msr` call b
 ARM core will actually take care of this for you when the execution priority increases [^17]. Let's
 step over this block:
 
-```
+```c
         "       mov r0, #0                      \n"
         "       msr basepri, r0                 \n"
         "       ldmia sp!, {r0, r3}             \n"
@@ -923,7 +921,7 @@ a **PendSV** gets triggered but there isn't a currently running task because the
 
 There are several different strategies but a common pattern an RTOS will follow when creating a new task is
 to initialize the task stack to look like it had been context switched out by the scheduler. Then
-to start the scheduler itself by triggering a SVC exception with the `svc` instruction. This way 
+to start the scheduler itself by triggering a SVC exception with the `svc` instruction. This way
 starting a thread is nearly identical to context switching to a thread.
 
 During initialization you will also usually find a couple extra configuration settings such as:
