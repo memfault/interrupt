@@ -15,8 +15,8 @@ can be a valuable skill set for an embedded engineer to have.
 <!-- excerpt start -->
 
 In this article we will explore how **context switching** works on ARM Cortex-M MCUs. We will
-discuss how the hardware was designed support this operation, features that impact the context
-switching implementation (such as the Floating Point Unit (FPU), and common pitfalls seen when
+discuss how the hardware was designed to support this operation, features that impact the context
+switching implementation such as the Floating Point Unit (FPU), and common pitfalls seen when
 porting an RTOS to a platform. We will also walk through a practical example of analyzing the
 **FreeRTOS** context switcher, `xPortPendSVHandler`, utilizing `gdb` to strengthen our understanding.
 
@@ -46,7 +46,7 @@ Architecture Procedure Calling Standard_ (**AAPCS**)[^1] which defines the _Appl
 Interface_ (**ABI**) a compiler must abide by for ARM.
 
 > NOTE: If you already have a good understanding of these concepts, feel free to
-> [switch over](#context-switching) this section (pun intended) into the
+> [switch over](#context-switching) this section (pun intended).
 
 {: #cortex-m-privilege-modes}
 
@@ -58,7 +58,7 @@ Mode**. Otherwise, for all other operation, the MCU runs in **Thread Mode**.
 
 The core can operate at either a **privileged** or **unprivileged** level. Certain instructions and
 operations are only allowed when the software is executing as **privileged**. In **Handler Mode**, the core is
-_always_ in **privileged**. In **Thread Mode**, the software can also execute at either level.
+_always_ **privileged**. In **Thread Mode**, the software can execute at either level.
 
 Switching **Thread Mode** from the **unprivileged** to **privileged** level
 can _only_ happen when running from **Handler Mode**.
@@ -121,13 +121,13 @@ point operations, known as the _Floating Point_ (**FP**) extension.
 There are technically two floating point extensions a Cortex-M device may implement, `FPv4-SP` &
 `FPv5` but a full discussion is outside the scope of this article.
 
-Both extensions expose a the same set of registers for FPU operations. They can be addressed in two
+Both extensions expose the same set of registers for FPU operations. They can be addressed in two
 ways:
 
 1. As thirty-two 32 bit (single-word) registers (`s0` - `s31`)
 2. As sixteen 64 bit (double-word) registers (`d0` - `d16`)
 
-where, `s0` and `s1` make up `d0` and `s2` and `s3` make up `d1` and so on.
+where, `s0` and `s1` make up `d0`, `s2` and `s3` make up `d1`, ... and so on.
 
 When a **FP extension** is present, there is also one special register, `FPSCR`, which allows for
 configuration and control of floating point system options.
@@ -194,7 +194,7 @@ where
 - `FPCA` indicates whether the floating point context is active. We'll go into detail [below](#fpca-description).
 - `SPSEL` controls what stack pointer is in use. We'll go into more detail
   [below](#stack-pointers-and-usage).
-- `nPriv` controls whether or not **thread mode** is operating as **privileged** or **unprivileged**. A
+- `nPriv` controls whether or not **thread mode** is operating as **privileged** or **unprivileged**.
   When set to 1, thread mode operates as **unprivileged** otherwise it operates as **privileged**
 
 {: #stack-pointers-and-usage}
