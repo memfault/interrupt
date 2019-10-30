@@ -374,7 +374,7 @@ For this setup we will use:
 - GNU make as our build system
 
 All the code can be found on the
-[Interrupt Github page](https://github.com/memfault/interrupt/example/freertos-example) with more
+[Interrupt Github page](https://github.com/memfault/interrupt/tree/master/example/freertos-example) with more
 details in the `README` in the directory linked.
 
 The example application itself is very basic: it creates a "Ping" **FreeRTOS** task
