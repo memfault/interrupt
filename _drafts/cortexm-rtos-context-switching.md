@@ -33,8 +33,6 @@ straight to your mailbox_
 * auto-gen TOC:
 {:toc}
 
-{:.no_toc}
-
 ## Cortex-M ARM MCU Features
 
 To understand how RTOS context switching works for ARM Cortex-M MCUs, it's critical to have
@@ -52,16 +50,17 @@ Interface_ (**ABI**) a compiler must abide by for ARM.
 
 ### Cortex-M Operation Modes
 
-When a Cortex-M based MCU is running from an exception handler (such as an _Interrupt Service
-Routine_ (**ISR**)), it is known as running in **Handler
-Mode**. Otherwise, for all other operation, the MCU runs in **Thread Mode**.
+When a Cortex-M based MCU is running from an exception handler such as an _Interrupt Service
+Routine_ (**ISR**), it is known as running in **Handler
+Mode**. The rest of the time the MCU runs in **Thread Mode**.
 
 The core can operate at either a **privileged** or **unprivileged** level. Certain instructions and
-operations are only allowed when the software is executing as **privileged**. In **Handler Mode**, the core is
-_always_ **privileged**. In **Thread Mode**, the software can execute at either level.
+operations are only allowed when the software is executing as privileged.
+For example, unpriviledged code may not access NVIC registers. In Handler Mode, the core is
+_always_ privileged. In Thread Mode, the software can execute at either level.
 
-Switching **Thread Mode** from the **unprivileged** to **privileged** level
-can _only_ happen when running from **Handler Mode**.
+Switching Thread Mode from the unprivileged to privileged level
+can _only_ happen when running from Handler Mode.
 
 These different configurations enable use cases where certain application code, such as the
 RTOS kernel, can be better sandboxed from one another. We will cycle back to this terminology
@@ -160,8 +159,8 @@ Manual documentation about the instruction itself has a great overview [^2]:
 
 ![](img/context-switching/mrs-msr-registers.png)
 
-There _are_ some special rules about the privilege level needed to read and write to the **special
-registers** worth remembering:
+There _are_ some special rules about the privilege level needed to read and write to the special
+registers worth remembering:
 
 {:#mrs-register-info}
 Excerpt from "B5.2.2 MRS"[^2]:
@@ -178,7 +177,7 @@ Excerpt from "B5.2.3 MSR"[^2]:
 > to unprivileged execution, software must issue an ISB instruction to ensure instruction fetch
 > correctness.
 
-For context switching, one of the the most important **special registers** is the `CONTROL`
+For context switching, one of the the most important special registers is the `CONTROL`
 register. Bits in the register read-as-zero unless they are implemented. The
 ARMv8-M architecture[^4] has the largest number of optional extensions so the most complete assignment
 set one will see is:
@@ -194,8 +193,8 @@ where
 - `FPCA` indicates whether the floating point context is active. We'll go into detail [below](#fpca-description).
 - `SPSEL` controls what stack pointer is in use. We'll go into more detail
   [below](#stack-pointers-and-usage).
-- `nPriv` controls whether or not **thread mode** is operating as **privileged** or **unprivileged**.
-  When set to 1, thread mode operates as **unprivileged** otherwise it operates as **privileged**
+- `nPriv` controls whether or not thread mode is operating as privileged or unprivileged.
+  When set to 1, thread mode operates as unprivileged otherwise it operates as privileged
 
 {: #stack-pointers-and-usage}
 
@@ -206,7 +205,7 @@ _Process Stack_ (tracked in the `psp` register). On reset, the **MSP** is always
 from the first word in the vector table. When a stack pointer is "active", its current value will
 be returned when the `sp` register is accessed.
 
-In **Handler Mode**, the `msp` is always the stack which is used. In **Thread Mode**, the stack
+In Handler Mode, the `msp` is always the stack which is used. In Thread Mode, the stack
 pointer which is used can be controlled in two ways:
 
 - Writes of 1 to the `SPSEL` bit in the `CONTROL` register will switch from using the `msp` to the `psp`
@@ -245,7 +244,7 @@ calling function is responsible for preserving. To accomplish this, the ARM Cort
 that context onto the stack.
 
 > NOTE: The stack data is pushed on is the one which was in use prior to servicing the
-> exception. So for example, if the system was in **Thread Mode** using the `psp` and exception
+> exception. So for example, if the system was in Thread Mode using the `psp` and exception
 > takes place, the data will be pushed on the
 > `psp`. If the core was already servicing another exception and was preempted by a higher priority exception,
 > the data will be pushed on the `msp`.
@@ -308,7 +307,7 @@ When the FPU is "in use" (CONTROL.FPCA=1), an **extended frame** will be saved b
 Finally, in order for the hardware to figure out what state to restore when exiting an
 exception, a special value, known as `EXC_RETURN` needs to be loaded into the link register, `lr`. Typically, this
 will just mirror the value in the `lr` on exception entry. However, a different value can also be
-manually loaded into the register as well (i.e to change the **Thread Mode** stack pointer
+manually loaded into the register as well (i.e to change the Thread Mode stack pointer
 being used like we discussed [above](#stack-pointers-and-usage)).
 
 On exception entry, the ARM reference manual pseudocode for the value stored in `lr` gives the best description[^6]:
@@ -380,10 +379,9 @@ All the code can be found on the
 [Interrupt Github page](https://github.com/memfault/interrupt/example/freertos-example) with more
 details in the `README` in the directory linked.
 
-The example application itself is very basic.
-
-It creates a "Ping" **FreeRTOS** task and a "Pong" **FreeRTOS** task. The "Ping" task sends a
-message to the "Pong" task once per second and each time the event loop in a task runs, I've added
+The example application itself is very basic: it creates a "Ping" **FreeRTOS** task
+and a "Pong" **FreeRTOS** task. The "Ping" task sends a message to the "Pong" task
+once per second and each time the event loop in a task runs, I've added
 a breakpoint instruction so we can confirm with the debugger the tasks are switching between each
 other.
 
@@ -572,7 +570,7 @@ encodes [this information](#exception-entry-pseudocode).
 $7 = 0xfffffffd
 ```
 
-Using this info we know that the code was executing in **thread mode** and using the
+Using this info we know that the code was executing in thread mode and using the
 `psp` for it's stack. We also know that the FPU context was **not** active.
 
 This tells us a [**basic frame**](#basic-context-state-frame) was saved by the hardware on the
@@ -613,7 +611,7 @@ guaranteeing any instruction which follows will be re-fetched. Technically it do
 any purpose here and shouldn't be required at all[^14].
 
 ```
-// step over the first to instructions (can also type "si 2" for short)
+// step over the first two instructions (can also type "si 2" for short)
 (gdb) step instruction 2
 ```
 
@@ -874,7 +872,7 @@ exception entry:
 The last thing we need to do is change the location of the `psp` to match the value in `r0`
 and populate the link register (`r14`) with the special [EXC_RETURN](#exc-return-info) value we
 just recovered from the "Pong" task stack with the `ldmia` instruction. This will tell the hardware
-how return to **Thread Mode** and restore the context state that was automatically saved correctly:
+how return to Thread Mode and restore the context state that was automatically saved correctly:
 
 ```c
         "       msr psp, r0                     \n"
@@ -925,12 +923,12 @@ a **PendSV** gets triggered but there isn't a currently running task because the
 
 There are several different strategies but a common pattern an RTOS will follow when creating a new task is
 to initialize the task stack to look like it had been context switched out by the scheduler. Then
-to start the scheduler itself by triggering a SVC exception with the `svc` instruction. This way the
+to start the scheduler itself by triggering a SVC exception with the `svc` instruction. This way 
 starting a thread is nearly identical to context switching to a thread.
 
 During initialization you will also usually find a couple extra configuration settings such as:
 
-- Configuration as to whether or not tasks operate at **privileged** or **unprivileged** level
+- Configuration as to whether or not tasks operate at privileged or unprivileged level
 - **FP Extension** configuration (i.e whether or not the FPU is enabled and what context stacking
   schema to use). For example, the port used in the example does the following FPU configuration:
 
