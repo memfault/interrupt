@@ -123,7 +123,7 @@ arm-none-eabi-gdb-py --eval-command="target remote localhost:<remote port>" --sy
 ```
 
 - An Eclipse based GUI that has different views you can use to inspect variables or see memory
-- A VSCode Plugin[^17] that interfaces with GDB and let's you hover over and view variables
+- VSCode Plugins[^17][^25] that interfaces with GDB and let's you hover over and view variables
 
 ## Tracing a Transaction
 
@@ -367,3 +367,4 @@ See anything you'd like to change? Submit a pull request on [Github](https://git
 [^22]: [pyOCD RTOS Plugin](https://github.com/mbedmicro/pyOCD/tree/master/pyocd/rtos)
 [^23]: [Zephyr Config For RTOS Awareness](https://docs.zephyrproject.org/latest/reference/kconfig/CONFIG_OPENOCD_SUPPORT.html)
 [^24]: [Saleae Logic Analyzer](https://support.saleae.com/faq/technical-faq/what-sample-rate-is-required)
+[^25]: [Another VSCode Plugin for Cortex-M](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)
