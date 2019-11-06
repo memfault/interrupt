@@ -42,6 +42,8 @@ else ifeq ($(IMPL),ASSERT4)
 else ifeq ($(IMPL),ASSERT5)
   SRC_FILES += \
     $(PROJECT_SRC_DIR)/impls/assert5.c
+else
+  $(error IMPL is not set to a valid assert implementation)
 endif
 
 
