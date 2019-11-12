@@ -328,19 +328,139 @@ caddr_t _sbrk(int incr) {
 }
 ```
 
+Putting it all together, we get the following `main.c` file:
+
+```c
+static struct usart_module stdio_uart_module;
+
+// LIBC SYSCALLS
+/////////////////////
+
+extern int _end;
+
+caddr_t _sbrk(int incr) {
+  static unsigned char *heap = NULL;
+  unsigned char *prev_heap;
+
+  if (heap == NULL) {
+    heap = (unsigned char *)&_end;
+  }
+  prev_heap = heap;
+
+  heap += incr;
+
+  return (caddr_t) prev_heap;
+}
+
+int _close(int file) {
+  return -1;
+}
+
+int _fstat(int file, struct stat *st) {
+  st->st_mode = S_IFCHR;
+
+  return 0;
+}
+
+int _isatty(int file) {
+  return 1;
+}
+
+int _lseek(int file, int ptr, int dir) {
+  return 0;
+}
+
+void _exit(int status) {
+  __asm("BKPT #0");
+}
+
+void _kill(int pid, int sig) {
+  return;
+}
+
+int _getpid(void) {
+  return -1;
+}
+
+int _write (int file, char * ptr, int len) {
+  int written = 0;
+
+  if ((file != 1) && (file != 2) && (file != 3)) {
+    return -1;
+  }
+
+  for (; len != 0; --len) {
+    if (usart_serial_putchar(&stdio_uart_module, (uint8_t)*ptr++)) {
+      return -1;
+    }
+    ++written;
+  }
+  return written;
+}
+
+int _read (int file, char * ptr, int len) {
+  int read = 0;
+
+  if (file != 0) {
+    return -1;
+  }
+
+  for (; len > 0; --len) {
+    usart_serial_getchar(&stdio_uart_module, (uint8_t *)ptr++);
+    read++;
+  }
+  return read;
+}
+
+
+// APP
+////////////////////
+
+static void __attribute__((constructor)) serial_init(void) {
+  struct usart_config usart_conf;
+
+  usart_get_config_defaults(&usart_conf);
+  usart_conf.mux_setting = USART_RX_3_TX_2_XCK_3;
+  usart_conf.pinmux_pad0 = PINMUX_UNUSED;
+  usart_conf.pinmux_pad1 = PINMUX_UNUSED;
+  usart_conf.pinmux_pad2 = PINMUX_PB22D_SERCOM5_PAD2;
+  usart_conf.pinmux_pad3 = PINMUX_PB23D_SERCOM5_PAD3;
+
+  usart_serial_init(&stdio_uart_module, SERCOM5, &usart_conf);
+  usart_enable(&stdio_uart_module);
+}
+
+int main() {
+  serial_init();
+  printf("Hello, World!\n");
+}
+```
+
+This compiles fine, and can be run on our MCU. Hello, World!
+
 ### Initializing State with Constructors & Destructors
 
-> talk about using __libc_init_array to init uart
+Although we could perfectly well stop here, we can improve a bit over the above.
 
+In our example, `printf` depends implicitly on `serial_init` being called. This isn’t the end of the world, but it goes against the spirit of a standard library function which should be usable anywhere in our program. 
 
-New Reset_Handler:
+Instead, let’s see what we can do so that this works:
+```c
+int main() {
+  printf("Hello, World\n");
+}
+```
 
-```c 
+Can you think of a solution?
+
+If we want `printf` to work anywhere in our `main` function, then `serial_init` must be run **before** main. What runs before main? We know from our previous post that it is the `Reset_Handler`. A simple solution might therefore be:
+
+```c
 void Reset_Handler(void)
 {
         /* ... */
-        /* Run constructors / initializers */
-        __libc_init_array(); /* <--- This is new */
+        /* Hardware Initialization */
+		  serial_init();
 
         /* Branch to main function */
         main();
@@ -348,12 +468,15 @@ void Reset_Handler(void)
         /* Infinite loop */
         while (1);
 }
-
 ```
 
-UART init function now has attribute
+The GNU compiler collection and Newlib offer an alternative solution: constructors.
 
-```
+Constructors are functions which should be run before `main`. Conceptually, they are similar to the constructors of statically allocated C++ objects.
+
+A function is marked as a constructor using the attribute syntax: `__attribute__((constructor))`. We can thus update `serial_init`:
+
+```c
 static void __attribute__((constructor)) serial_init(void) {
   struct usart_config usart_conf;
 
@@ -369,12 +492,54 @@ static void __attribute__((constructor)) serial_init(void) {
 }
 ```
 
+But how do these constructors get invoked? We know that in firmware, we do not get anything for free. This is where newlib comes in.
+
+By default, GCC will put every constructor into an array in their own section of flash. Newlib then offers a function, `__libc_init_array` which iterates over the array and invokes every constructor. You can find out more about it by reading [the source code](https://github.com/bminor/newlib/blob/master/newlib/libc/misc/init.c).
+
+All we need to do is call `__libc_init_array` prior to `main` in our `Reset_Handler`, and we are good to go.
+
+```c 
+void Reset_Handler(void)
+{
+        /* ... */
+        /* Run constructors / initializers */
+        __libc_init_array();
+
+        /* Branch to main function */
+        main();
+
+        /* Infinite loop */
+        while (1);
+}
+```
 
 ## Implementing our own C standard library
+In some cases, you may want to take different tradeoffs than the ones taken by the implementers of Newlib. Perhaps you are willing to sacrifice some functionality for code space, or are willing to trade performance for security. In most cases it is easier to replace a few functions, though you may end up with a fully custom C library.
 
 ### Replacing a function
 
-> Talk about how all default libc symbols are weak for all intents and purposes
+Because Newlib is a static library with a separate object file for every function, all you need to do to replace a function is define it in your program. The linker won’t go looking for it in static libraries if it finds it in your code.
+
+For example, we may want to replace Newlib’s `printf` implementation, either because it is too large or because it depends on dynamic memory management. Using Marco Paland’s [excellent alternative](https://github.com/mpaland/printf) is as simple as a Makefile change.
+
+We first clone it in our firmware’s folder under `lib/printf`, and update our Makefile to reflect the change: 
+
+```
+PROJECT := with-libc
+BUILD_DIR ?= build
+
+INCLUDES = \
+  ... \
+  lib/printf
+
+SRCS = \
+  ... \
+  lib/printf/printf.c \
+	startup_samd21.c \
+	$(PROJECT).c
+
+include ../common-standalone.mk
+```
 
 ### Full replacement
 
