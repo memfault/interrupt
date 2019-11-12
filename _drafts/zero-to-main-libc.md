@@ -35,12 +35,14 @@ Undefined reference to `printf`! How could this be? Our firmware’s C environme
 
 In firmware-land, nothing comes free with the system: just like we had to explicitly zero out the `bss` region to initialize some of our static variables, we’ll have to port a `printf` implementation alongside a C standard library if we want to use them.
 
+<!-- excerpt start -->
 In this post, we will add RedHat’s Newlib to our firmware and highlight some of its features. We will implement syscalls, learn about constructors, and finally print out “Hello, World”!
+<!-- excerpt end -->
 
 ## Setup
 As we did in our previous posts, we are using Adafruit’s Metro M0 development board to run our examples. We use a cheap CMSIS-DAP adapter and openOCD to program it.
 
-- [ ] You can find a step by step guide in our previous post: [Programming the ATSAMD21 with IBDAP | Interrupt](https://interrupt.memfault.com/blog/getting-started-with-ibdap-and-atsamd21g18).
+You can find a step by step guide [in our previous post](https://interrupt.memfault.com/blog/getting-started-with-ibdap-and-atsamd21g18).
 
 As with previous examples, we start with our “minimal” example which you can find [on GitHub](https://github.com/memfault/zero-to-main/tree/master/minimal). I’ve reproduce the source code for `main.c` below:
 
@@ -81,7 +83,7 @@ Newlib has become the de-facto standard in embedded software because it is compl
 
 Today it is bundled alongside toolchains and SDK provided by vendors such as ARM (`arm-none-eabi-gcc`) and Espressif (ESP-IDF for ESP32).
 
-> newlib vs. newlib-nano: when code-size constrained, you may chooses to use a variant of newlib, called newlib-nano, which does away with some C99 features, and some `printf` bells and whistles to deliver a more compact standard library. Newlib-nano is enabled with the `—specs=nano.specs` CFLAG. You can read more about it in our [code size blog post](https://interrupt.memfault.com/blog/code-size-optimization-gcc-flags#c-library)  
+> **newlib vs. newlib-nano**: when code-size constrained, you may chooses to use a variant of newlib, called newlib-nano, which does away with some C99 features, and some `printf` bells and whistles to deliver a more compact standard library. Newlib-nano is enabled with the `—specs=nano.specs` CFLAG. You can read more about it in our [code size blog post](https://interrupt.memfault.com/blog/code-size-optimization-gcc-flags#c-library)  
 
 ### Enabling Newlib
 
@@ -328,10 +330,11 @@ caddr_t _sbrk(int incr) {
 
 ### Initializing State with Constructors & Destructors
 
-<talk about using __libc_init_array to init uart>
+> talk about using __libc_init_array to init uart
 
 
 New Reset_Handler:
+
 ```c 
 void Reset_Handler(void)
 {
@@ -371,11 +374,11 @@ static void __attribute__((constructor)) serial_init(void) {
 
 ### Replacing a function
 
-<Talk about how all default libc symbols are weak for all intents and purposes>
+> Talk about how all default libc symbols are weak for all intents and purposes
 
 ### Full replacement
 
-<Talk about using `-nostdlib` and linking your own. Perhaps use a 3rd party lib as example>
+> Talk about using `-nostdlib` and linking your own. Perhaps use a 3rd party lib as example
 
 Reference: 
 * [Howto: Porting newlib](https://www.embecosm.com/appnotes/ean9/ean9-howto-newlib-1.0.html)
