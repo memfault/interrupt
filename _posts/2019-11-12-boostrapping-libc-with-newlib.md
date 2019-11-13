@@ -109,7 +109,7 @@ int main() {
 
 There are several implementations of the C Standard Library, starting with the
 venerable `glibc` found on most GNU/Linux systems. Alternative implementations
-include Musl libc[^2], Bionic libc[^3], ucLibc[^4], and dietlibc[^4]. 
+include Musl libc[^2], Bionic libc[^3], ucLibc[^4], and dietlibc[^5]. 
 
 Newlib is an implementation of the C Standard Library targeted at bare-metal
 embedded systems that is maintained by RedHat. It has become the de-facto standard
@@ -738,5 +738,5 @@ posts straight to your mailbox_
 [^4]: [ucLibc](https://www.uclibc.org/)
 [^5]: [dietlibc](https://www.fefe.de/dietlibc/)
 [^6]: [newlib documentation](https://sourceware.org/newlib/libc.html#Syscalls)
-[^7]: [excellent alternative](https://github.com/mpaland/printf)
-[^8]: [Embedded Artistry’s solid alternative](https://github.com/embeddedartistry/libc)
+[^7]: [Marco Paland's printf](https://github.com/mpaland/printf)
+[^8]: [Embedded Artistry's libc](https://github.com/embeddedartistry/libc)
