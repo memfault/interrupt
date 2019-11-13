@@ -1,7 +1,9 @@
 ---
 title: "From zero to main(): Bootstrapping libc with Newlib"
 description:
-  "TODO"
+  "Newlib is most commonly used C standard library in ARM-based embedded
+systems. In this post, we learn more about Newlib and how to use it in a
+project."
 author: francois
 tags: [zero-to-main]
 ---
@@ -234,10 +236,9 @@ collect2: error: ld returned 1 exit status
 Specifically, the compiler is asking for `_fstat`, `_read`, `_lseek`, `_close`,
 `_write`, and `_sbrk`.
 
-The [newlib documentation](https://sourceware.org/newlib/libc.html#Syscalls)
-calls these functions “system calls”. In short, they are the handful of things
-newlib expects the underlying “operating system”. The complete list of them is
-provided below:
+The newlib documentation[^6] calls these functions “system calls”.  In short,
+they are the handful of things newlib expects the underlying “operating system”.
+The complete list of them is provided below:
 
 ```
 _exit, close, environ, execve, fork, fstat, getpid, isatty, kill,
@@ -654,8 +655,7 @@ code.
 
 For example, we may want to replace Newlib’s `printf` implementation, either
 because it is too large or because it depends on dynamic memory management.
-Using Marco Paland’s [excellent alternative](https://github.com/mpaland/printf)
-is as simple as a Makefile change.
+Using Marco Paland’s excellent alternative[^7] is as simple as a Makefile change.
 
 We first clone it in our firmware’s folder under `lib/printf`, and update our
 Makefile to reflect the change: 
@@ -680,11 +680,10 @@ include ../common-standalone.mk
 ### Full replacement
 
 In some cases, you may want to do away with Newlib altogether. Perhaps you don’t
-want any dynamic memory allocation, in which case you could use  [Embedded
-Artistry’s solid alternative](https://github.com/embeddedartistry/libc). Another
-good reason to replace the version of Newlib provided by your toolchain is to
-use your own build of it because you would like to use different compile-time
-flags.
+want any dynamic memory allocation, in which case you could use Embedded
+Artistry’s solid alternative[^8]. Another good reason to replace the version of
+Newlib provided by your toolchain is to use your own build of it because you
+would like to use different compile-time flags.
 
 Once we have copied the static lib (`.a`) for our selected libc, we disable
 Newlib with `-nostdlib` and explicitly link in our substitute library. You can
@@ -695,7 +694,7 @@ PROJECT := with-libc
 BUILD_DIR ?= build
 
 CFLAGS += -nostdlib
-LDFLAGS += -L../lib/embeddedartistry_libc/libc.a -lc
+LDFLAGS += -L../lib/embeddedartistry_libc -lc
 
 INCLUDES = \
 	$(ASF_PATH)/sam0/drivers/sercom \
@@ -716,6 +715,20 @@ include ../common-standalone.mk
 > C library. You will either need to avoid using it, or bring in Newlib’s
 > implementation.
 
+## Closing
+
+We hope reading this post has given you an understanding of how standard C
+functions come to be available in firmware code. As with previous posts,
+code examples are available on Github in the [zero to main
+repository](https://github.com/memfault/zero-to-main).
+
+Got a favorite libc implementation? Tell us all about it in the comments,
+or at [interrupt@memfault.com](mailto:interrupt@memfault.com).
+
+Next time in the series, we'll talk about Rust!
+
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
+posts straight to your mailbox_
 
 ## Reference Links
 
@@ -724,3 +737,6 @@ include ../common-standalone.mk
 [^3]: [bionic libc](https://android.googlesource.com/platform/bionic/)
 [^4]: [ucLibc](https://www.uclibc.org/)
 [^5]: [dietlibc](https://www.fefe.de/dietlibc/)
+[^6]: [newlib documentation](https://sourceware.org/newlib/libc.html#Syscalls)
+[^7]: [excellent alternative](https://github.com/mpaland/printf)
+[^8]: [Embedded Artistry’s solid alternative](https://github.com/embeddedartistry/libc)
