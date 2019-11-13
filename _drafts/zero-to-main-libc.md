@@ -543,7 +543,33 @@ include ../common-standalone.mk
 
 ### Full replacement
 
-> Talk about using `-nostdlib` and linking your own. Perhaps use a 3rd party lib as example
+In some cases, you may want to do away with Newlib altogether. Perhaps you don’t want any dynamic memory allocation, in which case you could use  [Embedded Artistry’s solid alternative](https://github.com/embeddedartistry/libc). 
+
+Once we have copied the static lib (`.a`) for our selected libc, we disable Newlib with `-nostdlib` and explicitly link in our substitute library. You can find the resulting Makefile below:
+
+```
+PROJECT := with-libc
+BUILD_DIR ?= build
+
+CFLAGS += -nostdlib
+LDFLAGS += -L../lib/embeddedartistry_libc/libc.a -lc
+
+INCLUDES = \
+	$(ASF_PATH)/sam0/drivers/sercom \
+	$(ASF_PATH)/sam0/drivers/sercom/usart \
+	$(ASF_PATH)/common/services/serial \
+	$(ASF_PATH)/common/services/serial/sam0_usart
+
+SRCS = \
+	$(ASF_PATH)/sam0/drivers/sercom/usart/usart.c \
+	$(ASF_PATH)/sam0/drivers/sercom/sercom.c \
+	startup_samd21.c \
+	$(PROJECT).c
+
+include ../common-standalone.mk
+``` 
+
+> Note that the `__libc_init_array` functionality is not found in every standard C library. You will either need to avoid using it, or bring in Newlib’s implementation.
 
 Reference: 
 * [Howto: Porting newlib](https://www.embecosm.com/appnotes/ean9/ean9-howto-newlib-1.0.html)
