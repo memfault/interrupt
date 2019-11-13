@@ -6,7 +6,8 @@ author: francois
 tags: [zero-to-main]
 ---
 
-In this series of post, we’ve worked methodically to demystify what happens to
+This is the third post in our [zero to main() series]({{ '/tag/zero-to-main' |
+relative_url  }}), where we worked methodically to demystify what happens to
 firmware before the main() function is called. So far, we bootstrapped a C
 environment, wrote a linker script from scratch, and implemented our own
 bootloader.
@@ -22,16 +23,16 @@ int main() {
   while (1) {}
 }
 ```
-Compiling this using our makefile and linker script from [previous](% post_url
-2019-05-14-zero-to-main-1 %) [posts](% post_url
-2019-06-25-how-to-write-linker-scripts-for-firmware %), we hit
+Compiling this using our makefile and linker script from [previous]({% post_url
+2019-05-14-zero-to-main-1 %}) [posts]({% post_url
+2019-06-25-how-to-write-linker-scripts-for-firmware %}), we hit
 the following error:
 
 ```shell
 $ make
 ...
 Linking build/minimal.elf
-/usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/bin/ld: build/objs/a/b/c/minimal.o: in function `main':
+arm-none-eabi/bin/ld: build/objs/a/b/c/minimal.o: in function `main':
 /minimal/minimal.c:4: undefined reference to `printf'
 collect2: error: ld returned 1 exit status
 make: *** [build/minimal.elf] Error 1
@@ -45,7 +46,7 @@ reach of our program so far.
 In firmware-land, nothing comes free with the system: just like we had to
 explicitly zero out the `bss` region to initialize some of our static variables,
 we’ll have to port a `printf` implementation alongside a C standard library if
-we want to use them.
+we want to use it.
 
 <!-- excerpt start -->
 In this post, we will add RedHat’s Newlib to our firmware and highlight some of
@@ -106,7 +107,7 @@ int main() {
 
 There are several implementations of the C Standard Library, starting with the
 venerable `glibc` found on most GNU/Linux systems. Alternative implementations
-include Musl libc, Bionic libc, ucLibc, and dietlibc. 
+include Musl libc[^2], Bionic libc[^3], ucLibc[^4], and dietlibc[^4]. 
 
 Newlib is an implementation of the C Standard Library targeted at bare-metal
 embedded systems that is maintained by RedHat. It has become the de-facto standard
@@ -185,7 +186,8 @@ really be this simple?
 > Note: the variant of Newlib bundled with `arm-none-eabi-gcc` is not compiled
 > with `-g`, which can make debugging difficult. For that reason, you may chose
 > to replace it with your own build of Newlib. You can read more about that
-> process in the "Implementing our own C standard library" section of this
+> process in the [Implementing our own C standard library
+> section](#implementing-our-own-c-standard-library) of this
 > article.
 
 
@@ -542,15 +544,15 @@ post that it is the `Reset_Handler`. A simple solution might therefore be:
 ```c
 void Reset_Handler(void)
 {
-        /* ... */
-        /* Hardware Initialization */
-        serial_init();
+  /* ... */
+  /* Hardware Initialization */
+  serial_init();
 
-        /* Branch to main function */
-        main();
+  /* Branch to main function */
+  main();
 
-        /* Infinite loop */
-        while (1);
+  /* Infinite loop */
+  while (1);
 }
 ```
 
@@ -594,15 +596,15 @@ All we need to do is call `__libc_init_array` prior to `main` in our
 ```c 
 void Reset_Handler(void)
 {
-        /* ... */
-        /* Run constructors / initializers */
-        __libc_init_array();
+  /* ... */
+  /* Run constructors / initializers */
+  __libc_init_array();
 
-        /* Branch to main function */
-        main();
+  /* Branch to main function */
+  main();
 
-        /* Infinite loop */
-        while (1);
+  /* Infinite loop */
+  while (1);
 }
 ```
 
@@ -717,5 +719,8 @@ include ../common-standalone.mk
 
 ## Reference Links
 
-[^1] [\_\_malloc_lock
-documentation](https://sourceware.org/newlib/libc.html#g_t_005f_005fmalloc_005flock)
+[^1]: [\_\_malloc_lock documentation](https://sourceware.org/newlib/libc.html#g_t_005f_005fmalloc_005flock)
+[^2]: [musl libc](https://www.musl-libc.org/)
+[^3]: [bionic libc](https://android.googlesource.com/platform/bionic/)
+[^4]: [ucLibc](https://www.uclibc.org/)
+[^5]: [dietlibc](https://www.fefe.de/dietlibc/)
