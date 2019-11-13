@@ -1,10 +1,10 @@
 ---
 title: "From zero to main(): Bootstrapping libc with Newlib"
+description:
+  "TODO"
 author: francois
 tags: [zero-to-main]
 ---
-
-## Introduction
 
 In this series of post, we’ve worked methodically to demystify what happens to
 firmware before the main() function is called. So far, we bootstrapped a C
@@ -22,8 +22,9 @@ int main() {
   while (1) {}
 }
 ```
-
-Compiling this using our makefile and linker script from previous posts, we hit
+Compiling this using our makefile and linker script from [previous](% post_url
+2019-05-14-zero-to-main-1 %) [posts](% post_url
+2019-06-25-how-to-write-linker-scripts-for-firmware %), we hit
 the following error:
 
 ```shell
@@ -49,8 +50,18 @@ we want to use them.
 <!-- excerpt start -->
 In this post, we will add RedHat’s Newlib to our firmware and highlight some of
 its features. We will implement syscalls, learn about constructors, and finally
-print out “Hello, World”!
+print out “Hello, World”! We will also learn how to replace parts or all of the
+standard C library.
 <!-- excerpt end -->
+
+{:.no_toc}
+
+## Table of Contents
+
+<!-- prettier-ignore -->
+* auto-gen TOC:
+{:toc}
+
 
 ## Setup
 As we did in our previous posts, we are using Adafruit’s Metro M0 development
@@ -62,7 +73,7 @@ post](https://interrupt.memfault.com/blog/getting-started-with-ibdap-and-atsamd2
 
 As with previous examples, we start with our “minimal” example which you can
 find [on GitHub](https://github.com/memfault/zero-to-main/tree/master/minimal).
-I’ve reproduce the source code for `main.c` below:
+I’ve reproduced the source code for `main.c` below:
 
 ```c
 #include <samd21g18a.h>
@@ -98,16 +109,14 @@ venerable `glibc` found on most GNU/Linux systems. Alternative implementations
 include Musl libc, Bionic libc, ucLibc, and dietlibc. 
 
 Newlib is an implementation of the C Standard Library targeted at bare-metal
-embedded systems that is maintained by RedHat.
+embedded systems that is maintained by RedHat. It has become the de-facto standard
+in embedded software because it is complete, has optimizations for a wide range
+of architectures, and produces relatively small code.
 
-Newlib has become the de-facto standard in embedded software because it is
-complete, has optimizations for a wide range of architectures, and produces
-relatively small code.
-
-Today it is bundled alongside toolchains and SDK provided by vendors such as ARM
+Today Newlib is bundled alongside toolchains and SDK provided by vendors such as ARM
 (`arm-none-eabi-gcc`) and Espressif (ESP-IDF for ESP32).
 
-> **newlib vs. newlib-nano**: when code-size constrained, you may chooses to use
+> Note: when code-size constrained, you may choose to use
 > a variant of newlib, called newlib-nano, which does away with some C99
 > features, and some `printf` bells and whistles to deliver a more compact
 > standard library. Newlib-nano is enabled with the `—specs=nano.specs` CFLAG.
@@ -142,7 +151,7 @@ consider this code used to zero-initialize a struct:
 
 ```c
 int main() {
-  int b[3] = {0}; // zero initialize a struct
+  int b[50] = {0}; // zero initialize a struct
   /* ... */
 }
 ```
@@ -161,7 +170,7 @@ make: *** [build/minimal.elf] Error 1
 
 If we remove `-nostdlib`, the program compiles and link without problems.
 
-```
+```shell
 Linking build/minimal.elf
 arm-none-eabi-objdump -D build/minimal.elf > build/minimal.lst
 arm-none-eabi-objcopy build/minimal.elf build/minimal.bin -O binary
@@ -172,6 +181,13 @@ arm-none-eabi-size build/minimal.elf
 
 So here we are, using Newlib, and we did not have to do anything. Could it
 really be this simple?
+
+> Note: the variant of Newlib bundled with `arm-none-eabi-gcc` is not compiled
+> with `-g`, which can make debugging difficult. For that reason, you may chose
+> to replace it with your own build of Newlib. You can read more about that
+> process in the "Implementing our own C standard library" section of this
+> article.
+
 
 ### System Calls
 
@@ -222,17 +238,15 @@ newlib expects the underlying “operating system”. The complete list of them 
 provided below:
 
 ```
-_exit, close, environ, execve, fork, fstat, getpid, isatty, kill, link, lseek,
-open, read, sbrk, stat, times, unlink, wait, write
+_exit, close, environ, execve, fork, fstat, getpid, isatty, kill,
+link, lseek, open, read, sbrk, stat, times, unlink, wait, write
 ``` 
 
 You’ll notice that several of the syscalls relate to filesystem operation or
 process control. These do not make much sense in a firmware context, so we’ll
 often simply provide a stub that returns an error code.
 
-Let’s look at the ones our “Hello, World” example requires. The man pages for
-them contains all the information we need.
-
+Let’s look at the ones our “Hello, World” example requires.
 #### fstat
 `fstat`  returns the status of an open file.  The minimal version of this should
 identify all files as character special devices. This forces one-byte-read at a
@@ -361,11 +375,11 @@ malloc](https://github.com/bminor/newlib/blob/6497fdfaf41d47e835fdefc78ecb0a9348
 Here’s a simple implementation of `sbrk`:
 
 ```c
-caddr_t _sbrk(int incr) {
+void *_sbrk(int incr) {
   static unsigned char *heap = HEAP_START;
   unsigned char *prev_heap = heap;
   heap += incr;
-  return (caddr_t) prev_heap;
+  return prev_heap;
 }
 ```
 
@@ -377,8 +391,8 @@ we had added the `_end` variable in our linker script to that end.
 
 We replace `HEAP_START` with `_end` and get:
 
-```
-caddr_t _sbrk(int incr) {
+```c
+void *_sbrk(int incr) {
   static unsigned char *heap = NULL;
   unsigned char *prev_heap;
 
@@ -389,7 +403,7 @@ caddr_t _sbrk(int incr) {
 
   heap += incr;
 
-  return (caddr_t) prev_heap;
+  return prev_heap;
 }
 ```
 
@@ -403,7 +417,7 @@ static struct usart_module stdio_uart_module;
 
 extern int _end;
 
-caddr_t _sbrk(int incr) {
+void *_sbrk(int incr) {
   static unsigned char *heap = NULL;
   unsigned char *prev_heap;
 
@@ -414,7 +428,7 @@ caddr_t _sbrk(int incr) {
 
   heap += incr;
 
-  return (caddr_t) prev_heap;
+  return prev_heap;
 }
 
 int _close(int file) {
@@ -530,7 +544,7 @@ void Reset_Handler(void)
 {
         /* ... */
         /* Hardware Initialization */
-		  serial_init();
+        serial_init();
 
         /* Branch to main function */
         main();
@@ -592,6 +606,35 @@ void Reset_Handler(void)
 }
 ```
 
+### Newlib and Multi-threading
+
+We have not yet talked much about multi-threading (e.g. with an RTOS) in this
+series, and going into details is outside of the scope of this article. However,
+there are a few things worth knowing when using Newlib in a multi-threaded
+environment.
+
+#### `_impure_ptr` and the `_reent` struct
+
+Most Newlib functions are *reentrant*. This means that they can be called by
+multiple processes safely.
+
+For the functions that cannot be easily made re-entrant, newlib depends on the
+operating system correctly setting the `_impure_ptr` variable whenever a context
+switch occur. That variable is expected to hold a `struct _reent` for the
+current thread. That struct is used to store state for standard library
+functions being used by that thread.
+
+#### Locking shared memory
+
+Some standard library functions depend on global memory which would not make
+sense to hold in the `_reent` struct. This is especially important when using
+`malloc` to allocate memory out of the heap. If mutliple threads try modifying
+the heap at the same time, they risk corrupting it.
+
+To allow multiple threads to call `malloc`, Newlib provides the `__malloc_lock`
+and `__malloc_unlock` APIs[^1]. A good implementation of these APIs would lock
+and unlock a recursive mutex.
+
 ## Implementing our own C standard library
 
 In some cases, you may want to take different tradeoffs than the ones taken by
@@ -615,7 +658,7 @@ is as simple as a Makefile change.
 We first clone it in our firmware’s folder under `lib/printf`, and update our
 Makefile to reflect the change: 
 
-```
+```makefile
 PROJECT := with-libc
 BUILD_DIR ?= build
 
@@ -636,13 +679,16 @@ include ../common-standalone.mk
 
 In some cases, you may want to do away with Newlib altogether. Perhaps you don’t
 want any dynamic memory allocation, in which case you could use  [Embedded
-Artistry’s solid alternative](https://github.com/embeddedartistry/libc). 
+Artistry’s solid alternative](https://github.com/embeddedartistry/libc). Another
+good reason to replace the version of Newlib provided by your toolchain is to
+use your own build of it because you would like to use different compile-time
+flags.
 
 Once we have copied the static lib (`.a`) for our selected libc, we disable
 Newlib with `-nostdlib` and explicitly link in our substitute library. You can
 find the resulting Makefile below:
 
-```
+```makefile
 PROJECT := with-libc
 BUILD_DIR ?= build
 
@@ -667,3 +713,9 @@ include ../common-standalone.mk
 > Note that the `__libc_init_array` functionality is not found in every standard
 > C library. You will either need to avoid using it, or bring in Newlib’s
 > implementation.
+
+
+## Reference Links
+
+[^1] [\_\_malloc_lock
+documentation](https://sourceware.org/newlib/libc.html#g_t_005f_005fmalloc_005flock)
