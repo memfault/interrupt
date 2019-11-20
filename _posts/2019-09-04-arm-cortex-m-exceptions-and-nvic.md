@@ -3,6 +3,7 @@ title: "A Practical guide to ARM Cortex-M Exception Handling"
 description: "Step-by-step walkthrough of ARM Cortex-M Exception handlers & how to configure ARM
 System Fault Handlers and the Nested Vector Interrupt Controller (NVIC) with examples in C"
 image: /img/armv-m-exceptions/nvic-config-example3.png
+tag: [cortex-m]
 author: chris
 ---
 
@@ -156,7 +157,7 @@ The highlights with respect to exceptions are:
 - **PRIGROUP** - This field lets you split exception priorities into two parts known as the _group
   priority_ and _subpriority_. The setting here indicates how many bits make up the _subpriority_. The _group priority_ is used to control which interrupts can preempt one another. The subpriority controls the order in which exceptions in the same group will be processed. This field is _not_ implemented in ARMv6-M based devices. This can be helpful if you only want certain groups of interrupts to be able to preempt one another.
 
-> NOTE: In order to issue a write to this register, the `VECTKEY` field must be set to `0xFA05`.
+> NOTE: In order to issue a write to this register, the `VECTKEY` field must be set to `0x05FA`.
 
 {:.no_toc}
 
