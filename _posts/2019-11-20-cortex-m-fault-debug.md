@@ -3,7 +3,7 @@ title: "How to debug a HardFault on an ARM Cortex-M MCU"
 description: "A step by step guide of how to investigate what led to a fault on a Cortex-M device with examples and strategies about how to recover"
 tag: [cortex-m]
 author: chris
-image: /img/cortex-m-fault/cortex-m-fault-gdb-debug.png
+image: /img/cortex-m-fault/cortex-m-fault-gdb-debug2.png
 ---
 
 Faults happen on embedded devices all the time for a variety of reasons -- ranging from
