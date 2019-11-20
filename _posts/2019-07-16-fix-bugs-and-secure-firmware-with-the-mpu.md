@@ -2,6 +2,7 @@
 title: "Fix Bugs and Secure Firmware with the MPU"
 description: "Step-by-step examples of how to use the ARM Cortex M Memory
 Protection Unit (MPU) to improve firmware security and stability."
+tag: [cortex-m]
 author: chris
 ---
 

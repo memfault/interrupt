@@ -3,6 +3,7 @@ title: "ARM Cortex-M RTOS Context Switching"
 description: "A deep dive into how the ARM Cortex-M architecture makes multi-tasking with an RTOS
 possible with a step-by-step walk through of the FreeRTOS implementation as an example"
 author: chris
+tag: [cortex-m]
 image: /img/context-switching/pendsv-debug-gdb.png
 ---
 
@@ -138,14 +139,15 @@ The layout can be found in the ARMv7 Reference Manual[^2]:
 {: #fpu-config-options}
 ![](img/context-switching/cpacr-reg-layout.png)
 
-where, `CP10` and `CP11` are used to control floating point availability.
+where, `CP10` and `CP11` are used to control floating point availability. Both fields are 2 bits
+and must be identical to correctly configure the FPU.
 
-| CP10 | CP11 | Configuration                                                           |
-| ---- | ---- | ----------------------------------------------------------------------- |
-| 0    | 0    | FPU Disabled (default). Any access generates a UsageFault.              |
-| 0    | 1    | Privileged access only. Any unprivileged access generates a UsageFault. |
-| 1    | 0    | Reserved                                                                |
-| 1    | 1    | Privileged and unprivileged access allowed.                             |
+| bit 1 | bit 0 | CP10 & CP11 FPU Configuration                                           |
+| ----- | ----- | ----------------------------------------------------------------------- |
+| 0     | 0     | FPU Disabled (default). Any access generates a UsageFault.              |
+| 0     | 1     | Privileged access only. Any unprivileged access generates a UsageFault. |
+| 1     | 0     | Reserved                                                                |
+| 1     | 1     | Privileged and unprivileged access allowed.                             |
 
 #### Special Registers
 
@@ -291,6 +293,7 @@ With respect to _Context State Stacking_, the values that are interesting are:
 
 When the FPU is "in use" (CONTROL.FPCA=1), an **extended frame** will be saved by the hardware:
 
+{: #extended-context-state-frame}
 ![](img/context-switching/context-state-stacking-extended-frame.png)
 
 > NOTE: If the FPU is enabled but no floating point instructions are executed or ASPEN is disabled
