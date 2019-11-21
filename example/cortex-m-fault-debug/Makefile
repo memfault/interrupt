@@ -88,4 +88,4 @@ $(PY_CORTEX_M_DEBUG):
 $(BUILD_DIR)/%.o: $(ROOT_DIR)/%.c Makefile | $(BUILD_DIR) $(DEP_DIR) $(FREERTOS_PORT_ROOT) $(PY_CORTEX_M_DEBUG)
 	@echo "Compiling $(patsubst $(ROOT_DIR)/%,%,$<)"
 	@mkdir -p $(dir $@)
-	arm-none-eabi-gcc $(DEP_CFLAGS) $(CFLAGS) $(INCLUDE_PATHS) -c -o $@ $<
+	$(Q) arm-none-eabi-gcc $(DEP_CFLAGS) $(CFLAGS) $(INCLUDE_PATHS) -c -o $@ $<

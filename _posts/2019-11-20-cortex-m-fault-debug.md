@@ -411,7 +411,7 @@ Fields in SCB CFSR_UFSR_BFSR_MMFSR:
 The previous two approaches are only helpful if we have a debug or physical connection to the device. Once the product has shipped and is out in the field these strategies will not help to triage what went wrong on devices.
 
 One approach is to simply try and reproduce the issue on site. This is a guessing game (are you
-actually reproducing the same issue the customer hit?), can be a huge time sync and in some cases is not even particularly feasible[^14].
+actually reproducing the same issue the customer hit?), can be a huge time sink and in some cases is not even particularly feasible[^14].
 
 Another strategy is to log the fault register and stack values to persistent storage and periocially collect or push the error logs. On the server side, the register values can be decoded and addresses can be symbolicated to try to root cause the crash.
 
