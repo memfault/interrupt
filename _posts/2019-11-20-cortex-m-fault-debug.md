@@ -16,7 +16,7 @@ this class of issue quickly.
 
 In this article, we explain how to debug faults on ARM Cortex-M based devices. In the process, we
 learn about fault registers, how to automate fault analysis, and figure out ways to recover from
-some faults without rebooting the MCU. We include practical examples, with a step by step walkthrough on how to investigate them.
+some faults without rebooting the MCU. We include practical examples, with a step by step walk-through on how to investigate them.
 
 <!-- excerpt end -->
 
@@ -71,8 +71,8 @@ This register is a 2 byte register which summarizes any faults that are not rela
 where,
 
 - `DIVBYZERO` - Indicates a divide instruction was executed where the denominator was zero. This fault is [configurable](#configurable-usage-faults).
-- `UNALIGNED` - Indicates an unaligned access operation occurred. Unaligned multiple word accesses, such as accessing a `uint64_t` that is not `8-byte` aligned, will _always_ generate this fault. With the excpetion of Cortex-M0 MCUs, whether or not unaligned accesses below 4 bytes generate a fault is also [configurable](#configurable-usage-faults).
-- `NOCP` - Indicates that a Cortex-M coprocess instruction was issued but the coprocessor is
+- `UNALIGNED` - Indicates an unaligned access operation occurred. Unaligned multiple word accesses, such as accessing a `uint64_t` that is not `8-byte` aligned, will _always_ generate this fault. With the exception of Cortex-M0 MCUs, whether or not unaligned accesses below 4 bytes generate a fault is also [configurable](#configurable-usage-faults).
+- `NOCP` - Indicates that a Cortex-M coprocessor instruction was issued but the coprocessor was
   disabled or not present. One common case where this fault happens is when code is compiled to use the Floating Point extension (`-mfloat-abi=hard` `-mfpu=fpv4-sp-d16`) but the coprocessor was not [enabled](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#fpu-config-options) on boot.
 - `INVPC` - Indicates an integrity check failure on `EXC_RETURN`. We'll explore an example [below](#coprocessor-fault-example). [`EXC_RETURN`](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#exc-return-info) is the value branched to upon return from an exception. If this fault flag is set, it means a reserved `EXC_RETURN` value was used on exception exit.
 - `INVSTATE` - Indicates the processor has tried to execute an instruction with an invalid
@@ -244,7 +244,7 @@ At this point we have gone over all the pieces of information which can be manua
 
 What if we are trying to debug an issue that is **not** easy to reproduce? Even if we have a debugger attached, useful state may be overwritten before we have a chance to halt the debugger and take a look.
 
-The first thing we can do is to programatically trigger a breakpoint when the system faults:
+The first thing we can do is to programmatically trigger a breakpoint when the system faults:
 
 ```c
 // NOTE: If you are using CMSIS, the registers can also be
@@ -309,7 +309,7 @@ void my_fault_handler_c(sContextStateFrame *frame) {
 ```
 
 Now when a fault occurs and a debugger is attached, we will automatically hit a breakpoint and be able to look at the register state!
-Re-examing our `illegal_instruction_execution` example we have:
+Re-examining our `illegal_instruction_execution` example we have:
 
 ```
 0x00000244 in my_fault_handler_c (frame=0x200005d8 <ucHeap+1136>) at ./cortex-m-fault-debug/startup.c:94
@@ -351,7 +351,7 @@ This approach has a couple notable limitations:
 - It bloats the code & data size of the binary image and consequently often gets turned off.
 - It can increase the stack size requirements for the fault handler (due to printf calls)
 - It requires a firmware update to improve or fix issues with the analyzers
-- It requires a console session be active to see what fault occurred. Furtheremore, this can be flaky if the system is in a crashed state.
+- It requires a console session be active to see what fault occurred. Furthermore, this can be flaky if the system is in a crashed state.
 
 #### Debugger Plugins
 
