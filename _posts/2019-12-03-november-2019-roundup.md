@@ -24,7 +24,7 @@ by Erich Styger - A step-by-step tutorial on how to slim down default projects
 to save RAM and code space. Focused on the Eclipse IDE.
 * [Exploring Startup Implementations: Newlib
   ARM](https://embeddedartistry.com/blog/2019/04/17/exploring-startup-implementations-newlib-arm) by Phillip Johnston - A great complement to our zero-to-main articles. Phillip walks us through init code included in Newlib.
-* [Pwn the ESP32 Forever: Flash Encryption and Sec. Boot Keys Extraction](https://limitedresults.com/2019/11/pwn-the-esp32-forever-flash-encryption-and-sec-boot-keys-extraction/) by LimitedResults - A demonstrations of secret extraction on ESP32 using voltage glitching.
+* [Pwn the ESP32 Forever: Flash Encryption and Sec. Boot Keys Extraction](https://limitedresults.com/2019/11/pwn-the-esp32-forever-flash-encryption-and-sec-boot-keys-extraction/) by LimitedResults - A demonstration of secret extraction on ESP32 using voltage glitching.
 * [Revving up for Edge
   Computing](https://semiengineering.com/revving-up-for-edge-computing/) by Ed
 Sperling - Edge computing is reshaping the embedded landscape. A high level
