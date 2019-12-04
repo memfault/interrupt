@@ -48,7 +48,7 @@ embedded.
 
 ## Tools & Libraries
 
-* [GDB Dashbooard](https://github.com/cyrus-and/gdb-dashboard) - Modular visual interface for GDB in Python
+* [GDB Dashboard](https://github.com/cyrus-and/gdb-dashboard) - Modular visual interface for GDB in Python
 * [Embedded Graphics](https://github.com/jamwaffles/embedded-graphics) - Graphics library for embedded applications
 * [Hippomocks](https://github.com/dascandy/hippomocks) - Single-header mocking framework.
 
