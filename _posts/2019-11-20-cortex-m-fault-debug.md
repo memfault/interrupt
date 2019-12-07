@@ -49,7 +49,7 @@ If you are trying to debug a Cortex-M0, you can skip ahead to the [next section]
 
 This 32 bit register contains a summary of the fault(s) which took place and resulted in the exception. The register is comprised of three different status registers -- UsageFault, BusFault & MemManage Fault Status Registers:
 
-![](img/cortex-m-fault/cfsr.png)
+![](/img/cortex-m-fault/cfsr.png)
 
 The register can be accessed via a 32 bit read at `0xE000ED28` or each register can be read individually. For example, in GDB it would look something like this:
 
@@ -66,7 +66,7 @@ The register can be accessed via a 32 bit read at `0xE000ED28` or each register 
 
 This register is a 2 byte register which summarizes any faults that are not related to memory access failures, such as executing invalid instructions or trying to enter invalid states.
 
-![](img/cortex-m-fault/ufsr.png)
+![](/img/cortex-m-fault/ufsr.png)
 
 where,
 
@@ -96,7 +96,7 @@ It is worth noting that some classes of UsageFaults are configurable via the _Co
 
 This register is a 1 byte register which summarizes faults related to instruction prefetch or memory access failures.
 
-![](img/cortex-m-fault/bfsr.png)
+![](/img/cortex-m-fault/bfsr.png)
 
 - `BFARVALID` - Indicates that the _Bus Fault Address Register_ (**BFAR**), a 32 bit register located at `0xE000ED38`, holds the address which triggered the fault. We'll walk through an example using this info [below](#bad-address-read-example).
 - `LSPERR` & `STKERR` - Indicates that a fault occurred during lazy state preservation or during exception entry, respectively. Both are situations where the hardware is [automatically saving state on the stack](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#context-state-stacking). One way this error may occur is if the stack in use overflows off the valid RAM address range while trying to service an exception. We'll go over an example [below](#stkerr-example).
@@ -127,7 +127,7 @@ For the Cortex M7, there is **no** way to force all stores to be synchronous / p
 
 This register **only** exists for Cortex-M7 devices. When an `IMPRECISE` error occurs it will at least give us an indication of what memory bus the fault occurred on[^7]:
 
-![](img/cortex-m-fault/abfsr.png)
+![](/img/cortex-m-fault/abfsr.png)
 
 A full discussion of memory interfaces is outside the scope of this article but more details can be found in the reference manual [^7].
 
@@ -141,7 +141,7 @@ Typically MPU faults will only trigger if the MPU has been [configured and enabl
 
 The layout of the register looks like this:
 
-![](img/cortex-m-fault/mmfsr.png)
+![](/img/cortex-m-fault/mmfsr.png)
 
 where,
 
@@ -155,7 +155,7 @@ where,
 
 This registers explains the reason a HardFault exception was triggered.
 
-![](img/cortex-m-fault/hfsr.png)
+![](/img/cortex-m-fault/hfsr.png)
 
 There's not too much information in this register but we will go over the fields real quickly
 
@@ -419,7 +419,7 @@ Alternatively, an end-to-end firmware error analysis system, such as
 [Memfault](https://memfault.com/features/error-analysis.html?utm_source=interrupt&utm_medium=link&utm_campaign=cortex-m-faults),
 can be used to automatically collect, transport, deduplicate and surface the faults and crashes happening in the field. Here is some example output from Memfault for the bad memory read example we will walk through [below](#bad-address-read-example):
 
-![](img/cortex-m-fault/memfault-fault-analyzer.png)
+![](/img/cortex-m-fault/memfault-fault-analyzer.png)
 
 {: #recovering-from-a-fault}
 

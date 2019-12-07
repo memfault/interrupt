@@ -1143,7 +1143,7 @@ tests, so you can be sure that the piece of code was tested in some capacity.
 Note that code coverage doesn't measure the different behaviors a code path
 **could take**, but only that a particular code path **was taken**.
 
-![](img/unit-testing-basics/code_coverage.png)
+![](/img/unit-testing-basics/code_coverage.png)
 
 Above is a an example coverage report taken from the Memfault Public SDK[^5].
 
