@@ -1,0 +1,29 @@
+From 5d0562fa3814a6db551ef918f4c35d42aee41161 Mon Sep 17 00:00:00 2001
+From: Chris Coleman <chrisc112358@gmail.com>
+Date: Mon, 9 Dec 2019 20:45:26 -0500
+Subject: [PATCH] Combine include headers and cleanup makefile
+
+---
+ example/reproducible-build/Makefile | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/example/reproducible-build/Makefile b/example/reproducible-build/Makefile
+index ba40a8a..ab0a9cd 100644
+--- a/example/reproducible-build/Makefile
++++ b/example/reproducible-build/Makefile
+@@ -40,10 +40,8 @@ INCLUDE_PATH_DIRS = \
+   $(FREERTOS_PORT_ROOT) \
+   $(FREERTOS_ROOT_DIR)/include \
+   $(ROOT_DIR) \
+-
+-INCLUDE_PATH_DIRS += $(ROOT_DIR)/include
+-
+-INCLUDE_PATH_DIRS += $(ROOT_DIR)/config
++  $(ROOT_DIR)/config \
++  $(ROOT_DIR)/include
+ 
+ INCLUDE_PATHS = $(foreach d, $(INCLUDE_PATH_DIRS), -I$d)
+ 
+-- 
+2.21.0
+

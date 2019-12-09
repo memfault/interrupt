@@ -1,0 +1,26 @@
+From f38045527031c766c59214cd4a4add8b67b613bf Mon Sep 17 00:00:00 2001
+From: Chris Coleman <chrisc112358@gmail.com>
+Date: Mon, 9 Dec 2019 20:33:47 -0500
+Subject: [PATCH] Use debug-prefix-map to remove absolute paths from debuginfo
+
+---
+ example/reproducible-build/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/example/reproducible-build/Makefile b/example/reproducible-build/Makefile
+index 63111bd..ba40a8a 100644
+--- a/example/reproducible-build/Makefile
++++ b/example/reproducible-build/Makefile
+@@ -56,7 +56,8 @@ CFLAGS += \
+   -ffunction-sections -fdata-sections \
+   -Wall \
+   -Werror \
+-  -Os
++  -Os \
++  -fdebug-prefix-map=$(ROOT_DIR)=.
+ 
+ TARGET ?= nrf52
+ LDSCRIPT = $(ROOT_DIR)/$(TARGET).ld
+-- 
+2.21.0
+

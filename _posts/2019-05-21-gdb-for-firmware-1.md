@@ -373,7 +373,7 @@ There are a few steps to get this working.
 	The GDB Server (which should be left running in another Terminal window) will show something like the following:
 	
 	
-	![](././img/gdb-tips-and-tricks/GDB_Server_connected.png)
+	![](/img/gdb-tips-and-tricks/GDB_Server_connected.png)
 	
 
 ### 2. GDB Commands
