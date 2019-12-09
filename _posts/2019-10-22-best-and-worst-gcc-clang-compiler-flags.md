@@ -489,7 +489,7 @@ occurs. The C standard defines this as[^17]:
 
 Then the following set of rules are applied to the promoted values:
 
-> ![](img/compiler-flags/arithmetic-conversions-int.png)
+> ![](/img/compiler-flags/arithmetic-conversions-int.png)
 
 It can be hard to keep track of the set of conversions taking place but fortunately the
 `-Wconversion` option can be used to generate warnings when **implicit** conversions that are

@@ -170,13 +170,13 @@ You can find our fork at
 We’re now ready to set up CircleCI. Head to [https://circleci.com](https://circleci.com), create an account,
 select “Add Projects” in the sidebar, and search for your ChibiOS repository.
 
-![](img/circle-ci/search_chibios.png)
+![](/img/circle-ci/search_chibios.png)
 
 Click “Set Up Project” and follow the instructions. ChibiOS is a C project with
 robust tooling to build it on Linux, so we recommend you select “Linux” as the
 operating system, and “Other” as the language.
 
-![](img/circle-ci/setup_project.png)
+![](/img/circle-ci/setup_project.png)
 
 ### CircleCI Hello World
 
@@ -184,7 +184,7 @@ Now that we have a project set up, we need to tell our CI system how to build
 and test our firmware. In Circle CI this is done by defining a set of **Steps**,
 **Jobs**, and **Workflows**.
 
-![](img/circle-ci/Diagram-v3--Default.png)
+![](/img/circle-ci/Diagram-v3--Default.png)
 
 Simply stated, a **Step** is a single command to be run as part of your build
 and test process. It is the unit of work of our CI system. A **Job** is a
@@ -324,11 +324,11 @@ To github.com:memfault/ChibiOS.git
 
 Now head to [https://circleci.com](https://circleci.com) and observe that a new job has started:
 
-![](img/circle-ci/sample_build_started.png)
+![](/img/circle-ci/sample_build_started.png)
 
 Wait a bit, and you can look at the build result:
 
-![](img/circle-ci/sample_build_ended.png)
+![](/img/circle-ci/sample_build_ended.png)
 
 You should see the output of your two commands, and a successful result.
 
@@ -430,16 +430,16 @@ CircleCI will notice the pull request, pick up the new `config.yml` file and
 start running our build. If all goes well, we will see “All checks have passed”
 in Github:
 
-![](img/circle-ci/github_pull_request_success.png)
+![](/img/circle-ci/github_pull_request_success.png)
 
 Clicking through the check information in GitHub links us back to our CircleCI
 job page:
 
-![](img/circle-ci/real_build_ended.png)
+![](/img/circle-ci/real_build_ended.png)
 
 Where we can now find our artifacts! 
 
-![](img/circle-ci/chibios_artifact.png)
+![](/img/circle-ci/chibios_artifact.png)
 
 ### Automated Tests
 
@@ -546,7 +546,7 @@ workflows:
 Once again, we open a pull request with our changes, and watch CircleCI run our
 tests.
 
-![](img/circle-ci/github_build_and_test_pass.png)
+![](/img/circle-ci/github_build_and_test_pass.png)
 
 ## Final Thoughts
 

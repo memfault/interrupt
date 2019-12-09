@@ -221,12 +221,12 @@ coworker at Pebble.
 Puncover will give you a full hierarchical view of both code size and static
 memory per module, file, and function. See the screenshot below:
 
-![](img/code-size-1/puncover-1.png)
+![](/img/code-size-1/puncover-1.png)
 
 It also shows you details for each function, including callers, callees, and
 disassembly.
 
-![](img/code-size-1/puncover-2.png)
+![](/img/code-size-1/puncover-2.png)
 
 Truly, it is a firmware analysis swiss army knife!
 

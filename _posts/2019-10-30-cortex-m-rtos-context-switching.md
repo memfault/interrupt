@@ -137,7 +137,7 @@ at address `0xE000ED88` must take place.
 The layout can be found in the ARMv7 Reference Manual[^2]:
 
 {: #fpu-config-options}
-![](img/context-switching/cpacr-reg-layout.png)
+![](/img/context-switching/cpacr-reg-layout.png)
 
 where, `CP10` and `CP11` are used to control floating point availability. Both fields are 2 bits
 and must be identical to correctly configure the FPU.
@@ -157,7 +157,7 @@ Special Register_ (**MSR**) and _Move to Register from Special Register_ (**MRS*
 A full discussion of all the registers is outside the scope of this article but the ARM Reference
 Manual documentation about the instruction itself has a great overview [^2]:
 
-![](img/context-switching/mrs-msr-registers.png)
+![](/img/context-switching/mrs-msr-registers.png)
 
 There _are_ some special rules about the privilege level needed to read and write to the special
 registers worth remembering:
@@ -184,7 +184,7 @@ set one will see is:
 
 {: #control-register}
 
-![](img/context-switching/control-reg.png)
+![](/img/context-switching/control-reg.png)
 
 where
 
@@ -253,7 +253,7 @@ The reference manual has a great picture of what the stack looks like after this
 state saving takes place:
 
 {: #basic-context-state-frame}
-![](img/context-switching/context-state-stacking-basic.png)
+![](/img/context-switching/context-state-stacking-basic.png)
 
 {: #psr-alignment}
 
@@ -277,7 +277,7 @@ However, there's also some fine granularity controls about how the context is pr
 be configured via the _Floating Point Context Control Register_ (`FPCCR`) located at address
 `0xE000EF34`:
 
-![](img/context-switching/fpccr-reg.png)
+![](/img/context-switching/fpccr-reg.png)
 
 With respect to _Context State Stacking_, the values that are interesting are:
 
@@ -294,7 +294,7 @@ With respect to _Context State Stacking_, the values that are interesting are:
 When the FPU is "in use" (CONTROL.FPCA=1), an **extended frame** will be saved by the hardware:
 
 {: #extended-context-state-frame}
-![](img/context-switching/context-state-stacking-extended-frame.png)
+![](/img/context-switching/context-state-stacking-extended-frame.png)
 
 > NOTE: If the FPU is enabled but no floating point instructions are executed or ASPEN is disabled
 > (i.e CONTROL.FPCA=0), only the **basic frame** will be saved. The ARM **lazy context save** application
@@ -314,7 +314,7 @@ being used like we discussed [above](#stack-pointers-and-usage)).
 On exception entry, the ARM reference manual pseudocode for the value stored in `lr` gives the best description[^6]:
 
 {: #exception-entry-pseudocode}
-![](img/context-switching/lr-exc-return-exception-entry.png)
+![](/img/context-switching/lr-exc-return-exception-entry.png)
 
 It describes the current stack frame in use (**Extended** vs **Basic**) as well as what the active
 stack pointer was prior to the exception taking place.
