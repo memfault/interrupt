@@ -28,13 +28,13 @@ A build is said to be "Reproducible" when given a set of source code, the exact 
 
 Common problems that arise when a build is not reproducible is the binary behaving differently for developers on the team. Debugging and supporting these kinds of issues can be a significant time sink. It's hard to debug a problem when you can't reproduce it yourself! Making builds reproducible can eliminate this class of problem and is the primary reason I reason I think reproducible builds are useful for embedded projects. We'll explore an example of this type of problem in the next section.
 
-Having reproducible builds can also be helpful when trying to recreate the debug symbols for an image where the symbols were not preserved or to be able to re-generate a build that hasn't been updated in a while (i.e an image used in the factory).
+Having reproducible builds can also be helpful when trying to recreate the debug symbols for an image where the symbols were not preserved or to be able to re-generate a build that hasn't been updated in a while (e.g. an image used in the factory).
 
 Open source projects also strive for reproducible builds for security reasons -- to ensure no backdoors were added into the final binary as part of the compilation process[^9] [^10]
 
 ## Making a Build Reproducible
 
-In this article we will examine a very simple app running FreeRTOS which passes a message between two tasks. Every time a message is sent a 64 bit counter is incremented. We will compile the app from two different directories and will find that the binary crashes when compiled from one directory and works fine when compiled in a different directory!
+In this article we will examine a very simple app running FreeRTOS which passes a message between two tasks. Every time a message is sent a 64 bit counter is incremented. We will compile the binary from two different directories. If the build is reproducible, we should find the binaries match and behave the same when flashed on target. However, what we will find out is that one of the binaries crashes on boot and one does not!
 
 #### Example Project Setup
 
@@ -448,6 +448,7 @@ First, compile your binary in two directories. If the binaries match, you are pr
 2. [Enforce that all builds use one version of a compiler](#enforce-compiler-for-build)
 3. Compare ELFs and BINs for differences using the tips discussed in this article. Typical differences arise from including absolute paths, timestamps, or shell information in the final binary.
 4. Utilize [`-fdebug-prefix-map=old=new`](#fdebug-prefix-map) to make sure any debug information emitted does not rely on absolute paths.
+5. At this point builds will usually match for an embedded project. If they do not, it's likely non-determinism in one of the build tools being used is causing issues.[^11]
 
 That's it!
 
@@ -609,3 +610,4 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 [^8]: [Projects with efforts underway to be Reproducible](https://reproducible-builds.org/who/)
 [^9]: [Debian Project reasons why does a reproducible build matter](https://wiki.debian.org/ReproducibleBuilds/About#Why_do_we_want_reproducible_builds.3F)
 [^10]: [Brian Reproducer](https://code.briarproject.org/briar/briar-reproducer/tree/master#briar-reproducer)
+[^11]: [Issues Preventing Debian Package Build Reproducibility](https://wiki.debian.org/ReproducibleBuilds/OldIssues#Generation_of_files_in_data.tar_depends_on_.28pseudo-.29randomness)
