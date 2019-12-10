@@ -761,7 +761,7 @@ Dump of assembler code for function access_disabled_coprocessor:
 $29 = 0x0
 ```
 
-We can cleary see the FP Extension is disabled. We will have to enable the FPU to fix our bug.
+We can clearly see the FP Extension is disabled. We will have to enable the FPU to fix our bug.
 
 {: #imprecise-error-code-example}
 
