@@ -1,0 +1,26 @@
+From db32e144d58b3771b33524170c5deb8e42ff2368 Mon Sep 17 00:00:00 2001
+From: Chris Coleman <chrisc112358@gmail.com>
+Date: Mon, 9 Dec 2019 19:58:10 -0500
+Subject: [PATCH] Update minimal heap implementation such that heap is 8 byte
+ aligned
+
+---
+ example/reproducible-build/minimal_heap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/example/reproducible-build/minimal_heap.c b/example/reproducible-build/minimal_heap.c
+index a2420ca..621f08b 100644
+--- a/example/reproducible-build/minimal_heap.c
++++ b/example/reproducible-build/minimal_heap.c
+@@ -6,7 +6,7 @@
+ #define MINIMAL_HEAP_TOTAL_SIZE 16
+ 
+ typedef struct {
+-  uint8_t heap[MINIMAL_HEAP_TOTAL_SIZE];
++  uint8_t heap[MINIMAL_HEAP_TOTAL_SIZE] __attribute__((aligned(8)));
+   bool space_free;
+ } sMinimalHeapContext;
+ 
+-- 
+2.21.0
+

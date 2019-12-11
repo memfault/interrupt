@@ -1,0 +1,22 @@
+From 749832978f8318288a9b8554e09e910696996b53 Mon Sep 17 00:00:00 2001
+From: Chris Coleman <chrisc112358@gmail.com>
+Date: Mon, 9 Dec 2019 20:25:01 -0500
+Subject: [PATCH] Patch makefile to invoke compiler with paths relative to root
+
+---
+ example/reproducible-build/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/example/reproducible-build/Makefile b/example/reproducible-build/Makefile
+index 63111bd..802f2be 100644
+--- a/example/reproducible-build/Makefile
++++ b/example/reproducible-build/Makefile
+@@ -100,4 +100,4 @@ $(FREERTOS_PORT_ROOT):
+ $(BUILD_DIR)/%.o: $(ROOT_DIR)/%.c Makefile | $(BUILD_DIR) $(DEP_DIR) $(FREERTOS_PORT_ROOT)
+ 	@echo "Compiling $*.c"
+ 	@mkdir -p $(dir $@)
+-	$(Q) arm-none-eabi-gcc $(DEP_CFLAGS) $(CFLAGS) $(INCLUDE_PATHS) -c -o $@ $<
++	$(Q) arm-none-eabi-gcc $(DEP_CFLAGS) $(CFLAGS) $(INCLUDE_PATHS) -c -o $@ $*.c
+-- 
+2.21.0
+
