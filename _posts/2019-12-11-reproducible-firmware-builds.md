@@ -2,6 +2,7 @@
 title: "Reproducible Firmware Builds"
 description: "A discussion about reproducible builds, why they matter and steps you can take to make your firmware build reproducible"
 author: chris
+image: /img/reproducible-build/reproducible-build.img
 ---
 
 If you have ever worked on a large scale embedded project before, you've probably run into situations where the build system or binary behaves differently depending on where it was compiled. For example, maybe the binary completely fails to compile on one computer and on another it compiles but crashes on boot!
@@ -32,7 +33,7 @@ Many open source projects (such as Debian GNU/Linux) are working towards making 
 
 ### Why does it matter if the build is Reproducible?
 
-A common problem that arises when a build is not reproducible is the binary behaving differently for developers on the team. Debugging and supporting these kinds of issues can be a significant time sink. It's hard to debug a problem when you can't reproduce it yourself! Making builds reproducible can eliminate this class of problem and is the primary reason I reason I think reproducible builds are useful for embedded projects. We'll explore an example of this type of problem in the next section.
+A common problem that arises when a build is not reproducible is the binary behaving differently for developers on the team. Debugging and supporting these kinds of issues can be a significant time sink. It's hard to debug a problem when you can't reproduce it yourself! Making builds reproducible can eliminate this class of problem and is the primary reason I think reproducible builds are useful for embedded projects. We'll explore an example of this type of problem in the next section.
 
 Having reproducible builds can also be helpful when trying to recreate the debug symbols for an image where the symbols were not preserved or to be able to re-generate a build that hasn't been updated in a while (e.g. an image used in the factory).
 
@@ -52,7 +53,7 @@ In this article we will be using:
 
 #### Enforcing a Compiler Version
 
-A first step for ensuring a build will be reproducible is to enforce that everyone use the same compiler version. It's very easy to add a check to the build system that checks this. Here's an example of what you could add to a Makefile to accomplish this:
+A first step for ensuring a build will be reproducible is to enforce that everyone use the same compiler version. It's very easy to add a check to the build system for this. Here's an example of what you could add to a Makefile to accomplish this:
 
 {: #enforce-compiler-for-build}
 
@@ -176,7 +177,6 @@ $5 = {
 34      vTaskDelayUntil(&xNextWakeTime, mainQUEUE_SEND_FREQUENCY_MS);
 35      xQueueSend(xQueue, total_queue_sends, 0U);
 36    }
-37	}
 ```
 
 The pointer which caused the bad store comes from the call to `minimal_heap_malloc()`. Let's take a look at that C file:
@@ -231,7 +231,7 @@ $ git apply 01-fix-alignment.patch
 
 #### Comparing the symbol address
 
-It's confusing how one build crashes and the other does not. If we did not crash in the first build it must mean the `s_heap` structure must have been 8 byte aligned. We can confirm that with the `nm` utility which can be used to inspect symbol information:
+It's confusing how one build crashes and the other does not. If we did not crash in the first build it must mean the `s_heap` structure was word aligned. We can confirm that with the `nm` utility which can be used to inspect symbol information:
 
 ```
 $ cd /private/tmp
@@ -259,7 +259,7 @@ We can see that one build is larger than the other and it looks like most of tha
 
 #### Examining strings in the binary
 
-When sizes differ, one of the first things I like to check is to see if there are any differences in the `strings` within the binary. We can easily examine this with `arm-none-eabi-strings`. The `-d` option can be used to only scan `.data` sections in the file (that is, skip over any debug info) & the `-n` argument can be used to control the minimum string length that will be detected. Let's try it out!
+When sizes differ, one of the first things I like to check is to see if there are any differences in the strings within the binary. We can easily examine this with `arm-none-eabi-strings`. The `-d` option can be used to only scan `.data` sections in the file (that is, skip over any debug info) & the `-n` argument can be used to control the minimum string length that will be detected. Let's try it out!
 
 ```bash
 $ arm-none-eabi-strings -d dev/interrupt/example/reproducible-build/build/nrf52.elf -n 10
@@ -281,7 +281,7 @@ $ arm-none-eabi-strings -d repos/interrupt/example/reproducible-build/build/nrf5
 
 So we see the entire filename path has made it into the build!
 
-This generally happens when the `__FILE__` macro is used which is a fairly common occurence (i.e a lot of logging implementations and assert handlers use it). The `__FILE__` macro expands to "path by which the preprocessor opened the file"[^4]. In practice this is the path passed to the compiler when the `.c` file is compiled. You can try it out yourself by running a simple `test.c` file through the preprocessor.
+This generally happens when the `__FILE__` macro is used which is a fairly common occurence (e.g. a lot of logging implementations and assert handlers use it). The `__FILE__` macro expands to "path by which the preprocessor opened the file"[^4]. In practice this is the path passed to the compiler when the `.c` file is compiled. You can try it out yourself by running a simple `test.c` file through the preprocessor.
 
 ```c
 // contents of test.c file
@@ -389,7 +389,7 @@ Let's apply the fix:
 $ cd /private/tmp/dev/interrupt/example/reproducible-build/
 $ git apply 03-fdebug-prefix-map.patch
 $ cd /private/tmp/repos/interrupt/example/reproducible-build/
-$ git 03-fdebug-prefix-map.patch
+$ git apply 03-fdebug-prefix-map.patch
 ```
 
 #### Ensuring GDB can find source when using -fdebug-prefix-map
@@ -502,7 +502,7 @@ If you want to follow along, you can apply the patch locally:
 $ cd /private/tmp/dev/interrupt/example/reproducible-build/
 $ git apply 04-makefile-cleanup.patch
 $ cd /private/tmp/repos/interrupt/example/reproducible-build/
-$ git 04-makefile-cleanup.patch
+$ git apply 04-makefile-cleanup.patch
 ```
 
 If we have done things right, nothing in the project should change. Let's save a copy of the build and rebuild with the modification:
@@ -564,9 +564,6 @@ or by dumping it in GDB:
 ```bash
 (gdb) list *0xde
 0xde is in main (main.c:61).
-56      vTaskDelay(1);
-57      }
-58	}
 59
 60	int main(void) {
 ==> CHANGE HERE
@@ -606,7 +603,7 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 
 ## References
 
-[^1]: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
+[^1]: [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
 [^2]: [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
 [^3]: [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
 [^4]: [Standard Predefined Macros for GNU GCC](https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html)
