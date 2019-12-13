@@ -252,17 +252,17 @@ typedef struct {
     uint8_t data[];
 } ElfNoteSection_t;
 
-extern const ElfNoteSection_t *g_note_build_id;
+extern const ElfNoteSection_t g_note_build_id;
 ```
 
 We can now simply index into the data field and print the build ID data.
 
 ```c
 void print_build_id(void) {
-    const uint8_t *build_id_data = &g_note_build_id->data[g_note_build_id->namesz];
+    const uint8_t *build_id_data = &g_note_build_id.data[g_note_build_id.namesz];
 
     printf("Build ID: ");
-    for (int i = 0; i < g_note_build_id->descsz; ++i) {
+    for (int i = 0; i < g_note_build_id.descsz; ++i) {
         printf("%02x", build_id_data[i]);
     }
     printf("\n");
@@ -275,6 +275,11 @@ Calling this code on boot, we get:
 Build ID: 8d7aec8b900dce6c14afe557dc8889230518be3e
 ...
 ```
+
+> Update: A prior version of the above code was incorrect: `g_note_build_id` was
+> declared as a pointer which would lead to random data being read in the best case,
+> and a crash in the worst case. Thanks to Simon Doppler for reporting the
+> problem.
 
 ## References
 
