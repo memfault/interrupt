@@ -6,6 +6,7 @@ systems. In this post, we learn more about Newlib and how to use it in a
 project."
 author: francois
 tags: [zero-to-main]
+image: /img/zero-to-main/newlib.png
 ---
 
 This is the third post in our [zero to main() series]({{ '/tag/zero-to-main' |
