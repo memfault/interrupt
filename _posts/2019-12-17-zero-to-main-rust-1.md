@@ -1,7 +1,8 @@
 ---
 title: "From zero to main(): Bare metal Rust"
-description: "A discussion about reproducible builds, why they matter and steps you can take to make your firmware build reproducible"
+description: "Bringing an embedded Rust application from zero to main"
 author: james
+tags: [zero-to-main]
 ---
 
 For the past thirty years or so, the choices of languages for embedded systems developers has been relatively slim. Languages like C++ and Ada have found a home in some niche areas, such as telecommunications and safety critical fields, while higher level languages like Lua, Python, and JavaScript have found a home for scripting and prototyping. But most developers working on bare metal systems have been using the same two languages as long as I can remember: Assembly and C.
