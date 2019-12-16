@@ -5,7 +5,7 @@ author: james
 tags: [zero-to-main]
 ---
 
-For the past thirty years or so, the choices of languages for embedded systems developers has been relatively slim. Languages like C++ and Ada have found a home in some niche areas, such as telecommunications and safety critical fields, while higher level languages like Lua, Python, and JavaScript have found a home for scripting and prototyping. But most developers working on bare metal systems have been using the same two languages as long as I can remember: Assembly and C.
+For the past thirty years or so, the choice of languages for embedded systems developers has been relatively slim. Languages like C++ and Ada have found a home in some niche areas, such as telecommunications and safety critical fields, while higher level languages like Lua, Python, and JavaScript have found a home for scripting and prototyping. But most developers working on bare metal systems have been using the same two languages as long as I can remember: Assembly and C.
 
 But not for no reason! Languages often make trade-offs to fit the needs of the developers working with them: an interpreter to allow for rapid iteration, a heap for ease of memory management, exceptions for simplifying control flow, etc. But these trade-offs come with a price: whether it is code size, RAM usage, low level control, power usage, latency, or determinism.
 
@@ -170,7 +170,7 @@ The `#[no_mangle]` attribute tells the compiler **not** to mangle this symbol, s
 #[link_section = ".vector_table.reset_vector"]
 ```
 
-This is another attribute that is informing the compiler to place this symbol in the `.vector_table.reset_vector` section of our linker script, which will place it right where we need it.
+This is another attribute that is informing the compiler to place this symbol in the `.vector_table.reset_vector` section of our linker script, which will place it right where we need it. This is similar to gcc's `__attribute__((section(...)))`.
 
 ### The Reset Handler, for real
 
@@ -338,7 +338,7 @@ fn panic(_info: &PanicInfo) -> ! {
 }
 ```
 
-Rust has a concept of a `panic`, which is sort of like failing an assert in C. This happens when the program has hit an unrecoverable error case, and must be stopped in some way.
+Rust has a concept of a `panic`, which is like failing an assert in C. This happens when the program has hit an unrecoverable error case, and must be stopped in some way.
 
 Unlike Exceptions in C++, panics are usually not designed to be recovered from gracefully, and therefore do not require the overhead necessary to unwind.
 
