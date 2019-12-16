@@ -40,7 +40,9 @@ Software wise, we will be using:
 * The 1.39.0 version of Rust, though any stable version 1.31.0 or newer should work
 * We'll also use some of the `arm-none-eabi` binutils, such as `arm-none-eabi-gdb` and `arm-none-eabi-objdump`, which are compatible with the binaries produced by Rust
 
-We'll also be implementing a simple blinking LED application. For the sake of completeness, you can find the code reproduced below:
+We'll also be implementing a simple blinking LED application. The full Rust source used for this blog post is available [here, on GitHub]. This is what the source code looks like for our application:
+
+[here, on GitHub]: https://github.com/ferrous-systems/zero-to-main/blob/master/from-scratch/src/main.rs
 
 ```rust
 #![no_std]
@@ -83,7 +85,7 @@ xxd target/thumbv7em-none-eabihf/release/from-scratch.bin | head -n 5
 00000040: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 ```
 
-Reading this, our initial stack pointer is `0x20100000`, and out start address pointer is `0x000000dd`. Let's see what symbol is there. We will also pass `-C` to objdump, which will demangle our symbols:
+Reading this, our initial stack pointer is `0x20100000`, and our start address pointer is `0x000000dd`. Let's see what symbol is there. We will also pass `-C` to objdump, which will demangle our symbols (we'll explain demangling a bit more later):
 
 ```
 arm-none-eabi-objdump -Ct target/thumbv7em-none-eabihf/release/from-scratch | sort
@@ -97,7 +99,7 @@ arm-none-eabi-objdump -Ct target/thumbv7em-none-eabihf/release/from-scratch | so
 ...
 ```
 
-Same as in the original post, our compiler has set the lowest bit of our reset handler to one (to indicate a thumb2 function), so `from_scratch::reset_handler` is what we're looking for
+Same as in the original post, our compiler has set the lowest bit of our reset handler to one to indicate a thumb2 function, so `from_scratch::reset_handler` is what we're looking for.
 
 ## Writing a Reset_Handler
 
@@ -179,7 +181,6 @@ This is another attribute that is informing the compiler to place this symbol in
 ### The Reset Handler, for real
 
 Now let's look at our actual reset handler, from top to bottom:
-
 
 ```rust
 pub fn reset_handler() -> ! {
@@ -350,7 +351,7 @@ Still, we must define a "panic handler" in case our program ever panics. For thi
 
 ### Programming without Compromise
 
-Earlier I mentioned that Rust brings convenience without compromise. To demonstrate this, let's take a quick look at size and total contents of our code once we compile for `opt-level = "s"`, which is equivalent to `-Os` in C or C++:
+Earlier I mentioned that Rust brings convenience without compromise. To demonstrate this, let's take a quick look at the size and total contents of our code once we compile for `opt-level = "s"`, which is equivalent to `-Os` in C or C++:
 
 ```
 arm-none-eabi-size target/thumbv7em-none-eabihf/release/from-scratch
