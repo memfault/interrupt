@@ -5,19 +5,19 @@ author: james
 tags: [zero-to-main]
 ---
 
-For the past thirty years or so, the choice of languages for embedded systems developers has been relatively slim. Languages like C++ and Ada have found a home in some niche areas, such as telecommunications and safety critical fields, while higher level languages like Lua, Python, and JavaScript have found a home for scripting and prototyping. But most developers working on bare metal systems have been using the same two languages as long as I can remember: Assembly and C.
+For the past thirty years or so, the choice of languages for embedded systems developers has been relatively slim. Languages like C++ and Ada have found a home in some niche areas, such as telecommunications and safety critical fields, while higher level languages like Lua, Python, and JavaScript have found a home for scripting and prototyping.
 
-But not for no reason! Languages often make trade-offs to fit the needs of the developers working with them: an interpreter to allow for rapid iteration, a heap for ease of memory management, exceptions for simplifying control flow, etc. But these trade-offs come with a price: whether it is code size, RAM usage, low level control, power usage, latency, or determinism.
+Despite these options, most developers working on bare metal systems have been using the same two languages as long as I can remember: Assembly and C.
+
+But not for no reason! Languages often make trade-offs to fit the needs of the developers working with them: an interpreter to allow for rapid iteration, a heap for ease of memory management, exceptions for simplifying control flow, etc. These trade-offs usually come with a price: whether it is code size, RAM usage, low level control, power usage, latency, or determinism.
 
 <!-- excerpt start -->
 
-Since 2015, Rust has been redefining what it means to combine the best-in-class aspects of performance, correctness, and developer convenience into one language, without compromise.
+Since 2015, Rust has been redefining what it means to combine the best-in-class aspects of performance, correctness, and developer convenience into one language, without compromise. In this post, we'll bootstrap a Rust environment on a Cortex-M microcontroller from scratch, and explain a few of the language concepts you might not have seen before.
 
 <!-- excerpt end -->
 
 As a compiled systems language (based on LLVM), it is also capable of reaching down to the lowest levels of embedded programming as well, without losing built-in features that feel more at home in higher level languages, like a package manager, helpful compile time diagnostics, correctness through powerful static analysis, or documentation tooling.
-
-In this series of posts, we'll show how to bootstrap a Rust environment from scratch, integrate with existing C codebases, write correct code that is enforced at compile time, and more!
 
 This post is meant as a complement to the original [Zero to Main] post on the Interrupt blog, and will elide some of the explanations of hardware level concepts. If you're new to embedded development, or haven't seen that post, go read it now!
 
@@ -71,7 +71,7 @@ Let's build our Rust application, and see what the binary contains:
 ```text
 cargo build --release
    Compiling from-scratch v0.1.0 (/home/james/memfault/blog-1/examples/from-scratch)
-    Finished release [optimized] target(s) in 0.
+    Finished release [optimized] target(s) in 0.62s
 
 arm-none-eabi-objcopy -O binary target/thumbv7em-none-eabihf/release/from-scratch  target/thumbv7em-none-eabihf/release/from-scratch.bin
 
@@ -128,7 +128,9 @@ While the Standard Library contains a number of useful components, such as data 
 
 Rust as a language has a concept of "modules", which can be used to organize and provide namespaces for your code. Libraries or applications in Rust are called "Crates", and each has it's own namespace. This is why we saw the symbol `from_scratch::reset_handler` in our linker script: It was referring to the `reset_handler` function in the `from_scratch` crate (which is the crate in this example).
 
-To use items from another crate, including the `core` library, you can import these items in using the `use` syntax:
+To use items from another crate, including the [`core` library], you can import these items in using the `use` syntax:
+
+[`core` library]: https://doc.rust-lang.org/core/index.html
 
 ```rust
 use core::{
@@ -164,7 +166,9 @@ This line defines a symbol called `__RESET_VECTOR` at static scope. The type of 
 
 This is another attribute, like our `#![no_std]`. By starting with `#[` instead of `#![`, we can tell this is a local attribute instead of a global attribute, which means it only applies to the next item, instead of the whole module.
 
-The `#[no_mangle]` attribute tells the compiler **not** to mangle this symbol, so it will show up as `__RESET_VECTOR`, not `from_scratch::__RESET_VECTOR`. This is important, so that our linker script can understand the symbol we are providing.
+The `#[no_mangle]` attribute tells the compiler **not** to mangle this symbol, so it will show up as `__RESET_VECTOR`, not `from_scratch::__RESET_VECTOR`. [Name mangling] is a technique used by languages like C++ and Rust to emit unique names for things like functions, generic data type parameters, or symbols for data at static scope, no matter where or how often they are used in the resulting binary.
+
+[Name mangling]: https://en.wikipedia.org/wiki/Name_mangling
 
 ```rust
 #[link_section = ".vector_table.reset_vector"]
@@ -261,7 +265,7 @@ This section defines a number of static symbols which will be provided by our li
 1. They will be provided sometime later, by another piece of code, or in this case, the linker itself
 2. They will be defined using the "C" style of ABI and naming conventions, which means they are implicitly `#[no_mangle]`
 
-Some of these symbols are also declared as `mut`, or "mutable". By default in Rust, all variables are immutable, or read-only. To make a variable mutable in Rust, you must explicitly mark it as `mut`.
+Some of these symbols are also declared as `mut`, or "mutable". By default in Rust, all variables are immutable, or read-only. To make a variable mutable in Rust, you must explicitly mark it as `mut`. This is the opposite of languages like C and C++, where variables are by default mutable, and must be marked with `const` to prevent them from being modified.
 
 ### Zeroing the BSS section
 
