@@ -85,7 +85,7 @@ xxd target/thumbv7em-none-eabihf/release/from-scratch.bin | head -n 5
 00000040: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 ```
 
-Reading this, our initial stack pointer is `0x20100000`, and our start address pointer is `0x000000dd`. Let's see what symbol is there. We will also pass `-C` to objdump, which will demangle our symbols (we'll explain demangling a bit more later):
+Reading this, our initial stack pointer is `0x20010000`, and our start address pointer is `0x000000dd`. Let's see what symbol is there. We will also pass `-C` to objdump, which will demangle our symbols (we'll explain demangling a bit more later):
 
 ```
 arm-none-eabi-objdump -Ct target/thumbv7em-none-eabihf/release/from-scratch | sort

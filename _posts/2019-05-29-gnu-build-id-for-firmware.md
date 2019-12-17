@@ -278,7 +278,8 @@ Build ID: 8d7aec8b900dce6c14afe557dc8889230518be3e
 
 > Update: A prior version of the above code was incorrect: `g_note_build_id` was
 > declared as a pointer which would lead to random data being read in the best case,
-> and a crash in the worst case. Thanks to Simon Doppler for reporting the
+> and a crash in the worst case. Thanks to [Simon
+> Doppler](https://github.com/dopsi) for reporting the
 > problem.
 
 ## References
