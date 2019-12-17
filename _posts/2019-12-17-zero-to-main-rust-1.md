@@ -329,7 +329,7 @@ Since the main function we defined above is also divergent (`fn main() -> !`), w
 
 ### Something just for Rust
 
-Rust does has one additional requirement for a bare metal program: You must define the panic handler.
+Rust does have one additional requirement for a bare metal program: You must define the panic handler.
 
 ```rust
 /// This function is called on panic.
