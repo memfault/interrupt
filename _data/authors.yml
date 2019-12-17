@@ -40,3 +40,12 @@ cyril:
     web: https://twitter.com/cyrilfougeray
     image: /img/author/cyril.jpg
     blurb: is a freelance Firmware Engineer. Previously he worked on embedded software at Equisense and Spire.
+james:
+    name: James Munns
+    email: james.munns@ferrous-systems.com
+    web: https://ferrous-systems.com
+    twitter: https://twitter.com/bitshiftmask
+    image: /img/author/james.jpg
+    github: jamesmunns
+    linkedin: https://www.linkedin.com/in/james-munns-8a42b429/
+    blurb: has worked on embedded systems from Safety Critical Avionics to rapidly prototyped IoT solutions. He is a Founder and Managing Director of <a href='https://ferrous-systems.com'>Ferrous Systems</a>.
