@@ -125,9 +125,9 @@ Rust provides a number of built-in library components, but the two main ones are
 1. The Rust Standard Library
 2. The Rust Core Library
 
-While the Standard Library contains a number of useful components, such as data structures, and interfaces for opening files and sockets, it generally requires your target to have these things! For bare metal applications, we can instead forego this library, and only use the Rust Core Library, does not have these requirements.
+While the Standard Library contains a number of useful components, such as data structures, and interfaces for opening files and sockets, it generally requires your target to have these things! For bare metal applications, we can instead forego this library and only use the Rust Core Library, which does not have these requirements.
 
-Rust as a language has a concept of "modules", which can be used to organize and provide namespaces for your code. Libraries or applications in Rust are called "Crates", and each has it's own namespace. This is why we saw the symbol `from_scratch::reset_handler` in our linker script: It was referring to the `reset_handler` function in the `from_scratch` crate (which is the crate in this example).
+Rust as a language has a concept of "modules", which can be used to organize and provide namespaces for your code. Libraries or applications in Rust are called "Crates", and each has its own namespace. This is why we saw the symbol `from_scratch::reset_handler` in our linker script: It was referring to the `reset_handler` function in the `from_scratch` crate (which is the application crate in this example).
 
 To use items from another crate, including the [`core` library], you can import these items in using the `use` syntax:
 
@@ -159,7 +159,7 @@ Let's unpack that from the bottom up:
 pub static __RESET_VECTOR: fn() -> ! = reset_handler;
 ```
 
-This line defines a symbol called `__RESET_VECTOR` at static scope. The type of this symbol is `fn() -> !`, which is a pointer to a function that never returns, or that "diverges". The value of this symbol is `reset_handler`, which is the name of a function in our program. Functions are a first class items in Rust (similar to Python), so we can use the names of functions as a value that represents a function pointer.
+This line defines a symbol called `__RESET_VECTOR` at static scope. The type of this symbol is `fn() -> !`, which is a pointer to a function that takes no arguments and that never returns, or that "diverges". The value of this symbol is `reset_handler`, which is the name of a function in our program. Functions are a first class items in Rust (similar to Python), so we can use the names of functions as a value that represents a function pointer.
 
 ```rust
 #[no_mangle]
