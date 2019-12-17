@@ -91,11 +91,10 @@ Reading this, our initial stack pointer is `0x20100000`, and our start address p
 arm-none-eabi-objdump -Ct target/thumbv7em-none-eabihf/release/from-scratch | sort
 ...
 00000004 g     O .vector_table  00000004 __RESET_VECTOR
-00000008 g       .vector_table  00000000 __reset_vector
 000000dc g       .vector_table  00000000 _stext
 000000dc l     F .text  0000005c from_scratch::reset_handler
-00000138 l     F .text  00000072 from_scratch::main
-000001ac g       .text  00000000 __etext
+00000138 l     F .text  0000006a from_scratch::main
+000001a4 g       *ABS*  00000000 __sidata
 ...
 ```
 
