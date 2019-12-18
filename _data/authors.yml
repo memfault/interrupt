@@ -37,14 +37,14 @@ mafaneh:
 cyril:
     name: Cyril Fougeray
     email: cyril.fougeray@gmail.com
-    web: https://twitter.com/cyrilfougeray
+    web: cyrilfougeray
     image: /img/author/cyril.jpg
     blurb: is a freelance Firmware Engineer. Previously he worked on embedded software at Equisense and Spire.
 james:
     name: James Munns
     email: james.munns@ferrous-systems.com
     web: https://ferrous-systems.com
-    twitter: https://twitter.com/bitshiftmask
+    twitter: bitshiftmask
     image: /img/author/james.jpg
     github: jamesmunns
     linkedin: https://www.linkedin.com/in/james-munns-8a42b429/
