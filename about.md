@@ -19,7 +19,7 @@ Posts on Interrupt are licensed under CC-by-SA, see the [License
 file](https://github.com/memfault/interrupt/blob/master/License.md) for
 more information.
 
-The Interrupt blog is based on a the
+The Interrupt blog is based on the
 [Emerald](https://github.com/KingFelix/emerald) Jekyll template originally
 authored by [Jacopo Rabolini](www.jacoporabolini).
 
