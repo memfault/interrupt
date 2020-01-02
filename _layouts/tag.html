@@ -10,7 +10,7 @@ layout: default
     {% if post.tags contains page.tag %}
 
     <li class="post">
-        <h2><a href="{% if site.baseurl == "/" %}{{ post.url }}{% else %}{{ post.url | prepend: site.baseurl }}{% endif %}">{{ post.title }}</a></h2> 
+        <h2><a href="{% if site.baseurl == "/" %}{{ post.url }}{% else %}{{ post.url | prepend: site.baseurl }}{% endif %}">{{ post.title }}</a></h2>
         <div class="by-line">
             <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
             {% assign author = site.data.authors[post.author] %}
