@@ -1,5 +1,5 @@
 ---
-title: "From zero to main(): Bare metal Rust"
+title: "From Zero to main(): Bare metal Rust"
 description: "Bringing an embedded Rust application from zero to main"
 author: james
 tags: [zero-to-main]
@@ -19,9 +19,9 @@ Since 2015, Rust has been redefining what it means to combine the best-in-class 
 
 As a compiled systems language (based on LLVM), it is also capable of reaching down to the lowest levels of embedded programming as well, without losing built-in features that feel more at home in higher level languages, like a package manager, helpful compile time diagnostics, correctness through powerful static analysis, or documentation tooling.
 
-This post is meant as a complement to the original [Zero to Main] post on the Interrupt blog, and will elide some of the explanations of hardware level concepts. If you're new to embedded development, or haven't seen that post, go read it now!
+This post is meant as a complement to the original [Zero to main()] post on the Interrupt blog, and will elide some of the explanations of hardware level concepts. If you're new to embedded development, or haven't seen that post, go read it now!
 
-[Zero to Main]: https://interrupt.memfault.com/blog/zero-to-main-1
+[Zero to Main()]: https://interrupt.memfault.com/blog/zero-to-main-1
 
 ## Setting the stage
 

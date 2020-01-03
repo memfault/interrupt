@@ -1,5 +1,5 @@
 ---
-title: "From zero to main(): Bootstrapping libc with Newlib"
+title: "From Zero to main(): Bootstrapping libc with Newlib"
 description:
   "Newlib is most commonly used C standard library in ARM-based embedded
 systems. In this post, we learn more about Newlib and how to use it in a
@@ -9,7 +9,7 @@ tags: [zero-to-main]
 image: /img/zero-to-main/newlib.png
 ---
 
-This is the third post in our [zero to main() series]({{ '/tag/zero-to-main' |
+This is the fourth post in our [Zero to main() series]({{ '/tag/zero-to-main' |
 relative_url  }}), where we worked methodically to demystify what happens to
 firmware before the main() function is called. So far, we bootstrapped a C
 environment, wrote a linker script from scratch, and implemented our own

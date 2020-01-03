@@ -1,12 +1,13 @@
 ---
-title: "Zero to main(): Demystifying Firmware Linker Scripts"
+title: "From Zero to main(): Demystifying Firmware Linker Scripts"
 description: "An in depth tutorial on how to write linker scripts for firmware
 projects"
 author: francois
 tags: [zero-to-main]
 ---
 
-This is the second post in our "Zero to main()" series.
+This is the second post in our [Zero to main() series]({{ '/tag/zero-to-main' |
+relative_url  }}).
 
 <!-- excerpt start -->
 [Last time](https://interrupt.memfault.com/blog/zero-to-main-1), we talked about
