@@ -8,12 +8,15 @@ author: tyler
 image: /img/using-conda/using-conda-cover.png
 ---
 
-Every developer on a team should build, debug, and test the firmware images with
-the **same versions** of all tools required by the project. This includes the
-compiler, debugger, build system, system packages, Python packages, and much
-more. Keeping all of these tools in sync among all members of a team is a
-daunting task. Luckily there are tools to make it easy. The one we'll talk about
-in this post is called [Conda](https://docs.conda.io/en/latest/).
+We've all had the experience of checking out an old release branch to debug an
+issue, only to find out that it depends on toolchains and packages that are no
+longer installed. This can be a major pain, and people have come up with several
+ways around it.
+
+In previous posts,
+[we have used virtualenv](https://interrupt.memfault.com/blog/using-pypi-packages-with-GDB#virtual-environment)
+to manage our Python packages. What if you would like to easily manage non
+Python dependencies? This is where Conda comes into play.
 
 <!-- excerpt start -->
 
@@ -35,27 +38,7 @@ straight to your mailbox_
 * auto-gen TOC:
 {:toc}
 
-## What is Conda
-
-![Conda](/img/using-conda/conda.png)
-
-Conda is a "package, dependency and environment management for any
-language"[^1]. It's most popular in the world of data science, but it can easily
-be used in any field, including firmware development! Conda has become my
-favorite way to manage the developer and continuous integration environments for
-my firmware projects.
-
-Conda is primarily used to manage Python distributions and environments. It can
-either be used as a replacement for
-[Virtualenv](https://virtualenv.pypa.io/en/latest/) or used alongside it if
-necessary. It also provides `pip` so that PyPi packages can be installed as
-well.
-
-The primary benefit of using Conda over Virtualenv is its ability to install and
-manage system binary packages that one may need in a developer environment, such
-as the `arm-none-eabi-gcc` toolchain, `wget`, or Make.
-
-## When to Use Conda
+## Who Is This Post For?
 
 Every developer should build, debug, and test the firmware using the **exact
 same versions** of the compiler, build system, and other tools. The specific
@@ -65,7 +48,7 @@ on. This ensures that there is one way to do all everyday tasks and they
 builds]({% post_url 2019-12-11-reproducible-firmware-builds %}).
 
 If you or your teammates have experienced any of the following more than once,
-it may be time to consider using Conda or another environment manager.
+it may be time to consider using Conda or similar environment manager.
 
 - After coming back from a 2 week vacation, you find that getting a functional
   development environment again takes hours or even days.
@@ -79,16 +62,41 @@ it may be time to consider using Conda or another environment manager.
   together an environment to build the firmware.
 - You use Windows, macOS, or Linux _without_ Docker.
 
+## What is Conda?
+
+![Conda](/img/using-conda/conda.png)
+
+Conda is a "package, dependency and environment management for any
+language"[^1]. It is most popular in the world of data science, but it can
+easily be used in any field, including firmware development! Conda has become my
+favorite way to manage the developer and continuous integration environments for
+my firmware projects.
+
+Conda is primarily used to manage Python distributions and environments. It can
+either be used as a replacement for virtualenv[^2] or used alongside it if necessary. It
+also provides `pip` so that PyPi packages can be installed as well.
+
+The primary benefit of using Conda over Virtualenv is its ability to install and
+manage system binary packages that one may need in a developer environment, such
+as the `arm-none-eabi-gcc` toolchain, `wget`, or Make.
+
 ## How Does Conda Work?
 
 When a developer installs Conda on their computer, a command-line tool called
 `conda` becomes available. `conda` is used to install, manage, and activate the
-Conda virtual environments. There are also public repositories which host
-packages built by Anaconda, Inc. and the community. The two most popular are the
-self-named Anaconda and [Conda Forge](https://conda-forge.org/) repositories.
-Conda Forge is supported by the community and developers contribute packages
-through Github, after which they are built and released for all platforms
-through their CI/CD system.
+Conda virtual environments.
+
+The local Conda environment is kept in sync with a manifest file, typically
+called `environment.yml` and revision controlled. It works similarly to a
+`requirements.txt` file in Python or `package.json` in the JavaScript world.
+This enables a developer to check out **any revision** from the past and
+immediately have the proper tools installed to build and debug.
+
+There are also public repositories which host packages built by Anaconda, Inc.
+and the community. The two most popular are the self-named Anaconda and
+[Conda Forge](https://conda-forge.org/) repositories. Conda Forge is supported
+by the community and developers contribute packages through Github, after which
+they are built and released for all platforms through their CI/CD system.
 
 When a package, Python or binary, is installed through Conda to a particular
 environment, it is placed in a separate "environment" directory (e.g.
@@ -125,7 +133,7 @@ GNU Make 4.2.1
 ### Common Developer Environment Alternatives
 
 I have found Conda to be the least restrictive and easiest way for firmware
-teams manage developer environments, but let's go through the most popular
+teams to manage developer environments, but let's go through the most popular
 alternatives.
 
 #### Docker
@@ -143,9 +151,9 @@ environments.
   within the container. Without a large investment in up-front tooling to help
   developers manage the code, build artifacts, debugging tools, and volume
   mounts, it is cumbersome and slow.
-- When using macOS or Windows and Docker, shared, mounted volumes have
-  file-sharing performance issues, which can cause build times to increase
-  between 2-10x depending on where the files live.[^2]
+- On macOS or Windows, shared volumes have file-sharing performance issues,
+  which can cause build times to increase between 2-10x depending on where the
+  files live.[^3]
 - For developers that like the use of IDE's and other visual tools, a virtual
   machine using VMWare or VirtualBox may be more appropriate.
 
@@ -171,8 +179,9 @@ It is not uncommon for firmware consultancies or companies to have multiple
 different firmware projects in flight. This could be a legacy project and a
 newer one. I imagine the following wouldn't be far off:
 
-**Old Project Dependencies:** GNU Make 4.1, GCC 5.4.1, GDB 7.11, Python 3.5
-**New Project Dependencies:** GNU Make 4.2.1, GCC 8.3.1, GDB 8.3, Python 3.6
+**Old Project Dependencies:** GNU Make 4.1, GCC 5.4.1, GDB 7.11, Python
+3.5<br /> **New Project Dependencies:** GNU Make 4.2.1, GCC 8.3.1, GDB 8.3,
+Python 3.6
 
 In the above example, to be able to go back and forth between these two
 projects, we'd have to uninstall and reinstall these four packages and their
@@ -253,8 +262,16 @@ Do you wish the installer to initialize Miniconda3
 by running conda init? [yes|no]
 ```
 
-I suggest saying `no` and modifying the appropriate shell startup file
-(`.bashrc` or `.zshrc`, etc.) to contain the following.
+If you'd like Conda to edit your `.bashrc` or `.zshrc` file automatically, you
+can say `yes` here. If you do, I suggest running the following command after the
+installation is complete so that the base Conda environment won't automatically
+activate.
+
+```
+$ conda config --set auto_activate_base false
+```
+
+If you would rather edit the startup file yourself, add the following line:
 
 ```
 . "$HOME/miniconda3/etc/profile.d/conda.sh"
@@ -271,7 +288,8 @@ conda 4.7.12
 ### Creating the Environment
 
 The next step is to create an isolated environment in which we can install
-packages into. We will create an environment called `example`.
+packages into. We will create an environment called `example` using Conda's
+[`create` command](https://docs.conda.io/projects/conda/en/latest/commands/create.html)
 
 ```
 $ conda create -n example
@@ -333,7 +351,7 @@ use the second method.
 There are also multiple repositories to install packages from. The two most
 popular ones are "Anaconda" and "Conda Forge". We will use Conda Forge as our
 primary repository, since it has more mainstream packages that we as firmware
-developers use. We will also add my personal Conda repository (tyhoff17), as it
+developers use. We will also add Memfault's Conda repository (memfault), as it
 has the ARM GCC package.
 
 To search for packages that can be installed, you can navigate to the
@@ -345,7 +363,7 @@ Below is the `environment.yml` file that contains all of our dependencies.
 
 ```yaml
 channels:
-  - tyhoff17
+  - memfault
   - conda-forge
   - defaults
 dependencies:
@@ -354,7 +372,7 @@ dependencies:
   - python=3.6.9
   - pip
   - pip:
-    - nrfutil==6.0.0
+      - nrfutil==6.0.0
 ```
 
 If you'd rather manage your `pip` packages in a separate `requirements.txt`
@@ -390,7 +408,7 @@ We are now able to build, flash, and debug as any developer should using `make`,
 
 > If any developer joins the team and needs to set up an environment, the only
 > two things they would need to do is install Conda and run
-> `conda create -n smart-sink -f environment.yml` in the project. Easy, right!?
+> `conda create -n my_env -f environment.yml` in the project. Easy, right!?
 
 ### Adding Another Package
 
@@ -400,7 +418,7 @@ we'd like to speed them up. A clever engineer realized that we could be using
 `ccache` to locally cache built object files between subsequent builds. This
 speeds up our firmware build by 50%, which is a huge win!
 
-We want _everyone_ to have `ccache` installed and to use it with ever build. We
+We want _everyone_ to have `ccache` installed and to use it with every build. We
 could send out an email to the team, mention it in Slack, and maybe even error
 out in the Makefile if we see the developer does not have it installed. All
 these methods are tedious and not 100% reliable.
@@ -411,7 +429,7 @@ entry for `ccache` in our `environment.yml` and this becomes trivial.
 ```yaml
 dependencies:
   # System Packages
-  ...
+  ... 
   - ccache
 ```
 
@@ -506,7 +524,7 @@ There is a high chance that all packages required by your project, team, or
 developers are not yet built for Conda and hosted on the Conda Forge repository.
 Fret not, as building and publishing Conda packages is relatively simple. We'll
 quickly walk through how I built and published the `gcc-arm-none-eabi` package
-that is hosted [here](https://anaconda.org/tyhoff17/gcc-arm-none-eabi) and built
+that is hosted [here](https://anaconda.org/memfault/gcc-arm-none-eabi) and built
 from the official
 [ARM GNU Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
 
@@ -573,9 +591,10 @@ test:
 - `source`: This is either the fields `url` and `sha256` which points to a Zip
   or Tarball containing the source code or binaries, or it can also reference a
   Git repository using the `git_url` and `git_rev` fields.
-- `build`: This is the build number. If a user publishes a package but it was
-  built incorrectly, they would use a new version of this identifier when they
-  re-publish the package.
+- `build`: This is the build identifier. If a user publishes a package but it
+  was built incorrectly, they would use a new version of this identifier when
+  they re-publish the package. A monotonically increasing integer or a random
+  hash is appropriate.
 - `test`: These are test commands to run against the package once it is build.
   In our example above, we have the package print out the version.
 
@@ -669,7 +688,7 @@ so I suggest reading the following references if you want to learn more.
 
 If you want to look at a more detailed recipe, I've also published a Conda
 recipe that builds and packages the popular C++ unit testing framework
-CppUTest[^5]
+CppUTest[^4]
 [on Github](https://github.com/memfault/conda-recipes/tree/master/cpputest)
 
 {:.no_toc}
@@ -691,8 +710,7 @@ in sync.
 
 ## References
 
-[^1]: [See "A4.1.1 ARMv7-M and interworking support"](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf)
-[^2]: [Docker Volume Mount Filesystem Performance](https://docs.docker.com/docker-for-mac/osxfs-caching/)
-[^3]: [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
-[^4]: [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
-[^5]: [CppUTest](http://cpputest.github.io/)
+[^1]: [Conda](https://docs.conda.io/en/latest/)
+[^2]: [Virtualenv](https://virtualenv.pypa.io/en/latest/)
+[^3]: [Docker Volume Mount Filesystem Performance](https://docs.docker.com/docker-for-mac/osxfs-caching/)
+[^4]: [CppUTest](http://cpputest.github.io/)
