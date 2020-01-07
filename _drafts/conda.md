@@ -57,7 +57,7 @@ it may be time to consider using Conda or similar environment manager.
   wiki pages.
 - You find that a build from your machine works correctly but not the one from
   CI or your co-workers machine.
-- You check out 6 month-old revision of your project and realize it's probably
+- You check out a 6 month-old revision of your project and realize it's probably
   quicker to reformat your computer and start over than to try and piece
   together an environment to build the firmware.
 - You use Windows, macOS, or Linux _without_ Docker.
@@ -73,8 +73,9 @@ favorite way to manage the developer and continuous integration environments for
 my firmware projects.
 
 Conda is primarily used to manage Python distributions and environments. It can
-either be used as a replacement for virtualenv[^2] or used alongside it if necessary. It
-also provides `pip` so that PyPi packages can be installed as well.
+either be used as a replacement for virtualenv[^2] or used alongside it if
+necessary. It also provides `pip` so that PyPi packages can be installed as
+well.
 
 The primary benefit of using Conda over Virtualenv is its ability to install and
 manage system binary packages that one may need in a developer environment, such
@@ -106,6 +107,9 @@ desired environment. For example, if we activate the `example` environment, the
 `$PATH` variable becomes
 
 ```
+# Activate environment
+$ conda activate example
+
 (example)
 $ echo $PATH
 /Users/tyler/miniconda3/envs/example/bin:...
@@ -180,7 +184,8 @@ different firmware projects in flight. This could be a legacy project and a
 newer one. I imagine the following wouldn't be far off:
 
 **Old Project Dependencies:** GNU Make 4.1, GCC 5.4.1, GDB 7.11, Python
-3.5<br /> **New Project Dependencies:** GNU Make 4.2.1, GCC 8.3.1, GDB 8.3,
+3.5<br />
+**New Project Dependencies:** GNU Make 4.2.1, GCC 8.3.1, GDB 8.3,
 Python 3.6
 
 In the above example, to be able to go back and forth between these two
@@ -248,9 +253,13 @@ through `bash`. The following steps apply to both Linux and macOS. If you are
 using Windows, there is a Miniconda installer that can be downloaded from the
 same page.
 
-```
+```bash
+# Download for Mac:
 $ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-$ bash Miniconda3-latest-MacOSX-x86_64.sh
+# Download for Linux:
+$ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+# install it
+$ bash Miniconda3-latest-*-x86_64.sh
 ```
 
 The final step in the installer is to make sure the
@@ -429,7 +438,7 @@ entry for `ccache` in our `environment.yml` and this becomes trivial.
 ```yaml
 dependencies:
   # System Packages
-  ... 
+  ...
   - ccache
 ```
 
@@ -623,7 +632,7 @@ We'll want to copy **all** of these directories into our Conda package, so our
 script is simply
 
 ```
-#!/bin/bash
+#!/usr/bin/env bash
 cp -R $SRC_DIR/* $PREFIX
 ```
 
@@ -678,6 +687,13 @@ arm-none-eabi-gcc (GNU Tools for Arm Embedded Processors 8-2019-q3-update) ...
 
 It works! Now we can publish it using the `anaconda upload ...` command printed
 previously in the terminal.
+
+> NOTE: It is also possible to automate this test procedure by adding test
+> scripts. The
+> [Conda docs](https://docs.conda.io/projects/conda-build/en/latest/resources/define-metadata.html#test-section)
+> are a great place to start and
+> [here](https://github.com/memfault/conda-recipes/blob/master/gcc-arm-none-eabi/meta.yaml#L16-L18)
+> is an example which performs the steps above.
 
 This was by no means a comprehensive tutorial of how to build a Conda package,
 so I suggest reading the following references if you want to learn more.
