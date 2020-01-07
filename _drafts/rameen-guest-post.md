@@ -1,17 +1,27 @@
 ---
-title: "Beyond 'Embedded' in the 2020s"
+title: "Beyond Embedded in the 2020s"
 author: rameen
+excerpt: "For embedded systems the decade turnover couldn't be better
+timed.  As we embark upon the next decade the capabilities of software for
+embedded systems will catch up to those of hardware, and at some point
+an emergent discipline - something beyond embedded - will take shape."
 ---
 
+> Editor's note: We're kicking off 2020 with a think piece from Rameen Aryanpur.
+> This strikes a different tone from our standard fare (usually technical how
+> to's and tutorials), but we hope you will enjoy it just as well. We are always
+> looking for new submissions, so don't hesitate to get in touch if you would
+> like to contribute!
+
 There are a lot of decade in review, next decade prediction pieces floating
-around. For embedded systems the decade turnover couldn't be better timed.  The
-capabilities of embedded systems and the tools we use to deploy, manage, and
-debug them have come a long way in the last ten years. The vast majority of this
-progress, however, has come in hardware rather than software. So, color me a
-prospective prophet: as we embark upon the next decade the capabilities of
-software for embedded systems will catch up to those of hardware, and at the
-point of convergence and beyond an emergent discipline, something beyond
-embedded, will take shape.
+around. Allow me to throw my hat in the ring. For embedded systems the decade
+turnover couldn't be better timed.  The capabilities of embedded systems and the
+tools we use to deploy, manage, and debug them have come a long way in the last
+ten years. The vast majority of this progress, however, has come in hardware
+rather than software. So, color me a prospective prophet: as we embark upon the
+next decade the capabilities of software for embedded systems will catch up to
+those of hardware and at some point an emergent discipline - something beyond
+embedded - will take shape.
 
 Serendipitous to the decade motif, I wrote my first line of software for an
 embedded system in early 2010. I wrote my first line of functioning software for
@@ -20,7 +30,7 @@ increasingly clear as the 2010s rumbled along was that the term "embedded" was
 being used to describe a more diverse and capable set of technologies than
 before. One implication of this was that learning to write software for embedded
 systems in the 2010s was, to put it lightly, really hard. In retrospect, some of
-that difficulty can be attributed to the inherent challenges in comprehending
+that difficulty can be attributed to the inherent challenges in understanding
 embedded mental models. But another outsize, generally unspoken reason for this
 difficulty was that those traditional mental models were becoming less useful
 more or less at the rate at which the capabilities of the hardware were
@@ -87,7 +97,7 @@ What products and services are created and scale in the era of beyond embedded
 will be one of the most exciting stories in tech to unfold this decade. But
 because of its highly technical nature and the relatively small number of
 practitioners in the space it will likely do so under the radar. The second
-order effects, however – in particular applications and business successes --
+order effects, however – in particular applications and business successes -
 will be numerous and broadly publicized. No matter how beyond embedded plays out
 this decade I just have one ask - please, don’t confuse any of this with
 blockchain!
