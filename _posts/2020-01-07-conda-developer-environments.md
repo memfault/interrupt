@@ -1,11 +1,12 @@
 ---
 title: "Managing Developer Environments with Conda"
 description:
-  "An introduction to using Conda for managing developer environments in the
-  context of embedded software projects."
+  "How to use Conda for managing build, test, and debug environments for local 
+  development and continuous integration in the context of embedded software 
+  projects"
 tag: [python]
 author: tyler
-image: /img/using-conda/using-conda-cover.png
+image: /img/conda-developer-environments/conda-developer-environments-cover.png
 ---
 
 We've all had the experience of checking out an old release branch to debug an
@@ -64,7 +65,7 @@ it may be time to consider using Conda or similar environment manager.
 
 ## What is Conda?
 
-![Conda](/img/using-conda/conda.png)
+![Conda](/img/conda-developer-environments/conda.png)
 
 Conda is a "package, dependency and environment management for any
 language"[^1]. It is most popular in the world of data science, but it can
@@ -236,7 +237,7 @@ to the example directory.
 
 ```
 $ git clone git@github.com:memfault/interrupt.git
-$ cd interrupt/example/using-conda/
+$ cd interrupt/example/conda-developer-environments/
 ```
 
 > Before we begin, I want to bring comfort to anyone skeptical about installing
