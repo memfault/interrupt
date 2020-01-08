@@ -1,0 +1,15 @@
+channels:
+  - memfault
+  - conda-forge
+  - defaults
+dependencies:
+  # System Packages
+  - gcc-arm-none-eabi=8.2019.q3.update
+  - make=4.2.1
+  - ccache
+  - wget
+  - python=3.6.9
+  - pip
+  # Python Packages
+  - pip:
+    - -r requirements.txt
