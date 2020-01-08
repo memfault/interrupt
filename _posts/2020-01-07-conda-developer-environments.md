@@ -1,12 +1,12 @@
 ---
 title: "Managing Developer Environments with Conda"
 description:
-  "How to use Conda for managing build, test, and debug environments for local 
-  development and continuous integration in the context of embedded software 
-  projects"
+  "How to use Conda for managing build, test, and debug environments and
+  dependencies for local development and continuous integration in the context
+  of embedded software projects"
 tag: [python]
 author: tyler
-image: /img/conda-developer-environments/conda-developer-environments-cover.png
+image: /img/conda-developer-environments/cover.png
 ---
 
 We've all had the experience of checking out an old release branch to debug an
