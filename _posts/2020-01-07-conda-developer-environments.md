@@ -4,7 +4,7 @@ description:
   "How to use Conda for managing build, test, and debug environments and
   dependencies for local development and continuous integration in the context
   of embedded software projects"
-tag: [python]
+tag: [python, better-firmware]
 author: tyler
 image: /img/conda-developer-environments/cover.png
 ---
