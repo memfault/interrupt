@@ -28,7 +28,27 @@ embedded system in early 2010. I wrote my first line of functioning software for
 an embedded system soon after - in late 2011. Kidding aside, what became
 increasingly clear as the 2010s rumbled along was that the term "embedded" was
 being used to describe a more diverse and capable set of technologies than
-before. One implication of this was that learning to write software for embedded
+before. At the beginning of the decade, my peers and I were concerned with
+debouncing buttons and meeting realtime deadlines. Today, we are deploying
+machine learning models to the edge.
+
+The rapid increase in capability of embedded hardware in the 2010s was primarily
+attributable to ARM and chip vendors’ investment into and around the Cortex-M
+and Cortex-A cores (sorry Cortex-R, no shout out here). Today it's a stretch to
+refer to mid to high-end microcontrollers as microcontrollers. With
+expandability to megabytes of flash and RAM and hundreds of megahertz of
+processing speed, as well as L1 and L2 caches, pipelined architectures, and
+ever-expanding (and now customizable) ISAs, mid to high-end "microcontrollers"
+at the dawn of the 2020s look a lot more like Pentium II processors of the 1990s
+than PIC32 microcontrollers of the 2000s/2010s. It's this difference that
+characterizes the divergence in embedded systems hardware and software today and
+that hints at how the two will again converge. In the 2010s we largely wrote
+software assuming it was going to run on something like a PIC32 when it was
+actually going to run on something like a Pentium II.The advent of RISC-V, an
+open-source entrant to the microcontroller space, will only accelerate the
+trend. 
+
+One implication of this was that learning to write software for embedded
 systems in the 2010s was, to put it lightly, really hard. In retrospect, some of
 that difficulty can be attributed to the inherent challenges in understanding
 embedded mental models. But another outsize, generally unspoken reason for this
@@ -38,23 +58,6 @@ increasing. Absent new mental models (or the fledgling application of existing
 ones from other domains) traditional embedded best practices quickly became no
 longer best practices and learning to write software for embedded systems was,
 well, really tough.
-
-The rapid increase in capability of embedded hardware in the 2010s was primarily
-attributable to ARM and chip vendors’ investment into and around the Cortex-M
-and Cortex-A cores (sorry Cortex-R, no shout out here). RISC-V, a more recent
-entrant to the hardware space, has also started to have an impact although not
-yet to the same degree. The scope and pace of hardware advancements were most
-pronounced in the Cortex-M line, where today it's a stretch to refer to mid to
-high-end microcontrollers as microcontrollers. With expandability to megabytes
-of flash and RAM and hundreds of megahertz, if not soon a gigahertz of
-processing speed, as well as L1 and L2 caches, pipelined architectures, and
-ever-expanding (and now customizable) ISAs, mid to high-end "microcontrollers"
-at the dawn of the 2020s look a lot more like Pentium II processors of the 1990s
-than PIC32 microcontrollers of the 2000s/2010s. It's this difference that
-characterizes the divergence in embedded systems hardware and software today and
-that hints at how the two will again converge. In the 2010s we largely wrote
-software assuming it was going to run on something like a PIC32 when it was
-actually going to run on something like a Pentium II.
 
 Having Pentium II-like machines on the compute and memory axes with single and
 double precision floating point coprocessors has unlocked large performance
