@@ -17,7 +17,7 @@ div[id^="WaveDrom_"] {
 
 <!-- excerpt start -->
 I2C is perhaps the most commonly used bus to connect ICs together. As such,
-firmware engineers encounter it on most project. In this post, we explain how I2C
+firmware engineers encounter it on most projects. In this post, we explain how I2C
 works, explore common bugs and investigate how to debug these issues.
 <!-- excerpt end -->
 
