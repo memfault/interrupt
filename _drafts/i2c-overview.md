@@ -8,7 +8,9 @@ image:
 ---
 
 <!-- excerpt start -->
-Lorem Ipsum
+I2C is perhaps the most commonly used bus to connect ICs together. As such,
+firmwae engineers encounter it on most project. In this post, we explain how I2C
+works and go through common bugs and how to investiage them.
 <!-- excerpt end -->
 
 {:.no_toc}
@@ -22,14 +24,31 @@ Lorem Ipsum
 
 ## Why use I2C
 
+I2C has many advantages:
+1. It is cheap to implement, with fewer pins than SPI, and a simpler physical
+   layer than CAN (no differential signalling).
+2. It supports up to 127 devices on a bus with only two pins.
+3. It goes up to 400Kbps, which is fast enough for many human interfaces as well
+   as fan control, temperature sensing and other low-speed contol loops.
+4. Historically, it has been less onerous for manufacturers to include than some
+   of the 1-wire protocols which were strongly patented.
 
+Many of the sensors and actuators in devices all around us use everywhere:
+temperature sensors, accelerometers, gyroscopes, fans, video bridging cheaps,
+gpio expanders, EEPROMS, ...etc.
+
+I2C is not appropriate for all applications however:
+1. When higher bandwidth is required, SPI may the right choice. MIPI can go even
+   faster, and is often used in displays and cameras.
+2. If reliability is a must, CAN is the bus of choice. It is found in cars and
+   other vehicles.
+3. When a single device is on the bus, UART may work just as well.
 
 ## Anatomy of an I2C transaction
 
 I2C is made up of two signals: a clock (SCL), and a data line (SDA). By default,
 the lines are pulled high by resistors. To communicate, a device pulls lines low
 and releases them to let them rise back to high.
-
 
 ### Ones and Zeroes
 
@@ -231,15 +250,15 @@ with each other. While I2C is a standard, there are a couple of extensions to it
 which are not always implemented by every device on the bus.
 
 Specifically, we've seen two optional features which can lead to problems:
-1. 400Khz bus speed: the original I2C standard specified a bus speed of 100KHz,
-   but many modern devices support the optional 400KHz mode. If your master
-device clocks data in at 400KHz but your slave only supports 100KHz, the slave
+1. 400Kbps bus speed: the original I2C standard specified a bus speed of 100Kbps,
+   but many modern devices support the optional 400Kbps mode. If your master
+device clocks data in at 400Kbps but your slave only supports 100Kbps, the slave
 may not respond.
 2. Clock stretching: clock stretching is an optional feature of the standard,
    and some slave devices do not support it.
 
 Check your datasheets, and if needed disable optional features on your master
-device. In doubt, slow the clock down to 100KHz and disable clock stretching in
+device. In doubt, slow the clock down to 100Kbps and disable clock stretching in
 firmware while configuring your I2C peripheral.
 
 ### Misconfigured Peripherals
