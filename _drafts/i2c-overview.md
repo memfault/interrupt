@@ -7,6 +7,12 @@ author: francois
 image: 
 ---
 
+<style>
+div[id^="WaveDrom_"] {
+    text-align: center;
+}
+</style>
+
 <!-- excerpt start -->
 I2C is perhaps the most commonly used bus to connect ICs together. As such,
 firmwae engineers encounter it on most project. In this post, we explain how I2C
@@ -273,7 +279,7 @@ clock line if that is easier.
 
 If the line stays permanently low, time to check the pull-ups (see the "Line
 Pull-Up" section below).
-Otherwise, the I2C peripheral in your MCU is likely misconfigured. Check the
+If the lines stay high, the I2C peripheral in your MCU is likely misconfigured. Check the
 code again:
 1. Are you checking the return value of the I2C initialization and read/write
    functions? Some peripheral configurations are invalid and will emit errors.
@@ -371,6 +377,12 @@ I2C device may have trouble with them.
 I2C buses accumulate capacitances when traces are long and devices are
 added to the bus. You may need stronger pull-ups to overcome it. Counter intuitively, a strongr pull-up is a weaker resistor. In doubt, go to 2K
 resistors. You will waste a bit of power, but your I2C signal will look great.
+
+### Flowchart
+
+To make the process easier, we've put together a flowchart summarizing the I2C
+debugging process. You can download it
+[here](/img/i2c-in-a-nutshell/i2c-debugging-flowchart.svg).
 
 ## Closing
 
