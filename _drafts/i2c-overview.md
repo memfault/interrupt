@@ -375,7 +375,7 @@ StackExchange [^3]:
 
 Notice how the second image has sharp, square pulses while the first image has
 rounded ones? This is your tell. Round pulses are an indications that your
-pull-ups are too weak. Your logic analyzer might decode them just find, but an
+pull-ups are too weak. Your logic analyzer might decode them just fine, but an
 I2C device may have trouble with them.
 
 I2C buses accumulate capacitances when traces are long and devices are
@@ -407,12 +407,12 @@ See anything you'd like to change? Submit a pull request or open an issue at
 {:.no_toc}
 ## Reference
 
-[^1]: https://www.totalphase.com/support/articles/200349176
-[^2]: https://support.saleae.com/tutorials/example-projects/how-to-analyze-i2c
-[^3]: https://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-line://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-lines 
-[^4]: https://en.wikipedia.org/wiki/1-Wire
-[^5]: https://en.wikipedia.org/wiki/Serial_Peripheral_Interface
-[^6]: https://en.wikipedia.org/wiki/Controller_area_network
+[^1]: [TotalPhase: 10-bit vs 7-bit I2C](https://www.totalphase.com/support/articles/200349176)
+[^2]: [Salae: How to Analyze I2C](https://support.saleae.com/tutorials/example-projects/how-to-analyze-i2c)
+[^3]: [StackExchange: What happens if I omit the pullup resitors?](https://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-line://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-lines)
+[^4]: [Wikipedia: 1-Wire](https://en.wikipedia.org/wiki/1-Wire)
+[^5]: [Wikipedia: SPI](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
+[^6]: [Wikipedia: CAN](https://en.wikipedia.org/wiki/Controller_area_network)
 
 <!-- Wavedrom code to convert WaveDrom data to diagrams -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/2.1.2/skins/default.js" type="text/javascript"></script>
