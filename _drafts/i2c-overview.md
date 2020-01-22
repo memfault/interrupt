@@ -381,8 +381,12 @@ resistors. You will waste a bit of power, but your I2C signal will look great.
 ### Flowchart
 
 To make the process easier, we've put together a flowchart summarizing the I2C
-debugging process. You can download it
+debugging process. You can find it below, or download it
 [here](/img/i2c-in-a-nutshell/i2c-debugging-flowchart.svg).
+
+<div>
+  <img src="/img/i2c-in-a-nutshell/i2c-debugging-flowchart.svg" width="400px" style="border:5px solid black">
+</div>
 
 ## Closing
 
