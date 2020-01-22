@@ -7,6 +7,7 @@ author: francois
 image: 
 ---
 
+<!-- center-align wavedrom diagrams to match images -->
 <style>
 div[id^="WaveDrom_"] {
     text-align: center;
@@ -15,8 +16,8 @@ div[id^="WaveDrom_"] {
 
 <!-- excerpt start -->
 I2C is perhaps the most commonly used bus to connect ICs together. As such,
-firmwae engineers encounter it on most project. In this post, we explain how I2C
-works and go through common bugs and how to investiage them.
+firmware engineers encounter it on most project. In this post, we explain how I2C
+works, explore common bugs and investigate how to debug these issues.
 <!-- excerpt end -->
 
 {:.no_toc}
@@ -31,21 +32,24 @@ works and go through common bugs and how to investiage them.
 ## Why use I2C
 
 I2C has many advantages:
-1. It is cheap to implement, with fewer pins than SPI, and a simpler physical
-   layer than CAN (no differential signalling).
+1. It is cheaper to implement than comparable low-power buses, with fewer pins
+   than SPI[^5], and a simpler physical layer than CAN[^6] (no differential
+signalling).
 2. It supports up to 127 devices on a bus with only two pins.
-3. It goes up to 400Kbps, which is fast enough for many human interfaces as well
-   as fan control, temperature sensing and other low-speed contol loops.
-4. Historically, it has been less onerous for manufacturers to include than some
-   of the 1-wire protocols which were strongly patented.
+3. It has transfer rates up to 400Kbps, which is fast enough for many human
+   interfaces as well as fan control, temperature sensing and other low-speed
+contol loops.
+4. Historically, it has been less onerous for manufacturers to include than
+   competing protocols like Maxim's 1-wire protocol[^4]. 
 
-Many of the sensors and actuators in devices all around us use everywhere:
-temperature sensors, accelerometers, gyroscopes, fans, video bridging cheaps,
+Many of the sensors and actuators in devices all around us use i2c:
+temperature sensors, accelerometers, gyroscopes, fans, video bridging chips,
 gpio expanders, EEPROMS, ...etc.
 
 I2C is not appropriate for all applications however:
-1. When higher bandwidth is required, SPI may the right choice. MIPI can go even
-   faster, and is often used in displays and cameras.
+1. When higher bandwidth is required, SPI may be the right choice and can be found
+   in many NOR-flash chips. MIPI can go even faster, and is often used in
+displays and cameras.
 2. If reliability is a must, CAN is the bus of choice. It is found in cars and
    other vehicles.
 3. When a single device is on the bus, UART may work just as well.
@@ -112,7 +116,7 @@ addresses are 7 bits, a few addresses are reserved and the rest are allocated
 by the I2C-bus committee. Note that a 10-bit address extension does exist, but
 is extremely uncommon[^1].
 
-To communicate with a slave device, and I2C master simply needs to write its
+To communicate with a slave device, an I2C master simply needs to write its
 7-bit address on the bus after the START condition. For example, the waveform
 below captures an I2C transaction to a slave with address 0xC6:
 
@@ -132,7 +136,7 @@ below captures an I2C transaction to a slave with address 0xC6:
 > conflicts are not uncommon. For example, you may want to include multiple
 > instances of the same sensor on a single I2C bus.
 > <br />To enable this use case IC designers typically allow their customers to set a
-> few bits of a device's I2C address, either by typing pins high or low, or by
+> few bits of a device's I2C address, either by tying pins high or low, or by
 > writing a register. If all else fails, you may use an I2C multiplexer to
 > resolve addressing conflicts.
 
@@ -228,7 +232,7 @@ writes `0x9C` to the slave at address `0xC6`.
 
 While control of the SCL line is the domain of the I2C master, an optional
 feature of the protocol allows slaves to temporarily control it to slow down
-tranmission before it is ready to accept more data.
+transmission before it is ready to accept more data.
 
 To stretch the clock, the slave device simply holds the SCL line down. In that
 state, the master device must wait for the clock rises back up to high before
@@ -270,7 +274,7 @@ firmware while configuring your I2C peripheral.
 ### Misconfigured Peripherals
 
 Next, you will want to grab a logic analyzer and probe the SDA and SCL signals.
-We're partial to Salae devices, which come with an easy to set up I2C
+We're partial to Saleae devices, which come with an easy to set up I2C
 decoder[^2].
 
 Looking at a recording of those lines, you should see the SCL line pulse when
@@ -406,6 +410,9 @@ See anything you'd like to change? Submit a pull request or open an issue at
 [^1]: https://www.totalphase.com/support/articles/200349176
 [^2]: https://support.saleae.com/tutorials/example-projects/how-to-analyze-i2c
 [^3]: https://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-line://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-lines 
+[^4]: https://en.wikipedia.org/wiki/1-Wire
+[^5]: https://en.wikipedia.org/wiki/Serial_Peripheral_Interface
+[^6]: https://en.wikipedia.org/wiki/Controller_area_network
 
 <!-- Wavedrom code to convert WaveDrom data to diagrams -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/2.1.2/skins/default.js" type="text/javascript"></script>
