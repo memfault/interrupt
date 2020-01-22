@@ -1,10 +1,11 @@
 ---
 title: "I2C in a Nutshell"
 description:
-  ""
+  "An in-depth explanation of the I2C protocol, followed by common bugs and how
+to fix them."
 tag: [buses]
 author: francois
-image: 
+image: /img/i2c-in-a-nutshell/i2c-in-a-nutshell-preview.png
 ---
 
 <!-- center-align wavedrom diagrams to match images -->
