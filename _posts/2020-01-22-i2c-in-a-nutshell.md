@@ -21,6 +21,9 @@ firmware engineers encounter it on most projects. In this post, we explain how I
 works, explore common bugs and investigate how to debug these issues.
 <!-- excerpt end -->
 
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
+straight to your mailbox_
+
 {:.no_toc}
 
 ## Table of Contents
@@ -404,6 +407,9 @@ below!
 
 See anything you'd like to change? Submit a pull request or open an issue at
 [Github](https://github.com/memfault/interrupt)
+
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
+straight to your mailbox_
 
 {:.no_toc}
 ## Reference
