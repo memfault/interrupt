@@ -230,7 +230,7 @@ writes `0x9C` to the slave at address `0xC6`.
 > a read. For example, reading 8 bytes from an I2C EEPROM would be implemented
 > by sending a write command to set the EEPROM address offset we want to read from,
 > followed by command which would NACK the 8th byte to signal to the EEPROM
-> device that no more bytes are needed. This is simpler than a hypothetical
+> device that no more bytes are needed.
 
 ### Clock Stretching
 
@@ -320,7 +320,7 @@ Often times, you will see the following on your logic analyzer:
 An address is sent on the bus, but it is NACK-ed. Note that NACK is the default
 state of the lines, so often times it just means: nobody answered.
 
-The firt thing to check is: is the address correct? Your logic analyzer will
+The first thing to check is: is the address correct? Your logic analyzer will
 often decode it as a byte, so you will need to shift it down by one bit to
 recover the 7-bit address. For example, 7-bit address 0x18 would show up as 0x30
 in a byte with the lsb set to 0. Check that address against your device's
