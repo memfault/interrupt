@@ -355,7 +355,7 @@ issue, go to "Line Pull-Up".
 ### Line Pull-Up
 
 I2C relies on resistors to pull the lines up to the logic HIGH voltage.
-These registers may be missing, have too high a resistance, or be connected to a
+These resistors may be missing, have too high a resistance, or be connected to a
 rail at the wrong voltage.
 
 To find it, grab an oscilloscope and probe both the SDA and SCL lines. First,
