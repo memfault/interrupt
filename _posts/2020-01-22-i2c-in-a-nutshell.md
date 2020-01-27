@@ -46,9 +46,9 @@ contol loops.
 4. Historically, it has been less onerous for manufacturers to include than
    competing protocols like Maxim's 1-wire protocol[^4]. 
 
-Many of the sensors and actuators in devices all around us use i2c:
+Many of the sensors and actuators in devices all around us use I2C:
 temperature sensors, accelerometers, gyroscopes, fans, video bridging chips,
-gpio expanders, EEPROMS, ...etc.
+GPIO expanders, EEPROMs, ...etc.
 
 I2C is not appropriate for all applications however:
 1. When higher bandwidth is required, SPI may be the right choice and can be found
@@ -383,7 +383,7 @@ pull-ups are too weak. Your logic analyzer might decode them just fine, but an
 I2C device may have trouble with them.
 
 I2C buses accumulate capacitances when traces are long and devices are
-added to the bus. You may need stronger pull-ups to overcome it. Counter intuitively, a strongr pull-up is a weaker resistor. In doubt, go to 2K
+added to the bus. You may need stronger pull-ups to overcome it. Counter intuitively, a stronger pull-up is a weaker resistor. In doubt, go to 2K
 resistors. You will waste a bit of power, but your I2C signal will look great.
 
 ### Flowchart
