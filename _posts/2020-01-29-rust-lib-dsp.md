@@ -28,7 +28,7 @@ I assume [you have installed Rust](https://www.rust-lang.org/tools/install) and 
 
 The goal here is to write a library that can be statically linked to my main C program. Creating a library in Rust proved to be quite easy[^2]. For the sake of that example, I'm going to use the nRF52832 microcontroller on a PCA10040 board. 
 
-```Bash
+```bash
 # Let's create a new module with cargo
 # Notice how we can specify that we are creating a library using "--lib"
 $ cargo new dsp_rs --lib
@@ -68,7 +68,7 @@ In order to keep everything as simple as possible, here is the algorithm that we
 Those 3 functions (scale, offset, mean) taken individually are the most used for the projects I have been working for.
 Here are the simple steps implemented in C using CMSIS-DSP:
 
-```C
+```c
 #define ARBITRARY_OFFSET   ((float32_t) 1.98765432)
 
 static float32_t dsp_process_c(float32_t scaling_factor, float32_t * array, size_t size)
@@ -91,7 +91,7 @@ I have to admit that I started by implementing the function using imperative pro
 
 Here is the equivalent of the C function, along with some attributes to make it work on our target that **cannot** use `std`.
 
-```Rust
+```rust
 #![no_std]
 #![no_builtins]
 
@@ -104,7 +104,7 @@ use core::ops::Div;
 #[no_mangle]
 pub extern "C" fn dsp_process_rs(scaling: f32, ptr: *const f32, size: usize) -> f32 {
     /* Create a slice out of the C array using pointer to first element */ 
-		let array; 
+    let array; 
     unsafe {
         array = core::slice::from_raw_parts(ptr, size);
     }
@@ -125,7 +125,7 @@ Now that we have the Rust function written, we need to compile the crate.
 
 We want to compile that library for our nRF52. In our case, we didn't specified anywhere the default target to be used so we will now specify it if we want to compile for Cortex-M4F core using the `--target` flag:
 
-```Bash
+```bash
 $ cargo build --target thumbv7em-none-eabihf
 
 	Compiling panic-halt v0.2.0
@@ -162,7 +162,7 @@ In our case, we have only one function signature, which is pretty simple so I wr
 
 Below is our header file, easy right?
 
-```C
+```c
 #ifndef HELLO_WORLD_DSP_RS_H
 #define HELLO_WORLD_DSP_RS_H
 
@@ -175,7 +175,7 @@ float32_t dsp_process_rs(float32_t scaling, float32_t const * array, size_t size
 
 Below is a snippet of the actual `main.c` file used for that example, with the interesting parts:
 
-```C
+```c
 #include "cmsis_dsp_rs.h"
 /* ... */
 
@@ -189,22 +189,22 @@ static float32_t array_from[TEST_ARRAY_SIZE] = {...};
  */
 int main(void)
 {
-	/* Copy needed in another array when calling the C function
+    /* Copy needed in another array when calling the C function
      * not to change the original data 
      */
-	float32_t array_copy[TEST_ARRAY_SIZE];
-	arm_copy_f32(array_from, array_copy, TEST_ARRAY_SIZE);
+    float32_t array_copy[TEST_ARRAY_SIZE];
+    arm_copy_f32(array_from, array_copy, TEST_ARRAY_SIZE);
 
-	/* Call Rust function */
-	float32_t mean_rs = dsp_process_rs((float32_t) SCALING_FACTOR, array_from, TEST_ARRAY_SIZE);
-	
-	/* Call C function */
-	float32_t mean_c  = dsp_process_c((float32_t) SCALING_FACTOR, array_copy, TEST_ARRAY_SIZE);
+    /* Call Rust function */
+    float32_t mean_rs = dsp_process_rs((float32_t) SCALING_FACTOR, array_from, TEST_ARRAY_SIZE);
 
-	/* Make sure results are the same */
-	APP_ERROR_CHECK_BOOL(mean_rs == mean_c);
+    /* Call C function */
+    float32_t mean_c  = dsp_process_c((float32_t) SCALING_FACTOR, array_copy, TEST_ARRAY_SIZE);
 
-	while(1);
+    /* Make sure results are the same */
+    APP_ERROR_CHECK_BOOL(mean_rs == mean_c);
+
+    while(1);
 }
 ```
 
@@ -216,7 +216,7 @@ First, we need to make sure that the path to the header file is specified in the
 
 Second, we have to add both `libdsp_rs.a` and the CMSIS-DSP lib to be linked. The `.a` file is copy-pasted in the nRF52 project while the CMSIS-DSP file can be found in the nRF-SDK:
 
-```Makefile
+```
 LIB_FILES += \
   $(PROJ_DIR)/lib/libdsp_rs.a \
   $(SDK_ROOT)/components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a 
@@ -228,7 +228,7 @@ We can now compile and flash our test program on the PCA10040 board and check if
 
 In order to test extensively the C code against the Rust code, my first idea has been to add time tracking around the call to `dsp_process_rs` and `dsp_process_c`. Thus, we can measure the time spent in each function using the low frequency clock on the nRF52 (`app_timer` module). I added a loop to make the test a hundred times to make sure the results can be repeated. I will report the worst case scenario here. Below are the steps to measure the time spent in the function:
 
-```C
+```c
 uint32_t tick      = app_timer_cnt_get();
 
 uint32_t mean      = dsp_process_rs((float32_t) i, array_from, TEST_ARRAY_SIZE);
@@ -248,7 +248,7 @@ Around 25 times slower using Rust... It's a lot and doesn't seem to be a good in
 
 Now, as in many programming languages, it is possible with Rust to optimize for speed[^3]. One basic optimization is to simply build the library with the `--release` flag. 
 
-```Bash
+```bash
 $ cargo build --target thumbv7em-none-eabihf --release
 ```
 
@@ -281,7 +281,7 @@ Let's see how we can make use of the portability of Rust.
 
 Having developed a processing crate that fits our needs, we can easily integrate that crate into another Rust project, using a few steps. Let's create that application:
 
-```Bash
+```bash
 $ cargo new hello_world --bin
     Created binary (application) `hello_world` package
 ```
@@ -303,7 +303,7 @@ crate-type = ["rlib"]
 
 And making use of our crate in `main.rs`, for example:
 
-```Rust
+```rust
 extern crate dsp_rs;
 use dsp_rs::*;
 
@@ -312,7 +312,7 @@ fn main() {
 
     let mean = dsp_process_rs(1.324_f32, array_to_process.as_ptr(), array_to_process.len());
 
-	println!("Average: {}", mean);
+    println!("Average: {}", mean);
 }
 ```
 
