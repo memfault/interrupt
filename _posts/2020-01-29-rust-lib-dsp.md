@@ -4,14 +4,6 @@ description: "A DSP library written in Rust brings many advantages"
 author: cyril
 ---
 
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
-
-## A DSP library in Rust
-
 As you may know, the Rust programming language is gaining traction among firmware developers. James wrote [a great article](https://interrupt.memfault.com/blog/zero-to-main-rust-1) to help people start from scratch with Rust on embedded devices. 
 
 Writing firmware in Rust implemented into production code won't be done in a day. Many SDKs (if not all...) provided with ARM Cortex M microcontrollers are based on C/C++ and developers have been used for long time to write their whole program in C/C++. Although Rust is quite new, it deserves to be considered in production code and without a doubt, regarding the legacy code running, Rust components will come as external libraries first. 
@@ -21,6 +13,14 @@ One of the domain where Rust can be highly beneficial for the development proces
 <!-- excerpt start -->
 We will see how Rust increases productivity when building a library to be called from legacy code in C, and most importantly how it compares against the well-known CMSIS-DSP library.
 <!-- excerpt end -->
+
+{:.no_toc}
+
+## Table of Contents
+
+<!-- prettier-ignore -->
+* auto-gen TOC:
+{:toc}
 
 ## Creating the library
 
@@ -267,7 +267,7 @@ Function written using C: **3 930** instructions counted
 
 The Rust function is about **1.8 times faster** than the CMSIS-DSP implementation. 
 
-# Rust portability, the real advantage
+##   Rust portability, the real advantage
 
 As you probably know: Rust can be compiled for different architectures: x86, ARM, etc. And as people who have been trying to develop DSP algorithms on embedded targets know: it's hard to test those algorithms on a massive amount of data, directly on the target. Some solutions include using Qemu with semihosting to fetch data from the host and pass it to the algorithms, or using Matlab to develop the algorithms and later generate C code. 
 
@@ -325,6 +325,8 @@ The power of Rust programs used in a CLI[^5] environment, along with the ease to
 We have seen that Rust keeps its promises regarding efficiency and portability, making it a great choice to develop your future (or old) DSP algorithms. Getting rid of CMSIS-DSP in order to enjoy the productivity gains brought with Rust is to be considered. 
 
 I would love people who started developping DSP algorithms using Rust, for any target to join the discussion. 
+
+{:.no_toc}
 
 ## References
 
