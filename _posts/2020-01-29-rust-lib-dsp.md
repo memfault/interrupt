@@ -324,7 +324,7 @@ The power of Rust programs used in a CLI[^5] environment, along with the ease to
 
 We have seen that Rust keeps its promises regarding efficiency and portability, making it a great choice to develop your future (or old) DSP algorithms. Getting rid of CMSIS-DSP in order to enjoy the productivity gains brought with Rust is to be considered. 
 
-I would love people who started developping DSP algorithms using Rust, for any target to join the discussion. 
+I would love people who started developing DSP algorithms using Rust, for any target to join the discussion. 
 
 {:.no_toc}
 
