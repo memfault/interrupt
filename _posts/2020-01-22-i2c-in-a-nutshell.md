@@ -122,7 +122,7 @@ is extremely uncommon[^1].
 
 To communicate with a slave device, an I2C master simply needs to write its
 7-bit address on the bus after the START condition. For example, the waveform
-below captures an I2C transaction to a slave with address 0xC6:
+below captures an I2C transaction to a slave with address 0x66:
 
 <script type="WaveDrom">
 { signal : 
@@ -130,7 +130,7 @@ below captures an I2C transaction to a slave with address 0xC6:
     { name: "SDA",  wave: "101.0.1.010|.101." },
     { name: "SCL",  wave: "1.n........|...h."},
     { name: "bits", wave: "x==========|==x=x",  data: ["S", "1", "1", "0", "0", "1", "1","0","1","","0","1","P"]},
-    { name: "data", wave: "x.=......=.|..x..", data: ["Address: 0xC6"]}
+    { name: "data", wave: "x.=......=.|..x..", data: ["Address: 0x66"]}
   ]
 }
 </script>
@@ -151,7 +151,7 @@ I2C masters may read or write to slave devices. This is indicated with a single
 bit transmitted after the address bits. A `1` means the command is a read, and
 a `0` means it is a write.
 
-The example below shows a read sent to the slave device at address `0xC6`.
+The example below shows a read sent to the slave device at address `0x66`.
 
 <script type="WaveDrom">
 { signal : 
@@ -160,7 +160,7 @@ The example below shows a read sent to the slave device at address `0xC6`.
     { name: "SCL",  wave: "1.n........|...h."},
     { name: "bits", wave: "x==========|==x=x",  data: ["S", "1", "1", "0", "0",
 "1", "1","0","1","","0","1","P"]},
-    { name: "data", wave: "x.=......==|..x..", data: ["Address: 0xC6", "W"]}
+    { name: "data", wave: "x.=......==|..x..", data: ["Address: 0x66", "W"]}
   ]
 }
 </script>
@@ -174,12 +174,13 @@ register address, followed by a second START condition and a full read command
 (including the slave address).
 
 For example, this is what a write-then-read transaction to read register `0x11`
-from the slave device at address `0xC6` would look like:
+from the slave device at address `0x66` would look like:
 
 <script type="WaveDrom">
 { signal : 
   [
-    { name: "", wave: "x==..==...==..==.=x", data: ["S", "Address: 0xC6", "W", "Reg Address: 0x11", "S", "Address: 0xC6", "R", "Data", "P"]}
+    { name: "", wave: "x==..==...==..==.=x", data: ["S", "Address: 0x66", "W",
+"Reg Address: 0x11", "S", "Address: 0x66", "R", "Data", "P"]}
   ]
 }
 </script>
@@ -208,7 +209,7 @@ This can mean one of several things:
    moe bytes.
 
 Below is an example of a full I2C write command, with the ACK bits included. It
-writes `0x9C` to the slave at address `0xC6`.
+writes `0x9C` to the slave at address `0x66`.
 
 <!-- Can't get the narrow skin to work, so using an image
 <script type="WaveDrom">
@@ -217,7 +218,7 @@ writes `0x9C` to the slave at address `0xC6`.
     { name: "SDA",  wave: "101.0.1.01010.1..0.101."},
     { name: "SCL",  wave: "1.n..................h."},
     { name: "bits", wave: "x===================x=x",  data: ["S", "1", "1", "0", "0", "1", "1","0","1","0", "1","0","0","1","1","1","0","0","1","P"]},
-    { name: "data", wave: "x.=......===.......=x..", data: ["Address: 0xC6","W","A", "Data: 0x9C", "A"]}
+    { name: "data", wave: "x.=......===.......=x..", data: ["Address: 0x66","W","A", "Data: 0x9C", "A"]}
   ],
   config: {skin: 'narrow'}
 }
@@ -312,7 +313,7 @@ Often times, you will see the following on your logic analyzer:
     { name: "SDA",  wave: "101.0.1.010.1."},
     { name: "SCL",  wave: "1.n.........h."},
     { name: "bits", wave: "x==========x=x",  data: ["S", "1", "1", "0", "0", "1", "1","0","1","0","P"]},
-    { name: "data", wave: "x.=......==x..", data: ["Address: 0xC6","W", "N"]}
+    { name: "data", wave: "x.=......==x..", data: ["Address: 0x66","W", "N"]}
   ],
 }
 </script>
