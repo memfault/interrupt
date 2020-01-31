@@ -37,7 +37,10 @@ mafaneh:
 cyril:
     name: Cyril Fougeray
     email: cyril.fougeray@gmail.com
-    web: https://www.linkedin.com/in/cyrilfougeray/
+    web: https://about.me/cyril.fougeray
+    linkedin: https://www.linkedin.com/in/cyrilfougeray/
+    twitter: cyrilfougeray
+    github: fouge
     image: /img/author/cyril.jpg
     blurb: is a freelance Firmware Engineer. Previously he worked on embedded software at Equisense and Spire.
 james:
