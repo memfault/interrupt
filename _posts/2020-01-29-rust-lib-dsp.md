@@ -4,7 +4,7 @@ description: "A DSP library written in Rust brings many advantages"
 author: cyril
 ---
 
-Like many firmware developers, I've been curous about the potential Rust can
+Like many firmware developers, I've been curious about the potential Rust can
 have in the embedded space. After reading James Munns'
 [great article](https://interrupt.memfault.com/blog/zero-to-main-rust-1), I
 decided to find a project I could use Rust for to learn.
