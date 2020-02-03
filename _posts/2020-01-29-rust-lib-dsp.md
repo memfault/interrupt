@@ -323,8 +323,12 @@ So Rust is 25 times slower. That doesn't bode well!
 
 ### Optimizing Rust
 
-Like most compilers, `rustc` has multiple optimization levels[^3]. We have been
-compiling in debug mode, which disables all optimizations, one simple
+Like most compilers, `rustc` has multiple optimization levels[^3]. 
+
+Here, the C project has been compiled using GCC's `-03` optimization level which 
+turns on all optimizations for performance, no matter the code size or compilation time[^4].
+
+As for Rust, we have been compiling in debug mode, which disables all optimizations. One simple
 improvement we can make is to simply build the library with the `--release` flag.
 
 ```bash
@@ -346,7 +350,7 @@ It's getting **really** interesting. I now have a quicker program using Rust! ðŸ
 Using the low frequency clock doesn't yield accurate results regarding the
 actual efficiency of both implementation. In order to get more accurate results,
 we need a better timer. A good option on Cortex-M4 is to use the Cycle Count
-register[^4]. Reading it before and after calling our function will tell us how
+register[^6]. Reading it before and after calling our function will tell us how
 many CPU cycles have been spent executing it.
 
 Function written using Rust: **2 209** instructions counted
@@ -355,6 +359,18 @@ Function written using C: **3Â 930** instructions counted
 
 The Rust function is about **1.8 times faster** than the CMSIS-DSP
 implementation.
+
+The optimizations brought by the `--release` flag also improve the binary size.
+The DSP library built without optimization has a size of 2082 kB while its Release 
+counterpart takes 2010 kB: a difference of 72kB. Once the 
+project is compiled, the created binaries using the Debug and Release library is 
+respectively 18.712 kB and 16.456 kB. Having compiled our library using `--release` 
+brought us a gain of 2kB over the 18 initially used by our program.
+
+Going even further, I removed the calls to the processing 
+functions one by one: when only the Rust code is called the binary takes 15.944 kB while it 
+takes 16.024 kB when only the C code is called. Although the gain is only a few bytes, it is
+important to note that the Rust code is not only faster, but even smaller for that example. 
 
 ##   Rust portability, the real advantage
 
@@ -423,7 +439,7 @@ fn main() {
 
 Compiling and running that example takes milliseconds.
 
-The power of Rust programs used in a CLI[^6] environment, along with the ease to
+The power of Rust programs used in a CLI[^7] environment, along with the ease to
 develop crates for different targets, is a strong advantage to use Rust. Coupled
 with its standard library, Rust is able to talk to machines and fetch data from
 servers quite easily, then pass that data into your algorithms and gives
@@ -448,6 +464,7 @@ straight to your mailbox_
 [^1]: [Rust and the panic behavior](https://interrupt.memfault.com/blog/zero-to-main-rust-1#something-just-for-rust)
 [^2]: [A little Rust with your C](https://rust-embedded.github.io/book/interoperability/rust-with-c.html)
 [^3]: [Optimize Rust for speed](https://rust-embedded.github.io/book/unsorted/speed-vs-size.html#optimize-for-speed)
-[^4]: [Cycle Count register](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0439b/BABJFFGJ.html)
-[^5]: [Issue: Ability to set crate-type depending on target](https://github.com/rust-lang/cargo/issues/4881)
-[^6]: [Command-line apps with Rust](https://www.rust-lang.org/what/cli)
+[^4]: [Code Size Optimization: GCC Compiler Flags](https://interrupt.memfault.com/blog/code-size-optimization-gcc-flags#changing-the-optimization-level)
+[^5]: [Cycle Count register](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0439b/BABJFFGJ.html)
+[^6]: [Issue: Ability to set crate-type depending on target](https://github.com/rust-lang/cargo/issues/4881)
+[^7]: [Command-line apps with Rust](https://www.rust-lang.org/what/cli)
