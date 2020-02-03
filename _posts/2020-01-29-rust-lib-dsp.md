@@ -4,7 +4,7 @@ description: "A DSP library written in Rust brings many advantages"
 author: cyril
 ---
 
-Like many firmware developers, I've been curous about the potential Rust can
+Like many firmware developers, I've been curious about the potential Rust can
 have in the embedded space. After reading James' [great
 article](https://interrupt.memfault.com/blog/zero-to-main-rust-1), I decided to
 find a project I could use Rust in to learn.
@@ -58,8 +58,8 @@ There are good instructions on how to do this online[^2], I've summarized them
 below.
 
 First, we use the `cargo` package manager to create a new project. Cargo is the
-default for Rust packages, which are usually called "crates. We can pass
-cargo the `--lib` flag to specify that the project is a library.
+default for Rust packages, which are usually called "crates". We can pass
+Cargo the `--lib` flag to specify that the project is a library.
 
 ```bash
 $ cargo new dsp_rs --lib
@@ -76,10 +76,11 @@ modify this file slightly:
    it under `crate-type`.
 2. We will add a dependency on another crate, `panic-halt`, which we use as the
    default panic behavior for our project. `panic`[^1] is one of the few functions
-required by the Rust runtime on a given platform. Conveniently, `panic-halt` has
-an implementation we can use.
+   required by the Rust runtime on a given platform. Conveniently, `panic-halt` has
+   an implementation we can use.
 
 Here's our `Cargo.toml`:
+
 ```toml
 [lib]
 name = "dsp_rs"
@@ -96,7 +97,7 @@ Now that that's out of the way, we can start implementing our library.
 
 Let's start with a simple algorithm:
 
-Given an array of 200 floating point numbers
+Given an array of 200 floating point numbers:
 1. scale it to a dynamic factor
 2. offset the resulting array using an arbitrary number
 3. get the average of that new array
@@ -125,7 +126,7 @@ static float32_t dsp_process_c(float32_t scaling_factor, float32_t * array, size
 
 #### The Rust implementation
 
-As a C programmer, I was tempted to write the rust code using an imperative
+As a C programmer, I was tempted to write the Rust code using an imperative
 style. Instead, I decided to leverage Rust's synthax for functional programming,
 as it maps neatly to digital signal processing concepts. While this is beyond
 the scope of this article, I found that using a functional rather than
@@ -166,8 +167,8 @@ A few things to note:
 1. Per James' article, we disable the standard library and builtins via `no_std`
    and `no_builtins`.
 2. We must mark our function as `pub` to export it, `extern "C"` to use the C
-   ABI, and `no_mangle` to make sure its name does not get mangled by the rust
-compiler (like it would with C++).
+   ABI, and `no_mangle` to make sure its name does not get mangled by the Rust
+   compiler (like it would with C++).
 
 Now that we have the Rust function written, we need to compile the crate.
 
@@ -195,7 +196,6 @@ our program, and generated debug & program output. In the directory
 
 >  Tip: To compile our code for the same target every time, we can create the
 >  file `.cargo/config` in the root directory and add the following lines:
->
 > ```
 > [build]
 > # Pick ONE of these compilation targets by uncommenting the corresponding line:
@@ -368,7 +368,7 @@ develop the algorithms and later generate C code.
 Rust and `cargo` make it trivially easy to run our algorithm in different
 environments. Our program can be developed on an x86 host, against large corpus
 of data and with good debugging tools, then be easily recompiled for our
-cortex-m4 target. Let's check this out.
+Cortex-M4 target. Let's check this out.
 
 > Note on floating point portability: Despite IEEE standardization, you may find
 > that different architectures produce different results for the same floating
@@ -400,7 +400,7 @@ We want the `crate-type` to be `rlib`. Unfortunately, while I'm writing those
 lines, there is no way to specify a crate type depending on target at the
 moment[^5], so let's change it in `Cargo.toml`:
 
-```
+```toml
 [lib]
 name = "dsp_rs"
 crate-type = ["rlib"]
@@ -450,4 +450,4 @@ straight to your mailbox_
 [^3]: [Optimize Rust for speed](https://rust-embedded.github.io/book/unsorted/speed-vs-size.html#optimize-for-speed)
 [^4]: [Cycle Count register](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0439b/BABJFFGJ.html)
 [^5]: [Issue: Ability to set crate-type depending on target](https://github.com/rust-lang/cargo/issues/4881)
-[^\]: [Command-line apps with Rust](https://www.rust-lang.org/what/cli)
+[^6]: [Command-line apps with Rust](https://www.rust-lang.org/what/cli)
