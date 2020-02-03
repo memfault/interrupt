@@ -15,18 +15,19 @@ believe Rust will creep into projects in the form of libraries that get included
 into firmware.
 
 One area I quickly honed in on is DSP programming. The current tooling and
-process in that area is very poor, and I suspected that Rust could help. [I had
-asked the reddit r/embedded
-community](https://www.reddit.com/r/embedded/comments/cmoiea/best_setup_to_develop_signal_processing_algorithm/)
+process in that area is very poor, and I suspected that Rust could help.
+[I had asked the reddit r/embedded community](https://www.reddit.com/r/embedded/comments/cmoiea/best_setup_to_develop_signal_processing_algorithm/)
 what their favorite setup was like. The most upvoted answer surprised me: folks
 were using Matlab for development, then translating their algorithms to C code
 based on the ubiquitous
 [CMSIS-DSP](http://www.keil.com/pack/doc/CMSIS/DSP/html/index.html) library.
 
 <!-- excerpt start -->
-In this post, I go over how Rust can be used to implement
-DSP algorithms for firmware today, and compare the process and performance to
-the equivalent code written with CMSIS-DSP.
+
+In this post, I go over how Rust can be used to implement DSP algorithms for
+firmware today, and compare the process and performance to the equivalent code
+written with CMSIS-DSP.
+
 <!-- excerpt end -->
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
@@ -43,9 +44,9 @@ straight to your mailbox_
 ## Building a Rust library
 
 Before anything, make sure you have installed Rust on your system. There are
-great instructions on [the Rust
-website](https://www.rust-lang.org/tools/install) so I won't repeat them here.
-You should have `rustc` and `cargo` executables on your path.
+great instructions on
+[the Rust website](https://www.rust-lang.org/tools/install) so I won't repeat
+them here. You should have `rustc` and `cargo` executables on your path.
 
 For the sake of this example, I'm using the nRF52832 microcontroller on a
 PCA10040 development board.
@@ -72,6 +73,7 @@ $ ls dsp_rs
 Our project contains source code under `src` as well as a `Cargo.toml` file.
 This is the main project configuration file used by Cargo. We will need to
 modify this file slightly:
+
 1. Since we want the library to be static rather than dynamic, we must indicate
    it under `crate-type`.
 2. We will add a dependency on another crate, `panic-halt`, which we use as the
@@ -102,24 +104,22 @@ Given an array of 200 floating point numbers:
 2. offset the resulting array using an arbitrary number
 3. get the average of that new array
 
-While this is a bit artificial, it relies on three operations (scale,
-offset, mean) which are used heavily in all of my DSP projects.
+While this is a bit artificial, it relies on three operations (scale, offset,
+mean) which are used heavily in all of my DSP projects.
 
 Here is a simple implementation of this algorithm using CMSIS-DSP and C:
 
 ```c
 #define ARBITRARY_OFFSET   ((float32_t) 1.98765432)
 
-static float32_t dsp_process_c(float32_t scaling_factor, float32_t * array, size_t size)
+static float32_t dsp_process_c(float32_t scaling_factor,
+                               float32_t * array,
+                               size_t size)
 {
     float32_t mean = 0;
-
     arm_scale_f32(array, scaling_factor, array, TEST_ARRAY_SIZE);
-
     arm_offset_f32(array, ARBITRARY_OFFSET, array, TEST_ARRAY_SIZE);
-
     arm_mean_f32(array, TEST_ARRAY_SIZE, &mean);
-
     return mean;
 }
 ```
@@ -146,7 +146,10 @@ extern crate panic_halt;
 use core::ops::Div;
 
 #[no_mangle]
-pub extern "C" fn dsp_process_rs(scaling: f32, ptr: *const f32, size: usize) -> f32 {
+pub extern "C" fn dsp_process_rs(scaling: f32,
+                                 ptr: *const f32,
+                                 size: usize) -> f32
+{
     /* Create a slice out of the C array using pointer to first element */
     let array;
     unsafe {
@@ -164,6 +167,7 @@ pub extern "C" fn dsp_process_rs(scaling: f32, ptr: *const f32, size: usize) -> 
 ```
 
 A few things to note:
+
 1. Per James' article, we disable the standard library and builtins via `no_std`
    and `no_builtins`.
 2. We must mark our function as `pub` to export it, `extern "C"` to use the C
@@ -176,7 +180,7 @@ Now that we have the Rust function written, we need to compile the crate.
 
 This is where the Rust tooling really starts to shine. More than a package
 manager, Cargo is also a build system. To compile our library, all we need to do
-is call `cargo build`, and specify the correct target architecture. Like most
+is call `cargo build` and specify the correct target architecture. Like most
 compilers, `rustc` will otherwise default to compiling a program for the host
 architecture.
 
@@ -188,11 +192,10 @@ $ cargo build --target thumbv7em-none-eabihf
 	Finished dev [unoptimized + debuginfo] target(s) in 0.62s
 ```
 
-You can see that cargo has pulled all the dependencies, compiled them, compiled
+You can see that Cargo has pulled all the dependencies, compiled them, compiled
 our program, and generated debug & program output. In the directory
 `target/thumbv7em-none-eabihf/debug/`, we can find our static library:
 `libdsp_rs.a`. Impressive!
-
 
 >  Tip: To compile our code for the same target every time, we can create the
 >  file `.cargo/config` in the root directory and add the following lines:
@@ -204,7 +207,6 @@ our program, and generated debug & program output. In the directory
 > # target = "thumbv7em-none-eabi"   # Cortex-M4 and Cortex-M7 (no FPU)
 > # target = "thumbv7em-none-eabihf" # Cortex-M4F and Cortex-M7F (with FPU)
 > ```
-
 
 ### Calling Rust from C
 
@@ -231,7 +233,9 @@ Below is our header file, easy right?
 
 #include "arm_math.h"
 
-float32_t dsp_process_rs(float32_t scaling, float32_t const * array, size_t size);
+float32_t dsp_process_rs(float32_t scaling,
+                         float32_t const * array,
+                         size_t size);
 
 #endif //HELLO_WORLD_DSP_RS_H
 ```
@@ -256,7 +260,7 @@ static float32_t array_from[TEST_ARRAY_SIZE] = {...};
 int main(void)
 {
     /* Copy needed in another array when calling the C function
-     * not to change the original data 
+     * not to change the original data
      */
     float32_t array_copy[TEST_ARRAY_SIZE];
     arm_copy_f32(array_from, array_copy, TEST_ARRAY_SIZE);
@@ -289,7 +293,7 @@ be found in the nRF-SDK:
 ```make
 LIB_FILES += \
   $(PROJ_DIR)/lib/libdsp_rs.a \
-  $(SDK_ROOT)/components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a 
+  $(SDK_ROOT)/components/toolchain/cmsis/dsp/GCC/libarm_cortexM4lf_math.a
 ```
 
 We can now compile and flash our test program on the PCA10040 board and check if
@@ -372,16 +376,16 @@ functions one by one: when only the Rust code is called the binary takes 15.944 
 takes 16.024 kB when only the C code is called. Although the gain is only a few bytes, it is
 important to note that the Rust code is not only faster, but even smaller for that example. 
 
-##   Rust portability, the real advantage
+## Rust portability, the real advantage
 
 As you probably know: Rust can be compiled for different architectures: x86,
 ARM, etc. And as people who have been trying to develop DSP algorithms on
 embedded targets know: it's hard to test those algorithms on a massive amount of
-data, directly on the target. Some solutions include using Qemu with semihosting
+data, directly on the target. Some solutions include using QEMU with semihosting
 to fetch data from the host and pass it to the algorithms, or using Matlab to
 develop the algorithms and later generate C code.
 
-Rust and `cargo` make it trivially easy to run our algorithm in different
+Rust and Cargo make it trivially easy to run our algorithm in different
 environments. Our program can be developed on an x86 host, against large corpus
 of data and with good debugging tools, then be easily recompiled for our
 Cortex-M4 target. Let's check this out.
@@ -389,7 +393,7 @@ Cortex-M4 target. Let's check this out.
 > Note on floating point portability: Despite IEEE standardization, you may find
 > that different architectures produce different results for the same floating
 > point calculations. There are
-> [interesting](https://gafferongames.com/post/floating_point_determinism/) 
+> [interesting](https://gafferongames.com/post/floating_point_determinism/)
 > [discussions](https://news.ycombinator.com/item?id=9837342) on this topic
 > online. Long story short, expect small variations in the results across
 > platforms.
@@ -442,8 +446,8 @@ Compiling and running that example takes milliseconds.
 The power of Rust programs used in a CLI[^7] environment, along with the ease to
 develop crates for different targets, is a strong advantage to use Rust. Coupled
 with its standard library, Rust is able to talk to machines and fetch data from
-servers quite easily, then pass that data into your algorithms and gives
-results in seconds.
+servers quite easily, then pass that data into your algorithms and gives results
+in seconds.
 
 ## Closing
 
