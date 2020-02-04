@@ -388,10 +388,10 @@ The table below summarizes the results:
 Although the gain is only a few bytes, it is important to note that 
 the Rust code is not only faster, but even smaller for that example.
 
-## Rust portability, the real advantage
+## Rust actual advantages
 
-As you probably know: Rust can be compiled for different architectures: x86,
-ARM, etc. And as people who have been trying to develop DSP algorithms on
+As you probably know: Rust can be compiled for different architectures (x86,
+ARM, etc). And as people who have been trying to develop DSP algorithms on
 embedded targets know: it's hard to test those algorithms on a massive amount of
 data, directly on the target. Some solutions include using QEMU with semihosting
 to fetch data from the host and pass it to the algorithms, or using Matlab to
@@ -460,6 +460,28 @@ develop crates for different targets, is a strong advantage to use Rust. Coupled
 with its standard library, Rust is able to talk to machines and fetch data from
 servers quite easily, then pass that data into your algorithms and gives results
 in seconds.
+
+### Rust is modern
+
+For many reasons, the Rust programming language is a great choice for data 
+scientists. 
+
+One could have written pure C code and port it to any machine 
+but the Rust built-in safety mechanism along with the functional paradigm are some of
+Rust advantages for better productivity and code quality. 
+
+Rust compiler is really powerful at detecting the causes behind the errors and prevents
+developers to write bad code. 
+
+Like some well known modern languages, Rust also has its package manager: Cargo. Developers
+can find crates on the [official website](https://crates.io/). Cargo is 
+also powerful at standardizing tests and documentation, bringing up the quality of Rust code 
+and the crates available. 
+
+Other tools like `Rustfmt` make Rust code easy to write and read, using a standardized formating
+for all of us.
+
+Last but not least, Rust is free and open-source when Matlab needs a licence to work. 
 
 ## Closing
 
