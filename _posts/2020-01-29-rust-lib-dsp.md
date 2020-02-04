@@ -327,7 +327,9 @@ So Rust is 25 times slower. That doesn't bode well!
 
 ### Optimizing Rust
 
-Like most compilers, `rustc` has multiple optimization levels[^3]. 
+Like most compilers, `rustc` has multiple optimization levels[^3].
+
+#### Speed
 
 Here, the C project has been compiled using GCC's `-03` optimization level which 
 turns on all optimizations for performance, no matter the code size or compilation time[^4].
@@ -339,10 +341,10 @@ improvement we can make is to simply build the library with the `--release` flag
 $ cargo build --target thumbv7em-none-eabihf --release
 ```
 
-Do not forget to copy the resulting `.a` file over to your project, and to call
-(`make clean`) if there is no modification to the code because the Makefile
-won't detect that the lib file has changed (at least the simple Makefile I'm
-using).
+> Do not forget to copy the resulting `.a` file over to your project, and to call
+> (`make clean`) if there is no modification to the code because the Makefile
+> won't detect that the lib file has changed (at least the simple Makefile I'm
+> using).
 
 Let's look at the results:
 
@@ -364,17 +366,27 @@ Function written using C: **3 930** instructions counted
 The Rust function is about **1.8 times faster** than the CMSIS-DSP
 implementation.
 
-The optimizations brought by the `--release` flag also improve the binary size.
-The DSP library built without optimization has a size of 2082 kB while its Release 
-counterpart takes 2010 kB: a difference of 72kB. Once the 
-project is compiled, the created binaries using the Debug and Release library is 
-respectively 18.712 kB and 16.456 kB. Having compiled our library using `--release` 
-brought us a gain of 2kB over the 18 initially used by our program.
+#### Code size 
 
-Going even further, I removed the calls to the processing 
-functions one by one: when only the Rust code is called the binary takes 15.944 kB while it 
-takes 16.024 kB when only the C code is called. Although the gain is only a few bytes, it is
-important to note that the Rust code is not only faster, but even smaller for that example. 
+The optimizations brought by the `--release` flag also improve the binary size.
+
+To compare code size, we compile 4 binaries: 
+- one calling C function and Rust function using the Debug library
+- one calling C function and Rust function using the Release library
+- one calling only our Rust function, 
+- one calling only our C function. 
+
+The table below summarizes the results:
+
+| Functions called          | Binary size | Comments                                         |
+| ------------------------- | ----------- | ------------------------------------------------ |
+| Both C and Rust (debug)   | 18.712kB    | The larger we can get                            |
+| Both C and Rust (release) | 16.456kB    | A gain of 2.256kB with release optimizations     |
+| C only                    | 16.024kB    | The Rust part takes 432 bytes                    |
+| Rust only (release)       | 15.944kB    | The C part takes 512 bytes, a bit more than Rust | 
+
+Although the gain is only a few bytes, it is important to note that 
+the Rust code is not only faster, but even smaller for that example.
 
 ## Rust portability, the real advantage
 
