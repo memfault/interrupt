@@ -5,9 +5,9 @@ author: cyril
 ---
 
 Like many firmware developers, I've been curious about the potential Rust can
-have in the embedded space. After reading James' [great
+have in the embedded space. After reading James Munns' [great
 article](https://interrupt.memfault.com/blog/zero-to-main-rust-1), I decided to
-find a project I could use Rust in to learn.
+find a project I could use Rust for to learn.
 
 We're still in the early days of Rust on embedded. Given all the chipset SDKs
 provided in C, the dominance of K&R's language is assured for years to come. I
@@ -127,7 +127,7 @@ static float32_t dsp_process_c(float32_t scaling_factor,
 #### The Rust implementation
 
 As a C programmer, I was tempted to write the Rust code using an imperative
-style. Instead, I decided to leverage Rust's synthax for functional programming,
+style. Instead, I decided to leverage Rust's syntax for functional programming,
 as it maps neatly to digital signal processing concepts. While this is beyond
 the scope of this article, I found that using a functional rather than
 itterative approach yielded a ~2x improvement in performance in this case.
