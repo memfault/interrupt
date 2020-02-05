@@ -1,6 +1,7 @@
 ---
-title: "Rust for Digital Signal Processing"
-description: "A DSP library written in Rust brings many advantages"
+title: "Rust for Low Power Digital Signal Processing"
+description: "A step by step guide on how to use Rust for Digital Signal
+Processing (DSP) in a firmware project"
 author: cyril
 ---
 
