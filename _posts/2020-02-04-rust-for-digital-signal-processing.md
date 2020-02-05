@@ -27,7 +27,7 @@ based on the ubiquitous
 
 In this post, I go over how Rust can be used to implement DSP algorithms for
 firmware today, and compare the process and performance to the equivalent code
-written with CMSIS-DSP.
+    written with CMSIS-DSP.
 
 <!-- excerpt end -->
 
@@ -369,27 +369,29 @@ implementation.
 
 #### Code size 
 
-The optimizations brought by the `--release` flag also improve the binary size.
+Firmware is often constrained by code size just as much as it is by performance.
+We must make sure that Rust performance does not come at an unreasonable code
+size cost.
 
-To compare code size, we compile 4 binaries: 
+To compare code size, we compile 4 binaries:
 - one calling C function and Rust function using the Debug library
 - one calling C function and Rust function using the Release library
-- one calling only our Rust function, 
-- one calling only our C function. 
+- one calling only our Rust function,
+- one calling only our C function.
 
 The table below summarizes the results:
 
 | Functions called          | Binary size | Comments                                         |
 | ------------------------- | ----------- | ------------------------------------------------ |
-| Both C and Rust (debug)   | 18.712kB    | The larger we can get                            |
-| Both C and Rust (release) | 16.456kB    | A gain of 2.256kB with release optimizations     |
-| C only                    | 16.024kB    | The Rust part takes 432 bytes                    |
-| Rust only (release)       | 15.944kB    | The C part takes 512 bytes, a bit more than Rust | 
+| Both C and Rust (debug)   | 18.712kB    | Our baseline                                     |
+| Both C and Rust (release) | 16.456kB    | A ~2kB improvement with release optimizations    |
+| C only                    | 16.024kB    | The Rust library takes 432 bytes                 |
+| Rust only (release)       | 15.944kB    | The C library takes 512 bytes,                   |
 
-Although the gain is only a few bytes, it is important to note that 
-the Rust code is not only faster, but even smaller for that example.
+Far from being unreasonable, there is in fact no real code size tradeoff between
+C & Rust for our example. This is exciting!
 
-## Rust actual advantages
+## Where Rust shines
 
 As you probably know: Rust can be compiled for different architectures (x86,
 ARM, etc). And as people who have been trying to develop DSP algorithms on
@@ -411,7 +413,7 @@ Cortex-M4 target. Let's check this out.
 > online. Long story short, expect small variations in the results across
 > platforms.
 
-### Get into speed using your host computer
+### Developing cross-platform algorithms on PC with Cargo
 
 Having developed a processing crate that fits our needs, we can easily integrate
 that crate into another Rust project. For example, let's create a simple Rust
@@ -457,32 +459,33 @@ fn main() {
 Compiling and running that example takes milliseconds.
 
 The power of Rust programs used in a CLI[^7] environment, along with the ease to
-develop crates for different targets, is a strong advantage to use Rust. Coupled
+develop crates for different targets, is a strong advantage for Rust. Coupled
 with its standard library, Rust is able to talk to machines and fetch data from
-servers quite easily, then pass that data into your algorithms and gives results
-in seconds.
+servers quite easily, to test your algorithm against a corpus hosted online.
 
-### Rust is modern
+### Rust has modern language features
 
-For many reasons, the Rust programming language is a great choice for data 
-scientists. 
+While Algorithm designers today prefer Matlab or Python, I believe Rust strikes
+a great balance between expressivity and performance which may allow it to win
+in the end.
 
-One could have written pure C code and port it to any machine 
-but the Rust built-in safety mechanism along with the functional paradigm are some of
-Rust advantages for better productivity and code quality. 
+This starts with the syntax itself: Rust offers functional programming idioms,
+option types, powerful macros, and a powerful type system. This will be familiar
+to software engineers who may find C arcane and difficult to use.
 
-Rust compiler is really powerful at detecting the causes behind the errors and prevents
-developers to write bad code. 
+Moreover, the tooling around Rust is fantastic. `cargo` is a solid build system
+and package manager and `rustfmt` helps format your code. By bundling these
+tools with the language, Rust has enabled a vibrant ecosystem to spring. Rather
+than reinvent the wheel, Rust programmers rely on third party libraries
+throughout their projects.
 
-Like some well known modern languages, Rust also has its package manager: Cargo. Developers
-can find crates on the [official website](https://crates.io/). Cargo is 
-also powerful at standardizing tests and documentation, bringing up the quality of Rust code 
-and the crates available. 
+Last but not least, many of the safety features implemented in the compiler make
+Rust a much more forgiving language than C. Rather than crashes, Rust developers
+are faced with verbose error messages emitted at compile time.
 
-Other tools like `Rustfmt` make Rust code easy to write and read, using a standardized formating
-for all of us.
-
-Last but not least, Rust is free and open-source when Matlab needs a licence to work. 
+Last but not least, Rust is free and open-source! Between the low cost,
+expressive syntax, solid ecosystem, and the fact that it does not need to be
+translated to C, Rust is a real alternative to Matlab for algorithm development.
 
 ## Closing
 
