@@ -479,7 +479,7 @@ tools with the language, Rust has enabled a vibrant ecosystem to spring. Rather
 than reinvent the wheel, Rust programmers rely on third party libraries
 throughout their projects.
 
-Last but not least, many of the safety features implemented in the compiler make
+Many of the safety features implemented in the compiler make
 Rust a much more forgiving language than C. Rather than crashes, Rust developers
 are faced with verbose error messages emitted at compile time.
 
