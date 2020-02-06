@@ -3,6 +3,7 @@ title: "Rust for Low Power Digital Signal Processing"
 description: "A step by step guide on how to use Rust for Digital Signal
 Processing (DSP) in a firmware project"
 author: cyril
+image: /img/rust-dsp/rust-dsp-code.png
 ---
 
 Like many firmware developers, I've been curious about the potential Rust can
