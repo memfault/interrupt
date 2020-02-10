@@ -37,11 +37,10 @@ STM32 chips over the past few years:
 
 ![STM32 Available RAM over time](/img/embedded-in-2020/stm32-chart.png)
 
-Moore's law is alive and well, it seems! In the 2010s we largely wrote software
-assuming it was going to run on something like a PIC32 when it was actually
-going to run on something like a Pentium II. The advent of RISC-V, an
-open-source entrant to the microcontroller space, will only accelerate the
-trend.
+In the 2010s we largely wrote software assuming it was going to run on something
+like a PIC32 when it was actually going to run on something like a Pentium II.
+The advent of RISC-V, an open-source entrant to the microcontroller space, will
+only accelerate the trend.
 
 Having Pentium II-like machines with single and double precision floating point
 coprocessors has unlocked large performance gains for general purpose signal
@@ -74,8 +73,8 @@ more like software businesses. They'll use the methods of software engineering,
 the tools of software engineering, but also the business model of software
 engineering. Bolt - a prominent hardware VC - called it in 2015[^4]. On a
 technical level, embedded software will become increasingly decoupled from the
-underlying hardware it runs on. Abstractions and mental models will be part of
-our day-to-day.
+underlying hardware it runs on. Software abstractions and mental models will be
+part of our day-to-day.
 
 Various areas of computing in decades past have undergone similar
 transformations with profound implications. Broadly-available, affordable
