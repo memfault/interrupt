@@ -8,24 +8,24 @@ excerpt: "In the next decade the capabilities of software for
 ---
 
 > Editor's note: We're starting off February with a think piece from Rameen
-> Aryanpur.  This strikes a different tone from our standard fare (usually
+> Aryanpur. This strikes a different tone from our standard fare (usually
 > technical how to's and tutorials), but we hope you will enjoy it just as well.
 > We are always looking for new submissions, so don't hesitate to get in touch
 > if you would like to contribute!
 
-With the turn of the decade, there are many next decade prediction pieces floating
-around. For embedded systems the decade turnover could not be better timed.  The
+With the turn of the decade, there are many next-decade prediction pieces floating
+around. For embedded systems, the decade turnover could not be better timed. The
 capabilities of embedded systems and the tools we use to deploy, manage, and
 debug them have come a long way in the last ten years. The vast majority of
 this progress, however, has come in hardware rather than software. So, color me
-a prospective prophet: in the next decade the capabilities of software for
+a prospective prophet. In the next decade: the capabilities of software for
 embedded systems will catch up to those of hardware, "firmware" will become
 increasingly difficult to distinguish from "software", and a new discipline
 altogether will begin to take shape.
 
 The rapid increase in capability of embedded hardware in the 2010s was primarily
 due to ARM and chip vendors’ investment in the Cortex-M and Cortex-A families of
-devices.  Thanks to that investment, it is a stretch today to refer to mid to
+devices. Thanks to that investment, it is a stretch today to refer to mid to
 high-end SoCs as microcontrollers. With expandability to megabytes of flash and
 RAM and hundreds of megahertz of processing speed[^3], as well as L1 and L2
 caches, pipelined architectures, and ever-expanding (and now customizable) ISAs,
@@ -99,8 +99,7 @@ in the process disrupt industries ripe for disruption.
 
 ## References
 
-[^1]: https://www.tensorflow.org/lite/microcontrollers
-[^2]: https://m5stack.com/blogs/news/introducing-the-k210-risc-v-ai-camera-m5stickv
-[^3]: Indeed you can get a board with a beefy 600MHz/1MB RAM MCU for just $20!
-  https://www.pjrc.com/store/teensy40.html
-[^4]: https://blog.bolt.io/business-models-that-matter/
+[^1]: [TensorFlow Lite for Microcontrollers](https://www.tensorflow.org/lite/microcontrollers)
+[^2]: [Introducing the K210 RISC-V AI Camera (M5StickV)](https://m5stack.com/blogs/news/introducing-the-k210-risc-v-ai-camera-m5stickv)
+[^3]: [Teensy 4.0 Development Board](https://www.pjrc.com/store/teensy40.html)
+[^4]: [The 3 Business Models That Matter](https://blog.bolt.io/business-models-that-matter/)
