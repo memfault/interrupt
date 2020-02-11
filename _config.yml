@@ -50,3 +50,18 @@ version: "1.1.0"
 custom_header: true
 custom_nav_footer: true
 reverse: false
+
+# Exclude these files from the build
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - example
