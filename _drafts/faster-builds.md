@@ -1,7 +1,7 @@
 ---
-title: "Improving Compilation Time of Embedded Projects"
+title: "Improving Compilation Time of C/C++ Projects"
 description:
-  "Strategies for speeding up C/C++ compile times for embedded software projects
+  "Strategies for improving up C/C++ compile times for embedded software projects
   using ccache, preprocessor optimizations, parallel execution, and other
   techniques."
 tag: [better-firmware]
