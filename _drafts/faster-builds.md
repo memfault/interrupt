@@ -16,7 +16,7 @@ to the matter.
 
 <!-- excerpt start -->
 
-Build times don't have to be slow, even yours! However, many factors play a
+Build times don't have to be long, even yours! However, many factors play a
 role. In this post, we'll dive into which factors contribute to slower builds,
 compare and contrast options, and also go over some easy wins which you can
 immediately contribute to your project and share with your teammates. The
@@ -44,7 +44,7 @@ Waiting for a build to complete is a **waste of time**. It's as if someone
 decided to tie your hands behind your back a few minutes, tens of hundreds of
 times a day, ruining your productivity. If your team consists of 5 engineers and
 the build takes 5 minutes, at 20 builds a day (conservative estimate), that's 8
-hours...a whole work day for an extra single engineer!
+hours... a whole work day for an extra single engineer!
 
 Although we commonly run up against slow build times when trying to move
 quickly, there are many other pieces of "infrastructure" (or lack thereof) that
@@ -70,10 +70,11 @@ the day is spent waiting for builds to complete.
 ## Preamble
 
 To set things straight, I don't love build systems. They are complex,
-unintuitive, and require a deep understanding of each one to do things _right_.
-The [GNU Make Manual](https://www.gnu.org/software/make/manual/make.html) is one
-of the few manuals I've read _cover to cover_, and it was one of the best uses
-of my time (and my employer's). When you mash together string substitutions[^8],
+unintuitive, and require a deep understanding of each one to do things
+correctly. The
+[GNU Make Manual](https://www.gnu.org/software/make/manual/make.html) is one of
+the few manuals I've read cover to cover, and it was one of the best uses of my
+time (and my employer's). When you mash together string substitutions[^8],
 shelling out to Python scripts, downloading files from remote servers and
 package managers, and using custom binary packaging scripts, the build
 infrastructure could very easy slow down to a crawl if not done properly.
@@ -158,10 +159,11 @@ With Make, it is as simple as invoking Make with the argument `-jN`, where `N`
 is the number of desired threads to use. If you or your team members
 occasionally forget to pass in this parameter, I suggest wrapping the command
 [using
-Invoke]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#adding-parallel-builds)
+Invoke]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#adding-parallel-builds).
 
-If you are using Make in a recursive manner, **make sure** you are using
-`$(MAKE)` instead of `make` when using it in a rule, as follows:
+If you are calling Make from a Makefile (a.k.a. recursive Make[^15]), verify
+that you are using `$(MAKE)` instead of `make` when using it in a rule, as
+follows:
 
 ```make
 # GOOD
@@ -174,7 +176,7 @@ somerule:
 ```
 
 If you passed in `-j4 --output-sync=recurse` as arguments to your initial Make
-call, these will also be passed through to future `$(MAKE)` calls. In the second
+call, they will also be passed through to future `$(MAKE)` calls. In the second
 `# BAD` example above, they will not be propagated and Make will run `somerule:`
 in a single thread.
 
@@ -188,8 +190,8 @@ setup.
 
 GCC for macOS, Linux, and Windows performed the best regardless of operating
 system, coming in just under 10 seconds. ARM Compiler 6 with Keil then IAR
-followed close behind. Keil with ARM Compiler 5 (armcc) was _much_ slower. If
-you are using ARM Compiler 5, I'd try to upgrade ASAP.
+followed close behind. Keil with ARM Compiler 5 (armcc) was significantly
+slower. If you are using ARM Compiler 5, I'd try to upgrade ASAP.
 
 ### ccache - Compiler Cache
 
@@ -226,9 +228,8 @@ ccache can be installed in the following ways for each operating system:
 - Windows -
   [Github nagayasu-shinya/ccache-win64](https://github.com/nagayasu-shinya/ccache-win64)
 
-I suggest **against** the commonly suggested way of symlinking your compilers to
-the `ccache` binary and instead to set up your build system in the following
-way:
+I suggest against the commonly suggested way of symlinking your compilers to the
+`ccache` binary and instead to set up your build system in the following way:
 
 ```make
 ARM_CC    ?= arm-none-eabi-gcc
@@ -278,26 +279,25 @@ max cache size                       5.0 GB
 
 As you can see above, I had a 100% cache hit rate on a rebuild!
 
-> If you have a _very_ large project, I've heard good things about icecc[^2] and
-> sccache[^3], but these are generally for projects with thousands of large
-> files and many developers.
+> If you have a substantially large project, I've heard good things about
+> icecc[^2] and sccache[^3], but these are generally for projects with thousands
+> of large files and many developers.
 
 ### Optimizing Header Includes and Dependencies
 
 This (large) section goes into how to clean up and optimize dependencies between
 your source files and headers.
 
-#### Large Files = Problem
+#### Large Files = Slow Builds
 
 Generally speaking, the larger the input file into the compiler is, the longer
-it will take to compile. If the compiler is fed a file with 10 lines, it might
+it will take to compile. If the compiler is fed a file of 10 lines, it might
 take 10 ms to compile, but with 5000 lines, it might take 100 ms.
 
 One step that happens before a file is compiled is "preprocessing". A
-preprocessor takes all `#include "file.h"` statements and replaces them with the
-_entire contents_ of the file being included, and does this recursively. This
-means that a `.c` file as small as the following could wind up being 5000+ lines
-of code for the compiler!
+preprocessor takes all `#include "file.h"` essentially copy-pastes the contents
+into each source file, and does this recursively. This means that a `.c` file as
+small as the following could wind up being 5000+ lines of code for the compiler!
 
 ```c
 // extra.c
@@ -318,10 +318,10 @@ $ cat preprocessed.txt | wc -l
     5397
 ```
 
-It turns out that the header file `stm32f4xx.h` and all of _its_ included header
-files amass into a file of 5398 lines. To put some build numbers to this result,
-let's test compiling this small file _with_ and _without_ the `stm32f4xx.h`
-header.
+It turns out that the header file `stm32f4xx.h` and all of its transitively
+included header files amass into a file of 5398 lines. To put some build numbers
+to this result, let's test compiling this small file with and without the
+`stm32f4xx.h` header.
 
 ```
 # Header included
@@ -340,7 +340,7 @@ large included header file.
 
 #### Preventing Dependencies is _hard_
 
-It's _incredibly_ easy to accidentally add a nasty header dependency chain into
+It's incredibly easy to accidentally add a nasty header dependency chain into
 your code base. Take for example the file `FreeRTOSConfig.h` in the Amazon AWS
 FreeRTOS nRF52840 port,
 [linked here](https://github.com/aws/amazon-freertos/blob/e6d2e075e1dfa6729ab818a1b80cdb983b688492/vendors/nordic/boards/nrf52840-dk/aws_demos/config_files/FreeRTOSConfig.h).
@@ -361,7 +361,7 @@ You can see that, while the `FreeRTOSConfig.h` header should have little to no
 dependencies, it ultimately includes 30 other header files along with it.
 
 If we take the FreeRTOS linked list implementation file `FreeRTOS/list.c` and
-compile it, it will now include _all_ of those headers mentioned above, which
+compile it, it will now include all of those headers mentioned above, which
 include the vendor and hardware specific files. A file that should take no more
 than 50 ms to compile now takes roughly 500 ms on my machine!
 
@@ -374,12 +374,12 @@ I've published the
 [AWS FreeRTOS nRF52830 list.d file](https://gist.github.com/tyhoff/a7028c60f8e0db1a548d3f236967109f)
 in a Github Gist.
 
-Next time, before including that extra header file, especially _to another
-header file_, think twice.
+Next time, before including that extra header file, especially to another header
+file, think twice.
 
-#### Quick Find Large Files and Dependency Chains
+#### Find Large Files and Dependency Chains Quickly
 
-To find the largest files _after_ preprocessing, you can pass the CFLAG argument
+To find the largest files after preprocessing, you can pass the CFLAG argument
 `-save-temps` to GCC, which will save these intermediate files as `.i` files (it
 will also save the result of the assembler as `.s` files). This allows you to
 get a rough idea of the largest files that the compiler sees.
@@ -425,8 +425,8 @@ there are probably issues to fix.
 
 One tool I would be wary of using or investing time in is Include What You
 Use[^6] \(or IWYU\). I have found that the egregious dependency issues, the ones
-that slow down your build by minutes, can usually be fixed by resolving just _a
-few_ includes or headers. When running IWYU, it will complain about _every file_
+that slow down your build by minutes, can usually be fixed by resolving just a
+few includes or headers. When running IWYU, it will complain about every file
 and will likely hide the root issues. I suggest investigating the `.d` files or
 one of the other Graphiz style tools mentioned in the post linked above.
 
@@ -488,15 +488,15 @@ previous projects I've worked on, and I have some tips to share.
 On a previous project, the most significant patch I made related to header
 dependencies resulted in a compilation speedup of 30%. Before the change, almost
 every file in our firmware project had incidentally included the entire set of
-our vendor's peripheral library header files, which are usually **huge**. Each
-`.c` file was accidentally including 600+ headers.
+our vendor's peripheral library header files, which are usually huge. Each `.c`
+file was accidentally including more than 600 headers.
 
 The fix was to create a couple of `..._types.h` files which contained forward
 declarations to help break the dependencies between our code and vendor code.
 
 ### Pre-compiled headers
 
-> NOTE: This is a GCC/Clang only feature.
+> NOTE: This is a GCC/Clang-only feature.
 
 After cleaning up all of the header dependency issues that you can find, there
 may still be some headers that you can't avoid including everywhere, and they
@@ -513,26 +513,21 @@ instead.
 Let's go over the easiest way to do this in GCC, one that doesn't require you to
 re-architect your project.
 
-1. Create a header file `precompiled.h` and place it in your source tree.
-2. Add a rule to compile this header, just as you would with a `.c` file. It
-   should be built _before_ building the `.c` or `.cpp` files. With Make, this
-   looks something like:
+First, create a header file `precompiled.h` and place it in your source tree.
+Add a rule to compile this header, just as you would with a `.c` file. It should
+be built before building the `.c` or `.cpp` files. Then include this header
+using the CFLAG argument `-include <>` when compiling the `.c` and `.cpp` files.
+With Make, this looks something like:
 
-   ```make
-   PRECOMPILED_H := "precompiled.h"
-   PRECOMPILED_H_OBJ := $(PRECOMPILED_H).gch
+```make
+PRECOMPILED_H := "precompiled.h"
+PRECOMPILED_H_OBJ := $(PRECOMPILED_H).gch
 
-   %.h.gch: $(PRECOMPILED_H)
-   	$(CC) $(CFLAGS) -c -o $@ $<
-   ```
-
-3. Include this file using a CFLAG argument `-include <>` when compiling the
-   `.c` files.
-
-   ```make
-   %.o : %.c | $(PRECOMPILED_H_OBJ)
-   	$(CC) $(CFLAGS) -include $(PRECOMPILED_H) -c -o $@ $<
-   ```
+%.h.gch: $(PRECOMPILED_H)
+	$(CC) $(CFLAGS) -c -o $@ $<
+%.o : %.c | $(PRECOMPILED_H_OBJ)
+	$(CC) $(CFLAGS) -include $(PRECOMPILED_H) -c -o $@ $<
+```
 
 Time to try it out. Let's go back to our `extra.c` file we had defined above.
 
@@ -602,7 +597,7 @@ or
 
 ### Profiling Every Make Build Rule
 
-If you want to profile _every_ build rule in your Makefile, a
+If you want to profile every build rule in your Makefile, a
 [clever approach](http://alangrow.com/blog/profiling-every-command-in-a-makefile)
 is to override the `SHELL` Make variable with a timing script.
 
@@ -616,8 +611,8 @@ build.
 I hope this post has helped uncover some ways that you could try to improve the
 build time of your firmware projects.
 
-I would argue that it may be more difficult to _keep_ the build time fast than
-it is to initially make it fast. For this, I recommend tracking the build times
+I would argue that it may be more difficult to keep the build time fast than it
+is to initially make it fast. For this, I recommend tracking the build times
 either in your CI system or in an external database that can be referenced
 retroactively. If you notice that your build time somehow slipped from 1 minute
 to 2 minutes, you can easily look through all master commits and see where the
@@ -647,3 +642,4 @@ See anything you'd like to change? Submit a pull request!_
 [^12]: [GCC - Using Precompiled Headers](https://gcc.gnu.org/onlinedocs/gcc/Precompiled-Headers.html)
 [^13]: [Make - Parallel Output](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html)
 [^14]: [Portability of #pragma once](https://en.wikipedia.org/wiki/Pragma_once#Portability)
+[^15]: [Recursive Make](https://www.gnu.org/software/make/manual/html_node/Recursion.html)
