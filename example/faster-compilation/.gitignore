@@ -1,6 +1,9 @@
 # Compiler output
 *.o
 *.a
+*.s
+*.i
+*.d
 *.bin
 *.elf
 *.hex

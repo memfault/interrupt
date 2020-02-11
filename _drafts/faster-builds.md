@@ -154,12 +154,11 @@ different thread counts.
 
 ![comparison of compiler build times with GCC threads](/img/faster-compilation/gcc-threads-build-time-comparison.svg)
 
-With Make, it is as simple as invoking Make with the argument `-j` or `-jN`,
-where `N` is the number of desired threads to use. If you or your team members
+With Make, it is as simple as invoking Make with the argument `-jN`, where `N`
+is the number of desired threads to use. If you or your team members
 occasionally forget to pass in this parameter, I suggest wrapping the command
-using Invoke, as I wrote about in my [Building a CLI for Firmware
-Projects]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#adding-parallel-builds)
-post.
+[using
+Invoke]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#adding-parallel-builds)
 
 If you are using Make in a recursive manner, **make sure** you are using
 `$(MAKE)` instead of `make` when using it in a rule, as follows:
@@ -190,12 +189,12 @@ setup.
 GCC for macOS, Linux, and Windows performed the best regardless of operating
 system, coming in just under 10 seconds. ARM Compiler 6 with Keil then IAR
 followed close behind. Keil with ARM Compiler 5 (armcc) was _much_ slower. If
-you are using armcc, I'd try to upgrade ASAP.
+you are using ARM Compiler 5, I'd try to upgrade ASAP.
 
 ### ccache - Compiler Cache
 
 > NOTE: This is trivial to set up when using GCC + Make. It might be more
-> difficult or impossible with other build systems.
+> difficult or impossible with other build systems or compilers.
 
 ccache[^1] is a compiler cache that speeds up recompilation. It compares the
 input files and compilation flags to any previous inputs it has previously
@@ -206,13 +205,19 @@ similar. It's not uncommon to see 10x speedups for large projects.
 
 ![comparison of compile build times with ccache](/img/faster-compilation/ccache-build-time-comparison.svg)
 
+Some people question whether ccache is safe to use in production due to the risk
+of an accidental cache hit. The ccache homepage
+[covers this topic](https://ccache.dev/).
+
+#### Using ccache
+
 You can use ccache by prefixing the compiler when compiling individual files.
 
 ```
 $ ccache arm-none-eabi-gcc <args>
 ```
 
-ccache can be installed using in the following ways for each operating system:
+ccache can be installed in the following ways for each operating system:
 
 - macOS - [Brew](https://formulae.brew.sh/formula/ccache) or
   [Conda](https://anaconda.org/conda-forge/ccache)
@@ -249,7 +254,7 @@ $ make
 $ ccache --zero-stats
 
 # Run the build again (most artifacts should be cached)
-$ make
+$ make clean && make
 ...
 
 # Ensure ccache had some hits
@@ -257,17 +262,21 @@ $ ccache --show-stats
 cache directory                     /Users/tyler/.ccache
 primary config                      /Users/tyler/.ccache/ccache.conf
 secondary config      (readonly)    /usr/local/Cellar/ccache/3.7.3/etc/ccache.conf
-stats updated                       Fri Jan  3 14:10:39 2020
-cache hit (direct)                   540
-cache hit (preprocessed)             140
-cache miss                           303
-cache hit rate                     69.18 %
-called for link                       31
+stats updated                       Mon Feb 10 23:24:26 2020
+stats zeroed                        Mon Feb 10 23:24:18 2020
+cache hit (direct)                     0
+cache hit (preprocessed)              75
+cache miss                             0
+cache hit rate                    100.00 %
+called for link                        4
+can't use precompiled header           1
 cleanups performed                     0
-files in cache                       853
-cache size                          76.1 MB
+files in cache                      8521
+cache size                         197.0 MB
 max cache size                       5.0 GB
 ```
+
+As you can see above, I had a 100% cache hit rate on a rebuild!
 
 > If you have a _very_ large project, I've heard good things about icecc[^2] and
 > sccache[^3], but these are generally for projects with thousands of large
@@ -275,8 +284,8 @@ max cache size                       5.0 GB
 
 ### Optimizing Header Includes and Dependencies
 
-This section goes into how to clean up and optimize dependencies between your
-source files and headers.
+This (large) section goes into how to clean up and optimize dependencies between
+your source files and headers.
 
 #### Large Files = Problem
 
@@ -284,7 +293,7 @@ Generally speaking, the larger the input file into the compiler is, the longer
 it will take to compile. If the compiler is fed a file with 10 lines, it might
 take 10 ms to compile, but with 5000 lines, it might take 100 ms.
 
-One step that happens before a file is compiled is "reprocessing". A
+One step that happens before a file is compiled is "preprocessing". A
 preprocessor takes all `#include "file.h"` statements and replaces them with the
 _entire contents_ of the file being included, and does this recursively. This
 means that a `.c` file as small as the following could wind up being 5000+ lines
@@ -324,7 +333,7 @@ $ time arm-none-eabi-gcc ... -c -o obj/extra.o ./src/extra.c
 0.03s user 0.02s system 90% cpu 0.053 total
 ```
 
-This shows that, just by including a single header to our otherwise 3 line `.c`
+This shows that, just by including a single header in our otherwise 3 line `.c`
 file, the file went from being built in 50 ms to 200 ms. In the next section
 we'll see how easy it is to slow down every compilation due to an accidental or
 large included header file.
@@ -368,6 +377,39 @@ in a Github Gist.
 Next time, before including that extra header file, especially _to another
 header file_, think twice.
 
+#### Quick Find Large Files and Dependency Chains
+
+To find the largest files _after_ preprocessing, you can pass the CFLAG argument
+`-save-temps` to GCC, which will save these intermediate files as `.i` files (it
+will also save the result of the assembler as `.s` files). This allows you to
+get a rough idea of the largest files that the compiler sees.
+
+My one-liner for this step is to find all `.i` files, run them through `wc -l`
+to print out the number of lines, then `sort -r` to sort in descending order.
+
+```
+$ find . -name "*.i" -exec wc -l {} \; | sort -r
+   11445 ./stm32f4xx_hal_i2c.i
+   11272 ./api_msg.i
+   10307 ./api_lib.i
+   10206 ./stm32f4xx_hal_tim.i
+   10102 ./memp.i
+   ...
+```
+
+We can also count the number of lines in each `.d` file. This gives us a rough
+idea of the `.c` files which include the largest number of header files.
+
+```
+$ find . -name "*.d" -exec wc -l {} \; | sort -r
+     110 ./dep/memp.d
+     105 ./dep/timeouts.d
+     105 ./dep/init.d
+      99 ./dep/netif.d
+      99 ./dep/api_msg.d
+      ...
+```
+
 #### Exploring Header Dependency Graphs
 
 Rather than just thinking twice before adding a header file, there are tools
@@ -381,12 +423,12 @@ files that it produces and look for repeated trees of includes. If you find that
 every file in your firmware includes FreeRTOS or standard peripheral headers,
 there are probably issues to fix.
 
-One tool I would be wary of using or investing time in is IWYU (Include What You
-Use)[^6]. I have found that the egregious dependency issues, the ones that slow
-down your build by minutes, can usually be fixed by resolving just _a few_
-includes or headers. When running IWYU, it will complain about _every file_ and
-will likely hide the root issues. I suggest investigating the `.d` files or one
-of the other Graphiz style tools mentioned in the post linked above.
+One tool I would be wary of using or investing time in is Include What You
+Use[^6] \(or IWYU\). I have found that the egregious dependency issues, the ones
+that slow down your build by minutes, can usually be fixed by resolving just _a
+few_ includes or headers. When running IWYU, it will complain about _every file_
+and will likely hide the root issues. I suggest investigating the `.d` files or
+one of the other Graphiz style tools mentioned in the post linked above.
 
 #### Fixing Header Dependency Issues
 
@@ -423,7 +465,7 @@ previous projects I've worked on, and I have some tips to share.
    bool settings_file_open(File *file);
    ```
 
-   If you find yourself needing to forward declare this in many places, I
+   If you find yourself needing to forward declare this more than once, I
    suggest creating a header file `filesystem_types.h` which contains these
    declarations. Now other files can include this new `_types.h` header instead.
 
