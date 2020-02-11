@@ -79,7 +79,7 @@ STM32CUBE_URL   = https://github.com/STMicroelectronics/STM32CubeF4/archive/v1.2
 ###############################################################################
 # Toolchain
 
-PREFIX     = ccache arm-none-eabi
+PREFIX     = arm-none-eabi
 CC         = $(PREFIX)-gcc
 AR         = $(PREFIX)-ar
 OBJCOPY    = $(PREFIX)-objcopy

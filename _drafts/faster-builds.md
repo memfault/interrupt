@@ -9,9 +9,10 @@ author: tyler
 image: /img/faster-compilation/faster-builds-ccache-comparison.png
 ---
 
-We've all likely worked on a software or firmware project where the build times
-take a "coffee break" amount of time. It's become such a common occurrence that
-there is an infamous [xkcd comic](https://xkcd.com/303/) related to the matter.
+We've all likely worked on a software or firmware project where the build takes
+a "coffee break" amount of time to complete. It's become such a common
+occurrence that there is an infamous [xkcd comic](https://xkcd.com/303/) related
+to the matter.
 
 <!-- excerpt start -->
 
@@ -74,8 +75,8 @@ The [GNU Make Manual](https://www.gnu.org/software/make/manual/make.html) is one
 of the few manuals I've read _cover to cover_, and it was one of the best uses
 of my time (and my employer's). When you mash together string substitutions[^8],
 shelling out to Python scripts, downloading files from remote servers and
-package managers, and custom binary packaging scripts, the build infrastructure
-could very easy slow down to a crawl if not done properly.
+package managers, and using custom binary packaging scripts, the build
+infrastructure could very easy slow down to a crawl if not done properly.
 
 In this post, we will primarily focus on speeding up the compilation side of the
 build system by testing out different compilers and compilation strategies.
@@ -93,8 +94,8 @@ isn't satisfied, I'd start there.
 - Exclude your working directories from your your corporate or built-in
   anti-virus software. I've seen 2-3x slowdowns without the exclusion.
 - Use the newest set of compilers and tools that you can reasonably use.
-- Ensure incremental builds only compile the minimal set of files (the build
-  shouldn't require a "clean" before each "build").
+- The build shouldn't require a "clean" before each "build", nor should changing
+  one file trigger a rebuild of most of the files in your project.
 - Ensure no timestamps are injected into the build which would force rebuilds.
 - Try not to enable link-time optimizations (LTO) as the linking step sometimes
   becomes as slow as the entire build itself! If you have enabled it due to code
@@ -146,7 +147,7 @@ The operating system environments were as follows:
 
 The first and easiest thing to do to speed up builds is ensure you are building
 with multiple threads. Make, IAR, and Keil all support parallel compilation, so
-ensure you and the entire team are using it.
+ensure you and the entire team have enabled this.
 
 Below are some times recorded compiling the example project with GCC and
 different thread counts.
@@ -435,18 +436,18 @@ previous projects I've worked on, and I have some tips to share.
    ```
 
 3. Use [include guards](https://en.wikipedia.org/wiki/Include_guard). I suggest
-   using `#pragma once` since it is less error prone, but the standard C way
-   works too.
+   using `#pragma once` since it is less error prone and is quite portable[^14].
+   The standard C way works too.
 4. Wrap third party library code in an abstraction layer so its internal types
    and headers do not leak where they do not belong. Vendors are not in the
    business of clean and quick compiling code, and you shouldn't be at the mercy
    of their bad habits.
 
-The most significant patch I made related to header dependencies resulted in a
-speedup of 30%. Before the change, almost every file in our firmware project had
-incidentally included the entire set of our vendor's peripheral library header
-files, which are usually **huge**. Each `.c` file was accidentally including
-600+ headers.
+On a previous project, the most significant patch I made related to header
+dependencies resulted in a compilation speedup of 30%. Before the change, almost
+every file in our firmware project had incidentally included the entire set of
+our vendor's peripheral library header files, which are usually **huge**. Each
+`.c` file was accidentally including 600+ headers.
 
 The fix was to create a couple of `..._types.h` files which contained forward
 declarations to help break the dependencies between our code and vendor code.
@@ -503,8 +504,8 @@ char *extra(void) {
 }
 ```
 
-Recall that the inclusion of the `stm32f4xx.h` header caused the build time of
-this file to slow down by \~150 ms.
+Recall that the inclusion of the `stm32f4xx.h` header caused the build
+[time to slow down by \~150 ms](#large-files--problem) for this file.
 
 If we create a `precompiled.h` file with the contents below
 
@@ -535,7 +536,7 @@ profiling. My ultimate suggestion would be to just not use Make and opt for
 something more modern. Bazel and CMake are good options. However, continue
 reading if you want a couple of hacks for profiling build steps with Make.
 
-### Profiling Individual Make Build Rules
+### Profiling Individual Make Build Commands
 
 The easiest way to add timing information to compilation steps is to prepend the
 `time` command to the desired rules. For instance, if we wanted to profile each
@@ -603,3 +604,4 @@ See anything you'd like to change? Submit a pull request!_
 [^11]: [Forward Declarations Blog Post](https://gieseanw.wordpress.com/2018/02/25/the-joys-of-forward-declarations-results-from-the-real-world/)
 [^12]: [GCC - Using Precompiled Headers](https://gcc.gnu.org/onlinedocs/gcc/Precompiled-Headers.html)
 [^13]: [Make - Parallel Output](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html)
+[^14]: [Portability of #pragma once](https://en.wikipedia.org/wiki/Pragma_once#Portability)
