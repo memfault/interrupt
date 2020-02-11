@@ -494,7 +494,7 @@ file was accidentally including more than 600 headers.
 The fix was to create a couple of `..._types.h` files which contained forward
 declarations to help break the dependencies between our code and vendor code.
 
-### Pre-compiled headers
+### Precompiled headers
 
 > NOTE: This is a GCC/Clang-only feature.
 
@@ -507,8 +507,10 @@ Pre-compiling a header means that the compiler will only need to compile a
 header _once_, and whenever it is included by other files, it will reuse the
 built object. It compiles the header into an intermediate file with the
 extension `.h.gch`. If the location of these files is added as an include path
-when compiling (before the real headers), GCC will use the pre-compiled versions
+when compiling (before the real headers), GCC will use the precompiled versions
 instead.
+
+#### Implementing Precompiled Headers
 
 Let's go over the easiest way to do this in GCC, one that doesn't require you to
 re-architect your project.
