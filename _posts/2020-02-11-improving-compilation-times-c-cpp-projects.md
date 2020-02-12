@@ -1,9 +1,9 @@
 ---
 title: "Improving Compilation Time of C/C++ Projects"
 description:
-  "Strategies for improving up C/C++ compile times for embedded software projects
-  using ccache, preprocessor optimizations, parallel execution, and other
-  techniques."
+  "Strategies for improving up C/C++ compile times for embedded software
+  projects using ccache, preprocessor optimizations, parallel execution, and
+  other techniques."
 tag: [better-firmware]
 author: tyler
 image: /img/faster-compilation/faster-builds-ccache-comparison.png
@@ -98,9 +98,11 @@ isn't satisfied, I'd start there.
 - The build shouldn't require a "clean" before each "build", nor should changing
   one file trigger a rebuild of most of the files in your project.
 - Ensure no timestamps are injected into the build which would force rebuilds.
-- Try not to enable link-time optimizations (LTO) as the linking step sometimes
-  becomes as slow as the entire build itself! If you have enabled it due to code
-  size constraints, I suggest checking out Interrupt's
+- Try [not to enable link-time optimizations
+  (LTO)]({% post_url 2019-10-22-best-and-worst-gcc-clang-compiler-flags %}#-flto)
+  as the linking step sometimes becomes as slow as the entire build itself! If
+  you have enabled it due to code size constraints, I suggest checking out
+  Interrupt's
   [code size posts](https://interrupt.memfault.com/blog/tag/fw-code-size) for
   easy wins.
 
