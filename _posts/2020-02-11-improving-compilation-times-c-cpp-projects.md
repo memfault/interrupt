@@ -74,10 +74,10 @@ unintuitive, and require a deep understanding of each one to do things
 correctly. The
 [GNU Make Manual](https://www.gnu.org/software/make/manual/make.html) is one of
 the few manuals I've read cover to cover, and it was one of the best uses of my
-time (and my employer's). When you mash together string substitutions[^8],
-shelling out to Python scripts, downloading files from remote servers and
-package managers, and using custom binary packaging scripts, the build
-infrastructure could very easy slow down to a crawl if not done properly.
+time (and my employer's). When you mash together parallel build issues, shelling
+out to single-threaded Python scripts, downloading files from remote servers and
+package managers, and auto-generating source files, the build infrastructure
+could very easy slow down to a crawl if not done properly.
 
 In this post, we will primarily focus on speeding up the compilation side of the
 build system by testing out different compilers and compilation strategies.
