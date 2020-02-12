@@ -1,0 +1,21 @@
+# Compiler output
+*.o
+*.a
+*.s
+*.i
+*.d
+*.bin
+*.elf
+*.hex
+*.lst
+*.map
+
+# Makefile dependencies
+dep/
+
+# Object directories
+obj/
+
+# Third-Party firmware from ST
+stm32cube/
+.DS_Store
