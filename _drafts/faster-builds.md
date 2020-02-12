@@ -388,7 +388,7 @@ My one-liner for this step is to find all `.i` files, run them through `wc -l`
 to print out the number of lines, then `sort -r` to sort in descending order.
 
 ```
-$ find . -name "*.i" -exec wc -l {} \; | sort -r
+$ find . -name "*.i" | xargs wc -l | sort -r
    11445 ./stm32f4xx_hal_i2c.i
    11272 ./api_msg.i
    10307 ./api_lib.i
@@ -401,7 +401,7 @@ We can also count the number of lines in each `.d` file. This gives us a rough
 idea of the `.c` files which include the largest number of header files.
 
 ```
-$ find . -name "*.d" -exec wc -l {} \; | sort -r
+$ find . -name "*.d" | xargs wc -l | sort -r
      110 ./dep/memp.d
      105 ./dep/timeouts.d
      105 ./dep/init.d
