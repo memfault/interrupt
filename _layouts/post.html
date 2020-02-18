@@ -2,15 +2,22 @@
 layout: default
 ---
 <article id="post-page">
-    <script src="/js/anchor.min.js"></script>
-	<h2>{{ page.title }}</h2>		
-	<time datetime="{{ page.date | date_to_xmlschema }}" class="by-line">{{ page.date | date_to_string }}</time>
-	<div class="content">
-
-		{{ content }}
-		
-	</div>
     {% assign author = site.data.authors[page.author] %}
+
+    <script src="/js/anchor.min.js"></script>
+    <h2>{{ page.title }}</h2>
+    <div class="by-line">
+       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date_to_string }}</time>
+       {% if author %}
+       <span>by <a href="{{ author.web }}">{{ author.name }}</a></span>
+       {% endif %}
+    </div>
+    <div class="content">
+
+        {{ content }}
+
+    </div>
+
     {% if author %}
         <div class="author">
             {% if author.image %}
