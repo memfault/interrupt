@@ -1,0 +1,143 @@
+Add a Task Watchdog to the system
+
+From: Chris Coleman <chrisc112358@gmail.com>
+
+
+---
+ Makefile        |    3 ++-
+ main.c          |   12 +++++++++++-
+ task_watchdog.c |   44 ++++++++++++++++++++++++++++++++++++++++++++
+ task_watchdog.h |    9 +++++++++
+ 4 files changed, 66 insertions(+), 2 deletions(-)
+ create mode 100644 task_watchdog.c
+ create mode 100644 task_watchdog.h
+
+diff --git a/example/watchdog-example/Makefile b/example/watchdog-example/Makefile
+index e058da4..b0abc6e 100644
+--- a/example/watchdog-example/Makefile
++++ b/example/watchdog-example/Makefile
+@@ -28,7 +28,8 @@ SRC_FILES += \
+   $(FREERTOS_KERNEL_SOURCES)
+ 
+ SRC_FILES += \
+-  $(PROJECT_SRC_DIR)/hardware_watchdog.c
++  $(PROJECT_SRC_DIR)/hardware_watchdog.c \
++  $(PROJECT_SRC_DIR)/task_watchdog.c
+ 
+ OBJ_FILES := $(patsubst $(ROOT_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
+ 
+diff --git a/example/watchdog-example/main.c b/example/watchdog-example/main.c
+index 6c78785..42c8027 100644
+--- a/example/watchdog-example/main.c
++++ b/example/watchdog-example/main.c
+@@ -7,6 +7,7 @@
+ #include "queue.h"
+ #include "semphr.h"
+ #include "task.h"
++#include "task_watchdog.h"
+ 
+ // Modes:
+ //  0: while (1) { } loop which does _not_ feed the watchdog
+@@ -59,14 +60,19 @@ void erase_external_flash(void) {
+ }
+ 
+ static void prvWatchdogTask(void *pvParameters) {
++  const uint32_t task_id = (uint32_t)pvParameters;
++  task_watchdog_register_task(task_id);
+   while (1) {
+     vTaskDelay(1000);
+-    hardware_watchdog_feed();
++    task_watchdog_feed_task(task_id);
+   }
+ }
+ 
+ static void prvQueuePingTask(void *pvParameters) {
++  const uint32_t task_id = (uint32_t)pvParameters;
++  task_watchdog_register_task(task_id);
+   while (1) {
++    task_watchdog_feed_task(task_id);
+     const uint32_t ulValueToSend = 100;
+     xQueueSend(xQueue, &ulValueToSend, portMAX_DELAY);
+   }
+@@ -94,12 +100,16 @@ static void trigger_nvic_int0(void) {
+ }
+ 
+ static void prvQueuePongTask(void *pvParameters) {
++  const uint32_t task_id = (uint32_t)pvParameters;
+   while (1) {
+     uint32_t ulReceivedValue = 0xff;
+ 
++    // We are going to block forever for an event, unregister since thats okay
++    task_watchdog_unregister_task(task_id);
+     if (xQueueReceive(xQueue, &ulReceivedValue, portMAX_DELAY) == pdFALSE) {
+       continue;
+     }
++    task_watchdog_register_task(task_id);
+ 
+     if (g_watchdog_hang_config == 2) {
+       erase_external_flash();
+diff --git a/example/watchdog-example/task_watchdog.c b/example/watchdog-example/task_watchdog.c
+new file mode 100644
+index 0000000..f3715fe
+--- /dev/null
++++ b/example/watchdog-example/task_watchdog.c
+@@ -0,0 +1,44 @@
++#include "task_watchdog.h"
++
++#include <stdint.h>
++
++#include "cmsis_shim.h"
++#include "hardware_watchdog.h"
++
++static uint32_t s_registered_tasks = 0;
++static uint32_t s_fed_tasks = 0;
++
++static void prv_task_watchdog_check(void) {
++  if ((s_fed_tasks & s_registered_tasks) == s_registered_tasks) {
++    // all the tasks have been fed!
++    hardware_watchdog_feed();
++    s_fed_tasks = 0;
++  }
++}
++
++void task_watchdog_register_task(uint32_t task_id) {
++  __disable_irq();
++
++  s_registered_tasks |= (1 << task_id);
++
++  __enable_irq();
++}
++
++void task_watchdog_unregister_task(uint32_t task_id) {
++  __disable_irq();
++
++  s_registered_tasks &= ~(1 << task_id);
++  s_fed_tasks &= ~(1 << task_id);
++  prv_task_watchdog_check();
++
++  __enable_irq();
++}
++
++void task_watchdog_feed_task(uint32_t task_id) {
++  __disable_irq();
++
++  s_fed_tasks |= (1 << task_id);
++  prv_task_watchdog_check();
++
++  __enable_irq();
++}
+diff --git a/example/watchdog-example/task_watchdog.h b/example/watchdog-example/task_watchdog.h
+new file mode 100644
+index 0000000..75723cb
+--- /dev/null
++++ b/example/watchdog-example/task_watchdog.h
+@@ -0,0 +1,9 @@
++#pragma once
++
++#include <stdint.h>
++
++#define TASK_WATCHDOG_MAX_ID 31
++
++void task_watchdog_register_task(uint32_t task_id);
++void task_watchdog_unregister_task(uint32_t task_id);
++void task_watchdog_feed_task(uint32_t task_id);
