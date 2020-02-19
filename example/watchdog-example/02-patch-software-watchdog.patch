@@ -1,0 +1,230 @@
+Add a Software Watchdog to the system
+
+From: Chris Coleman <chrisc112358@gmail.com>
+
+
+---
+ Makefile            |    3 +
+ main.c              |    2 +
+ software_watchdog.c |  125 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ software_watchdog.h |    5 ++
+ startup.c           |    2 +
+ task_watchdog.c     |    2 +
+ 6 files changed, 138 insertions(+), 1 deletion(-)
+ create mode 100644 software_watchdog.c
+ create mode 100644 software_watchdog.h
+
+diff --git a/example/watchdog-example/Makefile b/example/watchdog-example/Makefile
+index b0abc6e..61a9700 100644
+--- a/example/watchdog-example/Makefile
++++ b/example/watchdog-example/Makefile
+@@ -29,7 +29,8 @@ SRC_FILES += \
+ 
+ SRC_FILES += \
+   $(PROJECT_SRC_DIR)/hardware_watchdog.c \
+-  $(PROJECT_SRC_DIR)/task_watchdog.c
++  $(PROJECT_SRC_DIR)/task_watchdog.c \
++  $(PROJECT_SRC_DIR)/software_watchdog.c
+ 
+ OBJ_FILES := $(patsubst $(ROOT_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
+ 
+diff --git a/example/watchdog-example/main.c b/example/watchdog-example/main.c
+index 42c8027..5f9c229 100644
+--- a/example/watchdog-example/main.c
++++ b/example/watchdog-example/main.c
+@@ -6,6 +6,7 @@
+ #include "hardware_watchdog.h"
+ #include "queue.h"
+ #include "semphr.h"
++#include "software_watchdog.h"
+ #include "task.h"
+ #include "task_watchdog.h"
+ 
+@@ -160,6 +161,7 @@ int main(void) {
+   prv_check_and_reset_reboot_reason();
+ 
+   hardware_watchdog_enable();
++  software_watchdog_enable();
+ 
+   if (g_watchdog_hang_config == 0) {
+     baremetal_while_loop_no_feed();
+diff --git a/example/watchdog-example/software_watchdog.c b/example/watchdog-example/software_watchdog.c
+new file mode 100644
+index 0000000..ae2e396
+--- /dev/null
++++ b/example/watchdog-example/software_watchdog.c
+@@ -0,0 +1,125 @@
++#include "software_watchdog.h"
++
++#include <stdint.h>
++
++#include "cmsis_shim.h"
++#include "hardware_watchdog.h"
++
++#if HARDWARE_WATCHDOG_TIMEOUT_SECS < 5
++#error "HARDWARE WATCHDOG TIMEOUT TOO SHORT"
++#endif
++
++#define SOFTWARE_WATCHDOG_TIMEOUT_SECS (HARDWARE_WATCHDOG_TIMEOUT_SECS - 3)
++
++// NOTE: For brevity, a hand rolled struct for the NRF52 Timer
++// Peripheral. Typically, this definition would be sourced from
++// the headers provided with the NRF52 SDK.
++typedef struct __attribute__((packed)) Nrf52Timer {
++  __OM uint32_t TASKS_START;
++  __OM uint32_t TASKS_STOP;
++  __OM uint32_t TASKS_COUNT;
++  __OM uint32_t TASKS_CLEAR;
++  __OM uint32_t TASKS_SHUTDOWN;
++  __IM uint32_t RSVD[11];
++  __OM uint32_t TASKS_CAPTURE[6];
++  __IM uint32_t RSVD1[58];
++  __IOM uint32_t EVENTS_COMPARE[6];
++  __IM uint32_t RSVD2[42];
++  __IOM uint32_t SHORTS;
++  __IM uint32_t RSVD3[64];
++  __IOM uint32_t INTENSET;
++  __IOM uint32_t INTENCLR;
++  __IM uint32_t RSVD4[126];
++  __IOM uint32_t MODE;
++  __IOM uint32_t BITMODE;
++  __IM uint32_t RSVD5;
++  __IOM uint32_t PRESCALER;
++  __IM uint32_t RSVD6[11];
++  __IOM uint32_t CC[6];
++} sNrf52Timer;
++
++static sNrf52Timer *const TIMER0 = ((sNrf52Timer *)0x40008000UL);
++
++void software_watchdog_feed(void) {
++  // restart the timer
++  TIMER0->TASKS_CLEAR = 0x1;
++}
++
++typedef struct __attribute__((packed)) ContextStateFrame {
++  uint32_t r0;
++  uint32_t r1;
++  uint32_t r2;
++  uint32_t r3;
++  uint32_t r12;
++  uint32_t lr;
++  uint32_t return_address;
++  uint32_t xpsr;
++} sContextStateFrame;
++
++// NOTE: If you are using CMSIS, the registers can also be
++// accessed through CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk
++#define HALT_IF_DEBUGGING()                              \
++  do {                                                   \
++    if ((*(volatile uint32_t *)0xE000EDF0) & (1 << 0)) { \
++      __asm("bkpt 1");                                   \
++    }                                                    \
++} while (0)
++
++
++void Timer0_Handler(void) {
++  __asm volatile(
++      "tst lr, #4 \n"
++      "ite eq \n"
++      "mrseq r0, msp \n"
++      "mrsne r0, psp \n"
++      "b watchdog_fault_handler_c \n");
++}
++
++// Disable optimizations for this function so "frame" argument
++// does not get optimized away
++__attribute__((optimize("O0")))
++void watchdog_fault_handler_c(sContextStateFrame *frame) {
++  // If and only if a debugger is attached, execute a breakpoint
++  // instruction so we can take a look at what triggered the fault
++  HALT_IF_DEBUGGING();
++
++  // We are about to watchdog so do one last feed
++  // to give us time to cleanup & then explicitly reboot
++  hardware_watchdog_feed();
++
++  // Logic for dealing with the exception. Typically:
++  //  - Save a coredump for postmortem analaysis so you
++  //    can find deadlocks or hung loops
++  //  - perform any shutdown/cleanup needed before reboot
++  //  - reboot the system
++}
++
++void software_watchdog_enable(void) {
++  TIMER0->TASKS_STOP = 0;
++  TIMER0->MODE = 0;
++  TIMER0->PRESCALER = 9; // 16 Mhz / 2^9 = 31250 ticks per second
++
++  TIMER0->CC[0] = 31250 * SOFTWARE_WATCHDOG_TIMEOUT_SECS;
++
++  TIMER0->INTENSET = 0x1 << 16;
++  TIMER0->BITMODE = 3;
++  TIMER0->SHORTS = 1;
++
++  // Clear any pending events and start the timer
++  TIMER0->EVENTS_COMPARE[0] = 0x0;
++  TIMER0->TASKS_START = 1;
++
++  // Clear any pending interrupts
++  volatile uint32_t *nvic_icpr0 = (void *)0xE000E280;
++  *nvic_icpr0 |= ~0;
++
++  // Make sure the ISR runs at the highest possible
++  // configurable priority so we can catch hangs
++  // in other interrupts
++  volatile uint32_t *nvic_ipr = (void *)0xE000E400 + 2*4;
++  *nvic_ipr = 0x00;
++
++  // enable nvic int
++  volatile uint32_t *nvic_iser0 = (void *)0xE000E100;
++  *nvic_iser0 |= 1 << 8;
++}
+diff --git a/example/watchdog-example/software_watchdog.h b/example/watchdog-example/software_watchdog.h
+new file mode 100644
+index 0000000..5637050
+--- /dev/null
++++ b/example/watchdog-example/software_watchdog.h
+@@ -0,0 +1,5 @@
++#pragma once
++
++
++void software_watchdog_enable(void);
++void software_watchdog_feed(void);
+diff --git a/example/watchdog-example/startup.c b/example/watchdog-example/startup.c
+index b14eb18..e924ab0 100644
+--- a/example/watchdog-example/startup.c
++++ b/example/watchdog-example/startup.c
+@@ -57,6 +57,7 @@ static void HardFault_Handler(void) {
+ }
+ 
+ void ExternalInt0_Handler(void);
++void Timer0_Handler(void);
+ void SVC_Handler(void);
+ void PendSV_Handler(void);
+ void SysTick_Handler(void);
+@@ -82,4 +83,5 @@ __attribute__((section(".isr_vector"))) void (*const g_pfnVectors[])(void) = {
+     [15] = SysTick_Handler,
+     // NVIC Interrupts
+     [EXTERNAL_INT_BASE + 0] = ExternalInt0_Handler,
++    [EXTERNAL_INT_BASE + 8] = Timer0_Handler,
+ };
+diff --git a/example/watchdog-example/task_watchdog.c b/example/watchdog-example/task_watchdog.c
+index f3715fe..99ab7dd 100644
+--- a/example/watchdog-example/task_watchdog.c
++++ b/example/watchdog-example/task_watchdog.c
+@@ -4,6 +4,7 @@
+ 
+ #include "cmsis_shim.h"
+ #include "hardware_watchdog.h"
++#include "software_watchdog.h"
+ 
+ static uint32_t s_registered_tasks = 0;
+ static uint32_t s_fed_tasks = 0;
+@@ -12,6 +13,7 @@ static void prv_task_watchdog_check(void) {
+   if ((s_fed_tasks & s_registered_tasks) == s_registered_tasks) {
+     // all the tasks have been fed!
+     hardware_watchdog_feed();
++    software_watchdog_feed();
+     s_fed_tasks = 0;
+   }
+ }
