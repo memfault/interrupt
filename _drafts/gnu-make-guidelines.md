@@ -42,7 +42,7 @@ It enables tracking "prerequisites" and running a hierarchy of commands to
 produce "targets".
 
 The GNU Make manual is very good:
-https://www.gnu.org/software/make/manual/html_node/index.html
+[https://www.gnu.org/software/make/manual/html_node/index.html](https://www.gnu.org/software/make/manual/html_node/index.html)
 
 When searching for help on Make, using `gnu make xxx` as the search terms can be
 helpful.
@@ -266,7 +266,7 @@ the same name). Some common examples:
 
 Full list here:
 
-https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
+[https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html](https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html)
 
 ### Automatic variables
 
@@ -287,7 +287,7 @@ all.zip: foo.txt test.txt
 ```
 
 See more at:
-https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html
+[https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
 
 ## Targets (goals)
 
@@ -336,6 +336,11 @@ If you have multiple phony targets, a good pattern might be to append each to
 `.PHONY` where it's defined:
 
 ```makefile
+# the 'all' rule that builds and tests. note that it's listed first, to make it
+# the default rule
+.PHONY: all
+all: build test
+
 # compile foo.c into a program 'foo'
 foo: foo.c
 	$(CC) foo.c -o foo
@@ -359,14 +364,11 @@ build: foo foo.a
 .PHONY: test
 test: build
 	./run-tests.sh
-
-# the 'all' rule that builds and tests
-.PHONY: all
-all: build
 ```
 
 **_NOTE!!! `.PHONY` targets are ALWAYS considered out-of-date, so Make will
-ALWAYS run the recipe for those targets. Use with caution!!_**
+ALWAYS run the recipe for those targets (and therfore any target that has a
+`.PHONY` prerequisite!). Use with caution!!_**
 
 ### Implicit rules
 
@@ -384,7 +386,7 @@ test: test.o
 
 Full list of implicit rules here:
 
-https://www.gnu.org/software/make/manual/html_node/Catalogue-of-Rules.html
+[https://www.gnu.org/software/make/manual/html_node/Catalogue-of-Rules.html](https://www.gnu.org/software/make/manual/html_node/Catalogue-of-Rules.html)
 
 ### Pattern rules
 
@@ -421,8 +423,8 @@ with the `-M` compiler flag for gcc/clang, which will output a file you will
 then use the Make `include` directive to tell make which C files include which
 header files. See more details here:
 
-https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html
-http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
+[https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html](https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html)
+[http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/](http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/)
 
 The basic form might be:
 
@@ -445,7 +447,7 @@ These prerequisites will only be built if they don't exist; if they are newer
 than the target, they will not trigger a target re-build.
 
 A typical use is to create a directory for output files; emitting files to a
-directory will update it's mtime attribute, but we don't want that to trigger a
+directory will update its mtime attribute, but we don't want that to trigger a
 rebuild.
 
 ```makefile
@@ -469,8 +471,6 @@ should search when looking for prerequisites and targets.
 It can be used to emit object files or other derived files into a `./build`
 directory, instead of cluttering up the `src` directory:
 
-**🚫🚫 TODO TEST THE BELOW!! 🚫🚫**
-
 ```makefile
 # This makefile should be invoked from the temporary build directory, eg:
 # $ mkdir -p build && cd ./build && make -f ../Makefile
@@ -481,10 +481,13 @@ MAKEFILE_DIR = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 # well as the cwd
 VPATH += $(MAKEFILE_DIR)
 
+SRC_FILES = $(wildcard $(MAKEFILE_DIR)/src/*.c)
+
+# Set the obj file paths to be relative to the cwd
+OBJ_FILES = $(subst $(MAKEFILE_DIR)/,,$(SRC_FILES:.c=.o))
+
 # now we can continue as if Make was running from the root directory, and not a
 # subdirectory
-SRC_FILES = $(wildcard src/*.c)
-OBJ_FILES = $(SRC_FILES:.c=.o)
 
 # $(OBJ_FILES) will be built by the pattern rule below
 foo.a: $(OBJ_FILES)
@@ -494,10 +497,15 @@ foo.a: $(OBJ_FILES)
 # like `src/test.c` when running from the build directory!
 %.o: %.c
 	# create the directory tree for the output file 👍
-	mkdir -p $(dirname $@)
+	echo $@
+	mkdir -p $(dir $@)
 	# compile
 	$(CC) -c $^ -o $@
 ```
+
+Use of `VPATH` can be a little confusing, and you can usually achieve the same
+out-of-tree behavior by putting the generated files in a build directory without
+needing `VPATH`.
 
 ## Recipe
 
@@ -537,8 +545,8 @@ $(function-name arguments)
 
 There are several functions provided by Make. I most commonly use those for text
 manipulation:
-https://www.gnu.org/software/make/manual/html_node/Text-Functions.html
-https://www.gnu.org/software/make/manual/html_node/File-Name-Functions.html
+[https://www.gnu.org/software/make/manual/html_node/Text-Functions.html](https://www.gnu.org/software/make/manual/html_node/Text-Functions.html)
+[https://www.gnu.org/software/make/manual/html_node/File-Name-Functions.html](https://www.gnu.org/software/make/manual/html_node/File-Name-Functions.html)
 
 For example:
 
@@ -661,7 +669,7 @@ Note that this approach has some pitfalls:
 
 More details on the disadvantages here:
 
-http://aegis.sourceforge.net/auug97.pdf
+[http://aegis.sourceforge.net/auug97.pdf](http://aegis.sourceforge.net/auug97.pdf)
 
 ## Metaprogramming
 
@@ -715,7 +723,7 @@ endif
 
 For **debugging** why a rule is running when it shouldn't (or vice versa), you can
 use the `--debug` options:
-https://www.gnu.org/software/make/manual/html_node/Options-Summary.html
+[https://www.gnu.org/software/make/manual/html_node/Options-Summary.html](https://www.gnu.org/software/make/manual/html_node/Options-Summary.html)
 
 I recommend redirecting stdout to a file when using this option, it can produce
 a lot of output.
@@ -723,11 +731,11 @@ a lot of output.
 For **profiling** a make invocation (eg for attempting to improve compilation
 times), this tool can be useful:
 
-https://github.com/rocky/remake
+[https://github.com/rocky/remake](https://github.com/rocky/remake)
 
 Check out the tips here for compilation-related performance improvements:
 
-https://interrupt.memfault.com/blog/improving-compilation-times-c-cpp-projects
+[https://interrupt.memfault.com/blog/improving-compilation-times-c-cpp-projects](https://interrupt.memfault.com/blog/improving-compilation-times-c-cpp-projects)
 
 ## Recommendations
 
@@ -769,16 +777,16 @@ look into them. [Bazel](https://bazel.build/) and
 ## References
 
 - Good detailed dive into less common topics (shout out on `remake`):<br/>
-https://blog.jgc.org/2013/02/updated-list-of-my-gnu-make-articles.html
+[https://blog.jgc.org/2013/02/updated-list-of-my-gnu-make-articles.html](https://blog.jgc.org/2013/02/updated-list-of-my-gnu-make-articles.html)
 
 - Mix of very exotic and simpler material:<br/>
-https://tech.davis-hansson.com/p/make/
+[https://tech.davis-hansson.com/p/make/](https://tech.davis-hansson.com/p/make/)
 
 - Useful tutorial:<br/>
-http://maemo.org/maemo_training_material/maemo4.x/html/maemo_Application_Development_Chinook/Chapter_02_GNU_Make_and_makefiles.html
+[http://maemo.org/maemo_training_material/maemo4.x/html/maemo_Application_Development_Chinook/Chapter_02_GNU_Make_and_makefiles.html](http://maemo.org/maemo_training_material/maemo4.x/html/maemo_Application_Development_Chinook/Chapter_02_GNU_Make_and_makefiles.html)
 
 - Nice pictures:<br/>
-https://www.jfranken.de/homepages/johannes/vortraege/make.en.html
+[https://www.jfranken.de/homepages/johannes/vortraege/make.en.html](https://www.jfranken.de/homepages/johannes/vortraege/make.en.html)
 
 - Very nice summary:<br/>
-https://www.alexeyshmalko.com/2014/7-things-you-should-know-about-make/
+[https://www.alexeyshmalko.com/2014/7-things-you-should-know-about-make/](https://www.alexeyshmalko.com/2014/7-things-you-should-know-about-make/)
