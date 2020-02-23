@@ -97,7 +97,6 @@ export CPUCOUNT=(python -c "import psutil; print(int(psutil.cpu_count(logical=Fa
 make -l $CPUCOUNT
 ```
 
-
 ## Anatomy of a Makefile
 
 A Makefile contains **rules** used to produce **targets**.
@@ -121,41 +120,52 @@ test: test.c
 	echo $(FOO)
 
 	# Calling the C compiler using a predefined variable naming the default C
-	# compiler
+	# compiler, '$(CC)'
 	$(CC) test.c -o test
 ```
 
-Let's take a lot at each part of the example above!
+Let's take a look at each part of the example above!
 
 ## Variables
 
 Variables are used with the syntax `$(FOO)`, where `FOO` is the variable name.
+
+Variable contain purely strings, Make language does not have other data types.
+
+Appending to a variable will add a space and the new content:
+
+```makefile
+FOO = one
+FOO += two
+# FOO is now "one two"
+
+FOO = one
+FOO = $(FOO)two
+# FOO is now "onetwo"
+```
 
 ### Variable assignment
 
 In GNU Make syntax, variables are assigned with two "**flavors**":
 
 1. *recursive expansion*: value is set when the variable is consumed
-
- ```makefile
- FOO = 1
- BAR = foo=$(FOO)
- FOO = 2
- $(info BAR=$(BAR))
- # prints BAR=foo=2
- ```
-
+   ```makefile
+   FOO = 1
+   BAR = foo=$(FOO)
+   FOO = 2
+   $(info BAR=$(BAR))
+   # prints BAR=foo=2
+   ```
 2. *simple expansion*: value is set when Make processes the expression
+   ```makefile
+   FOO = 1
+   BAR := foo=$(FOO)
+   FOO = 2
+   $(info BAR=$(BAR))
+   # prints BAR=foo=1
+   ```
 
- ```makefile
- FOO = 1
- BAR := foo=$(FOO)
- FOO = 2
- $(info BAR=$(BAR))
- # prints BAR=foo=1
- ```
-
-*Note: the `$(info)` function is being used below to print stuff out, and can be
+*Note: the `$(info)` function is being used above to print stuff out, and can be
 handy when debugging Makefiles!*
 
 Variables which are not explicitly or implicitly or automatically set will
@@ -431,15 +441,14 @@ The basic form might be:
 
 ```makefile
 # these are the compiler flags for emitting the dependency tracking file. note
-# the usage of the '$*' automatic variable
-DEPFLAGS = -MT $@ -MMD -MP -MF /$<.d
+# the usage of the '$<' automatic variable
+DEPFLAGS = -MT $@ -MMD -MP -MF $<.d
 
 test.o: test.c
 	$(CC) $(DEPFLAGS) $< -c $@
 
 # bring in the prerequisites by including all the .d files
 include $(wildcard *.d)
-
 ```
 
 ## Order-only prerequisites
@@ -476,6 +485,7 @@ directory, instead of cluttering up the `src` directory:
 # This makefile should be invoked from the temporary build directory, eg:
 # $ mkdir -p build && cd ./build && make -f ../Makefile
 
+# Derive the directory containing this Makefile
 MAKEFILE_DIR = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # now inform Make we should look for prerequisites from the root directory as
@@ -530,6 +540,32 @@ prefixing with the `-` character:
 clean:
 	# we don't care if rm fails
 	-rm -f ./build
+```
+
+Prefixing a recipe line with `@` will disable echoing that line before
+executing:
+
+```makefile
+clean:
+	@# this recipe will just print 'About to clean everything!'
+	@# prefixing the shell comment ines '#' here also prevents them from
+	@# appearing during execution
+	@echo About to clean everything!
+```
+
+Make will expand variable/function expressions in the recipe context before
+running them, but otherwise not process it. If you want to access shell
+variables, escape them with `$`:
+
+```makefile
+USER = linus
+
+print-user:
+	# print out the shell variable $USER
+	echo $$USER
+
+	# print out the make variable USER
+	echo $(USER)
 ```
 
 ## Functions
@@ -754,6 +790,7 @@ A list of recommendations for getting the most of Make:
 8. put lots of comments in Makefiles, especially if there is complicated
    behavior or subtle syntax used
 9. use the `-j` or `-l` options to run Make in parallel!
+10. try to avoid using the `touch` command to track rule completion
 
 ## Outro
 
