@@ -7,8 +7,9 @@ image: /img/gnu-make-guidelines/gnu-make-guidelines.img
 ---
 
 GNU Make is a very commonly used program for building C language software. It's
-used for example when building the Linux kernel [CITE CITE], and many commonly
-used GNU/Linux programs and software libraries.
+used for example when [building the Linux
+kernel](https://wiki.archlinux.org/index.php/Kernel/Traditional_compilation#Compilation),
+and many commonly used GNU/Linux programs and software libraries.
 
 Most embedded software developers will probably run across software that uses
 GNU Make. Though there are [many many alternatives](https://en.wikipedia.org/wiki/List_of_build_automation_software), it's still
@@ -592,7 +593,8 @@ TODAYS_DATE=$(shell date --iso-8601)
 
 I'm cautious when using this feature, though; it adds a dependency on whatever
 programs you use, so if you're calling more exotic programs, make sure your
-build environment is controlled (eg in a container or with Conda [CITE CITE]).
+build environment is controlled (eg in a container or with
+[Conda](https://interrupt.memfault.com/blog/conda-developer-environments)).
 
 ## Conditionals
 
