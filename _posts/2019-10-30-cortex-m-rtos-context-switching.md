@@ -216,7 +216,7 @@ pointer which is used can be controlled in two ways:
 ### Context State Stacking
 
 In our
-[guide](https://interrupt.memfault.com/blog/arm-cortex-m-exceptions-and-nvic#exception-entry--exit)
+[guide]({% post_url 2019-09-04-arm-cortex-m-exceptions-and-nvic %}#exception-entry--exit)
 about ARM Cortex-M Exception Handling, we touched upon how the hardware itself implements the AAPCS[^1]
 so that interrupts can be implemented as normal C functions. Here we will expand on what that
 actually means.
@@ -356,7 +356,7 @@ task needs to be preserved in some way. This includes information such as the ex
 (i.e blocked on a mutex, sleeping, etc) and the values of the active hardware registers.
 
 As we alluded to in our
-[ARM Cortex-M Exception](https://interrupt.memfault.com/blog/arm-cortex-m-exceptions-and-nvic#built-in-exceptions)
+[ARM Cortex-M Exception]({% post_url 2019-09-04-arm-cortex-m-exceptions-and-nvic %}#built-in-exceptions)
 article, the `SVCall`, `PendSV`, and `SysTick` interrupts integrated into every Cortex-M device
 were explicitly designed to make task management simple. Consequently, the context switching logic
 winds up looking extremely similar regardless of the RTOS in use. So if you understand how one

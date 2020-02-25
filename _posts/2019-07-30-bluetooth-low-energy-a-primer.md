@@ -222,7 +222,7 @@ Let's go through the different steps for downloading the necessary software pack
 
 For each of these downloads, you can place them anywhere on your machine. I recommend having them all in a single folder, to make it easier to locate later on.
 
-If you've read and followed the steps in our previous post [*Debugging Firmware with GDB*](https://interrupt.memfault.com/blog/gdb-for-firmware-1), you would already have all the necessary software packages installed and set up (and you could safely skip the installation section).
+If you've read and followed the steps in our previous post [*Debugging Firmware with GDB*]({% post_url 2019-05-21-gdb-for-firmware-1 %}), you would already have all the necessary software packages installed and set up (and you could safely skip the installation section).
 
 #### 1. nRF5 SDK
 Installation of the nRF5 SDK is straightforward. All you need to do is download the SDK tarball from Nordic's website and then extract it.

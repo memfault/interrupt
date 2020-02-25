@@ -1,5 +1,5 @@
 ---
-title: "Code Size Optimization: Measure Twice, Cut Once"
+title: "Tools for Firmware Code Size Optimization"
 description: "Overview of useful tools such as GNU size, nm, and puncover to help reduce code size usage of an ARM firmware binary"
 author: francois
 tags: [fw-code-size]
@@ -13,7 +13,8 @@ Whether they are trying to cram in another feature, or to make enough space for
 updates](https://sbabic.github.io/swupdate/overview.html#double-copy-with-fall-back)
 more code space is always better.
 
-In this series of posts, we'll explore ways to save code space and ways not to
+In this [series of posts]({{ '/tag/fw-code-size' | relative_url }}) 
+series of posts, we'll explore ways to save code space and ways not to
 do it. We will cover compiler options, coding style, logging, as well as
 desperate hacks when all you need is another 24 bytes.
 
@@ -21,7 +22,7 @@ But first, let's talk about measuring code size.
 
 <!-- excerpt end -->
 
-### Why measure?
+## Why measure?
 
 Optimization is often counter intuitive. Don't take my word for it: this is one
 of the topics [Microsoft's Raymond
@@ -32,7 +33,7 @@ agree on!
 So before you do anything, measure where your code size is going. You may be
 surprised!
 
-### Measuring overall code size
+## Measuring overall code size
 
 The simplest way to measure code size is to inspect the different sections of
 your elf file. The ARM GCC toolchain comes with a handy utility to do just that:
@@ -157,7 +158,7 @@ This falls into the same pitfall as `size` in that it does not count `data`
 against ROM, and gives us less info since it does not break RAM out into `data`
 and `bss`.
 
-### Digging into functions
+## Digging into functions
 
 The above tells us *how much* code space we are using, but not *why*. To answer
 the latter, we need to go deeper.
@@ -211,7 +212,7 @@ Note: you can also add `-l` to get filename & line # for each symbol.
 Here we see that our largest symbol is `_usart_set_config` which uses 692
 bytes of flash.
 
-### Puncover
+## Puncover
 
 Although you can get quite far with the ARM GNU tools, my favorite tool for code
 size analysis by far is [Puncover](https://github.com/memfault/puncover).
@@ -233,7 +234,7 @@ Truly, it is a firmware analysis swiss army knife!
 Using puncover is relatively straightforward. You'll need to lightly prepare
 your codebase, setup the tool itself, and run it.
 
-### Preparing our codebase
+## Preparing our codebase
 
 In order to for puncover to work, our elf file needs to contain the requisite
 information. As such, you'll need to make sure you've got the following CFLAGS
@@ -248,7 +249,7 @@ Even better would be to use your repository's root (usually found by running
 I typically add those two to my CFLAGS for every project directly in my
 Makefile.
 
-### Setting up puncover
+## Setting up puncover
 
 Puncover is relatively straightforward to setup: you simply need to clone it,
 setup a virtualenv, and install the dependencies.
@@ -282,7 +283,7 @@ mock-1.3.0 nose-1.3.7 nose-cov-1.6 pbr-5.2.0 requests-2.21.0 six-1.12.0
 urllib3-1.24.3
 ```
 
-### Running puncover
+## Running puncover
 
 While you can install puncover as an executable, I typically just run the
 `runner.py` script directly. All it requires is the path to your GNU ARM
@@ -323,7 +324,7 @@ symbols do not come with file information as newlib is not compiled with `-g` in
 most distributions. If you built your own newlib from source, you could fix
 that!
 
-### Epilogue
+## Epilogue
 
 Upon reviewing this blog post, a friend suggested I look at Bloaty by Google.
 You can check it out on [Github](https://github.com/google/bloaty) or just

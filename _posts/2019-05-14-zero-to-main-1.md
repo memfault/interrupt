@@ -22,7 +22,7 @@ and your main function is called. In the process, we'll learn how to bootstrap a
 C environment, implement a bootloader, relocate code, and more!
 <!-- excerpt end -->
 
-### Setting the stage
+## Setting the stage
 
 While most of the concepts and code presented in this series should work for all
 Cortex-M series MCUs, our examples target the SAMD21G18 processor by Atmel. This
@@ -66,7 +66,7 @@ int main() {
 ```
 
 
-### Power on!
+## Power on!
 
 So how did we get to main? All we can tell from observation is that we applied
 power to the board and our code started executing. There must be behavior
@@ -159,7 +159,7 @@ instructions, which is one of the two instruction sets supported by ARM
 processors, so `Reset_Handler` is what we're looking for (for more details check
 out section A4.1.1 in the ARMv6-M manual).
 
-### Writing a Reset_Handler
+## Writing a Reset_Handler
 
 Unfortunately, the Reset_Handler is often an inscrutable mess of Assembly code.
 See the [nRF52 SDK
@@ -312,14 +312,17 @@ You will note that we added two things:
    `Reset_Handler` before `main`. This is the approach [taken by
 Nordic](https://github.com/NordicSemiconductor/nrfx/blob/6f54f689e9555ea18f9aca87caf44a3419e5dd7a/mdk/system_nrf52811.c#L60).
 
+## Closing
+
 All the code used in this blog post is available on 
 [Github](https://github.com/memfault/zero-to-main/tree/master/minimal). See
 anything you'd like to change? Submit a pull request!
 
 More complex programs often require a more complicated `Reset_Handler`. For
 example:
-1. If our program relies on libc, we must initialize it
-2. Relocatable code must be copied over
+1. Relocatable code must be copied over  
+2. If our program relies on libc, we must initialize it  
+  _EDIT: Post written!_ - [From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
 3. More complex memory layouts can add a few copy / zero loops
 
 We'll cover all of them in future posts. But before that, 
@@ -327,3 +330,4 @@ we'll talk about how the magical memory region variables come about,
 how our `Reset_Handler`'s address ends up at `0x00000004`, and how to write a
 linker script in our next post!
 
+_EDIT: Post written!_ - [From Zero to main(): Demystifying Firmware Linker Scripts]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %})

@@ -73,8 +73,8 @@ where,
 - `DIVBYZERO` - Indicates a divide instruction was executed where the denominator was zero. This fault is [configurable](#configurable-usage-faults).
 - `UNALIGNED` - Indicates an unaligned access operation occurred. Unaligned multiple word accesses, such as accessing a `uint64_t` that is not `8-byte` aligned, will _always_ generate this fault. With the exception of Cortex-M0 MCUs, whether or not unaligned accesses below 4 bytes generate a fault is also [configurable](#configurable-usage-faults).
 - `NOCP` - Indicates that a Cortex-M coprocessor instruction was issued but the coprocessor was
-  disabled or not present. One common case where this fault happens is when code is compiled to use the Floating Point extension (`-mfloat-abi=hard` `-mfpu=fpv4-sp-d16`) but the coprocessor was not [enabled](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#fpu-config-options) on boot.
-- `INVPC` - Indicates an integrity check failure on `EXC_RETURN`. We'll explore an example [below](#coprocessor-fault-example). [`EXC_RETURN`](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#exc-return-info) is the value branched to upon return from an exception. If this fault flag is set, it means a reserved `EXC_RETURN` value was used on exception exit.
+  disabled or not present. One common case where this fault happens is when code is compiled to use the Floating Point extension (`-mfloat-abi=hard` `-mfpu=fpv4-sp-d16`) but the coprocessor was not [enabled]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#fpu-config-options) on boot.
+- `INVPC` - Indicates an integrity check failure on `EXC_RETURN`. We'll explore an example [below](#coprocessor-fault-example). [`EXC_RETURN`]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#exc-return-info) is the value branched to upon return from an exception. If this fault flag is set, it means a reserved `EXC_RETURN` value was used on exception exit.
 - `INVSTATE` - Indicates the processor has tried to execute an instruction with an invalid
   _Execution Program Status Register_ (**EPSR**) value. Among other things the ESPR tracks whether or not the processor is in thumb mode state. Instructions which use "interworking addresses"[^1] (`bx` & `blx` or `ldr` & `ldm` when loading a `pc`-relative value) must set `bit[0]` of the instruction to 1 as this is used to update `ESPR.T`. If this rule is violated, a `INVSTATE` exception will be generated. When writing C code, the compiler will take care of this automatically, but this is a common bug which can arise when hand-writing assembly.
 - `UNDEFINSTR` - Indicates an undefined instruction was executed. This can happen on exception exit if the stack got corrupted. A compiler may emit undefined instructions as well for code paths that _should_ be unreachable.
@@ -99,7 +99,7 @@ This register is a 1 byte register which summarizes faults related to instructio
 ![](/img/cortex-m-fault/bfsr.png)
 
 - `BFARVALID` - Indicates that the _Bus Fault Address Register_ (**BFAR**), a 32 bit register located at `0xE000ED38`, holds the address which triggered the fault. We'll walk through an example using this info [below](#bad-address-read-example).
-- `LSPERR` & `STKERR` - Indicates that a fault occurred during lazy state preservation or during exception entry, respectively. Both are situations where the hardware is [automatically saving state on the stack](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#context-state-stacking). One way this error may occur is if the stack in use overflows off the valid RAM address range while trying to service an exception. We'll go over an example [below](#stkerr-example).
+- `LSPERR` & `STKERR` - Indicates that a fault occurred during lazy state preservation or during exception entry, respectively. Both are situations where the hardware is [automatically saving state on the stack]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#context-state-stacking). One way this error may occur is if the stack in use overflows off the valid RAM address range while trying to service an exception. We'll go over an example [below](#stkerr-example).
 - `UNSTKERR` - Indicates that a fault occurred trying to return from an exception. This typically arises if the stack was corrupted while the exception was running or the stack pointer was changed and its contents were not initialized correctly.
 - `IMPRECISERR` - This flag is _very_ important. It tells us whether or not the hardware was able to determine the exact location of the fault. We will explore some debug strategies when this flag is set in the [next section](#imprecise-error-debug) and walk through a code exampe [below](#imprecise-error-code-example).
 - `PRECISERR` - Indicates that the instruction which was executing prior to exception entry triggered the fault.
@@ -137,7 +137,7 @@ A full discussion of memory interfaces is outside the scope of this article but 
 
 This register reports Memory Protection Unit faults.
 
-Typically MPU faults will only trigger if the MPU has been [configured and enabled](https://interrupt.memfault.com/blog/fix-bugs-and-secure-firmware-with-the-mpu) by the firmware. However, there are a few memory access errors that will always result in a MemManage fault -- such as trying to execute code from the system address range (`0xExxx.xxxx`).
+Typically MPU faults will only trigger if the MPU has been [configured and enabled]({% post_url 2019-07-16-fix-bugs-and-secure-firmware-with-the-mpu %}) by the firmware. However, there are a few memory access errors that will always result in a MemManage fault -- such as trying to execute code from the system address range (`0xExxx.xxxx`).
 
 The layout of the register looks like this:
 
@@ -146,7 +146,7 @@ The layout of the register looks like this:
 where,
 
 - `MMARVALID` - Indicates that the _MemManage Fault Address Register_ (**MMFAR**), a 32 bit register located at `0xE000ED34`, holds the address which triggered the MemManage fault.
-- `MLSPERR` & `MSTKERR` - Indicates that a MemManage fault occurred during lazy state preservation or exception entry, respectively. For example, this could happen if an MPU region is being used to detect [stack overflows](https://interrupt.memfault.com/blog/fix-bugs-and-secure-firmware-with-the-mpu#catch-stack-overflows-with-the-mpu).
+- `MLSPERR` & `MSTKERR` - Indicates that a MemManage fault occurred during lazy state preservation or exception entry, respectively. For example, this could happen if an MPU region is being used to detect [stack overflows]({% post_url 2019-07-16-fix-bugs-and-secure-firmware-with-the-mpu %}).
 - `MUNSTKERR` - Indicates that a fault occurred while returning from an exception
 - `DACCVIOL` - Indicates that a data access triggered the MemManage fault.
 - `IACCVIOL` - Indicates that an attempt to execute an instruction triggered an MPU or Execute Never (XN) fault. We'll explore an example [below](#bad-pc-mpu-fault).
@@ -175,10 +175,10 @@ If the fault is readily reproducible and we have a debugger attached to the boar
 (gdb) break HardFault_Handler
 ```
 
-Upon exception entry some registers will always be automatically saved on the stack. Depending on whether or not an FPU is in use, either a [basic](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#basic-context-state-frame) or [extended](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#extended-context-state-frame) stack frame will be pushed by hardware.
+Upon exception entry some registers will always be automatically saved on the stack. Depending on whether or not an FPU is in use, either a [basic]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#basic-context-state-frame) or [extended]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#extended-context-state-frame) stack frame will be pushed by hardware.
 
 {: #determine-pre-exception-sp}
-Regardless, the hardware will _always_ push the same core set of registers to the very top of the stack which was active prior to entering the exception. ARM Cortex-M devices have [two stack pointers](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#stack-pointers-and-usage), `msp` & `psp`. Upon exception entry, the active stack pointer is encoded in bit 2 of the `EXC_RETURN` value pushed to the link register. If the bit is set, the `psp` was active prior to exception entry, else the `msp` was active.
+Regardless, the hardware will _always_ push the same core set of registers to the very top of the stack which was active prior to entering the exception. ARM Cortex-M devices have [two stack pointers]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#stack-pointers-and-usage), `msp` & `psp`. Upon exception entry, the active stack pointer is encoded in bit 2 of the `EXC_RETURN` value pushed to the link register. If the bit is set, the `psp` was active prior to exception entry, else the `msp` was active.
 
 Let's look at the state when we break in `HardFault_Handler` for a pathological example:
 
@@ -358,9 +358,9 @@ This approach has a couple notable limitations:
 Many embedded IDEs expose a system view that can be used to look at registers. The registers will often be decoded into human readable descriptions. These implementations typically leverage the CMSIS _System View Description_ (**SVD**) format[^4], a standardized XML file format for describing the memory mapped registers in an ARM MCU. Most silicon vendors expose this information on their own website, ARM's website[^5], or provide the files upon request.
 
 {: #pycortex-svd-gdb-setup}
-You can even load these files in GDB using PyCortexMDebug[^6], a [GDB python](https://interrupt.memfault.com/blog/automate-debugging-with-gdb-python-api#getting-started-with-gdb-python) script .
+You can even load these files in GDB using PyCortexMDebug[^6], a [GDB python]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}#getting-started-with-gdb-python) script .
 
-To use the utility, all you need to do is update your `.gdbinit` to use PyPi packages from your environment (instructions [here](https://interrupt.memfault.com/blog/using-pypi-packages-with-GDB#3-append-syspath-to-gdbs-python)) and then run:
+To use the utility, all you need to do is update your `.gdbinit` to use PyPi packages from your environment (instructions [here]({% post_url 2019-07-23-using-pypi-packages-with-GDB %}#3-append-syspath-to-gdbs-python)) and then run:
 
 ```shell
 $ git clone git@github.com:bnahill/PyCortexMDebug.git
@@ -432,7 +432,7 @@ Occasionally, you may want to recover the system from a fault without rebooting 
 Let's quickly explore how we could implement a recovery mechanism that puts a RTOS task which experience a UsageFault into an idle loop and reboots the system otherwise.
 
 We will use the
-[Application Interrupt and Reset Control Register](https://interrupt.memfault.com/blog/arm-cortex-m-exceptions-and-nvic#application-interrupt-and-reset-control-register-aircr---0xe000ed0c) to reset the device if the fault is unrecoverable. We can easily extend `my_fault_handler_c` from [above](#my-fault-handler-c):
+[Application Interrupt and Reset Control Register]({% post_url 2019-09-04-arm-cortex-m-exceptions-and-nvic %}#application-interrupt-and-reset-control-register-aircr---0xe000ed0c) to reset the device if the fault is unrecoverable. We can easily extend `my_fault_handler_c` from [above](#my-fault-handler-c):
 
 ```c
 void my_fault_handler_c(sContextStateFrame *frame) {
@@ -481,7 +481,7 @@ This winds up looking like:
 ```
 
 You may recall from the
-[RTOS Context Switching post](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#context-state-stacking)
+[RTOS Context Switching post]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#context-state-stacking)
 that fault handlers can work just like regular C functions so after these changes we will exit from
 `my_fault_handler_c` and start executing whatever is in `recover_from_task_fault` function. We will walk through an example of this [below](#usage-fault-recovery-example).
 
@@ -754,7 +754,7 @@ Dump of assembler code for function access_disabled_coprocessor:
    0x00000118 <+16>:	bx	lr
 ```
 
-`vmov` is a floating point instruction so we now know what coprocessor the NOCP was caused by. The FPU is enabled using bits 20-23 of the [CPACR](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#fpu-config-options) register located at `0xE000ED88`. A value of 0 indicates the extension is disabled. Let's check it:
+`vmov` is a floating point instruction so we now know what coprocessor the NOCP was caused by. The FPU is enabled using bits 20-23 of the [CPACR]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#fpu-config-options) register located at `0xE000ED88`. A value of 0 indicates the extension is disabled. Let's check it:
 
 ```
 (gdb) p/x (*(uint32_t*)0xE000ED88 >> 20) & 0xf
@@ -969,7 +969,7 @@ We can manually walk up the stack to get some clues:
 
 It looks like the RAM has a pattern of sequentially increasing values _and_ that the RAM addresses map to different variables in our code (i.e `pxCurrentTCB`). This suggests we overflowed the stack we were using and started to clobber RAM in the system until we ran off the end of RAM!
 
-> TIP: To catch this type of failure sooner consider using an [MPU Region](https://interrupt.memfault.com/blog/fix-bugs-and-secure-firmware-with-the-mpu#catch-stack-overflows-with-the-mpu)
+> TIP: To catch this type of failure sooner consider using an [MPU Region]({% post_url 2019-07-16-fix-bugs-and-secure-firmware-with-the-mpu %}#catch-stack-overflows-with-the-mpu)
 
 Since the crash is reproducible, let's leverage a watchpoint and see if we can capture the stack corruption in action! Let's add a watchpoint for any access near the bottom of RAM, `0x2000000c`:
 

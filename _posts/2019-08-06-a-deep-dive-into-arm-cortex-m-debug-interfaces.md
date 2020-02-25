@@ -132,7 +132,7 @@ Now that we understand a bit about the software stack in play. Let's trace throu
 
 For this setup we will use:
 
-- A nRF52840-DK running the blinky demo application from our [MPU blog post](https://interrupt.memfault.com/blog/fix-bugs-and-secure-firmware-with-the-mpu#mpu-usage-examples)
+- A nRF52840-DK running the blinky demo application from our [MPU blog post]({% post_url 2019-07-16-fix-bugs-and-secure-firmware-with-the-mpu %}#mpu-usage-examples)
 - A saleae logic analyzer[^18]
 
 ## Debug Path

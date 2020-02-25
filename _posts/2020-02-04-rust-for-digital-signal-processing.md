@@ -8,7 +8,7 @@ image: /img/rust-dsp/rust-dsp-code.png
 
 Like many firmware developers, I've been curious about the potential Rust can
 have in the embedded space. After reading James Munns' [great
-article](https://interrupt.memfault.com/blog/zero-to-main-rust-1), I decided to
+article]({% post_url 2019-12-17-zero-to-main-rust-1 %}), I decided to
 find a project I could use Rust for to learn.
 
 We're still in the early days of Rust on embedded. Given all the chipset SDKs
@@ -504,10 +504,10 @@ straight to your mailbox_
 
 ## References
 
-[^1]: [Rust and the panic behavior](https://interrupt.memfault.com/blog/zero-to-main-rust-1#something-just-for-rust)
+[^1]: [Rust and the panic behavior]({% post_url 2019-12-17-zero-to-main-rust-1 %}#something-just-for-rust)
 [^2]: [A little Rust with your C](https://rust-embedded.github.io/book/interoperability/rust-with-c.html)
 [^3]: [Optimize Rust for speed](https://rust-embedded.github.io/book/unsorted/speed-vs-size.html#optimize-for-speed)
-[^4]: [Code Size Optimization: GCC Compiler Flags](https://interrupt.memfault.com/blog/code-size-optimization-gcc-flags#changing-the-optimization-level)
+[^4]: [Code Size Optimization: GCC Compiler Flags]({% post_url 2019-08-20-code-size-optimization-gcc-flags %}#changing-the-optimization-level)
 [^5]: [Cycle Count register](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0439b/BABJFFGJ.html)
 [^6]: [Issue: Ability to set crate-type depending on target](https://github.com/rust-lang/cargo/issues/4881)
 [^7]: [Command-line apps with Rust](https://www.rust-lang.org/what/cli)

@@ -10,7 +10,7 @@ This is the second post in our [Zero to main() series]({{ '/tag/zero-to-main' |
 relative_url  }}).
 
 <!-- excerpt start -->
-[Last time](https://interrupt.memfault.com/blog/zero-to-main-1), we talked about
+[Last time]({% post_url 2019-05-14-zero-to-main-1 %}), we talked about
 bootstrapping a C environment on an MCU before invoking our `main` function. One
 thing we took for granted was the fact that functions and data end up in the
 right place in our binary. Today, we're going to dig into how that happens by
@@ -38,7 +38,7 @@ Github](https://github.com/memfault/zero-to-main/blob/master/minimal).
 *Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
 posts straight to your mailbox*
 
-### A brief primer on linking
+## Brief Primer on Linking
 
 Linking is the last stage in compiling a program. It takes a number of compiled
 object files and merges them into a single program, filling in addresses so
@@ -96,7 +96,7 @@ this conversation, we will not cover these topics.
 For more information on the linker, there's a great thread on [Stack
 Overflow](https://stackoverflow.com/questions/3322911/what-do-linkers-do).
 
-### Anatomy of a linker script
+## Anatomy of a Linker Script
 
 A linker script contains four things:
 * Memory layout: what memory is available where
@@ -104,7 +104,7 @@ A linker script contains four things:
 * Options: commands to specify architecture, entry point, ...etc. if needed
 * Symbols: variables to inject into the program at link time
 
-### Memory Layout
+## Memory Layout
 
 In order to allocate program space, the linker needs to know how much memory is
 available, and at what addresses that memory exists. This is what the `MEMORY`
@@ -167,7 +167,7 @@ MEMORY
 }
 ```
 
-### Section Definitions
+## Section Definitions
 
 Code and data are bucketed into sections, which are contiguous areas of memory.
 There are no hard rules about how many sections you should have, or what they
@@ -227,7 +227,7 @@ No symbols! While the linker is able to make asumptions that will allow it to
 link in symbols with little information, but it at least needs to know either
 what the entry point should be, or what symbols to put in the text section.
 
-#### .text
+### `.text` Section
 
 Let's start by adding our `.text` section. We want that section in ROM. The
 syntax is simple:
@@ -336,7 +336,7 @@ SYMBOL TABLE:
 ...
 ```
 
-#### .bss
+### `.bss` Section
 
 Now, let's take care of our `.bss`. Remember, this is the section we put
 uninitialized static memory in. `.bss` must be reserved in the memory map, but there
@@ -363,7 +363,7 @@ have the same name.
 We indicate that this section is not loaded with the `NOLOAD` property. This is
 the only section property used in modern linker scripts.
 
-#### .stack
+### `.stack` Section
 
 We do the same thing for our `.stack` memory, since it is in RAM and not loaded.
 As the stack contains no symbols, we must explicitly reserve space for it by
@@ -398,7 +398,7 @@ SECTION {
 
 Only one more section to go!
 
-#### .data
+### `.data` Section
 
 The `.data` section contains static variables which have an
 initial value at boot. You will remember from our previous article that since RAM
@@ -443,7 +443,7 @@ can enter an address in hex as well.
 
 And we're done! Here's our complete linker script with every section:
 
-#### Complete Linker Script
+### Complete Linker Script
 
 ```
 MEMORY
@@ -492,7 +492,7 @@ You can find the full details on linker script sections syntax in the
 [ld
 manual](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/sections.html#OUTPUT-SECTION-DESCRIPTION).
 
-### Variables
+## Variables
 
 In the first post, our `ResetHandler` relied on seemingly magic variables to know
 the address of each of our sections of memory. It turns out, those variable came
@@ -552,3 +552,22 @@ uint8_t *data_byte = &_sdata;
 
 You can read more details about this in the [binutils
 docs](https://sourceware.org/binutils/docs/ld/Source-Code-Reference.html).
+
+
+## Closing
+
+I hope this post gave you confidence in writing your own linker scripts. 
+
+In my next post, we'll talk about writing a bootloader to assist with loading
+and starting your application.
+
+_EDIT: Post written!_ - [Writing a Bootloader from Scratch]({% post_url 2019-08-13-how-to-write-a-bootloader-from-scratch %})
+
+As with previous posts, code examples are available on Github in the [zero to main
+repository](https://github.com/memfault/zero-to-main)
+
+See anything you'd like to change? Submit a pull request or open an issue at
+[Github](https://github.com/memfault/interrupt)
+
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
+straight to your mailbox_

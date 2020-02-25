@@ -21,7 +21,7 @@ As a compiled systems language (based on LLVM), it is also capable of reaching d
 
 This post is meant as a complement to the original [Zero to main()] post on the Interrupt blog, and will elide some of the explanations of hardware level concepts. If you're new to embedded development, or haven't seen that post, go read it now!
 
-[Zero to Main()]: https://interrupt.memfault.com/blog/zero-to-main-1
+[Zero to Main()]: {% post_url 2019-05-14-zero-to-main-1 %}
 
 ## Setting the stage
 

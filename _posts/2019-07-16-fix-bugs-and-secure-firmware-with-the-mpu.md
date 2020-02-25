@@ -43,7 +43,7 @@ The MPU also allows for an _application level programmers’ model_ to be implem
 - disable unprivileged writes
 - make areas read-only for privileged and/or unprivileged code.
 
-Additionally, the MPU let's you configure if a region of memory can be executed from using the _eXecute Never capability_ (`XN`). In a [previous article](https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware#section-definitions), we discussed how different regions of memory will hold code (_text_) and data. Sometimes arbitrary data (like a string from a `printf()` statement) can look like valid ARM instructions. A classic security vulnerability would be to find a way to execute this data as code, escalate privileges and harm the system or steal information. We'll explore this concept in more detail below.
+Additionally, the MPU let's you configure if a region of memory can be executed from using the _eXecute Never capability_ (`XN`). In a [previous article]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %}#section-definitions), we discussed how different regions of memory will hold code (_text_) and data. Sometimes arbitrary data (like a string from a `printf()` statement) can look like valid ARM instructions. A classic security vulnerability would be to find a way to execute this data as code, escalate privileges and harm the system or steal information. We'll explore this concept in more detail below.
 
 ## MPU registers
 
@@ -54,7 +54,7 @@ The MPU is configured using just five registers! A great way to build an underst
 `MPU_TYPE` - Address 0xE000ED90 register bit assignments:
 ![](/img/armv7m_mpu/mpu_type.png)
 
-This register is present regardless of whether or not the MPU was implemented on the _Cortex-M_ device being used. This is pretty nice because it allows us to dynamically determine at runtime or via a [GDB Python script](https://interrupt.memfault.com/blog/automate-debugging-with-gdb-python-api) whether or not an MPU is present and use it. The **only** field of interest here is `DREGION` which reveals the number of MPU regions which were implemented. A value of 0 for `DREGION` indicates the MPU was not implemented.
+This register is present regardless of whether or not the MPU was implemented on the _Cortex-M_ device being used. This is pretty nice because it allows us to dynamically determine at runtime or via a [GDB Python script]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) whether or not an MPU is present and use it. The **only** field of interest here is `DREGION` which reveals the number of MPU regions which were implemented. A value of 0 for `DREGION` indicates the MPU was not implemented.
 
 ### MPU Control Register
 
@@ -208,7 +208,7 @@ int recursive_sum(int n) {
 
 From our `main` loop let's call `recursive_sum(600)`. If you compile and run the application, you should see the LEDs blink in a loop. Things _appear_ to be working. Let's use MPU Region 0 just to be sure we aren't overflowing our stack.
 
-The NRF52 SDK defines a [linker script variable](https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware#variables), `__StackLimit`, which can be used to determine where the end of the stack is. We'll set up a `64 byte` MPU region at the bottom of the stack so we can catch a stack overflow as it is happening. Based on what we learned above, the configuration settings we need to add to our code will look something like:
+The NRF52 SDK defines a [linker script variable]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %}#variables), `__StackLimit`, which can be used to determine where the end of the stack is. We'll set up a `64 byte` MPU region at the bottom of the stack so we can catch a stack overflow as it is happening. Based on what we learned above, the configuration settings we need to add to our code will look something like:
 
 ```c
   volatile uint32_t *mpu_rbar = (void *)0xE000ED9C;

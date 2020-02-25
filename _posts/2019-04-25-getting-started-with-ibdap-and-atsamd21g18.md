@@ -15,7 +15,7 @@ the next poor soul wrestling with these systems.
 Note: I'm a MacOS user, but the procedure below will work fine on Linux /
 Windows with some adjustments.
 
-### Setting up the IBDAP programmer
+## Setting up the IBDAP programmer
 
 I had recently picked up an [IBDAP](https://www.adafruit.com/product/2764)
 programmer from Adafruit. This is a simple CMSIS-DAP device based on the
@@ -51,7 +51,7 @@ within the flash and OSX wants some overhead, erroring out with "not enough spac
 
 You are now the proud owner of a functional IBDAP programmer!
 
-### Installing OpenOCD
+## Installing OpenOCD
 
 Installing OpenOCD with all the right dependencies to do CMSIS-DAP was once
 trickier than it ought to be. Today, the Homebrew formula takes care of it all
@@ -68,7 +68,7 @@ For bug reports, read
 ```
 Huzzah!
 
-### Flashing the atsamd21g18
+## Flashing the atsamd21g18
 
 Both the Arduino M0 pro and the Metro M0 Express boards come with fancy
 bootloaders that let you [update your firmware over

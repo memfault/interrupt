@@ -552,7 +552,7 @@ You can find all the details about optimization flags in the "Optimization Optio
 GNU GCC docs[^5]. `-Os`, optimize for size, is generally the optimization flag you will see used
 for embedded systems. It enables a good balance of flags which optimize for size _as well as
 speed_. Forgetting to flip on this flag can have serious code size impacts. For more details check
-out the [interrupt series](https://interrupt.memfault.com/blog/tag/fw-code-size) of posts about it!
+out the [interrupt series]({{ '/tag/fw-code-size' | relative_url  }}) of posts about it!
 
 ### \-ffunction-sections, \-fdata-sections, & \-\-gc-sections
 
@@ -899,7 +899,7 @@ See anything you'd like to change? Submit a pull request or open an issue at
 [^11]: [-Wformat Option Documentation](https://gcc.gnu.org/onlinedocs/gcc-8.3.0/gcc/Warning-Options.html#index-Wformat)
 [^12]: [See format attribute](https://gcc.gnu.org/onlinedocs/gcc-8.3.0/gcc/Common-Function-Attributes.html#Common-Function-Attributes)
 [^13]: [See "7.1.3 Enumerated Types"](http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf)
-[^14]: [Demystifying Firmware Linker Scripts](https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware)
-[^15]: [Linker Garbage Collection](https://interrupt.memfault.com/blog/code-size-optimization-gcc-flags#linker-garbage-collection)
+[^14]: [Demystifying Firmware Linker Scripts]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %})
+[^15]: [Linker Garbage Collection]({% post_url 2019-08-20-code-size-optimization-gcc-flags %}#linker-garbage-collection)
 [^16]: [-ffast-math documentation](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#index-ffast-math)
 [^17]: [See "6.3 Conversions" for "integer promotion" & "arithmetic conversion" rules](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf)

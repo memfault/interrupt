@@ -624,6 +624,8 @@ or at [interrupt@memfault.com](mailto:interrupt@memfault.com).
 
 Next time in the series, we'll talk about bootstrapping the C library!
 
+_EDIT: Post written!_ - [Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
+
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
 posts straight to your mailbox_
 
