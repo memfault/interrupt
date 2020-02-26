@@ -43,9 +43,8 @@ software dev.
 dimtass - A multi-part series on ways to apply DevOps concepts to embedded
 software development.
 * [Jaywalking around the
-  compiler](https://www.embeddedrelated.com/showarticle/1310.php) by Jason Sachs
-- An exposition of a sublte class of embedded software bugs and their
-  consequences.
+  compiler](https://www.embeddedrelated.com/showarticle/1310.php) by Jason Sachs. 
+  An exposition of a subtle class of embedded software bugs and their consequences.
 
 ## Reference & Learning
 
