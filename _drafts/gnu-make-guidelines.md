@@ -409,6 +409,18 @@ pattern-matching:
 	$(CC) -c $^ -o $@
 ```
 
+The rule will then be used to make any target matching the pattern, which above
+would be any file matching `%.o`, eg `foo.o`, `bar.o`, for example if you use
+those `.o` files to build a program:
+
+```makefile
+OBJ_FILES = foo.o bar.o
+
+# Use CC to link foo.o + bar.o into 'program'
+program: $(OBJ_FILES)
+	$(CC) -o $@ $<
+```
+
 ## Prerequisites
 
 As seen above, these are targets that Make will check when running a rule. They
@@ -548,7 +560,7 @@ executing:
 ```makefile
 clean:
 	@# this recipe will just print 'About to clean everything!'
-	@# prefixing the shell comment ines '#' here also prevents them from
+	@# prefixing the shell comment lines '#' here also prevents them from
 	@# appearing during execution
 	@echo About to clean everything!
 ```
