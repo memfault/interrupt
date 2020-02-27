@@ -12,8 +12,10 @@ kernel](https://wiki.archlinux.org/index.php/Kernel/Traditional_compilation#Comp
 and many commonly used GNU/Linux programs and software libraries.
 
 Most embedded software developers will probably run across software that uses
-GNU Make. Though there are [many many alternatives](https://en.wikipedia.org/wiki/List_of_build_automation_software), it's still
-commonly used in new and existing software, and it's widely supported.
+GNU Make. Though there are [many many
+alternatives](https://en.wikipedia.org/wiki/List_of_build_automation_software),
+it's still commonly used in new and existing software, and it's widely
+supported.
 
 <!-- excerpt start -->
 

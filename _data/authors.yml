@@ -60,3 +60,10 @@ rameen:
     twitter: raryanpur
     linked: https://www.linkedin.com/in/rameenaryanpur/
     blurb: leads the engineering team at Andium. He previously worked as a software engineer in robotics and distributed systems at Boston Engineering, and was co-founder and CTO of a connected device startup.
+noah:
+    name: Noah Pendleton
+    email: noah.pendleton@gmail.com
+    web: https://www.linkedin.com/in/noah-pendleton-71437843/
+    image: /img/author/noah.jpg
+    github: noahp
+    blurb: embedded software engineer at Fitbit
