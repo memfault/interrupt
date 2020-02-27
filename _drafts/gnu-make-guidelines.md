@@ -828,16 +828,16 @@ look into them. [Bazel](https://bazel.build/) and
 ## References
 
 - Good detailed dive into less common topics (shout out on `remake`):<br/>
-[https://blog.jgc.org/2013/02/updated-list-of-my-gnu-make-articles.html](https://blog.jgc.org/2013/02/updated-list-of-my-gnu-make-articles.html)
+  [https://blog.jgc.org/2013/02/updated-list-of-my-gnu-make-articles.html](https://blog.jgc.org/2013/02/updated-list-of-my-gnu-make-articles.html)
 
 - Mix of very exotic and simpler material:<br/>
-[https://tech.davis-hansson.com/p/make/](https://tech.davis-hansson.com/p/make/)
+  [https://tech.davis-hansson.com/p/make/](https://tech.davis-hansson.com/p/make/)
 
 - Useful tutorial:<br/>
-[http://maemo.org/maemo_training_material/maemo4.x/html/maemo_Application_Development_Chinook/Chapter_02_GNU_Make_and_makefiles.html](http://maemo.org/maemo_training_material/maemo4.x/html/maemo_Application_Development_Chinook/Chapter_02_GNU_Make_and_makefiles.html)
+  [http://maemo.org/maemo_training_material/...](http://maemo.org/maemo_training_material/maemo4.x/html/maemo_Application_Development_Chinook/Chapter_02_GNU_Make_and_makefiles.html)
 
 - Nice pictures:<br/>
-[https://www.jfranken.de/homepages/johannes/vortraege/make.en.html](https://www.jfranken.de/homepages/johannes/vortraege/make.en.html)
+  [https://www.jfranken.de/homepages/johannes/vortraege/make.en.html](https://www.jfranken.de/homepages/johannes/vortraege/make.en.html)
 
 - Very nice summary:<br/>
-[https://www.alexeyshmalko.com/2014/7-things-you-should-know-about-make/](https://www.alexeyshmalko.com/2014/7-things-you-should-know-about-make/)
+  [https://www.alexeyshmalko.com/2014/7-things-you-should-know-about-make/](https://www.alexeyshmalko.com/2014/7-things-you-should-know-about-make/)
