@@ -92,11 +92,15 @@ make -j 6
 Anecdotally, I've seen slightly better CPU utilization with the `-l` "load
 limit" option, vs. the `-j` "jobs" option. YMMV though!
 
-Here's a small bash/python snippet to provide this automatically:
+There are a few ways to programmatically find the cpu count for the current
+machine. One easy option is to use the python `multiprocessing.cpu_count()`
+function to get the number of threads supported by the system (note on system
+that have hyperthreading, this will use up a lot of your machine's resources,
+but is probably preferable to letting make spawn an unlimited number of jobs):
 
 ```bash
-export CPUCOUNT=(python -c "import psutil; print(int(psutil.cpu_count(logical=False)*1.5))")
-make -l $CPUCOUNT
+# call the python cpu_count() function in a subshell
+make -l $(python -c "import multiprocessing; print(multiprocessing.cpu_count())")
 ```
 
 ## Anatomy of a Makefile
@@ -150,41 +154,47 @@ FOO = $(FOO)two
 
 In GNU Make syntax, variables are assigned with two "**flavors**":
 
-1. *recursive expansion*: value is set when the variable is consumed
+1. *recursive expansion*: `variable = expression`
+   The expression on the right hand side is assigned verbatim to the variable-
+   this behaves much like a macro in C/C++, where the expression is evaluated
+   when the variable is used:
    ```makefile
    FOO = 1
-   BAR = foo=$(FOO)
+   BAR = $(FOO)
    FOO = 2
+   # prints BAR=2
    $(info BAR=$(BAR))
-   # prints BAR=foo=2
    ```
-2. *simple expansion*: value is set when Make processes the expression
+2. *simple expansion*: `variable := expression`
+   This assigns the *result* of an expression to a variable; the expression is
+   expanded at the time of assignment:
    ```makefile
    FOO = 1
-   BAR := foo=$(FOO)
+   BAR := $(FOO)
    FOO = 2
+   # prints BAR=1
    $(info BAR=$(BAR))
-   # prints BAR=foo=1
    ```
 
-*Note: the `$(info)` function is being used above to print stuff out, and can be
-handy when debugging Makefiles!*
+*Note: the `$(info ...)` function is being used above to print expressions and
+can be handy when debugging Makefiles!*`
 
-Variables which are not explicitly or implicitly or automatically set will
-evaluate to an empty string.
+Variables which are not explicitly,
+[implicitly](https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html),
+nor
+[automatically](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
+set will evaluate to an empty string.
 
 ### Environment variables
 
-Environment variables are carried into the Make execution environment, for
-example:
-
-Makefile contents:
+Environment variables are carried into the Make execution environment, consider
+the following makefile for example:
 
 ```makefile
 $(info YOLO variable = $(YOLO))
 ```
 
-Setting the variable in the shell command when running `make`:
+Then if we set the variable in the shell command when running `make`:
 
 ```bash
 $ YOLO="hello there!" make
@@ -231,7 +241,7 @@ This can be very useful!
 
 A special category of variable usage is called **overriding variables**. Using
 this command-line option will override the value set **ANYWHERE ELSE** in the
-environment or Makfile!
+environment or Makefile!
 
 Makefile:
 
@@ -252,7 +262,7 @@ overridden!!
 make: *** No targets.  Stop.
 ```
 
-Overriding variables can be confusing!
+Overriding variables can be confusing, and should be used with caution!
 
 ### Target-specific variables
 
@@ -273,9 +283,9 @@ prog : prog.o foo.o bar.o
 These are pre-defined by Make (unless overridden with any other variable type of
 the same name). Some common examples:
 
-- $(CC) - the C compiler (`gcc`)
-- $(AR) - archive program (`ar`)
-- $(CFLAGS) - flags for the C compiler
+- `$(CC)` - the C compiler (`gcc`)
+- `$(AR)` - archive program (`ar`)
+- `$(CFLAGS)` - flags for the C compiler
 
 Full list here:
 
@@ -296,6 +306,8 @@ test.txt:
 
 # $^ : name of all the prerequisites
 all.zip: foo.txt test.txt
+	# run the gzip command with all the prerequisites "$^", outputting to the
+	# name of the target, "$@"
 	gzip -c $^ > $@
 ```
 
@@ -315,12 +327,12 @@ Targets almost always name **files**. This is because Make uses last-modified
 time to track if a target is newer or older than its prerequisites, and whether
 it needs to be rebuilt!
 
-When invoking Make, you can specify which target you want to build as the `goal`
-by specifying it as a positional argument:
+When invoking Make, you can specify which target(s) you want to build as the
+`goal`s by specifying it as a positional argument:
 
 ```bash
-# make the 'clean' and 'all' targets
-make clean all
+# make the 'test.txt' and 'all.zip' targets
+make test.txt all.zip
 ```
 
 If you don't specify a goal in the command, Make uses the first target specified
@@ -379,7 +391,7 @@ test: build
 	./run-tests.sh
 ```
 
-**_NOTE!!! `.PHONY` targets are ALWAYS considered out-of-date, so Make will
+> **_NOTE!!! `.PHONY` targets are ALWAYS considered out-of-date, so Make will
 ALWAYS run the recipe for those targets (and therfore any target that has a
 `.PHONY` prerequisite!). Use with caution!!_**
 
@@ -444,9 +456,11 @@ foo.o: foo.c
 
 A very important consideration for C language projects is to trigger
 recompilation if an `#include` header files change for a C file. This is done
-with the `-M` compiler flag for gcc/clang, which will output a file you will
-then use the Make `include` directive to tell make which C files include which
-header files. See more details here:
+with the `-M` compiler flag for gcc/clang, which will output a `.d` file you
+will then import with the Make `include` directive.
+
+The `.d` file will contain the necessary prerequisites for the `.c` file so any
+header change causes a rebuild. See more details here:
 
 [https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html](https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html)
 [http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/](http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/)
@@ -528,9 +542,9 @@ foo.a: $(OBJ_FILES)
 	$(CC) -c $^ -o $@
 ```
 
-Use of `VPATH` can be a little confusing, and you can usually achieve the same
-out-of-tree behavior by putting the generated files in a build directory without
-needing `VPATH`.
+I recommend avoiding use of `VPATH`. It's usually simpler to achieve the same
+out-of-tree behavior by outputting the generated files in a build directory
+without needing `VPATH`.
 
 ## Recipe
 
