@@ -132,7 +132,7 @@ Let's take a look at each part of the example above!
 
 Variables are used with the syntax `$(FOO)`, where `FOO` is the variable name.
 
-Variable contain purely strings, Make language does not have other data types.
+Variables contain purely strings, Make does not have other data types.
 
 Appending to a variable will add a space and the new content:
 
