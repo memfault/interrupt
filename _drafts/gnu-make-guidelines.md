@@ -103,6 +103,21 @@ but is probably preferable to letting make spawn an unlimited number of jobs):
 make -l $(python -c "import multiprocessing; print(multiprocessing.cpu_count())")
 ```
 
+#### Output during parallel invocation
+
+If you have a lot of output from the commands Make is executing in parallel, you
+might see output interleaved on stdout. Make has the `--ouput-sync` option to
+handle this:
+
+https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html
+
+I recommend using **`--output-sync=recurse`**, which will print the entire
+output of each target's recipe when it completes, without interspersing other
+recipe output.
+
+It also will output an entire recursive Make's output together, if your recipe
+is using recursive make.
+
 ## Anatomy of a Makefile
 
 A Makefile contains **rules** used to produce **targets**.
@@ -470,13 +485,14 @@ The basic form might be:
 ```makefile
 # these are the compiler flags for emitting the dependency tracking file. note
 # the usage of the '$<' automatic variable
-DEPFLAGS = -MT $@ -MMD -MP -MF $<.d
+DEPFLAGS = -MMD -MP -MF $<.d
 
 test.o: test.c
-	$(CC) $(DEPFLAGS) $< -c $@
+    $(CC) $(DEPFLAGS) $< -c $@
 
-# bring in the prerequisites by including all the .d files
-include $(wildcard *.d)
+# bring in the prerequisites by including all the .d files. prefix the line with
+# '-' to prevent an error if any of the files do not exist
+-include $(wildcard *.d)
 ```
 
 ## Order-only prerequisites
@@ -803,6 +819,159 @@ Check out the tips here for compilation-related performance improvements:
 
 [https://interrupt.memfault.com/blog/improving-compilation-times-c-cpp-projects](https://interrupt.memfault.com/blog/improving-compilation-times-c-cpp-projects)
 
+## Using a verbose flag
+
+If your project includes a lot of compiler flags (search paths, lots of warning
+flags, etc.), you may want to simplify the output of Make rules. It can be
+useful to have a toggle to easily see the full output, for example:
+
+```makefile
+ifeq ($(V),1)
+Q :=
+else
+Q := @
+endif
+
+%.o: %.c
+	# prefix the compilation command with the $(Q) variable
+	# use echo to print a simple "Compiling x.c" to show progress
+	@echo Compiling $(notdir @^)
+	$(Q) $(CC) -c $^ -o $@
+```
+
+To enable printing out the full compilation commands, set the `V` environment
+variable like so:
+
+```bash
+V=1 make
+```
+
+## `touch`
+
+You may see the `touch` command used to track rules that seem difficult to
+otherwise track; for example, when unpacking a toolchain:
+
+```makefile
+# our tools are stored in tools.tar.gz, and downloaded from a server
+TOOLS_ARCHIVE = tools.tar.gz
+TOOLS_URL = https://httpbin.org/get
+
+# the rule to download the tools using wget
+$(TOOLS_ARCHIVE):
+	wget $(TOOLS_URL) -O $(TOOLS_ARCHIVE)
+
+# rule to unpack them
+tools-unpacked.dummy: $(TOOLS_ARCHIVE)
+	# running this command results in a directory.. but how do we know it
+	# completed, without a file to track?
+	tar xzvf $^
+	# use the touch command to record completion in a dummy file
+	touch $@
+```
+I recommend avoiding the use of `touch`. However there are some cases where it
+might be unavoidable.
+
+## Full example
+
+Here's an annotated example of a complete build process for an example C
+project. You can see this example and the source tree
+[here](https://github.com/memfault/interrupt/tree/master/example/gnu-make-guidelines).
+
+```makefile
+# Makefile for building the 'example' binary from C sources
+
+# Verbose flag
+ifeq ($(V),1)
+Q :=
+else
+Q := @
+endif
+
+# The build folder, for all generated output. This should normally be included
+# in a .gitignore rule
+BUILD_FOLDER := build
+
+# Default all rule will build the 'example' target, which here is an executable
+.PHONY:
+all: $(BUILD_FOLDER)/example
+
+# List of C source files. Putting this in a separate variable, with a file on
+# each line, makes it easy to add files later (and makes it easier to see
+# additions in pull requests). Larger projects might use a wildcard to locate
+# source files automatically.
+SRC_FILES = \
+    src/example.c \
+    src/main.c
+
+# Generate a list of .o files from the .c files. Prefix them with the build
+# folder to output the files there
+OBJ_FILES = $(addprefix $(BUILD_FOLDER)/,$(SRC_FILES:.c=.o))
+
+# Generate a list of depfiles, used to track includes. The file name is the same
+# as the object files with the .d extension added
+DEP_FILES = $(addsuffix .d,$(OBJ_FILES))
+
+# Flags to generate the .d dependency-tracking files when we compile.  It's
+# named the same as the target file with the .d extension
+DEPFLAGS = -MMD -MP -MF $@.d
+
+# Include the dependency tracking files
+-include $(DEP_FILES)
+
+# List of include dirs. These are put into CFLAGS.
+INCLUDE_DIRS = \
+    src/
+
+# Set some compiler flags we need. Note that we're appending to the CFLAGS
+# variable
+CFLAGS += \
+    -std=c11 \
+    -Wall \
+    -Werror \
+    -ffunction-sections -fdata-sections \
+    -Og \
+    -g3
+
+# Our project requires some linker flags: garbage collect sections, output a
+# .map file
+LDFLAGS += \
+    -Wl,--gc-sections,-Map,$@.map
+
+# Set LDLIBS to specify linking with libm, the math library
+LDLIBS += \
+    -lm
+
+# The rule for compiling the SRC_FILES into OBJ_FILES
+$(BUILD_FOLDER)/%.o: %.c
+	@echo Compiling $(notdir $<)
+	@# Create the folder structure for the output file
+	@mkdir -p $(dir $@)
+	$(Q) $(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
+
+# The rule for building the executable "example", using OBJ_FILES as
+# prerequisites. Since we're not relying on an implicit rule, we need to
+# explicity list CFLAGS, LDFLAGS, LDLIBS
+$(BUILD_FOLDER)/example: $(OBJ_FILES)
+	@echo Linking $(notdir $@)
+	$(Q) $(CC) $(CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+# Remove debug information for a smaller executable. An embedded project might
+# instead using [arm-none-eabi-]objcopy to convert the ELF file to a raw binary
+# suitable to be written to an embedded device
+STRIPPED_OUTPUT = $(BUILD_FOLDER)/example-stripped
+
+$(STRIPPED_OUTPUT): $(BUILD_FOLDER)/example
+	@echo Stripping $(notdir $@)
+	$(Q)objcopy --strip-debug $^ $@
+
+# Since all our generated output is placed into the build folder, our clean rule
+# is simple. Prefix the recipe line with '-' to not error if the build folder
+# doesn't exist (the -f flag for rm also has this effect)
+.PHONY: clean
+clean:
+	- rm -rf $(BUILD_FOLDER)
+```
+
 ## Recommendations
 
 A list of recommendations for getting the most of Make:
@@ -814,7 +983,8 @@ A list of recommendations for getting the most of Make:
 4. generally avoid using implicit rules
 5. for C files, make sure to use `.d` automatic include tracking!
 6. use metaprogramming with caution
-7. use automatic variables in rules
+7. use automatic variables in rules- _always_ try to use `$@` for a recipe
+   output path, so your rule and Make have the exact same path
 8. put lots of comments in Makefiles, especially if there is complicated
    behavior or subtle syntax used
 9. use the `-j` or `-l` options to run Make in parallel!
