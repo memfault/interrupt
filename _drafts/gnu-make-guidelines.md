@@ -45,6 +45,18 @@ Although the GNU Make manual is lengthy, I suggest giving it a read as it is the
 
 Let's dive in!
 
+## When to choose Make
+
+Make is suitable for building small C/C++ projects, or if you're building a
+small library that would normally be included in another project's build system-
+most build systems will have some way to integrate Make-based subprojects.
+
+For larger projects, or if you need dependency tracking or other more
+sophisticated features in your build system, you might find
+[cmake](https://cmake.org/), [bazel](https://bazel.build/),
+[meson](https://mesonbuild.com/), or another build system that provides more
+functionality out of the box than Make.
+
 ## Invoking Make
 
 Running `make`  will load a file named `Makefile` from the current directory
@@ -296,7 +308,8 @@ Full list here:
 
 #### Automatic Variables
 
-These are special variables always set by Make and available in recipe context. They can be useful to prevent duplicated names (Don't Repeat Yourself).
+These are special variables always set by Make and available in recipe context.
+They can be useful to prevent duplicated names (Don't Repeat Yourself).
 
 A few common automatic variables:
 
@@ -502,10 +515,6 @@ $(OUTPUT_DIR):
 	mkdir -p $@
 ```
 
-I recommend avoiding use of `VPATH`. It's usually simpler to achieve the same
-out-of-tree behavior by outputting the generated files in a build directory
-without needing `VPATH`.
-
 ### Recipe
 
 The "recipe" is the list of shell commands to be executed to create the target. They are
@@ -558,46 +567,8 @@ print-user:
 
 ## Advanced Topics
 
-### VPATH
-
-`VPATH` is a special Make variable that contains a list of directories Make
-should search when looking for prerequisites and targets.
-
-It can be used to emit object files or other derived files into a `./build`
-directory, instead of cluttering up the `src` directory:
-
-```makefile
-# This makefile should be invoked from the temporary build directory, eg:
-# $ mkdir -p build && cd ./build && make -f ../Makefile
-
-# Derive the directory containing this Makefile
-MAKEFILE_DIR = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-
-# now inform Make we should look for prerequisites from the root directory as
-# well as the cwd
-VPATH += $(MAKEFILE_DIR)
-
-SRC_FILES = $(wildcard $(MAKEFILE_DIR)/src/*.c)
-
-# Set the obj file paths to be relative to the cwd
-OBJ_FILES = $(subst $(MAKEFILE_DIR)/,,$(SRC_FILES:.c=.o))
-
-# now we can continue as if Make was running from the root directory, and not a
-# subdirectory
-
-# $(OBJ_FILES) will be built by the pattern rule below
-foo.a: $(OBJ_FILES)
-	$(AR) rcs $@ $(OBJ_FILES)
-
-# pattern rule; since we added ROOT_DIR to VPATH, Make can find prerequisites
-# like `src/test.c` when running from the build directory!
-%.o: %.c
-	# create the directory tree for the output file 👍
-	echo $@
-	mkdir -p $(dir $@)
-	# compile
-	$(CC) -c $^ -o $@
-```
+These features are less frequently encountered, but provide some powerful
+functionality that can enable sophisticated behavior in your build.
 
 ### Functions
 
@@ -738,7 +709,7 @@ More details on the disadvantages here:
 
 [http://aegis.sourceforge.net/auug97.pdf](http://aegis.sourceforge.net/auug97.pdf)
 
-### Metaprogramming
+### Metaprogramming with `eval`
 
 `Make`'s `eval` directive allows us to generate Make syntax at runtime:
 
@@ -775,6 +746,51 @@ $(foreach file,$(FILES),$(call GENERATE_RULE,$(file)))
 Note that approaches using this feature of Make can be quite confusing, adding
 helpful comments explaining what the intent is can be useful for your future
 self!
+
+### VPATH
+
+`VPATH` is a special Make variable that contains a list of directories Make
+should search when looking for prerequisites and targets.
+
+It can be used to emit object files or other derived files into a `./build`
+directory, instead of cluttering up the `src` directory:
+
+```makefile
+# This makefile should be invoked from the temporary build directory, eg:
+# $ mkdir -p build && cd ./build && make -f ../Makefile
+
+# Derive the directory containing this Makefile
+MAKEFILE_DIR = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+# now inform Make we should look for prerequisites from the root directory as
+# well as the cwd
+VPATH += $(MAKEFILE_DIR)
+
+SRC_FILES = $(wildcard $(MAKEFILE_DIR)/src/*.c)
+
+# Set the obj file paths to be relative to the cwd
+OBJ_FILES = $(subst $(MAKEFILE_DIR)/,,$(SRC_FILES:.c=.o))
+
+# now we can continue as if Make was running from the root directory, and not a
+# subdirectory
+
+# $(OBJ_FILES) will be built by the pattern rule below
+foo.a: $(OBJ_FILES)
+	$(AR) rcs $@ $(OBJ_FILES)
+
+# pattern rule; since we added ROOT_DIR to VPATH, Make can find prerequisites
+# like `src/test.c` when running from the build directory!
+%.o: %.c
+	# create the directory tree for the output file 👍
+	echo $@
+	mkdir -p $(dir $@)
+	# compile
+	$(CC) -c $^ -o $@
+```
+
+I recommend avoiding use of `VPATH`. It's usually simpler to achieve the same
+out-of-tree behavior by outputting the generated files in a build directory
+without needing `VPATH`.
 
 ### `touch`
 
@@ -819,6 +835,9 @@ use the `--debug` options:
 
 I recommend redirecting stdout to a file when using this option, it can produce
 a lot of output.
+
+For **profiling** a make invocation (e.g. for attempting to improve compilation
+### Profiling
 
 For **profiling** a make invocation (e.g. for attempting to improve compilation
 times), this tool can be useful:
@@ -992,9 +1011,14 @@ that generates Makefiles, and is worth a look (especially if you are writing
 C software that needs to be very widely portable).
 
 There are many competitors to GNU Make available today, I encourage everyone to
-look into them. [Bazel](https://bazel.build/) and
-[Meson](https://mesonbuild.com/) are some interesting options.
-[CMake](https://cmake.org/) is also pretty popular and worth a look!
+look into them. Some examples:
+
+- [CMake](https://cmake.org/) is pretty popular (the Zephyr project uses this)
+  and worth a look. It makes out-of-tree builds pretty easy
+- [Bazel](https://docs.bazel.build/versions/master/tutorial/cpp.html) uses a
+  declarative syntax (vs. Make's imperative approach)
+- [Meson](https://mesonbuild.com/) is a meta-builder like `cmake`, but by
+  default uses Ninja as the backend, and can be very fast
 
 ## References
 
