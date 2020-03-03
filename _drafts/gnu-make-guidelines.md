@@ -47,15 +47,23 @@ Let's dive in!
 
 ## When to choose Make
 
-Make is suitable for building small C/C++ projects, or if you're building a
-small library that would normally be included in another project's build system-
-most build systems will have some way to integrate Make-based subprojects.
+Make is suitable for building small C/C++ projects or libraries that would 
+be included in another project's build system. Most build systems will have a
+way to integrate Make-based sub-projects.
 
-For larger projects, or if you need dependency tracking or other more
-sophisticated features in your build system, you might find
-[cmake](https://cmake.org/), [bazel](https://bazel.build/),
-[meson](https://mesonbuild.com/), or another build system that provides more
-functionality out of the box than Make.
+For larger projects, you will find a more modern build system easier to work with.
+
+I would suggest a build system other than Make in the following situations:
+
+- When the number of targets (or files) being built is (or will eventually be) in the hundreds.
+- A "configure" step is desired, which sets up and persists variables, target definitions, and environment configurations.
+- The project is going to remain internal or private and will not need to be built by end users.
+- You find debugging a frustrating exercise.
+- You need the build to be cross platform that can build on macOS, Linux, and Windows.
+
+In these situations, you might find using
+[CMake](https://cmake.org/), [Bazel](https://bazel.build/),
+[Meson](https://mesonbuild.com/), or another modern build system a more pleasurable experience.
 
 ## Invoking Make
 
@@ -836,7 +844,6 @@ use the `--debug` options:
 I recommend redirecting stdout to a file when using this option, it can produce
 a lot of output.
 
-For **profiling** a make invocation (e.g. for attempting to improve compilation
 ### Profiling
 
 For **profiling** a make invocation (e.g. for attempting to improve compilation
