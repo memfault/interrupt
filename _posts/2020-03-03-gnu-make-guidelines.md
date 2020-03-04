@@ -11,7 +11,7 @@ and other frequently used GNU/Linux programs and software libraries.
 
 Most embedded software developers will work with GNU Make at some point in their career, either using it to compile small libraries or building an entire project. Though there are [many, many
 alternatives to Make](https://en.wikipedia.org/wiki/List_of_build_automation_software),
-it's still commonly chosen as the build system for existing new software given its feature set and wide support.
+it's still commonly chosen as the build system for new software given its feature set and wide support.
 
 <!-- excerpt start -->
 
@@ -47,7 +47,7 @@ Let's dive in!
 
 ## When to choose Make
 
-Make is suitable for building small C/C++ projects or libraries that would 
+Make is suitable for building small C/C++ projects or libraries that would
 be included in another project's build system. Most build systems will have a
 way to integrate Make-based sub-projects.
 
@@ -933,6 +933,9 @@ DEPFLAGS = -MMD -MP -MF $@.d
 INCLUDE_DIRS = \
     src/
 
+# Prefix the include dirs with '-I' when passing them to the compiler
+CFLAGS += $(addprefix -I,$(INCLUDE_DIRS))
+
 # Set some compiler flags we need. Note that we're appending to the CFLAGS
 # variable
 CFLAGS += \
@@ -997,7 +1000,8 @@ A list of recommendations for getting the most of Make:
 7. Use automatic variables in rules. _Always_ try to use `$@` for a recipe
    output path, so your rule and Make have the exact same path.
 8. Use comments liberally in Makefiles, especially if there is complicated
-   behavior or subtle syntax used. Your past and future co-workers will thank you.
+   behavior or subtle syntax used. Your co-workers (and future self) will thank
+   you.
 9. Use the `-j` or `-l` options to run Make in parallel!
 10. Try to avoid using the `touch` command to track rule completion
 

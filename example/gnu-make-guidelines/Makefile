@@ -42,6 +42,9 @@ DEPFLAGS = -MMD -MP -MF $@.d
 INCLUDE_DIRS = \
     src/
 
+# Prefix the include dirs with '-I' when passing them to the compiler
+CFLAGS += $(addprefix -I,$(INCLUDE_DIRS))
+
 # Set some compiler flags we need. Note that we're appending to the CFLAGS
 # variable
 CFLAGS += \
