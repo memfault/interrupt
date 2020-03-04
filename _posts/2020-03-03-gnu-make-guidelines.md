@@ -1,5 +1,5 @@
 ---
-title: "GNU Make Overview and Guidelines"
+title: "A Shallow Dive into GNU Make"
 description: "A brief overview of GNU Make and its features, Makefile syntax, and how to use Make to build C/C++ software and firmware"
 author: noah
 image: /img/gnu-make-guidelines/gnu-make.png
