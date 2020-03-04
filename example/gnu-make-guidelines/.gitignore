@@ -1,0 +1,3 @@
+# ignore the build output directory. note the leading slash, making the pattern
+# relative to this directory level only.
+/build/
