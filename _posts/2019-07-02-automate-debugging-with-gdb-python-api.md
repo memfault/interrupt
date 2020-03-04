@@ -7,7 +7,7 @@ tags: [python, gdb]
 
 <!-- excerpt start -->
 
-[Previously](https://interrupt.memfault.com/blog/gdb-for-firmware-1#debugging-firmware-with-gdb) we discussed how a significant portion of developer time is spent _debugging_ firmware and how GDB can be a powerful utility for this. In this article we will discuss how to become more efficient at debugging by leveraging GDB's [Python API](https://sourceware.org/gdb/onlinedocs/gdb/Python.html#Python).
+[Previously]({% post_url 2019-05-21-gdb-for-firmware-1 %}) we discussed how a significant portion of developer time is spent _debugging_ firmware and how GDB can be a powerful utility for this. In this article we will discuss how to become more efficient at debugging by leveraging GDB's [Python API](https://sourceware.org/gdb/onlinedocs/gdb/Python.html#Python).
 
 <!-- excerpt end -->
 
@@ -384,8 +384,12 @@ Alternatively, you could also get this to run automatically when gdb is started 
 
 ## Closing
 
-We hope this post gave you a useful overview of how to add custom GDB commands and pretty printers using the Python API. Sometimes adding GDB commands like these can even be used to reduce [code size](https://interrupt.memfault.com/blog/best-firmware-size-tools) by replacing a on-device CLI command that would display the same information!
+We hope this post gave you a useful overview of how to add custom GDB commands and pretty printers using the Python API. Sometimes adding GDB commands like these can even be used to reduce [code size]({% post_url 2019-06-06-best-firmware-size-tools %}) by replacing a on-device CLI command that would display the same information!
 
 Do you already have some ideas about how the Python API could be applied to automate parts of your debugging flow ... perhaps a command to walk custom heaps or display the contents in a memory-mapped filesystem? Or maybe you are already have some great examples of how you have used GDB Python? Either way, let us know in the discussion area below!
+
+Next time, we'll talk about how to use third-party Python packages within GDB using virtual environments. 
+
+_EDIT: Post written!_ - [Using Python PyPi Packages with GDB]({% post_url 2019-07-23-using-pypi-packages-with-GDB %}) 
 
 _All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-post/). See anything you'd like to change? Submit a pull request!_

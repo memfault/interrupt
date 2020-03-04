@@ -88,7 +88,7 @@ reserve **Exception Numbers** **1**-**15**, inclusive, for these.
 Six exceptions are always supported and depending on the Cortex-M variant, additional
 handlers will be implemented as well. The minimum set is:
 
-- **Reset** - This is the routine executed when a chip comes out of reset. More details can be found within the zero-to-main bootloader series of [posts](https://interrupt.memfault.com/blog/tag/zero-to-main).
+- **Reset** - This is the routine executed when a chip comes out of reset. More details can be found within the [Zero to main() series of posts]({{ '/tag/zero-to-main' | relative_url  }}).
 - **Non Maskable Interrupt** (`NMI`) - As the name implies, this interrupt cannot be disabled. If
   errors happen in other exception handlers, a NMI will be triggered. Aside from the `Reset`
   exception, it has the highest priority of all exceptions.
@@ -756,7 +756,7 @@ that I've found to be interesting:
 
 ## Reference Links
 
-[^1]: [MPU overview](https://interrupt.memfault.com/blog/fix-bugs-and-secure-firmware-with-the-mpu)
+[^1]: [MPU overview]({% post_url 2019-07-16-fix-bugs-and-secure-firmware-with-the-mpu %})
 [^3]: [See "Overview of the exceptions supported" section](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf)
 [^4]: [ARMv7-M Specification](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf)
 [^5]: [ARM Architecture Procedure Calling Standard (AAPCS)](http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf)

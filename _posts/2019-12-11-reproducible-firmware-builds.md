@@ -139,7 +139,7 @@ Now when we start the application, we crash on boot. How strange!
 
 ### Why does only one of the builds crash?!
 
-A full discussion of how to debug the crash is outside the scope of this article but can be found in [this post](https://interrupt.memfault.com/blog/cortex-m-fault-debug#debugger-plugins).
+A full discussion of how to debug the crash is outside the scope of this article but can be found in [this post]({% post_url 2019-11-20-cortex-m-fault-debug %}#debugger-plugins).
 
 We examine the Configurable Fault Status Register (CFSR) and can see that a UsageFault has taken place:
 
@@ -352,7 +352,7 @@ $ sdiff -s <(xxd repos/interrupt/example/reproducible-build/build/nrf52.bin) <(x
 00000060: 63e7 2d9c a9c9 0aa4 38f4 9b54 0000 0000  c.-.....8. |	00000060: 5deb df50 e138 ff64 174c 6e12 0000 0000  ]..P.8.d.L
 ```
 
-The "GNU" in the string in this case stands out. That's likely from the [GNU Build ID](https://interrupt.memfault.com/blog/gnu-build-id-for-firmware) we are using in the firmware to _uniquely_ identify the compilation.
+The "GNU" in the string in this case stands out. That's likely from the [GNU Build ID]({% post_url 2019-05-29-gnu-build-id-for-firmware %}) we are using in the firmware to _uniquely_ identify the compilation.
 
 The GNU Build ID is a SHA computed over the binary sections _as well as_ the debug sections in an ELF.
 
@@ -450,7 +450,7 @@ In summary, here are the steps to take in order to make a build reproducible:
 
 First, compile your binary in two directories. If the binaries match, you are probably good! Otherwise, follow these strategies:
 
-1. Include a [GNU Build ID](https://interrupt.memfault.com/blog/gnu-build-id-for-firmware) in your binary so it's always easy to identify the build in use.
+1. Include a [GNU Build ID]({% post_url 2019-05-29-gnu-build-id-for-firmware %}) in your binary so it's always easy to identify the build in use.
 2. [Enforce that all builds use one version of a compiler](#enforce-compiler-for-build).
 3. Compare ELFs and BINs for differences using the tips discussed in this article. Typical differences arise from including absolute paths, timestamps, or shell information in the final binary.
 4. Utilize [`-fdebug-prefix-map=old=new`](#fdebug-prefix-map) to make sure any debug information emitted does not rely on absolute paths.
@@ -465,7 +465,7 @@ Over a projects lifetime, you will likely wind up making changes to the product 
 1. Migrating to a new build system (i.e Make to CMake)
 2. Refactoring a Makefile to be more readable
 3. Sorting headers in a C file to follow a coding convention
-4. Fixing a new [compiler warning](https://interrupt.memfault.com/blog/best-and-worst-gcc-clang-compiler-flags#the-best-one-off-warning-options-options-not-covered-by--wall-or--wextra) that shouldn't impact the binary produced.
+4. Fixing a new [compiler warning]({% post_url 2019-10-22-best-and-worst-gcc-clang-compiler-flags %}#the-best-one-off-warning-options-options-not-covered-by--wall-or--wextra) that shouldn't impact the binary produced.
 5. Refactoring a linker script so it's easier to extend
 
 Some of these parts of a codebase can be "scary" ones to touch. By applying what we have learned above to debug how binaries differ, we can make these types of changes with confidence ... if we update a Makefile and don't expect a change in the binary but something _has_ changed, it likely means we have messed up! Let's walk through a quick example.
@@ -574,7 +574,7 @@ or by dumping it in GDB:
 65                "Ping", configMINIMAL_STACK_SIZE,
 ```
 
-Per the [ARM procedure call standard](https://interrupt.memfault.com/blog/cortex-m-rtos-context-switching#core-registers), `$r0` is used to hold the first argument for a function call. This means that the `$r0` operation we see above maps to `MAIN_QUEUE_LENGTH`. But how did that change between builds? Let's grep[^6] through the codebase to see where it is defined.
+Per the [ARM procedure call standard]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}#core-registers), `$r0` is used to hold the first argument for a function call. This means that the `$r0` operation we see above maps to `MAIN_QUEUE_LENGTH`. But how did that change between builds? Let's grep[^6] through the codebase to see where it is defined.
 
 ```bash
 $rg "define.*MAIN_QUEUE_LENGTH"
@@ -593,7 +593,7 @@ Oh interesting, the define is provided in two headers. In `main.c` we just inclu
 
 ## Closing
 
-I hope this post gave you a useful overview of the benefits of reproducible builds and how you might update your project to achieve this behavior
+I hope this post gave you a useful overview of the benefits of reproducible builds and how you might update your project to achieve this behavior.
 
 Are the builds for your project reproducible today? Are there other matters on the topic that you would have liked to see us cover? Let us know in the discussion area below!
 

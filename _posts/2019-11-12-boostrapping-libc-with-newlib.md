@@ -26,7 +26,7 @@ int main() {
   while (1) {}
 }
 ```
-Compiling this using our makefile and linker script from [previous]({% post_url
+Compiling this using our Makefile and linker script from [previous]({% post_url
 2019-05-14-zero-to-main-1 %}) [posts]({% post_url
 2019-06-25-how-to-write-linker-scripts-for-firmware %}), we hit
 the following error:
@@ -73,7 +73,7 @@ board to run our examples. We use a cheap CMSIS-DAP adapter and openOCD to
 program it.
 
 You can find a step by step guide [in our previous
-post](https://interrupt.memfault.com/blog/getting-started-with-ibdap-and-atsamd21g18).
+post]({% post_url 2019-04-25-getting-started-with-ibdap-and-atsamd21g18 %}).
 
 As with previous examples, we start with our “minimal” example which you can
 find [on GitHub](https://github.com/memfault/zero-to-main/tree/master/minimal).
@@ -125,7 +125,7 @@ Today Newlib is bundled alongside toolchains and SDK provided by vendors such as
 > features, and some `printf` bells and whistles to deliver a more compact
 > standard library. Newlib-nano is enabled with the `—specs=nano.specs` CFLAG.
 > You can read more about it in our [code size blog
-> post](https://interrupt.memfault.com/blog/code-size-optimization-gcc-flags#c-library)  
+> post]({% post_url 2019-08-20-code-size-optimization-gcc-flags %}#c-library)
 
 ### Enabling Newlib
 
@@ -390,7 +390,7 @@ void *_sbrk(int incr) {
 More often than not, we want the heap to use all the RAM not used by anything
 else. We therefore set `HEAP_START` to the first address not spoken for in our
 linker script. In our [previous
-post](https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware#complete-linker-script),
+post]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %}#complete-linker-script),
 we had added the `_end` variable in our linker script to that end.
 
 We replace `HEAP_START` with `_end` and get:
@@ -720,13 +720,15 @@ include ../common-standalone.mk
 
 We hope reading this post has given you an understanding of how standard C
 functions come to be available in firmware code. As with previous posts,
-code examples are available on Github in the [zero to main
+code examples are available in the [Zero to Main Github
 repository](https://github.com/memfault/zero-to-main).
 
 Got a favorite libc implementation? Tell us all about it in the comments,
 or at [interrupt@memfault.com](mailto:interrupt@memfault.com).
 
 Next time in the series, we'll talk about Rust!
+
+_EDIT: Post written!_ - [From Zero to main(): Bare metal Rust]({% post_url 2019-12-17-zero-to-main-rust-1 %})
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
 posts straight to your mailbox_

@@ -14,6 +14,8 @@ In this article, we dive into the factors which influence BLE throughput. We wil
 
 <!-- excerpt end -->
 
+I recommend starting with our [Primer on Bluetooth Low Energy]({% post_url 2019-07-30-bluetooth-low-energy-a-primer %}) if this is your first time working with BLE.
+
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
 posts straight to your mailbox_
 
@@ -118,7 +120,7 @@ Below is a diagram of the layout of an L2CAP packet. As you can see there are 4 
 In the _L2CAP Information Payload_ we have the ATT packet. This is the packet structure the _GATT_
 protocol uses.
 
-> NOTE: For an excellent article about GATT itself, check out Mohammad Afaneh's thorough [BLE Primer post](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer) on the topic!
+> NOTE: For an excellent article about GATT itself, check out Mohammad Afaneh's thorough [BLE Primer post]({% post_url 2019-07-30-bluetooth-low-energy-a-primer %}) on the topic!
 
 ATT packets can span multiple LL packets. The size of the data unit within an ATT packet is known
 as the _Maximum Transmission Unit_ (**MTU**). The default size is 23 bytes (which allows the packet
@@ -370,6 +372,6 @@ presentation provides an excellent overview of how to get the most out of iOS Co
 [^7]: [ Accessory Design Guidelines for Apple Devices](https://developer.apple.com/accessories/Accessory-Design-Guidelines.pdf)
 [^8]: [Reddit comment about Nordic's BLE sniffer](https://www.reddit.com/r/embedded/comments/d95obo/a_practical_guide_to_ble_throughput/f1f0q68/)
 [^9]: [nRF Sniffer For Bluetooth LE](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Sniffer-for-Bluetooth-LE)
-[^10]: [More details about GATT Operations](https://interrupt.memfault.com/blog/bluetooth-low-energy-a-primer#services-and-characteristics)
+[^10]: [More details about GATT Operations]({% post_url 2019-07-30-bluetooth-low-energy-a-primer %}#services-and-characteristics)
 [^11]: See "3.2.9 Long Attribute Values" of the [Bluetooth 5.1 Core Specification](https://www.bluetooth.com/specifications/bluetooth-core-specification/)
 [^12]: See comment from _/u/writtenabode_ on [Reddit](https://www.reddit.com/r/embedded/comments/d95obo/a_practical_guide_to_ble_throughput/f22udsz/) and _oflannabhra_ on [HN](https://news.ycombinator.com/item?id=21082583)

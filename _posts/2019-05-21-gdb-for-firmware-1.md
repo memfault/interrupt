@@ -1,6 +1,8 @@
 ---
 title: "Debugging Firmware with GDB"
+description: "How to set up, flash, and debug firmware on a Nordic nRF52 using GDB, a Segger J-Link, and the GNU ARM Embedded Toolchain."
 author: mafaneh
+tags: [gdb]
 ---
 
 <!-- excerpt start -->
@@ -77,7 +79,7 @@ In order to use GDB with any embedded system, we need to set up:
 Let's go through the different steps for downloading the necessary software packages.
 
 For each of these downloads, you can place them anywhere on your machine. I recommend having them all in a single folder, to make it easier to locate later on.
-#### 1. nRF5 SDK
+### 1. nRF5 SDK
 Installation of the nRF5 SDK is straightforward. All you need to do is download the SDK tarball from Nordic's website and then extract it.
 
 **[Link to download nRF5 SDK](https://www.nordicsemi.com/Software-and-Tools/Software/nRF5-SDK/Download#infotabs)**
@@ -88,7 +90,7 @@ Once you extract it, you should see the following directory structure:
 ![](/img/gdb-tips-and-tricks/nRF5_SDK_folder.png)
 
 
-#### 2. nRF5 Command Line Tools
+### 2. nRF5 Command Line Tools
 Next, we need to install the nRF5 Command Line Tools. These include **nrfjprog**, which is a tool for programming your nRF52 development kit via the Segger J-Link debugger and needed in our case for working from the command line.
 
 **[Link to download the nRF5 Command Line Tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF5-Command-Line-Tools/Download#infotabs)**
@@ -105,7 +107,7 @@ This is what the contents of the folder should look like:
 
 ![](/img/gdb-tips-and-tricks/nRF5_Command_Line_Tools_Folder.png)
 
-#### 3. SEGGER J-Link
+### 3. SEGGER J-Link
 The SEGGER J-Link software is needed for the GDB Server interface to the nRF52 chipset on the development kit.
 
 So let's go ahead and download the software.
@@ -122,7 +124,7 @@ This download (for macOS) is a .**pkg** installer file. Once you download it, si
 ![](/img/gdb-tips-and-tricks/J-Link_Installation.png)
 
 
-#### 4. GNU Arm Embedded Toolchain
+### 4. GNU Arm Embedded Toolchain
 The next software package that we need to install is the GNU Arm Embedded Toolchain which includes the compiler (gcc) and debugger (gdb) for the Arm architecture (which the nRF52840 chipset is based on).
 
 **[Direct link to download the GNU Arm Embedded Toolchain (version 7-2017-q4-major)](https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2017q4/gcc-arm-none-eabi-7-2017-q4-major-mac.tar.bz2?revision=7f453378-b2c3-4c0d-8eab-e7d5db8ea32e?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Mac%20OS%20X,7-2017-q4-major)**
@@ -137,14 +139,14 @@ After you download the package, simply extract it to your folder of choice.
 ![](/img/gdb-tips-and-tricks/GNU_Arm_Download_Folder.png)
 
 
-#### 5. Serial Terminal Program
+### 5. Serial Terminal Program
 My choice for a terminal program that I use across projects is a program called **CoolTerm**. What I like about this program is its simplicity and that it supports all the major platforms (Windows, macOS, and Linux).
 
 **[Link to download CoolTerm](https://freeware.the-meiers.org/CoolTermMac.zip)**
 
 For now, all you need to do is download it, open the package and copy the application file to your Mac **Applications** folder so you could launch it in the later steps.
 
-#### 6. Adding Necessary Folders to $PATH
+### 6. Adding Necessary Folders to $PATH
 In order to access the necessary commands that we'll be calling from anywhere in your system, you need to add their paths to the system **$PATH** environment variable.
 
 To do that, open up a Terminal session and type the following:
@@ -499,7 +501,8 @@ We hope this post served as a good starting point for using GDB, or a refresher 
 
 Some ideas for future GDB-related posts include:
 
-- GDB scripting and automation
+- GDB scripting and automation  
+  _EDIT: Post written!_ - [Automate Debugging with GDB Python API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %})
 - Debugging nRF5x SoftDevice-based applications
 
 What other GDB tips and tricks do you know? Are you facing any problems or struggles with using GDB?

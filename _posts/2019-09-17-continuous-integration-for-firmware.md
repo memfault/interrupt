@@ -6,7 +6,7 @@ tags: [better-firmware]
 ---
 
 Larger firmware projects sometimes have tens, even hundreds of engineers working
-in a single codebase. This introduces new challenges: builds break, lesser used
+in a single code base. This introduces new challenges: builds break, lesser used
 features get forgotten about, new features miss support for older hardware
 platforms. Without solid tooling and processes, this can slow development to a
 grind.
@@ -24,7 +24,7 @@ CircleCI on a firmware project step by step.
 
 <!-- excerpt end -->
 
-This is the first post in our _Building Better Firmware_ series. Future posts will
+This is the first post in our [Building Better Firmware series]({{ '/tag/better-firmware' | relative_url }}). Future posts will
 cover testing techniques, test driven development, fuzzing, and continuous
 deployment.
 

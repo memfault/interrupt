@@ -15,7 +15,7 @@ longer installed. This can be a major pain, and people have come up with several
 ways around it.
 
 In previous posts,
-[we have used virtualenv](https://interrupt.memfault.com/blog/using-pypi-packages-with-GDB#virtual-environment)
+[we have used virtualenv]({% post_url 2019-07-23-using-pypi-packages-with-GDB %}#virtual-environment)
 to manage our Python packages. What if you would like to easily manage non
 Python dependencies? This is where Conda comes into play.
 

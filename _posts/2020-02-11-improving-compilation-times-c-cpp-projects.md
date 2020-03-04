@@ -103,7 +103,7 @@ isn't satisfied, I'd start there.
   as the linking step sometimes becomes as slow as the entire build itself! If
   you have enabled it due to code size constraints, I suggest checking out
   Interrupt's
-  [code size posts](https://interrupt.memfault.com/blog/tag/fw-code-size) for
+  [code size posts]({{ '/tag/fw-code-size' | relative_url  }}) for
   easy wins.
 
 ## Example Build Environment

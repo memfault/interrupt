@@ -223,7 +223,7 @@ Following the memory configuration is the **Linker script and memory map**. That
 
 Those lines give us the address of each function and its size. Above, you can read the address of `bsp_board_led_invert`, coming from `boards.c.o` (compilation unit of `board.c` as you guessed) which has a size of 0x34 bytes in the `text` area. That way, we are able to locate each function used in the program.
 
-My constant string `_delay_ms_str` is obviously included in the program as it is initialized. Read-only data are saved as `rodata` and kept in the `FLASH` region as specified in the [linker script](https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware) (stored in Flash and not copied in RAM as it is constant). I can find it under that line:
+My constant string `_delay_ms_str` is obviously included in the program as it is initialized. Read-only data are saved as `rodata` and kept in the `FLASH` region as specified in the [linker script]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %}) (stored in Flash and not copied in RAM as it is constant). I can find it under that line:
 
 ```
     .rodata.main.str1.4
@@ -336,7 +336,7 @@ Now if you want to make your program safer and prevent accessibility of some glo
 
 ---
 
-Several usages of the map file are possible. Most of the time, you will have an address and you will want to resolve the function behind. It can be the Program Counter in the Hard Fault handler for example. Some other times you will be debugging some undefined behavior to finally find out that your program is accidentally writing into an out-of-bounds array. Whenever you have the ELF file, `arm-none-eabi-nm` is pretty useful for those things too, and it comes with options to sort symbols by size, [check out this article from François](https://interrupt.memfault.com/blog/best-firmware-size-tools).
+Several usages of the map file are possible. Most of the time, you will have an address and you will want to resolve the function behind. It can be the Program Counter in the Hard Fault handler for example. Some other times you will be debugging some undefined behavior to finally find out that your program is accidentally writing into an out-of-bounds array. Whenever you have the ELF file, `arm-none-eabi-nm` is pretty useful for those things too, and it comes with options to sort symbols by size, [check out this article from François]({% post_url 2019-06-06-best-firmware-size-tools %}).
 
 But some other times, it will be useful even before you have an executable ready...
 
