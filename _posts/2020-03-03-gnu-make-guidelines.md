@@ -34,7 +34,7 @@ If you feel like you already know Make pretty well, feel free to skip the tutori
 ## What is GNU Make?
 
 [GNU Make](https://www.gnu.org/software/make/) is a program that automates the
-running shell commands and helps with repetitive tasks. It is typically used to transform files into some other form, e.g. compiling
+running of shell commands and helps with repetitive tasks. It is typically used to transform files into some other form, e.g. compiling
 source code files into programs or libraries.
 
 It does this by tracking **prerequisites** and executing a hierarchy of commands to
