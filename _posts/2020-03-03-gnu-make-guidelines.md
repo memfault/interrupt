@@ -439,8 +439,10 @@ Pattern rules let you write a generic rule that applies to multiple targets via
 pattern-matching:
 
 ```makefile
+# Note the use of the '$<' automatic variable, specifying the first
+# prerequisite, which is the .c file
 %.o: %.c
-	$(CC) -c $^ -o $@
+	$(CC) -c $< -o $@
 ```
 
 The rule will then be used to make any target matching the pattern, which above
@@ -451,9 +453,11 @@ If you use those `.o` files mentioned above to build a program:
 ```makefile
 OBJ_FILES = foo.o bar.o
 
-# Use CC to link foo.o + bar.o into 'program'
+# Use CC to link foo.o + bar.o into 'program'. Note the use of the '$^'
+# automatic variable, specifying ALL the prerequisites (all the OBJ_FILES)
+# should be part of the link command
 program: $(OBJ_FILES)
-	$(CC) -o $@ $<
+    $(CC) -o $@ $^
 ```
 
 ### Prerequisites
