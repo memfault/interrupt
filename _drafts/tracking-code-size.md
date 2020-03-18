@@ -6,7 +6,7 @@ description:
   reduce a firmware binary size."
 tag: [fw-code-size]
 author: tyler
-image: /img/tracking-code-size/tracking-code-size.png
+image: /img/code-size-deltas/code-size-deltas.png
 ---
 
 ```
@@ -30,18 +30,11 @@ immensely helpful when our team at Pebble was trying to
 Below is an example of a type of dashboard we had. When we approached 5kB
 remaining in our firmware image, we knew what to do.
 
-![](/img/tracking-code-size/running-out-code-space.png)
-
-Hopefully this post provides the tools you need to have a dashboard like this
-too!
+![](/img/code-size-deltas/running-out-code-space.png)
 
 <!-- excerpt start -->
 
-Code size information should be surfaced and tracked throughout the development
-of an embedded software project, especially if there is even a slight chance of
-running out in the future. In this post, we'll cover why this is the case, show
-how to track code size, and show how to calculate code size deltas on pull
-requests to help keep code size to a minimum.
+In this post, I will show you how to set up a code size dashboard for your project. I'll cover why should track code size, how to do it, and the steps to calculate code size deltas on every pull requests to keep it to a minimum.
 
 <!-- excerpt end -->
 
@@ -62,20 +55,14 @@ straight to your mailbox_
 
 ## Why Track Code Size?
 
-If you are a firmware engineer, you've likely run into code sizes issues. If
-not, it is likely because the firmware engineers before you fought for an MCU
-with more micro-flash space or because the company went overboard and bought the
-most expensive chip.
+If you are a firmware engineer, you've likely run into code sizes issues. Firmware, like a gas, will expand to take up all available space, whether it's extra debug logs, a full featured command line interface, or fancy animation & images.
 
-A team that has extra space in the firmware image will find a way to fill it,
-whether it is extra debug logs, a full-featured command-line interface, or fancy
-animations or images. With this in mind, it would be wise to constantly track
+With this in mind, it is wise to constantly track
 and measure the code size of a project during development to know when and why
-the code size grows. This would mean that each commit and a handful of build
+the code size grows. This means that each commit and a handful of build
 configurations should be tracked so an accurate picture can be painted.
 
-I've seen many projects start to have a print out like below after each build,
-which is nice, but it isn't enough to keep the code size from being gobbled up.
+Most projects simply print out size information after each build. It may look like this:
 
 ```
 Memory region         Used Size  Region Size  %age Used
@@ -84,13 +71,12 @@ Memory region         Used Size  Region Size  %age Used
         IDT_LIST:          56 B         2 KB      2.73%
 ```
 
-Once you have the code size for each commit and build combination, you and your
-entire team can:
+This is a step in the right direction, but it does not give us any sense of the changes to code size over time. Instead, we must track this information from commit to commit. With this information, your team can:
 
 - Prevent large (possibly accidental) code size increases due to non-optimal
   code for function usage (e.g. a few years ago, by adding a call to newlib's
   `sscanf(...)`, I increased the firmware size by 2kB).
-- You can retroactively find large spikes or decreases in code size when looking
+- Retroactively find large spikes or decreases in code size when looking
   for easy-win optimizations.
 - Estimate when the code size will exceed the limit by looking at historical
   data.
@@ -101,8 +87,7 @@ entire team can:
 
 ## How to Track Code Size
 
-In the remainder of the blog post, we'll go through an example of tracking the
-code size of the popular open-source RTOS, Zephyr[^zephyr]. We also want to take
+In the remainder of this blog post, we will set up a code size tracking dashboard for the popular open-source RTOS, Zephyr[^zephyr]. We also want to take
 this data and be able to compute the code size **deltas** between commits to
 know exactly which commits and by how much each one contributed to the code
 size.
@@ -110,7 +95,7 @@ size.
 Since the Zephyr project is massive in the number of examples, boards, and
 features that it encompasses, we will restrict the code size calculations to the
 `examples/net/lwm2m_client` example with the `cc3220sf_launchxl` board. This
-example was chosen due to the large number of files and dependencies with a hope
+example was chosen due to its large number of files and dependencies with a hope
 that its code size would fluctuate more than a hello world example with limited
 dependencies.
 
@@ -121,6 +106,8 @@ taken advantage of
 [Conda]({% post_url 2020-01-07-conda-developer-environments %}). It would also
 have the benefit of being cross-platform and version controlled within the
 codebase.
+
+If anyone working on Zephyr is reading this, you should check out how Conda can make the setup easier 😉.
 
 ### Goals
 
@@ -198,7 +185,7 @@ $ arm-none-eabi-size zephyr/zephyr.elf
  130780    3356   21167  155303   25ea7 build/zephyr/zephyr.elf
 ```
 
-There are a number of ways to capture this data, and some projects or teams want
+There are a [number of ways to capture]([Conda]({% post_url 2019-06-06-best-firmware-size-tools %})) this data, and some projects or teams want
 to track other data important to them. These might include specific linker
 region sizes, resource pack size (fonts, images, etc), or possibly the largest
 10 files or symbols in the codebase. Whatever is important to you and your team,
@@ -303,7 +290,7 @@ using the `psycopg2` library. Unfortunately, going into the details, nuances,
 and pitfalls about how one interacts with and manages a database is out of the
 scope of this post. I have listed SQL operations below that a developer could
 use, and I have also written up a
-[working example](https://github.com/memfault/interrupt/tree/master/example/tracking-code-size/codesizes.py)
+[working example](https://github.com/memfault/interrupt/tree/master/example/code-size-deltas/codesizes.py)
 that you can use with a few modifications.
 
 For now, let's quickly go through using `pyscopg2` in a Python script.
@@ -386,7 +373,7 @@ return CodesizeData(
 ```
 
 All of these code snippets shown above can be found in the Interrupt repo in a
-[mostly working example](https://github.com/memfault/interrupt/tree/master/example/tracking-code-size/codesizes.py).
+[mostly working example](https://github.com/memfault/interrupt/tree/master/example/code-size-deltas/codesizes.py).
 
 Wrapping these SQL operations with Python and
 [Click](https://click.palletsprojects.com/en/7.x/) makes the operation of
@@ -442,12 +429,12 @@ pretty quick and useful visualizations!
 Here is a chart of the code size of the `.text` region for the last 2,500
 commits:
 
-![](/img/tracking-code-size/zephyr-codesize-chart.png)
+![](/img/code-size-deltas/zephyr-codesize-chart.png)
 
 and here is a way to show the extent of each commit's impact on the overall code
 size:
 
-![](/img/tracking-code-size/zephyr-codesize-table.png)
+![](/img/code-size-deltas/zephyr-codesize-table.png)
 
 If you want to see this data live, check out the
 [Redash instance on Heroku](https://codesize-visuals.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default)!
@@ -485,7 +472,7 @@ In the case of the Zephyr Project, this is the common ancestor between the base
 of a pull-request and the `origin/master` branch.
 
 In our
-[example code](https://github.com/memfault/interrupt/tree/master/example/tracking-code-size/codesizes.py),
+[example code](https://github.com/memfault/interrupt/tree/master/example/code-size-deltas/codesizes.py),
 we have a command, `diff` which will do exactly this.
 
 ```python
@@ -566,6 +553,15 @@ It turns out this pull-request adds roughly 250B to the master branch for our
 example firmware build! With this information in hand, the maintainers of the
 Zephyr Project can then decide whether the change is worth the bump in the
 firmware size. (I'd ✅)
+
+### The Last Mile
+
+This is the end of the tutorial, but I wanted to share with you what I found works best at the previous companies I've worked for. 
+
+- Using Github Actions or the Github API, post a comment on each pull request. Something like:
+  ![](/img/code-size-deltas/github-comment.png)
+- Automatically add a firmware lead if the code size delta crosses a set threshold.
+- Start tracking now. When you run out, it's too late to make changes quickly.
 
 {:.no_toc}
 
