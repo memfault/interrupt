@@ -34,7 +34,9 @@ remaining in our firmware image, we knew what to do.
 
 <!-- excerpt start -->
 
-In this post, I will show you how to set up a code size dashboard for your project. I'll cover why should track code size, how to do it, and the steps to calculate code size deltas on every pull requests to keep it to a minimum.
+In this post, I will show you how to set up a code size dashboard for your
+project. I'll cover why should track code size, how to do it, and the steps to
+calculate code size deltas on every pull requests to keep it to a minimum.
 
 <!-- excerpt end -->
 
@@ -55,14 +57,18 @@ straight to your mailbox_
 
 ## Why Track Code Size?
 
-If you are a firmware engineer, you've likely run into code sizes issues. Firmware, like a gas, will expand to take up all available space, whether it's extra debug logs, a full featured command line interface, or fancy animation & images.
+If you are a firmware engineer, you've likely run into code sizes issues.
+Firmware, like a gas, will expand to take up all available space, whether it's
+extra debug logs, a full featured command line interface, or fancy animation &
+images.
 
-With this in mind, it is wise to constantly track
-and measure the code size of a project during development to know when and why
-the code size grows. This means that each commit and a handful of build
-configurations should be tracked so an accurate picture can be painted.
+With this in mind, it is wise to constantly track and measure the code size of a
+project during development to know when and why the code size grows. This means
+that each commit and a handful of build configurations should be tracked so an
+accurate picture can be painted.
 
-Most projects simply print out size information after each build. It may look like this:
+Most projects simply print out size information after each build. It may look
+like this:
 
 ```
 Memory region         Used Size  Region Size  %age Used
@@ -71,13 +77,15 @@ Memory region         Used Size  Region Size  %age Used
         IDT_LIST:          56 B         2 KB      2.73%
 ```
 
-This is a step in the right direction, but it does not give us any sense of the changes to code size over time. Instead, we must track this information from commit to commit. With this information, your team can:
+This is a step in the right direction, but it does not give us any sense of the
+changes to code size over time. Instead, we must track this information from
+commit to commit. With this information, your team can:
 
 - Prevent large (possibly accidental) code size increases due to non-optimal
   code for function usage (e.g. a few years ago, by adding a call to newlib's
   `sscanf(...)`, I increased the firmware size by 2kB).
-- Retroactively find large spikes or decreases in code size when looking
-  for easy-win optimizations.
+- Retroactively find large spikes or decreases in code size when looking for
+  easy-win optimizations.
 - Estimate when the code size will exceed the limit by looking at historical
   data.
 - Over time, learn which coding patterns contribute to the code size increases.
@@ -87,9 +95,10 @@ This is a step in the right direction, but it does not give us any sense of the 
 
 ## How to Track Code Size
 
-In the remainder of this blog post, we will set up a code size tracking dashboard for the popular open-source RTOS, Zephyr[^zephyr]. We also want to take
-this data and be able to compute the code size **deltas** between commits to
-know exactly which commits and by how much each one contributed to the code
+In the remainder of this blog post, we will set up a code size tracking
+dashboard for the popular open-source RTOS, Zephyr[^zephyr]. We also want to
+take this data and be able to compute the code size **deltas** between commits
+to know exactly which commits and by how much each one contributed to the code
 size.
 
 Since the Zephyr project is massive in the number of examples, boards, and
@@ -107,7 +116,8 @@ taken advantage of
 have the benefit of being cross-platform and version controlled within the
 codebase.
 
-If anyone working on Zephyr is reading this, you should check out how Conda can make the setup easier 😉.
+If anyone working on Zephyr is reading this, you should check out how Conda can
+make the setup easier 😉.
 
 ### Goals
 
@@ -185,11 +195,12 @@ $ arm-none-eabi-size zephyr/zephyr.elf
  130780    3356   21167  155303   25ea7 build/zephyr/zephyr.elf
 ```
 
-There are a [number of ways to capture]([Conda]({% post_url 2019-06-06-best-firmware-size-tools %})) this data, and some projects or teams want
-to track other data important to them. These might include specific linker
-region sizes, resource pack size (fonts, images, etc), or possibly the largest
-10 files or symbols in the codebase. Whatever is important to you and your team,
-track it!
+There are a [number of ways to
+capture]([Conda]({% post_url 2019-06-06-best-firmware-size-tools %})) this data,
+and some projects or teams want to track other data important to them. These
+might include specific linker region sizes, resource pack size (fonts, images,
+etc), or possibly the largest 10 files or symbols in the codebase. Whatever is
+important to you and your team, track it!
 
 ### Organizing the Sizes
 
@@ -224,15 +235,17 @@ commits and pull request builds to always work, we need to ensure that **every
 single commit** in the master branch that a developer could branch from has its
 code size calculated and stored.
 
-For better or worse, the Zehpyr Project has chosen the "Rebase and
-Merge" strategy. This means that a pull-request can have many commits that don't
+For better or worse, the Zehpyr Project has chosen the "Rebase and Merge"
+strategy. This means that a pull-request can have many commits that don't
 successfully build in CI. It also means that to successfully store code size
 about every commit, we'll need to build
 `count of pull requests * count of commits in each pull request` times in our CI
 system.
 
-> I've come around to Phabricator's "One Idea is One Commit" philosophy,
-> especially in large projects. It greatly simplifies release management and
+> I've come around to Phabricator's
+> ["One Idea is One Commit"](https://secure.phabricator.com/book/phabflavor/article/recommendations_on_revision_control/)
+> philosophy[^phab], especially in large projects. It greatly simplifies release
+> management and
 > [reverts](https://github.com/zephyrproject-rtos/zephyr/commits/9b9436dfbe40a162b41ce6418839c5c1fd3d8d65).
 > If this strategy is too heavy of a hammer, I suggest using merge commits.
 
@@ -556,11 +569,13 @@ firmware size. (I'd ✅)
 
 ### The Last Mile
 
-This is the end of the tutorial, but I wanted to share with you what I found works best at the previous companies I've worked for. 
+This is the end of the tutorial, but I wanted to share with you what I found
+works best at the previous companies I've worked for.
 
-- Using Github Actions or the Github API, post a comment on each pull request. Something like:
-  ![](/img/code-size-deltas/github-comment.png)
-- Automatically add a firmware lead if the code size delta crosses a set threshold.
+- Using Github Actions or the Github API, post a comment on each pull request.
+  Something like: ![](/img/code-size-deltas/github-comment.png)
+- Automatically add a firmware lead if the code size delta crosses a set
+  threshold.
 - Start tracking now. When you run out, it's too late to make changes quickly.
 
 {:.no_toc}
