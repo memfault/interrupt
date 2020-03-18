@@ -42,7 +42,7 @@ calculate code size deltas on every pull requests to keep it to a minimum.
 
 > If you want to skip ahead to see what we'll be building in the post, check out
 > this example
-> [code size dashboard for the Zephyr Project](https://codesize-visuals.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default).
+> [code size dashboard for the Zephyr Project](https://zephyr-codesizes.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default).
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
@@ -450,7 +450,7 @@ size:
 ![](/img/code-size-deltas/zephyr-codesize-table.png)
 
 If you want to see this data live, check out the
-[Redash instance on Heroku](https://codesize-visuals.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default)!
+[Redash instance on Heroku](https://zephyr-codesizes.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default)!
 
 Having these visualizations allow developers to dive into why code space has
 disappeared in the past and see where the code size is trending. If you ever
