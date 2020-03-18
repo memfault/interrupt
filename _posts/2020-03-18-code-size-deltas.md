@@ -244,7 +244,7 @@ system.
 
 > I've come around to Phabricator's
 > ["One Idea is One Commit"](https://secure.phabricator.com/book/phabflavor/article/recommendations_on_revision_control/)
-> philosophy[^phab], especially in large projects. It greatly simplifies release
+> philosophy, especially in large projects. It greatly simplifies release
 > management and
 > [reverts](https://github.com/zephyrproject-rtos/zephyr/commits/9b9436dfbe40a162b41ce6418839c5c1fd3d8d65).
 > If this strategy is too heavy of a hammer, I suggest using merge commits.
