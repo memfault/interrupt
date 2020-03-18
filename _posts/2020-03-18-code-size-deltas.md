@@ -25,7 +25,7 @@ Fortunately, this message doesn't always have to come as a surprise. Where I've
 worked in the past, we had the tools and infrastructure in place to know when we
 would run out of code space, as well as where it all went. These tools were
 immensely helpful when our team at Pebble was trying to
-[cram an 800kB firmware into a 512kB ROM device](http://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/).
+[cram an 653kB firmware into a 448kB ROM region](http://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/).
 
 Below is an example of a type of dashboard we had. When we approached 5kB
 remaining in our firmware image, we knew what to do.
