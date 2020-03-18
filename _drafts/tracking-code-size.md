@@ -45,6 +45,10 @@ requests to help keep code size to a minimum.
 
 <!-- excerpt end -->
 
+> If you want to skip ahead to see what we'll be building in the post, check out
+> this example
+> [code size dashboard for the Zephyr Project](https://codesize-visuals.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default).
+
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
 
@@ -446,7 +450,6 @@ size:
 
 If you want to see this data live, check out the
 [Redash instance on Heroku](https://codesize-visuals.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default)!
-Please note it might be slow to respond given it's on the free tier.
 
 Having these visualizations allow developers to dive into why code space has
 disappeared in the past and see where the code size is trending. If you ever
