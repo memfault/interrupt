@@ -6,7 +6,7 @@ description:
   reduce a firmware binary size."
 tag: [fw-code-size]
 author: tyler
-image: /img/code-size-deltas/code-size-deltas.png
+image: /img/code-size-deltas/terminal-printout.png
 ---
 
 ```
