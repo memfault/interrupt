@@ -237,16 +237,17 @@ commits and pull request builds to always work, we need to ensure that **every
 single commit** in the master branch that a developer could branch from has its
 code size calculated and stored.
 
-For better or worse, the Zehpyr Project has chosen the "Rebase and Merge"
-strategy. This means that a pull-request can have many commits that don't
+For better or worse, the Zehpyr Project has chosen the "Rebase and
+Merge" strategy. This means that a pull-request can have many commits that don't
 successfully build in CI. It also means that to successfully store code size
 about every commit, we'll need to build
 `count of pull requests * count of commits in each pull request` times in our CI
 system.
 
-> I've come around to Phabricator's "One Idea is One Commit", especially in
-> large projects, as it greatly simplifies release management and
+> I've come around to Phabricator's "One Idea is One Commit" philosophy,
+> especially in large projects. It greatly simplifies release management and
 > [reverts](https://github.com/zephyrproject-rtos/zephyr/commits/9b9436dfbe40a162b41ce6418839c5c1fd3d8d65).
+> If this strategy is too heavy of a hammer, I suggest using merge commits.
 
 ### Determining the Storage
 
