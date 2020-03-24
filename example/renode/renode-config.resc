@@ -1,0 +1,43 @@
+:name: STM32F4 Discovery Printf
+:description: This script runs the usart_printf example on stm32f4 discovery
+
+using sysbus
+$name?="STM32F4_Discovery"
+mach create $name
+machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
+machine LoadPlatformDescription @add-ccm.repl
+
+cpu PerformanceInMips 125
+
+$bin?=@renode-example.elf
+
+showAnalyzer sysbus.uart2
+
+machine StartGdbServer 3333
+
+### Set random board UNIQUE ID ###
+
+python "import _random"
+python "rand = _random.Random()"
+
+$id1 = `python "print rand.getrandbits(32)"`
+$id2 = `python "print rand.getrandbits(32)"`
+$id3 = `python "print rand.getrandbits(32)"`
+
+macro setup
+"""
+    sysbus LoadELF $bin
+
+    sysbus WriteDoubleWord 0x1FFF7A10 $id1
+    sysbus WriteDoubleWord 0x1FFF7A14 $id2
+    sysbus WriteDoubleWord 0x1FFF7A18 $id3
+"""
+
+macro reset
+"""
+    pause
+    machine RequestReset
+    runMacro $setup
+"""
+
+runMacro $setup
