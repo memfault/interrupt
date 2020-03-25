@@ -1,6 +1,8 @@
 ---
-title: "Cortex-M Emulation with Renode"
-description: "WIP"
+title: "Cortex-M MCU Emulation with Renode"
+description:
+  "An overview of how Renode can be used to emulate Cortex-M series MCUs, speed
+up iteration time, and automate firmware testing."
 author: francois
 ---
 
