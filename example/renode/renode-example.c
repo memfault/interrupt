@@ -64,13 +64,8 @@ int main(void) {
 	usart_setup();
 
     printf("hello world!\n");
-    int i = 0;
 
     while (1) {
-        printf("%d\n", i++);
-        for (int j = 0; j < 3000000; j++) {	/* Wait a bit. */
-            __asm__("NOP");
-        }
     }
 
 	return 0;

@@ -62,8 +62,8 @@ This guide was written on MacOS, though it is not OS specific.
 
 To verify your Renode installation, you can run one of the examples:
 
-1. Open Renode, on MacOS I prefer to use the command line directly:
-    ```$ sh /Applications/Renode.app/Contents/MacOS/macos_run.command```
+1. Open Renode, on MacOS I prefer to use the command line directly with `$ sh
+   /Applications/Renode.app/Contents/MacOS/macos_run.command`
 2. A Renode terminal window will open. Load the example with `start
    @scripts/single-node/stm32f4_discovery.resc`
 ![](/img/intro-to-renode/renode-first-demo-start.png)
@@ -73,7 +73,25 @@ To verify your Renode installation, you can run one of the examples:
 
 ## Running our own firmware
 
+Let's write a hello world firmware to run via Renode. We will target the STM23F4
+Discovery board, as the emulator supports it out of the box.
+
 ### A simple firmware
+
+I chose to use libopencm3[^1], an open source library for ARM cortex-M
+microcontrollers. I enjoy how easy it is to get started with it and appreciate
+the consistent API across microcontrollers. Note however that the library is
+still in its early stages and likely not fit for production use. I used the
+libopencm3 template [^2] as a starting point.
+
+To get to a "hello, world!", we must:
+1. Setup the peripheral clocks
+2. Enable the UART GPIOs
+3. Configure the UART peripheral
+4. Implement the `_write` syscall
+
+I've reproduced the source code below, you can find the full project (Makefile
+included) in the interrupt Github repo.
 
 ```c
 #include <errno.h>
@@ -149,17 +167,139 @@ int main(void) {
 }
 ```
 
-### Configuring Renode 
+If all goes well, we now have a `renode-example.elf` file we can load in the
+emulator.
+
+### Running our firmware in Renode
+
+Next up, we must spin up a machine in Renode and run our firmware in it.
+
+Like we did earlier, we first start Renode:
+```
+# Note: on Linux this just is the "renode" command
+$ sh /Applications/Renode.app/Contents/MacOS/macos_run.command
+```
+
+The window that pops up is called the Renode *monitor*. In it, you can run
+Renode commands.
+
+We now need to create a *machine*. A machine represents a device, which can have
+a number of cores. Renode can run multiple machines in a single run.
+
+We can create, add, and remove machines with the `mach` command:
+
+```
+(monitor) mach create
+(machine-0)
+```
+
+The prompt now includes our machine name. Since we did not name our machine, it
+just says "machine-0".
+
+Next, we configure our machine. We could specify each bus and peripheral by
+hand, but instead we will load a prebuilt configuration.
+
+```
+(machine-0) machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
+(machine-0)
+```
+
+You will notice that the path is prepended with the `@` sign. This is a C#-ism.
+Renode will load absolute paths, as well as paths relative to your working
+directory, and paths relative to the renode installation. In our case, we used
+the latter as `platforms` is bundled with the Renode installation.
+
+Next, we load our firmware:
+
+```
+(machine-0) sysbus LoadELF @renode-example.elf
+(machine-0)
+```
+
+Before we start the machine, we want to do one last thing: open a terminal to
+display UART data. Some peripherals come with what Renode calls "Analyzers",
+which are ways to display their state and data. We enabled UART2 in our
+firmware, so we will show the analyzer for UART2.
+
+```
+(machine-0) showAnalyzer sysbus.uart2
+(machine-0)
+```
+
+You should now have two Renode windows open, the monitor window and the UART2
+window.
+
+We are now ready to run our simulation with the `start` command:
+
+```
+(machine-0) start
+```
+
+#### Adding CCM memory
+
+... Well, this is embarassing. Nothing happened.
+
+In the terminal window we used to start the Renode app, we see line after line
+of warnings:
+
+```
+[...]
+20:46:07.5783 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AA3, value 0x0.
+20:46:07.5783 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AA4, value 0x0.
+20:46:07.5783 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AA5, value 0x0.
+20:46:07.5795 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AA6, value 0x0.
+20:46:07.5799 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AA7, value 0x0.
+20:46:07.5800 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AA8, value 0x0.
+20:46:07.5800 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AA9, value 0x0.
+20:46:07.5800 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AAA, value 0x0.
+20:46:07.5801 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AAB, value 0x0.
+20:46:07.5801 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AAC, value 0x0.
+20:46:07.5801 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AAD, value 0x0.
+20:46:07.5802 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AAE, value 0x0.
+20:46:07.5802 [WARNING] sysbus: [cpu: 0x8000926] WriteByte to non existing peripheral at 0x10152AAF, value 0x0.
+[...]
+```
+
+Looking at our chip's memory map, we notice that `0x10XXXXXX` is in the CCM
+region. Turns out the renode model does not implement it. Fear not! This is
+easily fixed.
+
+The easiest way to modify our Machine to add the CCM RAM is to write a Renode
+Platform (or "repl") file. Repl files use YAML-like syntax to define
+peripherals, including their type, address, and size.
+
+You can read more about the Platform Description file format in the [Renode
+Documentation](https://renode.readthedocs.io/en/latest/advanced/platform_description_format.html)
+Adding our CCM region requires the following:
+
+```
+// In "add-ccm.repl"
+ccm: Memory.MappedMemory @ sysbus 0x10000000
+    size: 0x10000
+```
+
+Since platform descriptions are composable, We can now load that file using the
+same `LoadPlatformDescription` command we used earlier:
+
+```
+(machine-0) machine LoadPlatformDescription @add-ccm.repl
+(machine-0)
+```
+
+We restart our machine, and voila!
+
+![](/img/intro-to-renode/renode-hello-world.png)
+
+### Automating setup with a `.resc` script
 
 ```
 :name: STM32F4 Discovery Printf
 :description: This script runs the usart_printf example on stm32f4 discovery
 
-$name?="STM32F4_Discovery"
 $bin?=@renode-example.elf
 
 # Create Machine & Load config
-mach create $name
+mach create
 machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
 machine LoadPlatformDescription @add-ccm.repl
 
@@ -179,3 +319,8 @@ runMacro $reset
 
 
 ## Renode & Integration Tests
+
+## References
+
+- [^1] https://github.com/libopencm3/libopencm3
+- [^2] https://github.com/libopencm3/libopencm3-template
