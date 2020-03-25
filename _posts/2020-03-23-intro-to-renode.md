@@ -6,7 +6,7 @@ up iteration time, and automate firmware testing."
 author: francois
 ---
 
-In this new era of work-from-home, firmware engineer may not have all the
+In this new era of work-from-home, firmware engineers may not have all the
 equipment and development boards they are used to having at the office. One way
 around this? Emulation!
 
@@ -35,12 +35,12 @@ straight to your mailbox_
 
 ## What is Renode?
 
-[Renode](https://renode.io/) is an open source Emulator for embedded platforms.
-Today, it supports x86 (Intel Quark), Cortex-A (Nvidia Tegra), Cortex-M, SPARC
+[Renode](https://renode.io/) is an open-source Emulator for embedded platforms.
+Today, it supports x86 (Intel Quark), Cortex-A (NVIDIA Tegra), Cortex-M, SPARC
 (Leon), and RISC-V based platforms.
 
 Renode can take the same firmware you are running in production, and run it
-againsts emulated cores, peripherals, and even sensors and actuators. Better
+against emulated cores, peripherals, and even sensors and actuators. Better
 yet, its extensive networking support and multi-system emulation make it a shoe
 in for testing systems made up of multiple devices talking together.
 
@@ -53,12 +53,12 @@ Renode is built using the Mono framework, which allows it to run cross-platform.
 > **Why not QEMU?** - Readers who have experience with emulation will point out
 > that QEMU has existed for a long time, and is capable of emulating Cortex-M
 > targets. In our experience, QEMU is focused on emulating systems meant for
-> higher level OSes (e.g. Linux computers) rather than embedded devices. To
+> higher-level OSes (e.g. Linux computers) rather than embedded devices. To
 > date, it only supports two cortex-M series targets, both made by TI.
 
 ## Installing Renode
 
-The Renode projects releases installers for Windows, MacOS, and multiple Linux
+The Renode project releases installers for Windows, MacOS, and multiple Linux
 distributions. As of this writing, you can find the v1.9 release on
 [Github](https://github.com/renode/renode/releases/tag/v1.9.0).
 
@@ -79,7 +79,7 @@ Discovery board, as the emulator supports it out of the box.
 
 ### A simple firmware
 
-I chose to use libopencm3[^1], an open source library for ARM cortex-M
+I chose to use libopencm3[^1], an open-source library for ARM cortex-M
 microcontrollers. I enjoy how easy it is to get started with it and appreciate
 the consistent API across microcontrollers. Note however that the library is
 still in its early stages and likely not fit for production use. I used the
@@ -245,7 +245,7 @@ We are now ready to run our simulation with the `start` command:
 
 #### Adding CCM memory
 
-... Well, this is embarassing. Nothing happened.
+... Well, this is embarrassing. Nothing happened.
 
 In the terminal window we used to start the Renode app, we see line after line
 of warnings:
@@ -348,7 +348,7 @@ macro reset
 runMacro $reset
 ```
 
-We can start renode with this script by passing it as argument to our renode
+We can start renode with this script by passing it as an argument to our renode
 command. I wrapped it all in a `start.sh` shell script:
 
 ```
@@ -377,7 +377,7 @@ Instead, we can use lifecycle commands to start, pause, and reset our machine:
 (machine-0) machine RequestReset
 ```
 
-These are all pretty self explanatory. Note that the `RequestReset` command will
+These are all pretty self-explanatory. Note that the `RequestReset` command will
 invoke your `reset` macro if you have one specified.
 
 Last but not least, you can drop the whole emulation by using the `Clear`
@@ -391,7 +391,7 @@ area where Renode really shines.
 ### Tracing Function Calls
 
 One of the advantages of emulators is that they make it much easier to
-introspect and trace device state. One of the more useful hooks exposed by
+introspect and trace the device state. One of the more useful hooks exposed by
 Renode is execution tracing. Provided you fed the emulator an ELF file with
 debug symbols, Renode will print out log out every function being executed.
 
