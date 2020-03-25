@@ -4,6 +4,7 @@ description:
   "An overview of how Renode can be used to emulate Cortex-M series MCUs, speed
 up iteration time, and automate firmware testing."
 author: francois
+image: /img/intro-to-renode/renode-highlight-img.png
 ---
 
 In this new era of work-from-home, firmware engineers may not have all the
