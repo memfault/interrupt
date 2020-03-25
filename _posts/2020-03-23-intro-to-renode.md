@@ -7,7 +7,7 @@ author: francois
 ---
 
 In this new era of work-from-home, firmware engineer may not have all the
-equipment and development board they are used to having at the office. One way
+equipment and development boards they are used to having at the office. One way
 around this? Emulation!
 
 While they're not quite the real thing, emulators can run our firmware, print
@@ -15,9 +15,11 @@ data over UART, read registers from I2C sensors, and even run a filesystem on a
 SPI flash device. That's more than enough to write some real firmware!
 
 <!-- excerpt start -->
+
 In this post, I walk through setting up the Renode emulator and running a
 firmware in it for STM32. Using that setup, we'll debug our firmware, run it
 through integrated tests, and shorten the iteration cycle of development.
+
 <!-- excerpt end -->
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
@@ -64,14 +66,11 @@ This guide was written on MacOS, though it is not OS specific.
 
 To verify your Renode installation, you can run one of the examples:
 
-1. Open Renode, on MacOS I prefer to use the command line directly with `$ sh
-   /Applications/Renode.app/Contents/MacOS/macos_run.command`
-2. A Renode terminal window will open. Load the example with `start
-   @scripts/single-node/stm32f4_discovery.resc`
-![](/img/intro-to-renode/renode-first-demo-start.png)
+1. Open Renode, on MacOS I prefer to use the command line directly with `$ sh /Applications/Renode.app/Contents/MacOS/macos_run.command`
+2. A Renode terminal window will open. Load the example with `start @scripts/single-node/stm32f4_discovery.resc`
+   ![](/img/intro-to-renode/renode-first-demo-start.png)
 3. A second terminal window should open, displaying serial output
-![](/img/intro-to-renode/renode-first-demo-output.png)
-
+   ![](/img/intro-to-renode/renode-first-demo-output.png)
 
 ## Running our firmware in Renode
 
@@ -87,6 +86,7 @@ still in its early stages and likely not fit for production use. I used the
 libopencm3 template [^2] as a starting point.
 
 To get to a "hello, world!", we must:
+
 1. Setup the peripheral clocks
 2. Enable the UART GPIOs
 3. Configure the UART peripheral
@@ -177,15 +177,19 @@ emulator.
 Next up, we must spin up a machine in Renode and run our firmware in it.
 
 Like we did earlier, we first start Renode:
+
 ```
+$ git clone https://github.com/memfault/interrupt.git
+$ cd example/renode/
+$ make
 # Note: on Linux this just is the "renode" command
 $ sh /Applications/Renode.app/Contents/MacOS/macos_run.command
 ```
 
-The window that pops up is called the Renode *monitor*. In it, you can run
+The window that pops up is called the Renode _monitor_. In it, you can run
 Renode commands.
 
-We now need to create a *machine*. A machine represents a device, which can have
+We now need to create a _machine_. A machine represents a device, which can have
 a number of cores. Renode can run multiple machines in a single run.
 
 We can create, add, and remove machines with the `mach` command:
@@ -264,6 +268,12 @@ of warnings:
 [...]
 ```
 
+Let's quit the emulator for now and restart it once things are fixed
+
+```
+(monitor) quit
+```
+
 Looking at our chip's memory map, we notice that `0x10XXXXXX` is in the CCM
 region. Turns out the renode model does not implement it. Fear not! This is
 easily fixed.
@@ -290,7 +300,16 @@ same `LoadPlatformDescription` command we used earlier:
 (machine-0)
 ```
 
-We restart our machine, and voila!
+Putting it all together we have:
+
+```
+(monitor) mach create
+(machine-0) machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
+(machine-0) sysbus LoadELF @renode-example.elf
+(machine-0) machine LoadPlatformDescription @add-ccm.repl
+```
+
+We now run `start` on our machine, and voila!
 
 ![](/img/intro-to-renode/renode-hello-world.png)
 
@@ -301,8 +320,8 @@ files come in.
 
 Not much documentation can be found on `.resc` files, but here are a few things
 I was able to figure out:
-1. variables can be created with `$` and assigned with `=`. For example: `$hello
-   = "world"`.
+
+1. variables can be created with `$` and assigned with `=`. For example: `$hello = "world"`.
 2. renode are executed in the order written
 3. macros can be defined with the keyword `macro`, and start and end with `"""`
 
@@ -339,10 +358,10 @@ sh /Applications/Renode.app/Contents/MacOS/macos_run.command renode-config.resc
 ```
 
 > **Reset macro**: Renode looks for a macro named "reset", and uses it to reset
-> the machine when the `machine Reset` or `machine RequestReset`. In our script,
+> the machine when the `machine Reset` or `machine RequestReset` are issued. In our script,
 > we use that macro to reload our elf file every time, so we do not have to do
-> it manally between reset. This also guarantees that the latest elf file is
-> picked up and allows us to itterate on code quickly.
+> it manually between resets. This also guarantees that the latest elf file is
+> picked up and allows us to iterate on code quickly.
 
 ### Managing machine lifecycle
 
@@ -367,7 +386,7 @@ command.
 ## Debugging with Renode
 
 Inevitably things will go wrong and you will need to debug them. This is one
-area where Renode really shine.
+area where Renode really shines.
 
 ### Tracing Function Calls
 
@@ -388,7 +407,7 @@ You will likely want to write the output to a file rather than stdout, you can
 do this with a single command as well:
 
 ```
-(machine-0) LogFile @/tmp/function-trace.log 
+(machine-0) logFile @/tmp/function-trace.log
 (machine-0)
 ```
 
@@ -429,8 +448,10 @@ First, we enable the GDB server and bind it to port 3333:
 (machine-0)
 ```
 
-In a separate terminal window, we start GDB and connect to the server on port
-3333.
+> Note: For the example config we have added this to renode-config.resc so it happens automatically
+> when spinning up the environment
+
+In a separate terminal window, we start GDB and connect to the server on port 3333.
 
 ```
 $ arm-none-eabi-gdb renode-example.elf
@@ -485,7 +506,7 @@ clock_setup () at renode-example.c:12
 
 ## Renode & Integration Tests
 
-Another area Where emulation really shines is the ability to run automated tests
+Another area where emulation really shines is the ability to run automated tests
 without hardware. Renode integrates with the Robot Framework[^3] to enable this
 uses case.
 
@@ -565,6 +586,7 @@ python -u <path-to-renode>/tests/run_tests.py tests/test-button.robot -r test_re
 ```
 
 You'll notice a few things:
+
 1. We passed a "test_results" folder to the script, which is a location that
    HTML test results will be written
 2. We must pass the path to our working directory in a variable, as it is not

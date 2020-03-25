@@ -2,3 +2,4 @@ bin/
 *.elf
 *.bin
 generated.*.ld
+libopencm3/
