@@ -71,7 +71,7 @@ To verify your Renode installation, you can run one of the examples:
 ![](/img/intro-to-renode/renode-first-demo-output.png)
 
 
-## Running our own firmware
+## Running our firmware in Renode
 
 Let's write a hello world firmware to run via Renode. We will target the STM23F4
 Discovery board, as the emulator supports it out of the box.
@@ -216,6 +216,8 @@ Next, we load our firmware:
 (machine-0)
 ```
 
+> Note: You can also load `.bin` files with `sysbus LoadBinary`
+
 Before we start the machine, we want to do one last thing: open a terminal to
 display UART data. Some peripherals come with what Renode calls "Analyzers",
 which are ways to display their state and data. We enabled UART2 in our
@@ -292,10 +294,21 @@ We restart our machine, and voila!
 
 ### Automating setup with a `.resc` script
 
-```
-:name: STM32F4 Discovery Printf
-:description: This script runs the usart_printf example on stm32f4 discovery
+Typing all this out is a bit of a hassle, this is where Renode Scripts ".resc"
+files come in.
 
+Not much documentation can be found on `.resc` files, but here are a few things
+I was able to figure out:
+1. variables can be created with `$` and assigned with `=`. For example: `$hello
+   = "world"`.
+2. renode are executed in the order written
+3. macros can be defined with the keyword `macro`, and start and end with `"""`
+
+Putting this all together, we can write the following script to setup our hello
+world example:
+
+```
+# Filename: renode-config.resc
 $bin?=@renode-example.elf
 
 # Create Machine & Load config
@@ -314,13 +327,295 @@ macro reset
 runMacro $reset
 ```
 
+We can start renode with this script by passing it as argument to our renode
+command. I wrapped it all in a `start.sh` shell script:
+
+```
+#!/bin/sh
+
+sh /Applications/Renode.app/Contents/MacOS/macos_run.command renode-config.resc
+```
+
+> **Reset macro**: Renode looks for a macro named "reset", and uses it to reset
+> the machine when the `machine Reset` or `machine RequestReset`. In our script,
+> we use that macro to reload our elf file every time, so we do not have to do
+> it manally between reset. This also guarantees that the latest elf file is
+> picked up and allows us to itterate on code quickly.
+
+### Managing machine lifecycle
+
+Starting renode every time you want to restart your machine is cumbersome.
+Instead, we can use lifecycle commands to start, pause, and reset our machine:
+
+```
+# start a machine
+(machine-0) start
+# pause a machine
+(machine-0) pause
+# reset a machine
+(machine-0) machine RequestReset
+```
+
+These are all pretty self explanatory. Note that the `RequestReset` command will
+invoke your `reset` macro if you have one specified.
+
+Last but not least, you can drop the whole emulation by using the `Clear`
+command.
 
 ## Debugging with Renode
 
+Inevitably things will go wrong and you will need to debug them. This is one
+area where Renode really shine.
+
+### Tracing Function Calls
+
+One of the advantages of emulators is that they make it much easier to
+introspect and trace device state. One of the more useful hooks exposed by
+Renode is execution tracing. Provided you fed the emulator an ELF file with
+debug symbols, Renode will print out log out every function being executed.
+
+Going back to our hello world example, we can enable function tracing with a
+single command:
+
+```
+(machine-0) sysbus.cpu LogFunctionNames True
+(machine-0)
+```
+
+You will likely want to write the output to a file rather than stdout, you can
+do this with a single command as well:
+
+```
+(machine-0) LogFile @/tmp/function-trace.log 
+(machine-0)
+```
+
+Once we've started our emulation, we can retrieve the file and inspect it:
+
+```
+[...]
+23:12:16 [INFO] cpu: Entering function _write at 0x80001D8¬
+23:12:16 [INFO] cpu: Entering function usart_send_blocking (entry) at 0x80003B4¬
+23:12:16 [INFO] cpu: Entering function usart_wait_send_ready (entry) at 0x80003D2¬
+23:12:16 [INFO] cpu: Entering function usart_wait_send_ready at 0x80003D8¬
+23:12:16 [INFO] cpu: Entering function usart_send_blocking at 0x80003BE¬
+23:12:16 [INFO] cpu: Entering function usart_send (entry) at 0x80003CA¬
+23:12:16 [INFO] cpu: Entering function _write at 0x80001E2¬
+23:12:16 [INFO] cpu: Entering function _write at 0x80001BE¬
+23:12:16 [INFO] cpu: Entering function _write at 0x80001CA¬
+23:12:16 [INFO] cpu: Entering function _write at 0x80001D0¬
+23:12:16 [INFO] cpu: Entering function usart_send_blocking (entry) at 0x80003B4¬
+23:12:16 [INFO] cpu: Entering function usart_wait_send_ready (entry) at 0x80003D2¬
+23:12:16 [INFO] cpu: Entering function usart_wait_send_ready at 0x80003D8¬
+23:12:16 [INFO] cpu: Entering function usart_send_blocking at 0x80003BE¬
+23:12:16 [INFO] cpu: Entering function usart_send (entry) at 0x80003CA¬
+23:12:16 [INFO] cpu: Entering function _write at 0x80001D8¬
+23:12:16 [INFO] cpu: Entering function usart_send_blocking (entry) at 0x80003B4¬
+[...]
+```
+
+### GDB Integration
+
+When it comes to debugging, GDB is my go to tool. I was pleasantly surprised to
+learn that Renode will spin up a GDB server for you out of the box. This is
+extremely easy to use.
+
+First, we enable the GDB server and bind it to port 3333:
+
+```
+(machine-0) machine StartGdbServer 3333
+(machine-0)
+```
+
+In a separate terminal window, we start GDB and connect to the server on port
+3333.
+
+```
+$ arm-none-eabi-gdb renode-example.elf
+GNU gdb (GNU Tools for Arm Embedded Processors 8-2018-q4-major)
+8.2.50.20181213-git
+Copyright (C) 2018 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-apple-darwin10
+--target=arm-none-eabi".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from renode-example.elf...
+
+(gdb) target remote :3333
+Remote debugging using :3333
+0x00000000 in ?? ()
+```
+
+We can then issue monitor commands to renode via the `monitor` gdb command, and
+debug as we would a real target
+
+```
+(gdb) break main
+Breakpoint 1 at 0x80001f8: file renode-example.c, line 62.
+(gdb) monitor start
+Starting emulation...
+(gdb) c
+Continuing.
+
+Breakpoint 1, main () at renode-example.c:62
+62              clock_setup();
+(gdb) step
+rcc_periph_clock_enable (clken=clken@entry=RCC_GPIOD) at
+../common/rcc_common_all.c:136
+136             _RCC_REG(clken) |= _RCC_BIT(clken);
+(gdb) n
+clock_setup () at renode-example.c:12
+12              rcc_periph_clock_enable(RCC_GPIOA);
+(gdb) n
+15              rcc_periph_clock_enable(RCC_USART2);
+(gdb)
+```
 
 ## Renode & Integration Tests
 
+Another area Where emulation really shines is the ability to run automated tests
+without hardware. Renode integrates with the Robot Framework[^3] to enable this
+uses case.
+
+A full tutorial on the Robot Framework is outside of the scope of this post, but
+it is already quite useful.
+
+To make the test more interesting, let's add a button to our firmware. The STM32
+discovery board we are emulating has one on Port A pin 0, which we can enable
+with a few lines of code:
+
+```c
+static void button_setup(void)
+{
+    /* Enable GPIOA clock. */
+    rcc_periph_clock_enable(RCC_GPIOA);
+
+    /* Set GPIOA0 to 'input floating'. */
+    gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO0);
+}
+```
+
+We then modify our main function to test the state of the button
+
+```c
+    bool button_is_pressed = false;
+
+    while (1) {
+        if (!button_is_pressed && gpio_get(GPIOA, GPIO0)) {
+            button_is_pressed = true;
+        } else if (button_is_pressed && !gpio_get(GPIOA, GPIO0)) {
+            printf("button pressed\n");
+            button_is_pressed = false;
+        }
+    }
+```
+
+Not how we'd do it in production, but it works!
+
+We can then write a simple Robot Framework script to exercise our firmware:
+
+```
+# Filename: test-button.robot
+*** Settings ***
+Suite Setup                   Setup
+Suite Teardown                Teardown
+Test Setup                    Reset Emulation
+Resource                      ${RENODEKEYWORDS}
+
+*** Test Cases ***
+Should Handle Button Press
+    Execute Command         mach create
+    Execute Command         machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
+    Execute Command         machine LoadPlatformDescription @${PATH}/add-ccm.repl
+    Execute Command         sysbus LoadELF @${PATH}/renode-example.elf
+
+    Create Terminal Tester  sysbus.uart2
+
+    Start Emulation
+
+    Wait For Line On Uart   hello world
+    Test If Uart Is Idle    3
+    Execute Command         sysbus.gpioPortA.UserButton Press
+    Test If Uart Is Idle    3
+    Execute Command         sysbus.gpioPortA.UserButton Release
+    Wait For Line On Uart   button pressed
+```
+
+This test will wait for the "hello world" string to print, then press and
+release the button and wait for "button pressed" to print.
+
+To run the test, we need to checkout and build the Renode codebase. You can find
+step by step instructions on their website[^4]. We can then use the
+`run_tests.py` script to execute our test.
+
+```
+python -u <path-to-renode>/tests/run_tests.py tests/test-button.robot -r test_results --variable PATH:$PWD
+```
+
+You'll notice a few things:
+1. We passed a "test_results" folder to the script, which is a location that
+   HTML test results will be written
+2. We must pass the path to our working directory in a variable, as it is not
+   propagated automatically
+
+To make life easier, I wrapped this command in a shell script here as well:
+
+```bash
+#!/bin/sh
+
+RC=${RENODE_CHECKOUT:-~/code/renode}
+
+python -u $RC/tests/run_tests.py tests/test-button.robot -r test_results --variable PATH:$PWD
+```
+
+Running this shell script, we observe the test running!
+
+```
+$ ./test.sh
+Preparing suites
+Starting suites
+Running tests/test-button.robot
++++++ Starting test 'test-button.Should Handle Button Press'
++++++ Finished test 'test-button.Should Handle Button Press' in 8.35 seconds with status OK
+Cleaning up suites
+Aggregating all robot results
+Output:  /Users/francois/code/interrupt/example/renode/test_results/robot_output.xml
+Log:     /Users/francois/code/interrupt/example/renode/test_results/log.html
+Report:  /Users/francois/code/interrupt/example/renode/test_results/report.html
+Tests finished successfully :)
+```
+
+Success! As a bonus, the robot framework generates some pretty HTML reports:
+
+![](/img/intro-to-renode/renode-test-result.png)
+
+## Closing
+
+While we only scratched the surface of what Renode is capable of, I hope this
+post helped you get up and running with firmware emulation.
+
+In a future post, we will show how to model a custom device in Renode with
+custom Platform Description files and some Python peripheral implementations.
+
+All the code used in this blog post is aavailable on
+[Github](https://github.com/memfault/interrupt/tree/master/example/renode).
+See anything you'd like to change? Submit a pull request!
+
+{:.no_toc}
+
 ## References
 
-- [^1] https://github.com/libopencm3/libopencm3
-- [^2] https://github.com/libopencm3/libopencm3-template
+[^1]: https://github.com/libopencm3/libopencm3
+[^2]: https://github.com/libopencm3/libopencm3-template
+[^3]: https://robotframework.org/
+[^4]: https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html
