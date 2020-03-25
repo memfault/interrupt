@@ -14,7 +14,8 @@ SPI flash device. That's more than enough to write some real firmware!
 
 <!-- excerpt start -->
 In this post, I walk through setting up the Renode emulator and running a
-firmware in it for STM32.
+firmware in it for STM32. Using that setup, we'll debug our firmware, run it
+through integrated tests, and shorten the iteration cycle of development.
 <!-- excerpt end -->
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
@@ -30,14 +31,47 @@ straight to your mailbox_
 
 ## What is Renode?
 
+[Renode](https://renode.io/) is an open source Emulator for embedded platforms.
+Today, it supports x86 (Intel Quark), Cortex-A (Nvidia Tegra), Cortex-M, SPARC
+(Leon), and RISC-V based platforms.
 
-### Why not QEMU?
+Renode can take the same firmware you are running in production, and run it
+againsts emulated cores, peripherals, and even sensors and actuators. Better
+yet, its extensive networking support and multi-system emulation make it a shoe
+in for testing systems made up of multiple devices talking together.
 
+With Renode, you can start development before your hardware is ready, test your
+firmware without deploying racks of hardware, and shorten your iteration cycles
+by cutting out flash loading delays.
+
+Renode is built using the Mono framework, which allows it to run cross-platform.
+
+> **Why not QEMU?** - Readers who have experience with emulation will point out
+> that QEMU has existed for a long time, and is capable of emulating Cortex-M
+> targets. In our experience, QEMU is focused on emulating systems meant for
+> higher level OSes (e.g. Linux computers) rather than embedded devices. To
+> date, it only supports two cortex-M series targets, both made by TI.
 
 ## Installing Renode
 
+The Renode projects releases installers for Windows, MacOS, and multiple Linux
+distributions. As of this writing, you can find the v1.9 release on
+[Github](https://github.com/renode/renode/releases/tag/v1.9.0).
 
-## Running our Hello World
+This guide was written on MacOS, though it is not OS specific.
+
+To verify your Renode installation, you can run one of the examples:
+
+1. Open Renode, on MacOS I prefer to use the command line directly:
+    ```$ sh /Applications/Renode.app/Contents/MacOS/macos_run.command```
+2. A Renode terminal window will open. Load the example with `start
+   @scripts/single-node/stm32f4_discovery.resc`
+![](/img/intro-to-renode/renode-first-demo-start.png)
+3. A second terminal window should open, displaying serial output
+![](/img/intro-to-renode/renode-first-demo-output.png)
+
+
+## Running our own firmware
 
 ### A simple firmware
 
