@@ -7,7 +7,7 @@ author: francois
 ---
 
 In this new era of work-from-home, firmware engineer may not have all the
-equipment and development board they are used to having at the office. One way
+equipment and development boards they are used to having at the office. One way
 around this? Emulation!
 
 While they're not quite the real thing, emulators can run our firmware, print
@@ -179,6 +179,9 @@ Next up, we must spin up a machine in Renode and run our firmware in it.
 Like we did earlier, we first start Renode:
 
 ```
+$ git clone https://github.com/memfault/interrupt.git
+$ cd example/renode/
+$ make
 # Note: on Linux this just is the "renode" command
 $ sh /Applications/Renode.app/Contents/MacOS/macos_run.command
 ```
@@ -265,6 +268,12 @@ of warnings:
 [...]
 ```
 
+Let's quit the emulator for now and restart it once things are fixed
+
+```
+(monitor) quit
+```
+
 Looking at our chip's memory map, we notice that `0x10XXXXXX` is in the CCM
 region. Turns out the renode model does not implement it. Fear not! This is
 easily fixed.
@@ -291,7 +300,16 @@ same `LoadPlatformDescription` command we used earlier:
 (machine-0)
 ```
 
-We restart our machine, and voila!
+Putting it all together we have:
+
+```
+(monitor) mach create
+(machine-0) machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
+(machine-0) sysbus LoadELF @renode-example.elf
+(machine-0) machine LoadPlatformDescription @add-ccm.repl
+```
+
+We now run `start` on our machine, and voila!
 
 ![](/img/intro-to-renode/renode-hello-world.png)
 
@@ -340,10 +358,10 @@ sh /Applications/Renode.app/Contents/MacOS/macos_run.command renode-config.resc
 ```
 
 > **Reset macro**: Renode looks for a macro named "reset", and uses it to reset
-> the machine when the `machine Reset` or `machine RequestReset`. In our script,
+> the machine when the `machine Reset` or `machine RequestReset` are issued. In our script,
 > we use that macro to reload our elf file every time, so we do not have to do
-> it manally between reset. This also guarantees that the latest elf file is
-> picked up and allows us to itterate on code quickly.
+> it manually between resets. This also guarantees that the latest elf file is
+> picked up and allows us to iterate on code quickly.
 
 ### Managing machine lifecycle
 
@@ -368,7 +386,7 @@ command.
 ## Debugging with Renode
 
 Inevitably things will go wrong and you will need to debug them. This is one
-area where Renode really shine.
+area where Renode really shines.
 
 ### Tracing Function Calls
 
@@ -389,7 +407,7 @@ You will likely want to write the output to a file rather than stdout, you can
 do this with a single command as well:
 
 ```
-(machine-0) LogFile @/tmp/function-trace.log
+(machine-0) logFile @/tmp/function-trace.log
 (machine-0)
 ```
 
@@ -429,6 +447,9 @@ First, we enable the GDB server and bind it to port 3333:
 (machine-0) machine StartGdbServer 3333
 (machine-0)
 ```
+
+> Note: For the example config we have added this to renode-config.resc so it happens automatically
+> when spinning up the environment
 
 In a separate terminal window, we start GDB and connect to the server on port 3333.
 
@@ -485,7 +506,7 @@ clock_setup () at renode-example.c:12
 
 ## Renode & Integration Tests
 
-Another area Where emulation really shines is the ability to run automated tests
+Another area where emulation really shines is the ability to run automated tests
 without hardware. Renode integrates with the Robot Framework[^3] to enable this
 uses case.
 

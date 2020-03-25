@@ -1,3 +1,0 @@
-[submodule "example/renode/libopencm3"]
-	path = example/renode/libopencm3
-	url = https://github.com/libopencm3/libopencm3.git
