@@ -196,7 +196,7 @@ $ arm-none-eabi-size zephyr/zephyr.elf
 ```
 
 There are a [number of ways to
-capture]([Conda]({% post_url 2019-06-06-best-firmware-size-tools %})) this data,
+capture]({% post_url 2019-06-06-best-firmware-size-tools %}) this data,
 and some projects or teams want to track other data important to them. These
 might include specific linker region sizes, resource pack size (fonts, images,
 etc), or possibly the largest 10 files or symbols in the codebase. Whatever is
