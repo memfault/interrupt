@@ -37,12 +37,12 @@ mafaneh:
 cyril:
     name: Cyril Fougeray
     email: cyril.fougeray@gmail.com
-    web: https://about.me/cyril.fougeray
+    web: http://www.cyrilfougeray.com
     linkedin: https://www.linkedin.com/in/cyrilfougeray/
     twitter: cyrilfougeray
     github: fouge
     image: /img/author/cyril.jpg
-    blurb: is a freelance Firmware Engineer you can hire <a href='https://www.notion.so/cyrilfougeray/Hey-I-m-Cyril-e18527c028844776813f11a8f724862c'>through that page</a>. Previously he worked on embedded software at Equisense and Spire.
+    blurb: is a freelance embedded software engineer you can hire <a href='http://www.cyrilfougeray.com'>through that page</a>. Previously he worked on embedded software at Equisense and Spire.
 james:
     name: James Munns
     email: james.munns@ferrous-systems.com
