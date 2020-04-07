@@ -114,7 +114,7 @@ $(MYLIB_TARGET): $(MYLIB_OBJ_FILES)
 # FreeRTOS should really be included as a submodule in a real project
 # Let's do a cheap hack and clone it here instead
 $(FREERTOS_PORT_ROOT):
-	gir clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git $(FREERTOS_ROOT_DIR)
+	git clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git $(FREERTOS_ROOT_DIR)
 
 $(BUILD_DIR)/%.o: $(ROOT_DIR)/%.c Makefile | $(BUILD_DIR) $(DEP_DIR) $(FREERTOS_PORT_ROOT)
 	@echo "Compiling $*.c"

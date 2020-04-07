@@ -38,7 +38,7 @@ Introduced in the late 1980s as part of the Unix operating system, ELF has becom
 output format used by compilers for embedded development. A full discussion of the ELF file format
 is outside the scope of this article but at a high level it's a binary data format which holds
 program data as well as debug information in different "sections". Since the format is well specified, many
-tools have been developed to parse them. It's easy to check if a file is an ELF format by
+tools have been developed to parse it. It is easy to check if a file is an ELF format by
 inspecting the first four bytes of the file where you should see `0x7f` followed by "ELF":
 
 ```bash
@@ -46,20 +46,20 @@ $ xxd -l4 <ELF>
 00000000: 7f45 4c46                                .ELF
 ```
 
-Compilers and IDEs will sometimes use different extensions for ELF artifacts but typically you will
-see one of`.elf`, `.out`, or `.axf`.
+Compilers and IDEs will sometimes use different extensions for ELF artifacts. The most common ones
+you will see are `.elf`, `.out`, or `.axf`.
 
 ### DWARF
 
 DWARF is a standardized format[^3] for representing debug information (i.e symbol names, struct
-layouts, how to recover backtraces, etc). The format was developed in the late 1980s as well as
+layouts, how to recover backtraces, etc). The format was developed in the late 1980s as
 part of Unix System V Release 4 (SVR4):
 
-> The name DWARF is something of a pun, since it was developed along with the ELF object file
-> format. The name is an acronym for “Debugging With Arbitrary Record Formats”.[^2]
+> Fun Fact: "The name DWARF is something of a pun, since it was developed along with the ELF object file
+> format. The name is an acronym for “Debugging With Arbitrary Record Formats”".[^2]
 
-When a program is compile with debug information enabled (e.g. the `-g` CFLAG when using GCC), this
-information will be written into special `.debug_` ELF sections such as:
+When a program is compiled with debug information enabled (e.g. with the `-g` CFLAG when using GCC
+or Clang), this information will be written into special `.debug_` ELF sections that look like:
 
 ```
 $ readelf -S <ELF>
@@ -76,12 +76,12 @@ $ readelf -S <ELF>
 
 ### stabs, COFF, XCOFF
 
-While rather infrequent, if you are working with legacy compilers or custom compilers (such as
+While rather infrequent, if you are working with custom compilers (such as
 those shipped with some DSPs), you may see binary / debug information emitted in alternative formats such as
 stabs, COFF, or XCOFF. These are all legacy formats that have largely been superseded by ELF +
 DWARF. I view it as a red-flag in the evaluation process if a vendors compiler emits information in
-these formats because a lot of binary inspection tools these days have largely deprecated support
-for these formats. This makes it hard to debug issues on these chips and workaround issues.
+these formats. At this point, a lot of binary inspection tools have deprecated support
+for these formats. This makes it harder to debug and workaround issues on chips using these formats.
 
 ## Examples
 
@@ -89,16 +89,21 @@ All the example code used in the sections below can be found in it's entirety
 [on Github](https://github.com/memfault/interrupt/tree/master/example/best-of-binutils). If you
 would like to follow along and build any of the sources yourself you can find more information there.
 
-## Binutils
+## GNU Binutils
 
-Bin utils is the collection of supporting tools are GNU GCC that can be used for editing binaries.
-We'll go into details below but most of the tools operate on Executable and Linkable Format (ELFs). This is the output of the link stage during compilation and usually has an extension like `.elf`, `.out`, `.axf`. Pretty much all of the embedded compilers use this format so binutils can also be leveraged
+GNU Binutils is a collection of supporting tools that work alongside GNU GCC to inspect and edit binaries.
+We'll go into details below but most of the tools operate on ELFs. On linux and for embedded
+devices both individual object files (`.o`) and the final linked output (the ELF) are in this format.
 
 ### Compiling Binutils From Source
 
+Sometimes it can be fun (or useful) to compile the latest GNU Binutil to get a preview of
+unreleased features or customize the supported architecture targets that are supported:
+
 ```
 $ git clone git://sourceware.org/git/binutils-gdb.git
-$ cd binutils-gdb
+$ git log --oneline -1
+3349112e38 elf: Remove zero-sized relocation section from section group
 $ ./configure --prefix=/usr/local/binutils_latest/arm-none-eabi --target=arm-none-eabi
 --with-python --disable-ld
 $ make
@@ -113,7 +118,7 @@ This program has absolutely no warranty.
 
 ### Compiling Binutils For Multiple Targets
 
-A typical binutil release will only include select targets. For example, the official GNU ARM
+A typical GNU Binutil release will only include select targets. For example, the official GNU ARM
 toolchain[^4] includes:
 
 ```
@@ -124,25 +129,25 @@ elf32-bigarm elf32-bigarm-fdpic elf32-little elf32-big srec symbolsrec
 verilog tekhex binary ihex plugin
 ```
 
-However, binutils can also be compiled to support multiple architectures / targets from the same binary!
-If you are switching between architectures frequently, it's also possible to compile a
-single bintuils image by utilizing the `--enable-targets`. You can provide a comma separated list
-of targets to enable. If you want everything you can use `--enable-targets=all` which flips on over
-250 targets!
+However, Binutils can also be compiled to support multiple architectures / targets from the same binary!
+If you are switching between architectures frequently, you can compile a
+single Binutil's image by utilizing the `--enable-targets` configure option. You can provide a comma separated list
+of targets to enable or everything can be enabled with`--enable-targets=all` (which flips on over
+250 targets!).
 
 ## Binutil Command Examples
 
 ### readelf
 
-Readelf lets us explore the overall contents of an ELF.
+`readelf` lets us get overall summaries of the different sections of an ELF.
 
-#### Dump Sections in an ELF
+#### Dumping Sections in an ELF
 
 With the `-S` option, we can see the sections that will be included in the final binary as well as sections with special
 information such as the `.debug_*` or `NOTE` sections.
 
-```
-# arm-none-eabi-readelf -S build/nrf52.elf
+```bash
+# arm-none-eabi-readelf -S nrf52_example/build/nrf52.elf
 There are 22 section headers, starting at offset 0x48e7c:
 
 Section Headers:
@@ -176,17 +181,18 @@ Key to Flags:
   y (purecode), p (processor specific)
 ```
 
-#### Dump Compiler ABI Info
+#### Dumping Compiler ABI Info
 
 Every MCU architecture has an Application Binary Interface (ABI) -- which details things such as the registers
-the compiler should use for passing arguments, the registers that must be be preserved across function
-calls, etc. Sometimes a given architecture may have several ABI configuration options. For example, on ARMv7-m
-there are two different ABIs which can be used for passing floating point arguments -- one which
+the compiler should use for passing arguments and the registers that must be be preserved across function
+calls. Sometimes a given architecture may have several ABI configuration options which can be
+selected via compiler flags. For example, on ARMv7-m
+there are two different ABIs which can be used for passing floating point arguments as parameters -- one which
 passes arguments in "VFP" registers and one which uses general purpose registers[^5]. We can
-discover what options are used along with some other information by using the `-A` argument:
+discover what options are used along with some other information by using readelf's`-A` argument:
 
-```
-arm-none-eabi-readelf -A build/nrf52.elf
+```bash
+arm-none-eabi-readelf -A nrf52_example/build/nrf52.elf
 Attribute Section: aeabi
 File Attributes
   Tag_CPU_name: "7E-M"
@@ -212,8 +218,8 @@ A DWARF section is comprised of a sequence of Debugging Information Entries refe
 DIEs. You can use readelf to dump a human readable representation of all the debug information in
 the ELF:
 
-```
-$arm-none-eabi-readelf --debug-dump build/nrf52.elf
+```bash
+$arm-none-eabi-readelf --debug-dump nrf52_example/build/nrf52.elf
   Compilation Unit @ offset 0x0:
    Length:        0x4f9 (32-bit)
    Version:       4
@@ -231,27 +237,32 @@ $arm-none-eabi-readelf --debug-dump build/nrf52.elf
 [...]
 ```
 
-For GCC, there's certain DIEs that can be interesting to look at in isolation. For example, you can
-look at `DW_AT_producer` and inspect the compilation flags that were used. I like to do this to
-quickly audit the compiler flags are in use:
+#### Auditing Compiler Flag Settings
 
-```
-arm-none-eabi-readelf --debug-dump build/nrf52.elf | grep DW_AT_producer.*:
-    <c>   DW_AT_producer    : (indirect string, offset: 0x2cc5): GNU C17 9.2.1 20191025 (release)
+There's certain DIEs that are often interesting to look at in isolation. For example, you can
+look at `DW_AT_producer` DIE on GCC and Clang to see the compiler flags which were used.
+
+```bash
+$ arm-none-eabi-readelf --debug-dump nrf52_example/build/nrf52.elf |
+   grep DW_AT_producer.*:
+
+    <c>   DW_AT_producer    :
+    (indirect string, offset: 0x2cc5): GNU C17 9.2.1 20191025 (release)
     [ARM/arm-9-branch revision 277599]
-    -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb -march=armv7e-m+fp
-    -g3 -Os -ffunction-sections -fdata-sections
+    -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb
+    -march=armv7e-m+fp -g3 -Os -ffunction-sections -fdata-sections
 ```
 
-> For more details about good compiler flag settings for embedded devices in general, check out [this post]({% post_url 2019-10-22-best-and-worst-gcc-clang-compiler-flags %}).
+> NOTE: For more details about good compiler flag settings for embedded devices in general, check out our
+> post on the topic [here]({% post_url 2019-10-22-best-and-worst-gcc-clang-compiler-flags %}).
 
 #### Read GNU Build ID
 
 When using a GNU build ID, the `-n` option can be used to quickly
 print note sections and see the value
 
-```
-arm-none-eabi-readelf -n build/nrf52.elf
+```bash
+arm-none-eabi-readelf -n nrf52_example/build/nrf52.elf
 
 Displaying notes found in: .gnu_build_id
   Owner                Data size    Description
@@ -259,22 +270,23 @@ Displaying notes found in: .gnu_build_id
   Build ID: c61acc0ab0602a9f53bcc36b91d017834129fea1
 ```
 
-> To learn more about GNU Build IDs and how to easily add one to your embedded firmware, check out
+> NOTE: To learn more about GNU Build IDs and how to easily add one to your project, check out
 > [this article]({% post_url 2019-05-29-gnu-build-id-for-firmware %}).
 
 ### strings
 
-As the name implies, "strings" will display all the strings in a binary. We can use the tool to:
+As the name implies, `strings` will display all the strings in a binary. We can use the tool to:
 
 1. To check for security holes in a binary (i.e encryption keys, hard coded passwords, etc)
 2. As a mechanism for quickly saving [code space]({% post_url
-   2019-08-20-code-size-optimization-gcc-flags %}). More often than not there's a couple
+   2019-08-20-code-size-optimization-gcc-flags %}). More often than not there are a couple
    unexpectedly long file names or command line strings in a binary that can be trimmed.
 
 There's two particularly helpful arguments:
 
-- `-d` Which causes only data sections (e.g code in the actual) binary to be scanned instead of the entire info. This way if the ELF has debug information in the ELF, it will not show up in the results
-- `-n <number>` can be used to control the length of strings searched for
+- `-d` - Causes only data sections (code in the actual binary) to be scanned instead of the entire
+  info rather than parts of the ELF that are not in the binary.
+- `-n <number>` - Can be used to control the minimum string length scanned for.
 
 #### Leveraging strings to Save Code
 
@@ -296,9 +308,12 @@ $ arm-none-eabi-strings -n5 -d build/zephyr/zephyr.elf |
 159 Console gets terminal screen size or assumes 80 in case the readout fails. It must be executed after each terminal width change to ensure correct text display.
 ```
 
+Neat! We've found a few long strings printed by the console that we could consider removing if we
+were desperate to save some code space!
+
 ### nm
 
-nm lets you inspect the locations and sizes of symbols within a binary. It can be a quick way to
+`nm` lets you inspect the locations and sizes of symbols within a binary. It can be a quick way to
 find where particular symbols are located or identify what symbols are taking up a lot of space in
 a binary.
 
@@ -317,27 +332,27 @@ arm-none-eabi-nm  build/zephyr/zephyr.elf
 The section type is a one character shorthand where:
 
 | Shorthand | Type |
-| `t` | text symbol |
-| `r` | read only data symbol |
-| `d` |read/write data symbol |
-| `b` |BSS / Zero initialized symbol|
+| `t` or `T` | text symbol |
+| `r` or `R` | read only data symbol |
+| `d` or `D`|read/write data symbol |
+| `b` or `B` |BSS / Zero initialized symbol|
 
-Letters are capitalized if the symbol is global and lower case if the symbols are private/static to
-the compilation unit.
+Letters are capitalized if the symbol is global and lower case if the symbols are static to
+the compilation unit (i.e C file).
 
 #### Useful arguments
 
-- `-S` to print the size of the symbol
-- `-l` to print the line number
-- `--size-sort` to give you the size of the symbol
-- `-t` to change the radix. For example numbers can be displayed in decimal instead of hex by using
+- `-S` - print the size of the symbol
+- `-l` - print the line number
+- `--size-sort` - sort the symbols by size and display the sizes.
+- `-t` - change the radix. For example numbers can be displayed in decimal instead of hex by using
   `-t dec`
 
 #### Finding Largest Symbols
 
-We can use `nm` to quickly identify what the largest objects in the binary are. When doing this I like to change the radix to decimal and use the `--size-sort` argument. Let's try it out
+We can use `nm` to quickly identify what the largest objects in the binary are. When doing this I like to change the radix to decimal and use the `--size-sort` argument. Let's try it out:
 
-```
+```bash
 $ arm-none-eabi-nm --size-sort -t dec -l  build/zephyr/zephyr.elf
 [...]
 00002048 B rx_stack	subsys/net/ip/net_tc.c:28
@@ -351,9 +366,9 @@ $ arm-none-eabi-nm --size-sort -t dec -l  build/zephyr/zephyr.elf
 #### Finding Largest Functions
 
 We can also pipe the result into grep to get largest sizes by section type. For example, to limit
-our search to code/text sections only we can do:
+our search to text sections:
 
-```
+```bash
 $ arm-none-eabi-nm --size-sort -t dec -l  build/zephyr/zephyr.elf  |
    grep " t " -i
 [...]
@@ -366,10 +381,10 @@ $ arm-none-eabi-nm --size-sort -t dec -l  build/zephyr/zephyr.elf  |
 
 #### Computing Code Size of a Single C File
 
-We can further pipe our results into a CLI command like awk to sum totals and compute the codesize
+We can further pipe our results into a CLI command like `awk` to sum totals and compute the codesize
 of a single object file. For example, let's look at `lib/os/printk.c`:
 
-```
+```bash
 $ arm-none-eabi-nm  -l --size-sort -t dec build/zephyr/zephyr.elf |
   grep " t .*printk\.c" -i | cut -d ' ' -f 1 |
   awk '{total += $0} END{print "sum="total}'
@@ -378,26 +393,26 @@ sum=1180
 
 ### ar
 
-ar can be used for building and inspecting static libraries. Large projects will often build
+`ar` can be used for building and inspecting static libraries. Large projects will often build
 subcomponents into static libraries or wind up including a `.a` provided by a vendor.
 
 The most typical invocation of `ar` you will see in a project is something like:
 
-```
+```bash
 arm-none-eabi-ar rcs mylib.a file1.o file2.o file3.o
 ```
 
 where:
 
-`r` tells ar to add the .o files to the archive
-`c` turns off warnings if a new archive had to be created
-`s` adds an index section to the archive for faster linking
+- `r` - tells `ar` to add the .o files to the archive
+- `c` - turns off warnings if a new archive had to be created
+- `s` - adds an index section to the archive for faster linking
 
 #### Common Confusion Point
 
 Let's build a dead simple static library from the following code:
 
-```
+```c
 // library.h
 #pragma once
 void my_library_function(void);
@@ -448,7 +463,12 @@ $ ar rcs mylib.a lib_v2.o
 $ gcc main.c mylib.a
 ```
 
-When we run `./a.out`, what do you expect to see print?
+##### Pop Quiz: What do you expect to see print?
+
+- A: `my_library_function lib_v1.c:6: Version 1`
+- B: `my_library_function lib_v2.c:6: Version 1`
+
+Let's try it out and find out:
 
 ```bash
 $ ./a.out
@@ -466,14 +486,14 @@ lib_v1.o
 lib_v2.o
 ```
 
-Aha, `lib_v1.o` is still in the archive. Let's delete it using the `d` option and recompile:
+Aha, `lib_v1.o` is still in the archive. We can delete it using the `d` option and recompile:
 
 ```bash
 $ ar d  mylib.a lib_v1.o
 $ gcc main.c mylib.a
 ```
 
-Now when we run `./a.out`, we see the print message from lib_v2.c as we would expect.
+Now when we run `./a.out`, we see the print message from `lib_v2.c` as we would expect.
 
 ```bash
 $ ./a.out
@@ -482,8 +502,9 @@ my_library_function  lib_v2.c:6: Version 1
 
 #### Recreate static libraries to avoid using out-of-date objects
 
-The behavior we observed above is because unlike other binutil commands, `ar` _appends_ to a
-pre-existing file if it exists. On embedded systems, since creating an archive is very fast, to
+The behavior we observed above is because unlike other Binutil commands, `ar` _appends_ to a
+pre-existing file if it exists. On embedded systems, since static libraries are relatively fast and
+creating a new archive is very fast, to
 avoid confusion I recommend just deleting any pre-existing archive when a new one gets
 generated. For example,
 
@@ -499,7 +520,8 @@ full rebuild.
 
 ### objdump
 
-Objdump is general purpose utility that is most helpful when trying to examine the assembly in a binary. You can run objdump on the final
+`objdump` is a general purpose utility that is most helpful when trying to examine the assembly in
+a binary (and my personal favorite!). You can run `objdump` on the final
 ELF output or individual `.o` object files. While there are a
 number of options, most of the time the following are most useful:
 
@@ -513,15 +535,16 @@ Let's walk through a few examples of the types of questions we can answer by uti
 Above we saw one of the biggest functions in the zephyr elf we were looking at was
 `z_printk`
 
-```
-$ arm-none-eabi-objdump   -d build/zephyr/zephyr.elf  --disassemble=eswifi_request_work | less
+```bash
+$ arm-none-eabi-objdump   -d build/zephyr/zephyr.elf
+  --disassemble=eswifi_request_work | less
 08003964 <eswifi_request_work>:
 => 8003964:       e92d 4ff0       stmdb   sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
- 8003968:       f890 4071       ldrb.w  r4, [r0, #113]  ; 0x71
- 800396c:       2c01            cmp     r4, #1
+   8003968:       f890 4071       ldrb.w  r4, [r0, #113]  ; 0x71
+   800396c:       2c01            cmp     r4, #1
 => 800396e:       b08f            sub     sp, #60 ; 0x3c
- 8003970:       4605            mov     r5, r0
- 8003972:       f1a0 0698       sub.w   r6, r0, #152    ; 0x98
+   8003970:       4605            mov     r5, r0
+   8003972:       f1a0 0698       sub.w   r6, r0, #152    ; 0x98
 ```
 
 We can see a push of 9 registers and a subtraction of 60 bytes from `$sp` which tells us the stack
@@ -529,14 +552,16 @@ consumption for the function is around 96 bytes
 
 > If you are trying to do an in-depth stack uasge analysis you can also use the GCC compiler flag,
 > `-fstack-usage`. This will emit `.su` files alongside the `.o` files which contain information of
-> stack utilization for all the functions in the object file.
+> stack utilization for all the functions in the object file. Some tools, such as
+> [puncover](https://github.com/memfault/puncover), can also analyze `.su` files to run worst-case
+> stack depth analysis for call chains.
 
-#### Checking for inlining
+#### Examining Optimizations
 
 When looking at backtraces in a debugger, sometimes functions that should be in the backtrace are
 not displayed. While the compiler tries its best to emit debug information that allows for the
 backtraces to be recovered, sometimes certain optimizations (such as inlining) make this really
-difficult. If the backtrace looks wrong, I like to look at the assembly to see if inlining or other
+difficult. If a backtrace looks suspicious, I like to look at the assembly to see if inlining or other
 types of optimizations may have taken place. Lets look at a simple example:
 
 ```c
@@ -560,8 +585,9 @@ int compute_power_sum(int count) {
 }
 ```
 
-```
-$ arm-none-eabi-objdump -d build/nrf52.elf  --disassemble=compute_power_sum
+```bash
+$ arm-none-eabi-objdump -d nrf52_example/build/nrf52.elf
+   --disassemble=compute_power_sum
 
 00000134 <compute_power_sum>:
      134:	1e02        subs	r2, r0, #0
@@ -579,8 +605,9 @@ $ arm-none-eabi-objdump -d build/nrf52.elf  --disassemble=compute_power_sum
 ```
 
 Interesting, no calls to `prv_compute_power_sum()`. This tells us the call was inlined! We can also
-use the `-S` option to display the source code the assembly was generated from. While this can be
-helpful at times, it isn't always correct so just keep that in mind:
+use the `-S` option to display the source code the assembly was generated from.
+
+> DISCLAIMER: While this can be helpful at times, the assembly to source code mapping isn't always correct.
 
 ```
 00000134 <compute_power_sum>:
@@ -617,9 +644,9 @@ int compute_power_sum(int count) {
 #### Comparing Code Size
 
 If you are crunched for space, it can be useful to understand what coding patterns the compiler can
-do a better job with optimizing. The results can easily be compared with objdump
+do a better job at optimizing. These types of comparisons can easily be achieved with objdump.
 
-Consider the following example, which one do you think will yield smaller code?
+##### Pop Quiz: Which of the Following will Yield Smaller Code?
 
 ```c
 const char *test_enum_to_str_v1(eTestEnum e) {
@@ -652,8 +679,12 @@ const char *test_enum_to_str_v2(eTestEnum e) {
 }
 ```
 
+> NOTE: We've compiled both snipets with `-Os` to force a size based optimization
+
+##### test_enum_to_str_v1 assembly
+
 ```
-$ arm-none-eabi-objdump -d build/nrf52.elf \
+$ arm-none-eabi-objdump -d nrf52_example/build/nrf52.elf \
    --disassemble=test_enum_to_str_v1
 0000015c <test_enum_to_str_v1>:
  15c:	2802        cmp	r0, #2
@@ -667,8 +698,10 @@ $ arm-none-eabi-objdump -d build/nrf52.elf \
  170:	2000000a    .word	0x2000000a
 ```
 
+##### test_enum_to_str_v2 assembly
+
 ```
-$ arm-none-eabi-objdump -d build/nrf52.elf  \
+$ arm-none-eabi-objdump -d nrf52_example/build/nrf52.elf  \
    --disassemble=test_enum_to_str_v1
 00000174 <test_enum_to_str_v2>:
  174:	b140        cbz	r0, 188 <test_enum_to_str_v2+0x14>
@@ -692,31 +725,31 @@ $ arm-none-eabi-objdump -d build/nrf52.elf  \
 ```
 
 Interesting, while both functions have the same behavior, the switch case based approach winds up
-being 50% smaller! It looks like the compiler has optimized that approach using a lookup table
+being 50% smaller! It looks like the compiler has optimized that approach better by using a lookup table
 instead of branching.
 
 #### New Feature: visualize jumps
 
 Binutils is constantly adding new features. While writing this post, I discovered a new option in
-`objdump`, `--visualize-jumps` that was just released in binutils 2.34. This generates
+`objdump`, `--visualize-jumps`, that was just released in binutils 2.34. This generates
 ascii art showing the branching flow within individual functions which will be very
 helpful for following control flow when stepping through assembly:
 
 ```
-binutils/objdump  --visualize-jumps=color --disassemble=test_enum_to_str_v2 build/nrf52.elf
+$ binutils/objdump  --visualize-jumps=color --disassemble=test_enum_to_str_v2
+   nrf52_example/build/nrf52.elf
 ```
 
 ![](img/best-of-binutils/visualize-jumps-binutils.png)
 
 ### strip
 
-As the name implies, `strip` is can remove sections from an ELF. Most commonly you
-will see it used for stripping things like debug info from an ELF before shipping the binary to an
-end customer:
+As the name implies, `strip` removes sections from an ELF. Most commonly you
+will see it used for stripping things like debug info from an ELF:
 
 ```
 # Confirm ELF originally has debug info
-$ arm-none-eabi-readelf -S build/nrf52.elf | grep debug
+$ arm-none-eabi-readelf -S nrf52_example/build/nrf52.elf | grep debug
   [ 8] .debug_info       PROGBITS        00000000 0200f4 00980b 00      0   0  1
   [ 9] .debug_abbrev     PROGBITS        00000000 0298ff 001adf 00      0   0  1
   [10] .debug_loc        PROGBITS        00000000 02b3de 003bf7 00      0   0  1
@@ -728,42 +761,46 @@ $ arm-none-eabi-readelf -S build/nrf52.elf | grep debug
   [18] .debug_frame      PROGBITS        00000000 046248 000d8c 00      0   0  4
 
 # Remove debug info
-$ arm-none-eabi-strip -g build/nrf52.elf
+$ arm-none-eabi-strip -g nrf52_example/build/nrf52.elf
 
 # Confirm ELF no longer has debug info
-$ arm-none-eabi-readelf -S build/nrf52.elf | grep debug
+$ arm-none-eabi-readelf -S nrf52_example/build/nrf52.elf | grep debug
 
 ```
 
 ### objcopy
 
-objcopy is most commonly used as the last stage of a build to generate the `.bin` or `.hex` file which
+`objcopy` is most commonly used as the last stage of a build to generate the `.bin` or `.hex` file which
 can be flashed onto a device. Unlike an operating system where there is a "dynamic loader" that
 resolves addresses and loads libaries at runtime, on embedded devices all of the memory locations
 are typically resolved at compilation time.
 
-```
+```bash
 $ arm-none-eabi-objcopy firmware.elf firmware.bin -O binary
 ```
+
+> NOTE: For an example of leveraging using objcopy to build a bootloader for an embedded device,
+> check out [this post]({% post_url 2019-08-13-how-to-write-a-bootloader-from-scratch %}#putting-it-all-together).
 
 #### Converting binaries into an object file
 
 Sometimes for embedded development you may want to include binary artifacts into a firmware as a
-byte array. For example, a firmware that needs to be loaded on a peripheral during boot
-up. One neat thing you can do with objcopy is convert any binary blob into an object file that can
+byte array. For example, sometimes a firmware will include binaries that need to be loaded onto peripherals (i.e a GPS,
+or accelerometer peripheral image). One neat thing you can do with objcopy is convert any binary blob into an object file that can
 then be linked in your image.
 
 For example, if you want to include `my_binary.bin` in an image, you could create a `.o` as
 follows:
 
-```
-arm-none-eabi-objcopy -I binary -O elf32-littlearm --add-section my_binary_section=my_binary.bin  my_binary.bin my_binary.o
+```bash
+$ arm-none-eabi-objcopy -I binary -O elf32-littlearm
+   --add-section my_binary_section=my_binary.bin my_binary.bin my_binary.o
 ```
 
-objcopy will emit symbols in the object that then make it easy to reference the blob from your
+`objcopy` will emit symbols in the object that then make it easy to reference the blob from your
 C Code:
 
-```
+```bash
 arm-none-eabi-nm -S -l my_binary.o
 00000031 D _binary_my_binary_bin_end
 00000031 A _binary_my_binary_bin_size
@@ -772,7 +809,19 @@ arm-none-eabi-nm -S -l my_binary.o
 
 ### addr2line
 
-addr2line converts addresses back to function and line numbers. You can run it on a single address:
+`addr2line` converts addresses back to function and line numbers.
+
+#### Useful Arguments
+
+- `-a` To show the address which was decoded. This can be useful when decoding multiple addresses
+  at once or using `addr2line` in a batch processing mode.
+- `-f` To display the function name the address is in
+- `-e <ELF>` To specify the excutable to decode. (Otherwise, `addr2line` checks for `a.out` in the
+  working directory and uses that.)
+
+#### Example Usage
+
+You can run it on a single address:
 
 ```bash
 $ arm-none-eabi-addr2line -a -f -e build/zephyr/zephyr.elf 0x08000946
@@ -797,7 +846,7 @@ __udivmoddi4
 ### size
 
 `size` walks through the sections in the ELF and sums up the totals for all sections which are
-allocated. This can be useful for getting a quick summary of what the codesize footprint looks like:
+allocated. This can be useful for getting a quick summary of what the binary footprint looks like:
 
 ```bash
 $ arm-none-eabi-size build/zephyr/zephyr.elf
@@ -807,22 +856,22 @@ text data bss dec hex filename
 
 ## Other useful tools for examining ELFs
 
-There's a number of additional tools aside from GNU binutils which can also be used to examine
-binaries. A full discussion of them is outside the scope of this article but I've included some
-highlights for some of my other favorite tools below:
+There's a number of additional tools aside from GNU Binutils which I've found tremendously useful
+over the years. While a full discussion of them is outside the scope of this article (and merits a
+blog post of their own), I've included some of my favorite highlights here.
 
 ### Godbolt (aka Compiler Explorer)
 
 No discussion of binary inspection is complete without a shout out to Compiler Explorer. This is an online tool
-that allows you to compile snippets of code with against a ridiculous amount of different compilers. Even better you can
-then generate short urls and share links.
+that allows you to compile snippets of code against a ridiculous amount of different compilers. Even better you can
+create short urls and share links with friends.
 
 For example, [here is](https://godbolt.org/z/iqeNUv) an interesting one I was looking at recently.
 
 ![](/img/best-of-binutils/compiler-explorer-example.png)
 
 For ARMv7-M, 4 byte loads and store instructions (`ldr` and `str`, respectively) support unaligned
-access. When compiling code for space optimizations (with `-Os`), I would have expected unaligned
+access. When compiling code for space optimizations (using `-Os` CFLAG), I would have expected unaligned
 accesses to get optimized using this instruction. What I noticed is for some reason if the
 unaligned store is through a packed structure, the optimization does not take place.
 
@@ -833,7 +882,7 @@ looking to perform your own analysis on ELF files, I'd highly recommend checking
 repo. There is an [examples](https://github.com/eliben/pyelftools/tree/master/examples) folder in
 the project that you can use as inspiration to get started.
 
-#### Pure Python Binutils size equivalent
+#### Pure Python GNU Binutils size Command Equivalent
 
 As a quick example, we can implement an equivalent of the `size` binutil command in about 30 lines
 of python!
@@ -884,13 +933,13 @@ if __name__ == "__main__":
 
 We can compare the binutil size to the python size to confirm it works!
 
-```
-$ python pyelftools_size.py build/nrf52.elf
+```bash
+$ python pyelftools_size.py nrf52_example/build/nrf52.elf
    text    data     bss     dec     hex	filename
-   6340     244   11684   18268    475c	build/nrf52.elf
-$ arm-none-eabi-size build/nrf52.elf
+   6340     244   11684   18268    475c	nrf52_example/build/nrf52.elf
+$ arm-none-eabi-size nrf52_example/build/nrf52.elf
    text    data     bss     dec     hex	filename
-   6340     244   11684   18268    475c	build/nrf52.elf
+   6340     244   11684   18268    475c	nrf52_example/build/nrf52.elf
 ```
 
 ### LLVM
@@ -898,15 +947,15 @@ $ arm-none-eabi-size build/nrf52.elf
 The LLVM project has [clones](https://llvm.org/docs/CommandGuide/index.html#gnu-binutils-replacements) of most of the binutil commands we discussed above as well as a
 bunch of tools of its own. There's a healthy competition between the LLVM and GNU projects which
 means if a new feature makes it to one of them, there's typically work already underway to bring
-the other to parity. If you haven't looked at LLVM before, it's definitely worth checking out. We intend to do
-a deeper dive into some of the LLVM tools in a future article.
+the other to parity. If you haven't looked at LLVM before, it's definitely worth checking out!
 
 ### abidiff
 
 [abidiff](https://sourceware.org/libabigail/manual/abidiff.html#) analyzes two ELFs and compare
-them for compatbility. This can be an interesting tool to run on ELFs if you are linking libraries
+them for compatibility. This can be an interesting tool to run on ELFs if you are linking libraries
 compiled with multiple compilers or maintaining a third party binary SDK and want to catch
-regressions. On ubuntu:
+regressions. I assume you can cross-compile it to work on OSX, but I typically just run it in an
+ubuntu docker image:
 
 ```
 $ apt-get install libabigail
@@ -915,7 +964,7 @@ $ apt-get install abigail-tools
 
 #### A Contrived Example
 
-```
+```c
 // test.c
 void my_public_function_1(void) {
 }
@@ -926,12 +975,12 @@ void my_public_function_2(void) {
 #endif
 ```
 
-```
+```bash
 $ gcc -c test.c -o test_v1.o
 $ gcc -c test.c -DADD_NEW_API=1 -o test_v2.o
 ```
 
-```
+```bash
 abidiff test_v1.o test_v2.o
 Functions changes summary: 0 Removed, 0 Changed, 0 Added function
 Variables changes summary: 0 Removed, 0 Changed, 0 Added variable
@@ -959,4 +1008,4 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 [^2]: See ["A brief History of DWARF"](http://www.dwarfstd.org/doc/Debugging%20using%20DWARF-2012.pdf)
 [^3]: [DWARF 5](http://www.dwarfstd.org/doc/DWARF5.pdf) is the latest spec but [DWARF 4](http://www.dwarfstd.org/doc/DWARF4.pdf) is still the version most compilers emit.
 [^4]: [GNU ARM Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
-[^5]: https://static.docs.arm.com/ihi0042/g/aapcs32.pdf
+[^5]: [ARM Procedure Call Standard](https://static.docs.arm.com/ihi0042/g/aapcs32.pdf)
