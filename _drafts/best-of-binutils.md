@@ -1,22 +1,24 @@
 ---
-title: "Best of Binutils and other ELF introspection tools"
-description: ""
+title: "Best of GNU Binutils and other ELF introspection tools"
+description: "A guide of how to make the most of GNU binutils to examine binaries using tools such as
+readelf, nm, and objdump with practical examples"
 image: ""
-tag: []
+tags: [better-firmware, fw-code-size]
 author: chris
 ---
 
-When working on embedded systems, there's a lot that takes place in between the C code you write
-and the binary that winds up executing on a device. Building a working knowledge of how to look at and inspect
-the code emitted by the compiler saves time and improve your efficiency for many parts of the
-development process -- such as debugging system problems, identifying issues with compilers or
-debug info emitted, saving code space and optimizing for performance and minimal latency.
+There's a lot that takes place between the C code you write
+and the binary that winds up executing on a device. Understanding how to look at and inspect
+what is emitted by the compiler saves time and improves can improve your efficiency in many areas
+of the development lifecycle -- such
+as debugging system problems, identifying issues with compilers or
+debug info emitted, reducing the size of binaries, and optimizing an application for performance and minimal latency.
 
 <!-- excerpt start -->
 
-In this article, we will explore the best parts of binary introspection tools such as GNU
+In this article, we will explore some of the best binary introspection tools available such as GNU
 Binutils. We will walk through practical examples of how the tools can be leveraged to aid in the
-embedded development process irrespective of the compiler you are using (GCC, IAR, ARMCC).
+embedded development process irrespective of the compiler you are using (e.g. GCC, Clang, IAR, ARMCC).
 
 <!-- excerpt end -->
 
