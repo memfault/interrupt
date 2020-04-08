@@ -1,24 +1,26 @@
 ---
 title: "Best of GNU Binutils and other ELF introspection tools"
 description: "A guide of how to make the most of GNU binutils to examine binaries using tools such as
-readelf, nm, and objdump with practical examples"
+readelf, nm, and objdump with practical examples and recommendations."
 image: ""
 tags: [better-firmware, fw-code-size]
 author: chris
 ---
 
-There's a lot that takes place between the C code you write
-and the binary that winds up executing on a device. Understanding how to look at and inspect
-what is emitted by the compiler saves time and improves can improve your efficiency in many areas
-of the development lifecycle -- such
-as debugging system problems, identifying issues with compilers or
-debug info emitted, reducing the size of binaries, and optimizing an application for performance and minimal latency.
+There's a lot that takes place between the C code you write and the binary that winds up executing
+on a device. Understanding how to look at and inspect what is emitted by the compiler saves time
+and improves can improve your efficiency in many areas of the development lifecycle -- such as
+debugging system problems, identifying issues with compilers or debug info emitted, reducing the
+size of binaries, and optimizing an application for performance and latency.
 
 <!-- excerpt start -->
 
-In this article, we will explore some of the best binary introspection tools available such as GNU
-Binutils. We will walk through practical examples of how the tools can be leveraged to aid in the
-embedded development process irrespective of the compiler you are using (e.g. GCC, Clang, IAR, ARMCC).
+In this article, we will explore some of my favorite binary introspection tools, such as GNU
+Binutils. The material is geared toward the embedded software crowd that typically writes C and
+C++, but many of the ideas, tools, and lessons learned can be applied to a variety of low-level
+software. We will walk through practical examples of how the tools can be leveraged to aid in the
+embedded development process irrespective of the compiler you are using (e.g. GCC, Clang, IAR,
+ARMCC).
 
 <!-- excerpt end -->
 
@@ -36,7 +38,7 @@ embedded development process irrespective of the compiler you are using (e.g. GC
 
 Introduced in the late 1980s as part of the Unix operating system, ELF has become the ubiquitous
 output format used by compilers for embedded development. A full discussion of the ELF file format
-is outside the scope of this article but at a high level it's a binary data format which holds
+is outside the scope of this article, but at a high level, it's a binary data format which holds
 program data as well as debug information in different "sections". Since the format is well specified, many
 tools have been developed to parse it. It is easy to check if a file is an ELF format by
 inspecting the first four bytes of the file where you should see `0x7f` followed by "ELF":
@@ -77,28 +79,30 @@ $ readelf -S <ELF>
 ### stabs, COFF, XCOFF
 
 While rather infrequent, if you are working with custom compilers (such as
-those shipped with some DSPs), you may see binary / debug information emitted in alternative formats such as
-stabs, COFF, or XCOFF. These are all legacy formats that have largely been superseded by ELF +
-DWARF. I view it as a red-flag in the evaluation process if a vendors compiler emits information in
+those shipped with some DSPs), you may see binary or debug information emitted in alternative formats such as
+stabs, COFF, or XCOFF. These are all legacy formats that have largely been superseded by ELF and
+DWARF. I view it as a red-flag in the evaluation process if a vendor's compiler emits information in
 these formats. At this point, a lot of binary inspection tools have deprecated support
-for these formats. This makes it harder to debug and workaround issues on chips using these formats.
-
-## Examples
-
-All the example code used in the sections below can be found in it's entirety
-[on Github](https://github.com/memfault/interrupt/tree/master/example/best-of-binutils). If you
-would like to follow along and build any of the sources yourself you can find more information there.
+for these formats, and makes it harder to debug and workaround issues on chips using these legacy formats.
 
 ## GNU Binutils
 
-GNU Binutils is a collection of supporting tools that work alongside GNU GCC to inspect and edit binaries.
-We'll go into details below but most of the tools operate on ELFs. On linux and for embedded
-devices both individual object files (`.o`) and the final linked output (the ELF) are in this format.
+GNU Binutils is a collection of tools that can be used alongside GNU GCC to inspect and edit binaries.
+Most of these tools operate on ELFs, and for Linux as well as most embedded software, both the
+individual object files (.o) and the final linked output (the ELF) are in this format.
 
-### Compiling Binutils From Source
+### Installing Binutils with a Package Manager
+
+Binutils can easily be installed with a package manager:
+
+- OSX: `brew install binutils`
+- Linux: `apt-get install binutils`
+
+### Installing Binutils From Source
 
 Sometimes it can be fun (or useful) to compile the latest GNU Binutil to get a preview of
-unreleased features or customize the supported architecture targets that are supported:
+unreleased features or customize the supported architecture targets that are supported.
+If you want to also try compiling from source, you can try the below steps.
 
 ```
 $ git clone git://sourceware.org/git/binutils-gdb.git
@@ -135,7 +139,12 @@ single Binutil's image by utilizing the `--enable-targets` configure option. You
 of targets to enable or everything can be enabled with`--enable-targets=all` (which flips on over
 250 targets!).
 
-## Binutil Command Examples
+## GNU Binutil Command Examples
+
+> NOTE: In the sections that follow, we will walk through examples of using various commands to
+> examine ELFs. If you would like to run any of the commands locally, the source code along with
+> build instructions for the example code can be found in the
+> [Interrupt Github Repo](https://github.com/memfault/interrupt/tree/master/example/best-of-binutils).
 
 ### readelf
 
@@ -147,7 +156,7 @@ With the `-S` option, we can see the sections that will be included in the final
 information such as the `.debug_*` or `NOTE` sections.
 
 ```bash
-# arm-none-eabi-readelf -S nrf52_example/build/nrf52.elf
+$ arm-none-eabi-readelf -S nrf52_example/build/nrf52.elf
 There are 22 section headers, starting at offset 0x48e7c:
 
 Section Headers:
@@ -183,16 +192,16 @@ Key to Flags:
 
 #### Dumping Compiler ABI Info
 
-Every MCU architecture has an Application Binary Interface (ABI) -- which details things such as the registers
-the compiler should use for passing arguments and the registers that must be be preserved across function
-calls. Sometimes a given architecture may have several ABI configuration options which can be
-selected via compiler flags. For example, on ARMv7-m
-there are two different ABIs which can be used for passing floating point arguments as parameters -- one which
-passes arguments in "VFP" registers and one which uses general purpose registers[^5]. We can
-discover what options are used along with some other information by using readelf's`-A` argument:
+Every MCU architecture has an Application Binary Interface (ABI). An ABI details things such as
+which registers to use for passing arguments and which ones must be preserved across function
+calls. Sometimes, a given architecture may have several ABI configuration options which can be
+selected via compiler flags. For example, on ARMv7-m, there are two different ABIs which can be used
+for passing floating point arguments as parameters -- one which passes arguments in "VFP" registers
+and one which uses general purpose registers[^5]. We can discover which options are used along with
+some other information by using readelf's`-A` argument:
 
 ```bash
-arm-none-eabi-readelf -A nrf52_example/build/nrf52.elf
+$ arm-none-eabi-readelf -A nrf52_example/build/nrf52.elf
 Attribute Section: aeabi
 File Attributes
   Tag_CPU_name: "7E-M"
@@ -219,7 +228,7 @@ DIEs. You can use readelf to dump a human readable representation of all the deb
 the ELF:
 
 ```bash
-$arm-none-eabi-readelf --debug-dump nrf52_example/build/nrf52.elf
+$ arm-none-eabi-readelf --debug-dump nrf52_example/build/nrf52.elf
   Compilation Unit @ offset 0x0:
    Length:        0x4f9 (32-bit)
    Version:       4
@@ -239,7 +248,7 @@ $arm-none-eabi-readelf --debug-dump nrf52_example/build/nrf52.elf
 
 #### Auditing Compiler Flag Settings
 
-There's certain DIEs that are often interesting to look at in isolation. For example, you can
+There are certain DIEs that are often interesting to look at in isolation. For example, you can
 look at `DW_AT_producer` DIE on GCC and Clang to see the compiler flags which were used.
 
 ```bash
@@ -256,13 +265,13 @@ $ arm-none-eabi-readelf --debug-dump nrf52_example/build/nrf52.elf |
 > NOTE: For more details about good compiler flag settings for embedded devices in general, check out our
 > post on the topic [here]({% post_url 2019-10-22-best-and-worst-gcc-clang-compiler-flags %}).
 
-#### Read GNU Build ID
+#### Read the GNU Build ID
 
-When using a GNU build ID, the `-n` option can be used to quickly
-print note sections and see the value
+When using a GNU Build ID, the `-n` option can be used to quickly
+print note sections and see the value.
 
 ```bash
-arm-none-eabi-readelf -n nrf52_example/build/nrf52.elf
+$ arm-none-eabi-readelf -n nrf52_example/build/nrf52.elf
 
 Displaying notes found in: .gnu_build_id
   Owner                Data size    Description
@@ -314,8 +323,8 @@ were desperate to save some code space!
 ### nm
 
 `nm` lets you inspect the locations and sizes of symbols within a binary. It can be a quick way to
-find where particular symbols are located or identify what symbols are taking up a lot of space in
-a binary.
+find the address of particular symbols or identify which symbols are taking up the most space in a
+binary.
 
 The default output looks like this:
 
@@ -350,7 +359,8 @@ the compilation unit (i.e C file).
 
 #### Finding Largest Symbols
 
-We can use `nm` to quickly identify what the largest objects in the binary are. When doing this I like to change the radix to decimal and use the `--size-sort` argument. Let's try it out:
+We can use `nm` to quickly identify what the largest objects in the binary are. When doing this, I
+like to change the radix to decimal and use the `--size-sort` argument. Let's try it out:
 
 ```bash
 $ arm-none-eabi-nm --size-sort -t dec -l  build/zephyr/zephyr.elf
@@ -502,11 +512,9 @@ my_library_function  lib_v2.c:6: Version 1
 
 #### Recreate static libraries to avoid using out-of-date objects
 
-The behavior we observed above is because unlike other Binutil commands, `ar` _appends_ to a
-pre-existing file if it exists. On embedded systems, since static libraries are relatively fast and
-creating a new archive is very fast, to
-avoid confusion I recommend just deleting any pre-existing archive when a new one gets
-generated. For example,
+The behavior we observed above is because `ar`, unlike other Binutil commands, _appends_ to a
+pre-existing file if it exists. With embedded software, since creating a new archive is very fast,
+I recommend just deleting any pre-existing archive when a new one gets generated. For example,
 
 ```bash
 $(MYLIB_TARGET): $(MYLIB_OBJ_FILES)
@@ -521,9 +529,9 @@ full rebuild.
 ### objdump
 
 `objdump` is a general purpose utility that is most helpful when trying to examine the assembly in
-a binary (and my personal favorite!). You can run `objdump` on the final
-ELF output or individual `.o` object files. While there are a
-number of options, most of the time the following are most useful:
+a binary. It's also my personal favorite!. You can run `objdump` on the final ELF output or
+individual `.o` object files. While there are a number of options, most of the time the following
+are most useful:
 
 `-d` to display the assembly code for all executable sections.
 `--disassemble=<symbol>` to display the assembly for just one function
@@ -532,7 +540,7 @@ Let's walk through a few examples of the types of questions we can answer by uti
 
 #### Inspecting Stack Usage
 
-Above we saw one of the biggest functions in the zephyr elf we were looking at was
+Above we saw one of the biggest functions in the Zephyr ELF we were looking at was
 `z_printk`
 
 ```bash
@@ -728,11 +736,11 @@ Interesting, while both functions have the same behavior, the switch case based 
 being 50% smaller! It looks like the compiler has optimized that approach better by using a lookup table
 instead of branching.
 
-#### New Feature: visualize jumps
+#### New Feature: Visualize Jumps
 
 Binutils is constantly adding new features. While writing this post, I discovered a new option in
 `objdump`, `--visualize-jumps`, that was just released in binutils 2.34. This generates
-ascii art showing the branching flow within individual functions which will be very
+ASCII art showing the branching flow within individual functions which will be very
 helpful for following control flow when stepping through assembly:
 
 ```
@@ -765,7 +773,6 @@ $ arm-none-eabi-strip -g nrf52_example/build/nrf52.elf
 
 # Confirm ELF no longer has debug info
 $ arm-none-eabi-readelf -S nrf52_example/build/nrf52.elf | grep debug
-
 ```
 
 ### objcopy
@@ -773,7 +780,7 @@ $ arm-none-eabi-readelf -S nrf52_example/build/nrf52.elf | grep debug
 `objcopy` is most commonly used as the last stage of a build to generate the `.bin` or `.hex` file which
 can be flashed onto a device. Unlike an operating system where there is a "dynamic loader" that
 resolves addresses and loads libaries at runtime, on embedded devices all of the memory locations
-are typically resolved at compilation time.
+are typically resolved at link time.
 
 ```bash
 $ arm-none-eabi-objcopy firmware.elf firmware.bin -O binary
@@ -785,9 +792,9 @@ $ arm-none-eabi-objcopy firmware.elf firmware.bin -O binary
 #### Converting binaries into an object file
 
 Sometimes for embedded development you may want to include binary artifacts into a firmware as a
-byte array. For example, sometimes a firmware will include binaries that need to be loaded onto peripherals (i.e a GPS,
-or accelerometer peripheral image). One neat thing you can do with objcopy is convert any binary blob into an object file that can
-then be linked in your image.
+byte array. Sometimes, a firmware will include binaries that need to be loaded onto peripherals,
+such as a GPS or accelerometer firmware image. One neat thing you can do with objcopy is convert
+any binary blob into an object file that can then be linked in your image.
 
 For example, if you want to include `my_binary.bin` in an image, you could create a `.o` as
 follows:
@@ -828,7 +835,6 @@ $ arm-none-eabi-addr2line -a -f -e build/zephyr/zephyr.elf 0x08000946
   0x08000946
 _printk_dec_ulong
 zephyr/lib/os/printk.c:465
-
 ```
 
 or pipe a bunch of addresses in from stdin and get them all decoded at once
@@ -854,7 +860,7 @@ text data bss dec hex filename
 84340 2416 32157 118913 1d081 build/zephyr/zephyr.elf
 ```
 
-## Other useful tools for examining ELFs
+## Additional Tools for Examining ELFs
 
 There's a number of additional tools aside from GNU Binutils which I've found tremendously useful
 over the years. While a full discussion of them is outside the scope of this article (and merits a
@@ -877,15 +883,15 @@ unaligned store is through a packed structure, the optimization does not take pl
 
 ### pyelftools
 
-Pyelftools is a pure python package capable of parsing ELF and DWARF information. If you are
-looking to perform your own analysis on ELF files, I'd highly recommend checking out the
+Pyelftools is a pure Python package capable of parsing ELF and DWARF information. If you are
+looking to perform your own analysis on ELF files, I highly recommend checking out the
 repo. There is an [examples](https://github.com/eliben/pyelftools/tree/master/examples) folder in
 the project that you can use as inspiration to get started.
 
 #### Pure Python GNU Binutils size Command Equivalent
 
 As a quick example, we can implement an equivalent of the `size` binutil command in about 30 lines
-of python!
+of Python!
 
 ```python
 # pyelftools_size.py
@@ -931,7 +937,7 @@ if __name__ == "__main__":
 
 ```
 
-We can compare the binutil size to the python size to confirm it works!
+We can compare the binutil size to the Python size to confirm it works!
 
 ```bash
 $ python pyelftools_size.py nrf52_example/build/nrf52.elf
@@ -941,13 +947,6 @@ $ arm-none-eabi-size nrf52_example/build/nrf52.elf
    text    data     bss     dec     hex	filename
    6340     244   11684   18268    475c	nrf52_example/build/nrf52.elf
 ```
-
-### LLVM
-
-The LLVM project has [clones](https://llvm.org/docs/CommandGuide/index.html#gnu-binutils-replacements) of most of the binutil commands we discussed above as well as a
-bunch of tools of its own. There's a healthy competition between the LLVM and GNU projects which
-means if a new feature makes it to one of them, there's typically work already underway to bring
-the other to parity. If you haven't looked at LLVM before, it's definitely worth checking out!
 
 ### abidiff
 
@@ -991,6 +990,14 @@ Variable symbols changes summary: 0 Removed, 0 Added variable symbol not referen
 
   my_public_function_2
 ```
+
+### LLVM
+
+The LLVM project has [clones](https://llvm.org/docs/CommandGuide/index.html#gnu-binutils-replacements) of most of the
+binutil commands we discussed above as well as a bunch of tools of its own. There's a healthy
+competition between the LLVM and GNU projects which means if a new feature makes it to one of them,
+there's typically work already underway to bring the other to parity. If you haven't looked at LLVM
+before, it's definitely worth checking out!
 
 ## Closing
 
