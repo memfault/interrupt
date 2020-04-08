@@ -40,7 +40,9 @@ Introduced in the late 1980s as part of the Unix operating system, ELF has becom
 output format used by compilers for embedded development. A full discussion of the ELF file format
 is outside the scope of this article, but at a high level, it's a binary data format which holds
 program data as well as debug information in different "sections". Since the format is well specified, many
-tools have been developed to parse it. It is easy to check if a file is an ELF format by
+tools have been developed to parse it. 
+
+It is easy to check if a file is an ELF format by
 inspecting the first four bytes of the file where you should see `0x7f` followed by "ELF":
 
 ```bash
