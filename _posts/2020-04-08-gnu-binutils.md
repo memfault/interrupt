@@ -7,7 +7,7 @@ author: chris
 ---
 
 There's a lot that takes place between the C code you write and the binary that winds up executing
-on a device. Understanding how to look at and inspect what is emitted by the compiler saves time
+on a device. Understanding how to look at and inspect what is emitted by the compiler saves time and
 can improve your efficiency in many areas of the development lifecycle -- such as
 debugging system problems, identifying issues with compilers or debug info emitted, reducing the
 size of binaries, and optimizing an application for performance and latency.
