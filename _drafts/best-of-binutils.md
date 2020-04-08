@@ -1,7 +1,6 @@
 ---
-title: "Best of GNU Binutils and other ELF introspection tools"
-description: "A guide of how to make the most of GNU binutils to examine binaries using tools such as
-readelf, nm, and objdump with practical examples and recommendations."
+title: "GNU Binutils: the ELF Swiss Army Knife"
+description: "A guide of how to make the most of GNU Binutils and other tools to examine ELFs"
 image: /img/best-of-binutils/visualize-jumps-binutils-memset.png
 tags: [better-firmware, fw-code-size]
 author: chris
@@ -40,7 +39,7 @@ Introduced in the late 1980s as part of the Unix operating system, ELF has becom
 output format used by compilers for embedded development. A full discussion of the ELF file format
 is outside the scope of this article, but at a high level, it's a binary data format which holds
 program data as well as debug information in different "sections". Since the format is well specified, many
-tools have been developed to parse it. 
+tools have been developed to parse it.
 
 It is easy to check if a file is an ELF format by
 inspecting the first four bytes of the file where you should see `0x7f` followed by "ELF":
@@ -143,10 +142,10 @@ of targets to enable a select subset or use `--enable-targets=all` to enable all
 
 ## GNU Binutil Command Examples
 
-> NOTE: In the sections that follow, we will walk through examples of using various commands to
-> examine ELFs. If you would like to run any of the commands locally, the source code along with
-> build instructions for the example code can be found in the
-> [Interrupt Github Repo](https://github.com/memfault/interrupt/tree/master/example/best-of-binutils).
+In the sections that follow, we will walk through examples of using various commands to examine
+ELFs. If you would like to run any of the commands locally, the source code along with build
+instructions for the example code can be found in the
+[Interrupt Github Repo](https://github.com/memfault/interrupt/tree/master/example/best-of-binutils).
 
 ### readelf
 
@@ -296,11 +295,11 @@ in the following ways:
 
 There's two particularly helpful arguments:
 
-- `-d` - Causes only data sections (code in the actual binary) to be scanned instead of the entire
-  info rather than parts of the ELF that are not in the binary.
+- `-d` - Causes only data sections (code in the actual binary) to be scanned rather than parts of
+  the ELF that are not in the binary.
 - `-n <number>` - Can be used to control the minimum string length scanned for.
 
-#### Leveraging strings to Save Code
+#### Leveraging `strings` to Save Code Space
 
 Let's take a look at the longest strings in the Zephyr `samples/net/wifi` application:
 
@@ -346,8 +345,8 @@ The section type is a one character shorthand where:
 | Shorthand | Type |
 | `t` or `T` | text symbol |
 | `r` or `R` | read only data symbol |
-| `d` or `D`|read/write data symbol |
-| `b` or `B` |BSS / Zero initialized symbol|
+| `d` or `D` | read/write data symbol |
+| `b` or `B` | BSS / Zero initialized symbol |
 
 Letters are capitalized if the symbol is global and lower case if the symbols are private to
 the compilation unit (i.e a static in a C file).
@@ -540,7 +539,7 @@ are most useful:
 `-d` to display the assembly code for all executable sections.
 `--disassemble=<symbol>` to display the assembly for just one function
 
-Let's walk through a few examples of the types of questions we can answer by utilizing objdump.
+Let's walk through a few examples of the types of questions we can answer with objdump.
 
 #### Inspecting Stack Usage
 
@@ -562,7 +561,7 @@ $ arm-none-eabi-objdump   -d build/zephyr/zephyr.elf
 We can see a push of 9 registers and a subtraction of 60 bytes from `$sp` which tells us the stack
 consumption for the function is around 96 bytes.
 
-> If you are trying to do an in-depth stack uasge analysis you can also use the GCC compiler flag,
+> If you are trying to do an in-depth stack usage analysis you can also use the GCC compiler flag,
 > `-fstack-usage`. This will emit `.su` files alongside the `.o` files which contain information of
 > stack utilization for all the functions in the object file. Some tools, such as
 > [puncover](https://github.com/memfault/puncover), can also analyze `.su` files to determine worst-case
@@ -572,7 +571,7 @@ consumption for the function is around 96 bytes.
 
 When looking at backtraces in a debugger, sometimes functions that should be in the backtrace are
 not displayed. While the compiler tries its best to emit debug information that allows for the
-backtraces to be recovered, sometimes certain optimizations (such as inlining) make this really
+backtraces to be recovered, certain optimizations (such as inlining) make this really
 difficult. If a backtrace looks suspicious, I like to look at the assembly to see if inlining or other
 types of optimizations may have taken place. Lets look at a simple example:
 
@@ -740,6 +739,8 @@ Interesting, while both functions have the same behavior, the switch case based 
 being 50% smaller! It looks like the compiler has optimized that approach better by using a lookup table
 instead of branching.
 
+> Note: This behavior is subject to change from compiler version to compiler version.
+
 #### New Feature: Visualize Jumps
 
 Binutils is constantly adding new features. While writing this post, I discovered a new option in
@@ -756,8 +757,9 @@ $ binutils/objdump  --visualize-jumps=color
 
 ### strip
 
-As the name implies, `strip` removes sections from an ELF. Most commonly you
-will see it used for stripping things like debug info from an ELF:
+As the name implies, `strip` removes sections from an ELF. Most commonly you will see it used for
+stripping things like debug info from an ELF. If you are distributing your ELF files, stripping
+debug information can make it harder to reverse engineeryour code. Here is an example:
 
 ```
 # Confirm ELF originally has debug info
@@ -790,7 +792,7 @@ are typically resolved at link time.
 $ arm-none-eabi-objcopy firmware.elf firmware.bin -O binary
 ```
 
-> NOTE: For an example of leveraging objcopy to build a bootloader for an embedded device,
+> NOTE: For an example of using objcopy to build a bootloader for an embedded device,
 > check out [this post]({% post_url 2019-08-13-how-to-write-a-bootloader-from-scratch %}#putting-it-all-together).
 
 #### Converting Binaries into an Object (.o) File
@@ -955,7 +957,7 @@ $ arm-none-eabi-size nrf52_example/build/nrf52.elf
 
 ### abidiff
 
-[abidiff](https://sourceware.org/libabigail/manual/abidiff.html#) analyzes two ELFs and compare
+[abidiff](https://sourceware.org/libabigail/manual/abidiff.html#) analyzes two ELFs and compares
 them for compatibility. This can be an interesting tool to run on ELFs if you are linking libraries
 compiled with multiple compilers or maintaining a third party binary SDK and want to catch
 regressions. I assume you can ompile it yourself on OSX, but I typically just run it in an
