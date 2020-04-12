@@ -310,15 +310,10 @@ bottom.
 #  or another system python.
 
 # Convert GDB to interpret in Python
-python
-import sys
-import os
-import subprocess
-# Execute a Python using the user's shell and pull out the sys.path
-#  from that version
-paths = eval(subprocess.check_output('python -c "import sys;print(sys.path)"',
-                                     shell=True).strip())
-# Extend the current GDB instance's Python paths
+import os,subprocess,sys
+# Execute a Python using the user's shell and pull out the sys.path (for site-packages)
+paths = subprocess.check_output('python -c "import os,sys;print(os.linesep.join(sys.path).strip())"',shell=True).decode("utf-8").split()
+# Extend GDB's Python's search path
 sys.path.extend(paths)
 end
 ```
@@ -481,7 +476,7 @@ reproducible and shareable across teams.
 The above steps will get any GDB up and running using third-party PyPi packages.
 If you want a simple snippet to use or share with teammates about how to set up
 their GDB for PyPi package use, you can use
-[this gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
+[this Github Gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-pypi-post/).
