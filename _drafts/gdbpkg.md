@@ -36,7 +36,28 @@ straight to your mailbox_
 * auto-gen TOC:
 {:toc}
 
-## GDB Needs a Plugin Manager
+## Backstory
+
+I started doing embedded development at Pebble, the smart watch maker, and it's where I first treaded into the deep in with GDB. It's also where I first learned about GDB's Python API. 
+
+One of the firmware engineers on the team wrote a script to pretty-print a summary of the heap for a device connected to GDB using the Python API. It was **awesome**. But, using this script with GDB wasn't without its problems, but we slowly made improvements to our collection of scripts and our workflows. A few notable improvements were:
+
+- Add more scripts for each of our critical modules in the firmware, such as state machines, Bluetooth state, etc.
+- Instead of just printing the heap allocations, expose the heap through a Python Class. e.g. `heap = Heap(g_heap); total_size = sum([b.size] for b in heap.iter_blocks()])`. 
+- [Wrapping the GDB invocation]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#a-project-cli ) and loading GDB Python scripts automatically so every developer on the team had them loaded and ready to use at all times.
+
+This was all back in 2015 or so. As I've moved around to other companies and talked to many other embedded software developers, I've discovered that many of them have never thought to extend GDB using scripts, and even more had not heard of GDB's Python API.
+
+## Consequences of GDB's Lack of Plugin Manager
+
+What has happened in the GDB ecosystem due to not having a plugin manager?
+
+### No Forward Progress
+
+
+
+
+### Poor Debugging Experience
 
 For context, I'm an embedded developer and I write software for devices that run on bare-metal, ARM Cortex-M4/M7 MCU's with about 256 KB of RAM, 1-16 MB of persistent flash, and clocking in at around 100 MHz. Within this past year, I've worked with four different MCU's, 7 different Real-Time Operating Systems (RTOS's), and a handful of common low-level software libraries including Mbed TLS, the WICED Bluetooth Stack, and many mediocre vendor SDK's. 
 
@@ -45,6 +66,19 @@ That's probably a bit more diversity than the average embedded developer given I
 I'm using GDB frequently to debug, read and write memory and state variables, and to help me understand what goes on behind the scenes in vendor libraries and hardware. The experience that I have on a daily basis **sucks**. 
 
 **Debugging even the most popular C/C++/Rust software packages is a huge pain**. 
+
+
+
+### Lack of Awareness and Community
+
+### Monolithic Projects
+
+
+
+
+
+
+
 
 
 
@@ -73,7 +107,7 @@ I'd like to now paint a picture that is possible if we take the time to clean up
 The only thing we need to allow the above to happen is a standard way to write, package, publish, and install these plugins. I'm constantly amazed that our IDE's, GUI based text editors, and even Vim have plugin managers, and I feel that GDB desperately needs one too. 
 
 
-## GDB's Current Extensibility
+## GDB's Current Extensibility Hooks
 
 There are essentially three "built-in" ways to automatically load GDB scripts
 upon launch.
