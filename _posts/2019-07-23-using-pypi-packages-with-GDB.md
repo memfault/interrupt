@@ -1,10 +1,16 @@
 ---
-title: "Using Python PyPi Packages with GDB"
+title: "Using Python PyPi Packages within GDB/LLDB"
 description:
-  "How to setup GDB, virtualenv, and Python to use PyPi packages in GDB scripts"
+  "How to setup GDB/LLDB, virtualenv, and Python to use PyPi packages in GDB/LLDB
+  scripts"
 author: tyler
 tags: [python, gdb]
 ---
+
+> UPDATE: I've discovered that the approach in this post also works with LLDB,
+> despite the
+> [Python Caveat #3](https://lldb.llvm.org/resources/caveats.html#id1) mentioned
+> in the LLDB documentation.
 
 <!-- excerpt start -->
 
@@ -322,7 +328,7 @@ This will allow any Python packages installed in the local installation or
 virtual environment (the one active when launching GDB) to be accessible to GDB!
 
 The snippet above can also be found in this
-[gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
+[`.gdbinit` Github Gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6).
 
 ### Test Importing PrettyTable within GDB
 
@@ -476,7 +482,9 @@ reproducible and shareable across teams.
 The above steps will get any GDB up and running using third-party PyPi packages.
 If you want a simple snippet to use or share with teammates about how to set up
 their GDB for PyPi package use, you can use
-[this Github Gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6)
+[this `.gdbinit` Github Gist](https://gist.github.com/tyhoff/060e480b6cf9ad35dfd2ba9d01cad4b6).
+If you use `lldb`, here is an
+[`.lldbinit` Github Gist](https://gist.github.com/tyhoff/7a286945ef75947ad49a347dbc8708ca).
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-pypi-post/).
