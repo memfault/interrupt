@@ -1,27 +1,51 @@
 ---
-title: "GDBundle - GDB's Missing Plugin Manager"
+title: "gdbundle - GDB's Missing Plugin Manager"
 description: ""
 author: tyler
 image:
 ---
 
-I have a love/hate relationship with GDB. On one hand, it's a wonderful tool and
-debugger, it's works with almost _anything_ I want to attach to it, it has a
-remote protocol which allows for custom GDB servers and front-ends, and it has a
-powerful extensibility story using GDB command scripts and Python (and, err,
-Guile).
+I started with embedded development at Pebble, the smart watch maker, where we
+were building a modern operating system on a device with 128 KB of RAM. It's
+also where I got up-close and personal with GDB and had my first encounter with
+GDB's Python API.
 
-Now for the aspects of GDB that I don't love.
+One one of our bi-weekly hack-days, one of the firmware engineers wrote a script
+to pretty-print a summary of the heap for a device connected to GDB using its
+Python API ([similar to
+this]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}#adding-a-custom-gdb-command-with-gdb-python)).
+It was **awesome**. But, using this script with GDB wasn't without problems. We
+slowly grew it into a collection of scripts and improved our workflows. A few
+notable improvements were:
 
-Last but not least, and what is probably the biggest problem with GDB today, is
-that many developers would rather use `printf` debugging or an inferior IDE
-wrapper over learning and using GDB.
+- Add more scripts for each of our critical modules in the firmware, such as
+  state machines, Bluetooth state, etc.
+- Instead of just printing the heap allocations, expose the heap through a
+  Python Class. e.g.
+  `heap = Heap(g_heap); total_size = sum([b.size] for b in heap.iter_blocks()])`.
+- [Wrapping the GDB
+  invocation]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#a-project-cli
+  ) and loading GDB Python scripts automatically so every developer on the team
+  had them loaded and ready to use at all times.
+
+This was all back in 2015 or so. As I've moved around to other companies and
+talked to many other embedded software developers, I've discovered that many of
+them have never thought to extend or automate GDB using scripts, and even more
+had not even heard of GDB's Python API. I'm saddened by this.
+
+I have a personal goal (and it's one of Memfault's missions) to empower embedded
+software developers with the tools they need to get their job done, and I'm
+excited to share with you something I've been thinking about and building
+towards for over 3 years.
 
 <!-- excerpt start -->
 
-GDB desperately needs a better way to package and distribute scripts and plugins
-to enhance the user experience and encourage sharing common debugging utilities
-and techniques.
+GDB desperately needs a better way for developers to share scripts,
+user-interface improvements, and utilities with the broader public. This would
+enable building upon each other's work and debugging techniques, progressing the
+entire community and preventing developers from reinventing the wheel time and
+time again. GDB (and LLDB) needs a plugin manager, and I'd like to introduce to
+you `gdbundle`.
 
 <!-- excerpt end -->
 
@@ -36,76 +60,100 @@ straight to your mailbox_
 * auto-gen TOC:
 {:toc}
 
-## Backstory
-
-I started doing embedded development at Pebble, the smart watch maker, and it's where I first treaded into the deep in with GDB. It's also where I first learned about GDB's Python API. 
-
-One of the firmware engineers on the team wrote a script to pretty-print a summary of the heap for a device connected to GDB using the Python API. It was **awesome**. But, using this script with GDB wasn't without its problems, but we slowly made improvements to our collection of scripts and our workflows. A few notable improvements were:
-
-- Add more scripts for each of our critical modules in the firmware, such as state machines, Bluetooth state, etc.
-- Instead of just printing the heap allocations, expose the heap through a Python Class. e.g. `heap = Heap(g_heap); total_size = sum([b.size] for b in heap.iter_blocks()])`. 
-- [Wrapping the GDB invocation]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#a-project-cli ) and loading GDB Python scripts automatically so every developer on the team had them loaded and ready to use at all times.
-
-This was all back in 2015 or so. As I've moved around to other companies and talked to many other embedded software developers, I've discovered that many of them have never thought to extend GDB using scripts, and even more had not heard of GDB's Python API.
-
 ## Consequences of GDB's Lack of Plugin Manager
 
 What has happened in the GDB ecosystem due to not having a plugin manager?
 
-### No Forward Progress
+### No Out-Of-Box Debugging of Popular Software
 
+Within this past year, I've worked with four different microcontroller stacks, 7
+different Real-Time Operating Systems (RTOS's), and a handful of common
+low-level software libraries including Mbed TLS, the WICED Bluetooth Stack, and
+many mediocre vendor SDK's. Tens of thousands of developers use each one of
+these stacks/libraries, and every single one of them has to manually debug each
+module by hand by using GDB's print functionality or write their own scripts.
 
+This is why embedded developers often choose to use thousand dollar or mediocre
+IDE debuggers over using GDB. They have these debugging utilities built in or
+allow extensions to be integrated and sold[^code_confidence], even though the
+software backing them isn't all that complex.
 
+### Poor Installation and Non-Discoverable of Extensions
 
-### Poor Debugging Experience
+In the age of modern developer tools, easy installation of extensions is a
+critical facet that needs to be taken seriously. Let's take the new wave of text
+editors as an example. The ones that have gained massive popularity over the
+last 5 years, Sublime Text, VSCode, and Atom, all have a built-in package
+manager which allows searching for and installing extensions with only a few
+keystrokes. **This is what GDB should have**.
 
-For context, I'm an embedded developer and I write software for devices that run on bare-metal, ARM Cortex-M4/M7 MCU's with about 256 KB of RAM, 1-16 MB of persistent flash, and clocking in at around 100 MHz. Within this past year, I've worked with four different MCU's, 7 different Real-Time Operating Systems (RTOS's), and a handful of common low-level software libraries including Mbed TLS, the WICED Bluetooth Stack, and many mediocre vendor SDK's. 
+As for discoverability, I love websites like
+[VimAwesome](https://vimawesome.com/) and the
+[VSCode Marketplace](https://marketplace.visualstudio.com/vscode). I check them
+regularly to see which pieces of my workflows have been automated for me.
 
-That's probably a bit more diversity than the average embedded developer given I work for a company who's job it is to build integrations into every embedded software package, but I want to bring up a point. 
+If you believe this ease of extensibility is only for high-level applications
+and desktop style software, check out
+[PlatformIO's Libraries page](https://platformio.org/lib/search?query=) which
+provides easy installation and discoverability of compiled C/C++ packages for
+embedded systems and Arduino.
 
-I'm using GDB frequently to debug, read and write memory and state variables, and to help me understand what goes on behind the scenes in vendor libraries and hardware. The experience that I have on a daily basis **sucks**. 
+### Monolithic, Invasive Projects
 
-**Debugging even the most popular C/C++/Rust software packages is a huge pain**. 
+Since there is no trivial way for GDB scripts to build upon each other, all
+ambitious projects, such as [hugsy/gef](https://github.com/hugsy/gef),
+[pwndbg/pwndbg](https://github.com/pwndbg/pwndbg), and
+[snare/voltron](https://github.com/snare/voltron), are required to rewrite or
+copy-paste functionality that would normally be imported from popular Python
+packages (e.g. termcolor). This is a barrier to entry for plugin developers.
 
+On the other side of the pendulum, since packages can't be imported easily
+through the Python ecosystem, users are required to run
+[invasive](https://github.com/pwndbg/pwndbg/blob/dev/setup.sh)
+[shell](https://github.com/snare/voltron/blob/master/install.sh) scripts that
+use the system's package manager and install Python packages into the system's
+Python installation.
 
+Every developer should be using virtual environments and leaving their system
+Python installation alone, and the Python environment within GDB is no
+different.
 
-### Lack of Awareness and Community
+### Lack of Customization
 
-### Monolithic Projects
+On one hand, some might see this as a nice feature of GDB. Once you get a GDB
+shell, you know exactly how to accomplish what you want, assuming you know how
+to use GDB to begin with. This is similar to how people think about Vi(m).
 
+However, Vim is infinitely better today due to its customization options, plugin
+managers, community, and ability to quickly change the initial historic settings
+to modern and sane defaults.
 
-
-
-
-
-
-
-
-
-The story around GDB and it's extensibility today is sad. The fact that GDB is
-scriptable through GDB command sequences, Python, and even GNU
-Guile[^extending_gdb] shows that the core developers are trying to allow people
-to extend GDB. However, the community hasn't run with this idea in any
-significant way.
-
-Most new developer tools today need to be _easily_ extensible. Integrations are
-usually a core feature of these products.
-
-GDB's extensibility story is almost exactly the same as Vim's. On launch, GDB
-load's a series of `.gdbinit` files in configured folders[^gdb_startup]
+In contrast, GDB and it's customization story has roughly remained the same for
+the last 10 years for the majority of developers. I found it ironic that the
+most popular GDB enhancement at my previous employer was
+[vim-scripts/Conque-GDB](https://github.com/vim-scripts/Conque-GDB), a Vim
+plugin which wraps GDB.
 
 ## Life with a GDB Plugin Manager
 
-I'd like to now paint a picture that is possible if we take the time to clean up, share, and install GDB scripts that we all have stored somewhere in our local `~/.gdbinit` or stored away in some old repo.
+I'd like to now paint a picture that is possible if we take the time to clean
+up, share, and install GDB scripts that we all have stored somewhere in our
+local `~/.gdbinit` or stored away in some old repo.
 
-1. I start a new project which uses the Zephyr RTOS as an operating system. 
-2. I install the Zephyr GDB plugin so I can view information about the threads, heaps, block pools, mutexes, and global state variables all in GDB.
+1. I start a new project which uses the Zephyr RTOS as an operating system.
+2. I install the Zephyr GDB plugin so I can view information about the threads,
+   heaps, block pools, mutexes, and global state variables all in GDB.
 3. I to pull in the Mbed TLS library to be able to connect to secure servers.
-4. I install the Mbed TLS GDB plugin so that I again can look at the libraries global state to help my debugging experience.
-5. I find a bug in the Zephyr GBD plugin due to a global variable name change. I fork the plugin, fix the bug, and the maintainer publishes a new version of the plugin and now everyone can update. 
+4. I install the Mbed TLS GDB plugin so that I again can look at the libraries
+   global state to help my debugging experience.
+5. I find a bug in the Zephyr GBD plugin due to a global variable name change. I
+   fork the plugin, fix the bug, and the maintainer publishes a new version of
+   the plugin and now everyone can update.
 
-The only thing we need to allow the above to happen is a standard way to write, package, publish, and install these plugins. I'm constantly amazed that our IDE's, GUI based text editors, and even Vim have plugin managers, and I feel that GDB desperately needs one too. 
-
+The only thing we need to allow the above to happen is a standard way to write,
+package, publish, and install these plugins. I'm constantly amazed that our
+IDE's, GUI based text editors, and even Vim have plugin managers, and I feel
+that GDB desperately needs one too.
 
 ## GDB's Current Extensibility Hooks
 
@@ -250,8 +298,8 @@ user-interface to make things colored, formatted, and more efficient.
 What I'm trying to say is...**GDB should have a similar plugin architecture to
 Vim**
 
-|          Functionality           |                          Vim                          |                    GDB                    |
-|----------------------------------|-------------------------------------------------------|-------------------------------------------|
+| Functionality                    | Vim                                                   | GDB                                       |
+| -------------------------------- | ----------------------------------------------------- | ----------------------------------------- |
 | Scripts loaded on startup        | `~/.vimrc`<br>`/etc/vimrc`                            | ~/.gdbinit<br>/usr/local/share/auto-load/ |
 | Scripting Language               | Vimscript                                             | GDB Commands, Python, or Guile            |
 | How to manage plugins            | Plugin Managers, like vim-plug and Vundle             | gdbundle                                  |
@@ -411,14 +459,14 @@ everyone.
 Here are a few more examples of plugins I've created that wrap popular packages
 that I use frequently.
 
-- [gdbundle-gdb-dashboard](https://github.com/memfault/gdbundle-gdb-dashboard) - gdbundle plugin for
+- [gdbundle-gdb-dashboard](https://github.com/memfault/gdbundle-gdb-dashboard) -
+  gdbundle plugin for
   [cyrus-and/gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard).
-- [gdbundle-PyCortexMDebug](https://github.com/memfault/gdbundle-PyCortexMDebug) - gdbundle plugin for
+- [gdbundle-PyCortexMDebug](https://github.com/memfault/gdbundle-PyCortexMDebug) -
+  gdbundle plugin for
   [bnahill/PyCortexMDebug](https://github.com/bnahill/PyCortexMDebug).
 
 ## The Future
-
-
 
 {:.no_toc}
 
@@ -436,7 +484,7 @@ I came across some neat repositories of GDB scripts while I was searching the
 Internet. I've included them below for anyone looking to learn more about how
 people use GDB Python.
 
-### Debugging
+### Debugging Utilities
 
 <!-- prettier-ignore-start -->
 - [Linux - scripts/gdb/](https://github.com/torvalds/linux/tree/master/scripts/gdb)
@@ -446,15 +494,17 @@ people use GDB Python.
 - [PX4/Firmware - platforms/nuttx/Debug/Nuttx.py](https://github.com/PX4/Firmware/blob/master/platforms/nuttx/Debug/Nuttx.py)
 <!-- prettier-ignore-end -->
 
-### Usability
+### Usability / UI Enhancements
 
 <!-- prettier-ignore-start -->
 - [cyrus/gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)
+- [vim-scripts/Conque-GDB](https://github.com/vim-scripts/Conque-GDB)
 - [longld/peda](https://github.com/longld/peda)
 - [snare/voltron](https://github.com/snare/voltron)
 - [hugsy/gef](https://github.com/hugsy/gef)
 - [pwndbg/pwndbg](https://github.com/pwndbg/pwndbg)
 - [cloudburst/libheap](https://github.com/cloudburst/libheap)
+- [PlasmaHH/vdb](https://github.com/PlasmaHH/vdb)
 <!-- prettier-ignore-end -->
 
 ## References
@@ -462,4 +512,5 @@ people use GDB Python.
 <!-- prettier-ignore-start -->
 [^extending_gdb]: [GDB Documentation - Extending GDB](https://sourceware.org/gdb/onlinedocs/gdb/Extending-GDB.html#Extending-GDB)
 [^gdb_startup]: [What GDB Does During Startup](http://sourceware.org/gdb/onlinedocs/gdb/Startup.html)
+[^code_confidence]: [Code Confidence - FreeRTOS Eclipse Plugin](https://www.codeconfidence.com/freertos-tools.shtml)
 <!-- prettier-ignore-end -->
