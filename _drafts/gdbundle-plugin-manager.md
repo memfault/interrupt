@@ -49,7 +49,10 @@ need a plugin manager, and I'd like to introduce to you
 
 <!-- excerpt end -->
 
-Whether you are an embedded engineer using GDB directly or through VSCode and Cortex-Debug, an iOS or Android developer using LLDB within XCode or Android Studio, or a C++ and Rust developer building x86 software, gdbundle will work for you.
+Whether you are an embedded engineer using GDB directly or through VSCode and
+Cortex-Debug, an iOS or Android developer using LLDB within XCode or Android
+Studio, or a C++ and Rust developer building x86 software, gdbundle will work
+for you.
 
 > This article speaks primarily to GDB, but gdbundle works perfectly with LLDB
 > as well.
@@ -84,9 +87,9 @@ GDB, despite their cost and clunkiness. They have these debugging utilities
 built-in or allow extensions to be integrated and sold[^code_confidence], even
 though the software backing them isn't all that complex.
 
-I believe that most popular software libraries could and should have a complimentary debugging
-plugin for GDB that provides a holistic view of the state of the system
-without the developer needing to print linked-lists by hand.
+I believe that most popular software libraries could and should have a
+complimentary debugging plugin for GDB that provides a holistic view of the
+state of the system without the developer needing to print linked-lists by hand.
 
 ### More Customization
 
@@ -224,8 +227,8 @@ CLI]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}).
 ### objfile-gdb.ext File
 
 The next way that GDB allows you to auto-load extensions is by matching the
-object name to a script[^gdb_objfile_gdb_ext]. Let's run through an example of this as well. Let's
-create a c file called `test.c`.
+object name to a script[^gdb_objfile_gdb_ext]. Let's run through an example of
+this as well. Let's create a c file called `test.c`.
 
 ```c
 // test.c
@@ -271,8 +274,9 @@ This also works with GDB Python scripts, however, the filename must end with
 ### .debug_gdb_scripts Section
 
 Upon loading an ELF file, GDB will also look for a section called
-`.debug_gdb_scripts`[^gdb_debug_gdb_scripts]. This section can contain either filenames (e.g.
-`gdb_scripts.py`) or full scripts, like the `HelloPy` script we wrote above.
+`.debug_gdb_scripts`[^gdb_debug_gdb_scripts]. This section can contain either
+filenames (e.g. `gdb_scripts.py`) or full scripts, like the `HelloPy` script we
+wrote above.
 
 While I admit that this functionality is clever, it means that the information
 is hard-coded in the ELF file and cannot be easily changed at a later date.
@@ -487,7 +491,8 @@ developers at my previous company). I am confident in the approach taken, but
 just like I said about GDB, a plugin manager is nothing without the community
 and willing developers to hack something together.
 
-gdbundle is in its infancy, and I'm looking forward to any feature requests or issues that you can think of!
+gdbundle is in its infancy, and I'm looking forward to any feature requests or
+issues that you can think of!
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/).
