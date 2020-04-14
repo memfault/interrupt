@@ -72,22 +72,22 @@ managers are fantastic! The GDB ecosystem stands to gain much from adopting one.
 
 Within the past year, I've worked with four different microcontroller stacks,
 seven different Real-Time Operating Systems (RTOS's), and a handful of common
-low-level software libraries including Mbed TLS, the NRF5 SDK, the WICED Wi-Fi Stack, and
-many vendor SDK's. Tens of thousands of developers use each one of these
-stacks/libraries, and every single one of them has to manually debug each module
-by hand by using GDB's print functionality or writing their own scripts.
+low-level software libraries including Mbed TLS, the NRF5 SDK, the WICED Wi-Fi
+Stack, and many vendor SDK's. Tens of thousands of developers use each one of
+these stacks/libraries, and every single one of them has to manually debug each
+module by hand by using GDB's print functionality or writing their own scripts.
 
-This is why embedded developers often choose to use proprietary debuggers over GDB,
-despite their cost and clunkiness. They have these debugging utilities built in
-or allow extensions to be integrated and sold[^code_confidence], even though the
-software backing them isn't all that complex.
+This is why embedded developers often choose to use proprietary debuggers over
+GDB, despite their cost and clunkiness. They have these debugging utilities
+built-in or allow extensions to be integrated and sold[^code_confidence], even
+though the software backing them isn't all that complex.
 
 ### More Customization
 
 GDB is a professional tool used tens of thousands of developers. No two people
-use GDB exactly the same way and they shouldn't be required to. Given these
-facts, GDB should be able to adapt to each developer's use case and empower them
-to do their job. The use cases for GDB span from reverse engineering binaries,
+use GDB the same way and they shouldn't be required to. Given these facts, GDB
+should be able to adapt to each developer's use case and empower them to do
+their job. The use cases for GDB span from reverse engineering binaries,
 debugging embedded software running on hardware connected over USB, to debugging
 super computers half-way across the world.
 
@@ -155,7 +155,7 @@ $ cd interrupt/example/gdbundle/
 
 GDB allows loading and executing scripts using the `--command <file>` and
 `--eval-command <command>` arguments. This is the one I recommend everyone to
-use and personally use within all of my projects.
+use, and I use it within all of my projects.
 
 For example, we can load a local file called `hello.gdb` which contains a GDB
 command called `hello`.
@@ -241,7 +241,7 @@ Now that we have an executable called `myexe.out`, we can create a script file
 named `<object_file_name>-gdb.gdb`, or in our case `myexe.out-gdb.gdb`, and GDB
 will load it for us automatically.
 
-> NOTE: GDB will auto load scripts from the directories listed in the command
+> NOTE: GDB will auto-load scripts from the directories listed in the command
 > `show auto-load scripts-directory` or from the current working directory.
 
 For this example, we'll copy our previous file.
@@ -259,7 +259,7 @@ $ gdb myexe.out
 Hello World from .gdb
 ```
 
-This also works with GDB Python scripts, however the filename must end with
+This also works with GDB Python scripts, however, the filename must end with
 `-gdb.py`.
 
 ### .debug_gdb_scripts Section
@@ -271,8 +271,8 @@ Upon loading an ELF file, GDB will also look for a section called
 While I admit that this functionality is clever, it means that the information
 is hard-coded in the ELF file and cannot be easily changed at a later date.
 Adding a filename or fixing a bug in an embedded script would require [creative
-uses of GNU binutils]({% post_url 2020-04-08-gnu-binutils %}) and some
-work re-distributing the ELF files.
+uses of GNU binutils]({% post_url 2020-04-08-gnu-binutils %}) and some work
+re-distributing the ELF files.
 
 ## `gdbundle` - Plugin Manager for GDB/LLDB
 
@@ -311,7 +311,7 @@ And that is all.
 
 ### Requirements
 
-gdbundle has a couple requirements.
+gdbundle has a couple of requirements.
 
 #### Python-compatible GDB
 
@@ -434,8 +434,8 @@ were never designed with gdbundle in mind or designed to be distributed.
 
 ## A Few More Examples
 
-Given the flexibility of gdbundle itself, it can allow developer to package up
-any of the already existing GDB scripts and make installation easier for
+Given the flexibility of gdbundle itself, it can allow the developer to package
+up any of the already existing GDB scripts and make installation easier for
 everyone.
 
 Here are a few more examples of plugins I've created that wrap popular packages
@@ -518,9 +518,9 @@ people use GDB Python.
 
 <!-- prettier-ignore-start -->
 - [cyrus/gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)  
-  If anyone has a GDB UI enhancement set up, it's probably this one. It's popular with embedded engineers I know, and provides a full overview of the system state.
+  If anyone has a GDB UI enhancement set up, it's probably this one. It's popular with embedded engineers I know and provides a full overview of the system state.
 - [vim-scripts/Conque-GDB](https://github.com/vim-scripts/Conque-GDB)
-  Also popular with embedded engineers I know, it's allows a GDB session to be used within Vim in a clean way. If you're a Vim user, definitely check it out. 
+  Also popular with embedded engineers I know, it allows a GDB session to be used within Vim cleanly. If you're a Vim user, definitely check it out.
 - [PlasmaHH/vdb](https://github.com/PlasmaHH/vdb)  
   I stumbled upon this one and it looks great! It only has 2 Github stars, but has some great visualizations to show jumps for assembly.
 - [snare/voltron](https://github.com/snare/voltron)  
