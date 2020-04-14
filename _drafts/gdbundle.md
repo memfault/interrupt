@@ -41,10 +41,9 @@ towards for over 3 years.
 <!-- excerpt start -->
 
 GDB desperately needs a better way for developers to share scripts,
-user-interface improvements, and utilities with the broader public. This would
+user-interface improvements, and utilities with their peers. This would
 enable building upon each other's work and debugging techniques, progressing the
-entire community and preventing developers from reinventing the wheel time and
-time again. GDB (and LLDB) needs a plugin manager, and I'd like to introduce to
+entire community and preventing developers from reinventing the wheel. GDB (and LLDB) needs a plugin manager, and I'd like to introduce to
 you [gdbundle](https://github.com/memfault/gdbundle).
 
 <!-- excerpt end -->
@@ -65,19 +64,18 @@ straight to your mailbox_
 
 ## Why Does GDB Need a Plugin Manager
 
-What has happened in the GDB ecosystem due to not having a plugin manager?
+Anyone who has used a modern language will tell you: package managers are fantastic! The GDB ecosystem stands to gain much from adopting one.
 
 ### No Out-Of-Box Debugging of Popular Software
 
-Within this past year, I've worked with four different microcontroller stacks, 7
+Within the past year, I've worked with four different microcontroller stacks, seven
 different Real-Time Operating Systems (RTOS's), and a handful of common
 low-level software libraries including Mbed TLS, the WICED Bluetooth Stack, and
-many mediocre vendor SDK's. Tens of thousands of developers use each one of
+many vendor SDK's. Tens of thousands of developers use each one of
 these stacks/libraries, and every single one of them has to manually debug each
 module by hand by using GDB's print functionality or write their own scripts.
 
-This is why embedded developers often choose to use thousand dollar or mediocre
-IDE debuggers over using GDB. They have these debugging utilities built in or
+This is why embedded developers often choose to use proprietary debuggers over, despite their cost and clunkiness. They have these debugging utilities built in or
 allow extensions to be integrated and sold[^code_confidence], even though the
 software backing them isn't all that complex.
 
@@ -101,7 +99,7 @@ and desktop style software, check out
 provides easy installation and discoverability of compiled C/C++ packages for
 embedded systems and Arduino.
 
-### Monolithic, Invasive Projects
+### Plugin development requires rebuilding the world
 
 Since there is no trivial way for GDB scripts to build upon each other, all
 ambitious projects, such as [hugsy/gef](https://github.com/hugsy/gef),
@@ -261,7 +259,7 @@ named `<object_file_name>-gdb.gdb`, or in our case `myexe.out-gdb.gdb`, and GDB
 will load it for us automatically.
 
 > NOTE: GDB will auto load scripts from the directories listed in the command
-> `show auto-load scripts-directory` or from thee current working directory.
+> `show auto-load scripts-directory` or from the current working directory.
 
 For this example, we'll copy our previous file.
 
@@ -269,7 +267,7 @@ For this example, we'll copy our previous file.
 $ cp hello.gdb myexe.out-gdb.gdb
 ```
 
-We can now launch GDB without nay extra arguments other than the executable and
+We can now launch GDB without any extra arguments other than the executable and
 verify that the command is loaded.
 
 ```
@@ -278,7 +276,7 @@ $ gdb myexe.out
 Hello World from .gdb
 ```
 
-It also works with GDB Python scripts, however the filename must end with
+This also works with GDB Python scripts, however the filename must end with
 `-gdb.py`.
 
 ### .debug_gdb_scripts Section
@@ -312,7 +310,7 @@ gdbundle tries to remain simple, un-opinionated, and delegates most of the work
 of loading the plugin to the plugin itself. Let's go over how it works! It won't
 take long.
 
-In order and by default, gdbundle:
+By default, gdbundle:
 
 1. Searches for installed Python packages that begin with the name `gdbundle_`.
 2. Calls the `gdbundle_load()` function of each plugin module.
