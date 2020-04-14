@@ -1,6 +1,6 @@
 ---
-title: "gdbundle - GDB's Missing Plugin Manager"
-description: "Introducing gdbundle, a plugin manager for GDB and LLDB, which enables developers to easily install plugins through PyPi and pip."
+title: "gdbundle - GDB and LLDB's Missing Plugin Manager"
+description: "Introducing gdbundle, a minimalist plugin manager for GDB and LLDB, which enables developers to easily install Python scripts from PyPi"
 author: tyler
 image:
 ---
@@ -40,14 +40,16 @@ towards for over 3 years.
 
 <!-- excerpt start -->
 
-GDB desperately needs a better way for developers to share scripts,
+GDB and LLDB desperately need a better way for developers to share scripts,
 user-interface improvements, and utilities with their peers. This would enable
-building upon each other's work and debugging techniques, progressing the entire
+building upon existing work and debugging techniques, progressing the entire
 community and preventing developers from reinventing the wheel. GDB and LLDB
 need a plugin manager, and I'd like to introduce to you
 [gdbundle](https://github.com/memfault/gdbundle).
 
 <!-- excerpt end -->
+
+Whether you are an embedded engineer using GDB directly or through VSCode and Cortex-Debug, an iOS or Android developer using LLDB within XCode or Android Studio, or a C++ and Rust developer building x86 software, gdbundle will work for you.
 
 > This article speaks primarily to GDB, but gdbundle works perfectly with LLDB
 > as well.
@@ -81,6 +83,10 @@ This is why embedded developers often choose to use proprietary debuggers over
 GDB, despite their cost and clunkiness. They have these debugging utilities
 built-in or allow extensions to be integrated and sold[^code_confidence], even
 though the software backing them isn't all that complex.
+
+I believe that most popular software libraries could and should have a complimentary debugging
+plugin for GDB that provides a holistic view of the state of the system
+without the developer needing to print linked-lists by hand.
 
 ### More Customization
 
@@ -138,7 +144,7 @@ embedded systems and Arduino.
 ## GDB's Current Extensibility Hooks
 
 Before covering what gdbundle is and how it works, I'd briefly like to talk
-about the extensibility that is already included with GDB.
+about the extensibility that is already included with GDB[^extending_gdb].
 
 There are essentially three "built-in" ways to automatically load GDB scripts
 upon launch.
@@ -218,7 +224,7 @@ CLI]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}).
 ### objfile-gdb.ext File
 
 The next way that GDB allows you to auto-load extensions is by matching the
-object name to a script. Let's run through an example of this as well. Let's
+object name to a script[^gdb_objfile_gdb_ext]. Let's run through an example of this as well. Let's
 create a c file called `test.c`.
 
 ```c
@@ -265,7 +271,7 @@ This also works with GDB Python scripts, however, the filename must end with
 ### .debug_gdb_scripts Section
 
 Upon loading an ELF file, GDB will also look for a section called
-`.debug_gdb_scripts`. This section can contain either filenames (e.g.
+`.debug_gdb_scripts`[^gdb_debug_gdb_scripts]. This section can contain either filenames (e.g.
 `gdb_scripts.py`) or full scripts, like the `HelloPy` script we wrote above.
 
 While I admit that this functionality is clever, it means that the information
@@ -481,6 +487,8 @@ developers at my previous company). I am confident in the approach taken, but
 just like I said about GDB, a plugin manager is nothing without the community
 and willing developers to hack something together.
 
+gdbundle is in its infancy, and I'm looking forward to any feature requests or issues that you can think of!
+
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/).
 See anything you'd like to change? Submit a pull request!_
@@ -542,8 +550,7 @@ I can't speak to much of these since I am not the target market, but these all l
 
 <!-- prettier-ignore-start -->
 [^extending_gdb]: [GDB Documentation - Extending GDB](https://sourceware.org/gdb/onlinedocs/gdb/Extending-GDB.html#Extending-GDB)
-[^gdb_startup]: [What GDB Does During Startup](http://sourceware.org/gdb/onlinedocs/gdb/Startup.html)
+[^gdb_objfile_gdb_ext]: [GDB Auto-Loading Extensions - The objfile-gdb.ext file](https://sourceware.org/gdb/onlinedocs/gdb/objfile_002dgdbdotext-file.html#objfile_002dgdbdotext-file)
+[^gdb_debug_gdb_scripts]: [GDB Auto-Loading Extensions - The .debug_gdb_scripts section](https://sourceware.org/gdb/onlinedocs/gdb/dotdebug_005fgdb_005fscripts-section.html#dotdebug_005fgdb_005fscripts-section)
 [^code_confidence]: [Code Confidence - FreeRTOS Eclipse Plugin](https://www.codeconfidence.com/freertos-tools.shtml)
-[^littlefs]: [ARMmbed/littlefs](https://github.com/ARMmbed/littlefs)
-[^gnu_arm_embedded_toolchain]: [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
 <!-- prettier-ignore-end -->
