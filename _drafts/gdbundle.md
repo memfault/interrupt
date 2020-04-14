@@ -1,6 +1,6 @@
 ---
 title: "gdbundle - GDB's Missing Plugin Manager"
-description: ""
+description: "Introducing gdbundle, a plugin manager for GDB and LLDB, which enables developers to easily install plugins through PyPi and pip."
 author: tyler
 image:
 ---
@@ -24,8 +24,8 @@ notable improvements were:
   Python Class. e.g.
   `heap = Heap(g_heap); total_size = sum([b.size] for b in heap.iter_blocks()])`.
 - [Wrapping the GDB
-  invocation]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#a-project-cli
-  ) and loading GDB Python scripts automatically so every developer on the team
+  invocation]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %})
+  and loading GDB Python scripts automatically so every developer on the team
   had them loaded and ready to use at all times.
 
 This was all back in 2015 or so. As I've moved around to other companies and
@@ -45,9 +45,12 @@ user-interface improvements, and utilities with the broader public. This would
 enable building upon each other's work and debugging techniques, progressing the
 entire community and preventing developers from reinventing the wheel time and
 time again. GDB (and LLDB) needs a plugin manager, and I'd like to introduce to
-you `gdbundle`.
+you [gdbundle](https://github.com/memfault/gdbundle).
 
 <!-- excerpt end -->
+
+> This article speaks primarily to GDB, but gdbundle works perfectly
+> with LLDB as well.
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
@@ -60,7 +63,7 @@ straight to your mailbox_
 * auto-gen TOC:
 {:toc}
 
-## Consequences of GDB's Lack of Plugin Manager
+## Why Does GDB Need a Plugin Manager
 
 What has happened in the GDB ecosystem due to not having a plugin manager?
 
@@ -143,22 +146,29 @@ local `~/.gdbinit` or stored away in some old repo.
 1. I start a new project which uses the Zephyr RTOS as an operating system.
 2. I install the Zephyr GDB plugin so I can view information about the threads,
    heaps, block pools, mutexes, and global state variables all in GDB.
-3. I to pull in the Mbed TLS library to be able to connect to secure servers.
-4. I install the Mbed TLS GDB plugin so that I again can look at the libraries
-   global state to help my debugging experience.
-5. I find a bug in the Zephyr GBD plugin due to a global variable name change. I
-   fork the plugin, fix the bug, and the maintainer publishes a new version of
-   the plugin and now everyone can update.
+3. I pull in the LittleFS[^littlefs] library so that I can persist logs to the filesystem.
+4. I install the LittleFS GDB plugin which enables me to read and write files to the filesystem since I have a memory-mapped flash chip.
+5. I find a bug in the LittleFS GBD plugin due to a global variable name change. I
+   fork the plugin, push a fix, and the maintainer publishes a patch version update of
+   the plugin, which every developer can immediately update to.
 
-The only thing we need to allow the above to happen is a standard way to write,
-package, publish, and install these plugins. I'm constantly amazed that our
-IDE's, GUI based text editors, and even Vim have plugin managers, and I feel
-that GDB desperately needs one too.
+The only item gating this future is a standard and agreed upon way to write,
+package, publish, and install these plugins. 
 
 ## GDB's Current Extensibility Hooks
 
+Before covering what gdbundle is and how it works, I'd briefly like to talk about the extensibility that is already included with GDB. 
+
 There are essentially three "built-in" ways to automatically load GDB scripts
 upon launch.
+
+If you'd like to follow along, you may download the Interrupt repo and navigate
+to the example directory.
+
+```
+$ git clone git@github.com:memfault/interrupt.git
+$ cd interrupt/example/gdbundle/
+```
 
 ### Using `--command` Argument
 
@@ -283,39 +293,11 @@ Adding a filename or fixing a bug in an embedded script would require [creative
 uses of GNU binutils]([Conda]({% post_url 2020-04-08-gnu-binutils %})) and some
 work re-distributing the ELF files.
 
-## It Doesn't Have To Be Awful
-
-Let's take Vim for example. Vim's plugins are, at their core, a collection of
-`.vim` files written in Vimscript packaged up. These "plugins" are distributed
-and installed on a user's computer with one of the many Vim plugin managers,
-such as [vim-plug](https://github.com/junegunn/vim-plug) or
-[Vundle](https://github.com/VundleVim/Vundle.vim).
-
-These Vim plugins range in functionality from new language syntax support,
-integrations with common tools like git and grep, and even alterations to the
-user-interface to make things colored, formatted, and more efficient.
-
-What I'm trying to say is...**GDB should have a similar plugin architecture to
-Vim**
-
-| Functionality                    | Vim                                                   | GDB                                       |
-| -------------------------------- | ----------------------------------------------------- | ----------------------------------------- |
-| Scripts loaded on startup        | `~/.vimrc`<br>`/etc/vimrc`                            | ~/.gdbinit<br>/usr/local/share/auto-load/ |
-| Scripting Language               | Vimscript                                             | GDB Commands, Python, or Guile            |
-| How to manage plugins            | Plugin Managers, like vim-plug and Vundle             | gdbundle                                  |
-| How to initialize plugin manager | Add snippet of code to `~/.vimrc`                     | Add snippet of code to `~/.gdbinit`       |
-| How to install plugins           | Define plugins in `~/.vimrc` and run `:PluginInstall` | `pip install gdbundle-<plugin-name>`      |
-| Where are plugins stored         | Downloaded and cached in user's home directory        | Python virtualenv's site-packages/        |
-
-## Life with a Package Manager
-
-- You've written
-
 ## `gdbundle` - GDB's Plugin Manager
 
 gdbundle is short for GDB bundle and is a plugin manager for GDB.
 
-To quickly summarize, gdbundle plugins:
+To summarize, gdbundle plugins:
 
 - can be automatically loaded by `gdbundle`.
 - are Python 2 and 3 compatible.
@@ -332,13 +314,18 @@ take long.
 
 In order and by default, gdbundle:
 
-1. Searches for installed Python packages that begin with `gdbundle_`.
+1. Searches for installed Python packages that begin with the name `gdbundle_`.
 2. Calls the `gdbundle_load()` function of each plugin module.
-3. In each plugin's `gdbundle_load()` function, it will source, import, and
+3. In each plugin's `gdbundle_load()` function, the plugin should source, import, and
    configure the GDB scripts that it has bundled inside (or from another package
    by way of a dependency).
 
 And that is all.
+
+> gdbundle should work with LLDB out of the box, as all that
+> is required is Python and a way to run the setup procedure at launch. Please check
+> out the [gdbundle README.md](https://github.com/memfault/gdbundle) for more information
+> and examples. 
 
 ### Requirements
 
@@ -352,11 +339,11 @@ configured correctly by the following quick test:
 ```
 $ gdb
 (gdb) python-interactive
->>> print("TEST")
-"TEST"
+>>> import sys; sys.version
+'3.6.7 | packaged by conda-forge'
 ```
 
-If "TEST" is printed, everything should work! If not, there are a few things to
+If a Python version is printed, everything should work! If not, there are a few things to
 try:
 
 - Brew and Ubuntu's Apt both install a GDB with Python enabled.
@@ -386,32 +373,41 @@ end
 # -- GDBUNDLE_EDITS_END
 ```
 
-As I discussed in a previous post,
-[Using PyPi Packages with GDB](https://interrupt.memfault.com/blog/using-pypi-packages-with-GDB#3-append-syspath-to-gdbs-python),
-the first part of this **is required** to be able to use Python packages
-installed in a virtual environment, Conda environment, or non-default Python
+For more information about exactly what is happening above, feel free to read the short section in
+[Using PyPi Packages with GDB](https://interrupt.memfault.com/blog/using-pypi-packages-with-GDB#setting-syspath-within-gdbinit). 
+
+The first block **is required** to be able to use Python packages
+installed in the activated virtual environment, Conda environment, or non-default Python
 installation.
 
 The second part, `gdbundle.init()`, is what is new and will load installed
 gdbundle plugins.
 
+> NOTE: The major (and ideally minor) version of Python linked with GDB should match
+> the version that is activated at the time of launch, whether that is a virtual environment, Conda environment, `brew` Python installation, etc. 
+> Mismatched major versions will cause packages and plugins to either break in mysterious ways or not show up at all. 
+> More information can be found in the [gdbundle README.md](https://github.com/memfault/gdbundle)
+
 ## gdbundle Example Plugin
 
-I've created a "Hello World" plugin for gdbundle called
+No plugin manager introduction would be complete without an example plugin. I've created a "Hello World" plugin for gdbundle called
 [`gdbundle-example`](https://github.com/memfault/gdbundle-example). Let's dig in
 and see how it's built.
 
 ### Structure
 
-Below is the directory structure of our plugin.
+Below is the directory structure of our example plugin that works with GDB and LLDB.
 
 ```
 ├── README.md
 ├── gdbundle_example
 │   ├── __init__.py
+│   ├── gdb_loader.py
+│   ├── lldb_loader.py
 │   └── scripts
-│       ├── example.gdb
-│       └── example.py
+│       ├── example_gdb.gdb
+│       ├── example_gdb.py
+│       └── example_lldb.py
 └── pyproject.toml
 ```
 
@@ -421,17 +417,17 @@ packages will work with Python 2 and 3, so it shouldn't matter.
 
 ### How It Works
 
-Let's look at the code in `gdbundle_example/__init__.py`
+Let's look at the code in `gdbundle_example/gdb_loader.py`
 
 ```python
 import gdb
 import os
 
-ROOT_DIR = os.path.dirname(__file__)
+PACKAGE_DIR = os.path.dirname(__file__)
 
 SCRIPT_PATHS = [
-    [ROOT_DIR, 'scripts', 'example.gdb'],
-    [ROOT_DIR, 'scripts', 'example.py']
+    [PACKAGE_DIR, 'scripts', 'example_gdb.gdb'],
+    [PACKAGE_DIR, 'scripts', 'example_gdb.py']
 ]
 
 def _abs_path(path):
@@ -442,7 +438,7 @@ def gdbundle_load():
         gdb.execute("source {}".format(_abs_path(script_path)))
 ```
 
-Notice the module-level `gdbundle_load` function which `gdbundle` will call
+Notice the `gdbundle_load` function which `gdbundle` will call
 directly. When this is called, it takes each script file located in `scripts/`
 and tells GDB to `source` it. Notice that both GDB Python and GDB Command
 scripts work!
@@ -465,12 +461,21 @@ that I use frequently.
 - [gdbundle-PyCortexMDebug](https://github.com/memfault/gdbundle-PyCortexMDebug) -
   gdbundle plugin for
   [bnahill/PyCortexMDebug](https://github.com/bnahill/PyCortexMDebug).
+- [gdbundle-voltron](https://github.com/memfault/gdbundle-voltron) - gdbbundle plugin for [snare/voltron](https://github.com/snare/voltron). This example is my personal favorite because the install script is particularly sketchy but you can simply run `pip install gdbundle-voltron` and you're up and running!
+
+## Summary of Benefits of using gdbundle
+
+There are a handful of indisputable benefits of using gdbundle. 
+
+1. Just `pip install gdbundle-<plugin-name>`. No more manually editing your `~/.gdbinit` in specific ways depending on the extension.
+2. It **enables** developers to use virtual environments (and encourages it!) without the need for each plugin to [mangle `sys.path`](https://github.com/snare/voltron/blob/master/voltron/entry.py#L26-L34) in creative ways and install native packages using `apt` or `brew`. 
+3. Personal projects and team projects can have project-specific `requirements.txt` and `.gdbinit` files. With these two in place, a new developer would just need to `pip install -r requirements.txt` and they'll have everything they need to start using the plugins.
+4. Discoverability. Want to find out what new gdbundle packages exist? Just go to [PyPi and search](https://pypi.org/search/?q=gdbundle).
+5. Dependency management and version tracking is now done automatically by Python's packaging infrastructure. No more telling users to download a new version of the script or writing your own `update.sh` script.
 
 ## The Future
 
-{:.no_toc}
-
-## Closing
+So, where does gdbundle go from here? Honestly, it's up to everyone reading this. I've been using this internally for a few weeks, and I have been battle testing the `sys.path` hi-jacking approach for 3 years (along with \~100 developers at my previous company). I am confident in the approach taken, but just like I said about GDB, a plugin manager is nothing without the community and willing developers to hack something together.
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/).
@@ -483,6 +488,9 @@ See anything you'd like to change? Submit a pull request!_
 I came across some neat repositories of GDB scripts while I was searching the
 Internet. I've included them below for anyone looking to learn more about how
 people use GDB Python.
+
+> Sponsored by [grep.app](https://grep.app). Not really, but that app is seriously incredible. 
+> [Try it out for yourself!](https://grep.app/search?q=%28import%20gdb%7Cgdb.COMMAND_USER%29&regexp=true&filter[lang][0]=Python)
 
 ### Debugging Utilities
 
@@ -513,4 +521,6 @@ people use GDB Python.
 [^extending_gdb]: [GDB Documentation - Extending GDB](https://sourceware.org/gdb/onlinedocs/gdb/Extending-GDB.html#Extending-GDB)
 [^gdb_startup]: [What GDB Does During Startup](http://sourceware.org/gdb/onlinedocs/gdb/Startup.html)
 [^code_confidence]: [Code Confidence - FreeRTOS Eclipse Plugin](https://www.codeconfidence.com/freertos-tools.shtml)
+[^littlefs]: [ARMmbed/littlefs](https://github.com/ARMmbed/littlefs)
+[^gnu_arm_embedded_toolchain]: [GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
 <!-- prettier-ignore-end -->
