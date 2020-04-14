@@ -10,7 +10,7 @@ were building a modern operating system on a device with 128 KB of RAM. It's
 also where I got up-close and personal with GDB and had my first encounter with
 GDB's Python API.
 
-One one of our bi-weekly hack-days, one of the firmware engineers wrote a script
+On one of our bi-weekly hack-days, one of the firmware engineers wrote a script
 to pretty-print a summary of the heap for a device connected to GDB using its
 Python API ([similar to
 this]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}#adding-a-custom-gdb-command-with-gdb-python)).
@@ -43,8 +43,8 @@ towards for over 3 years.
 GDB desperately needs a better way for developers to share scripts,
 user-interface improvements, and utilities with their peers. This would enable
 building upon each other's work and debugging techniques, progressing the entire
-community and preventing developers from reinventing the wheel. GDB (and LLDB)
-needs a plugin manager, and I'd like to introduce to you
+community and preventing developers from reinventing the wheel. GDB and LLDB
+need a plugin manager, and I'd like to introduce to you
 [gdbundle](https://github.com/memfault/gdbundle).
 
 <!-- excerpt end -->
@@ -72,12 +72,12 @@ managers are fantastic! The GDB ecosystem stands to gain much from adopting one.
 
 Within the past year, I've worked with four different microcontroller stacks,
 seven different Real-Time Operating Systems (RTOS's), and a handful of common
-low-level software libraries including Mbed TLS, the WICED Bluetooth Stack, and
+low-level software libraries including Mbed TLS, the NRF5 SDK, the WICED Wi-Fi Stack, and
 many vendor SDK's. Tens of thousands of developers use each one of these
 stacks/libraries, and every single one of them has to manually debug each module
-by hand by using GDB's print functionality or write their own scripts.
+by hand by using GDB's print functionality or writing their own scripts.
 
-This is why embedded developers often choose to use proprietary debuggers over,
+This is why embedded developers often choose to use proprietary debuggers over GDB,
 despite their cost and clunkiness. They have these debugging utilities built in
 or allow extensions to be integrated and sold[^code_confidence], even though the
 software backing them isn't all that complex.
@@ -88,7 +88,7 @@ GDB is a professional tool used tens of thousands of developers. No two people
 use GDB exactly the same way and they shouldn't be required to. Given these
 facts, GDB should be able to adapt to each developer's use case and empower them
 to do their job. The use cases for GDB span from reverse engineering binaries,
-debugging embedded software running on hardware connected over USB, do debugging
+debugging embedded software running on hardware connected over USB, to debugging
 super computers half-way across the world.
 
 With this level of customization required, GDB needs to be able to easily tailor
@@ -96,7 +96,7 @@ itself to many different use cases. There is no better way to enable this than
 having a package manager.
 
 The Vim community has taken these ideals to heart. Vim began as a tiny text
-editor and has grown into a 800 lbs. gorilla that's still light on it's toes. It
+editor and has grown into a 800 lb. gorilla that's still light on its toes. It
 didn't get there alone though. It has a multitude of plugin managers, thousands
 of easily installable plugins, a growing contributor base (and Neovim), and it's
 all configured by a simple `~/.vimrc` configuration file.
@@ -112,7 +112,7 @@ Let's take VSCode for example. Released in 2015, it has since become one of the
 most popular text editors, has become the open source project with the most
 contributors (19k!), and has close to 20,000 packages registered in the
 [VSCode Marketplace](https://marketplace.visualstudio.com/vscode). I firmly
-believe that the reason it rose to the top was because of it's extensibility,
+believe that the reason it rose to the top was because of its extensibility,
 package manager, and community.
 
 In the age of modern developer tools, easy installation of extensions is a
@@ -212,7 +212,7 @@ Hello World from .py
 
 If you don't want to keep typing `--command ...` every time you launch GDB, or
 trying to convince or remind your co-workers to do the same, I suggest [wrapping
-the GBD invocation with a
+the GDB invocation with a
 CLI]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}).
 
 ### objfile-gdb.ext File
@@ -269,9 +269,9 @@ Upon loading an ELF file, GDB will also look for a section called
 `gdb_scripts.py`) or full scripts, like the `HelloPy` script we wrote above.
 
 While I admit that this functionality is clever, it means that the information
-is hard-coded in the ELF file and can't be easily changed at a later date.
+is hard-coded in the ELF file and cannot be easily changed at a later date.
 Adding a filename or fixing a bug in an embedded script would require [creative
-uses of GNU binutils]([Conda]({% post_url 2020-04-08-gnu-binutils %})) and some
+uses of GNU binutils]({% post_url 2020-04-08-gnu-binutils %}) and some
 work re-distributing the ELF files.
 
 ## `gdbundle` - Plugin Manager for GDB/LLDB
