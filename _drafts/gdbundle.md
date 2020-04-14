@@ -30,7 +30,7 @@ notable improvements were:
 
 This was back in 2015 or so. As I've moved to other companies, I've had the joy
 to spread the love of GDB scripting to other embedded software developers. It's
-amazing how much a few Python scripts can improve one's productivity in the 
+amazing how much a few Python scripts can improve one's productivity in the
 debugger.
 
 I have a personal goal (and it's one of Memfault's missions) to empower embedded
@@ -41,15 +41,16 @@ towards for over 3 years.
 <!-- excerpt start -->
 
 GDB desperately needs a better way for developers to share scripts,
-user-interface improvements, and utilities with their peers. This would
-enable building upon each other's work and debugging techniques, progressing the
-entire community and preventing developers from reinventing the wheel. GDB (and LLDB) needs a plugin manager, and I'd like to introduce to
-you [gdbundle](https://github.com/memfault/gdbundle).
+user-interface improvements, and utilities with their peers. This would enable
+building upon each other's work and debugging techniques, progressing the entire
+community and preventing developers from reinventing the wheel. GDB (and LLDB)
+needs a plugin manager, and I'd like to introduce to you
+[gdbundle](https://github.com/memfault/gdbundle).
 
 <!-- excerpt end -->
 
-> This article speaks primarily to GDB, but gdbundle works perfectly
-> with LLDB as well.
+> This article speaks primarily to GDB, but gdbundle works perfectly with LLDB
+> as well.
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
@@ -62,24 +63,57 @@ straight to your mailbox_
 * auto-gen TOC:
 {:toc}
 
-## Why Does GDB Need a Plugin Manager
+## Why Does GDB Need a Plugin Manager?
 
-Anyone who has used a modern language will tell you: package managers are fantastic! The GDB ecosystem stands to gain much from adopting one.
+Anyone who has used a modern language or code editor will tell you: package
+managers are fantastic! The GDB ecosystem stands to gain much from adopting one.
 
-### No Out-Of-Box Debugging of Popular Software
+### Out-Of-Box Debugging of Popular Software
 
-Within the past year, I've worked with four different microcontroller stacks, seven
-different Real-Time Operating Systems (RTOS's), and a handful of common
+Within the past year, I've worked with four different microcontroller stacks,
+seven different Real-Time Operating Systems (RTOS's), and a handful of common
 low-level software libraries including Mbed TLS, the WICED Bluetooth Stack, and
-many vendor SDK's. Tens of thousands of developers use each one of
-these stacks/libraries, and every single one of them has to manually debug each
-module by hand by using GDB's print functionality or write their own scripts.
+many vendor SDK's. Tens of thousands of developers use each one of these
+stacks/libraries, and every single one of them has to manually debug each module
+by hand by using GDB's print functionality or write their own scripts.
 
-This is why embedded developers often choose to use proprietary debuggers over, despite their cost and clunkiness. They have these debugging utilities built in or
-allow extensions to be integrated and sold[^code_confidence], even though the
+This is why embedded developers often choose to use proprietary debuggers over,
+despite their cost and clunkiness. They have these debugging utilities built in
+or allow extensions to be integrated and sold[^code_confidence], even though the
 software backing them isn't all that complex.
 
-### Poor Installation and Non-Discoverable of Extensions
+### More Customization
+
+GDB is a professional tool used tens of thousands of developers. No two people
+use GDB exactly the same way and they shouldn't be required to. Given these
+facts, GDB should be able to adapt to each developer's use case and empower them
+to do their job. The use cases for GDB span from reverse engineering binaries,
+debugging embedded software running on hardware connected over USB, do debugging
+super computers half-way across the world.
+
+With this level of customization required, GDB needs to be able to easily tailor
+itself to many different use cases. There is no better way to enable this than
+having a package manager.
+
+The Vim community has taken these ideals to heart. Vim began as a tiny text
+editor and has grown into a 800 lbs. gorilla that's still light on it's toes. It
+didn't get there alone though. It has a multitude of plugin managers, thousands
+of easily installable plugins, a growing contributor base (and Neovim), and it's
+all configured by a simple `~/.vimrc` configuration file.
+
+### Package Managers Build Community and Increase Adoption
+
+--------- STill needs work BEGIN
+
+The way to build a successful developer tool is to win the hearts and minds of
+the developers and the community.
+
+Let's take VSCode for example. Released in 2015, it has since become one of the
+most popular text editors, has become the open source project with the most
+contributors (19k!), and has close to 20,000 packages registered in the
+[VSCode Marketplace](https://marketplace.visualstudio.com/vscode). I firmly
+believe that the reason it rose to the top was because of it's extensibility,
+package manager, and community.
 
 In the age of modern developer tools, easy installation of extensions is a
 critical facet that needs to be taken seriously. Let's take the new wave of text
@@ -99,63 +133,12 @@ and desktop style software, check out
 provides easy installation and discoverability of compiled C/C++ packages for
 embedded systems and Arduino.
 
-### Plugin development requires rebuilding the world
-
-Since there is no trivial way for GDB scripts to build upon each other, all
-ambitious projects, such as [hugsy/gef](https://github.com/hugsy/gef),
-[pwndbg/pwndbg](https://github.com/pwndbg/pwndbg), and
-[snare/voltron](https://github.com/snare/voltron), are required to rewrite or
-copy-paste functionality that would normally be imported from popular Python
-packages (e.g. termcolor). This is a barrier to entry for plugin developers.
-
-On the other side of the pendulum, since packages can't be imported easily
-through the Python ecosystem, users are required to run
-[invasive](https://github.com/pwndbg/pwndbg/blob/dev/setup.sh)
-[shell](https://github.com/snare/voltron/blob/master/install.sh) scripts that
-use the system's package manager and install Python packages into the system's
-Python installation.
-
-Every developer should be using virtual environments and leaving their system
-Python installation alone, and the Python environment within GDB is no
-different.
-
-### Lack of Customization
-
-On one hand, some might see this as a nice feature of GDB. Once you get a GDB
-shell, you know exactly how to accomplish what you want, assuming you know how
-to use GDB to begin with. This is similar to how people think about Vi(m).
-
-However, Vim is infinitely better today due to its customization options, plugin
-managers, community, and ability to quickly change the initial historic settings
-to modern and sane defaults.
-
-In contrast, GDB and it's customization story has roughly remained the same for
-the last 10 years for the majority of developers. I found it ironic that the
-most popular GDB enhancement at my previous employer was
-[vim-scripts/Conque-GDB](https://github.com/vim-scripts/Conque-GDB), a Vim
-plugin which wraps GDB.
-
-## Life with a GDB Plugin Manager
-
-I'd like to now paint a picture that is possible if we take the time to clean
-up, share, and install GDB scripts that we all have stored somewhere in our
-local `~/.gdbinit` or stored away in some old repo.
-
-1. I start a new project which uses the Zephyr RTOS as an operating system.
-2. I install the Zephyr GDB plugin so I can view information about the threads,
-   heaps, block pools, mutexes, and global state variables all in GDB.
-3. I pull in the LittleFS[^littlefs] library so that I can persist logs to the filesystem.
-4. I install the LittleFS GDB plugin which enables me to read and write files to the filesystem since I have a memory-mapped flash chip.
-5. I find a bug in the LittleFS GBD plugin due to a global variable name change. I
-   fork the plugin, push a fix, and the maintainer publishes a patch version update of
-   the plugin, which every developer can immediately update to.
-
-The only item gating this future is a standard and agreed upon way to write,
-package, publish, and install these plugins. 
+--------- STill needs work END
 
 ## GDB's Current Extensibility Hooks
 
-Before covering what gdbundle is and how it works, I'd briefly like to talk about the extensibility that is already included with GDB. 
+Before covering what gdbundle is and how it works, I'd briefly like to talk
+about the extensibility that is already included with GDB.
 
 There are essentially three "built-in" ways to automatically load GDB scripts
 upon launch.
@@ -315,16 +298,16 @@ By default, gdbundle:
 
 1. Searches for installed Python packages that begin with the name `gdbundle_`.
 2. Calls the `gdbundle_load()` function of each plugin module.
-3. In each plugin's `gdbundle_load()` function, the plugin should source, import, and
-   configure the GDB scripts that it has bundled inside (or from another package
-   by way of a dependency).
+3. In each plugin's `gdbundle_load()` function, the plugin should source,
+   import, and configure the GDB scripts that it has bundled inside (or from
+   another package by way of a dependency).
 
 And that is all.
 
-> gdbundle should work with LLDB out of the box, as all that
-> is required is Python and a way to run the setup procedure at launch. Please check
-> out the [gdbundle README.md](https://github.com/memfault/gdbundle) for more information
-> and examples. 
+> gdbundle should work with LLDB out of the box, as all that is required is
+> Python and a way to run the setup procedure at launch. Please check out the
+> [gdbundle README.md](https://github.com/memfault/gdbundle) for more
+> information and examples.
 
 ### Requirements
 
@@ -342,8 +325,8 @@ $ gdb
 '3.6.7 | packaged by conda-forge'
 ```
 
-If a Python version is printed, everything should work! If not, there are a few things to
-try:
+If a Python version is printed, everything should work! If not, there are a few
+things to try:
 
 - Brew and Ubuntu's Apt both install a GDB with Python enabled.
 - Your distribution might also include a `*-gdb-py` version with Python enabled.
@@ -372,30 +355,35 @@ end
 # -- GDBUNDLE_EDITS_END
 ```
 
-For more information about exactly what is happening above, feel free to read the short section in
-[Using PyPi Packages with GDB](https://interrupt.memfault.com/blog/using-pypi-packages-with-GDB#setting-syspath-within-gdbinit). 
+For more information about exactly what is happening above, feel free to read
+the short section in
+[Using PyPi Packages with GDB](https://interrupt.memfault.com/blog/using-pypi-packages-with-GDB#setting-syspath-within-gdbinit).
 
-The first block **is required** to be able to use Python packages
-installed in the activated virtual environment, Conda environment, or non-default Python
+The first block **is required** to be able to use Python packages installed in
+the activated virtual environment, Conda environment, or non-default Python
 installation.
 
 The second part, `gdbundle.init()`, is what is new and will load installed
 gdbundle plugins.
 
-> NOTE: The major (and ideally minor) version of Python linked with GDB should match
-> the version that is activated at the time of launch, whether that is a virtual environment, Conda environment, `brew` Python installation, etc. 
-> Mismatched major versions will cause packages and plugins to either break in mysterious ways or not show up at all. 
-> More information can be found in the [gdbundle README.md](https://github.com/memfault/gdbundle)
+> NOTE: The major (and ideally minor) version of Python linked with GDB should
+> match the version that is activated at the time of launch, whether that is a
+> virtual environment, Conda environment, `brew` Python installation, etc.
+> Mismatched major versions will cause packages and plugins to either break in
+> mysterious ways or not show up at all. More information can be found in the
+> [gdbundle README.md](https://github.com/memfault/gdbundle)
 
 ## gdbundle Example Plugin
 
-No plugin manager introduction would be complete without an example plugin. I've created a "Hello World" plugin for gdbundle called
+No plugin manager introduction would be complete without an example plugin. I've
+created a "Hello World" plugin for gdbundle called
 [`gdbundle-example`](https://github.com/memfault/gdbundle-example). Let's dig in
 and see how it's built.
 
 ### Structure
 
-Below is the directory structure of our example plugin that works with GDB and LLDB.
+Below is the directory structure of our example plugin that works with GDB and
+LLDB.
 
 ```
 ├── README.md
@@ -437,10 +425,9 @@ def gdbundle_load():
         gdb.execute("source {}".format(_abs_path(script_path)))
 ```
 
-Notice the `gdbundle_load` function which `gdbundle` will call
-directly. When this is called, it takes each script file located in `scripts/`
-and tells GDB to `source` it. Notice that both GDB Python and GDB Command
-scripts work!
+Notice the `gdbundle_load` function which `gdbundle` will call directly. When
+this is called, it takes each script file located in `scripts/` and tells GDB to
+`source` it. Notice that both GDB Python and GDB Command scripts work!
 
 By using `gdb.execute("source <script>")`, plugins can source GDB scripts that
 were never designed with gdbundle in mind or designed to be distributed.
@@ -460,21 +447,39 @@ that I use frequently.
 - [gdbundle-PyCortexMDebug](https://github.com/memfault/gdbundle-PyCortexMDebug) -
   gdbundle plugin for
   [bnahill/PyCortexMDebug](https://github.com/bnahill/PyCortexMDebug).
-- [gdbundle-voltron](https://github.com/memfault/gdbundle-voltron) - gdbbundle plugin for [snare/voltron](https://github.com/snare/voltron). This example is my personal favorite because the install script is particularly sketchy but you can simply run `pip install gdbundle-voltron` and you're up and running!
+- [gdbundle-voltron](https://github.com/memfault/gdbundle-voltron) - gdbbundle
+  plugin for [snare/voltron](https://github.com/snare/voltron). This example is
+  my personal favorite because the install script is particularly sketchy but
+  you can simply run `pip install gdbundle-voltron` and you're up and running!
 
 ## Summary of Benefits of using gdbundle
 
-There are a handful of indisputable benefits of using gdbundle. 
+There are a handful of indisputable benefits of using gdbundle.
 
-1. Just `pip install gdbundle-<plugin-name>`. No more manually editing your `~/.gdbinit` in specific ways depending on the extension.
-2. It **enables** developers to use virtual environments (and encourages it!) without the need for each plugin to [mangle `sys.path`](https://github.com/snare/voltron/blob/master/voltron/entry.py#L26-L34) in creative ways and install native packages using `apt` or `brew`. 
-3. Personal projects and team projects can have project-specific `requirements.txt` and `.gdbinit` files. With these two in place, a new developer would just need to `pip install -r requirements.txt` and they'll have everything they need to start using the plugins.
-4. Discoverability. Want to find out what new gdbundle packages exist? Just go to [PyPi and search](https://pypi.org/search/?q=gdbundle).
-5. Dependency management and version tracking is now done automatically by Python's packaging infrastructure. No more telling users to download a new version of the script or writing your own `update.sh` script.
+1. Just `pip install gdbundle-<plugin-name>`. No more manually editing your
+   `~/.gdbinit` in specific ways depending on the extension.
+2. It **enables** developers to use virtual environments (and encourages it!)
+   without the need for each plugin to
+   [mangle `sys.path`](https://github.com/snare/voltron/blob/master/voltron/entry.py#L26-L34)
+   in creative ways and install native packages using `apt` or `brew`.
+3. Personal projects and team projects can have project-specific
+   `requirements.txt` and `.gdbinit` files. With these two in place, a new
+   developer would just need to `pip install -r requirements.txt` and they'll
+   have everything they need to start using the plugins.
+4. Discoverability. Want to find out what new gdbundle packages exist? Just go
+   to [PyPi and search](https://pypi.org/search/?q=gdbundle).
+5. Dependency management and version tracking is now done automatically by
+   Python's packaging infrastructure. No more telling users to download a new
+   version of the script or writing your own `update.sh` script.
 
 ## The Future
 
-So, where does gdbundle go from here? Honestly, it's up to everyone reading this. I've been using this internally for a few weeks, and I have been battle testing the `sys.path` hi-jacking approach for 3 years (along with \~100 developers at my previous company). I am confident in the approach taken, but just like I said about GDB, a plugin manager is nothing without the community and willing developers to hack something together.
+So, where does gdbundle go from here? Honestly, it's up to everyone reading
+this. I've been using this internally for a few weeks, and I have been battle
+testing the `sys.path` hi-jacking approach for 3 years (along with \~100
+developers at my previous company). I am confident in the approach taken, but
+just like I said about GDB, a plugin manager is nothing without the community
+and willing developers to hack something together.
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/).
@@ -488,30 +493,49 @@ I came across some neat repositories of GDB scripts while I was searching the
 Internet. I've included them below for anyone looking to learn more about how
 people use GDB Python.
 
-> Sponsored by [grep.app](https://grep.app). Not really, but that app is seriously incredible. 
+> Sponsored by [grep.app](https://grep.app). Not really, but that app is
+> seriously incredible.
 > [Try it out for yourself!](https://grep.app/search?q=%28import%20gdb%7Cgdb.COMMAND_USER%29&regexp=true&filter[lang][0]=Python)
 
 ### Debugging Utilities
 
 <!-- prettier-ignore-start -->
-- [Linux - scripts/gdb/](https://github.com/torvalds/linux/tree/master/scripts/gdb)
-- [CPython - Tools/gdb/libpython.py](https://github.com/python/cpython/blob/master/Tools/gdb/libpython.py)
-- [golang/Go - src/runtime/runtime-gdb.py](https://github.com/golang/go/blob/master/src/runtime/runtime-gdb.py)
-- [MongoDB - buildscripts/gdb/mongo.py](https://github.com/mongodb/mongo/blob/master/buildscripts/gdb/mongo.py)
-- [PX4/Firmware - platforms/nuttx/Debug/Nuttx.py](https://github.com/PX4/Firmware/blob/master/platforms/nuttx/Debug/Nuttx.py)
+- [Linux - scripts/gdb/](https://github.com/torvalds/linux/tree/master/scripts/gdb)  
+  The master set of Linux GDB scripts, which allow developers to pretty print nearly everything
+  about the state of the kernel. 
+- [CPython - Tools/gdb/libpython.py](https://github.com/python/cpython/blob/master/Tools/gdb/libpython.py)  
+  Coming full circle, a common way to debug CPython is to use a set of GDB Python scripts to more easily print data structures.
+- [Facebook/hhvm](https://github.com/facebook/hhvm/tree/master/hphp/tools/gdb)  
+  An extensive collection of pretty-printers, utilities, I particularly like the `gdbutils.py` and
+  `pretty.py` files as they have a random collection of goodies.
+- [MongoDB - buildscripts/gdb/mongo.py](https://github.com/mongodb/mongo/blob/master/buildscripts/gdb/mongo.py)  
+  Debug utilities for MongoDO to print current threads, mutexes, stacks, and other state.
+- [PX4/Firmware - platforms/nuttx/Debug/Nuttx.py](https://github.com/PX4/Firmware/blob/master/platforms/nuttx/Debug/Nuttx.py)  
+  A wonderful collection of GDB scripts for the NuttX RTOS to print threads, mutexes, heap information, and data structures. The names of the commands could use some work.
 <!-- prettier-ignore-end -->
 
 ### Usability / UI Enhancements
 
 <!-- prettier-ignore-start -->
-- [cyrus/gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)
+- [cyrus/gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)  
+  If anyone has a GDB UI enhancement set up, it's probably this one. It's popular with embedded engineers I know, and provides a full overview of the system state.
 - [vim-scripts/Conque-GDB](https://github.com/vim-scripts/Conque-GDB)
+  Also popular with embedded engineers I know, it's allows a GDB session to be used within Vim in a clean way. If you're a Vim user, definitely check it out. 
+- [PlasmaHH/vdb](https://github.com/PlasmaHH/vdb)  
+  I stumbled upon this one and it looks great! It only has 2 Github stars, but has some great visualizations to show jumps for assembly.
+- [snare/voltron](https://github.com/snare/voltron)  
+  Similar to gdb-dashboard and surprisingly compatible with GDB, LLDB, VDB, and WinDbg.
+<!-- prettier-ignore-end -->
+
+
+### Reverse Engineering Enhancements
+
+I can't speak to much of these since I am not the target market, but these all look powerful and helpful.
+
+<!-- prettier-ignore-start -->
 - [longld/peda](https://github.com/longld/peda)
-- [snare/voltron](https://github.com/snare/voltron)
 - [hugsy/gef](https://github.com/hugsy/gef)
 - [pwndbg/pwndbg](https://github.com/pwndbg/pwndbg)
-- [cloudburst/libheap](https://github.com/cloudburst/libheap)
-- [PlasmaHH/vdb](https://github.com/PlasmaHH/vdb)
 <!-- prettier-ignore-end -->
 
 ## References
