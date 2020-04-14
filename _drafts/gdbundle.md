@@ -28,10 +28,10 @@ notable improvements were:
   and loading GDB Python scripts automatically so every developer on the team
   had them loaded and ready to use at all times.
 
-This was all back in 2015 or so. As I've moved around to other companies and
-talked to many other embedded software developers, I've discovered that many of
-them have never thought to extend or automate GDB using scripts, and even more
-had not even heard of GDB's Python API. I'm saddened by this.
+This was back in 2015 or so. As I've moved to other companies, I've had the joy
+to spread the love of GDB scripting to other embedded software developers. It's
+amazing how much a few Python scripts can improve one's productivity in the 
+debugger.
 
 I have a personal goal (and it's one of Memfault's missions) to empower embedded
 software developers with the tools they need to get their job done, and I'm
@@ -291,14 +291,15 @@ Adding a filename or fixing a bug in an embedded script would require [creative
 uses of GNU binutils]([Conda]({% post_url 2020-04-08-gnu-binutils %})) and some
 work re-distributing the ELF files.
 
-## `gdbundle` - GDB's Plugin Manager
+## `gdbundle` - Plugin Manager for GDB/LLDB
 
-gdbundle is short for GDB bundle and is a plugin manager for GDB.
+gdbundle is short for GDB bundle and is a plugin manager for GDB and LLDB.
 
 To summarize, gdbundle plugins:
 
 - can be automatically loaded by `gdbundle`.
-- are Python 2 and 3 compatible.
+- can be compatible with both GDB and LLDB.
+- can be both Python 2 and 3 compatible.
 - can be distributed through PyPi within Python packages.
 - can be installed using `pip`, `poetry`, etc.
 - can be installed into virtual environments to prevent version collisions.
