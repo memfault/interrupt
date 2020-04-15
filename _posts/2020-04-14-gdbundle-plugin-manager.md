@@ -1,6 +1,6 @@
 ---
 title: "gdbundle - GDB and LLDB's Missing Plugin Manager"
-description: "Introducing gdbundle, a minimalist plugin manager for GDB and LLDB, which enables developers to easily install Python scripts from PyPi"
+description: "Introducing gdbundle, a minimalist plugin manager for GDB and LLDB, which enables developers to easily GDB and LLDB extensions, packages, and Python scripts from PyPi"
 author: tyler
 image: /img/gdbundle-plugin-manager/gdbundle.png
 ---
