@@ -40,7 +40,7 @@ towards for over 3 years.
 
 <!-- excerpt start -->
 
-GDB and LLDB desperately need a better way for developers to share scripts,
+GDB and LLDB desperately need a way for developers to share scripts,
 user-interface improvements, and utilities with their peers. This would enable
 building upon existing work and debugging techniques, progressing the entire
 community and preventing developers from reinventing the wheel. GDB and LLDB
