@@ -376,7 +376,7 @@ gdbundle plugins.
 > mysterious ways or not show up at all. More information can be found in the
 > [gdbundle README.md](https://github.com/memfault/gdbundle)
 
-## gdbundle Example Plugin
+## Creating a gdbundle Plugin
 
 No plugin manager introduction would be complete without an example plugin. I've
 created a "Hello World" plugin for gdbundle called
