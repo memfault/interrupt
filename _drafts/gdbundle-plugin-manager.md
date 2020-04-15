@@ -51,13 +51,17 @@ need a plugin manager, and I'd like to introduce to you
 
 <script id="asciicast-UEAFpeLDRxoN72NnrZpfL30Gk" src="https://asciinema.org/a/UEAFpeLDRxoN72NnrZpfL30Gk.js" async></script>
 
+Here is a link to the
+[gdbundle Github page](https://github.com/memfault/gdbundle).
+
 Whether you are an embedded engineer using GDB directly or through VSCode and
 Cortex-Debug, an iOS or Android developer using LLDB within XCode or Android
 Studio, or a C++ and Rust developer building x86 software, gdbundle will work
 for you.
 
-> This article speaks primarily to GDB, but gdbundle works perfectly with LLDB
-> as well.
+> This article speaks primarily to GDB, but
+> [gdbundle](https://github.com/memfault/gdbundle) works perfectly with LLDB as
+> well.
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
@@ -131,10 +135,10 @@ frequently find myself browsing the
 [VimAwesome](https://vimawesome.com/) every month or two to see what's new.
 
 GDB, unfortunately, doesn't currently have these benefits. The authors of GDB
-scripts can't rely on what is currently installed on the system, and there is
-no central repository of GDB scripts. Because of this, each user only installs
-what they stumble upon on the Internet or what they hear about from their peers.
-This in turn keeps the community and adoption small, and new developers turn to
+scripts can't rely on what is currently installed on the system, and there is no
+central repository of GDB scripts. Because of this, each user only installs what
+they stumble upon on the Internet or what they hear about from their peers. This
+in turn keeps the community and adoption small, and new developers turn to
 alternative solutions instead.
 
 ## GDB's Current Extensibility Hooks
@@ -279,11 +283,12 @@ re-distributing the ELF files.
 
 ## `gdbundle` - Plugin Manager for GDB/LLDB
 
-gdbundle is short for GDB bundle and is a plugin manager for GDB and LLDB.
+[gdbundle](https://github.com/memfault/gdbundle) is short for GDB bundle and is
+a plugin manager for GDB and LLDB.
 
 To summarize, gdbundle plugins:
 
-- can be automatically loaded by `gdbundle`.
+- can be automatically loaded by gdbundle.
 - can be compatible with both GDB and LLDB.
 - can be both Python 2 and 3 compatible.
 - can be distributed through PyPi within Python packages.
@@ -293,9 +298,9 @@ To summarize, gdbundle plugins:
   [cyrus-and/gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard), so that
   modifying the original package is not necessary.
 
-gdbundle tries to remain simple, un-opinionated, and delegates most of the work
-of loading the plugin to the plugin itself. Let's go over how it works! It won't
-take long.
+[gdbundle](https://github.com/memfault/gdbundle) tries to remain simple,
+un-opinionated, and delegates most of the work of loading the plugin to the
+plugin itself. Let's go over how it works! It won't take long.
 
 By default, gdbundle:
 
@@ -380,7 +385,7 @@ gdbundle plugins.
 
 No plugin manager introduction would be complete without an example plugin. I've
 created a "Hello World" plugin for gdbundle called
-[`gdbundle-example`](https://github.com/memfault/gdbundle-example). Let's dig in
+[gdbundle-example](https://github.com/memfault/gdbundle-example). Let's dig in
 and see how it's built.
 
 ### Structure
@@ -477,15 +482,15 @@ There are a handful of indisputable benefits of using gdbundle.
 
 ## The Future
 
-So, where does gdbundle go from here? Honestly, it's up to everyone reading
-this. I've been using this internally for a few weeks, and I have been battle
-testing the `sys.path` hi-jacking approach for 3 years (along with \~100
-developers at my previous company). I am confident in the approach taken, but
-just like I said about GDB, a plugin manager is nothing without the community
-and willing developers to hack something together.
+So, where does [gdbundle](https://github.com/memfault/gdbundle) go from here?
+Honestly, it's up to everyone reading this. I've been using this internally for
+a few weeks, and I have been battle testing the `sys.path` hi-jacking approach
+for 3 years (along with \~100 developers at my previous company). I am confident
+in the approach taken, but just like I said about GDB, a plugin manager is
+nothing without the community and willing developers to hack something together.
 
-gdbundle is in its infancy, and I'm looking forward to any feature requests or
-issues that you can think of!
+[gdbundle](https://github.com/memfault/gdbundle) is in its infancy, and I'm
+looking forward to any feature requests or issues that you can think of!
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/).
