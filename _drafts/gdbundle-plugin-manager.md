@@ -8,7 +8,7 @@ image:
 I started with embedded development at Pebble, the smart watch maker, where we
 were building a modern operating system on a device with 128 KB of RAM. It's
 also where I got up-close and personal with GDB and had my first encounter with
-GDB's Python API.
+GDB's Python API[^gdb_python_api].
 
 On one of our bi-weekly hack-days, one of the firmware engineers wrote a script
 to pretty-print a summary of the heap for a device connected to GDB using its
@@ -48,6 +48,8 @@ need a plugin manager, and I'd like to introduce to you
 [gdbundle](https://github.com/memfault/gdbundle).
 
 <!-- excerpt end -->
+
+<script id="asciicast-UEAFpeLDRxoN72NnrZpfL30Gk" src="https://asciinema.org/a/UEAFpeLDRxoN72NnrZpfL30Gk.js" async></script>
 
 Whether you are an embedded engineer using GDB directly or through VSCode and
 Cortex-Debug, an iOS or Android developer using LLDB within XCode or Android
@@ -554,6 +556,7 @@ I can't speak to much of these since I am not the target market, but these all l
 ## References
 
 <!-- prettier-ignore-start -->
+[^gdb_python_api]: [GDB Python API](https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html)
 [^extending_gdb]: [GDB Documentation - Extending GDB](https://sourceware.org/gdb/onlinedocs/gdb/Extending-GDB.html#Extending-GDB)
 [^gdb_objfile_gdb_ext]: [GDB Auto-Loading Extensions - The objfile-gdb.ext file](https://sourceware.org/gdb/onlinedocs/gdb/objfile_002dgdbdotext-file.html#objfile_002dgdbdotext-file)
 [^gdb_debug_gdb_scripts]: [GDB Auto-Loading Extensions - The .debug_gdb_scripts section](https://sourceware.org/gdb/onlinedocs/gdb/dotdebug_005fgdb_005fscripts-section.html#dotdebug_005fgdb_005fscripts-section)
