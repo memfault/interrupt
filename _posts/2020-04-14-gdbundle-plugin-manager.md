@@ -511,30 +511,30 @@ people use GDB Python.
 ### Debugging Utilities
 
 <!-- prettier-ignore-start -->
-- [Linux - scripts/gdb/](https://github.com/torvalds/linux/tree/master/scripts/gdb)  
+- [Linux - scripts/gdb/](https://github.com/torvalds/linux/tree/master/scripts/gdb)
   The master set of Linux GDB scripts, which allow developers to pretty print nearly everything
-  about the state of the kernel. 
-- [CPython - Tools/gdb/libpython.py](https://github.com/python/cpython/blob/master/Tools/gdb/libpython.py)  
+  about the state of the kernel.
+- [CPython - Tools/gdb/libpython.py](https://github.com/python/cpython/blob/master/Tools/gdb/libpython.py)
   Coming full circle, a common way to debug CPython is to use a set of GDB Python scripts to more easily print data structures.
-- [Facebook/hhvm](https://github.com/facebook/hhvm/tree/master/hphp/tools/gdb)  
+- [Facebook/hhvm](https://github.com/facebook/hhvm/tree/master/hphp/tools/gdb)
   An extensive collection of pretty-printers, utilities, I particularly like the `gdbutils.py` and
   `pretty.py` files as they have a random collection of goodies.
-- [MongoDB - buildscripts/gdb/mongo.py](https://github.com/mongodb/mongo/blob/master/buildscripts/gdb/mongo.py)  
-  Debug utilities for MongoDO to print current threads, mutexes, stacks, and other state.
-- [PX4/Firmware - platforms/nuttx/Debug/Nuttx.py](https://github.com/PX4/Firmware/blob/master/platforms/nuttx/Debug/Nuttx.py)  
+- [MongoDB - buildscripts/gdb/mongo.py](https://github.com/mongodb/mongo/blob/master/buildscripts/gdb/mongo.py)
+  Debug utilities for MongoDB to print current threads, mutexes, stacks, and other state.
+- [PX4/Firmware - platforms/nuttx/Debug/Nuttx.py](https://github.com/PX4/Firmware/blob/master/platforms/nuttx/Debug/Nuttx.py)
   A wonderful collection of GDB scripts for the NuttX RTOS to print threads, mutexes, heap information, and data structures. The names of the commands could use some work.
 <!-- prettier-ignore-end -->
 
 ### Usability / UI Enhancements
 
 <!-- prettier-ignore-start -->
-- [cyrus/gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)  
+- [cyrus/gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)
   If anyone has a GDB UI enhancement set up, it's probably this one. It's popular with embedded engineers I know and provides a full overview of the system state.
 - [vim-scripts/Conque-GDB](https://github.com/vim-scripts/Conque-GDB)
   Also popular with embedded engineers I know, it allows a GDB session to be used within Vim cleanly. If you're a Vim user, definitely check it out.
-- [PlasmaHH/vdb](https://github.com/PlasmaHH/vdb)  
+- [PlasmaHH/vdb](https://github.com/PlasmaHH/vdb)
   I stumbled upon this one and it looks great! It only has 2 Github stars, but has some great visualizations to show jumps for assembly.
-- [snare/voltron](https://github.com/snare/voltron)  
+- [snare/voltron](https://github.com/snare/voltron)
   Similar to gdb-dashboard and surprisingly compatible with GDB, LLDB, VDB, and WinDbg.
 <!-- prettier-ignore-end -->
 
