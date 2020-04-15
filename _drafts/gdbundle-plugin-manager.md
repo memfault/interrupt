@@ -154,7 +154,7 @@ to the example directory.
 
 ```
 $ git clone git@github.com:memfault/interrupt.git
-$ cd interrupt/example/gdbundle/
+$ cd interrupt/example/gdbundle-plugin-manager/
 ```
 
 ### Using `--command` Argument
@@ -493,7 +493,7 @@ nothing without the community and willing developers to hack something together.
 looking forward to any feature requests or issues that you can think of!
 
 _All the code used in this blog post is available on
-[Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/).
+[Github](https://github.com/memfault/interrupt/tree/master/example/gdbundle-plugin-manager/).
 See anything you'd like to change? Submit a pull request!_
 
 {:.no_toc}
