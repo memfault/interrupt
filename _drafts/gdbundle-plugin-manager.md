@@ -112,39 +112,30 @@ didn't get there alone though. It has a multitude of plugin managers, thousands
 of easily installable plugins, a growing contributor base (and Neovim), and it's
 all configured by a simple `~/.vimrc` configuration file.
 
-### Package Managers Build Community and Increase Adoption
+### Package Managers Increase Adoption and Build Community
 
---------- STill needs work BEGIN
+At their core, package managers help developers build on top of previously
+existing work and manage dependencies between packages so that integrations go
+more smoothly.
 
-The way to build a successful developer tool is to win the hearts and minds of
-the developers and the community.
+Package managers also lower the barrier to entry for users and contributors to
+the platform, whether it's a programming language, code editor, IDE, or
+operating system. For instance, a brand new user of Vim can install the latest
+version using `brew install vim`, set up the vim-plug[^vim_plug] plugin manager,
+define a list of plugins to install, and within 5 minutes have all the syntax
+packages, key mappings, and visual extensions they need to be productive.
 
-Let's take VSCode for example. Released in 2015, it has since become one of the
-most popular text editors, has become the open source project with the most
-contributors (19k!), and has close to 20,000 packages registered in the
-[VSCode Marketplace](https://marketplace.visualstudio.com/vscode). I firmly
-believe that the reason it rose to the top was because of its extensibility,
-package manager, and community.
+One extra benefit of having a package manager is it increases discoverability. I
+frequently find myself browsing the
+[VSCode Marketplace](https://marketplace.visualstudio.com/vscode) and
+[VimAwesome](https://vimawesome.com/) every month or two to see what's new.
 
-In the age of modern developer tools, easy installation of extensions is a
-critical facet that needs to be taken seriously. Let's take the new wave of text
-editors as an example. The ones that have gained massive popularity over the
-last 5 years, Sublime Text, VSCode, and Atom, all have a built-in package
-manager which allows searching for and installing extensions with only a few
-keystrokes. **This is what GDB should have**.
-
-As for discoverability, I love websites like
-[VimAwesome](https://vimawesome.com/) and the
-[VSCode Marketplace](https://marketplace.visualstudio.com/vscode). I check them
-regularly to see which pieces of my workflows have been automated for me.
-
-If you believe this ease of extensibility is only for high-level applications
-and desktop style software, check out
-[PlatformIO's Libraries page](https://platformio.org/lib/search?query=) which
-provides easy installation and discoverability of compiled C/C++ packages for
-embedded systems and Arduino.
-
---------- STill needs work END
+GDB, unfortunately, doesn't currently have these benefits. The authors of GDB
+scripts can't rely on what is currently installed on the system, and there is
+no central repository of GDB scripts. Because of this, each user only installs
+what they stumble upon on the Internet or what they hear about from their peers.
+This in turn keeps the community and adoption small, and new developers turn to
+alternative solutions instead.
 
 ## GDB's Current Extensibility Hooks
 
@@ -561,4 +552,6 @@ I can't speak to much of these since I am not the target market, but these all l
 [^gdb_objfile_gdb_ext]: [GDB Auto-Loading Extensions - The objfile-gdb.ext file](https://sourceware.org/gdb/onlinedocs/gdb/objfile_002dgdbdotext-file.html#objfile_002dgdbdotext-file)
 [^gdb_debug_gdb_scripts]: [GDB Auto-Loading Extensions - The .debug_gdb_scripts section](https://sourceware.org/gdb/onlinedocs/gdb/dotdebug_005fgdb_005fscripts-section.html#dotdebug_005fgdb_005fscripts-section)
 [^code_confidence]: [Code Confidence - FreeRTOS Eclipse Plugin](https://www.codeconfidence.com/freertos-tools.shtml)
+[^vim_plug]: [junegunn/vim-plug](https://github.com/junegunn/vim-plug)
+
 <!-- prettier-ignore-end -->
