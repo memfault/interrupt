@@ -435,7 +435,7 @@ this is called, it takes each script file located in `scripts/` and tells GDB to
 By using `gdb.execute("source <script>")`, plugins can source GDB scripts that
 were never designed with gdbundle in mind or designed to be distributed.
 
-## A Few More Examples
+## A Few Real gdbundle Plugins
 
 Given the flexibility of gdbundle itself, it can allow the developer to package
 up any of the already existing GDB scripts and make installation easier for
