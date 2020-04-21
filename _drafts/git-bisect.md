@@ -226,28 +226,29 @@ In a very helpful output, git is telling us how many different commits we still
 need to run through, and is counting down about how many test steps we have
 left. The view of our bisect looks something like this right now:
 
-```
-RED
-e1952a1c Comment flasher files
-BLACK
+<div class='highlighter-rouge'>
+<div class='highlight'>
+<pre>
+<code>
+<span style="color:red;">e1952a1c Comment flasher files</span>
 51ed84b6 Comment main.c
 b3a10580 Helpful python error message and traceback
 f21a4c55 (tag v1.2) Add comments and static-ize flasher.c
 47a89108 Actually improved performance
 0afd538f Reverting performance improvements that made things slower
 84c98ac9 Performance improvements
-YELLOW
-26338040 Refactor python script with classes
-BLACK
+<span style="color:yellow;">26338040 Refactor python script with classes</span>
 54526f51 (tag v1.1) Note the work that still needs to be done in the readme
 9f0d9a91 Move flash driver to non-memory-mapped
 e717c312 Repo linting changes
 a2b8a742 More misc. changes
 e0c258c0 Misc. Changes
 cecc054a Integrate all the things
-GREEN
-acf78303 (tag v1.0) Add initialization procedure
-```
+<span style="color:green;">acf78303 (tag v1.0) Add initialization procedure</span>
+</code>
+</pre>
+</div>
+</div>
 
 Git has now checked out commit 26338040 for us to test. This commit is
 effectively the midpoint between v1.0 and the head of our repo. Let’s run our
@@ -271,28 +272,29 @@ commits, and have one less step to test. Now that we know our midpoint is bad,
 git considers everything between our midpoint and HEAD to be bad, looking
 something like this:
 
-```
-RED
-e1952a1c Comment flasher files
-51ed84b6 Comment main.c
-b3a10580 Helpful python error message and traceback
-f21a4c55 (tag v1.2) Add comments and static-ize flasher.c
-47a89108 Actually improved performance
-0afd538f Reverting performance improvements that made things slower
-84c98ac9 Performance improvements
-26338040 Refactor python script with classes
-BLACK
+<div class='highlighter-rouge'>
+<div class='highlight'>
+<pre>
+<code>
+<span style="color:red;">e1952a1c Comment flasher files</span>
+<span style="color:red;">51ed84b6 Comment main.c</span>
+<span style="color:red;">b3a10580 Helpful python error message and traceback</span>
+<span style="color:red;">f21a4c55 (tag v1.2) Add comments and static-ize flasher.c</span>
+<span style="color:red;">47a89108 Actually improved performance</span>
+<span style="color:red;">0afd538f Reverting performance improvements that made things slower</span>
+<span style="color:red;">84c98ac9 Performance improvements</span>
+<span style="color:red;">26338040 Refactor python script with classes</span>
 54526f51 (tag v1.1) Note the work that still needs to be done in the readme
 9f0d9a91 Move flash driver to non-memory-mapped
 e717c312 Repo linting changes
-YELLOW
-a2b8a742 More misc. changes
-BLACK
+<span style="color:yellow;">a2b8a742 More misc. changes</span>
 e0c258c0 Misc. Changes
 cecc054a Integrate all the things
-GREEN
-acf78303 (tag v1.0) Add initialization procedure
-```
+<span style="color:green;">acf78303 (tag v1.0) Add initialization procedure</span>
+</code>
+</pre>
+</div>
+</div>
 
 Future’s already looking brighter. Let’s test it again and tell git the result.
 
@@ -313,27 +315,29 @@ Now our view of the world looks like this. As I trudged along through this
 bisect, I couldn’t help but feel a particular form of shame at how long things
 had been broken...
 
-```
-RED
-e1952a1c Comment flasher files
-51ed84b6 Comment main.c
-b3a10580 Helpful python error message and traceback
-f21a4c55 (tag v1.2) Add comments and static-ize flasher.c
-47a89108 Actually improved performance
-0afd538f Reverting performance improvements that made things slower
-84c98ac9 Performance improvements
-26338040 Refactor python script with classes
-54526f51 (tag v1.1) Note the work that still needs to be done in the readme
-9f0d9a91 Move flash driver to non-memory-mapped
-e717c312 Repo linting changes
-a2b8a742 More misc. changes
-YELLOW
-e0c258c0 Misc. Changes
-BLACK
+<div class='highlighter-rouge'>
+<div class='highlight'>
+<pre>
+<code>
+<span style="color:red;">e1952a1c Comment flasher files</span>
+<span style="color:red;">51ed84b6 Comment main.c</span>
+<span style="color:red;">b3a10580 Helpful python error message and traceback</span>
+<span style="color:red;">f21a4c55 (tag v1.2) Add comments and static-ize flasher.c</span>
+<span style="color:red;">47a89108 Actually improved performance</span>
+<span style="color:red;">0afd538f Reverting performance improvements that made things slower</span>
+<span style="color:red;">84c98ac9 Performance improvements</span>
+<span style="color:red;">26338040 Refactor python script with classes</span>
+<span style="color:red;">54526f51 (tag v1.1) Note the work that still needs to be done in the readme</span>
+<span style="color:red;">9f0d9a91 Move flash driver to non-memory-mapped</span>
+<span style="color:red;">e717c312 Repo linting changes</span>
+<span style="color:red;">a2b8a742 More misc. changes</span>
+<span style="color:yellow;">e0c258c0 Misc. Changes</span>
 cecc054a Integrate all the things
-GREEN
-acf78303 (tag v1.0) Add initialization procedure
-```
+<span style="color:green;">acf78303 (tag v1.0) Add initialization procedure</span>
+</code>
+</pre>
+</div>
+</div>
 
 Self-pity aside, let’s keep going.
 
@@ -347,26 +351,29 @@ Bisecting: 0 revisions left to test after this (roughly 0 steps)
 
 Just about there... One more step left, and our world will be crystal clear
 
-```
-RED
-e1952a1c Comment flasher files
-51ed84b6 Comment main.c
-b3a10580 Helpful python error message and traceback
-f21a4c55 (tag v1.2) Add comments and static-ize flasher.c
-47a89108 Actually improved performance
-0afd538f Reverting performance improvements that made things slower
-84c98ac9 Performance improvements
-26338040 Refactor python script with classes
-54526f51 (tag v1.1) Note the work that still needs to be done in the readme
-9f0d9a91 Move flash driver to non-memory-mapped
-e717c312 Repo linting changes
-a2b8a742 More misc. changes
-e0c258c0 Misc. Changes
-YELLOW
-cecc054a Integrate all the things
-GREEN
-acf78303 (tag v1.0) Add initialization procedure
-```
+<div class='highlighter-rouge'>
+<div class='highlight'>
+<pre>
+<code>
+<span style="color:red;">e1952a1c Comment flasher files</span>
+<span style="color:red;">51ed84b6 Comment main.c</span>
+<span style="color:red;">b3a10580 Helpful python error message and traceback</span>
+<span style="color:red;">f21a4c55 (tag v1.2) Add comments and static-ize flasher.c</span>
+<span style="color:red;">47a89108 Actually improved performance</span>
+<span style="color:red;">0afd538f Reverting performance improvements that made things slower</span>
+<span style="color:red;">84c98ac9 Performance improvements</span>
+<span style="color:red;">26338040 Refactor python script with classes</span>
+<span style="color:red;">54526f51 (tag v1.1) Note the work that still needs to be done in the readme</span>
+<span style="color:red;">9f0d9a91 Move flash driver to non-memory-mapped</span>
+<span style="color:red;">e717c312 Repo linting changes</span>
+<span style="color:red;">a2b8a742 More misc. changes</span>
+<span style="color:red;">e0c258c0 Misc. Changes</span>
+<span style="color:yellow;">cecc054a Integrate all the things</span>
+<span style="color:green;">acf78303 (tag v1.0) Add initialization procedure</span>
+</code>
+</pre>
+</div>
+</div>
 
 Now, at long last, let’s test our last commit and tell git.
 
@@ -380,25 +387,29 @@ e0c258c05343202c53a294ba59704bb02565c9d5 is the first bad commit
 Cool, we found the bad commit, and if we look at our world one last time, we
 see exactly where things went bad.
 
-```
-RED
-e1952a1c Comment flasher files
-51ed84b6 Comment main.c
-b3a10580 Helpful python error message and traceback
-f21a4c55 (tag v1.2) Add comments and static-ize flasher.c
-47a89108 Actually improved performance
-0afd538f Reverting performance improvements that made things slower
-84c98ac9 Performance improvements
-26338040 Refactor python script with classes
-54526f51 (tag v1.1) Note the work that still needs to be done in the readme
-9f0d9a91 Move flash driver to non-memory-mapped
-e717c312 Repo linting changes
-a2b8a742 More misc. changes
-GREEN
-e0c258c0 Misc. Changes
-cecc054a Integrate all the things
-acf78303 (tag v1.0) Add initialization procedure
-```
+<div class='highlighter-rouge'>
+<div class='highlight'>
+<pre>
+<code>
+<span style="color:red;">e1952a1c Comment flasher files</span>
+<span style="color:red;">51ed84b6 Comment main.c</span>
+<span style="color:red;">b3a10580 Helpful python error message and traceback</span>
+<span style="color:red;">f21a4c55 (tag v1.2) Add comments and static-ize flasher.c</span>
+<span style="color:red;">47a89108 Actually improved performance</span>
+<span style="color:red;">0afd538f Reverting performance improvements that made things slower</span>
+<span style="color:red;">84c98ac9 Performance improvements</span>
+<span style="color:red;">26338040 Refactor python script with classes</span>
+<span style="color:red;">54526f51 (tag v1.1) Note the work that still needs to be done in the readme</span>
+<span style="color:red;">9f0d9a91 Move flash driver to non-memory-mapped</span>
+<span style="color:red;">e717c312 Repo linting changes</span>
+<span style="color:red;">a2b8a742 More misc. changes</span>
+<span style="color:green;">e0c258c0 Misc. Changes</span>
+<span style="color:green;">cecc054a Integrate all the things</span>
+<span style="color:green;">acf78303 (tag v1.0) Add initialization procedure</span>
+</code>
+</pre>
+</div>
+</div>
 
 ### Fixing the Bug
 As we saw at the end of the last section, our bug seems to have been introduced
