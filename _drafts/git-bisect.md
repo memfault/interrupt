@@ -4,6 +4,12 @@ description: "An introduction to bisecting a set of changes as a bug-hunting too
 author: shiva
 image: /img/git-bisect/git-logo.png
 ---
+<style>
+table {
+    text-align: center;
+}
+</style>
+
 It’s one of those nights- your project has been moving along at breakneck
 pace, with all of its contributors committing refactors, improvements, and
 bugfixes every day. You’ve been using git commands so much recently that you
@@ -14,9 +20,10 @@ you. All of a sudden, you get that dreaded message from a teammate:
 
 If you’re anything like me, your reaction looks something like this.
 
-| ![](/img/git-bisect/gambino.gif) |
-|:--:|
-| *Donald Glover hates bugs too, probably (Source: Tenor Gif)* |
+<figure>
+  <img src="/img/git-bisect/gambino.gif" />
+  <figcaption>Donald Glover hates bugs too, probably (Source: Tenor Gif)</figcaption>
+</figure>
 
 Your brain starts swirling. “How did this break? What could’ve possibly caused
 that? Am I that far off my game that I somehow goofed this?”
@@ -99,9 +106,10 @@ no issue before. Although there were few commits, such issues can be very
 difficult to find if not approached in a somewhat organized fashion. Trying to
 find issues by testing commits one by one tends to look like this:
 
-| ![](/img/git-bisect/divide_and_conquer.gif) |
-|:--:|
-| *Your life without git bisect (Source: Giphy)* |
+<figure>
+  <img src="/img/git-bisect/divide_and_conquer.gif" />
+  <figcaption>Your life without git bisect (Source: Giphy)</figcaption>
+</figure>
 
 Thankfully, git bisect was there to come to the rescue. Come along and join me
 in re-living this bug-hunting adventure!
@@ -112,9 +120,11 @@ something changed in your codebase, and is most useful during those mysterious
 times when the search space is large and the root cause of a change in behavior
 is not clear.
 
-| ![](/img/git-bisect/gordon_ramsay.gif) |
-|:--:|
-| *Gordon Ramsay’s advice doesn’t just apply to the kitchen (Source: Giphy)* |
+<figure>
+  <img src="/img/git-bisect/gordon_ramsay.gif" />
+  <figcaption>Gordon Ramsay’s advice doesn’t just apply to the kitchen (Source:
+Giphy)</figcaption>
+</figure>
 
 ### What's the idea?
 
@@ -131,9 +141,10 @@ where did you know things were bad? Once you input the “good” commit and the
 between, starting with the midpoint between the “good” and “bad” commits. The
 concept of a binary search is nothing new:
 
-| ![](/img/git-bisect/binary_search.jpg) |
-|:--:|
-| *Finding a G using a binary search (Source: TutorialsPoint)* |
+<figure>
+  <img src="/img/git-bisect/binary_search.jpg" />
+  <figcaption>Finding a G using a binary search (Source: TutorialsPoint)</figcaption>
+</figure>
 
 A git bisect is very similar to this visual, if you imagine letter A is your
 good commit, and letter R is your bad commit. At each point in the binary
@@ -408,9 +419,10 @@ instead of returning that directly, we return a boolean. The boolean value
 a nonzero value if the memory matched. Our python script only considers our
 verification successful if we return a zero return code.
 
-| ![](/img/git-bisect/colbert.gif) |
-|:--:|
-| *There is not enough facepalm for a bug like this (Source: Giphy)* |
+<figure>
+  <img src="/img/git-bisect/colbert.gif" />
+  <figcaption>There is not enough facepalm for a bug like this (Source: Giphy)</figcaption>
+</figure>
 
 Now that we know what the error is, let’s exit git bisect so we can get back to
 work. This is the easiest step of the bisect.
@@ -477,9 +489,10 @@ Using a merge strategy works just fine for a project, but when it comes to git
 bisect, it can be a bit problematic. Your master branch could look something
 like the following:
 
-| ![](/img/git-bisect/merge_commit.png) |
-|:--:|
-| *(Source: Medium- @haydar_ai)* |
+<figure>
+  <img src="/img/git-bisect/merge_commit.png" />
+  <figcaption>(Source: Medium- @haydar_ai)</figcaption>
+</figure>
 
 Unfortunately, if you’re trying to track down when the main branch (develop,
 in this case) went bad, you’re in for a world of hurt here. Git bisect sees all
@@ -499,7 +512,7 @@ do
   git rev-list $rev^2 --not $rev^
 done | xargs git bisect skip
 ```
-*(Source: Quantic)*
+<figcaption>(Source: Quantic)</figcaption>
 
 ### Automating git bisect
 
@@ -508,9 +521,11 @@ earlier was “Isn’t there an easier way to automate this?” After all, we we
 just running the same script every time, looking for a success or failure
 message, telling git, and then repeating the procedure until we were done.
 
-| ![](/img/git-bisect/forrest.gif) |
-|:--:|
-| *Automation can help you find bugs at the speed of Forrest (Source: Giphy)* |
+<figure>
+  <img src="/img/git-bisect/forrest.gif" />
+  <figcaption>Automation can help you find bugs at the speed of Forrest
+(Source: Giphy)</figcaption>
+</figure>
 
 #### Scripting the Testing
 
