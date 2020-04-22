@@ -108,3 +108,13 @@ tbody td {
 .svg-icon.github {
   color: $github-color;
 }
+
+figure {
+  margin-top: 40px;
+}
+
+figcaption {
+  margin-top: -20px;
+  text-align: center;
+  font-size: 12px;
+}

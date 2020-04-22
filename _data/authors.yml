@@ -68,3 +68,11 @@ noah:
     image: /img/author/noah.jpg
     github: noahp
     blurb: is an embedded software engineer at Fitbit.
+shiva:
+    name: Shiva Rajagopal
+    email: shiva.rajagopal@outlook.com
+    web: https://about.me/shiva.rajagopal
+    linkedin: https://www.linkedin.com/in/shivarajagopal/
+    image: /img/author/shiva.jpg
+    github: shivarajagopal
+    blurb: is an embedded software engineer at Fitbit.
