@@ -1,14 +1,14 @@
 ---
 title: "Hunting Bugs with Git Bisect"
-description: "An introduction to bisecting a set of changes as a bug-hunting tool, followed by some deeper techniques to speed up the process of tracking down when behavior is introduced"
+description: "An introduction to using git bisect against a set of changes as a bug-hunting tool, followed by some deeper techniques to speed up the process of tracking down when unintended behavior is introduced"
 author: shiva
-image: /img/git-bisect/git-logo.png
+image: /img/git-bisect/git-bisect.png
 ---
 
 It’s one of those nights- your project has been moving along at breakneck
 pace, with all of its contributors committing refactors, improvements, and
 bugfixes. You’ve been using git commands so much recently that you
-can rely on your fingers’s muscle memory to do all of your git operations for
+can rely on your fingers’ muscle memory to do all of your git operations for
 you. All of a sudden, you get that dreaded message from a teammate:
 
 > The firmware flasher is broken, and we don’t know when it broke
@@ -27,7 +27,7 @@ You start to look around at the codebase, and nothing’s popping out to you as
 an obvious cause of the bug. You run `git log --oneline` to look through the
 recent commit history, but your heart starts to sink because you actually don’t
 know when the bug might’ve been introduced. You ask your team in Slack “Does
-anyone know when this broke?” You get more desperate, and start checking out
+anyone know when this broke?” You get more desperate and start checking out
 random commits to see if it works. No luck.
 
 What do you do now? If only there was a tool you could use to find where things
@@ -36,7 +36,7 @@ broke in an organized fashion...
 This is where the concept of bisecting comes to the rescue. Regardless of
 what version control system you are using there are options for
 bisecting. In this article, we will be using git, since it has a bisect
-feature built in. If you use a different system, check the References section
+feature built-in. If you use a different system, check the References section
 for bisecting solutions for Mercurial[^mercurial_bisect], CVS[^cvs_bisect], or
 SVN[^svn_bisect].
 
@@ -44,7 +44,7 @@ SVN[^svn_bisect].
 
 This article is a personal story of a time I had to run a bisect on a repository, 
 and the thoughts that went through my mind as it happened.
-I touch on how to find a bug using git’s bisect feature, and go over some easy strategies 
+I touch on how to find a bug using git’s bisect feature and go over some easy strategies 
 to narrow your search space as much as possible. Lastly, I detail some ways of speeding up that
  search through git bisect’s automation options.
 
@@ -64,7 +64,7 @@ straight to your mailbox_
 ## Setting the Scene
 
 ### The System
-To start out, let’s introduce the system we’re using:
+To start, let’s introduce the system we’re using:
 
 * A microcontroller with internal RAM
 * A NOR flash chip with 4MiB of memory
@@ -106,7 +106,7 @@ find issues by testing commits one by one tends to look like this:
 Thankfully, git bisect was there to come to the rescue. Come along and join me
 in re-living this bug-hunting adventure!
 
-## Starting out with git bisect
+## Starting With git bisect
 Put simply, git bisect is a “divide-and-conquer” approach to finding where
 something changed in your codebase, and is most useful during those mysterious
 times when the search space is large and the root cause of a change in behavior
@@ -118,13 +118,13 @@ is not clear.
 Giphy)</figcaption>
 </figure>
 
-### What's the idea?
+### What's the Idea?
 
 I’ll start by explaining the concept theoretically, and later on, we’ll apply
 it to a real-world example of bisecting my flasher example further down in this
 article. This is one of those concepts that I found far easier to learn and
 understand by example, so if my theoretical description is lackluster,
-hopefully going through a real life example will help
+hopefully going through a real-life example will help
 
 Git bisect works by taking in the two most important pieces of information that
 you might have in such a situation: when did you know things were good, and
@@ -154,7 +154,7 @@ As a result, you have now effectively cut the whole search space in half, and
 can continue to the midpoint of the remaining search space. This procedure
 repeats on to commit E, to commit G, and finally to either F or H depending on
 whether G is good or bad. Once you’ve finished searching, you have isolated the
-commit that introduced the undesired behavior, and can finally see what
+commit that introduced the undesired behavior and can finally see what
 happened.
 
 ### Typical/Important Commands
@@ -175,7 +175,7 @@ isn’t working. Let’s go through this bisect and see what happened.
 
 ### Setting Up the Bisect
 Let’s look at my commit history first. I know this was good at v1.0, and bad at
-HEAD (AKA, my latest commit), so let’s get a short list of everything in
+HEAD (AKA, my latest commit), so let’s get a shortlist of everything in
 between.
 
 ```
