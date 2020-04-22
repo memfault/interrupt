@@ -4,15 +4,10 @@ description: "An introduction to bisecting a set of changes as a bug-hunting too
 author: shiva
 image: /img/git-bisect/git-logo.png
 ---
-<style>
-table {
-    text-align: center;
-}
-</style>
 
 It’s one of those nights- your project has been moving along at breakneck
 pace, with all of its contributors committing refactors, improvements, and
-bugfixes every day. You’ve been using git commands so much recently that you
+bugfixes. You’ve been using git commands so much recently that you
 can rely on your fingers’s muscle memory to do all of your git operations for
 you. All of a sudden, you get that dreaded message from a teammate:
 
@@ -29,7 +24,7 @@ Your brain starts swirling. “How did this break? What could’ve possibly caus
 that? Am I that far off my game that I somehow goofed this?”
 
 You start to look around at the codebase, and nothing’s popping out to you as
-an obvious cause of the bug. You run `git long --oneline` to look through the
+an obvious cause of the bug. You run `git log --oneline` to look through the
 recent commit history, but your heart starts to sink because you actually don’t
 know when the bug might’ve been introduced. You ask your team in Slack “Does
 anyone know when this broke?” You get more desperate, and start checking out
@@ -38,23 +33,20 @@ random commits to see if it works. No luck.
 What do you do now? If only there was a tool you could use to find where things
 broke in an organized fashion... 
 
-This is where the concept of bisecting is here to rescue you. Regardless of
-what version control system you are using there are usually options for
-bisecting. In this article, we will be assuming git, since it has a bisect
-feature built in. If you use a different system, the References section
-contains some links to bisect scripts/features for other version control
-systems, such as Mercurial[^mercurial_bisect], CVS[^cvs_bisect], or
-SVN[^svn_bisect]. This article is an extremely personal story of a time I had to
-run a bisect on a repository, and the thoughts that went through my mind as it
-happened.
+This is where the concept of bisecting comes to the rescue. Regardless of
+what version control system you are using there are options for
+bisecting. In this article, we will be using git, since it has a bisect
+feature built in. If you use a different system, check the References section
+for bisecting solutions for Mercurial[^mercurial_bisect], CVS[^cvs_bisect], or
+SVN[^svn_bisect].
 
 <!-- excerpt start -->
 
-This article also seeks to be a primer on how to find a bug using
-git’s bisect feature, including some easy strategies to search in a sensical
-way and narrow your search space as much as possible. We will then continue
-into some ways of speeding up that search through git bisect’s automation
-options.
+This article is a personal story of a time I had to run a bisect on a repository, 
+and the thoughts that went through my mind as it happened.
+I touch on how to find a bug using git’s bisect feature, and go over some easy strategies 
+to narrow your search space as much as possible. Lastly, I detail some ways of speeding up that
+ search through git bisect’s automation options.
 
 <!-- excerpt end -->
 
@@ -78,7 +70,7 @@ To start out, let’s introduce the system we’re using:
 * A NOR flash chip with 4MiB of memory
 
 In this particular instance, I was trying to bring up a new system where the
-NOR flash would be the boot medium. I could not memory map it in this case, and
+NOR flash would be the boot medium. I could not memory map it, and
 therefore I needed to create a way of passing data through the system’s
 internal RAM into NOR flash.
 
@@ -103,7 +95,7 @@ Somewhere between version 1.0 and the current head of the repository, my
 teammates started reporting that the verify step (Step 5) from above was
 failing unexpectedly. The python script was reporting failures where there was
 no issue before. Although there were few commits, such issues can be very
-difficult to find if not approached in a somewhat organized fashion. Trying to
+difficult to find if not approached methodically. Trying to
 find issues by testing commits one by one tends to look like this:
 
 <figure>
@@ -149,7 +141,7 @@ concept of a binary search is nothing new:
 A git bisect is very similar to this visual, if you imagine letter A is your
 good commit, and letter R is your bad commit. At each point in the binary
 search, git will checkout the commit, and wait for you to run whatever tests
-you need to run. In this case, we checkout commit I and test it. Once you have
+you need to run. In this case, we checkout commit "I" and test it. Once you have
 determined if the commit is good or bad, you tell git as such. Now, git knows
 the following:
 
@@ -166,7 +158,7 @@ commit that introduced the undesired behavior, and can finally see what
 happened.
 
 ### Typical/Important Commands
-There’s quite a few commands within the git bisect world, but here’s the bare
+There are quite a few commands within the git bisect world, but here is the bare
 minimum you would need for a bisect.
 
 * `git bisect start`: puts git into bisect mode, awaiting further bisect
@@ -259,7 +251,7 @@ python script to see what’s happening.
 Verification failed!
 ```
 
-We now know things were still bad at commit 26338040. Let’s tell git about that.
+We now know things were still bad at commit 26338040. Let’s tell git about that:
 
 ```
 >>> git bisect bad
@@ -416,10 +408,17 @@ As we saw at the end of the last section, our bug seems to have been introduced
 with commit e0c258c0. Let’s check that changeset for verification changes...
 
 ```diff
+/* @brief
+ * Verify the given data from NOR flash
+ * Return 0 if contents match
+ */
+static int prv_flasher_verify(void) {
+[...]
 + uint8_t readback_data[size];
 + nor_flash_dev->operations.read(sector_to_compare, readback_data, size);
 + int return_code = memcmp((void *) DATA_PAYLOAD_ADDR, readback_data, size);
 + return (return_code == 0)
+}
 ```
 
 Ah, of course! This is an improper checking of `memcmp`’s return code. No wonder
