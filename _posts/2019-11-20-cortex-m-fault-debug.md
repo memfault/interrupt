@@ -1092,7 +1092,7 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 [^3]: [Zephyr ARM fault handler](https://github.com/intel/zephyr/blob/e09a04f0689fd29aa909cc49ee94fd129798f986/arch/arm/core/fault.c#L55-L275)
 [^4]: [CMSIS-SVD](https://arm-software.github.io/CMSIS_5/SVD/html/index.html)
 [^5]: [CMSIS Software Packs](https://developer.arm.com/tools-and-software/embedded/cmsis)
-[^6]: [PyCortexMDebug](git@github.com:bnahill/PyCortexMDebug.git)
+[^6]: [PyCortexMDebug](https://github.com/bnahill/PyCortexMDebug)
 [^7]: [See "3.3.9 Auxiliary Bus Fault Status Register"](http://infocenter.arm.com/help/topic/com.arm.doc.ddi0489b/DDI0489B_cortex_m7_trm.pdf)
 [^8]: [Segger JTrace](https://www.segger.com/products/debug-probes/j-trace/) & [Lauterbach Trace32](https://www.lauterbach.com/frames.html?home.htmlLink lauterbach) are both capable of analyzing the ETM
 [^9]: [See B3.5.1 "Relation of the MPU to the system memory map"](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf)
