@@ -5,7 +5,7 @@ description:
   include fakes, mocks, and stubs, as well as setting up and using CppUTest.
 author: tyler
 image: /img/unit-testing-basics/cover.png
-tags: [better-firmware]
+tags: [better-firmware, unit-testing]
 ---
 
 Complex embedded projects have thousands and frequently tens of thousands lines
@@ -306,10 +306,10 @@ on or off.
 These alternate implementations of modules have different types. Let's explain
 them.
 
-- **Fakes** will be a working implementation, but will usually substitute its
+- **Fakes** are a working implementation, but will usually substitute their
   dependencies with something simpler and easier for a test environment.
   Example: an in-memory key/value store vs a NOR Flash backed Key/Value store.
-- **Stubs** will be an implementation that returns canned values, generally
+- **Stubs** are a trivial implementation that returns canned values, generally
   always returning valid or invalid values.
 - **Mocks** are an implementation that is controlled by the unit test. They can
   be pre-programmed with return values, check values of arguments, and help
@@ -1087,7 +1087,7 @@ project. It should build quite easily once some paths are patched up.
 
 ```
 $ git clone https://github.com/memfault/interrupt.git
-$ cd examples/unit-testing-basics/minimal/tests
+$ cd examples/unit-testing/minimal/tests
 
 # macOS
 $ make
@@ -1242,7 +1242,7 @@ I hope this post has been useful and that it has inspired you to consider
 writing a unit test for your next new embedded software module.
 
 You can find the examples shown in this post
-[here](https://github.com/memfault/interrupt/tree/master/example/unit-testing-basics).
+[here](https://github.com/memfault/interrupt/tree/master/example/unit-testing).
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
