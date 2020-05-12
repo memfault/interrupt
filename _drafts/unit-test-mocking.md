@@ -31,7 +31,7 @@ briefly talk about integration tests.
 
 <!-- excerpt end -->
 
-This is a continuation post of [Unit Testing Basics
+This post builds upon [Unit Testing Basics
 post]({% post_url 2019-10-08-unit-testing-basics %}), where we covered
 everything you would need to know to get started writing unit tests for your
 embedded software project in C or C++ using CppUTest. We are going to jump
