@@ -1,9 +1,12 @@
-22--- title: Embedded C/C++ Unit Testing with Mocks description: An overview of
-unit test mocking and integration tests for embedded software and firmware,
-using popular frameworks such as CppUTest, CppUMock, fff, and CMock. author:
-tyler tags: [better-firmware, unit-testing] image:
-/img/unit-testing-mocking/cover.png
-
+---
+title: Embedded C/C++ Unit Testing with Mocks
+description:
+  An overview of unit test mocking and integration tests for embedded software
+  and firmware, using popular frameworks such as CppUTest, CppUMock, fff, and
+  CMock.
+author: tyler
+tags: [better-firmware, unit-testing]
+image: /img/unit-testing-mocking/cover.png
 ---
 
 Writing a unit test from scratch for an embedded software project is almost
