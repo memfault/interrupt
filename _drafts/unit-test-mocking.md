@@ -17,10 +17,10 @@ protocols and stacks all within one software package and is usually managed by a
 single team. Due to these complexities, the number of dependencies of a single
 file can quickly grow out of control.
 
-One paradigm that we can use to our advantage as embedded developers when writing
-unit tests is _mocks_. They serve as a replacement for a module dependency, are
-quick and easy to write, and make it easy to test your code in a white-box
-fashion.
+One paradigm that we can use to our advantage as embedded developers when
+writing unit tests is _mocks_. They serve as a replacement for a module
+dependency, are quick and easy to write, and make it easy to test your code in a
+white-box fashion.
 
 <!-- excerpt start -->
 
@@ -75,15 +75,6 @@ arguments passed into the mock. The programmer also dictates what actions the
 mock takes, from calling other fakes or stubs, to returning particular return
 values, or modifying certain output parameters.
 
-Here are some common use cases for mocks that we'll cover in this post:
-
-- A malloc implementation that can be pre-programmed with return values (return
-  real buffers vs NULL).
-- A mock flash driver that returns error codes and forces different paths in a
-  higher level module.
-- A Bluetooth socket implementation that is fed artfully crafted packed data to
-  instrument protocols.
-
 Mocks are especially useful when testing failure paths that would likely never
 happen, or be disastrous if they did happen. For example, a mock would be a good
 choice if you are writing a vehicle software module that behaves differently if
@@ -125,6 +116,15 @@ would usually never fail.
 
 That leaves me with a **mock**!
 
+Here are some common use cases for mocks that we'll cover in this post:
+
+- A malloc implementation that can be pre-programmed with return values (return
+  real buffers vs NULL).
+- A mock flash driver that returns error codes and forces different paths in a
+  higher level module.
+- A Bluetooth socket implementation that is fed artfully crafted packed data to
+  instrument protocols.
+
 ## C/C++ Mocking Libraries
 
 Here are the mocking libraries that I most commonly see used within embedded
@@ -132,7 +132,8 @@ projects.
 
 - [CppUMock](https://cpputest.github.io/mocking_manual.html)
 - [Fake Function Framework (fff)](https://github.com/meekrosoft/fff) - _Although
-  the name suggests it generates fakes implementations, they are actually mocks_.
+  the name suggests it generates fakes implementations, they are actually
+  mocks_.
 - [CMock](http://www.throwtheswitch.org/cmock)
 
 There is one other frequently mentioned mocking library,
@@ -155,9 +156,9 @@ by James W. Grenning[^tdd_book]. This is also the framework I find myself
 reaching for most often, as it is full-featured, works with both C and C++, and
 is the most configurable.
 
-In the following example, we create a mock for `my_malloc` which should be called by `allocate_buffer` so that we can
-validate that `allocate_buffer` behaves correctly if `malloc` fails and
-succeeds.
+In the following example, we create a mock for `my_malloc` which should be
+called by `allocate_buffer` so that we can validate that `allocate_buffer`
+behaves correctly if `malloc` fails and succeeds.
 
 ```c
 // The mock is written explicitly
@@ -204,12 +205,24 @@ programmer doesn't explicitly set it to return `NULL`. With other mocking
 libraries, this isn't easily achieved and will require allocating a buffer
 before and setting that as a return value.
 
-Every library isn't perfect, and CppUMock isn't either. I have two issues with
-CppUMock. First, it requires a good bit of boiler plate which leads to verbose
-unit testing code. Where other libraries use macros to make things simpler and
-more concise, CppUMock requires you to write everything by hand. And second, the
-documentation leaves a lot to be desired, and I commonly find myself looking at
-the source code for extra functionality that isn't documented.
+At first, I thought the verbosity of CppUMock was its primary weakness, but as I
+explored the other alternatives, I realized it was actually its greatest strength. Where
+fff heavily relies on macros and CMock relies on generating mocks using Ruby,
+CppUMock mocks are just normal functions with some extra book-keeping done
+using `expectCall` and `actualCall`.
+
+When using CppUMock, if you have a few functions you are trying to mock out,
+it's probably best to keep them defined in test file, especially if you think
+it's an isolated case. If you are mocking out a large number of functions, or
+think it might be used by other teammates or in future tests, go ahead and move
+it to its own file.
+
+The [Memfault Firmware SDK](https://github.com/memfault/memfault-firmware-sdk)
+has a good example of a dedicated mock file,
+[mock_memfault_platform_debug_log.cpp](https://github.com/memfault/memfault-firmware-sdk/blob/master/tests/mocks/mock_memfault_platform_debug_log.cpp).
+This is a mock for the logging system, which I feel is a neat example because it
+allows the developer to assert on how `memfault_platform_log` was called but it
+also prints the logs to standard out as one would expect.
 
 ### Fake Function Framework (fff)
 
@@ -239,6 +252,15 @@ TEST(TestAllocateBuffer, Test_AllocateBufferBasic) {
   CHECK(buf != NULL);
 }
 ```
+
+The primary reason I choose not to use fff is because I find the use of the
+macros difficult to understand at a glance. The CppUMock function chain calls might be verbose,
+but they read like spoken word and are easy for anyone to parachute into the
+codebase and easily grasp what is happening.
+
+Here is
+[an example](https://github.com/marel-keytech/openCANopen/blob/master/test/unit_sdo_req.c)
+I found of a unit test file that uses fff.
 
 ### CMock
 
@@ -270,7 +292,7 @@ TEST(TestAllocateBuffer, Test_AllocateBufferBasic) {
 The main reason I do not use the tools from ThrowTheSwitch is that they require
 Ruby, and I haven't seen any significant number of embedded engineers or
 projects in the wild using Ruby. With this in mind, I prefer to use other
-frameworks and tools so that my team and I don't need to manage a Ruby
+frameworks and tools so that my team and I do not need to manage a Ruby
 environment (alongside the usual GCC and Python environments).
 
 ## Real World Unit Test Example
@@ -283,7 +305,8 @@ system.
 This is likely a system that most embedded engineers have either built or worked
 with.
 
-Below is a diagram of each piece in the system mentioned above.
+Below is a diagram of our unit test stack, which looks similar to a real
+device's end-to-end stack except for the fake NOR flash at the bottom.
 
 ![](/img/unit-testing-mocking/diagram.png)
 
@@ -334,7 +357,8 @@ a **Command**, a payload **Size**, and a **Payload**.
 ![](/img/unit-testing-mocking/protocol.png)
 
 We added the **command** field because we want to build a flexible protocol that
-can tell the device to do more things than just read and write key/value ("kv") pairs.
+can tell the device to do more things than just read and write key/value ("kv")
+pairs.
 
 Some other common remote commands I've seen implemented include:
 
@@ -960,8 +984,8 @@ Feel free to check out the
 
 ### Integration Tests in Practice
 
-This type of integration test can give us embedded software developers a lot of bang
-for our buck, but also cause frustration.
+This type of integration test can give us embedded software developers a lot of
+bang for our buck, but also cause frustration.
 
 #### Benefits
 
@@ -996,6 +1020,18 @@ of the firmware bugs that devices experience in the field. Except for the
 firmware code that directly pokes in register values into hardware, all of the
 software that goes into embedded software can and should be unit testing in some
 fashion.
+
+If you have interesting stories or creative ways that you've used unit
+tests or integration tests to validate your embedded software, I'd love to
+hear about them in the comments!
+
+You can find the examples shown in this post
+[here](https://github.com/memfault/interrupt/tree/master/example/unit-testing).
+
+See anything you'd like to change? Submit a pull request or open an issue at
+[Github](https://github.com/memfault/interrupt)
+
+{:.no_toc}
 
 ## References
 
