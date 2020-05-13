@@ -217,6 +217,8 @@ it's an isolated case. If you are mocking out a large number of functions, or
 think it might be used by other teammates or in future tests, go ahead and move
 it to its own file.
 
+> If you want to generate CppUMock files automatically, check out the [CppUMockGen](https://github.com/jgonzalezdr/CppUMockGen) on Github.
+
 The [Memfault Firmware SDK](https://github.com/memfault/memfault-firmware-sdk)
 has a good example of a dedicated mock file,
 [mock_memfault_platform_debug_log.cpp](https://github.com/memfault/memfault-firmware-sdk/blob/master/tests/mocks/mock_memfault_platform_debug_log.cpp#L22-L34).
