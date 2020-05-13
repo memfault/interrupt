@@ -462,6 +462,9 @@ We are not going to cover examples of mocks and how to implement them (the topic
 is big enough for another post), but some pseudo code is shown below to give an
 understanding:
 
+> Learn more about mocks in our separate post, [Unit Testing with
+> Mocks]({% post_url 2020-05-12-unit-test-mocking %}).
+
 ```c++
 
 TEST(TestKvStore, Test_InitMutexCreated) {
@@ -1240,6 +1243,9 @@ mine.
 
 I hope this post has been useful and that it has inspired you to consider
 writing a unit test for your next new embedded software module.
+
+> Want to keep reading? Check out our next post about unit testing, [Unit
+> Testing with Mocks]({% post_url 2020-05-12-unit-test-mocking %}).
 
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt/tree/master/example/unit-testing).
