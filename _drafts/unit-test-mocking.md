@@ -13,11 +13,11 @@ Writing a unit test from scratch for an embedded software project is almost
 always an exercise in frustration, patience, and determination. This is because
 of the constraints, as well as breadth, of embedded software. It combines
 hardware drivers, operating systems, high-level software, and communication
-protocols and stacks all within one software package and usually managed by a
+protocols and stacks all within one software package and is usually managed by a
 single team. Due to these complexities, the number of dependencies of a single
 file can quickly grow out of control.
 
-One tool that we can use to our advantage as embedded developers when writing
+One paradigm that we can use to our advantage as embedded developers when writing
 unit tests is _mocks_. They serve as a replacement for a module dependency, are
 quick and easy to write, and make it easy to test your code in a white-box
 fashion.
@@ -64,7 +64,7 @@ and **mocks**.
 
 Each one serves a purpose in unit testing. Although each type might not be
 utilized in every unit test you write, I can guarantee you that there's a place
-for them within the suite of tests for your firmware.
+for all of them within the suite of tests for your firmware.
 
 ## Mocks in Detail
 
@@ -111,7 +111,7 @@ You should considering using a mock:
 - When you find yourself manually pre-programming return values while using a
   stub or a fake. I did this many times before finally understanding how to use
   a mock. I was doing something
-  [like this](https://gist.github.com/tyhoff/54efe99dbcd3cb22fa244159dd9bc42c).
+  [like this](https://gist.github.com/tyhoff/54efe99dbcd3cb22fa244159dd9bc42c-L22-L33).
 
 Although it's not a binary decision or suggestion, I find that to reach 100%
 code coverage on my projects or in particular files, I commonly have to use
@@ -132,7 +132,7 @@ projects.
 
 - [CppUMock](https://cpputest.github.io/mocking_manual.html)
 - [Fake Function Framework (fff)](https://github.com/meekrosoft/fff) - _Although
-  the name suggests it generates fakes implementations, they are actually mocks_
+  the name suggests it generates fakes implementations, they are actually mocks_.
 - [CMock](http://www.throwtheswitch.org/cmock)
 
 There is one other frequently mentioned mocking library,
@@ -155,7 +155,7 @@ by James W. Grenning[^tdd_book]. This is also the framework I find myself
 reaching for most often, as it is full-featured, works with both C and C++, and
 is the most configurable.
 
-In the following example, we create a mock for `my_malloc` so that we can
+In the following example, we create a mock for `my_malloc` which should be called by `allocate_buffer` so that we can
 validate that `allocate_buffer` behaves correctly if `malloc` fails and
 succeeds.
 
