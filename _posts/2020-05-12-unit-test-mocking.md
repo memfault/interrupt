@@ -31,11 +31,11 @@ briefly talk about integration tests.
 
 <!-- excerpt end -->
 
-> This post builds upon our previous [Unit Testing
-> Basics]({% post_url 2019-10-08-unit-testing-basics %}) post, where we covered
-> everything you would need to know to get started writing unit tests for your
-> embedded software project in C or C++ using CppUTest. We are going to jump
-> quickly into the content so it's best to have read that post first.
+This post builds upon [Unit Testing Basics
+post]({% post_url 2019-10-08-unit-testing-basics %}), where we covered
+everything you would need to know to get started writing unit tests for your
+embedded software project in C or C++ using CppUTest. We are going to jump
+quickly into the content so it's best to have read that post first.
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
