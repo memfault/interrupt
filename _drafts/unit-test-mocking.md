@@ -334,7 +334,7 @@ a **Command**, a payload **Size**, and a **Payload**.
 ![](/img/unit-testing-mocking/protocol.png)
 
 We added the **command** field because we want to build a flexible protocol that
-can tell the device to do more things than just read and write key/value pairs.
+can tell the device to do more things than just read and write key/value ("kv") pairs.
 
 Some other common remote commands I've seen implemented include:
 
@@ -960,7 +960,7 @@ Feel free to check out the
 
 ### Integration Tests in Practice
 
-This type of integration test can us embedded software developers a lot of bang
+This type of integration test can give us embedded software developers a lot of bang
 for our buck, but also cause frustration.
 
 #### Benefits
