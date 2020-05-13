@@ -1,12 +1,9 @@
----
-title: Embedded C/C++ Unit Testing with Mocks
-description:
-  An overview of unit test mocking and integration tests for embedded software
-  and firmware, using popular frameworks such as CppUTest, CppUMock, fff, and
-  CMock.
-author: tyler
-tags: [better-firmware, unit-testing]
-image: /img/unit-testing-mocking/cover.png
+22--- title: Embedded C/C++ Unit Testing with Mocks description: An overview of
+unit test mocking and integration tests for embedded software and firmware,
+using popular frameworks such as CppUTest, CppUMock, fff, and CMock. author:
+tyler tags: [better-firmware, unit-testing] image:
+/img/unit-testing-mocking/cover.png
+
 ---
 
 Writing a unit test from scratch for an embedded software project is almost
@@ -102,7 +99,7 @@ You should considering using a mock:
 - When you find yourself manually pre-programming return values while using a
   stub or a fake. I did this many times before finally understanding how to use
   a mock. I was doing something
-  [like this](https://gist.github.com/tyhoff/54efe99dbcd3cb22fa244159dd9bc42c-L22-L33).
+  [like this](https://gist.github.com/tyhoff/54efe99dbcd3cb22fa244159dd9bc42c#file-test_kv_store_protocol_handlers-cpp-L22-L33).
 
 Although it's not a binary decision or suggestion, I find that to reach 100%
 code coverage on my projects or in particular files, I commonly have to use
@@ -206,10 +203,10 @@ libraries, this isn't easily achieved and will require allocating a buffer
 before and setting that as a return value.
 
 At first, I thought the verbosity of CppUMock was its primary weakness, but as I
-explored the other alternatives, I realized it was actually its greatest strength. Where
-fff heavily relies on macros and CMock relies on generating mocks using Ruby,
-CppUMock mocks are just normal functions with some extra book-keeping done
-using `expectCall` and `actualCall`.
+explored the other alternatives, I realized it was actually its greatest
+strength. Where fff heavily relies on macros and CMock relies on generating
+mocks using Ruby, CppUMock mocks are just normal functions with some extra
+book-keeping done using `expectCall` and `actualCall`.
 
 When using CppUMock, if you have a few functions you are trying to mock out,
 it's probably best to keep them defined in test file, especially if you think
@@ -219,7 +216,7 @@ it to its own file.
 
 The [Memfault Firmware SDK](https://github.com/memfault/memfault-firmware-sdk)
 has a good example of a dedicated mock file,
-[mock_memfault_platform_debug_log.cpp](https://github.com/memfault/memfault-firmware-sdk/blob/master/tests/mocks/mock_memfault_platform_debug_log.cpp).
+[mock_memfault_platform_debug_log.cpp](https://github.com/memfault/memfault-firmware-sdk/blob/master/tests/mocks/mock_memfault_platform_debug_log.cpp#L22-L34).
 This is a mock for the logging system, which I feel is a neat example because it
 allows the developer to assert on how `memfault_platform_log` was called but it
 also prints the logs to standard out as one would expect.
@@ -254,13 +251,15 @@ TEST(TestAllocateBuffer, Test_AllocateBufferBasic) {
 ```
 
 The primary reason I choose not to use fff is because I find the use of the
-macros difficult to understand at a glance. The CppUMock function chain calls might be verbose,
-but they read like spoken word and are easy for anyone to parachute into the
-codebase and easily grasp what is happening.
+macros difficult to understand at a glance. The CppUMock function chain calls
+might be verbose, but they read like spoken word and are easy for anyone to
+parachute into the codebase and easily grasp what is happening.
 
 Here is
 [an example](https://github.com/marel-keytech/openCANopen/blob/master/test/unit_sdo_req.c)
-I found of a unit test file that uses fff.
+unit test file from the
+[marel-keytech/openCANopen](https://github.com/marel-keytech/openCANopen)
+project that uses fff as it's mocking library.
 
 ### CMock
 
@@ -524,7 +523,7 @@ unit test using mocks!
 
 I won't be copying the full code into the blog post since most of it is
 boilerplate, but please
-[reference the source code on Github](https://github.com/memfault/interrupt/example/unit-testing/complex/tests/src/test_protocol.cpp)
+[reference the source code on Github](https://github.com/memfault/interrupt/blob/master/example/unit-testing/complex/tests/src/test_protocol.cpp)
 for more context.
 
 First, let's write our test with no knowledge of mocking and see what happens.
@@ -734,7 +733,7 @@ We now need to test our above implementations using unit tests.
 
 In light of the amount of code in this post thus far, I'll keep it shorter here.
 If you want to dive deeper, check out the source code to
-[test_kv_store_protocol_handlers.cpp on Github](https://github.com/memfault/interrupt/example/unit-testing/complex/tests/src/test_protocol.cpp)
+[test_kv_store_protocol_handlers.cpp on Github](https://github.com/memfault/interrupt/blob/master/example/unit-testing/complex/tests/src/test_kv_store_protocol_handlers.cpp)
 
 The only two external dependencies to `kv_store_protocol_handlers.c` are
 `kv_store_read` and `kv_store_write`. We have a few options we could take.
@@ -976,7 +975,7 @@ code, as shown in our diagram, and eventually returns data to our unit test with
 operation.
 
 Feel free to check out the
-[source code on Github](https://github.com/memfault/interrupt/example/unit-testing/complex/tests/src/test_integration_protocol_kv_store.cpp)
+[source code on Github](https://github.com/memfault/interrupt/blob/master/example/unit-testing/complex/tests/src/test_integration_protocol_kv_store.cpp)
 
 > Do these integration tests give us the optimal 100% real-world test that QA or
 > in-field testing provides? Of course not, but it gets us 90% of the way there
@@ -1021,9 +1020,9 @@ firmware code that directly pokes in register values into hardware, all of the
 software that goes into embedded software can and should be unit testing in some
 fashion.
 
-If you have interesting stories or creative ways that you've used unit
-tests or integration tests to validate your embedded software, I'd love to
-hear about them in the comments!
+If you have interesting stories or creative ways that you've used unit tests or
+integration tests to validate your embedded software, I'd love to hear about
+them in the comments!
 
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt/tree/master/example/unit-testing).
