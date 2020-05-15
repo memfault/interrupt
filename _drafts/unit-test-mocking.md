@@ -870,7 +870,7 @@ the modules will correctly work linked together.
 The type of test that tests many modules as a group for interoperability is
 called an **integration test**. These tests are usually left to QA or developer
 self-testing. Another approach would be to do automated testing with an emulator
-like [Renode](({% post_url 2020-03-23-intro-to-renode %})).
+like [Renode]({% post_url 2020-03-23-intro-to-renode %}).
 
 However, wouldn't it be nice if we could do similar tests within our unit test
 infrastructure? Yes it would!
