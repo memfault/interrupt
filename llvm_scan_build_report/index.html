@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>freertos-example-llvm - scan-build results</title>
+<link type="text/css" rel="stylesheet" href="scanview.css"/>
+<script src="sorttable.js"></script>
+<script language='javascript' type="text/javascript">
+function SetDisplay(RowClass, DisplayVal)
+{
+  var Rows = document.getElementsByTagName("tr");
+  for ( var i = 0 ; i < Rows.length; ++i ) {
+    if (Rows[i].className == RowClass) {
+      Rows[i].style.display = DisplayVal;
+    }
+  }
+}
+
+function CopyCheckedStateToCheckButtons(SummaryCheckButton) {
+  var Inputs = document.getElementsByTagName("input");
+  for ( var i = 0 ; i < Inputs.length; ++i ) {
+    if (Inputs[i].type == "checkbox") {
+      if(Inputs[i] != SummaryCheckButton) {
+        Inputs[i].checked = SummaryCheckButton.checked;
+        Inputs[i].onclick();
+      }
+    }
+  }
+}
+
+function returnObjById( id ) {
+    if (document.getElementById)
+        var returnVar = document.getElementById(id);
+    else if (document.all)
+        var returnVar = document.all[id];
+    else if (document.layers)
+        var returnVar = document.layers[id];
+    return returnVar;
+}
+
+var NumUnchecked = 0;
+
+function ToggleDisplay(CheckButton, ClassName) {
+  if (CheckButton.checked) {
+    SetDisplay(ClassName, "");
+    if (--NumUnchecked == 0) {
+      returnObjById("AllBugsCheck").checked = true;
+    }
+  }
+  else {
+    SetDisplay(ClassName, "none");
+    NumUnchecked++;
+    returnObjById("AllBugsCheck").checked = false;
+  }
+}
+</script>
+<!-- SUMMARYENDHEAD -->
+</head>
+<body>
+<h1>freertos-example-llvm - scan-build results</h1>
+
+<table>
+<tr><th>Working Directory:</th><td>/interrupt/example/freertos-example-llvm</td></tr>
+<tr><th>Command Line:</th><td>make</td></tr>
+<tr><th>Clang Version:</th><td>clang version 10.0.0 
+</td></tr>
+<tr><th>Date:</th><td>Tue May 19 19:01:56 2020</td></tr>
+</table>
+<h2>Bug Summary</h2><table>
+<thead><tr><td>Bug Type</td><td>Quantity</td><td class="sorttable_nosort">Display?</td></tr></thead>
+<tr style="font-weight:bold"><td class="SUMM_DESC">All Bugs</td><td class="Q">8</td><td><center><input type="checkbox" id="AllBugsCheck" onClick="CopyCheckedStateToCheckButtons(this);" checked/></center></td></tr>
+<tr><th>Logic error</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Assigned value is garbage or undefined</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_assigned_value_is_garbage_or_undefined');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Dereference of null pointer</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_dereference_of_null_pointer');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Division by zero</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_logic_error_division_by_zero');" checked/></center></td></tr>
+<tr><th>Memory error</th><th colspan=2></th></tr>
+<tr><td class="SUMM_DESC">Double free</td><td class="Q">2</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_memory_error_double_free');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Memory leak</td><td class="Q">1</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_memory_error_memory_leak');" checked/></center></td></tr>
+<tr><td class="SUMM_DESC">Use-after-free</td><td class="Q">2</td><td><center><input type="checkbox" onClick="ToggleDisplay(this,'bt_memory_error_use-after-free');" checked/></center></td></tr>
+</table>
+<h2>Reports</h2>
+
+<table class="sortable" style="table-layout:automatic">
+<thead><tr>
+  <td>Bug Group</td>
+  <td class="sorttable_sorted">Bug Type<span id="sorttable_sortfwdind">&nbsp;&#x25BE;</span></td>
+  <td>File</td>
+  <td>Function/Method</td>
+  <td class="Q">Line</td>
+  <td class="Q">Path Length</td>
+  <td class="sorttable_nosort"></td>
+  <!-- REPORTBUGCOL -->
+</tr></thead>
+<tbody>
+<tr class="bt_logic_error_assigned_value_is_garbage_or_undefined"><td class="DESC">Logic error</td><td class="DESC">Assigned value is garbage or undefined</td><td>memory_leak_examples.c</td><td class="DESC">example_access_garbage</td><td class="Q">31</td><td class="Q">6</td><td><a href="report-6a4f13.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-6a4f13.html" -->
+</tr>
+<tr class="bt_logic_error_dereference_of_null_pointer"><td class="DESC">Logic error</td><td class="DESC">Dereference of null pointer</td><td>builtin_scanbuild_examples.c</td><td class="DESC">example_operate_on_pointer</td><td class="Q">11</td><td class="Q">3</td><td><a href="report-d66e14.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-d66e14.html" -->
+</tr>
+<tr class="bt_logic_error_division_by_zero"><td class="DESC">Logic error</td><td class="DESC">Division by zero</td><td>builtin_scanbuild_examples.c</td><td class="DESC">example_divide_by_zero</td><td class="Q">18</td><td class="Q">3</td><td><a href="report-5129fd.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-5129fd.html" -->
+</tr>
+<tr class="bt_memory_error_double_free"><td class="DESC">Memory error</td><td class="DESC">Double free</td><td>memory_leak_examples.c</td><td class="DESC">example_malloc_free</td><td class="Q">11</td><td class="Q">3</td><td><a href="report-0560f7.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-0560f7.html" -->
+</tr>
+<tr class="bt_memory_error_double_free"><td class="DESC">Memory error</td><td class="DESC">Double free</td><td>memory_leak_examples.c</td><td class="DESC">example_use_after_free</td><td class="Q">65</td><td class="Q">8</td><td><a href="report-f11c81.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-f11c81.html" -->
+</tr>
+<tr class="bt_memory_error_memory_leak"><td class="DESC">Memory error</td><td class="DESC">Memory leak</td><td>memory_leak_examples.c</td><td class="DESC">example_memory_leak</td><td class="Q">47</td><td class="Q">8</td><td><a href="report-c89f5f.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-c89f5f.html" -->
+</tr>
+<tr class="bt_memory_error_use-after-free"><td class="DESC">Memory error</td><td class="DESC">Use-after-free</td><td>memory_leak_examples.c</td><td class="DESC">example_malloc_free</td><td class="Q">16</td><td class="Q">5</td><td><a href="report-751521.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-751521.html" -->
+</tr>
+<tr class="bt_memory_error_use-after-free"><td class="DESC">Memory error</td><td class="DESC">Use-after-free</td><td>memory_leak_examples.c</td><td class="DESC">example_use_after_free</td><td class="Q">68</td><td class="Q">9</td><td><a href="report-aaf149.html#EndPath">View Report</a></td>
+<!-- REPORTBUG id="report-aaf149.html" -->
+</tr>
+</tbody>
+</table>
+
+</body></html>

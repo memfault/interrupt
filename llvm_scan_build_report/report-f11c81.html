@@ -1,0 +1,426 @@
+<!doctype html>
+<html>
+<head>
+<title>/interrupt/example/freertos-example-llvm/src/memory_leak_examples.c</title>
+
+<style type="text/css">
+body { color:#000000; background-color:#ffffff }
+body { font-family:Helvetica, sans-serif; font-size:10pt }
+h1 { font-size:14pt }
+.FileName { margin-top: 5px; margin-bottom: 5px; display: inline; }
+.FileNav { margin-left: 5px; margin-right: 5px; display: inline; }
+.FileNav a { text-decoration:none; font-size: larger; }
+.divider { margin-top: 30px; margin-bottom: 30px; height: 15px; }
+.divider { background-color: gray; }
+.code { border-collapse:collapse; width:100%; }
+.code { font-family: "Monospace", monospace; font-size:10pt }
+.code { line-height: 1.2em }
+.comment { color: green; font-style: oblique }
+.keyword { color: blue }
+.string_literal { color: red }
+.directive { color: darkmagenta }
+
+/* Macros and variables could have pop-up notes hidden by default.
+  - Macro pop-up:    expansion of the macro
+  - Variable pop-up: value (table) of the variable */
+.macro_popup, .variable_popup { display: none; }
+
+/* Pop-up appears on mouse-hover event. */
+.macro:hover .macro_popup, .variable:hover .variable_popup {
+  display: block;
+  padding: 2px;
+  -webkit-border-radius:5px;
+  -webkit-box-shadow:1px 1px 7px #000;
+  border-radius:5px;
+  box-shadow:1px 1px 7px #000;
+  position: absolute;
+  top: -1em;
+  left:10em;
+  z-index: 1
+}
+
+.macro_popup {
+  border: 2px solid red;
+  background-color:#FFF0F0;
+  font-weight: normal;
+}
+
+.variable_popup {
+  border: 2px solid blue;
+  background-color:#F0F0FF;
+  font-weight: bold;
+  font-family: Helvetica, sans-serif;
+  font-size: 9pt;
+}
+
+/* Pop-up notes needs a relative position as a base where they pops up. */
+.macro, .variable {
+  background-color: PaleGoldenRod;
+  position: relative;
+}
+.macro { color: DarkMagenta; }
+
+#tooltiphint {
+  position: fixed;
+  width: 50em;
+  margin-left: -25em;
+  left: 50%;
+  padding: 10px;
+  border: 1px solid #b0b0b0;
+  border-radius: 2px;
+  box-shadow: 1px 1px 7px black;
+  background-color: #c0c0c0;
+  z-index: 2;
+}
+
+.num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+.num { text-align:right; font-size:8pt }
+.num { color:#444444 }
+.line { padding-left: 1ex; border-left: 3px solid #ccc }
+.line { white-space: pre }
+.msg { -webkit-box-shadow:1px 1px 7px #000 }
+.msg { box-shadow:1px 1px 7px #000 }
+.msg { -webkit-border-radius:5px }
+.msg { border-radius:5px }
+.msg { font-family:Helvetica, sans-serif; font-size:8pt }
+.msg { float:left }
+.msg { padding:0.25em 1ex 0.25em 1ex }
+.msg { margin-top:10px; margin-bottom:10px }
+.msg { font-weight:bold }
+.msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+.msgT { padding:0x; spacing:0x }
+.msgEvent { background-color:#fff8b4; color:#000000 }
+.msgControl { background-color:#bbbbbb; color:#000000 }
+.msgNote { background-color:#ddeeff; color:#000000 }
+.mrange { background-color:#dfddf3 }
+.mrange { border-bottom:1px solid #6F9DBE }
+.PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+.PathIndex { -webkit-border-radius:8px }
+.PathIndex { border-radius:8px }
+.PathIndexEvent { background-color:#bfba87 }
+.PathIndexControl { background-color:#8c8c8c }
+.PathIndexPopUp { background-color: #879abc; }
+.PathNav a { text-decoration:none; font-size: larger }
+.CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+.CodeRemovalHint { background-color:#de1010 }
+.CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+.selected{ background-color:orange !important; }
+
+table.simpletable {
+  padding: 5px;
+  font-size:12pt;
+  margin:20px;
+  border-collapse: collapse; border-spacing: 0px;
+}
+td.rowname {
+  text-align: right;
+  vertical-align: top;
+  font-weight: bold;
+  color:#444444;
+  padding-right:2ex;
+}
+
+/* Hidden text. */
+input.spoilerhider + label {
+  cursor: pointer;
+  text-decoration: underline;
+  display: block;
+}
+input.spoilerhider {
+ display: none;
+}
+input.spoilerhider ~ .spoiler {
+  overflow: hidden;
+  margin: 10px auto 0;
+  height: 0;
+  opacity: 0;
+}
+input.spoilerhider:checked + label + .spoiler{
+  height: auto;
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+<!-- BUGDESC Attempt to free released memory -->
+
+<!-- BUGTYPE Double free -->
+
+<!-- BUGCATEGORY Memory error -->
+
+<!-- BUGFILE /interrupt/example/freertos-example-llvm/src/memory_leak_examples.c -->
+
+<!-- FILENAME memory_leak_examples.c -->
+
+<!-- FUNCTIONNAME example_use_after_free -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 2b9abe61320fc41e4c9cfe2cf825276f -->
+
+<!-- BUGLINE 65 -->
+
+<!-- BUGCOLUMN 5 -->
+
+<!-- BUGPATHLENGTH 8 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>memory_leak_examples.c</td></tr>
+<tr><td class="rowname">Warning:</td><td><a href="#EndPath">line 65, column 5</a><br />Attempt to free released memory</td></tr>
+
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<p>Press <a href="#" onclick="toggleHelp(); return false;">'?'</a>
+   to see keyboard shortcuts</p>
+<input type="checkbox" class="spoilerhider" id="showinvocation" />
+<label for="showinvocation" >Show analyzer invocation</label>
+<div class="spoiler">clang -cc1 -triple thumbv7em-none-unknown-eabi -analyze -disable-free -disable-llvm-verifier -discard-value-names -main-file-name memory_leak_examples.c -analyzer-store=region -analyzer-opt-analyze-nested-blocks -analyzer-checker=core -analyzer-checker=apiModeling -analyzer-checker=unix -analyzer-checker=deadcode -analyzer-checker=security.insecureAPI.UncheckedReturn -analyzer-checker=security.insecureAPI.getpw -analyzer-checker=security.insecureAPI.gets -analyzer-checker=security.insecureAPI.mktemp -analyzer-checker=security.insecureAPI.mkstemp -analyzer-checker=security.insecureAPI.vfork -analyzer-checker=nullability.NullPassedToNonnull -analyzer-checker=nullability.NullReturnedFromNonnull -analyzer-output plist -w -setup-static-analyzer -mrelocation-model static -mthread-model posix -mframe-pointer=all -fmath-errno -fno-rounding-math -mconstructor-aliases -nostdsysteminc -target-cpu cortex-m4 -target-feature -crc -target-feature -sha2 -target-feature -aes -target-feature -dotprod -target-feature +dsp -target-feature -mve -target-feature -mve.fp -target-feature -ras -target-feature -sb -target-feature -lob -target-feature -hwdiv-arm -target-feature +hwdiv -target-feature -vfp2 -target-feature +vfp2sp -target-feature -vfp3 -target-feature -vfp3d16 -target-feature +vfp3d16sp -target-feature -vfp3sp -target-feature +fp16 -target-feature -vfp4 -target-feature -vfp4d16 -target-feature +vfp4d16sp -target-feature -vfp4sp -target-feature -fp-armv8 -target-feature -fp-armv8d16 -target-feature -fp-armv8d16sp -target-feature -fp-armv8sp -target-feature -fullfp16 -target-feature -fp64 -target-feature -d32 -target-feature -neon -target-feature -crypto -target-feature -fp16fml -target-feature +strict-align -target-abi aapcs -mfloat-abi hard -fallow-half-arguments-and-returns -dwarf-column-info -fno-split-dwarf-inlining -debugger-tuning=gdb -target-linker-version 556.5 -ffunction-sections -fdata-sections -resource-dir /clang+llvm-10.0.0-x86_64-apple-darwin/lib/clang/10.0.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -I /interrupt/example/freertos-example-llvm/freertos_kernel/include -I /interrupt/example/freertos-example-llvm/include -I /interrupt/example/freertos-example-llvm/freertos_kernel/portable/GCC/ARM_CM4F -internal-isystem /clang+llvm-10.0.0-x86_64-apple-darwin/lib/clang/10.0.0/include -internal-isystem /arm_9_2019q4/bin/../arm-none-eabi/include -Oz -fdebug-compilation-dir /interrupt/example/freertos-example-llvm -ferror-limit 19 -fmessage-length 0 -fno-signed-char -fgnuc-version=4.2.1 -fobjc-runtime=gcc -fdiagnostics-show-option -vectorize-slp -analyzer-output=html -faddrsig -o /interrupt/example/freertos-example-llvm/scanbuild_analysis/2020-05-19-190156-30115-1 -x c /interrupt/example/freertos-example-llvm/src/memory_leak_examples.c
+</div>
+<div id='tooltiphint' hidden="true">
+  <p>Keyboard shortcuts: </p>
+  <ul>
+    <li>Use 'j/k' keys for keyboard navigation</li>
+    <li>Use 'Shift+S' to show/hide relevant lines</li>
+    <li>Use '?' to toggle this window</li>
+  </ul>
+  <a href="#" onclick="toggleHelp(); return false;">Close</a>
+</div>
+<script type='text/javascript'>
+var relevant_lines = {"1": {"55": 1, "56": 1, "57": 1, "58": 1, "63": 1, "64": 1, "65": 1}};
+
+var filterCounterexample = function (hide) {
+  var tables = document.getElementsByClassName("code");
+  for (var t=0; t<tables.length; t++) {
+    var table = tables[t];
+    var file_id = table.getAttribute("data-fileid");
+    var lines_in_fid = relevant_lines[file_id];
+    if (!lines_in_fid) {
+      lines_in_fid = {};
+    }
+    var lines = table.getElementsByClassName("codeline");
+    for (var i=0; i<lines.length; i++) {
+        var el = lines[i];
+        var lineNo = el.getAttribute("data-linenumber");
+        if (!lines_in_fid[lineNo]) {
+          if (hide) {
+            el.setAttribute("hidden", "");
+          } else {
+            el.removeAttribute("hidden");
+          }
+        }
+    }
+  }
+}
+
+window.addEventListener("keydown", function (event) {
+  if (event.defaultPrevented) {
+    return;
+  }
+  if (event.key == "S") {
+    var checked = document.getElementsByName("showCounterexample")[0].checked;
+    filterCounterexample(!checked);
+    document.getElementsByName("showCounterexample")[0].checked = !checked;
+  } else {
+    return;
+  }
+  event.preventDefault();
+}, true);
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelector('input[name="showCounterexample"]').onchange=
+        function (event) {
+      filterCounterexample(this.checked);
+    };
+});
+</script>
+
+<form>
+    <input type="checkbox" name="showCounterexample" id="showCounterexample" />
+    <label for="showCounterexample">
+       Show only relevant lines
+    </label>
+</form>
+
+<script type='text/javascript'>
+var digitMatcher = new RegExp("[0-9]+");
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".PathNav > a").forEach(
+        function(currentValue, currentIndex) {
+            var hrefValue = currentValue.getAttribute("href");
+            currentValue.onclick = function() {
+                scrollTo(document.querySelector(hrefValue));
+                return false;
+            };
+        });
+});
+
+var findNum = function() {
+    var s = document.querySelector(".selected");
+    if (!s || s.id == "EndPath") {
+        return 0;
+    }
+    var out = parseInt(digitMatcher.exec(s.id)[0]);
+    return out;
+};
+
+var scrollTo = function(el) {
+    document.querySelectorAll(".selected").forEach(function(s) {
+        s.classList.remove("selected");
+    });
+    el.classList.add("selected");
+    window.scrollBy(0, el.getBoundingClientRect().top -
+        (window.innerHeight / 2));
+}
+
+var move = function(num, up, numItems) {
+  if (num == 1 && up || num == numItems - 1 && !up) {
+    return 0;
+  } else if (num == 0 && up) {
+    return numItems - 1;
+  } else if (num == 0 && !up) {
+    return 1 % numItems;
+  }
+  return up ? num - 1 : num + 1;
+}
+
+var numToId = function(num) {
+  if (num == 0) {
+    return document.getElementById("EndPath")
+  }
+  return document.getElementById("Path" + num);
+};
+
+var navigateTo = function(up) {
+  var numItems = document.querySelectorAll(
+      ".line > .msgEvent, .line > .msgControl").length;
+  var currentSelected = findNum();
+  var newSelected = move(currentSelected, up, numItems);
+  var newEl = numToId(newSelected, numItems);
+
+  // Scroll element into center.
+  scrollTo(newEl);
+};
+
+window.addEventListener("keydown", function (event) {
+  if (event.defaultPrevented) {
+    return;
+  }
+  if (event.key == "j") {
+    navigateTo(/*up=*/false);
+  } else if (event.key == "k") {
+    navigateTo(/*up=*/true);
+  } else {
+    return;
+  }
+  event.preventDefault();
+}, true);
+</script>
+  
+<script type='text/javascript'>
+
+var toggleHelp = function() {
+    var hint = document.querySelector("#tooltiphint");
+    var attributeName = "hidden";
+    if (hint.hasAttribute(attributeName)) {
+      hint.removeAttribute(attributeName);
+    } else {
+      hint.setAttribute("hidden", "true");
+    }
+};
+window.addEventListener("keydown", function (event) {
+  if (event.defaultPrevented) {
+    return;
+  }
+  if (event.key == "?") {
+    toggleHelp();
+  } else {
+    return;
+  }
+  event.preventDefault();
+});
+</script>
+<table class="code" data-fileid="1">
+<tr class="codeline" data-linenumber="1"><td class="num" id="LN1">1</td><td class="line"><span class='directive'>#include "example_project/examples.h"</span></td></tr>
+<tr class="codeline" data-linenumber="2"><td class="num" id="LN2">2</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="3"><td class="num" id="LN3">3</td><td class="line"><span class='directive'>#include &lt;string.h&gt;</span></td></tr>
+<tr class="codeline" data-linenumber="4"><td class="num" id="LN4">4</td><td class="line"><span class='directive'>#include &lt;stdlib.h&gt;</span></td></tr>
+<tr class="codeline" data-linenumber="5"><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="6"><td class="num" id="LN6">6</td><td class="line"><span class='directive'>#include "example_project/memory_pool.h"</span></td></tr>
+<tr class="codeline" data-linenumber="7"><td class="num" id="LN7">7</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="8"><td class="num" id="LN8">8</td><td class="line">uint32_t example_malloc_free(<span class='keyword'>void</span>) {</td></tr>
+<tr class="codeline" data-linenumber="9"><td class="num" id="LN9">9</td><td class="line">  <span class='keyword'>const</span> size_t size = 10;</td></tr>
+<tr class="codeline" data-linenumber="10"><td class="num" id="LN10">10</td><td class="line">  uint8_t *ptr = malloc(size);</td></tr>
+<tr class="codeline" data-linenumber="11"><td class="num" id="LN11">11</td><td class="line">  free(ptr);</td></tr>
+<tr class="codeline" data-linenumber="12"><td class="num" id="LN12">12</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="13"><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>// access the data before setting it</span></td></tr>
+<tr class="codeline" data-linenumber="14"><td class="num" id="LN14">14</td><td class="line">  uint32_t sum = 0;</td></tr>
+<tr class="codeline" data-linenumber="15"><td class="num" id="LN15">15</td><td class="line">  <span class='keyword'>for</span> (size_t i = 0; i &lt; size; i++) {</td></tr>
+<tr class="codeline" data-linenumber="16"><td class="num" id="LN16">16</td><td class="line">    sum += ptr[i];</td></tr>
+<tr class="codeline" data-linenumber="17"><td class="num" id="LN17">17</td><td class="line">  }</td></tr>
+<tr class="codeline" data-linenumber="18"><td class="num" id="LN18">18</td><td class="line">  <span class='keyword'>return</span> sum;</td></tr>
+<tr class="codeline" data-linenumber="19"><td class="num" id="LN19">19</td><td class="line">}</td></tr>
+<tr class="codeline" data-linenumber="20"><td class="num" id="LN20">20</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="21"><td class="num" id="LN21">21</td><td class="line">uint32_t example_access_garbage(<span class='keyword'>void</span>) {</td></tr>
+<tr class="codeline" data-linenumber="22"><td class="num" id="LN22">22</td><td class="line">  <span class='keyword'>const</span> size_t size = 10;</td></tr>
+<tr class="codeline" data-linenumber="23"><td class="num" id="LN23">23</td><td class="line">  uint8_t *ptr = memory_pool_allocate(size);</td></tr>
+<tr class="codeline" data-linenumber="24"><td class="num" id="LN24">24</td><td class="line">  <span class='keyword'>if</span> (ptr == <span class='macro'>NULL<span class='macro_popup'>((void*)0)</span></span>) {</td></tr>
+<tr class="codeline" data-linenumber="25"><td class="num" id="LN25">25</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr class="codeline" data-linenumber="26"><td class="num" id="LN26">26</td><td class="line">  }</td></tr>
+<tr class="codeline" data-linenumber="27"><td class="num" id="LN27">27</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="28"><td class="num" id="LN28">28</td><td class="line">  <span class='comment'>// access the data before setting it</span></td></tr>
+<tr class="codeline" data-linenumber="29"><td class="num" id="LN29">29</td><td class="line">  uint32_t sum = 0;</td></tr>
+<tr class="codeline" data-linenumber="30"><td class="num" id="LN30">30</td><td class="line">  <span class='keyword'>for</span> (size_t i = 0; i &lt; size; i++) {</td></tr>
+<tr class="codeline" data-linenumber="31"><td class="num" id="LN31">31</td><td class="line">    sum += ptr[i];</td></tr>
+<tr class="codeline" data-linenumber="32"><td class="num" id="LN32">32</td><td class="line">  }</td></tr>
+<tr class="codeline" data-linenumber="33"><td class="num" id="LN33">33</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="34"><td class="num" id="LN34">34</td><td class="line">  <span class='keyword'>return</span> sum;</td></tr>
+<tr class="codeline" data-linenumber="35"><td class="num" id="LN35">35</td><td class="line">}</td></tr>
+<tr class="codeline" data-linenumber="36"><td class="num" id="LN36">36</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="37"><td class="num" id="LN37">37</td><td class="line">uint32_t example_memory_leak(<span class='keyword'>void</span>) {</td></tr>
+<tr class="codeline" data-linenumber="38"><td class="num" id="LN38">38</td><td class="line">  <span class='keyword'>const</span> size_t size = 10;</td></tr>
+<tr class="codeline" data-linenumber="39"><td class="num" id="LN39">39</td><td class="line">  uint8_t *ptr = memory_pool_allocate(size);</td></tr>
+<tr class="codeline" data-linenumber="40"><td class="num" id="LN40">40</td><td class="line">  <span class='keyword'>if</span> (ptr == <span class='macro'>NULL<span class='macro_popup'>((void*)0)</span></span>) {</td></tr>
+<tr class="codeline" data-linenumber="41"><td class="num" id="LN41">41</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr class="codeline" data-linenumber="42"><td class="num" id="LN42">42</td><td class="line">  }</td></tr>
+<tr class="codeline" data-linenumber="43"><td class="num" id="LN43">43</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="44"><td class="num" id="LN44">44</td><td class="line">  <span class='comment'>// ... do something with the pointer ...</span></td></tr>
+<tr class="codeline" data-linenumber="45"><td class="num" id="LN45">45</td><td class="line">  <span class='keyword'>const</span> uint8_t return_code = ((uint32_t)(uintptr_t)ptr) ? 0xa5 : 0xef;</td></tr>
+<tr class="codeline" data-linenumber="46"><td class="num" id="LN46">46</td><td class="line">  <span class='keyword'>if</span> (return_code == 0xa5) {</td></tr>
+<tr class="codeline" data-linenumber="47"><td class="num" id="LN47">47</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr class="codeline" data-linenumber="48"><td class="num" id="LN48">48</td><td class="line">  }</td></tr>
+<tr class="codeline" data-linenumber="49"><td class="num" id="LN49">49</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="50"><td class="num" id="LN50">50</td><td class="line">  <span class='macro'>memory_pool_free<span class='macro_popup'>free</span></span>(ptr);</td></tr>
+<tr class="codeline" data-linenumber="51"><td class="num" id="LN51">51</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr class="codeline" data-linenumber="52"><td class="num" id="LN52">52</td><td class="line">}</td></tr>
+<tr class="codeline" data-linenumber="53"><td class="num" id="LN53">53</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="54"><td class="num" id="LN54">54</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="55"><td class="num" id="LN55">55</td><td class="line">uint32_t example_use_after_free(<span class='keyword'>void</span>) {</td></tr>
+<tr class="codeline" data-linenumber="56"><td class="num" id="LN56">56</td><td class="line">  <span class='keyword'>const</span> size_t size = 10;</td></tr>
+<tr class="codeline" data-linenumber="57"><td class="num" id="LN57">57</td><td class="line">  uint8_t *ptr = <span class="mrange">memory_pool_allocate(size)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:18ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr class="codeline" data-linenumber="58"><td class="num" id="LN58">58</td><td class="line">  <span class='keyword'>if</span> (<span class="mrange">ptr == <span class='macro'>NULL<span class='macro_popup'>((void*)0)</span></span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:7ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td><td>Assuming 'ptr' is not equal to NULL</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr class="codeline" data-linenumber="59"><td class="num" id="LN59">59</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr class="codeline" data-linenumber="60"><td class="num" id="LN60">60</td><td class="line">  }</td></tr>
+<tr class="codeline" data-linenumber="61"><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="62"><td class="num" id="LN62">62</td><td class="line">  <span class='comment'>// ... do something with the pointer ...</span></td></tr>
+<tr class="codeline" data-linenumber="63"><td class="num" id="LN63">63</td><td class="line">  <span class='keyword'>const</span> uint8_t return_code = ((uint32_t)(uintptr_t)<span class='variable'>ptr<table class='variable_popup'><tbody><tr><td valign='top'><div class='PathIndex PathIndexPopUp'>3.1</div></td><td>'ptr' is non-null</td></tr></tbody></table></span>) ? 0xa5 : 0xef;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:31ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td><td>'?' condition is true</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr class="codeline" data-linenumber="64"><td class="num" id="LN64">64</td><td class="line">  <span class='keyword'>if</span> (<span class='variable'>return_code<table class='variable_popup'><tbody><tr><td valign='top'><div class='PathIndex PathIndexPopUp'>4.1</div></td><td>'return_code' is equal to 165</td></tr></tbody></table></span> == 0xa5) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr class="codeline" data-linenumber="65"><td class="num" id="LN65">65</td><td class="line">    <span class="mrange"><span class='macro'>memory_pool_free<span class='macro_popup'>free</span></span>(ptr)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td><td>Attempt to free released memory</td></tr></table></div></td></tr>
+<tr class="codeline" data-linenumber="66"><td class="num" id="LN66">66</td><td class="line">  }</td></tr>
+<tr class="codeline" data-linenumber="67"><td class="num" id="LN67">67</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="68"><td class="num" id="LN68">68</td><td class="line">  memset(ptr, 0x5e, size);</td></tr>
+<tr class="codeline" data-linenumber="69"><td class="num" id="LN69">69</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr class="codeline" data-linenumber="70"><td class="num" id="LN70">70</td><td class="line">}</td></tr>
+<tr class="codeline" data-linenumber="71"><td class="num" id="LN71">71</td><td class="line"> </td></tr>
+<tr class="codeline" data-linenumber="72"><td class="num" id="LN72">72</td><td class="line">uint32_t example_project_run_memory_leak_examples(<span class='keyword'>void</span>) {</td></tr>
+<tr class="codeline" data-linenumber="73"><td class="num" id="LN73">73</td><td class="line">  <span class='keyword'>return</span> example_malloc_free() + example_access_garbage() + example_memory_leak() + example_use_after_free();</td></tr>
+<tr class="codeline" data-linenumber="74"><td class="num" id="LN74">74</td><td class="line">}</td></tr>
+</table></body></html>
