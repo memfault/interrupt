@@ -10,7 +10,7 @@ This is the second post in our [Zero to main() series]({{ '/tag/zero-to-main' |
 relative_url  }}).
 
 <!-- excerpt start -->
-[Last time]({% post_url 2019-05-14-zero-to-main-1 %}), we talked about
+[Last time]({{ site.url }}{% post_url 2019-05-14-zero-to-main-1 %}), we talked about
 bootstrapping a C environment on an MCU before invoking our `main` function. One
 thing we took for granted was the fact that functions and data end up in the
 right place in our binary. Today, we're going to dig into how that happens by
