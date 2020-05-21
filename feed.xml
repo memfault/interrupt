@@ -9,7 +9,7 @@ layout: null
         <link>{{ site.url | xml_escape }}</link>
         <description>{{ site.description | xml_escape }}</description>
         <language>en-us</language>
-        <atom:link href="{{ site.baseurl }}/feed.xml" rel="self" type="application/rss+xml" />
+        <dc:link href="{{ site.baseurl }}/feed.xml" rel="self" type="application/rss+xml" />
         <pubDate>{{ site.posts[0].date | date_to_rfc822 }}</pubDate>
         <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
         {% for post in site.posts %}
