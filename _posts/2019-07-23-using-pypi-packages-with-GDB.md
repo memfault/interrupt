@@ -15,7 +15,7 @@ tags: [python, gdb]
 <!-- excerpt start -->
 
 [In a previous
-post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}), we
+post]({{ site.url }}{% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}), we
 discussed how to automate some of the more tedious parts of debugging firmware
 using
 [Python in GDB Scripts](https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html).

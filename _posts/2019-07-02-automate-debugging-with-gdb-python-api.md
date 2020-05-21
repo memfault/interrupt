@@ -7,7 +7,7 @@ tags: [python, gdb]
 
 <!-- excerpt start -->
 
-[Previously]({% post_url 2019-05-21-gdb-for-firmware-1 %}) we discussed how a significant portion of developer time is spent _debugging_ firmware and how GDB can be a powerful utility for this. In this article we will discuss how to become more efficient at debugging by leveraging GDB's [Python API](https://sourceware.org/gdb/onlinedocs/gdb/Python.html#Python).
+[Previously]({{ site.url }}{% post_url 2019-05-21-gdb-for-firmware-1 %}) we discussed how a significant portion of developer time is spent _debugging_ firmware and how GDB can be a powerful utility for this. In this article we will discuss how to become more efficient at debugging by leveraging GDB's [Python API](https://sourceware.org/gdb/onlinedocs/gdb/Python.html#Python).
 
 <!-- excerpt end -->
 
