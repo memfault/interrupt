@@ -3,13 +3,13 @@ layout: null
 ---
 
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>{{ site.title | xml_escape }}</title>
         <link>{{ site.url | xml_escape }}</link>
         <description>{{ site.description | xml_escape }}</description>
         <language>en-us</language>
-        <dc:link href="{{ site.baseurl }}/feed.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="{{ site.baseurl }}/feed.xml" rel="self" type="application/rss+xml" />
         <pubDate>{{ site.posts[0].date | date_to_rfc822 }}</pubDate>
         <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
         {% for post in site.posts %}
@@ -29,7 +29,7 @@ layout: null
             <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
             {% assign author = site.data.authors[post.author] %}
             {% if author %}
-            <dc:creator>{{ author.name | default: "" | xml_escape }}</dc:creator>
+            <atom:creator>{{ author.name | default: "" | xml_escape }}</dc:creator>
             {% endif %}
         </item>
         {% endfor %}
