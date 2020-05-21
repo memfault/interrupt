@@ -6,7 +6,7 @@ layout: null
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
         <title>{{ site.title | xml_escape }}</title>
-        <link>{{ site.baseurl | xml_escape }}/feed.xml</link>
+        <link>{{ site.url | xml_escape }}</link>
         <description>{{ site.description | xml_escape }}</description>
         <language>en-us</language>
         <pubDate>{{ site.posts[0].date | date_to_rfc822 }}</pubDate>
