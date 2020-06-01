@@ -579,12 +579,12 @@ That's it! Now we can measure the time spent in our `mandel` function as such:
 ```c
 int main(void) {
     ...
-    dwt_enable_cycle_counter(); // << Enable Cycle Counter
+    enable_cycle_counter(); // << Enable Cycle Counter
     printf("System initialized.\n");
     while (1) {
-        uint32_t start = dwt_read_cycle_counter(); // << Start count
+        uint32_t start = read_cycle_counter(); // << Start count
         mandel(center_x, center_y, scale);	/* draw mandelbrot */
-        uint32_t stop = dwt_read_cycle_counter(); // << Stop count
+        uint32_t stop = read_cycle_counter(); // << Stop count
         printf("We spent %lu cycles in mandel\n", stop - start);
         ...
     }
@@ -630,6 +630,11 @@ We spent 38298322 cycles in mandel
 We see here that the amount of time spent in the `mandel` function increases
 with every iteration. To convert cycles to seconds we simply divide by our clock
 frequency. e.g. `38298322` cycles works out to ~23ms at 168MHz.
+
+> Note: libopencm3 has APIs to use the cycle counter already implemented:
+> `dwt_enable_cycle_counter` and `dwt_read_cycle_counter`. I chose to implement
+> them myself to make it easier to reproduce for those who do not use the
+> library.
 
 # Closing
 
