@@ -205,6 +205,17 @@ trace-enabled debugger (e.g. a J-Trace), alternatively it can be streamed over
 the SWO pin of your SWD bus. While more pin allow for more data to be read, much
 can be done with the single SWO pin without requiring complex tools.
 
+> Note: Using ITM for printf is relatively straightforward. Here's a putc
+> implementation that should do the trick:
+>
+>     void putc(char c) {
+>       while (ITM_STIM32(0) == 0);
+>       ITM_STIM8(0) = c;
+>     }
+>
+> You can then just `cat` the `itm.fifo` file we configure with openOCD below
+> and see the print output. It's pretty cool!
+
 ### Enabling PC Sampling with ITM and OpenOCD
 
 You will notice that "PC Sampling" is explicitly called out as one of the things
@@ -518,13 +529,109 @@ $ ~/code/itm-tools/target/debug/pcsampl itm.fifo -e mandel.elf 2>/dev/null
  100% 39863 samples
 ```
 
+As you can see, we now see the breakdown of time spent within `lcd_show_frame`,
+and as expected `spi_xfer` takes the lion's share.
+
 > Note: this approach is not perfect. Since IRQs are running, the function would
 > are trying to profile could get interrupted which means we will collect some
 > samples from other parts of our code as well. In a single threaded program
 > this is not a huge deal but can be more problematic when multiple threads are
 > running and pre-empting each other.
 
-## Closing
+## Measuring time with the Cycle Counter
+
+Our sampling profiler is able to tell us the relative time spent in one
+function versus another. However, it does not tell us anything about absolute
+time spent. If we want to optimize our `mandel` function, we will need a way to
+measure how long it executes for.
+
+This is where the `CYCCNT` register (address: `0xE0001004`) comes in. As noted
+earlier, the cycle counter is a free running 32-bit cycle counter which is used
+to tee-off PC sampling events. The cycle counter can also be used to measure
+time without needing to use a hardware timer.
+
+To use the `CYCCNT` to time a function, we simply need to read it before and
+after the function executes, and compute the delta.
+
+> Note: since the CYCCNT register is 32-bit wide, it can not be used to measure
+> time periods longer than `cycle_period` * 2^32. Given our 168MHz clock speed,
+> this comes to about ~25 seconds in our case.
+
+We already know how enable the cycle counter: we set the CYCCNTENA bit in the
+DWT Control Register (this was required for PC sampling as well).
+
+```c
+void enable_cycle_counter(void) {
+    DWT_CTRL |= DWT_CTRL_CYCCNTENA;
+}
+```
+
+To read the cycle counter we simple read that register:
+
+```c
+uint32_t read_cycle_counter(void) {
+    return DWT_CYCCNT;
+}
+```
+
+That's it! Now we can measure the time spent in our `mandel` function as such:
+
+```c
+int main(void) {
+    ...
+    dwt_enable_cycle_counter(); // << Enable Cycle Counter
+    printf("System initialized.\n");
+    while (1) {
+        uint32_t start = dwt_read_cycle_counter(); // << Start count
+        mandel(center_x, center_y, scale);	/* draw mandelbrot */
+        uint32_t stop = dwt_read_cycle_counter(); // << Stop count
+        printf("We spent %lu cycles in mandel\n", stop - start);
+        ...
+    }
+
+    return 0;
+}
+```
+
+And here are the results:
+
+```shell
+...
+We spent 23392491 cycles in mandel
+We spent 24345217 cycles in mandel
+We spent 25360211 cycles in mandel
+We spent 26309694 cycles in mandel
+We spent 27019451 cycles in mandel
+We spent 27434047 cycles in mandel
+We spent 27662784 cycles in mandel
+We spent 27868860 cycles in mandel
+We spent 28259158 cycles in mandel
+We spent 28544329 cycles in mandel
+We spent 28927996 cycles in mandel
+We spent 29792795 cycles in mandel
+We spent 30591276 cycles in mandel
+We spent 31332753 cycles in mandel
+We spent 32102420 cycles in mandel
+We spent 32874457 cycles in mandel
+We spent 33490363 cycles in mandel
+We spent 33849665 cycles in mandel
+We spent 34146071 cycles in mandel
+We spent 34523587 cycles in mandel
+We spent 34923967 cycles in mandel
+We spent 35274893 cycles in mandel
+We spent 35667430 cycles in mandel
+We spent 36211229 cycles in mandel
+We spent 36762744 cycles in mandel
+We spent 37389846 cycles in mandel
+We spent 37976133 cycles in mandel
+We spent 38298322 cycles in mandel
+```
+
+We see here that the amount of time spent in the `mandel` function increases
+with every iteration. To convert cycles to seconds we simply divide by our clock
+frequency. e.g. `38298322` cycles works out to ~23ms at 168MHz.
+
+# Closing
 
 ## References
 
