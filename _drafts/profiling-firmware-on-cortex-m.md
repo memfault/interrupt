@@ -135,12 +135,12 @@ connect, run our command and exit without user input. This is supported with the
 `-batch` flag. Here's the invocation:
 
 ```
-$ arm-none-eabi-gdb -ex "set pagination 0" -ex "target remote :3333" -ex "thread apply all bt" -batch $elf
+$ arm-none-eabi-gdb -ex "set pagination off" -ex "target remote :3333" -ex "thread apply all bt" -batch $elf
 ```
 
-This will start GDB, set the pagination to 0 (pagination requires user input),
-run `target remote :3333` to connect to OpenOCD, run `thread apply all bt` to
-get the backtrace of every thread, and exits.
+This will start GDB, disable pagination (it requires user input), run `target
+remote :3333` to connect to OpenOCD, run `thread apply all bt` to get the
+backtrace of every thread, and exits.
 
 To parse the data, I've adapted the `awk` script provided at
 poormansprofiler.org to handle the specific output of `arm-none-eabi-gdb`.
@@ -155,7 +155,7 @@ elf=mandel.elf
 
 for x in $(seq 1 $nsamples)
   do
-    arm-none-eabi-gdb -ex "set pagination 0" -ex "target remote :3333" -ex "thread apply all bt" -batch $elf
+    arm-none-eabi-gdb -ex "set pagination off" -ex "target remote :3333" -ex "thread apply all bt" -batch $elf
     sleep $sleeptime
   done | \
 awk '
@@ -216,9 +216,10 @@ instruction  counters, sleep cycles counters, and more[^dwt].
 data address, and the data value.
 
 This information can be read over the TRACE pins of your MCU if you have a
-trace-enabled debugger (e.g. a J-Trace), alternatively it can be streamed over
-the SWO pin of your SWD bus. While more pin allow for more data to be read, much
-can be done with the single SWO pin without requiring complex tools.
+trace-enabled debugger (e.g. a J-Trace or a Lauterbach TRACE32), alternatively
+it can be streamed over the SWO pin of your SWD bus. While more pin allow for
+more data to be read, much can be done with the single SWO pin without requiring
+complex tools.
 
 > Note: Using ITM for printf is relatively straightforward. Here's a putc
 > implementation that should do the trick:
@@ -420,7 +421,7 @@ be invoked as such:
 ```c
 int main(void) {
     ...
-    PROFILE(lcd_show_frame);
+    PROFILE(lcd_show_frame());
     ...
 }
 ```
@@ -435,7 +436,7 @@ We can start filling in our macro:
 ```c
 #define PROFILE(code) {         \
   // enable PC sampling         \
-  code                          \
+  code;                          \
   // disable PC sampling        \
 }
 ```
@@ -483,7 +484,7 @@ and fill in our macro:
 #define PROFILE(code)                   \
     {                                   \
         dwt_pcsampler_enable(true);     \
-        code                            \
+        code;                            \
         dwt_pcsampler_enable(false);    \
     }
 ```
@@ -673,6 +674,7 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 ## References
 
 [^disco]: [STM32F429i Discovery Kit](https://www.st.com/en/evaluation-tools/32f429idiscovery.html)
+[^libopencm3]: [Libopencm3 on GitHub](https://github.com/libopencm3/libopencm3)
 [^openocd]: More information on getting OpenOCD at [https://openocd.org](https://openocd.org).
 [^disco-um]: [STM32F429i Discovery User Manual](https://www.st.com/resource/en/user_manual/dm00093903-discovery-kit-with-stm32f429zi-mcu-stmicroelectronics.pdf)
 [^dwt]: You can read more about DWT counters on [ARM's Website](https://developer.arm.com/docs/ddi0337/e/system-debug/dwt)
