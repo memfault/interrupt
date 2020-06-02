@@ -110,7 +110,7 @@ $ continue
 You should now be seeing the Mandelbrot fractal on the LCD of the Discovery
 board.
 
-## Sampling Profilers
+## Poor Man's Profiler
 
 The simplest way to profile a system is to use a sampling profiler. The concept
 is simple: record the program counter at regular intervals for a period of time.
@@ -121,8 +121,6 @@ One of the main advantage of sampling profilers is that they do not require
 modifying the code you are trying to inspect. Other approaches like
 instrumentation your code can yield more precise results, but risk changing the
 behavior of our program.
-
-### Poor Man Profiler
 
 So how can we sample our program counter at a regular interval? Using our
 debugger! This is a common approach, sometimes dubbed the [poor man's
@@ -190,7 +188,7 @@ million clock cycles per second, that means that we get a sample every 10
 million clock cycle. This is too coarse for any meaningful analysis, so we must
 find a better approach
 
-## Instrumented Trace Macrocell
+## PC Sampling with ITM
 
 To get better profiling data, we turn to the Instrumented Trace Macrocell (ITM).
 The ITM is an optional feature of ARM Cortex-M cores which formats and outputs
@@ -555,7 +553,7 @@ and as expected `spi_xfer` takes the lion's share.
 > this is not a huge deal but can be more problematic when multiple threads are
 > running and pre-empting each other.
 
-## Measuring time with the Cycle Counter
+## Timing code with the cycle counter
 
 Our sampling profiler is able to tell us the relative time spent in one
 function versus another. However, it does not tell us anything about absolute
