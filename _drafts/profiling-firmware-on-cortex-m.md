@@ -6,7 +6,7 @@ author: francois
 
 Although microcontrollers in 2020 sometimes come with GHz clock frequencies and
 even multiple cores, performance is a major concern when developing embedded
-applications. Indeed, most firmware projects face some realtime constraints
+applications. Indeed, most firmware projects face some real-time constraints
 which must be carefully managed.
 
 Good profiling tools are therefore essential to firmware development.
@@ -95,16 +95,16 @@ arm-none-eabi-gcc --static -nostartfiles -T../stm32f429i-discovery.ld -mthumb -m
 $ arm-none-eabi-gdb mandel.elf
 
 # Connect to OpenOCD (it must already be running in another terminal)
-$ target remote :3333
+(gdb) target remote :3333
 
 # Reset & Halt the target
-# monitor reset halt
+(gdb) monitor reset halt
 
 # Flash the firmware
-$ load
+(gdb) load
 
 # Start the firmware
-$ continue
+(gdb) continue
 ```
 
 You should now be seeing the Mandelbrot fractal on the LCD of the Discovery
@@ -117,10 +117,10 @@ is simple: record the program counter at regular intervals for a period of time.
 Given a high enough sampling rate and a long enough period of time, you get a
 statistical distribution of what code is running on your device.
 
-One of the main advantage of sampling profilers is that they do not require
+One of the main advantages of sampling profilers is that they do not require
 modifying the code you are trying to inspect. Other approaches like
-instrumentation your code can yield more precise results, but risk changing the
-behavior of our program.
+instrumenting your code can yield more precise results, but risk changing the
+behavior of the program.
 
 So how can we sample our program counter at a regular interval? Using our
 debugger! This is a common approach, sometimes dubbed the [poor man's
@@ -398,8 +398,8 @@ Man's Profiler approach. In fact, we can see that we are spending most of our
 time in the `mandel` function, and not in the `spi_xfer` function as we
 thought.
 
-> Note: In the process of writing this blog post, I stumbled upon the Orbuculum
-> project (https://github.com/orbcode/orbuculum). While this looks very
+> Note: In the process of writing this blog post, I stumbled upon the [Orbuculum
+> project](https://github.com/orbcode/orbuculum). While this looks very
 > promising for ITM/ETM and other debugging, I was not able to get it to work on
 > MacOS.
 
@@ -479,7 +479,7 @@ static void dwt_pcsampler_enable(bool enable) {
 
 and fill in our macro:
 
-```
+```c
 #define PROFILE(code)                   \
     {                                   \
         dwt_pcsampler_enable(true);     \
@@ -547,7 +547,7 @@ $ ~/code/itm-tools/target/debug/pcsampl itm.fifo -e mandel.elf 2>/dev/null
 As you can see, we now see the breakdown of time spent within `lcd_show_frame`,
 and as expected `spi_xfer` takes the lion's share.
 
-> Note: this approach is not perfect. Since IRQs are running, the function would
+> Note: this approach is not perfect. Since IRQs are running, the function we
 > are trying to profile could get interrupted which means we will collect some
 > samples from other parts of our code as well. In a single threaded program
 > this is not a huge deal but can be more problematic when multiple threads are
@@ -661,7 +661,7 @@ frequency. e.g. `38298322` cycles works out to ~23ms at 168MHz.
 
 I hope this post gave you a better understanding of the profiling features
 available on Cortex-M microcontrollers. I am amazed at what can be accomplished
-with an open source tool such as openOCD and as single pin!
+with an open source tool such as openOCD and a single pin!
 
 Are there profiling tools or methods you've used to great effect? Let us know in
 the comments below!
