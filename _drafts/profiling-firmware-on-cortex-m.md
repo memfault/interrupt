@@ -4,7 +4,24 @@ description: "TODO"
 author: francois
 ---
 
+Although microcontrollers in 2020 sometimes come with GHz clock frequencies and
+even multiple cores, performance is a major concern when developing embedded
+applications. Indeed, most firmware projects face some realtime constraints
+which must be carefully managed.
+
+Good profiling tools are therefore essential to firmware development.
+Historically, profiling was done by toggling GPIOs when specific parts of the
+code execute. A logic analyzer could then be used to measure the time between
+different GPIO toggles.
+
+Today, modern microcontrollers implement multiple features to enable advanced
+profiling techniques. All you need is a debugger and a laptop to get started.
+
 <!-- excerpt start -->
+In this post, we explore different techniques that can be used to profile
+firmware applications running on ARM Cortex-M microcontrollers. We start with a
+naive debugger-based sampling method, and eventually discover ITM, DWT cycle
+counters, and more!
 <!-- excerpt end -->
 
 
@@ -593,6 +610,11 @@ int main(void) {
 }
 ```
 
+> Note: libopencm3 has APIs to use the cycle counter already implemented:
+> `dwt_enable_cycle_counter` and `dwt_read_cycle_counter`. I chose to implement
+> them myself to make it easier to reproduce for those who do not use the
+> library.
+
 And here are the results:
 
 ```shell
@@ -631,17 +653,29 @@ We see here that the amount of time spent in the `mandel` function increases
 with every iteration. To convert cycles to seconds we simply divide by our clock
 frequency. e.g. `38298322` cycles works out to ~23ms at 168MHz.
 
-> Note: libopencm3 has APIs to use the cycle counter already implemented:
-> `dwt_enable_cycle_counter` and `dwt_read_cycle_counter`. I chose to implement
-> them myself to make it easier to reproduce for those who do not use the
-> library.
+> Note: You can find libraries on Github that implement a bit more logic on top
+> of the cycle counter, so multiple functions can be measured within the same
+> run. Here are two that I stumbled upon while researching this article:
+> https://github.com/Serj-Bashlayev/STM32_Profiler, and
+> https://github.com/esynr3z/profiler-cortex-m4.
 
-# Closing
+## Closing
+
+I hope this post gave you a better understanding of the profiling features
+available on Cortex-M microcontrollers. I am amazed at what can be accomplished
+with an open source tool such as openOCD and as single pin!
+
+Are there profiling tools or methods you've used to great effect? Let us know in
+the comments below!
+
+See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+
+{:.no_toc}
 
 ## References
 
 [^disco]: [STM32F429i Discovery Kit](https://www.st.com/en/evaluation-tools/32f429idiscovery.html)
-[^openocd]: More information on getting OpenOCD at [](https://openocd.org).
+[^openocd]: More information on getting OpenOCD at [https://openocd.org](https://openocd.org).
 [^disco-um]: [STM32F429i Discovery User Manual](https://www.st.com/resource/en/user_manual/dm00093903-discovery-kit-with-stm32f429zi-mcu-stmicroelectronics.pdf)
 [^dwt]: You can read more about DWT counters on [ARM's Website](https://developer.arm.com/docs/ddi0337/e/system-debug/dwt)
 [^tpiu_config]: http://openocd.org/doc/html/Architecture-and-Core-Commands.html#index-tpiu-config
