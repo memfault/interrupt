@@ -1,6 +1,8 @@
 ---
 title: "Profiling Firmware on Cortex-M"
-description: "TODO"
+description: "An exploration of profiling techniques on Cortex-M
+microcontrollers, ranging from sampling profilers, ITM, and function timing via
+the cycle counter."
 author: francois
 ---
 
