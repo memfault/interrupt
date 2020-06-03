@@ -19,9 +19,9 @@ profiling techniques. All you need is a debugger and a laptop to get started.
 
 <!-- excerpt start -->
 In this post, we explore different techniques that can be used to profile
-firmware applications running on ARM Cortex-M microcontrollers. We start with a
-naive debugger-based sampling method, and eventually discover ITM, DWT cycle
-counters, and more!
+firmware applications running on ARM Cortex-M microcontrollers. To profile our
+Mandelbrot application on STM32, we start with a naive debugger-based sampling
+method, and eventually discover ITM, DWT cycle counters, and more! 
 <!-- excerpt end -->
 
 
@@ -61,7 +61,9 @@ Instead, a solder bridge is used to enable the functionality per the User
 Manual, Section 6.13[^disco-um].
 
 Simply grab a soldering iron and bridge the two pads labeled "SB9" with a bit
-of solder or a 0-ohm resistor.
+of solder or a 0-ohm resistor. Here is my handywork:
+
+![](/img/profiling/solder-bridge.jpg)
 
 ### Code Under Test
 
@@ -108,7 +110,9 @@ $ arm-none-eabi-gdb mandel.elf
 ```
 
 You should now be seeing the Mandelbrot fractal on the LCD of the Discovery
-board.
+board. Here it is!
+
+![](/img/profiling/mandelbrot.jpg)
 
 ## Poor Man's Profiler
 
@@ -242,7 +246,9 @@ Profiler!
 
 First, we must configure OpenOCD to read from the SWO pin and dump the data
 somewhere we can read it. This is done via the `tpiu config`
-command[^tpiu_config]. I've summarized it below:
+command[^tpiu_config]. This command configures the Trace Port Interface
+Unit[^tpiu] in the chip and enables saving to file in openOCD. I've summarized
+it below:
 
 ```
 tpiu config (disable | ((external | internal (filename | -)) (sync port_width | ((manchester | uart) formatter_enable)) TRACECLKIN_freq [trace_freq]))
@@ -675,6 +681,7 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 
 [^disco]: [STM32F429i Discovery Kit](https://www.st.com/en/evaluation-tools/32f429idiscovery.html)
 [^libopencm3]: [Libopencm3 on GitHub](https://github.com/libopencm3/libopencm3)
+[^tpui]: More info on the TPIU on [ARM's website](https://developer.arm.com/docs/100166/latest/trace-port-interface-unit/about-the-tpiu)
 [^openocd]: More information on getting OpenOCD at [https://openocd.org](https://openocd.org).
 [^disco-um]: [STM32F429i Discovery User Manual](https://www.st.com/resource/en/user_manual/dm00093903-discovery-kit-with-stm32f429zi-mcu-stmicroelectronics.pdf)
 [^dwt]: You can read more about DWT counters on [ARM's Website](https://developer.arm.com/docs/ddi0337/e/system-debug/dwt)
