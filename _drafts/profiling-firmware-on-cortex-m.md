@@ -63,7 +63,7 @@ Manual, Section 6.13[^disco-um].
 Simply grab a soldering iron and bridge the two pads labeled "SB9" with a bit
 of solder or a 0-ohm resistor. Here is my handywork:
 
-![](/img/profiling/solder-bridge.jpg)
+<img src="/img/profiling/solder-bridge.jpg" width="450" />
 
 ### Code Under Test
 
