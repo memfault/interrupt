@@ -58,12 +58,12 @@ $ openocd -f board/stm32f429disc1.cfg
 
 Note that the SWO pin is not connected by default on the Discovery board.
 Instead, a solder bridge is used to enable the functionality per the User
-Manual[^disco-um].
+Manual, Section 6.13[^disco-um].
 
-Simply grab a soldering iron and bridge the two pads labelled "SB9" with a bit
+Simply grab a soldering iron and bridge the two pads labeled "SB9" with a bit
 of solder or a 0-ohm resistor.
 
-### Code under test
+### Code Under Test
 
 In order to have something interesting to profile, we used the Mandelbrot
 program bundled as an example with libopenCM3[^libopencm3]. This simple program
@@ -114,7 +114,7 @@ board.
 
 The simplest way to profile a system is to use a sampling profiler. The concept
 is simple: record the program counter at regular intervals for a period of time.
-Given a high enough sampling rate and a long enough period of time, you get a
+Given a high enough sampling rate for a long enough duration, you get a
 statistical distribution of what code is running on your device.
 
 One of the main advantages of sampling profilers is that they do not require
@@ -126,12 +126,12 @@ So how can we sample our program counter at a regular interval? Using our
 debugger! This is a common approach, sometimes dubbed the [poor man's
 profiler](https://poormansprofiler.org/).
 
-The concept is simple: we write a script which executes our debugger in a loop,
+The concept is simple: we write a script which executes our debugger in a loop
 and dumps the current backtrace. After we've collected enough data points, we
 parse the backtraces and match them up to get aggregate values.
 
 To do this we must run `arm-none-eabi-gdb` in batch mode: we want it to start,
-connect, run our command and exit without user input. This is supported with the
+connect, run our command, and exit without user input. This is supported with the
 `-batch` flag. Here's the invocation:
 
 ```
@@ -185,7 +185,7 @@ Unfortunately, we cannot get much more precise results using this approach.
 Using GDB and OpenOCD introduces huge overhead, which means that we are limited
 to a datapoint every 50ms. Given that our MPU executes on the order of 200
 million clock cycles per second, that means that we get a sample every 10
-million clock cycle. This is too coarse for any meaningful analysis, so we must
+million clock cycles. This is too coarse for any meaningful analysis, so we must
 find a better approach
 
 ## PC Sampling with ITM
@@ -197,7 +197,7 @@ dedicated bus.
 
 Typically ITM is used to print out debug data from firmware, much like one would
 use `printf` over a serial bus. ITM is strictly superior to UART in this case as
-it is faster, work directly with your SWD adapter, and is buffered so the CPU
+it is faster, works directly with your SWD adapter, and is buffered so the CPU
 does not need to wait. You can read more about using ITM for logging in Jorge
 Aparicio's [excellent post on the topic](https://blog.japaric.io/itm/).
 
@@ -206,7 +206,7 @@ hardware. As of this writing, ITM supports the following hardware data sources:
 
 1. Event counter wrapping: When enabled, an event is generated when DWT
    event counters overflow. This includes clock cycle counters, folded
-instruction  counters, sleep cycles counters, and more[^dwt].
+instruction  counters, sleep cycle counters, and more[^dwt].
 2. Exception tracing: When enabled, an event is generated whenever an exception
    (i.e. Interrupt) occurs.
 3. PC sampling: When enabled, an event is generated at a regular interval
@@ -217,7 +217,7 @@ data address, and the data value.
 
 This information can be read over the TRACE pins of your MCU if you have a
 trace-enabled debugger (e.g. a J-Trace or a Lauterbach TRACE32), alternatively
-it can be streamed over the SWO pin of your SWD bus. While more pin allow for
+it can be streamed over the SWO pin of your SWD bus. While more pins allow for
 more data to be read, much can be done with the single SWO pin without requiring
 complex tools.
 
@@ -287,11 +287,11 @@ POSTPRESET value. When that counter hits 0, a PC sampling event is generated.
 Here's a practical example: if CYCTAP is set to 0 and POSTPRESET is set to 4, we
 tap the 6th bit of the cycle counter. This means that the tap is toggled every
 64 (or 2^6) cycles. After 4 tap toggles, a PC sample event is generated which
-works out to 256 (4 * 64) cycles. In other words the PC sampling rate is 0.65MHz
+works out to 256 (4 * 64) cycles. In other words, the PC sampling rate is 0.65MHz
 (168MHz / 256).
 
-We are limited by the speed of our debug adapter, so in my case I tapped the
-10th bit (CYCTAP = 1), and set set POPRESET to 3. This means that we are
+We are limited by the speed of our debug adapter, so in my case, I tapped the
+10th bit (CYCTAP = 1), and set POPRESET to 3. This means that we are
 sampling the PC every 3,072 cycles, or at 50KHz.
 
 Using OpenOCD, we write the register so that PCSAMPLEENA = 1, CYCCNTENA = 1,
@@ -312,7 +312,7 @@ Last but not least, we enable ITM port 0 which is a built in openOCD feature:
 If all went well, we now have a file named `itm.fifo` which contains binary ITM
 data. We must now decode it!
 
-The packet format is specified in details in the [ARM v7m Architecture Reference
+The packet format is specified in detail in the [ARM v7m Architecture Reference
 Manual](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf). Thankfully, 
 others have gone through the trouble of implementing decoders for us.
 
@@ -442,7 +442,7 @@ We can start filling in our macro:
 ```
 
 To enable or disable PC sampling, we need to write to the DWT Control Register.
-Thankfully, libopencm3 has definition for this register[^libopencm3-dwt] and its fields which
+Thankfully, libopencm3 has a definition for this register[^libopencm3-dwt] and its fields which
 makes our life easy.
 
 To enable PC sampling:
@@ -550,11 +550,11 @@ and as expected `spi_xfer` takes the lion's share.
 
 > Note: this approach is not perfect. Since IRQs are running, the function we
 > are trying to profile could get interrupted which means we will collect some
-> samples from other parts of our code as well. In a single threaded program
+> samples from other parts of our code as well. In a single threaded program,
 > this is not a huge deal but can be more problematic when multiple threads are
 > running and pre-empting each other.
 
-## Timing code with the cycle counter
+## Timing Code With the Cycle Counter
 
 Our sampling profiler is able to tell us the relative time spent in one
 function versus another. However, it does not tell us anything about absolute
@@ -573,7 +573,7 @@ after the function executes, and compute the delta.
 > time periods longer than `cycle_period` * 2^32. Given our 168MHz clock speed,
 > this comes to about ~25 seconds in our case.
 
-We already know how enable the cycle counter: we set the CYCCNTENA bit in the
+We already know how to enable the cycle counter: we set the CYCCNTENA bit in the
 DWT Control Register (this was required for PC sampling as well).
 
 ```c
