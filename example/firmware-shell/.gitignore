@@ -1,0 +1,4 @@
+nrf5_sdk
+*/_build
+nRF5_SDK*
+*.pyc
