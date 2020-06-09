@@ -1,8 +1,8 @@
 ROOT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 NRF_SDK_DIR := $(ROOT_DIR)
 PCA10056_UART_ARMGCC_DIR := $(NRF_SDK_DIR)/nrf5_sdk/examples/peripheral/uart/pca10056/blank/armgcc
-BASIC_ELF := $(ROOT_DIR)/basic/_build/nrf52840_xxaa.out
-COMPLEX_ELF := $(ROOT_DIR)/complex/_build/nrf52840_xxaa.out
+PART1_ELF := $(ROOT_DIR)/part1/_build/nrf52840_xxaa.out
+PART2_ELF := $(ROOT_DIR)/part2/_build/nrf52840_xxaa.out
 
 GDB_EXE = "arm-none-eabi-gdb-py"
 GCC_EXE = "arm-none-eabi-gcc"
@@ -28,17 +28,17 @@ ifeq (,$(shell which JLinkGDBServer))
 $(error "Couldn't find `JLinkGDBServer`. This tool can be found here: https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack")
 endif
 
-basic_flash:
-	cd $(PCA10056_UART_ARMGCC_DIR) && $(MAKE) -C $(ROOT_DIR)/basic flash
+part1_flash:
+	cd $(PCA10056_UART_ARMGCC_DIR) && $(MAKE) -C $(ROOT_DIR)/part1 flash
 
-basic_debug:
-	$(GDB_EXE) --eval-command="target remote localhost:$(ARG_GDB_PORT)" --ex="mon reset" --ex="load" --ex="mon reset" --se=$(EXAMPLE_ELF)
+part1_debug:
+	$(GDB_EXE) --eval-command="target remote localhost:$(ARG_GDB_PORT)" --ex="mon reset" --ex="load" --ex="mon reset" --se=$(PART1_ELF)
 
-complex_flash:
-	cd $(PCA10056_UART_ARMGCC_DIR) && $(MAKE) -C $(ROOT_DIR)/complex flash
+part2_flash:
+	cd $(PCA10056_UART_ARMGCC_DIR) && $(MAKE) -C $(ROOT_DIR)/part2 flash
 
-complex_debug:
-	$(GDB_EXE) --eval-command="target remote localhost:$(ARG_GDB_PORT)" --ex="mon reset" --ex="load" --ex="mon reset" --se=$(COMPLEX_ELF)
+part2_debug:
+	$(GDB_EXE) --eval-command="target remote localhost:$(ARG_GDB_PORT)" --ex="mon reset" --ex="load" --ex="mon reset" --se=$(PART2_ELF)
 
 gdbserver:
 	JLinkGDBServer -if swd -device nRF52840_xxAA -speed auto -port $(ARG_GDB_PORT)

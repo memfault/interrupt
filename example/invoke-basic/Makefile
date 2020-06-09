@@ -1,4 +1,5 @@
 ROOT_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+NRF_SDK_DIR := $(ROOT_DIR)
 PCA10056_BLINKY_ARMGCC_DIR := $(NRF_SDK_DIR)/nrf5_sdk/examples/peripheral/blinky/pca10056/blank/armgcc
 PCA10056_BLINKY_ARMGCC_ELF := $(PCA10056_BLINKY_ARMGCC_DIR)/_build/nrf52840_xxaa.out
 
