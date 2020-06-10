@@ -21,5 +21,5 @@ more information.
 
 The Interrupt blog is based on the
 [Emerald](https://github.com/KingFelix/emerald) Jekyll template originally
-authored by [Jacopo Rabolini](www.jacoporabolini).
+authored by [Jacopo Rabolini](www.jacoporabolini.com).
 
