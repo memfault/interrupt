@@ -10,7 +10,7 @@ def main():
     sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
     # Write our command and send immediately
-    sio.write("hello Tyler\n")
+    sio.write("hello\n")
     sio.flush()
 
     # Our serial implementation prints the input to the shell
