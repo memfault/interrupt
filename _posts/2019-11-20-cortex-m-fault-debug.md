@@ -55,7 +55,7 @@ The register can be accessed via a 32 bit read at `0xE000ED28` or each register 
 
 - Entire CFSR - `print/x *(uint32_t *) 0xE000ED28`
 - [UsageFault Status Register (UFSR)](#ufsr) - `print/x *(uint16_t *)0xE000ED2A`
-- [BusFault Status Register (BFSR)](#bfsr) - `print/x *(uint8_t *)0xE002ED29`
+- [BusFault Status Register (BFSR)](#bfsr) - `print/x *(uint8_t *)0xE000ED29`
 - [MemManage Status Register (MMFSR)](#mmfsr) - `print/x *(uint8_t *)0xE000ED28`
 
 > NOTE: If multiple faults have occurred, bits related to several faults may be set. Fields are only cleared by a system reset or by writing a 1 to them.
@@ -92,7 +92,7 @@ It is worth noting that some classes of UsageFaults are configurable via the _Co
 
 {: #bfsr}
 
-#### BusFault Status Register (BFSR) - 0xE002ED29
+#### BusFault Status Register (BFSR) - 0xE000ED29
 
 This register is a 1 byte register which summarizes faults related to instruction prefetch or memory access failures.
 
