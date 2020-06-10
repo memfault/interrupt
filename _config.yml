@@ -33,7 +33,7 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      image: /img/interrupt-logo-512px.png
+      image: /img/interrupt-cover-1200px.png
 
 # Plugins
 plugins:
