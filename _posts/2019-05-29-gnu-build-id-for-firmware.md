@@ -1,6 +1,6 @@
 ---
 title: "GNU Build IDs for Firmware"
-description: "How to enable and use GNU Build IDs to uniquely identify a firmware build or binary"
+description: "An overview of firmware versions and how to enable and use GNU Build IDs to uniquely identify a firmware build or binary"
 author: francois
 ---
 
