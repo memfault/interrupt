@@ -1,6 +1,6 @@
 ---
 title: "Breakpoints!"
-description: "An walk through of how hardware and software breakpoints work, how they are configured using GDB Remote Serial Protocol, and how to configure hardware breakpoints using the ARM Cortex-M Flash Patch and Breakpoint Unit"
+description: "A walk through of how hardware and software breakpoints work, how they are configured using GDB Remote Serial Protocol, and how to configure hardware breakpoints using the ARM Cortex-M Flash Patch and Breakpoint Unit"
 tag: [cortex-m]
 author: chris
 ---
@@ -134,7 +134,17 @@ The format of the commands are `‘Z/z type,addr,kind’` where:
 
 With that out of the way, let's take a look at the actual **GDB RSP** commands that get sent over the wire when we install a breakpoint. Conveniently GDB has a builtin debug command, `set debug remote 1`, which can be used to enable printing of every single command sent between the client and server!
 
-To facilitate breakpoint testing, I've created some test functions in the demo app `dummy_function_*` that we can install breakpoints on. We can use the `dump_dummy_funcs` CLI command to print information about them all:
+To facilitate breakpoint testing, I've added `dummy_function_1` through `dummy_function_9` to my
+program so that we can install breakpoints on. All the functions do is print the name of the
+function being executed:
+
+```c
+void dummy_function_3(void) {
+  EXAMPLE_LOG("stub function '%s' called", __func__);
+}
+```
+
+I also added `dump_dummy_funcs` to the firmware CLI to print information about them all:
 
 ```
 shell> dump_dummy_funcs
@@ -149,6 +159,24 @@ dummy_function_8: Starts at 0x2b0. First Instruction = 0x48024901
 dummy_function_9: Starts at 0x2c0. First Instruction = 0x48024901
 dummy_function_ram: Starts at 0x20000000. First Instruction = 0x48024901
 ```
+
+We dump the address to make them easier to correlate with **GDB RSP** and we dump
+the first couple instructions so we can easily check if a software breakpoint was installed (by
+patching the code).
+
+We can confirm that after a flash bootup, the info printed via the CLI matches what we see when
+dumping the info from the ELF file. For example:
+
+```bash
+$ arm-none-eabi-objdump --disassemble=dummy_function_1 build/nrf52.elf
+[...]
+00000240 <dummy_function_1>:
+ 240:	4901        ldr	r1, [pc, #4]	; (248 <dummy_function_1+0x8>)
+ 242:	4802        ldr	r0, [pc, #8]	; (24c <dummy_function_1+0xc>)
+```
+
+`dummy_function_1` "Starts at 0x240" and "Instruction = 0x48024901" captures the first two 16-bit
+instructions `0x4901` (`ldr r1, [pc, #4]`) and `0x4802` (`ldr r0, [pc, #8]`).
 
 #### GDB RSP while Setting Breakpoints
 
@@ -182,7 +210,9 @@ We see a `$Z0,240,2` request issued which means "install a software breakpoint a
 
 #### GDB RSP when a Breakpoint Triggers
 
-Now let's actually cause the breakpoint to be triggered by executing the function we installed the breakpoint on. This can be done by running the `call_dummy_funcs` CLI command:
+Now let's actually cause the breakpoint to be triggered by executing the function we installed the
+breakpoint on. I've added a CLI command to the example project, `call_dummy_funcs` that simply
+calls all the `dummy_function_*` routines in a row:
 
 ```
 shell> call_dummy_funcs
@@ -201,9 +231,26 @@ dummy_function_1 () at dummy_functions.c:4
 4     EXAMPLE_LOG("stub function '%s' called", __func__);
 ```
 
-We can see from the trace above that a breakpoint debug event took place. This is conveyed by the [`T AA n1:r1;n2:r2;…`](https://sourceware.org/gdb/onlinedocs/gdb/Stop-Reply-Packets.html#Stop-Reply-Packets) Stop Reply Packet where `T` indicates a signal was received and `hwbreak` indicates a hardware breakpoint was hit.
+We can see from the trace above that a breakpoint debug event took place. This is conveyed by the
+[`T AA n1:r1;n2:r2;…`](https://sourceware.org/gdb/onlinedocs/gdb/Stop-Reply-Packets.html#Stop-Reply-Packets)
+Stop Reply Packet where `T` indicates a signal was received and `hwbreak` indicates a hardware
+breakpoint was hit.
 
-A request to remove the breakpoint was also sent (`$z0,240,2`). That's strange. We expect the breakpoint to keep firing once it has been installed. Let's continue from the breakpoint and see what happens:
+> Note: The `thread:0000DEAD` conveys the "thread" the signal was generated on where 0000DEAD is the
+> [thread-id](https://sourceware.org/gdb/onlinedocs/gdb/Packets.html#thread_002did-syntax). Since we are running a baremetal system, I think someone at SEGGER just had
+> some fun and used `0xdead` as the id. In GDB the only place you see it reflected is as the "Target
+> Id" when running `info threads`:
+>
+> ```
+> (gdb) info threads
+>  Id   Target Id         Frame
+> * 1  Thread 57005 dummy_function_1 () at dummy_functions.c:4
+> (gdb) p/x 57005
+> $1 = 0xdead
+> (gdb)
+> ```
+
+We also see a request to remove the breakpoint was also sent (`$z0,240,2`). That's strange. We expect the breakpoint to keep firing once it has been installed. Let's continue from the breakpoint and see what happens:
 
 #### GDB RSP when a Continuing After a Breakpoint Trigger
 
@@ -268,12 +315,12 @@ Comparators for breakpoints will always be `FP_COMP0` up to the number of suppor
 
 `ENABLE` flips on the individual comparator and `REPLACE` controls the behavior as follows:
 
-| Replace | Behavior                                                                         |
-| ------- | -------------------------------------------------------------------------------- |
-| 0b00    | N/A - Used to enable Flash Patching                                              |
-| 0b01    | Install breakpoint on instruction at `'000':COMP:'00'`.                          |
-| 0b10    | Install breakpoint on instruction at `'000':COMP:'10'`.                          |
-| 0b11    | Install breakpoint on instructions at both `'000':COMP:'00'` & `'000':COMP:'10'` |
+| Replace | Behavior                                                                                             |
+| ------- | ---------------------------------------------------------------------------------------------------- |
+| 0b00    | N/A - Used to enable Flash Patching                                                                  |
+| 0b01    | Install breakpoint on instruction at `'000':FP_COMP[28:2]:'00'`.                                     |
+| 0b10    | Install breakpoint on instruction at `'000': FP_COMP[28:2]:'10'`.                                    |
+| 0b11    | Install breakpoint on instructions at both `'000': FP_COMP[28:2]:'00'` & `'000': FP_COMP[28:2]:'10'` |
 
 ##### Version 2 Layout
 
@@ -284,6 +331,10 @@ The Version 2 Layout is a little more straightforward. Bit 0, Breakpoint Enable 
 Bit 31:1 is the address to break on:
 
 ![](/img/breakpoint/fp-comp-rev2-bpaddr.png)
+
+Note this is able to cover the entire 32 bit address space even though the bottom bit is used to
+for **BE** because the bottom bit is used to convery whether the ARM or Thumb instruction set is
+being used rather than encoding any address information _and_ instructions must be aligned by their width.
 
 ### Examining FPB Configuration
 
@@ -525,21 +576,26 @@ dummy_function_ram: Starts at 0x20000000. First Instruction = 0x4802be00
 
 Aha, we can see `dummy_function_1` also was updated to include a breakpoint instruction, `0xbe00`. What's interesting here is this address is in the NRF52's internal flash space. This means to inject this breakpoint the flash page the address is in must have been reprogrammed.
 
-This is in fact exactly what happened. The SEGGER JLinkGDBServer implements a feature referred to in the docs as "unlimited flash breakpoints"[^11] which will patch flash regions the J-Link Software knows how to write to with `bkpt` instructions.
+This is in fact exactly what happened. The SEGGER JLinkGDBServer implements a feature referred to
+in the docs as "unlimited flash breakpoints"[^11] which will patch flash regions the J-Link
+Software knows how to write to with `bkpt` instructions. To support this feature, the JLink
+software ships with flash drivers for all those chips since they are not standard across different
+chip vendors.
 
 #### Flash Software Breakpoint Optimizations
 
-To minimize the amount of times the flash sector has to be rewritten, the JLinkGDBServer will also perform some additional nifty optimizations such as caching the flash sector and not actually uninstalling the breakpoint when gdb requests. When a request to single-step over the breakpoint is actually made, the gdbserver will "simulate" the instruction execution. For example if we objdump our dummy function, we can see the instruction patched over, `0x4901`, is `ldr r1, [pc, #4]`:
+To minimize the amount of times the flash sector has to be rewritten, the JLinkGDBServer will also
+perform some additional nifty optimizations such as caching the flash sector and "simulating"
+instruction execution rather than always removing/adding breakpoints on each halt like the `gdb`
+client requests.
+
+Let's walk through a quick example for our `dummy_function_1` where the `0x4901` instruction at
+`0x240` has been replaced by the gdbserver with a breakpoint instruction.
 
 ```bash
 $ arm-none-eabi-objdump  --disassemble=dummy_function_1  \
     example/breakpoint/build/nrf52.elf
-
-build/nrf52.elf:     file format elf32-littlearm
-
-
-Disassembly of section .text:
-
+[...]
 00000240 <dummy_function_1>:
  240:	4901        ldr	r1, [pc, #4] ; (248 <dummy_function_1+0x8>)
  242:	4802        ldr	r0, [pc, #8] ; (24c <dummy_function_1+0xc>)
@@ -548,7 +604,21 @@ Disassembly of section .text:
  24c:	00007315    .word	0x00007315
 ```
 
-From a debugger we could perform the `pc`-relative load into `r1` and increment the `pc` instead of re-flashing the sector with the real instruction so the hardware can execute it.
+As we discovered in this article, when hit the breakpoint at `dummy_function_1`, the gdb client
+will request that we uninstall all breakpoints. Then when we `continue`, the
+`(gdb)` client will request a "single-step" over the instruction. In our example this means executing the instruction at
+0x240 and halting again on the instruction fetch at `0x242`. At this time the `gdb` client will ask
+the server to re-install all the breakpoints (including the one originally at `0x240`) and resume.
+
+Instead the JLinkGDBServer ignores the first requests to remove/reinstall the breakpoint and when it
+receives the "single-step" request, "simulates" the instruction and updates the registers
+with the result directly from the debugger ove the [Debug Access Port]({% post_url
+2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}#the-debug-access-port). For the
+instruction in our example, this would involve updating `$r1` with the .word at `$pc+4` (`0x248`) and then
+incrementing the `$pc` by two bytes.
+
+Using this technique the GDBServer rarely has to actually reprogram the flash sector reducing
+flash write cycles and speeding up the time it takes to install flash breakpoints.
 
 > Note: Not many debuggers have this kind of sophisticated functionality. With a gdbserver like OpenOCD or pyOCD, the request to set a breakpoint in a flash region would just fail when you run out of available hardware breakpoints.
 
