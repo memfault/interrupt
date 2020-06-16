@@ -19,6 +19,7 @@ int cli_cmd_kv_write(int argc, char *argv[]) {
   // 3. Value
   if (argc != 3) {
     shell_put_line("> FAIL,1");
+    return;
   }
 
   const char *key = argv[1];
@@ -27,6 +28,7 @@ int cli_cmd_kv_write(int argc, char *argv[]) {
   bool result = kv_store_write(key, value, strlen(value));
   if (!result) {
     shell_put_line("> FAIL,2");
+    return;
   }
   shell_put_line("> OK");
   return 0;
