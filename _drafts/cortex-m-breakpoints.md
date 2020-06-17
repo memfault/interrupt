@@ -39,7 +39,7 @@ Hardware breakpoints are implemented by the chipset being used. At the silicon l
 
 ### Software Breakpoint
 
-Software breakpoints on the other hand are implemented by your debugger. They work by **patching** the code you are trying to execute with an instruction that triggers a debug event in some fashion. This is accomplished by injecting a breakpoint instruction or when that is not supported by inserting an instruction that causes a fault that halts the core.
+Software breakpoints, on the other hand, are implemented by your debugger. They work by **patching** the code you are trying to execute with an instruction that triggers a debug event in some fashion. This is accomplished by injecting a breakpoint instruction or when that is not supported by inserting an instruction that causes a fault that halts the core.
 
 With software breakpoints, a debugger can essentially expose an "unlimited" number of breakpoints. There are some challenges to deal with though:
 
@@ -51,15 +51,15 @@ With software breakpoints, a debugger can essentially expose an "unlimited" numb
 In the following sections, we will explore how breakpoints work by making use of a very simple bare-metal application running on a nRF52 using the following tooling:
 
 - a nRF52840-DK[^1] (ARM Cortex-M4F) as our development board
-- SEGGER JLinkGDBServer[^2] as our GDB Server (V6.80b)
+- SEGGER JLinkGDBServer[^2] as our gdbserver (V6.80b)
 - GCC 9.3.1 / GNU Arm Embedded Toolchain as our compiler[^3]
-- GNU make as our build system
+- GNU Make as our build system
 - the simple CLI shell [we built up in a previous post]({% post_url 2020-06-09-firmware-shell %}).
 - PySerial's `miniterm.py`[^miniterm] to connect to the serial console on the nRF52.
 
 ### Compiling and Flashing Project
 
-If you have an NRF52840-DK and would like to follow along:
+If you have an nRF52840-DK and would like to follow along:
 
 #### Launch JLinkGDBServer
 
@@ -128,7 +128,7 @@ The format of the commands is `‘Z/z type,addr,kind’` where:
 
 `kind` is architecture specific but for ARM it indicates what instruction to use. (The instruction changes depending on whether the MCU uses the ARM or Thumb instruction set).[^9]
 
-> NOTE: The use of "software" breakpoint in GDB RSP is a bit of a misnomer. The gdb server can choose how to best install the breakpoint. For example, the server may opt to install a "software" breakpoint as a hardware breakpoint if there are still ones available.
+> NOTE: The use of "software" breakpoint in GDB RSP is a bit of a misnomer. The gdbserver can choose how to best install the breakpoint. For example, the server may opt to install a "software" breakpoint as a hardware breakpoint if there are still ones available.
 
 ### Debugging GDB Remote Serial Protocol
 
@@ -280,7 +280,7 @@ The other advantage of removing and adding back breakpoints anytime the system i
 
 ## Cortex-M Hardware Breakpoints
 
-Now that we have a pretty good idea of how GDB requests breakpoints get set and removed let's see if we can figure out how the gdb server is actually installing them for the NRF52 Cortex-M target.
+Now that we have a pretty good idea of how GDB requests breakpoints get set and removed let's see if we can figure out how the gdbserver is actually installing them for the nRF52 Cortex-M target.
 
 ### Flash Patch & Breakpoint Unit
 
@@ -340,7 +340,7 @@ being used rather than encoding any address information _and_ instructions must 
 
 Recall that GDB will uninstall breakpoints when the system halts so this is a rare situation where we can _only_ debug the configuration on a running system!
 
-The NRF52 includes a Version 1 **FPB** so from here on out our code examples will make use of that implementation. Here's a minimal snippet of code which can be used to dump the config:
+The nRF52 includes a Version 1 **FPB** so from here on out our code examples will make use of that implementation. Here's a minimal snippet of code which can be used to dump the config:
 
 ##### C Code to Dump FPB Config
 
@@ -574,7 +574,7 @@ dummy_function_9: Starts at 0x2c0. First Instruction = 0x48024901
 dummy_function_ram: Starts at 0x20000000. First Instruction = 0x4802be00
 ```
 
-Aha, we can see `dummy_function_1` also was updated to include a breakpoint instruction, `0xbe00`. What's interesting here is this address is in the NRF52's internal flash space. This means to inject this breakpoint the flash page the address is in must have been reprogrammed.
+Aha, we can see `dummy_function_1` also was updated to include a breakpoint instruction, `0xbe00`. What's interesting here is this address is in the nRF52's internal flash space. This means to inject this breakpoint the flash page the address is in must have been reprogrammed.
 
 This is in fact exactly what happened. The SEGGER JLinkGDBServer implements a feature referred to
 in the docs as "unlimited flash breakpoints"[^11] which will patch flash regions the J-Link
@@ -628,7 +628,7 @@ Note one adverse side-effect of this approach is if you pull the power to your b
 
 We can try this ourselves by
 
-###### 1. Pull USB power on the NRF52
+###### 1. Pull USB power on the nRF52
 
 ###### 2. Instead of reattaching GDB, just start a shell:
 
