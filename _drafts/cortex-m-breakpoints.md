@@ -604,7 +604,7 @@ $ arm-none-eabi-objdump  --disassemble=dummy_function_1  \
  24c:	00007315    .word	0x00007315
 ```
 
-As we discovered in this article, when hit the breakpoint at `dummy_function_1`, the gdb client
+As we discovered in this article, when we hit the breakpoint at `dummy_function_1`, the gdb client
 will request that we uninstall all breakpoints. Then when we `continue`, the
 `(gdb)` client will request a "single-step" over the instruction. In our example this means executing the instruction at
 0x240 and halting again on the instruction fetch at `0x242`. At this time the `gdb` client will ask
@@ -626,31 +626,31 @@ flash write cycles and speeding up the time it takes to install flash breakpoint
 
 Note one adverse side-effect of this approach is if you pull the power to your board and don't terminate things gracefully, a breakpoint instruction could get stuck on your device until you reflash the board. When no debugger is enabled, executing a breakpoint instruction will escalate to a HardFault, so this could leave your firmware in a state where it would crash loop!
 
-We can try this ourselves by
+We can try this ourselves by:
 
-###### 1. Pull USB power on the nRF52
+1. Pull USB power on the nRF52
 
-###### 2. Instead of reattaching GDB, just start a shell:
+2. Instead of reattaching GDB, just start a shell:
 
-```
-$ miniterm.py /dev/cu.usbmodem* 115200 --raw
-shell>
-```
+    ```
+    $ miniterm.py /dev/cu.usbmodem* 115200 --raw
+    shell>
+    ```
 
-###### 3. Dump functions and confirm breakpoint instruction, `0xbe00`, is still installed.
+3. Dump functions and confirm breakpoint instruction, `0xbe00`, is still installed.
 
-```
-shell> dump_dummy_funcs
-dummy_function_1: Starts at 0x240. First Instruction = 0x4802be00
-[...]
-```
+    ```
+    shell> dump_dummy_funcs
+    dummy_function_1: Starts at 0x240. First Instruction = 0x4802be00
+    [...]
+    ```
 
-###### 4. Execute dummy functions and confirm this now causes a reboot!
+4. Execute dummy functions and confirm this now causes a reboot!
 
-```
-shell> call_dummy_funcs
-==Booted==
-```
+    ```
+    shell> call_dummy_funcs
+    ==Booted==
+    ```
 
 ## Final Thoughts
 
