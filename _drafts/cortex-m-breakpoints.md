@@ -7,11 +7,11 @@ author: chris
 
 The idea of halting program execution was invented over 70 years ago as part of the ENIAC digital computer. At the time, to pause a program and debug, you had to physically unplug one of the cables controlling program flow, which was coined a "breakpoint". [^8]
 
-Today, breakpoints are an ubiquitous way of debugging programs and most chip architectures even have dedicated instructions to trigger them! I Have you ever wondered how they actually work? Or at the very least, gotten upset when they do not?
+Today, breakpoints are a ubiquitous way of debugging programs and most chip architectures even have dedicated instructions to trigger them! Have you ever wondered how they actually work? Or at the very least, gotten upset when they do not?
 
 <!-- excerpt start -->
 
-In this article we will discuss the basic types of breakpoints (hardware and software) and how they are utilized by the GNU Project Debugger, GDB. We will then explore how to configure hardware breakpoints on an ARM Cortex-M MCU using the Flash Patch and Breakpoint Unit (**FPB**) and examine a real world configuration with an example application.
+In this article, we will discuss the basic types of breakpoints (hardware and software) and how they are utilized by the GNU Project Debugger, GDB. We will then explore how to configure hardware breakpoints on an ARM Cortex-M MCU using the Flash Patch and Breakpoint Unit (**FPB**) and examine a real-world configuration with an example application.
 
 <!-- excerpt end -->
 
@@ -39,7 +39,7 @@ Hardware breakpoints are implemented by the chipset being used. At the silicon l
 
 ### Software Breakpoint
 
-Software breakpoints on the other hand are implemented by your debugger. They work by **patching** the code you are trying to execute with an instruction which triggers a debug event in some fashion. This is accomplished by injecting a breakpoint instruction or when that is not supported by inserting an instruction which causes a fault that halts the core.
+Software breakpoints on the other hand are implemented by your debugger. They work by **patching** the code you are trying to execute with an instruction that triggers a debug event in some fashion. This is accomplished by injecting a breakpoint instruction or when that is not supported by inserting an instruction that causes a fault that halts the core.
 
 With software breakpoints, a debugger can essentially expose an "unlimited" number of breakpoints. There are some challenges to deal with though:
 
@@ -48,13 +48,13 @@ With software breakpoints, a debugger can essentially expose an "unlimited" numb
 
 ## Example Project Setup
 
-In the the following sections, we will explore how breakpoints work by making use of a very simple bare-metal application running on a NRF52 using the following tooling:
+In the following sections, we will explore how breakpoints work by making use of a very simple bare-metal application running on a nRF52 using the following tooling:
 
 - a nRF52840-DK[^1] (ARM Cortex-M4F) as our development board
 - SEGGER JLinkGDBServer[^2] as our GDB Server (V6.80b)
 - GCC 9.3.1 / GNU Arm Embedded Toolchain as our compiler[^3]
 - GNU make as our build system
-- the simple cli shell [we built up in a previous post]({% post_url 2020-06-09-firmware-shell %}).
+- the simple CLI shell [we built up in a previous post]({% post_url 2020-06-09-firmware-shell %}).
 - PySerial's `miniterm.py`[^miniterm] to connect to the serial console on the nRF52.
 
 ### Compiling and Flashing Project
@@ -109,7 +109,7 @@ shell>
 
 Let's start by taking a look at how breakpoints are handled with GDB.
 
-> A full discussion of debug interfaces is outside the scope of this article but more details can be found in [our post on the topic]({% post_url 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}). We'll recap the parts relevant for this post below.
+> A full discussion of debug interfaces is outside the scope of this article but more details can be found in [our post on the topic]({% post_url 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}). We'll recap the parts relevant to this post below.
 
 At a high level, `gdb` (the "client") interfaces with the embedded MCU via a `gdbserver` (in our case SEGGER's JLinkGDBServer). The protocol talked between the gdb "client" and the gdb "server" is referred to as "GDB Remote Serial Protocol" (**GDB RSP**)[^4].
 
@@ -117,7 +117,7 @@ If we take a look at the GDB RSP docs we will find that the ['z' packets](https:
 
 #### GDB RSP Breakpoint Command
 
-The format of the commands are `‘Z/z type,addr,kind’` where:
+The format of the commands is `‘Z/z type,addr,kind’` where:
 
 | GDB Remote Serial Packet | Operation                            |
 | ------------------------ | ------------------------------------ |
@@ -267,14 +267,14 @@ Sending packet: $Hc0#db...Packet received: OK
 
 Breaking it down:
 
-- a [`s` packet](https://sourceware.org/gdb/current/onlinedocs/gdb/Packets.html#index-s-packet) is sent to indicate that the debugger is requesting a single step
+- an [`s` packet](https://sourceware.org/gdb/current/onlinedocs/gdb/Packets.html#index-s-packet) is sent to indicate that the debugger is requesting a single step
 - The MCU generates a debug event and gdb receives a halt signal again (`T05hwbreak` packet).
 - Our breakpoint on `dummy_function_1` is re-installed (`$Z0,240,2`).
 - The continuation we requested in the first place is issued with the [`c` packet](https://sourceware.org/gdb/current/onlinedocs/gdb/Packets.html#index-c-packet).
 
-Thinking about this, it starts to makes sense. If GDB hadn't removed the breakpoint, the breakpoint we had set would repeatedly fire. By single stepping over the instruction while breakpoints are disabled we can get past the instruction which caused the breakpoint and re-enable all the breakpoints before we miss any new ones.
+Thinking about this, it starts to make sense. If GDB hadn't removed the breakpoint, the breakpoint we had set would repeatedly fire. By single-stepping over the instruction while breakpoints are disabled we can get past the instruction which caused the breakpoint and re-enable all the breakpoints before we miss any new ones.
 
-The other advantage about removing and adding back breakpoints anytime the system is halted is it reduces the probability of the debugger getting killed and leaving the system in a state where breakpoints are left installed.
+The other advantage of removing and adding back breakpoints anytime the system is halted is it reduces the probability of the debugger getting killed and leaving the system in a state where breakpoints are left installed.
 
 > Fun Fact: GDB doesn't send the `s` packet for single-stepping on all targets. Some (such as arm-elf-linux-\*) use "software single stepping" where GDB will determine the next instruction itself and install a hardware breakpoint at that location. This can be useful if native single stepping is not supported. You can check if this mode is in use by dumping the gdb-specific arch information, `maintenance print architecture`, and looking to see if `gdbarch_software_single_step_p` is not a NULL pointer.
 
@@ -289,7 +289,7 @@ For ARM Cortex-M MCUs, hardware breakpoint functionality is exposed via the Flas
 The FPB has two main features:
 
 1. Allows hardware breakpoints to be configured and enabled.
-2. Allows patching of Flash Code & Data. Historically this has been a popular way to debug ROM bootloaders or ship fixes for devices that can't perform full over the air updates. These days more and more embedded devices perform full firmware updates and so the practice is becomming less common. The art of flash patching deserves a post of its own so we won't be digging deeper here.
+2. Allows patching of Flash Code & Data. Historically this has been a popular way to debug ROM bootloaders or ship fixes for devices that can't perform full over the air updates. These days more and more embedded devices perform full firmware updates and so the practice is becoming less common. The art of flash patching deserves a post of its own so we won't be digging deeper here.
 
 For breakpoint management, there are two register types you will care about inside the **FPB**, `FP_CTRL` & `FP_COMPn`.
 
@@ -332,8 +332,8 @@ Bit 31:1 is the address to break on:
 
 ![](/img/breakpoint/fp-comp-rev2-bpaddr.png)
 
-Note this is able to cover the entire 32 bit address space even though the bottom bit is used to
-for **BE** because the bottom bit is used to convery whether the ARM or Thumb instruction set is
+Note this is able to cover the entire 32-bit address space even though the bottom bit is used to
+for **BE** because the bottom bit is used to convey whether the ARM or Thumb instruction set is
 being used rather than encoding any address information _and_ instructions must be aligned by their width.
 
 ### Examining FPB Configuration
@@ -497,7 +497,7 @@ FPB Revision: 0, Enabled: 1, Hardware Breakpoints: 6
 
 ### Installing Software Breakpoints in Flash
 
-Now that we have used all of the available hardware breakpoints what happens if we try to add one for another flash based function?
+Now that we have used all of the available hardware breakpoints what happens if we try to add one for another flash-based function?
 
 ```
 break dummy_function_7
@@ -584,7 +584,7 @@ chip vendors.
 
 #### Flash Software Breakpoint Optimizations
 
-To minimize the amount of times the flash sector has to be rewritten, the JLinkGDBServer will also
+To minimize the number of times the flash sector has to be rewritten, the JLinkGDBServer will also
 perform some additional nifty optimizations such as caching the flash sector and "simulating"
 instruction execution rather than always removing/adding breakpoints on each halt like the `gdb`
 client requests.
@@ -610,9 +610,9 @@ will request that we uninstall all breakpoints. Then when we `continue`, the
 0x240 and halting again on the instruction fetch at `0x242`. At this time the `gdb` client will ask
 the server to re-install all the breakpoints (including the one originally at `0x240`) and resume.
 
-Instead the JLinkGDBServer ignores the first requests to remove/reinstall the breakpoint and when it
+Instead, the JLinkGDBServer ignores the first requests to remove/reinstall the breakpoint and when it
 receives the "single-step" request, "simulates" the instruction and updates the registers
-with the result directly from the debugger ove the [Debug Access Port]({% post_url
+with the result directly from the debugger over the [Debug Access Port]({% post_url
 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}#the-debug-access-port). For the
 instruction in our example, this would involve updating `$r1` with the .word at `$pc+4` (`0x248`) and then
 incrementing the `$pc` by two bytes.
@@ -624,7 +624,7 @@ flash write cycles and speeding up the time it takes to install flash breakpoint
 
 ##### Consequences
 
-Note one adverse side-effect of this approach is if you pull power on your board and don't terminate things gracefully, a breakpoint instruction could get stuck on your device until you reflash the board. When no debugger is enabled, executing a breakpoint instruction will escalate to a HardFault, so this could leave your firmware in a state where it would crash loop!
+Note one adverse side-effect of this approach is if you pull the power to your board and don't terminate things gracefully, a breakpoint instruction could get stuck on your device until you reflash the board. When no debugger is enabled, executing a breakpoint instruction will escalate to a HardFault, so this could leave your firmware in a state where it would crash loop!
 
 We can try this ourselves by
 
@@ -656,7 +656,7 @@ shell> call_dummy_funcs
 
 I hope this post taught you something new about breakpoints and that the next time you run into a problem with a debugger and setting breakpoints, you now have some ideas of what to look into!
 
-I'd be curious to here if you are making use of the ARM Cortex-M **FPB** in interesting ways for your product or if there are other topics you would have liked to have seen covered with respect to breakpoints. Either way, let us know in the discussion area below!
+I'd be curious to hear if you are making use of the ARM Cortex-M **FPB** in interesting ways for your product or if there are other topics you would have liked to have seen covered with respect to breakpoints. Either way, let us know in the discussion area below!
 
 See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
 
