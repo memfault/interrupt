@@ -277,7 +277,8 @@ Breaking it down:
 - Our breakpoint on `dummy_function_1` is re-installed (`$Z0,240,2`).
 - The continuation we requested in the first place is issued with the [`c` packet](https://sourceware.org/gdb/current/onlinedocs/gdb/Packets.html#index-c-packet).
 
-Thinking about this, it starts to make sense. If GDB hadn't removed the breakpoint, the breakpoint we had set would repeatedly fire. By single-stepping over the instruction while breakpoints are disabled we can get past the instruction which caused the breakpoint and re-enable all the breakpoints before we miss any new ones.
+Thinking about this, it starts to make sense. If GDB hadn't removed the breakpoint, the breakpoint
+we had set would repeatedly fire when we try to continue. By single-stepping over the instruction while breakpoints are disabled we can get past the instruction which caused the breakpoint and re-enable all the breakpoints before we miss any new ones.
 
 The other advantage of removing and adding back breakpoints anytime the system is halted is it reduces the probability of the debugger getting killed and leaving the system in a state where breakpoints are left installed.
 
@@ -285,7 +286,7 @@ The other advantage of removing and adding back breakpoints anytime the system i
 
 ## Cortex-M Hardware Breakpoints
 
-Now that we have a pretty good idea of how GDB requests breakpoints get set and removed let's see if we can figure out how the gdbserver is actually installing them for the nRF52 Cortex-M target.
+Now that we have a pretty good idea of how GDB sets and removes breakpoints let's see if we can figure out how the gdbserver is actually installing them for the nRF52 Cortex-M target.
 
 ### Flash Patch & Breakpoint Unit
 
@@ -338,7 +339,7 @@ Bit 31:1 is the address to break on:
 ![](/img/breakpoint/fp-comp-rev2-bpaddr.png)
 
 > Note this is able to cover the entire 32-bit address space even though the bottom bit is used
-> for **BE** because thebit 0 is used to convey whether the ARM or Thumb instruction set is
+> for **BE** because bit 0 is used to convey whether the ARM or Thumb instruction set is
 > being used rather than encoding any address information _and_ instructions must be aligned by their width.
 
 ### Examining FPB Configuration
@@ -405,7 +406,7 @@ We can see that the JLinkGDBServer has installed a breakpoint in the first avail
 
 ### Breakpoint for function Running in RAM
 
-Recall that revision 1 of the FPB only works on addresses in code space. Let's install a breakpoint for a function running in SRAM (Address `0x20000000-0x3FFFFFFF`) and see what happens:
+Recall that Version 1 of the FPB only works on addresses in code space. Let's install a breakpoint for a function running in SRAM (Address `0x20000000-0x3FFFFFFF`) and see what happens:
 
 ```bash
 (gdb) break dummy_function_ram
@@ -487,7 +488,7 @@ Sending packet: $Z0,20000000,2#96...Packet received: OK
 Sending packet: $c#63...
 ```
 
-As expected, we see requests to install breakpoints on all the locations we requested. We can dump the `fpb` config from the CLI and confirm:
+As expected, we see requests to install breakpoints on all the locations we specified. We can dump the `fpb` config from the CLI and confirm:
 
 ```
 shell> fpb_dump
@@ -590,7 +591,7 @@ chip vendors.
 #### Flash Software Breakpoint Optimizations
 
 To minimize the number of times the flash sector has to be rewritten, the JLinkGDBServer will also
-perform some additional nifty optimizations such as caching the flash sector and "simulating"
+perform some nifty optimizations such as caching the flash sector and "simulating"
 instruction execution rather than always removing/adding breakpoints on each halt like the `gdb`
 client requests.
 
@@ -620,7 +621,7 @@ receives the "single-step" request, "simulates" the instruction and updates the 
 with the result directly from the debugger over the [Debug Access Port]({% post_url
 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}#the-debug-access-port). For the
 instruction in our example, this would involve updating `$r1` with the `.word` at `$pc+4` (`0x248`) and then
-incrementing the `$pc` by two bytes.
+advancing the `$pc` by two bytes.
 
 Using this technique the GDBServer rarely has to actually reprogram the flash sector reducing
 flash write cycles and speeding up the average time it takes to "set" flash breakpoints.
@@ -629,9 +630,12 @@ flash write cycles and speeding up the average time it takes to "set" flash brea
 
 ##### Consequences
 
-Note one adverse side-effect of this approach is if you pull the power to your board and don't terminate things gracefully, a breakpoint instruction could get stuck on your device until you reflash the board. When no debugger is enabled, executing a breakpoint instruction will escalate to a HardFault, so this could leave your firmware in a state where it would crash loop!
+One adverse side-effect of this approach is if you pull the power to your board and don't terminate
+things gracefully, a breakpoint instruction could get stuck on your device until you reflash the
+board. When no debugger is enabled, executing a breakpoint instruction will
+[escalate to a HardFault]({% post_url 2019-11-20-cortex-m-fault-debug %}#hardfault-status-register-hfsr---0xe000ed2c), so this could leave your firmware in a state where it would crash loop!
 
-We can try this ourselves by:
+We can try this ourselves:
 
 1. Pull USB power on the nRF52
 
