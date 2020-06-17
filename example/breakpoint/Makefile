@@ -11,7 +11,6 @@ PROJECT_SRC_DIR = $(ROOT_DIR)/src
 SRC_FILES += \
   $(PROJECT_SRC_DIR)/dummy_functions.c \
   $(PROJECT_SRC_DIR)/fpb.c \
-  $(PROJECT_SRC_DIR)/literal_remap_example.c \
   $(PROJECT_SRC_DIR)/log_port.c \
   $(PROJECT_SRC_DIR)/main.c \
   $(PROJECT_SRC_DIR)/minimal_nrf52_uart.c \
@@ -35,6 +34,7 @@ CFLAGS += \
   -ffunction-sections -fdata-sections \
   -Wall \
   -Werror \
+  -fdebug-prefix-map=$(ROOT_DIR)=. \
   -Os
 
 TARGET ?= nrf52

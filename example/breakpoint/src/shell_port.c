@@ -1,3 +1,7 @@
+//! @file
+//!
+//! A port of the tiny shell to a baremetal NRF52 system using the UART as a console
+
 #include "shell_port.h"
 
 #include <stdbool.h>

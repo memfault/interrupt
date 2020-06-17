@@ -1,3 +1,6 @@
+//! @file
+//! In the interest of brevity, an _extremely_ barebones port for the NRF52 UART Peripheral
+
 #include "hal/uart.h"
 
 #include <stdint.h>

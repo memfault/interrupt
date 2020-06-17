@@ -1,3 +1,7 @@
+//! @file
+//!
+//! A "tiny" shell implementation for testing. More details here:
+//!  https://interrupt.memfault.com/blog/firmware-shell
 
 #include "shell/shell.h"
 

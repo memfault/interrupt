@@ -1,3 +1,7 @@
+//! @file
+//!
+//! A pure C-based Reset Handler and Vector Table for Cortex-M devices
+
 #include <stdint.h>
 
 extern int main(void);

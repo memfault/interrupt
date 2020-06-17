@@ -1,6 +1,9 @@
 ---
-title: "Breakpoints!"
-description: "A walk through of how hardware and software breakpoints work, how they are configured using GDB Remote Serial Protocol, and how to configure hardware breakpoints using the ARM Cortex-M Flash Patch and Breakpoint Unit"
+title: "How do breakpoints even work?"
+description: "A walk through of how hardware and software breakpoints work, how they are configured
+using GDB Remote Serial Protocol, and how to configure hardware breakpoints using the ARM Cortex-M
+Flash Patch and Breakpoint Unit"
+image: /img/breakpoint/fpb-hardware-breakpoint.png
 tag: [cortex-m]
 author: chris
 ---
@@ -31,7 +34,7 @@ posts straight to your mailbox_
 
 ## Basic Terminology
 
-There are two classes of breakpoints know as the "hardware breakpoint" and "software breakpoint".
+There are two classes of breakpoints known as the "hardware breakpoint" and "software breakpoint".
 
 ### Hardware Breakpoint
 
@@ -44,7 +47,7 @@ Software breakpoints, on the other hand, are implemented by your debugger. They 
 With software breakpoints, a debugger can essentially expose an "unlimited" number of breakpoints. There are some challenges to deal with though:
 
 - Not all code regions are patchable (i.e Read-Only-Memory (ROM))
-- If the debugger crashes, the code can be left in a bad state (patched instruction instead of the actual code!)
+- If the debugger crashes, the code can be left in a bad state (patched instruction instead of the actual code!).
 
 ## Example Project Setup
 
@@ -67,7 +70,7 @@ If you have an nRF52840-DK and would like to follow along:
 $ JLinkGDBServer  -if swd -device nRF52840_xxAA  -nogui
 ```
 
-#### Clone, Compile, & Flash
+#### Clone, Compile & Flash
 
 ```bash
 $ git clone https://github.com/memfault/interrupt.git
@@ -77,7 +80,6 @@ $ cd examples/breakpoint
 $ make
 Compiling src/dummy_functions.c
 Compiling src/fpb.c
-Compiling src/literal_remap_example.c
 Compiling src/log_port.c
 Compiling src/main.c
 Compiling src/minimal_nrf52_uart.c
@@ -117,7 +119,7 @@ If we take a look at the GDB RSP docs we will find that the ['z' packets](https:
 
 #### GDB RSP Breakpoint Command
 
-The format of the commands is `‘Z/z type,addr,kind’` where:
+The format of the commands are `‘Z/z type,addr,kind’` where:
 
 | GDB Remote Serial Packet | Operation                            |
 | ------------------------ | ------------------------------------ |
@@ -135,7 +137,7 @@ The format of the commands is `‘Z/z type,addr,kind’` where:
 With that out of the way, let's take a look at the actual **GDB RSP** commands that get sent over the wire when we install a breakpoint. Conveniently GDB has a builtin debug command, `set debug remote 1`, which can be used to enable printing of every single command sent between the client and server!
 
 To facilitate breakpoint testing, I've added `dummy_function_1` through `dummy_function_9` to my
-program so that we can install breakpoints on. All the functions do is print the name of the
+program that we can set breakpoints for. All the functions do is print the name of the
 function being executed:
 
 ```c
@@ -160,9 +162,9 @@ dummy_function_9: Starts at 0x2c0. First Instruction = 0x48024901
 dummy_function_ram: Starts at 0x20000000. First Instruction = 0x48024901
 ```
 
-We dump the address to make them easier to correlate with **GDB RSP** and we dump
-the first couple instructions so we can easily check if a software breakpoint was installed (by
-patching the code).
+We dump the name and address to make it easier to correlate the function address with the **GDB RSP** and we dump
+the first couple instructions so we can easily check if a software breakpoint was installed (if the
+code was patched, the first instruction will change).
 
 We can confirm that after a flash bootup, the info printed via the CLI matches what we see when
 dumping the info from the ELF file. For example:
@@ -180,6 +182,8 @@ instructions `0x4901` (`ldr r1, [pc, #4]`) and `0x4802` (`ldr r0, [pc, #8]`).
 
 #### GDB RSP while Setting Breakpoints
 
+Let's flip on **GDB RSP** debug tracing, install a breakpoint, and see what happens.
+
 ```bash
 (gdb) set debug remote 1
 (gdb) break dummy_function_1
@@ -191,7 +195,8 @@ Sending packet: $m240,2#61...Packet received: 0149
 Breakpoint 1 at 0x240: file stub_functions.c, line 4.
 ```
 
-We see some [`m` packets](https://sourceware.org/gdb/onlinedocs/gdb/Packets.html#index-m-packet) (`m addr,length`). These are used for requesting reads of memory but no breakpoint commands?! Let's `continue` and see what happens:
+We see some [`m` packets](https://sourceware.org/gdb/onlinedocs/gdb/Packets.html#index-m-packet)
+(`m addr,length`). These are used for requesting reads of memory but no breakpoint set commands?! Let's `continue` and see what happens:
 
 ```bash
 (gdb) continue
@@ -250,7 +255,7 @@ breakpoint was hit.
 > (gdb)
 > ```
 
-We also see a request to remove the breakpoint was also sent (`$z0,240,2`). That's strange. We expect the breakpoint to keep firing once it has been installed. Let's continue from the breakpoint and see what happens:
+We also see a request to remove the breakpoint was sent (`$z0,240,2`). That's strange. We expect the breakpoint to keep firing once it has been installed. Let's continue from the breakpoint and see what happens:
 
 #### GDB RSP when a Continuing After a Breakpoint Trigger
 
@@ -276,7 +281,7 @@ Thinking about this, it starts to make sense. If GDB hadn't removed the breakpoi
 
 The other advantage of removing and adding back breakpoints anytime the system is halted is it reduces the probability of the debugger getting killed and leaving the system in a state where breakpoints are left installed.
 
-> Fun Fact: GDB doesn't send the `s` packet for single-stepping on all targets. Some (such as arm-elf-linux-\*) use "software single stepping" where GDB will determine the next instruction itself and install a hardware breakpoint at that location. This can be useful if native single stepping is not supported. You can check if this mode is in use by dumping the gdb-specific arch information, `maintenance print architecture`, and looking to see if `gdbarch_software_single_step_p` is not a NULL pointer.
+> Fun Fact: GDB doesn't send the `s` packet for single-stepping on all targets. Some targets (such as arm-elf-linux-\*) use "software single stepping" where GDB will determine the next instruction itself and install a hardware breakpoint at that location. This can be useful if native single stepping is not supported. You can check if this mode is in use by dumping the gdb-specific arch information, `maintenance print architecture`, and looking to see if `gdbarch_software_single_step_p` is not a NULL pointer.
 
 ## Cortex-M Hardware Breakpoints
 
@@ -315,12 +320,12 @@ Comparators for breakpoints will always be `FP_COMP0` up to the number of suppor
 
 `ENABLE` flips on the individual comparator and `REPLACE` controls the behavior as follows:
 
-| Replace | Behavior                                                                                             |
-| ------- | ---------------------------------------------------------------------------------------------------- |
-| 0b00    | N/A - Used to enable Flash Patching                                                                  |
-| 0b01    | Install breakpoint on instruction at `'000':FP_COMP[28:2]:'00'`.                                     |
-| 0b10    | Install breakpoint on instruction at `'000': FP_COMP[28:2]:'10'`.                                    |
-| 0b11    | Install breakpoint on instructions at both `'000': FP_COMP[28:2]:'00'` & `'000': FP_COMP[28:2]:'10'` |
+| Replace | Behavior                                                                                       |
+| ------- | ---------------------------------------------------------------------------------------------- |
+| 0b00    | N/A - Used to enable Flash Patching                                                            |
+| 0b01    | Install breakpoint on instruction at `0b000:FP_COMP[28:2]:00`.                                 |
+| 0b10    | Install breakpoint on instruction at `0b000:FP_COMP[28:2]:10`.                                 |
+| 0b11    | Install breakpoint on instructions at both `0b000:FP_COMP[28:2]:00` & `0b000:FP_COMP[28:2]:10` |
 
 ##### Version 2 Layout
 
@@ -332,9 +337,9 @@ Bit 31:1 is the address to break on:
 
 ![](/img/breakpoint/fp-comp-rev2-bpaddr.png)
 
-Note this is able to cover the entire 32-bit address space even though the bottom bit is used to
-for **BE** because the bottom bit is used to convey whether the ARM or Thumb instruction set is
-being used rather than encoding any address information _and_ instructions must be aligned by their width.
+> Note this is able to cover the entire 32-bit address space even though the bottom bit is used
+> for **BE** because thebit 0 is used to convey whether the ARM or Thumb instruction set is
+> being used rather than encoding any address information _and_ instructions must be aligned by their width.
 
 ### Examining FPB Configuration
 
@@ -383,7 +388,7 @@ void fpb_dump_breakpoint_config(void) {
 }
 ```
 
-I've hooked `fpb_dump_breakpoint_config` up to the`fpb_dump` shell command in the example app. Let's take a look at what we get with the breakpoint from `dummy_function_1` still set:
+I've hooked `fpb_dump_breakpoint_config()` up to the`fpb_dump` shell command in the example app. Let's take a look at what we get with the breakpoint from `dummy_function_1` still set:
 
 ```
 shell> fpb_dump
@@ -449,7 +454,7 @@ dummy_function_ram: Starts at 0x20000000. First Instruction = 0x4802be00
 
 You can see that the first instruction for `dummy_function_ram` has been modified by the debugger from `0x4901` to `0xbe00`.
 
-The astute observer may realize right away this is the encoding for a breakpoint in thumb mode
+The astute observer may realize right away this is the encoding for a breakpoint in thumb mode:
 
 #### BKPT Instruction Encoding
 
@@ -528,7 +533,7 @@ FPB Revision: 0, Enabled: 1, Hardware Breakpoints: 6
 
 Interesting, it looks like the breakpoint for `dummy_function_1` (address 0x240) has been removed from `FP_COMP_0` and `dummy_function_2` through `dummy_function_7` have been configured as hardware breakpoints.
 
-Let's call all the functions, using `call_dummy_funcs` and confirm we break at `dummy_function_1`..`dummy_function_7` as well as `dummy_function_ram`:
+Let's call all the functions, using the `call_dummy_funcs` shell command and confirm we break at `dummy_function_1`..`dummy_function_7` as well as `dummy_function_ram`:
 
 ```bash
 (gdb) c
@@ -556,9 +561,9 @@ Breakpoint 2, dummy_function_ram () at dummy_functions.c:41
 (gdb) c
 ```
 
-Neat, they all worked so a breakpoint was installed for our flash-based function, `dummy_function_1`, that was missing from the FPB configuration.
+Neat, they all worked so a breakpoint was installed for the flash-based function (`dummy_function_1`) that was missing from the FPB configuration.
 
-Let's dump the functions to examine if any instructions were modified:
+Let's dump the functions information to examine if any instructions were modified:
 
 ```
 shell> dump_dummy_funcs
@@ -574,7 +579,7 @@ dummy_function_9: Starts at 0x2c0. First Instruction = 0x48024901
 dummy_function_ram: Starts at 0x20000000. First Instruction = 0x4802be00
 ```
 
-Aha, we can see `dummy_function_1` also was updated to include a breakpoint instruction, `0xbe00`. What's interesting here is this address is in the nRF52's internal flash space. This means to inject this breakpoint the flash page the address is in must have been reprogrammed.
+Woah, we can see `dummy_function_1` also was updated to include a breakpoint instruction, `0xbe00`. What's interesting here is this address is in the nRF52's internal flash space. This means to inject this breakpoint the flash page the address is in must have been reprogrammed.
 
 This is in fact exactly what happened. The SEGGER JLinkGDBServer implements a feature referred to
 in the docs as "unlimited flash breakpoints"[^11] which will patch flash regions the J-Link
@@ -606,19 +611,19 @@ $ arm-none-eabi-objdump  --disassemble=dummy_function_1  \
 
 As we discovered in this article, when we hit the breakpoint at `dummy_function_1`, the gdb client
 will request that we uninstall all breakpoints. Then when we `continue`, the
-`(gdb)` client will request a "single-step" over the instruction. In our example this means executing the instruction at
+`gdb` client will request a "single-step" over the instruction. In our example this means executing the instruction at
 0x240 and halting again on the instruction fetch at `0x242`. At this time the `gdb` client will ask
 the server to re-install all the breakpoints (including the one originally at `0x240`) and resume.
 
-Instead, the JLinkGDBServer ignores the first requests to remove/reinstall the breakpoint and when it
+Instead, the JLinkGDBServer ignores the requests to remove/reinstall the breakpoint and when it
 receives the "single-step" request, "simulates" the instruction and updates the registers
 with the result directly from the debugger over the [Debug Access Port]({% post_url
 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}#the-debug-access-port). For the
-instruction in our example, this would involve updating `$r1` with the .word at `$pc+4` (`0x248`) and then
+instruction in our example, this would involve updating `$r1` with the `.word` at `$pc+4` (`0x248`) and then
 incrementing the `$pc` by two bytes.
 
 Using this technique the GDBServer rarely has to actually reprogram the flash sector reducing
-flash write cycles and speeding up the time it takes to install flash breakpoints.
+flash write cycles and speeding up the average time it takes to "set" flash breakpoints.
 
 > Note: Not many debuggers have this kind of sophisticated functionality. With a gdbserver like OpenOCD or pyOCD, the request to set a breakpoint in a flash region would just fail when you run out of available hardware breakpoints.
 
@@ -632,25 +637,25 @@ We can try this ourselves by:
 
 2. Instead of reattaching GDB, just start a shell:
 
-    ```
-    $ miniterm.py /dev/cu.usbmodem* 115200 --raw
-    shell>
-    ```
+   ```
+   $ miniterm.py /dev/cu.usbmodem* 115200 --raw
+   shell>
+   ```
 
 3. Dump functions and confirm breakpoint instruction, `0xbe00`, is still installed.
 
-    ```
-    shell> dump_dummy_funcs
-    dummy_function_1: Starts at 0x240. First Instruction = 0x4802be00
-    [...]
-    ```
+   ```
+   shell> dump_dummy_funcs
+   dummy_function_1: Starts at 0x240. First Instruction = 0x4802be00
+   [...]
+   ```
 
 4. Execute dummy functions and confirm this now causes a reboot!
 
-    ```
-    shell> call_dummy_funcs
-    ==Booted==
-    ```
+   ```
+   shell> call_dummy_funcs
+   ==Booted==
+   ```
 
 ## Final Thoughts
 

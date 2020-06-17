@@ -1,15 +1,20 @@
+//! @file
+//!
+//! @brief
+//! Shell commands for experimenting with breakpoints
+
 #include "shell/shell.h"
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
 #include <inttypes.h>
+#include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "fpb.h"
 #include "dummy_functions.h"
+#include "fpb.h"
 #include "hal/logging.h"
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))

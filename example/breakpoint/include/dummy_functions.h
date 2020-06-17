@@ -9,5 +9,4 @@ void dummy_function_6(void);
 void dummy_function_7(void);
 void dummy_function_8(void);
 void dummy_function_9(void);
-
 void dummy_function_ram(void);
