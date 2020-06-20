@@ -3,6 +3,7 @@
 
 #include "clock.h"
 #include "gpio.h"
+#include "image.h"
 #include "memory_map.h"
 #include "usart.h"
 
@@ -18,12 +19,12 @@ int main(void) {
     gpio_setup();
     usart_setup();
 
-    printf("Starting boot\n");
+    printf("Bootloader started\n");
 
     usart_teardown();
 
-    vector_table_t *app_vectors = (vector_table_t *) &__updaterom_start__;
-    printf("Vectors: %p %p\n", app_vectors->reset, app_vectors->initial_sp_value);
+    vector_table_t *app_vectors = (vector_table_t *) &__slot1rom_start__;
+    printf("Jumping to %p\n", app_vectors->reset);
     start_app(app_vectors->reset, app_vectors->initial_sp_value);
 
     while (1) {

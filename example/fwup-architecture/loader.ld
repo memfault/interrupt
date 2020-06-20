@@ -15,7 +15,7 @@ SECTIONS
 		. = ALIGN(4);
 		*(.rodata*)	/* Read-only data */
 		. = ALIGN(4);
-	} >updaterom
+	} >slot1rom
 
 	/* C++ Static constructors/destructors, also used for __attribute__
 	 * ((constructor)) and the likes */
@@ -24,21 +24,21 @@ SECTIONS
 		__preinit_array_start = .;
 		KEEP (*(.preinit_array))
 		__preinit_array_end = .;
-	} >updaterom
+	} >slot1rom
 	.init_array : {
 		. = ALIGN(4);
 		__init_array_start = .;
 		KEEP (*(SORT(.init_array.*)))
 		KEEP (*(.init_array))
 		__init_array_end = .;
-	} >updaterom
+	} >slot1rom
 	.fini_array : {
 		. = ALIGN(4);
 		__fini_array_start = .;
 		KEEP (*(.fini_array))
 		KEEP (*(SORT(.fini_array.*)))
 		__fini_array_end = .;
-	} >updaterom
+	} >slot1rom
 
 	/*
 	 * Another section used by C++ stuff, appears when using newlib with
@@ -46,12 +46,12 @@ SECTIONS
 	 */
 	.ARM.extab : {
 		*(.ARM.extab*)
-	} >updaterom
+	} >slot1rom
 	.ARM.exidx : {
 		__exidx_start = .;
 		*(.ARM.exidx*)
 		__exidx_end = .;
-	} >updaterom
+	} >slot1rom
 
 	. = ALIGN(4);
 	_etext = .;
@@ -61,14 +61,14 @@ SECTIONS
 		*(.data*)	/* Read-write initialized data */
 		. = ALIGN(4);
 		_edata = .;
-	} >ram AT >updaterom
+	} >ram AT >slot1rom
 	_data_loadaddr = LOADADDR(.data);
 
     .fill : {
         FILL(0xFF);
-        . = ORIGIN(updaterom) + LENGTH(updaterom) - 1;
+        . = ORIGIN(slot1rom) + LENGTH(slot1rom) - 1;
         BYTE(0xFF);
-    } >updaterom
+    } >slot1rom
 
 	.bss : {
 		*(.bss*)	/* Read-write zero initialized data */

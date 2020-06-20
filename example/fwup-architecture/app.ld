@@ -15,7 +15,7 @@ SECTIONS
 		. = ALIGN(4);
 		*(.rodata*)	/* Read-only data */
 		. = ALIGN(4);
-	} >approm
+	} >slot2rom
 
 	/* C++ Static constructors/destructors, also used for __attribute__
 	 * ((constructor)) and the likes */
@@ -24,21 +24,21 @@ SECTIONS
 		__preinit_array_start = .;
 		KEEP (*(.preinit_array))
 		__preinit_array_end = .;
-	} >approm
+	} >slot2rom
 	.init_array : {
 		. = ALIGN(4);
 		__init_array_start = .;
 		KEEP (*(SORT(.init_array.*)))
 		KEEP (*(.init_array))
 		__init_array_end = .;
-	} >approm
+	} >slot2rom
 	.fini_array : {
 		. = ALIGN(4);
 		__fini_array_start = .;
 		KEEP (*(.fini_array))
 		KEEP (*(SORT(.fini_array.*)))
 		__fini_array_end = .;
-	} >approm
+	} >slot2rom
 
 	/*
 	 * Another section used by C++ stuff, appears when using newlib with
@@ -46,12 +46,12 @@ SECTIONS
 	 */
 	.ARM.extab : {
 		*(.ARM.extab*)
-	} >approm
+	} >slot2rom
 	.ARM.exidx : {
 		__exidx_start = .;
 		*(.ARM.exidx*)
 		__exidx_end = .;
-	} >approm
+	} >slot2rom
 
 	. = ALIGN(4);
 	_etext = .;
@@ -61,7 +61,7 @@ SECTIONS
 		*(.data*)	/* Read-write initialized data */
 		. = ALIGN(4);
 		_edata = .;
-	} >ram AT >approm
+	} >ram AT >slot2rom
 	_data_loadaddr = LOADADDR(.data);
 
 	.bss : {
