@@ -18,11 +18,11 @@ int main(void) {
     gpio_setup();
     usart_setup();
 
-    printf("Starting boot\n");
+    printf("Starting updater\n");
 
     usart_teardown();
 
-    vector_table_t *app_vectors = (vector_table_t *) &__updaterom_start__;
+    vector_table_t *app_vectors = (vector_table_t *) &__approm_start__;
     printf("Vectors: %p %p\n", app_vectors->reset, app_vectors->initial_sp_value);
     start_app(app_vectors->reset, app_vectors->initial_sp_value);
 

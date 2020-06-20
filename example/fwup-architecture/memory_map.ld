@@ -1,8 +1,8 @@
 MEMORY
 {
   ram (rwx)      : ORIGIN = 0x20000000, LENGTH = 128K
-  bootrom (rx)   : ORIGIN = 0x08000000, LENGTH = 128K /* 16K */
-  updaterom (rx) : ORIGIN = 0x08004000, LENGTH = 0K /* 112K */
+  bootrom (rx)   : ORIGIN = 0x08000000, LENGTH = 16K
+  updaterom (rx) : ORIGIN = 0x08004000, LENGTH = 112K
   approm (rx)    : ORIGIN = 0x08020000, LENGTH = 896K
   ccm (rwx)      : ORIGIN = 0x10000000, LENGTH = 64K
 }

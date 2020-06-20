@@ -10,10 +10,15 @@ MKDIR=mkdir
 
 SRCS_BOOT = boot.c
 SRCS_APP = app.c
-SRCS_SHARED = syscalls.c
+SRCS_UPDATER = updater.c
+SRCS_SHARED = syscalls.c \
+			  clock.c \
+			  gpio.c \
+			  usart.c
 
 SRCS_BOOT += $(SRCS_SHARED)
 SRCS_APP += $(SRCS_SHARED)
+SRCS_UPDATER += $(SRCS_SHARED)
 
 INCLUDES = .
 DEFINES += STM32F4
@@ -39,6 +44,7 @@ LDFLAGS += \
 	-Wl,-Map=$(BUILD_DIR)/$(PROJECT).map
 
 LDFLAGS_BOOT = $(LDFLAGS) -T boot.ld
+LDFLAGS_UPDATER = $(LDFLAGS) -T updater.ld
 LDFLAGS_APP = $(LDFLAGS) -T app.ld
 
 OPENCM3_PATH = ./libopencm3
@@ -53,14 +59,10 @@ LDSCRIPT = stm32f429i-discovery.ld
 .PHONY: all
 all: $(BUILD_DIR)/$(PROJECT).bin
 
-$(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin $(BUILD_DIR)/$(PROJECT)-app.bin
+$(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin  $(BUILD_DIR)/$(PROJECT)-updater.bin $(BUILD_DIR)/$(PROJECT)-app.bin
 	cat $^ > $@
 
-$(BUILD_DIR)/$(PROJECT)-app.bin: $(BUILD_DIR)/$(PROJECT)-app.elf
-	$(OCPY) $< $@ -O binary
-	$(SZ) $<
-
-$(BUILD_DIR)/$(PROJECT)-boot.bin: $(BUILD_DIR)/$(PROJECT)-boot.elf
+$(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.elf
 	$(OCPY) $< $@ -O binary
 	$(SZ) $<
 
@@ -71,6 +73,10 @@ $(BUILD_DIR)/$(PROJECT)-app.elf: $(SRCS_APP) $(OPENCM3_LIB)
 $(BUILD_DIR)/$(PROJECT)-boot.elf: $(SRCS_BOOT) $(OPENCM3_LIB)
 	$(MKDIR) -p $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(LDFLAGS_BOOT) $^ -o $@
+
+$(BUILD_DIR)/$(PROJECT)-updater.elf: $(SRCS_UPDATER) $(OPENCM3_LIB)
+	$(MKDIR) -p $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(LDFLAGS_UPDATER) $^ -o $@
 
 $(OPENCM3_LIB): 
 	$(MAKE) -C $(OPENCM3_PATH)
