@@ -1,0 +1,1427 @@
+Archive member included to satisfy reference by file (symbol)
+
+libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+                              /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o (gpio_mode_setup)
+libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                              /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o (rcc_periph_clock_enable)
+libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                              /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o (usart_set_baudrate)
+libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+                              libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o) (usart_send)
+libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+                              (reset_handler)
+libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                              libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o) (rcc_apb2_frequency)
+libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+                              libopencm3/lib/libopencm3_stm32f4.a(rcc.o) (flash_set_ws)
+libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+                              libopencm3/lib/libopencm3_stm32f4.a(rcc.o) (flash_dcache_enable)
+libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+                              libopencm3/lib/libopencm3_stm32f4.a(rcc.o) (pwr_set_vos_scale)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-errno.o)
+                              /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o (__errno)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-impure.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-errno.o) (_impure_ptr)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o)
+                              /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o (puts)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o) (__swbuf_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o) (__swsetup_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o) (_fflush_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o) (__sinit)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fwalk.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o) (_fwalk)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o) (__retarget_lock_init_recursive)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o) (__smakebuf_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-memset.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o) (memset)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-freer.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o) (_free_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o) (_malloc_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-sbrkr.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o) (_sbrk_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o) (__sread)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-writer.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o) (_write_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-closer.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o) (_close_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fstatr.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o) (_fstat_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-isattyr.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o) (_isatty_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lseekr.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o) (_lseek_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-mlock.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-freer.o) (__malloc_lock)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-readr.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o) (_read_r)
+/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+                              /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-sbrkr.o) (errno)
+
+Allocating common symbols
+Common symbol       size              file
+
+__lock___atexit_recursive_mutex
+                    0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+__lock___arc4random_mutex
+                    0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+errno               0x4               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+__lock___env_recursive_mutex
+                    0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+__lock___sinit_recursive_mutex
+                    0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+__lock___malloc_recursive_mutex
+                    0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+__lock___at_quick_exit_mutex
+                    0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+__lock___dd_hash_mutex
+                    0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+__lock___tz_mutex   0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+__lock___sfp_recursive_mutex
+                    0x1               /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+
+Discarded input sections
+
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000      0xa90 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0x56 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0x51 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0xef libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0x6a libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000      0x1df libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0xe8 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000       0x76 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000000000      0x273 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000      0xa90 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x56 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x51 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0xef libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x6a libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000      0x1df libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0xe8 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x76 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000      0x273 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x8e libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000       0x28 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000000000      0xc88 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000      0xa90 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x56 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x51 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0xef libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x6a libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000      0x1df libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0xe8 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x76 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000      0x273 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x94 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000      0x29e libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0xa0 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x8e libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000       0x28 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000000000      0xc88 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000      0xa90 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0x76 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0x56 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0x51 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0xef libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0x6a libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000      0x1df libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000000000       0xe8 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000      0xa90 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x56 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x51 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0xef libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x6a libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000      0x1df libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0xe8 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x76 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000      0x273 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x8e libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000       0x28 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000000000      0xc88 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000      0xa90 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x56 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x51 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0xef libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x6a libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000      0x1df libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0xe8 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x76 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000      0x273 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000      0x143 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x0000000000000000       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000      0xa90 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x56 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x51 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0xef libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x6a libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000      0x1df libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0xe8 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x76 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000      0x273 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000      0x143 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x0000000000000000       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .group         0x0000000000000000        0xc libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000      0xa90 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x1c libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x56 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x51 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0xef libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x6a libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000      0x1df libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x22 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0xe8 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x76 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000      0x273 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x8e libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_macro   0x0000000000000000       0x28 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ram              0x0000000020000000 0x0000000000020000 xrw
+bootrom          0x0000000008000000 0x0000000000020000 xr
+updaterom        0x0000000008004000 0x0000000000000000 xr
+approm           0x0000000008020000 0x00000000000e0000 xr
+ccm              0x0000000010000000 0x0000000000010000 xrw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+START GROUP
+LOAD /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a
+LOAD /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/thumb/v7e-m+fp/hard/libgcc.a
+LOAD /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libnosys.a
+END GROUP
+LOAD /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+LOAD /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+LOAD libopencm3/lib/libopencm3_stm32f4.a
+START GROUP
+LOAD /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/thumb/v7e-m+fp/hard/libgcc.a
+LOAD /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a
+LOAD /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a
+END GROUP
+START GROUP
+LOAD /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/thumb/v7e-m+fp/hard/libgcc.a
+LOAD /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a
+END GROUP
+                0x0000000008000000                __bootrom_start__ = ORIGIN (bootrom)
+                0x0000000000020000                __bootrom_size__ = LENGTH (bootrom)
+                0x0000000008004000                __updaterom_start__ = ORIGIN (updaterom)
+                0x0000000000000000                __updaterom_size__ = LENGTH (updaterom)
+                0x0000000008020000                __approm_start__ = ORIGIN (approm)
+                0x00000000000e0000                __approm_size__ = LENGTH (approm)
+
+.text           0x0000000008020000     0x1b78
+ *(.vectors)
+ .vectors       0x0000000008020000      0x1ac libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+                0x0000000008020000                vector_table
+ *(.text*)
+ .text          0x00000000080201ac        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .text.clock_setup
+                0x00000000080201ac       0x20 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .text.usart_setup
+                0x00000000080201cc       0x44 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .text.gpio_setup
+                0x0000000008020210       0x34 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .text.button_setup
+                0x0000000008020244       0x20 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .text.main     0x0000000008020264       0x20 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+                0x0000000008020264                main
+ .text          0x0000000008020284        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .text._sbrk    0x0000000008020284       0x40 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x0000000008020284                _sbrk
+ .text._close   0x00000000080202c4       0x18 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x00000000080202c4                _close
+ .text._fstat   0x00000000080202dc       0x20 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x00000000080202dc                _fstat
+ .text._isatty  0x00000000080202fc       0x16 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x00000000080202fc                _isatty
+ .text._lseek   0x0000000008020312       0x1a /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x0000000008020312                _lseek
+ .text._exit    0x000000000802032c        0xc /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x000000000802032c                _exit
+ .text._kill    0x0000000008020338       0x16 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x0000000008020338                _kill
+ .text._getpid  0x000000000802034e       0x12 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x000000000802034e                _getpid
+ .text._write   0x0000000008020360       0x70 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x0000000008020360                _write
+ .text._read    0x00000000080203d0       0x1c /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                0x00000000080203d0                _read
+ .text          0x00000000080203ec        0x0 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .text.gpio_mode_setup
+                0x00000000080203ec       0x44 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+                0x00000000080203ec                gpio_mode_setup
+ .text.gpio_set_output_options
+                0x0000000008020430       0x36 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+                0x0000000008020430                gpio_set_output_options
+ .text.gpio_set_af
+                0x0000000008020466       0x54 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+                0x0000000008020466                gpio_set_af
+ .text          0x00000000080204ba        0x0 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .text.rcc_peripheral_enable_clock
+                0x00000000080204ba        0x8 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x00000000080204ba                rcc_peripheral_enable_clock
+ .text.rcc_peripheral_disable_clock
+                0x00000000080204c2        0xa libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x00000000080204c2                rcc_peripheral_disable_clock
+ .text.rcc_peripheral_reset
+                0x00000000080204cc        0x8 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x00000000080204cc                rcc_peripheral_reset
+ .text.rcc_peripheral_clear_reset
+                0x00000000080204d4        0xa libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x00000000080204d4                rcc_peripheral_clear_reset
+ .text.rcc_periph_clock_enable
+                0x00000000080204de       0x1a libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x00000000080204de                rcc_periph_clock_enable
+ .text.rcc_periph_clock_disable
+                0x00000000080204f8       0x1e libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x00000000080204f8                rcc_periph_clock_disable
+ .text.rcc_periph_reset_pulse
+                0x0000000008020516       0x22 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x0000000008020516                rcc_periph_reset_pulse
+ .text.rcc_periph_reset_hold
+                0x0000000008020538       0x1a libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x0000000008020538                rcc_periph_reset_hold
+ .text.rcc_periph_reset_release
+                0x0000000008020552       0x1e libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x0000000008020552                rcc_periph_reset_release
+ .text.rcc_set_mco
+                0x0000000008020570       0x14 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x0000000008020570                rcc_set_mco
+ .text.rcc_osc_bypass_enable
+                0x0000000008020584       0x28 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x0000000008020584                rcc_osc_bypass_enable
+ .text.rcc_osc_bypass_disable
+                0x00000000080205ac       0x28 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                0x00000000080205ac                rcc_osc_bypass_disable
+ .text          0x00000000080205d4        0x0 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .text.usart_set_baudrate
+                0x00000000080205d4       0x2c libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x00000000080205d4                usart_set_baudrate
+ .text.usart_set_databits
+                0x0000000008020600       0x12 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x0000000008020600                usart_set_databits
+ .text.usart_set_stopbits
+                0x0000000008020612        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x0000000008020612                usart_set_stopbits
+ .text.usart_set_parity
+                0x000000000802061e        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x000000000802061e                usart_set_parity
+ .text.usart_set_mode
+                0x000000000802062a        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x000000000802062a                usart_set_mode
+ .text.usart_set_flow_control
+                0x0000000008020636        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x0000000008020636                usart_set_flow_control
+ .text.usart_enable
+                0x0000000008020642        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x0000000008020642                usart_enable
+ .text.usart_disable
+                0x000000000802064c        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x000000000802064c                usart_disable
+ .text.usart_send_blocking
+                0x0000000008020656       0x16 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x0000000008020656                usart_send_blocking
+ .text.usart_recv_blocking
+                0x000000000802066c       0x12 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x000000000802066c                usart_recv_blocking
+ .text.usart_enable_rx_dma
+                0x000000000802067e        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x000000000802067e                usart_enable_rx_dma
+ .text.usart_disable_rx_dma
+                0x0000000008020688        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x0000000008020688                usart_disable_rx_dma
+ .text.usart_enable_tx_dma
+                0x0000000008020692        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x0000000008020692                usart_enable_tx_dma
+ .text.usart_disable_tx_dma
+                0x000000000802069c        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x000000000802069c                usart_disable_tx_dma
+ .text.usart_enable_rx_interrupt
+                0x00000000080206a6        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x00000000080206a6                usart_enable_rx_interrupt
+ .text.usart_disable_rx_interrupt
+                0x00000000080206b0        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x00000000080206b0                usart_disable_rx_interrupt
+ .text.usart_enable_tx_interrupt
+                0x00000000080206ba        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x00000000080206ba                usart_enable_tx_interrupt
+ .text.usart_disable_tx_interrupt
+                0x00000000080206c4        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x00000000080206c4                usart_disable_tx_interrupt
+ .text.usart_enable_error_interrupt
+                0x00000000080206ce        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x00000000080206ce                usart_enable_error_interrupt
+ .text.usart_disable_error_interrupt
+                0x00000000080206d8        0xa libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                0x00000000080206d8                usart_disable_error_interrupt
+ .text          0x00000000080206e2        0x0 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .text.usart_send
+                0x00000000080206e2        0x8 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+                0x00000000080206e2                usart_send
+ .text.usart_recv
+                0x00000000080206ea        0x8 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+                0x00000000080206ea                usart_recv
+ .text.usart_wait_send_ready
+                0x00000000080206f2        0x8 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+                0x00000000080206f2                usart_wait_send_ready
+ .text.usart_wait_recv_ready
+                0x00000000080206fa        0x8 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+                0x00000000080206fa                usart_wait_recv_ready
+ .text.usart_get_flag
+                0x0000000008020702        0xc libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+                0x0000000008020702                usart_get_flag
+ .text          0x000000000802070e        0x0 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .text.blocking_handler
+                0x000000000802070e        0x2 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+                0x000000000802070e                exti0_isr
+                0x000000000802070e                tim8_brk_tim12_isr
+                0x000000000802070e                dma1_stream7_isr
+                0x000000000802070e                usart3_isr
+                0x000000000802070e                tim7_isr
+                0x000000000802070e                dma2d_isr
+                0x000000000802070e                uart8_isr
+                0x000000000802070e                dma1_stream2_isr
+                0x000000000802070e                otg_hs_isr
+                0x000000000802070e                blocking_handler
+                0x000000000802070e                tim5_isr
+                0x000000000802070e                rtc_wkup_isr
+                0x000000000802070e                otg_fs_isr
+                0x000000000802070e                spi1_isr
+                0x000000000802070e                i2c3_er_isr
+                0x000000000802070e                exti2_isr
+                0x000000000802070e                spi5_isr
+                0x000000000802070e                usb_fs_wkup_isr
+                0x000000000802070e                tamp_stamp_isr
+                0x000000000802070e                can1_rx1_isr
+                0x000000000802070e                dma2_stream0_isr
+                0x000000000802070e                usart1_isr
+                0x000000000802070e                i2c3_ev_isr
+                0x000000000802070e                usage_fault_handler
+                0x000000000802070e                can2_rx0_isr
+                0x000000000802070e                dma1_stream6_isr
+                0x000000000802070e                can2_rx1_isr
+                0x000000000802070e                can1_sce_isr
+                0x000000000802070e                tim1_cc_isr
+                0x000000000802070e                can1_tx_isr
+                0x000000000802070e                tim1_up_tim10_isr
+                0x000000000802070e                sdio_isr
+                0x000000000802070e                eth_isr
+                0x000000000802070e                spi6_isr
+                0x000000000802070e                dma2_stream5_isr
+                0x000000000802070e                pvd_isr
+                0x000000000802070e                can1_rx0_isr
+                0x000000000802070e                rcc_isr
+                0x000000000802070e                dma2_stream3_isr
+                0x000000000802070e                flash_isr
+                0x000000000802070e                uart4_isr
+                0x000000000802070e                lcd_tft_isr
+                0x000000000802070e                rtc_alarm_isr
+                0x000000000802070e                exti15_10_isr
+                0x000000000802070e                hash_rng_isr
+                0x000000000802070e                tim1_trg_com_tim11_isr
+                0x000000000802070e                hard_fault_handler
+                0x000000000802070e                exti1_isr
+                0x000000000802070e                i2c1_ev_isr
+                0x000000000802070e                usart6_isr
+                0x000000000802070e                spi2_isr
+                0x000000000802070e                cryp_isr
+                0x000000000802070e                nvic_wwdg_isr
+                0x000000000802070e                dma1_stream1_isr
+                0x000000000802070e                dma2_stream4_isr
+                0x000000000802070e                exti3_isr
+                0x000000000802070e                tim3_isr
+                0x000000000802070e                usart2_isr
+                0x000000000802070e                sai1_isr
+                0x000000000802070e                fpu_isr
+                0x000000000802070e                dma1_stream4_isr
+                0x000000000802070e                i2c2_er_isr
+                0x000000000802070e                i2c2_ev_isr
+                0x000000000802070e                uart5_isr
+                0x000000000802070e                dma2_stream6_isr
+                0x000000000802070e                spi4_isr
+                0x000000000802070e                adc_isr
+                0x000000000802070e                dma2_stream7_isr
+                0x000000000802070e                tim8_up_tim13_isr
+                0x000000000802070e                fsmc_isr
+                0x000000000802070e                exti4_isr
+                0x000000000802070e                tim6_dac_isr
+                0x000000000802070e                dma1_stream3_isr
+                0x000000000802070e                tim8_trg_com_tim14_isr
+                0x000000000802070e                mem_manage_handler
+                0x000000000802070e                lcd_tft_err_isr
+                0x000000000802070e                can2_tx_isr
+                0x000000000802070e                exti9_5_isr
+                0x000000000802070e                tim1_brk_tim9_isr
+                0x000000000802070e                uart7_isr
+                0x000000000802070e                can2_sce_isr
+                0x000000000802070e                tim4_isr
+                0x000000000802070e                otg_hs_wkup_isr
+                0x000000000802070e                i2c1_er_isr
+                0x000000000802070e                dma1_stream0_isr
+                0x000000000802070e                tim8_cc_isr
+                0x000000000802070e                dcmi_isr
+                0x000000000802070e                dma2_stream2_isr
+                0x000000000802070e                eth_wkup_isr
+                0x000000000802070e                bus_fault_handler
+                0x000000000802070e                otg_hs_ep1_out_isr
+                0x000000000802070e                spi3_isr
+                0x000000000802070e                dma1_stream5_isr
+                0x000000000802070e                otg_hs_ep1_in_isr
+                0x000000000802070e                tim2_isr
+                0x000000000802070e                dma2_stream1_isr
+ .text.null_handler
+                0x0000000008020710        0x2 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+                0x0000000008020710                null_handler
+                0x0000000008020710                sv_call_handler
+                0x0000000008020710                pend_sv_handler
+                0x0000000008020710                debug_monitor_handler
+                0x0000000008020710                sys_tick_handler
+                0x0000000008020710                nmi_handler
+ *fill*         0x0000000008020712        0x2 
+ .text.reset_handler
+                0x0000000008020714       0x98 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+                0x0000000008020714                reset_handler
+ .text          0x00000000080207ac        0x0 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .text.rcc_osc_ready_int_clear
+                0x00000000080207ac       0x5c libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x00000000080207ac                rcc_osc_ready_int_clear
+ .text.rcc_osc_ready_int_enable
+                0x0000000008020808       0x5c libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020808                rcc_osc_ready_int_enable
+ .text.rcc_osc_ready_int_disable
+                0x0000000008020864       0x5c libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020864                rcc_osc_ready_int_disable
+ .text.rcc_osc_ready_int_flag
+                0x00000000080208c0       0x60 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x00000000080208c0                rcc_osc_ready_int_flag
+ .text.rcc_css_int_clear
+                0x0000000008020920       0x10 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020920                rcc_css_int_clear
+ .text.rcc_css_int_flag
+                0x0000000008020930       0x10 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020930                rcc_css_int_flag
+ .text.rcc_is_osc_ready
+                0x0000000008020940       0x5c libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020940                rcc_is_osc_ready
+ .text.rcc_wait_for_osc_ready
+                0x000000000802099c       0x10 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x000000000802099c                rcc_wait_for_osc_ready
+ .text.rcc_wait_for_sysclk_status
+                0x00000000080209ac       0x38 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x00000000080209ac                rcc_wait_for_sysclk_status
+ .text.rcc_osc_on
+                0x00000000080209e4       0x58 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x00000000080209e4                rcc_osc_on
+ .text.rcc_osc_off
+                0x0000000008020a3c       0x58 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020a3c                rcc_osc_off
+ .text.rcc_css_enable
+                0x0000000008020a94       0x10 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020a94                rcc_css_enable
+ .text.rcc_css_disable
+                0x0000000008020aa4       0x10 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020aa4                rcc_css_disable
+ .text.rcc_plli2s_config
+                0x0000000008020ab4       0x1c libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020ab4                rcc_plli2s_config
+ .text.rcc_pllsai_config
+                0x0000000008020ad0       0x2c libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020ad0                rcc_pllsai_config
+ .text.rcc_pllsai_postscalers
+                0x0000000008020afc       0x24 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020afc                rcc_pllsai_postscalers
+ .text.rcc_set_sysclk_source
+                0x0000000008020b20       0x14 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020b20                rcc_set_sysclk_source
+ .text.rcc_set_pll_source
+                0x0000000008020b34       0x14 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020b34                rcc_set_pll_source
+ .text.rcc_set_ppre2
+                0x0000000008020b48       0x14 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020b48                rcc_set_ppre2
+ .text.rcc_set_ppre1
+                0x0000000008020b5c       0x14 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020b5c                rcc_set_ppre1
+ .text.rcc_set_hpre
+                0x0000000008020b70       0x14 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020b70                rcc_set_hpre
+ .text.rcc_set_rtcpre
+                0x0000000008020b84       0x14 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020b84                rcc_set_rtcpre
+ .text.rcc_set_main_pll_hsi
+                0x0000000008020b98       0x44 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020b98                rcc_set_main_pll_hsi
+ .text.rcc_set_main_pll_hse
+                0x0000000008020bdc       0x44 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020bdc                rcc_set_main_pll_hse
+ .text.rcc_system_clock_source
+                0x0000000008020c20       0x10 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020c20                rcc_system_clock_source
+ .text.rcc_clock_setup_pll
+                0x0000000008020c30       0xf4 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020c30                rcc_clock_setup_pll
+ .text.rcc_clock_setup_hse_3v3
+                0x0000000008020d24        0x4 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008020d24                rcc_clock_setup_hse_3v3
+ .text          0x0000000008020d28        0x0 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .text.flash_prefetch_enable
+                0x0000000008020d28       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+                0x0000000008020d28                flash_prefetch_enable
+ .text.flash_prefetch_disable
+                0x0000000008020d38       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+                0x0000000008020d38                flash_prefetch_disable
+ .text.flash_set_ws
+                0x0000000008020d48       0x14 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+                0x0000000008020d48                flash_set_ws
+ .text.flash_unlock_option_bytes
+                0x0000000008020d5c       0x18 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+                0x0000000008020d5c                flash_unlock_option_bytes
+ .text          0x0000000008020d74        0x0 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .text.flash_dcache_enable
+                0x0000000008020d74       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+                0x0000000008020d74                flash_dcache_enable
+ .text.flash_dcache_disable
+                0x0000000008020d84       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+                0x0000000008020d84                flash_dcache_disable
+ .text.flash_icache_enable
+                0x0000000008020d94       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+                0x0000000008020d94                flash_icache_enable
+ .text.flash_icache_disable
+                0x0000000008020da4       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+                0x0000000008020da4                flash_icache_disable
+ .text.flash_dcache_reset
+                0x0000000008020db4       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+                0x0000000008020db4                flash_dcache_reset
+ .text.flash_icache_reset
+                0x0000000008020dc4       0x10 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+                0x0000000008020dc4                flash_icache_reset
+ .text          0x0000000008020dd4        0x0 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .text.pwr_set_vos_scale
+                0x0000000008020dd4       0x18 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+                0x0000000008020dd4                pwr_set_vos_scale
+ .text          0x0000000008020dec        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-errno.o)
+ .text.__errno  0x0000000008020dec        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-errno.o)
+                0x0000000008020dec                __errno
+ .text          0x0000000008020df8        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-impure.o)
+ .text          0x0000000008020df8        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o)
+ .text._puts_r  0x0000000008020df8       0xdc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o)
+                0x0000000008020df8                _puts_r
+ .text.puts     0x0000000008020ed4       0x10 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o)
+                0x0000000008020ed4                puts
+ .text          0x0000000008020ee4        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o)
+ .text.__swbuf_r
+                0x0000000008020ee4       0xa4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o)
+                0x0000000008020ee4                __swbuf_r
+ .text.__swbuf  0x0000000008020f88       0x10 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o)
+                0x0000000008020f88                __swbuf
+ .text          0x0000000008020f98        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o)
+ .text.__swsetup_r
+                0x0000000008020f98       0xdc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o)
+                0x0000000008020f98                __swsetup_r
+ .text          0x0000000008021074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+ .text.__sflush_r
+                0x0000000008021074      0x10c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+                0x0000000008021074                __sflush_r
+ .text._fflush_r
+                0x0000000008021180       0x78 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+                0x0000000008021180                _fflush_r
+ .text.fflush   0x00000000080211f8       0x24 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+                0x00000000080211f8                fflush
+ .text          0x000000000802121c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+ .text.std      0x000000000802121c       0x48 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+ .text._cleanup_r
+                0x0000000008021264        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x0000000008021264                _cleanup_r
+ .text.__fp_lock
+                0x0000000008021270       0x18 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+ .text.__fp_unlock
+                0x0000000008021288       0x18 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+ .text.__sfmoreglue
+                0x00000000080212a0       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x00000000080212a0                __sfmoreglue
+ .text._cleanup
+                0x00000000080212cc        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x00000000080212cc                _cleanup
+ .text.__sfp_lock_acquire
+                0x00000000080212d8        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x00000000080212d8                __sfp_lock_acquire
+ .text.__sfp_lock_release
+                0x00000000080212e4        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x00000000080212e4                __sfp_lock_release
+ .text.__sinit_lock_acquire
+                0x00000000080212f0        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x00000000080212f0                __sinit_lock_acquire
+ .text.__sinit_lock_release
+                0x00000000080212fc        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x00000000080212fc                __sinit_lock_release
+ .text.__sinit  0x0000000008021308       0x70 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x0000000008021308                __sinit
+ .text.__sfp    0x0000000008021378       0x8c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x0000000008021378                __sfp
+ .text.__fp_lock_all
+                0x0000000008021404       0x1c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x0000000008021404                __fp_lock_all
+ .text.__fp_unlock_all
+                0x0000000008021420       0x1c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x0000000008021420                __fp_unlock_all
+ .text          0x000000000802143c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fwalk.o)
+ .text._fwalk   0x000000000802143c       0x3a /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fwalk.o)
+                0x000000000802143c                _fwalk
+ .text._fwalk_reent
+                0x0000000008021476       0x3e /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fwalk.o)
+                0x0000000008021476                _fwalk_reent
+ .text          0x00000000080214b4        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+ .text.__retarget_lock_init
+                0x00000000080214b4        0x2 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214b4                __retarget_lock_init
+ .text.__retarget_lock_init_recursive
+                0x00000000080214b6        0x2 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214b6                __retarget_lock_init_recursive
+ .text.__retarget_lock_close
+                0x00000000080214b8        0x2 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214b8                __retarget_lock_close
+ .text.__retarget_lock_close_recursive
+                0x00000000080214ba        0x2 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214ba                __retarget_lock_close_recursive
+ .text.__retarget_lock_acquire
+                0x00000000080214bc        0x2 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214bc                __retarget_lock_acquire
+ .text.__retarget_lock_acquire_recursive
+                0x00000000080214be        0x2 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214be                __retarget_lock_acquire_recursive
+ .text.__retarget_lock_try_acquire
+                0x00000000080214c0        0x4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214c0                __retarget_lock_try_acquire
+ .text.__retarget_lock_try_acquire_recursive
+                0x00000000080214c4        0x4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214c4                __retarget_lock_try_acquire_recursive
+ .text.__retarget_lock_release
+                0x00000000080214c8        0x2 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214c8                __retarget_lock_release
+ .text.__retarget_lock_release_recursive
+                0x00000000080214ca        0x2 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x00000000080214ca                __retarget_lock_release_recursive
+ .text          0x00000000080214cc        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o)
+ .text.__swhatbuf_r
+                0x00000000080214cc       0x48 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o)
+                0x00000000080214cc                __swhatbuf_r
+ .text.__smakebuf_r
+                0x0000000008021514       0x80 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o)
+                0x0000000008021514                __smakebuf_r
+ .text          0x0000000008021594        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-memset.o)
+ .text.memset   0x0000000008021594       0x10 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-memset.o)
+                0x0000000008021594                memset
+ .text          0x00000000080215a4        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-freer.o)
+ .text._free_r  0x00000000080215a4       0xa0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-freer.o)
+                0x00000000080215a4                _free_r
+ .text          0x0000000008021644        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+ .text._malloc_r
+                0x0000000008021644       0xb4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+                0x0000000008021644                _malloc_r
+ .text          0x00000000080216f8        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-sbrkr.o)
+ .text._sbrk_r  0x00000000080216f8       0x20 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-sbrkr.o)
+                0x00000000080216f8                _sbrk_r
+ .text          0x0000000008021718        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+ .text.__sread  0x0000000008021718       0x22 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+                0x0000000008021718                __sread
+ .text.__seofread
+                0x000000000802173a        0x4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+                0x000000000802173a                __seofread
+ .text.__swrite
+                0x000000000802173e       0x38 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+                0x000000000802173e                __swrite
+ .text.__sseek  0x0000000008021776       0x24 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+                0x0000000008021776                __sseek
+ .text.__sclose
+                0x000000000802179a        0x8 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+                0x000000000802179a                __sclose
+ .text          0x00000000080217a2        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-writer.o)
+ *fill*         0x00000000080217a2        0x2 
+ .text._write_r
+                0x00000000080217a4       0x24 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-writer.o)
+                0x00000000080217a4                _write_r
+ .text          0x00000000080217c8        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-closer.o)
+ .text._close_r
+                0x00000000080217c8       0x20 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-closer.o)
+                0x00000000080217c8                _close_r
+ .text          0x00000000080217e8        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fstatr.o)
+ .text._fstat_r
+                0x00000000080217e8       0x24 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fstatr.o)
+                0x00000000080217e8                _fstat_r
+ .text          0x000000000802180c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-isattyr.o)
+ .text._isatty_r
+                0x000000000802180c       0x20 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-isattyr.o)
+                0x000000000802180c                _isatty_r
+ .text          0x000000000802182c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lseekr.o)
+ .text._lseek_r
+                0x000000000802182c       0x24 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lseekr.o)
+                0x000000000802182c                _lseek_r
+ .text          0x0000000008021850        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-mlock.o)
+ .text.__malloc_lock
+                0x0000000008021850        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-mlock.o)
+                0x0000000008021850                __malloc_lock
+ .text.__malloc_unlock
+                0x000000000802185c        0xc /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-mlock.o)
+                0x000000000802185c                __malloc_unlock
+ .text          0x0000000008021868        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-readr.o)
+ .text._read_r  0x0000000008021868       0x24 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-readr.o)
+                0x0000000008021868                _read_r
+ .text          0x000000000802188c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+ .text.cleanup_glue
+                0x000000000802188c       0x1a /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+                0x000000000802188c                cleanup_glue
+ *fill*         0x00000000080218a6        0x2 
+ .text._reclaim_reent
+                0x00000000080218a8       0xb8 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+                0x00000000080218a8                _reclaim_reent
+                0x0000000008021960                . = ALIGN (0x4)
+ *(.rodata*)
+ .rodata        0x0000000008021960        0xd /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ *fill*         0x000000000802196d        0x3 
+ .rodata.rcc_hse_12mhz_3v3
+                0x0000000008021970       0x54 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008021970                rcc_hse_12mhz_3v3
+ .rodata.rcc_hse_16mhz_3v3
+                0x00000000080219c4       0x54 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x00000000080219c4                rcc_hse_16mhz_3v3
+ .rodata.rcc_hse_25mhz_3v3
+                0x0000000008021a18       0x54 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008021a18                rcc_hse_25mhz_3v3
+ .rodata.rcc_hse_8mhz_3v3
+                0x0000000008021a6c       0x54 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008021a6c                rcc_hse_8mhz_3v3
+ .rodata.rcc_hsi_configs
+                0x0000000008021ac0       0x54 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000008021ac0                rcc_hsi_configs
+ .rodata._global_impure_ptr
+                0x0000000008021b14        0x4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-impure.o)
+                0x0000000008021b14                _global_impure_ptr
+ .rodata.__sf_fake_stderr
+                0x0000000008021b18       0x20 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x0000000008021b18                __sf_fake_stderr
+ .rodata.__sf_fake_stdin
+                0x0000000008021b38       0x20 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x0000000008021b38                __sf_fake_stdin
+ .rodata.__sf_fake_stdout
+                0x0000000008021b58       0x20 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+                0x0000000008021b58                __sf_fake_stdout
+                0x0000000008021b78                . = ALIGN (0x4)
+
+.glue_7         0x0000000008021b78        0x0
+ .glue_7        0x0000000008021b78        0x0 linker stubs
+
+.glue_7t        0x0000000008021b78        0x0
+ .glue_7t       0x0000000008021b78        0x0 linker stubs
+
+.vfp11_veneer   0x0000000008021b78        0x0
+ .vfp11_veneer  0x0000000008021b78        0x0 linker stubs
+
+.v4_bx          0x0000000008021b78        0x0
+ .v4_bx         0x0000000008021b78        0x0 linker stubs
+
+.iplt           0x0000000008021b78        0x0
+ .iplt          0x0000000008021b78        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+
+.rel.dyn        0x0000000008021b78        0x0
+ .rel.iplt      0x0000000008021b78        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+
+.preinit_array  0x0000000008021b78        0x0
+                0x0000000008021b78                . = ALIGN (0x4)
+                0x0000000008021b78                __preinit_array_start = .
+ *(.preinit_array)
+                0x0000000008021b78                __preinit_array_end = .
+
+.init_array     0x0000000008021b78        0x0
+                0x0000000008021b78                . = ALIGN (0x4)
+                0x0000000008021b78                __init_array_start = .
+ *(SORT_BY_NAME(.init_array.*))
+ *(.init_array)
+                0x0000000008021b78                __init_array_end = .
+
+.fini_array     0x0000000008021b78        0x0
+                0x0000000008021b78                . = ALIGN (0x4)
+                0x0000000008021b78                __fini_array_start = .
+ *(.fini_array)
+ *(SORT_BY_NAME(.fini_array.*))
+                0x0000000008021b78                __fini_array_end = .
+
+.ARM.extab
+ *(.ARM.extab*)
+
+.ARM.exidx      0x0000000008021b78        0x0
+                0x0000000008021b78                __exidx_start = .
+ *(.ARM.exidx*)
+                0x0000000008021b78                __exidx_end = .
+                0x0000000008021b78                . = ALIGN (0x4)
+                0x0000000008021b78                _etext = .
+
+.data           0x0000000020000000       0x70 load address 0x0000000008021b78
+                0x0000000020000000                _data = .
+ *(.data*)
+ .data          0x0000000020000000        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .data          0x0000000020000000        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .data          0x0000000020000000        0x0 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .data          0x0000000020000000        0x0 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .data          0x0000000020000000        0x0 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .data          0x0000000020000000        0x0 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .data          0x0000000020000000        0x0 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .data          0x0000000020000000        0x0 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .data.rcc_ahb_frequency
+                0x0000000020000000        0x4 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000020000000                rcc_ahb_frequency
+ .data.rcc_apb1_frequency
+                0x0000000020000004        0x4 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000020000004                rcc_apb1_frequency
+ .data.rcc_apb2_frequency
+                0x0000000020000008        0x4 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                0x0000000020000008                rcc_apb2_frequency
+ .data          0x000000002000000c        0x0 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .data          0x000000002000000c        0x0 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .data          0x000000002000000c        0x0 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .data          0x000000002000000c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-errno.o)
+ .data          0x000000002000000c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-impure.o)
+ .data._impure_ptr
+                0x000000002000000c        0x4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-impure.o)
+                0x000000002000000c                _impure_ptr
+ .data.impure_data
+                0x0000000020000010       0x60 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-impure.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fwalk.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-memset.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-freer.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-sbrkr.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-writer.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-closer.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fstatr.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-isattyr.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lseekr.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-mlock.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-readr.o)
+ .data          0x0000000020000070        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+                0x0000000020000070                . = ALIGN (0x4)
+                0x0000000020000070                _edata = .
+                0x0000000008021b78                _data_loadaddr = LOADADDR (.data)
+
+.igot.plt       0x0000000020000070        0x0 load address 0x0000000008021be8
+ .igot.plt      0x0000000020000070        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+
+.bss            0x0000000020000070       0x1c load address 0x0000000008021be8
+ *(.bss*)
+ .bss           0x0000000020000070        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .bss           0x0000000020000070        0x0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .bss.heap.6587
+                0x0000000020000070        0x4 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .bss           0x0000000020000074        0x0 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-errno.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-impure.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fwalk.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-memset.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-freer.o)
+ .bss           0x0000000020000074        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+ .bss.__malloc_free_list
+                0x0000000020000074        0x4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+                0x0000000020000074                __malloc_free_list
+ .bss.__malloc_sbrk_start
+                0x0000000020000078        0x4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+                0x0000000020000078                __malloc_sbrk_start
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-sbrkr.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-writer.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-closer.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fstatr.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-isattyr.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lseekr.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-mlock.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-readr.o)
+ .bss           0x000000002000007c        0x0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+ *(COMMON)
+ COMMON         0x000000002000007c        0x9 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+                0x000000002000007c                __lock___atexit_recursive_mutex
+                0x000000002000007d                __lock___arc4random_mutex
+                0x000000002000007e                __lock___env_recursive_mutex
+                0x000000002000007f                __lock___sinit_recursive_mutex
+                0x0000000020000080                __lock___malloc_recursive_mutex
+                0x0000000020000081                __lock___at_quick_exit_mutex
+                0x0000000020000082                __lock___dd_hash_mutex
+                0x0000000020000083                __lock___tz_mutex
+                0x0000000020000084                __lock___sfp_recursive_mutex
+ *fill*         0x0000000020000085        0x3 
+ COMMON         0x0000000020000088        0x4 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+                0x0000000020000088                errno
+                0x000000002000008c                . = ALIGN (0x4)
+                0x000000002000008c                _ebss = .
+
+/DISCARD/
+ *(.eh_frame)
+                0x000000002000008c                . = ALIGN (0x4)
+                0x000000002000008c                end = .
+                0x0000000020020000                PROVIDE (_stack = (ORIGIN (ram) + LENGTH (ram)))
+OUTPUT(build/fwup-example-app.elf elf32-littlearm)
+
+.debug_info     0x0000000000000000     0x4ab1
+ .debug_info    0x0000000000000000      0xf7f /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .debug_info    0x0000000000000f7f      0xe02 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .debug_info    0x0000000000001d81      0x233 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_info    0x0000000000001fb4      0xada libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_info    0x0000000000002a8e      0x698 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_info    0x0000000000003126      0x330 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_info    0x0000000000003456      0x33f libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_info    0x0000000000003795     0x1044 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_info    0x00000000000047d9       0xfc libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_info    0x00000000000048d5       0xf4 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_info    0x00000000000049c9       0xe8 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+
+.debug_abbrev   0x0000000000000000      0xf39
+ .debug_abbrev  0x0000000000000000      0x1d4 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .debug_abbrev  0x00000000000001d4      0x282 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .debug_abbrev  0x0000000000000456       0xbf libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_abbrev  0x0000000000000515      0x1a8 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_abbrev  0x00000000000006bd      0x182 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_abbrev  0x000000000000083f      0x121 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_abbrev  0x0000000000000960      0x18c libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_abbrev  0x0000000000000aec      0x2c1 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_abbrev  0x0000000000000dad       0x9a libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_abbrev  0x0000000000000e47       0x56 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_abbrev  0x0000000000000e9d       0x9c libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+
+.debug_aranges  0x0000000000000000      0x3f8
+ .debug_aranges
+                0x0000000000000000       0x40 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .debug_aranges
+                0x0000000000000040       0x68 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .debug_aranges
+                0x00000000000000a8       0x30 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_aranges
+                0x00000000000000d8       0x68 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_aranges
+                0x0000000000000140       0xb8 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_aranges
+                0x00000000000001f8       0x40 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_aranges
+                0x0000000000000238       0x30 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_aranges
+                0x0000000000000268       0xf0 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_aranges
+                0x0000000000000358       0x38 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_aranges
+                0x0000000000000390       0x48 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_aranges
+                0x00000000000003d8       0x20 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+
+.debug_ranges   0x0000000000000000      0x3a8
+ .debug_ranges  0x0000000000000000       0x30 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .debug_ranges  0x0000000000000030       0x58 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .debug_ranges  0x0000000000000088       0x20 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_ranges  0x00000000000000a8       0x58 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_ranges  0x0000000000000100       0xa8 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_ranges  0x00000000000001a8       0x30 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_ranges  0x00000000000001d8       0x38 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_ranges  0x0000000000000210      0x128 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_ranges  0x0000000000000338       0x28 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_ranges  0x0000000000000360       0x38 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_ranges  0x0000000000000398       0x10 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+
+.debug_line     0x0000000000000000     0x32d3
+ .debug_line    0x0000000000000000      0x237 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .debug_line    0x0000000000000237      0x33d /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .debug_line    0x0000000000000574      0x4ba libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_line    0x0000000000000a2e      0x4aa libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_line    0x0000000000000ed8      0x645 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_line    0x000000000000151d      0x422 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_line    0x000000000000193f      0x449 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_line    0x0000000000001d88      0xa8b libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_line    0x0000000000002813      0x3cb libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_line    0x0000000000002bde      0x3e4 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_line    0x0000000000002fc2      0x311 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+
+.debug_str      0x0000000000000000     0xfc7c
+ .debug_str     0x0000000000000000      0xc18 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+                                        0xd5c (size before relaxing)
+ .debug_str     0x0000000000000c18      0x1b0 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+                                        0x7c0 (size before relaxing)
+ .debug_str     0x0000000000000dc8     0x64aa libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+                                       0x6644 (size before relaxing)
+ .debug_str     0x0000000000007272     0x3fb4 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+                                       0x9909 (size before relaxing)
+ .debug_str     0x000000000000b226     0x1474 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+                                       0xa336 (size before relaxing)
+ .debug_str     0x000000000000c69a       0x2d libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+                                       0xa170 (size before relaxing)
+ .debug_str     0x000000000000c6c7     0x29dd libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+                                       0x6bf5 (size before relaxing)
+ .debug_str     0x000000000000f0a4      0xb27 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+                                       0x9fd8 (size before relaxing)
+ .debug_str     0x000000000000fbcb       0x64 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+                                       0x5979 (size before relaxing)
+ .debug_str     0x000000000000fc2f       0x47 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+                                       0x599b (size before relaxing)
+ .debug_str     0x000000000000fc76        0x6 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+                                       0x5577 (size before relaxing)
+
+.comment        0x0000000000000000       0xee
+ .comment       0x0000000000000000       0x79 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+                                         0x7a (size before relaxing)
+ .comment       0x0000000000000079       0x7a /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .comment       0x0000000000000079       0x75 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+                                         0x76 (size before relaxing)
+ .comment       0x00000000000000ee       0x76 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .comment       0x00000000000000ee       0x76 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .comment       0x00000000000000ee       0x76 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .comment       0x00000000000000ee       0x76 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .comment       0x00000000000000ee       0x76 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .comment       0x00000000000000ee       0x76 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .comment       0x00000000000000ee       0x76 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .comment       0x00000000000000ee       0x76 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+
+.ARM.attributes
+                0x0000000000000000       0x34
+ .ARM.attributes
+                0x0000000000000000       0x34 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .ARM.attributes
+                0x0000000000000034       0x34 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .ARM.attributes
+                0x0000000000000068       0x34 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .ARM.attributes
+                0x000000000000009c       0x34 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .ARM.attributes
+                0x00000000000000d0       0x34 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .ARM.attributes
+                0x0000000000000104       0x34 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .ARM.attributes
+                0x0000000000000138       0x34 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .ARM.attributes
+                0x000000000000016c       0x34 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .ARM.attributes
+                0x00000000000001a0       0x34 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .ARM.attributes
+                0x00000000000001d4       0x34 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .ARM.attributes
+                0x0000000000000208       0x34 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .ARM.attributes
+                0x000000000000023c       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-errno.o)
+ .ARM.attributes
+                0x0000000000000270       0x32 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-impure.o)
+ .ARM.attributes
+                0x00000000000002a2       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o)
+ .ARM.attributes
+                0x00000000000002d6       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o)
+ .ARM.attributes
+                0x000000000000030a       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o)
+ .ARM.attributes
+                0x000000000000033e       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+ .ARM.attributes
+                0x0000000000000372       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+ .ARM.attributes
+                0x00000000000003a6       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fwalk.o)
+ .ARM.attributes
+                0x00000000000003da       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+ .ARM.attributes
+                0x000000000000040e       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o)
+ .ARM.attributes
+                0x0000000000000442       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-memset.o)
+ .ARM.attributes
+                0x0000000000000476       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-freer.o)
+ .ARM.attributes
+                0x00000000000004aa       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+ .ARM.attributes
+                0x00000000000004de       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-sbrkr.o)
+ .ARM.attributes
+                0x0000000000000512       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+ .ARM.attributes
+                0x0000000000000546       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-writer.o)
+ .ARM.attributes
+                0x000000000000057a       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-closer.o)
+ .ARM.attributes
+                0x00000000000005ae       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fstatr.o)
+ .ARM.attributes
+                0x00000000000005e2       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-isattyr.o)
+ .ARM.attributes
+                0x0000000000000616       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lseekr.o)
+ .ARM.attributes
+                0x000000000000064a       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-mlock.o)
+ .ARM.attributes
+                0x000000000000067e       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-readr.o)
+ .ARM.attributes
+                0x00000000000006b2       0x34 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+
+.debug_frame    0x0000000000000000      0xef8
+ .debug_frame   0x0000000000000000       0x9c /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//cclVrQh8.o
+ .debug_frame   0x000000000000009c      0x188 /var/folders/8j/8_cdfwrx6rl94smt6zf7ld9h0000gn/T//ccBcHoj0.o
+ .debug_frame   0x0000000000000224       0x70 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_frame   0x0000000000000294       0xd0 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_frame   0x0000000000000364      0x178 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_frame   0x00000000000004dc       0x60 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_frame   0x000000000000053c       0x4c libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_frame   0x0000000000000588      0x1f4 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_frame   0x000000000000077c       0x50 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_frame   0x00000000000007cc       0x70 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_frame   0x000000000000083c       0x20 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+ .debug_frame   0x000000000000085c       0x20 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-errno.o)
+ .debug_frame   0x000000000000087c       0x3c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-puts.o)
+ .debug_frame   0x00000000000008b8       0x40 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wbuf.o)
+ .debug_frame   0x00000000000008f8       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-wsetup.o)
+ .debug_frame   0x0000000000000924       0x5c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fflush.o)
+ .debug_frame   0x0000000000000980      0x14c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-findfp.o)
+ .debug_frame   0x0000000000000acc       0x54 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fwalk.o)
+ .debug_frame   0x0000000000000b20       0xb0 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lock.o)
+ .debug_frame   0x0000000000000bd0       0x58 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-makebuf.o)
+ .debug_frame   0x0000000000000c28       0x20 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-memset.o)
+ .debug_frame   0x0000000000000c48       0x38 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-freer.o)
+ .debug_frame   0x0000000000000c80       0x30 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-nano-mallocr.o)
+ .debug_frame   0x0000000000000cb0       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-sbrkr.o)
+ .debug_frame   0x0000000000000cdc       0x88 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-stdio.o)
+ .debug_frame   0x0000000000000d64       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-writer.o)
+ .debug_frame   0x0000000000000d90       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-closer.o)
+ .debug_frame   0x0000000000000dbc       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-fstatr.o)
+ .debug_frame   0x0000000000000de8       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-isattyr.o)
+ .debug_frame   0x0000000000000e14       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-lseekr.o)
+ .debug_frame   0x0000000000000e40       0x30 /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-mlock.o)
+ .debug_frame   0x0000000000000e70       0x2c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-readr.o)
+ .debug_frame   0x0000000000000e9c       0x5c /usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/9.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libg_nano.a(lib_a-reent.o)
+
+.debug_loc      0x0000000000000000      0xe31
+ .debug_loc     0x0000000000000000      0x14d libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_loc     0x000000000000014d      0x128 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_loc     0x0000000000000275      0x1e1 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_loc     0x0000000000000456       0x99 libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_loc     0x00000000000004ef      0x114 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_loc     0x0000000000000603      0x7a0 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_loc     0x0000000000000da3       0x47 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_loc     0x0000000000000dea       0x47 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
+
+.debug_macro    0x0000000000000000     0x3842
+ .debug_macro   0x0000000000000000       0xd1 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x00000000000000d1      0xa90 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000b61       0x1c libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000b7d       0x22 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000b9f       0x56 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000bf5       0x51 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000c46       0xef libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000d35       0x6a libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000d9f      0x1df libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000f7e       0x22 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000000fa0       0xe8 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000001088       0x76 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x00000000000010fe      0x273 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x0000000000001371       0x76 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x00000000000013e7      0x2e6 libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x00000000000016cd      0x14e libopencm3/lib/libopencm3_stm32f4.a(gpio_common_f0234.o)
+ .debug_macro   0x000000000000181b       0xf0 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x000000000000190b       0x8e libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000001999       0x28 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x00000000000019c1      0xc88 libopencm3/lib/libopencm3_stm32f4.a(rcc_common_all.o)
+ .debug_macro   0x0000000000002649      0x10b libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000002754       0x94 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x00000000000027e8      0x29e libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000002a86       0xa0 libopencm3/lib/libopencm3_stm32f4.a(usart_common_all.o)
+ .debug_macro   0x0000000000002b26      0x10b libopencm3/lib/libopencm3_stm32f4.a(usart_common_f124.o)
+ .debug_macro   0x0000000000002c31       0xd3 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000002d04      0x395 libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000003099       0x6e libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000003107      0x22c libopencm3/lib/libopencm3_stm32f4.a(vector.o)
+ .debug_macro   0x0000000000003333      0x124 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000003457       0x16 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x000000000000346d       0x1c libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x0000000000003489      0x143 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x00000000000035cc       0x10 libopencm3/lib/libopencm3_stm32f4.a(rcc.o)
+ .debug_macro   0x00000000000035dc       0xd7 libopencm3/lib/libopencm3_stm32f4.a(flash_common_all.o)
+ .debug_macro   0x00000000000036b3       0xd7 libopencm3/lib/libopencm3_stm32f4.a(flash_common_idcache.o)
+ .debug_macro   0x000000000000378a       0xb8 libopencm3/lib/libopencm3_stm32f4.a(pwr.o)
