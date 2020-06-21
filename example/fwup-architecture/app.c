@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <libopencm3/cm3/vector.h>
-#include <libopencm3/cm3/scb.h>
+#include <shell/shell.h>
 
 #include "clock.h"
 #include "gpio.h"
@@ -25,13 +25,17 @@ int main(void) {
     shared_memory_init();
 
     printf("App started\n");
-    if (!shared_memory_is_update_complete()) {
-        printf("Requesting update\n");
-        shared_memory_set_update_requested(true);
-        scb_reset_system();
-    }
 
+    // Configure shell
+    sShellImpl shell_impl = {
+      .send_char = usart_putc,
+    };
+    shell_boot(&shell_impl);
+
+    char c;
     while (1) {
+        c = usart_getc();
+        shell_receive_char(c);
     }
 
     return 0;

@@ -15,10 +15,15 @@ showAnalyzer sysbus.uart2
 # Enable GDB
 machine StartGdbServer 3333
 
-macro reset
+macro setup
 """
     sysbus LoadBinary $bin 0x8000000
     sysbus.cpu VectorTableOffset 0x8000000
 """
 
-runMacro $reset
+macro reset
+"""
+    sysbus.cpu VectorTableOffset 0x8000000
+"""
+
+runMacro $setup

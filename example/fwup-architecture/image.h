@@ -12,8 +12,8 @@ typedef enum {
 } image_type_t;
 
 typedef enum {
-    IMAGE_SLOT_1,
-    IMAGE_SLOT_2,
+    IMAGE_SLOT_1 = 1,
+    IMAGE_SLOT_2 = 2,
     IMAGE_NUM_SLOTS,
 } image_slot_t;
 

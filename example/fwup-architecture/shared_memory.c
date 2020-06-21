@@ -16,8 +16,7 @@ typedef struct __attribute__((packed)) {
 shared_memory_t shared_memory __attribute__((section(".shared_memory")));
 
 enum {
-    UPDATE_REQUESTED = 1 << 0,
-    UPDATE_COMPLETE = 1 << 1,
+    DFU_REQUESTED = 1 << 0,
 };
 
 static void prv_set_flag(uint32_t flag, bool value) {
@@ -40,19 +39,11 @@ void shared_memory_init(void) {
     }
 }
 
-bool shared_memory_is_update_requested(void) {
-    return prv_get_flag(UPDATE_REQUESTED);
+bool shared_memory_is_dfu_requested(void) {
+    return prv_get_flag(DFU_REQUESTED);
 }
 
-void shared_memory_set_update_requested(bool yes) {
-    prv_set_flag(UPDATE_REQUESTED, yes);
-}
-
-bool shared_memory_is_update_complete(void) {
-    return prv_get_flag(UPDATE_COMPLETE);
-}
-
-void shared_memory_set_update_complete(bool yes) {
-    prv_set_flag(UPDATE_COMPLETE, yes);
+void shared_memory_set_dfu_requested(bool yes) {
+    prv_set_flag(DFU_REQUESTED, yes);
 }
 

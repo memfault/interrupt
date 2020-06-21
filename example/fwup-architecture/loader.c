@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <libopencm3/cm3/vector.h>
 #include <libopencm3/cm3/scb.h>
+#include <shell/shell.h>
 
 #include "clock.h"
 #include "gpio.h"
@@ -26,20 +27,30 @@ int main(void) {
 
     printf("Updater started\n");
 
-    if (shared_memory_is_update_requested()) {
-        printf("Update requested\n");
-        shared_memory_set_update_requested(false);
-        shared_memory_set_update_complete(true);
-        scb_reset_system();
+    while (!shared_memory_is_dfu_requested()) {
+        const vector_table_t *vectors = image_get_vectors(IMAGE_SLOT_2);
+        if (vectors == NULL) {
+            printf("No image found in slot 2\n");
+            break;
+        }
+        usart_teardown();
+        printf("Booting slot 2 at %p\n", vectors->reset);
+        image_boot_vectors(vectors);
     }
 
-    usart_teardown();
+    printf("Entering DFU Mode\n");
+    shared_memory_set_dfu_requested(false);
 
-    const vector_table_t *vectors = image_get_vectors(IMAGE_SLOT_2);
-    printf("Booting slot 2 at %p\n", vectors->reset);
-    image_boot_vectors(vectors);
+    // Configure shell
+    sShellImpl shell_impl = {
+      .send_char = usart_putc,
+    };
+    shell_boot(&shell_impl);
 
+    char c;
     while (1) {
+        c = usart_getc();
+        shell_receive_char(c);
     }
 
     return 0;

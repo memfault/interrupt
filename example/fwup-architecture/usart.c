@@ -21,4 +21,15 @@ void usart_teardown(void)
     usart_disable(USART2);
 }
 
+int usart_putc(char c) {
+    usart_send_blocking(USART2, c);
+    return 0;
+}
+
+char usart_getc(void) {
+  // Blocks until a character is captured from the UART
+  uint16_t cr = usart_recv_blocking(USART2);
+  return (char)cr;
+}
+
 

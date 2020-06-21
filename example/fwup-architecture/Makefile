@@ -7,10 +7,16 @@ OCPY=arm-none-eabi-objcopy
 ODUMP=arm-none-eabi-objdump
 SZ=arm-none-eabi-size
 MKDIR=mkdir
+XXD=xxd
 
 SRCS_BOOT = boot.c
-SRCS_APP = app.c
-SRCS_LOADER = loader.c
+SRCS_APP = app.c \
+		   shell/src/shell.c \
+		   app_shell_commands.c
+SRCS_LOADER = loader.c \
+			  shell/src/shell.c \
+			  loader_shell_commands.c \
+			  $(BUILD_DIR)/app_bin.c
 SRCS_SHARED = syscalls.c \
 			  shared_memory.c \
 			  clock.c \
@@ -22,7 +28,8 @@ SRCS_BOOT += $(SRCS_SHARED)
 SRCS_APP += $(SRCS_SHARED)
 SRCS_LOADER += $(SRCS_SHARED)
 
-INCLUDES = .
+INCLUDES = . \
+		   shell/include
 DEFINES += STM32F4
 
 CFLAGS += \
@@ -67,6 +74,9 @@ $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin  $(BUILD_DIR)/$(PR
 $(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.elf
 	$(OCPY) $< $@ -O binary
 	$(SZ) $<
+
+$(BUILD_DIR)/app_bin.c: $(BUILD_DIR)/$(PROJECT)-app.bin
+	$(XXD) -i $< > $@
 
 $(BUILD_DIR)/$(PROJECT)-app.elf: $(SRCS_APP) $(OPENCM3_LIB)
 	$(MKDIR) -p $(BUILD_DIR)
