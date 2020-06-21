@@ -9,6 +9,10 @@ ENTRY(reset_handler)
 /* Define sections. */
 SECTIONS
 {
+    .image_hdr : {
+        KEEP (*(.image_hdr))
+    } > slot2rom
+
 	.text : {
 		*(.vectors)	/* Vector table */
 		*(.text*)	/* Program code */

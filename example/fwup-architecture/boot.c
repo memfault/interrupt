@@ -7,13 +7,6 @@
 #include "memory_map.h"
 #include "usart.h"
 
-static void start_app(void *pc, void *sp) {
-    __asm("           \n\
-          msr msp, r1 \n\
-          bx r0       \n\
-    ");
-}
-
 int main(void) {
     clock_setup();
     gpio_setup();
@@ -23,9 +16,15 @@ int main(void) {
 
     usart_teardown();
 
-    vector_table_t *app_vectors = (vector_table_t *) &__slot1rom_start__;
-    printf("Jumping to %p\n", app_vectors->reset);
-    start_app(app_vectors->reset, app_vectors->initial_sp_value);
+    for (image_slot_t slot = IMAGE_SLOT_1; slot < IMAGE_NUM_SLOTS; ++slot) {
+        const vector_table_t *vectors = image_get_vectors(slot);
+        if (vectors != NULL) {
+            printf("Booting slot %d at %p\n", slot, vectors->reset);
+            image_boot_vectors(vectors);
+        }
+    }
+
+    printf("No valid image found.\n");
 
     while (1) {
     }

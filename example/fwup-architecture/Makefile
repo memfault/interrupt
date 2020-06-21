@@ -14,6 +14,7 @@ SRCS_LOADER = loader.c
 SRCS_SHARED = syscalls.c \
 			  shared_memory.c \
 			  clock.c \
+			  image.c \
 			  gpio.c \
 			  usart.c
 

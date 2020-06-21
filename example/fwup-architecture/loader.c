@@ -10,19 +10,13 @@
 #include "usart.h"
 
 image_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
+    .image_magic = IMAGE_MAGIC,
     .image_type = IMAGE_TYPE_LOADER,
     .version_major = 1,
     .version_minor = 0,
     .version_patch = 0,
     .vector_addr = (uint32_t)&vector_table,
 };
-
-static void start_app(void *pc, void *sp) {
-    __asm("           \n\
-          msr msp, r1 \n\
-          bx r0       \n\
-    ");
-}
 
 int main(void) {
     clock_setup();
@@ -41,9 +35,9 @@ int main(void) {
 
     usart_teardown();
 
-    vector_table_t *app_vectors = (vector_table_t *) &__slot2rom_start__;
-    printf("Jumping to %p\n", app_vectors->reset);
-    start_app(app_vectors->reset, app_vectors->initial_sp_value);
+    const vector_table_t *vectors = image_get_vectors(IMAGE_SLOT_2);
+    printf("Booting slot 2 at %p\n", vectors->reset);
+    image_boot_vectors(vectors);
 
     while (1) {
     }
