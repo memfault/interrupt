@@ -3,7 +3,7 @@
 #include "image.h"
 #include <stdint.h>
 
-int dfu_erase_image(image_slot_t slot);
+int dfu_invalidate_image(image_slot_t slot);
 
 int dfu_validate_image(image_slot_t slot, image_hdr_t *hdr);
 

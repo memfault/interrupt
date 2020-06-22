@@ -1,9 +1,10 @@
 #include "dfu.h"
 #include "memory_map.h"
+#include "shared_memory.h"
 
 #include <libopencm3/stm32/f4/flash.h>
 
-int dfu_erase_image(image_slot_t slot) {
+int dfu_invalidate_image(image_slot_t slot) {
     // We just write 0s over the image header
     uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ?
                                &__slot1rom_start__ : &__slot2rom_start__);
@@ -25,6 +26,9 @@ int dfu_commit_image(image_slot_t slot, image_hdr_t *hdr) {
     for (int i = 0; i < sizeof(image_hdr_t); ++i) {
         flash_program_byte(addr + i, data_ptr[i]);
     }
+
+    // new app -- reset the boot counter
+    shared_memory_clear_boot_counter();
 
     return 0;
 }

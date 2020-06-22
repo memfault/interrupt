@@ -1,13 +1,15 @@
 PROJECT = fwup-example
 BUILD_DIR = build
+Q ?= @
 
 CC=arm-none-eabi-gcc
 LD=arm-none-eabi-ld
 OCPY=arm-none-eabi-objcopy
 ODUMP=arm-none-eabi-objdump
-SZ=arm-none-eabi-size
 MKDIR=mkdir
 XXD=xxd
+GIT=git
+ECHO=@echo
 
 SRCS_BOOT = boot.c
 SRCS_APP = app.c \
@@ -70,28 +72,38 @@ LDSCRIPT = stm32f429i-discovery.ld
 all: $(BUILD_DIR)/$(PROJECT).bin
 
 $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin  $(BUILD_DIR)/$(PROJECT)-loader.bin $(BUILD_DIR)/$(PROJECT)-app.bin
-	cat $^ > $@
+	$(ECHO) "Merging $@"
+	$(Q)cat $^ > $@
 
 $(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.elf
-	$(OCPY) $< $@ -O binary
-	$(SZ) $<
+	$(ECHO) "Copying $@"
+	$(Q)$(OCPY) $< $@ -O binary
 
 $(BUILD_DIR)/app_bin.c: $(BUILD_DIR)/$(PROJECT)-app.bin
-	$(XXD) -i $< > $@
+	$(ECHO) "Generating $@"
+	$(Q)$(XXD) -i $< > $@
 
 $(BUILD_DIR)/$(PROJECT)-app.elf: $(SRCS_APP) $(OPENCM3_LIB)
-	$(MKDIR) -p $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(LDFLAGS_APP) $^ -o $@
+	$(ECHO) "Building $@"
+	$(Q)$(MKDIR) -p $(BUILD_DIR)
+	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_APP) $^ -o $@
 
 $(BUILD_DIR)/$(PROJECT)-boot.elf: $(SRCS_BOOT) $(OPENCM3_LIB)
-	$(MKDIR) -p $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(LDFLAGS_BOOT) $^ -o $@
+	$(ECHO) "Building $@"
+	$(Q)$(MKDIR) -p $(BUILD_DIR)
+	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_BOOT) $^ -o $@
 
 $(BUILD_DIR)/$(PROJECT)-loader.elf: $(SRCS_LOADER) $(OPENCM3_LIB)
-	$(MKDIR) -p $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(LDFLAGS_LOADER) $^ -o $@
+	$(ECHO) "Building $@"
+	$(Q)$(MKDIR) -p $(BUILD_DIR)
+	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_LOADER) $^ -o $@
 
-$(OPENCM3_LIB): 
+$(OPENCM3_PATH):
+	$(ECHO) "Libopencm3 not found, cloning it"
+	$(GIT) clone https://github.com/libopencm3/libopencm3.git
+
+$(OPENCM3_LIB): $(OPENCM3_PATH)
+	$(ECHO) "Building libopencm3"
 	$(MAKE) -C $(OPENCM3_PATH)
 
 .PHONY: clean

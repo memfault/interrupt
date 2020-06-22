@@ -1,5 +1,2 @@
-bin/
-*.elf
-*.bin
-generated.*.ld
-libopencm3/
+build
+libopencm3

@@ -53,7 +53,7 @@ int cli_command_do_dfu(int argc, char *argv[]) {
 
 int cli_command_erase_app(int argc, char *argv[]) {
     shell_put_line("Erasing app");
-    return dfu_erase_image(IMAGE_SLOT_2);
+    return dfu_invalidate_image(IMAGE_SLOT_2);
 }
 
 int cli_command_reboot(int argc, char *argv[]) {

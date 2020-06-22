@@ -1,10 +1,11 @@
-#include <stdint.h>
-#include <stddef.h>
-
 #include "image.h"
 #include "memory_map.h"
 
-static void prv_start_app(void *pc, void *sp) {
+#include <libopencm3/cm3/scb.h>
+#include <stdint.h>
+#include <stddef.h>
+
+static void prv_start_image(void *pc, void *sp) {
     __asm("           \n\
           msr msp, r1 \n\
           bx r0       \n\
@@ -42,6 +43,7 @@ const vector_table_t *image_get_vectors(image_slot_t slot) {
 }
 
 void image_boot_vectors(const vector_table_t *vectors) {
-    prv_start_app(vectors->reset, vectors->initial_sp_value);
+    SCB_VTOR = (uint32_t)vectors;
+    prv_start_image(vectors->reset, vectors->initial_sp_value);
      __builtin_unreachable();
 }
