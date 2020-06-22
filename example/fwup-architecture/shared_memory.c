@@ -1,5 +1,3 @@
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -11,6 +9,7 @@ const uint32_t MAGIC = 0xbadcafe;
 typedef struct __attribute__((packed)) {
     uint32_t magic;
     uint32_t flags;
+    uint8_t boot_counter;
 } shared_memory_t;
 
 shared_memory_t shared_memory __attribute__((section(".shared_memory")));
@@ -45,5 +44,17 @@ bool shared_memory_is_dfu_requested(void) {
 
 void shared_memory_set_dfu_requested(bool yes) {
     prv_set_flag(DFU_REQUESTED, yes);
+}
+
+void shared_memory_increment_boot_counter(void) {
+    shared_memory.boot_counter++;
+}
+
+void shared_memory_clear_boot_counter(void) {
+    shared_memory.boot_counter = 0;
+}
+
+uint8_t shared_memory_get_boot_counter(void) {
+    return shared_memory.boot_counter;
 }
 

@@ -16,8 +16,23 @@ int cli_command_dfu_mode(int argc, char *argv[]) {
     return 0;
 }
 
+int cli_command_mark_stable(int argc, char *argv[]) {
+    shell_put_line("Marking app as stable");
+    shared_memory_clear_boot_counter();
+    return 0;
+}
+
+int cli_command_reboot(int argc, char *argv[]) {
+    shell_put_line("Rebooting");
+    scb_reset_system();
+    while (1) {}
+    return 0;
+}
+
 static const sShellCommand s_shell_commands[] = {
+  {"mark-stable", cli_command_mark_stable, "Mark app as stable"},
   {"dfu-mode", cli_command_dfu_mode, "Reboot into DFU mode"},
+  {"reboot", cli_command_reboot, "Reboot device"},
   {"help", shell_help_handler, "Lists all commands"},
 };
 

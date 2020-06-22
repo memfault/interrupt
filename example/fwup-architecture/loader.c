@@ -28,13 +28,23 @@ int main(void) {
     printf("Updater started\n");
 
     while (!shared_memory_is_dfu_requested()) {
+        const int max_boot_attempts = 3;
+        if (shared_memory_get_boot_counter() >= max_boot_attempts) {
+            shared_memory_clear_boot_counter();
+            printf("App unstable, dropping back into DFU mode\n");
+            break;
+        }
+
         const vector_table_t *vectors = image_get_vectors(IMAGE_SLOT_2);
         if (vectors == NULL) {
             printf("No image found in slot 2\n");
             break;
         }
+
+        // Everything checks out, let's boot
         usart_teardown();
         printf("Booting slot 2 at %p\n", vectors->reset);
+        shared_memory_increment_boot_counter();
         image_boot_vectors(vectors);
     }
 
