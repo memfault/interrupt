@@ -14,6 +14,7 @@ SRCS_APP = app.c \
 		   shell/src/shell.c \
 		   app_shell_commands.c
 SRCS_LOADER = loader.c \
+			  dfu.c \
 			  shell/src/shell.c \
 			  loader_shell_commands.c \
 			  $(BUILD_DIR)/app_bin.c
