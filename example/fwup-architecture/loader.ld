@@ -13,6 +13,9 @@ SECTIONS
         KEEP (*(.image_hdr))
     } > slot1rom
 
+    /* Vector table must be 128-bit aligned */
+    . = ALIGN(128);
+
 	.text : {
 		*(.vectors)	/* Vector table */
 		*(.text*)	/* Program code */
