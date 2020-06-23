@@ -11,6 +11,7 @@
 
 image_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
     .image_magic = IMAGE_MAGIC,
+    .image_hdr_version = IMAGE_VERSION_CURRENT,
     .image_type = IMAGE_TYPE_APP,
     .version_major = 1,
     .version_minor = 0,
@@ -26,10 +27,12 @@ int main(void) {
     usart_setup();
     shared_memory_init();
 
-    printf("App STARTED - version %d.%d.%d (%s)\n", image_hdr.version_major,
-                                                    image_hdr.version_minor,
-                                                    image_hdr.version_patch,
-                                                    image_hdr.git_sha);
+    printf("App STARTED - version %d.%d.%d (%s) - CRC 0x%lx\n",
+           image_hdr.version_major,
+           image_hdr.version_minor,
+           image_hdr.version_patch,
+           image_hdr.git_sha,
+           image_hdr.crc);
 
     // Configure shell
     sShellImpl shell_impl = {

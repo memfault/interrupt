@@ -12,6 +12,7 @@
 
 image_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
     .image_magic = IMAGE_MAGIC,
+    .image_hdr_version = IMAGE_VERSION_CURRENT,
     .image_type = IMAGE_TYPE_LOADER,
     .version_major = 1,
     .version_minor = 0,

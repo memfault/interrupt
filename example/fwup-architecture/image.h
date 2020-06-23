@@ -17,6 +17,11 @@ typedef enum {
     IMAGE_NUM_SLOTS,
 } image_slot_t;
 
+typedef enum {
+    IMAGE_VERSION_1 = 1,
+    IMAGE_VERSION_CURRENT = IMAGE_VERSION_1,
+} image_version_t;
+
 typedef struct __attribute__((packed)) {
     uint16_t image_magic;
     uint16_t image_hdr_version;
