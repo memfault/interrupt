@@ -35,19 +35,19 @@ int dfu_commit_image(image_slot_t slot, image_hdr_t *hdr) {
 
 int dfu_write_data(image_slot_t slot, uint8_t *data, uint32_t len) {
     uint32_t addr;
-    int sector;
+    int start_sector;
+    int end_sector;
 
     switch (slot) {
         case IMAGE_SLOT_1:
-            // Not implemented
+            addr = (uint32_t)&__slot1rom_start__;
+            start_sector = 1;
+            end_sector = 4;
             return -1;
         case IMAGE_SLOT_2:
-            if (len > 128 * 1024) {
-                // too large
-                return -1;
-            }
             addr = (uint32_t)&__slot2rom_start__;
-            sector = 5;
+            start_sector = 5;
+            end_sector = 11;
             break;
         default:
             return -1;
@@ -55,8 +55,10 @@ int dfu_write_data(image_slot_t slot, uint8_t *data, uint32_t len) {
 
     addr += sizeof(image_hdr_t);
 
-    // FIXME -- Renode implements STM32 flash as generic Memory
-    flash_erase_sector(sector, 0);
+    for (int sector = start_sector; sector <= end_sector; ++sector) {
+        // XXX -- Renode implements STM32 flash as generic Memory
+        flash_erase_sector(sector, 0);
+    }
     flash_program(addr, data, len);
 
     return 0;

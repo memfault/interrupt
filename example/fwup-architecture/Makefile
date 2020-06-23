@@ -1,3 +1,5 @@
+.SECONDARY:
+
 PROJECT = fwup-example
 BUILD_DIR = build
 Q ?= @
@@ -10,6 +12,9 @@ MKDIR=mkdir
 XXD=xxd
 GIT=git
 ECHO=@echo
+CAT=cat
+CRC=crc32
+DD=dd
 
 SRCS_BOOT = boot.c
 SRCS_APP = app.c \
@@ -73,11 +78,29 @@ all: $(BUILD_DIR)/$(PROJECT).bin
 
 $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin  $(BUILD_DIR)/$(PROJECT)-loader.bin $(BUILD_DIR)/$(PROJECT)-app.bin
 	$(ECHO) "  CAT		$@"
-	$(Q)cat $^ > $@
+	$(Q)$(CAT) $^ > $@
 
-$(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.elf
+$(BUILD_DIR)/$(PROJECT)-boot.bin: $(BUILD_DIR)/$(PROJECT)-boot.elf
 	$(ECHO) "  OBJCOPY	$@"
-	$(Q)$(OCPY) $< $@ -O binary
+	$(Q)$(OCPY) $^ $@ -O binary
+
+$(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.hdr $(BUILD_DIR)/$(PROJECT)-%.data
+	$(ECHO) "  CAT		$@"
+	$(Q)$(CAT) $^ > $@
+
+$(BUILD_DIR)/$(PROJECT)-%.hdr: $(BUILD_DIR)/$(PROJECT)-%.elf $(BUILD_DIR)/$(PROJECT)-%.crc
+	$(ECHO) "  OBJCOPY	$@"
+	$(Q)$(OCPY) $(word 1, $^) --dump-section .image_hdr=$@
+	$(ECHO) "  DD		$@"
+	$(Q)$(DD) if=$(word 2, $^) of=$@ obs=1 seek=4 conv=notrunc 2>1
+
+$(BUILD_DIR)/$(PROJECT)-%.crc: $(BUILD_DIR)/$(PROJECT)-%.data
+	$(ECHO) "  CRC		$@"
+	$(Q)$(CRC) $^ | $(XXD) -r -p > $@
+
+$(BUILD_DIR)/$(PROJECT)-%.data: $(BUILD_DIR)/$(PROJECT)-%.elf
+	$(ECHO) "  OBJCOPY	$@"
+	$(Q)$(OCPY) $^ $@ -O binary --remove-section=.image_hdr
 
 $(BUILD_DIR)/app_bin.c: $(BUILD_DIR)/$(PROJECT)-app.bin
 	$(ECHO) "  XXD		$@"

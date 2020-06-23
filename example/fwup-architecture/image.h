@@ -3,7 +3,7 @@
 #include <libopencm3/cm3/vector.h>
 #include <stdint.h>
 
-#define IMAGE_MAGIC 0xb1accafe
+#define IMAGE_MAGIC 0xcafe
 
 typedef enum {
     IMAGE_TYPE_LOADER = 0x1,
@@ -18,7 +18,9 @@ typedef enum {
 } image_slot_t;
 
 typedef struct __attribute__((packed)) {
-    uint32_t image_magic;
+    uint16_t image_magic;
+    uint16_t image_hdr_version;
+    uint32_t crc;
     uint8_t image_type;
     uint8_t version_major;
     uint8_t version_minor;
