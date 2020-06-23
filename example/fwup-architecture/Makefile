@@ -17,6 +17,8 @@ CRC=crc32
 DD=dd
 STAT=stat
 
+GIT_SHA := \"$(shell $(GIT) rev-parse --short HEAD)\"
+
 SRCS_BOOT = boot.c
 SRCS_APP = app.c \
 		   shell/src/shell.c \
@@ -40,7 +42,8 @@ SRCS_LOADER += $(SRCS_SHARED)
 
 INCLUDES = . \
 		   shell/include
-DEFINES += STM32F4
+DEFINES += STM32F4 \
+		   GIT_SHA=$(GIT_SHA)
 
 CFLAGS += \
 	-mcpu=cortex-m4 \

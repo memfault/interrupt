@@ -27,7 +27,8 @@ typedef struct __attribute__((packed)) {
     uint8_t version_minor;
     uint8_t version_patch;
     uint32_t vector_addr;
-    uint32_t reserved[3];
+    uint32_t reserved;
+    char git_sha[8];
 } image_hdr_t;
 
 const image_hdr_t *image_get_header(image_slot_t slot);
