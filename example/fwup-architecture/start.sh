@@ -1,5 +1,5 @@
 #!/bin/sh
 
-#sh /Applications/Renode.app/Contents/MacOS/macos_run.command renode-config.resc
+RENODE_EXE_PATH=~/code/renode/output/bin/Release/Renode.exe
 
-mono64 ~/code/renode/output/bin/Release/Renode.exe renode-config.resc
+mono64 $RENODE_EXE_PATH renode-config.resc

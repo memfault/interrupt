@@ -72,39 +72,39 @@ LDSCRIPT = stm32f429i-discovery.ld
 all: $(BUILD_DIR)/$(PROJECT).bin
 
 $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin  $(BUILD_DIR)/$(PROJECT)-loader.bin $(BUILD_DIR)/$(PROJECT)-app.bin
-	$(ECHO) "Merging $@"
+	$(ECHO) "  CAT		$@"
 	$(Q)cat $^ > $@
 
 $(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.elf
-	$(ECHO) "Copying $@"
+	$(ECHO) "  OBJCOPY	$@"
 	$(Q)$(OCPY) $< $@ -O binary
 
 $(BUILD_DIR)/app_bin.c: $(BUILD_DIR)/$(PROJECT)-app.bin
-	$(ECHO) "Generating $@"
+	$(ECHO) "  XXD		$@"
 	$(Q)$(XXD) -i $< > $@
 
 $(BUILD_DIR)/$(PROJECT)-app.elf: $(SRCS_APP) $(OPENCM3_LIB)
-	$(ECHO) "Building $@"
+	$(ECHO) "  LD		$@"
 	$(Q)$(MKDIR) -p $(BUILD_DIR)
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_APP) $^ -o $@
 
 $(BUILD_DIR)/$(PROJECT)-boot.elf: $(SRCS_BOOT) $(OPENCM3_LIB)
-	$(ECHO) "Building $@"
+	$(ECHO) "  LD		$@"
 	$(Q)$(MKDIR) -p $(BUILD_DIR)
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_BOOT) $^ -o $@
 
 $(BUILD_DIR)/$(PROJECT)-loader.elf: $(SRCS_LOADER) $(OPENCM3_LIB)
-	$(ECHO) "Building $@"
+	$(ECHO) "  LD		$@"
 	$(Q)$(MKDIR) -p $(BUILD_DIR)
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_LOADER) $^ -o $@
 
 $(OPENCM3_PATH):
-	$(ECHO) "Libopencm3 not found, cloning it"
-	$(GIT) clone https://github.com/libopencm3/libopencm3.git
+	$(ECHO) "Libopencm3 not found, cloning it..."
+	$(Q)$(GIT) clone https://github.com/libopencm3/libopencm3.git 2>1
 
 $(OPENCM3_LIB): $(OPENCM3_PATH)
 	$(ECHO) "Building libopencm3"
-	$(MAKE) -C $(OPENCM3_PATH)
+	$(Q)$(MAKE) -s -C $(OPENCM3_PATH)
 
 .PHONY: clean
 clean:

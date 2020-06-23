@@ -39,6 +39,7 @@ defaults:
 plugins:
   - jekyll-paginate
   - jekyll-seo-tag
+  - jekyll-diagrams
 
 tag_page: '/tags/'
 category_page: '/categories/'
