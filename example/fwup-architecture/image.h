@@ -21,11 +21,13 @@ typedef struct __attribute__((packed)) {
     uint16_t image_magic;
     uint16_t image_hdr_version;
     uint32_t crc;
+    uint32_t data_size;
     uint8_t image_type;
     uint8_t version_major;
     uint8_t version_minor;
     uint8_t version_patch;
     uint32_t vector_addr;
+    uint32_t reserved[3];
 } image_hdr_t;
 
 const image_hdr_t *image_get_header(image_slot_t slot);

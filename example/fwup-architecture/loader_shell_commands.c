@@ -28,20 +28,20 @@ int cli_command_do_dfu(int argc, char *argv[]) {
     if (dfu_write_data(IMAGE_SLOT_2,
                        data_ptr,
                        build_fwup_example_app_bin_len)) {
-        shell_put_line("Failed");
+        shell_put_line("Image Write Failed");
         return -1;
     }
 
     shell_put_line("Validating image");
     // Check & commit image
     if (dfu_validate_image(IMAGE_SLOT_2, hdr)) {
-        shell_put_line("Failed");
+        shell_put_line("Validation Failed");
         return -1;
     };
 
     shell_put_line("Committing image");
     if (dfu_commit_image(IMAGE_SLOT_2, hdr)) {
-        shell_put_line("Failed");
+        shell_put_line("Image Commit Failed");
         return -1;
     };
 

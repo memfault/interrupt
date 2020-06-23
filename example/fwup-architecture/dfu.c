@@ -1,8 +1,10 @@
 #include "dfu.h"
+#include "crc32.h"
 #include "memory_map.h"
 #include "shared_memory.h"
 
 #include <libopencm3/stm32/f4/flash.h>
+#include <stdio.h>
 
 int dfu_invalidate_image(image_slot_t slot) {
     // We just write 0s over the image header
@@ -16,7 +18,17 @@ int dfu_invalidate_image(image_slot_t slot) {
 }
 
 int dfu_validate_image(image_slot_t slot, image_hdr_t *hdr) {
-    return 0;
+    void *addr = (slot == IMAGE_SLOT_1 ? &__slot1rom_start__ : &__slot2rom_start__);
+    addr += sizeof(image_hdr_t);
+    uint32_t len = hdr->data_size;
+    uint32_t a = crc32(addr, len);
+    uint32_t b = hdr->crc;
+    if (a == b) {
+        return 0;
+    } else {
+        printf("CRC Mismatch: %lx vs %lx\n", a, b);
+        return -1;
+    }
 }
 
 int dfu_commit_image(image_slot_t slot, image_hdr_t *hdr) {

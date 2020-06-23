@@ -15,12 +15,14 @@ ECHO=@echo
 CAT=cat
 CRC=crc32
 DD=dd
+STAT=stat
 
 SRCS_BOOT = boot.c
 SRCS_APP = app.c \
 		   shell/src/shell.c \
 		   app_shell_commands.c
 SRCS_LOADER = loader.c \
+			  crc32.c \
 			  dfu.c \
 			  shell/src/shell.c \
 			  loader_shell_commands.c \
@@ -88,15 +90,21 @@ $(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.hdr $(BUILD_DIR)/$(PROJ
 	$(ECHO) "  CAT		$@"
 	$(Q)$(CAT) $^ > $@
 
-$(BUILD_DIR)/$(PROJECT)-%.hdr: $(BUILD_DIR)/$(PROJECT)-%.elf $(BUILD_DIR)/$(PROJECT)-%.crc
+$(BUILD_DIR)/$(PROJECT)-%.hdr: $(BUILD_DIR)/$(PROJECT)-%.elf $(BUILD_DIR)/$(PROJECT)-%.crc $(BUILD_DIR)/$(PROJECT)-%.size 
 	$(ECHO) "  OBJCOPY	$@"
 	$(Q)$(OCPY) $(word 1, $^) --dump-section .image_hdr=$@
 	$(ECHO) "  DD		$@"
 	$(Q)$(DD) if=$(word 2, $^) of=$@ obs=1 seek=4 conv=notrunc 2>1
+	$(ECHO) "  DD		$@"
+	$(Q)$(DD) if=$(word 3, $^) of=$@ obs=1 seek=8 conv=notrunc 2>1
+
+$(BUILD_DIR)/$(PROJECT)-%.size: $(BUILD_DIR)/$(PROJECT)-%.data
+	$(ECHO) "  STAT		$@"
+	$(Q)$(STAT) -f%z $^ | xargs printf '%08x\n' | $(XXD) -r -p | $(XXD) -p -c1 | tac | $(XXD) -p -r > $@
 
 $(BUILD_DIR)/$(PROJECT)-%.crc: $(BUILD_DIR)/$(PROJECT)-%.data
 	$(ECHO) "  CRC		$@"
-	$(Q)$(CRC) $^ | $(XXD) -r -p > $@
+	$(Q)$(CRC) $^ | $(XXD) -r -p | $(XXD) -p -c1 | tac | $(XXD) -p -r > $@
 
 $(BUILD_DIR)/$(PROJECT)-%.data: $(BUILD_DIR)/$(PROJECT)-%.elf
 	$(ECHO) "  OBJCOPY	$@"
