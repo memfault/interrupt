@@ -91,31 +91,16 @@ $ make
 After which you can call `./start.sh` to start Renode. You will need to type the
 `start` command in the Renode window to get the emulation going.
 
-## DFU: High Level Architecture
+![](/img/fwup-architecture/renode-running.png)
+
+## High Level Architecture
 
 Over the years, I've come up with a set of basic requirements most DFU systems
-should fulfill. 
+should fulfill. Let's walk through  these one by one and iteratively design our
+system.
 
-1. *DFU functionality should be isolated from code churn*. While we may want to
-   update our firmware application regularly, those updates should not impact
-our DFU code. Even a change as innocuous as changing the address of a global
-variable used by DFU could trigger som subtle bugs.
-2. *DFU code should itself be update-able*. Encryption keys may need
-   to be rotated, flash layouts may need to be updated, and of course a bug in
-the update logic itself may need to be fixed.
-3. *A failed update should not brick the device*. Whether there is a bug in our
-   DFU process, or a power loss event while we are writing firmware, the device
-should be able to recover. It may operate in a degraded mode for a bit, but it
-should at least be able to update itself back to a good state.
-4. *As much code space as possible should be reserved for the application*.
-   Firmware projects regularly run out of code space, so we should shy away from
-architecture decisions that dedicate too much of it to the DFU process itself.
-
-These requirements are not exhaustive, and specific applications will come with
-their own requirements. Nevertheless, they are a good place to start.
-
-Let's take these one by one and iteratively design our system. We start with a
-simple fimrware 
+We start with the simplest possible description of what we want to achieve with
+DFU: an application that updates itself.
 
 <style>
 .diag1 {
@@ -132,7 +117,27 @@ blockdiag {
 }
 {% endblockdiag %}{:.diag1}
 
-### Separatin DFU from Application
+This is not a practical design. For one, self modifying code is easy
+to mess up. Let's see how we might modify this architecture to get to something
+we're happy with.
+
+### DFU should be separate from the application
+
+The only time I ever broke DFU on a device, I did it without changing a line of
+code relating to DFU. Unbeknownst to me, our DFU processes depended on an
+uninitialized variable which up until then had always ended up being `0`.
+Inevitably a new version reshuffled the content of the stack, and all of a
+sudden our uninitialized variable held a "1". This prevented DFU from taking
+place.[^chris-dfu-debug]
+
+The moral to this story: keep your DFU process and your application code
+separate. Firmware update code is critical and should not be changed unless
+absolutely necessary. Separating application code from firmware update code
+allows us to update our application code without risking problems with DFU.
+
+How do we modify our architecture to meet this requirement? We simply split the
+firmware into a "Loader" and an "Application". The loader verifies the
+application, runs it, and can update it.
 
 <style>
 .diag2 {
@@ -141,7 +146,7 @@ blockdiag {
     margin-right: auto;
 }
 </style>
-{% blockdiag size:120x40 %}
+{% blockdiag %}
 blockdiag {
     span_width = 100;
     // Set labels to nodes.
@@ -151,7 +156,20 @@ blockdiag {
 }
 {% endblockdiag %}{:.diag2}
 
-### Updating DFU Code
+### DFU code should be updatable
+
+While we want to update our DFU code as little as possible, updating it should
+still be *possible*. Invitably we will find bug in our firmware update code
+which we must fix. We may want to change our memory map to allocate more code
+space to our app, or to rotate a security key baked into our Loader.
+
+But where should the code lives that updates our Loader? It cannot be in the
+application, or else we would violate the previous principle. It cannot be in
+the Loader itself either. That leaves one option: a third module tasks with
+updating the loader. We'll call it the "Updater".
+
+The Updater is loaded by the Loader, perhaps when a specific input is received.
+All it knows how to do is update the Loader.
 
 <style>
 .diag3 {
@@ -160,7 +178,7 @@ blockdiag {
     margin-right: auto;
 }
 </style>
-{% blockdiag size:120x40 %}
+{% blockdiag %}
 blockdiag {
     span_width = 100;
     // Set labels to nodes.
@@ -169,14 +187,33 @@ blockdiag {
     A -> B [label = "Loads, Updates", fontsize=8];
 
     E [label = "Updater"];
-    A -> E [label = "Loads", fontsize=8];
+    A -> E [label = "Loads, Updates", fontsize=8];
     E -> A [label = "Updates", fontsize=8];
 }
 {% endblockdiag %}{:.diag3}
 
-### Saving code space
+### DFU should use minimal code space
 
-{% blockdiag size:120x40 %}
+Every firmware project I've ever worked on has run out of code space. At Pebble,
+we spent months porting our 3.0 firmware to the original watch; most of that
+time was spent slimming down the code so it could fit within the 512KB of Flash
+available on that device.
+
+With that in mind, we should make sure our Loader and Updater do not take more
+code space than absolutely necessary. Are there ways we can update our design to
+use less code space? Absolutely!
+
+The key insight here is that the Updater needs to run very rarely, and that it
+never needs to coexist with the application. We can therefore use the same
+"slot" in flash for both the Updater and the Application. The main tradeoff here
+is that our Loader update flow becomes more complicated:
+
+Go to Loader -> Update the Application with the Updater -> Load Updater ->
+Update Loader -> Reboot into Loader -> Replace the Updater with the Application
+
+We can tolerate this complexity because it should not be used often.
+
+{% blockdiag %}
 blockdiag {
     span_width = 100;
     // Set labels to nodes.
@@ -185,7 +222,7 @@ blockdiag {
     A -> B [label = "Loads, Updates", fontsize=8];
 
     E [label = "Updater"];
-    A -> E [label = "Loads", fontsize=8];
+    A -> E [label = "Loads, Updates", fontsize=8];
     E -> A [label = "Updates", fontsize=8];
 
     group {
@@ -201,7 +238,27 @@ blockdiag {
 }
 {% endblockdiag %}{:.diag3}
 
-### Fail-proofing DFU
+### DFU failures should not brick the device
+
+This one should be obvious. Whether there is a bug in our DFU process, or a power loss event while we are
+writing firmware, the device should be able to recover. It may operate in a
+degraded mode for a bit, but it should at least be able to update itself back to
+a good state.
+
+Our design already does a reasonable job of this: if we lose power in the middle
+of an Application update, we can reboot into our Loader and start our update
+again. There are however two failure modes we must deal with.
+
+First, in the event we lose power while updating the Loader, we could find
+ourselves with no valid image at the address the chip boots from (`0x0` by
+default for Cortex-M, but aliased to `0x80000000` on STM32). The solution is to
+add a small, immutable bootloader whose sole job is to sit at the start address
+and load our Loader.
+
+Second, what happens if we find ourselves without a functional Loader? We would
+want to fall back to the Updater. Here again, the small bootloader is the
+solution. In the event no valid Loader is found, it should try to load whatever
+is found in the "Application" slot.
 
 <style>
 .diag4 {
@@ -218,11 +275,12 @@ blockdiag {
     A [label = "App Loader"];
     B [label = "Application"];
     C -> A [label = "Loads", fontsize=8];
-    A -> B [label = "Loads, Updates", fontsize=8];
+    A -> B [label = "Ld, Updt", fontsize=8];
 
     E [label = "Updater"];
-    A -> E [label = "Loads", fontsize=8];
+    A -> E [label = "Ld, Updt", fontsize=8];
     E -> A [label = "Updates", fontsize=8];
+    C -> E [label = "Loads", style=dashed, fontsize=8];
 
     group {
         label = "Slot 0";
@@ -242,7 +300,15 @@ blockdiag {
 }
 {% endblockdiag %}{:.diag4}
 
+## Implementation Cookbook
 
+
+
+## References
+
+- [^chris-dfu-debug]: This is not the end to this story. My cofounder Chris
+    eventually found a set of inputs to provide to the device which would set
+the stack just so, and allow us to update out of that state. Phew!
 
 
 
