@@ -325,6 +325,18 @@ blockdiag {
 }
 {% endblockdiag %}{:.diag4}
 
+In summary, we end up with four programs:
+
+1. An immutable Bootloader whose sole job is to load the Loader, and fallback to
+   another image if the Loader is invalid.
+2. A Loader which can verify our Application image, load it, and update it.
+3. An Application which does not do any updates itself
+4. An Updater which temporarily replaces the Application and can update the
+   Loader.
+
+This is not the only valid firmware update architecture, but it avoids many of
+the pitfalls of DFU without consuming too much code space.
+
 ## Design Patterns & Recipes
 
 I have put together a full implementation of the Bootloader, the Loader, and the
@@ -333,7 +345,7 @@ Github
 repository](https://github.com/memfault/interrupt/tree/master/example/fwup-architecture).
 While discussing every line in details is outside of the scope of this
 conversation, I want to highlight a few patterns I have learned over the years.
-These include ways to package firmwar images, write them to flash, share data
+These include ways to package firmware images, write them to flash, share data
 between programs, and more!
 
 This posts builds upon many ideas previously written about on Interrupt. If you
@@ -890,7 +902,7 @@ straight to your mailbox_
 {:.no_toc}
 ## References
 
-- [^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so, and allow us to update out of that state. Phew!
-- [^pebble-3]: At the time, we wrote a blog post about it. You can still read it on the [Internet Archive](https://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/)
+[^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so, and allow us to update out of that state. Phew!
+[^pebble-3]: At the time, we wrote a blog post about it. You can still read it on the [Internet Archive](https://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/)
 
 
