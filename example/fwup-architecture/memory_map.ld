@@ -1,7 +1,7 @@
 MEMORY
 {
   sharedram (rwx): ORIGIN = 0x20000000, LENGTH = 256
-  ram (rwx)      : ORIGIN = 0x20000100, LENGTH = 128K - 256
+  ram (rwx)      : ORIGIN = 0x20000100, LENGTH = 128K - LENGTH(sharedram)
   bootrom (rx)   : ORIGIN = 0x08000000, LENGTH = 16K
   slot1rom (rx)  : ORIGIN = 0x08004000, LENGTH = 112K
   slot2rom (rx)  : ORIGIN = 0x08020000, LENGTH = 896K

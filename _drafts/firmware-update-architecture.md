@@ -1,5 +1,5 @@
 ---
-title: "Firmware Update Architecture"
+title: "Device Firmware Update for Dummies"
 description: "WIP"
 author: francois
 ---
@@ -165,7 +165,7 @@ space to our app, or to rotate a security key baked into our Loader.
 
 But where should the code lives that updates our Loader? It cannot be in the
 application, or else we would violate the previous principle. It cannot be in
-the Loader itself either. That leaves one option: a third module tasks with
+the Loader itself either. That leaves one option: a third program tasked with
 updating the loader. We'll call it the "Updater".
 
 The Updater is loaded by the Loader, perhaps when a specific input is received.
@@ -366,6 +366,18 @@ SECTIONS
     .image_hdr : {
         KEEP (*(.image_hdr))
     } > slot2rom
+
+    /* Vector table must be 128-bit aligned */
+    . = ALIGN(128);
+
+    .text : {
+        *(.vectors)    /* Vector table */
+        *(.text*)    /* Program code */
+        . = ALIGN(4);
+        *(.rodata*)    /* Read-only data */
+        . = ALIGN(4);
+    } >slot2rom
+
     ...
 };
 ```
@@ -445,6 +457,8 @@ for (image_slot_t slot = IMAGE_SLOT_1; slot < IMAGE_NUM_SLOTS; ++slot) {
     printf("Booting slot %d\n", slot);
     image_start(hdr);
 }
+
+// No image found, go into DFU mode
 ```
 
 Here our approach to locating images is simple: we use hardcoded "slots" where
@@ -518,6 +532,9 @@ void image_start(const image_hdr_t *hdr) {
      __builtin_unreachable();
 }
 ```
+
+If no image is found, the loader should go into DFU mode and waits for a new image to
+be transferred.
 
 > Note: The `VTOR` register is available on the Cortex-M0+,M3,M4,M7, but not on
 > the older M0. Unfortunately this makes building a bootloader much more
@@ -602,8 +619,45 @@ int dfu_invalidate_image(image_slot_t slot) {
 }
 ```
 
-
 ### Shared Memory
+
+It is often useful to exchange information between our different programs. The
+application may want to signal to the loader that it should go into DFU mode on
+the next reboot, and the loader may want to pass arguments to the application.
+
+On some platforms, scratch registers can be used as mailboxes between the
+different programs. This is the case for the STM32. For all others we must make
+do with RAM. "But François, isn't RAM volatile"? Not quite: as long as your MCU
+remains powered, the SRAM will hold its state. For short durations, you can
+treat is as non-volatile storage.
+
+The simplest way to carve out an area of RAM to be shared across our programs is
+to declare it in a shared linker script. We've covered linker scripts on
+Interrupt, so I won't detail the syntax again. This is what it looks like:
+
+```
+// memory_map.ld
+MEMORY
+{
+  sharedram (rwx): ORIGIN = 0x20000000, LENGTH = 256
+  ram (rwx)      : ORIGIN = 0x20000100, LENGTH = 128K - LENGTH(sharedram)
+}
+
+SECTIONS
+{
+    .shared_memory (NOLOAD) : {
+        KEEP(*(.shared_memory))
+    } >sharedram
+}
+```
+
+This shared linker script can then be included by the individual program's
+linker script with the `INCLUDE` directive.
+
+Now that we have a region of RAM defined, we can define a structure for it. You
+will want that structure to be packed to guard against alignment mismatches
+across your programs as you update compiler flags and versions. Here again we
+use the `section` attribut to assign our symbol to the `.shared_memory` section.
 
 ```c
 // shared_memory.c
@@ -616,21 +670,9 @@ typedef struct __attribute__((packed)) {
 shared_memory_t shared_memory __attribute__((section(".shared_memory")));
 ```
 
-```
-// memory_map.ld
-MEMORY
-{
-  sharedram (rwx): ORIGIN = 0x20000000, LENGTH = 256
-  ram (rwx)      : ORIGIN = 0x20000100, LENGTH = 128K - 256
-}
-
-SECTIONS
-{
-    .shared_memory (NOLOAD) : {
-        KEEP(*(.shared_memory))
-    } >sharedram
-}
-```
+In the event of power loss, RAM will lost its state. To detect those events we
+use a magic value here as well. On boot, we check the magic number and
+initialize the struct if it isn't what we'd expect.
 
 ```c
 void shared_memory_init(void) {
@@ -642,15 +684,22 @@ void shared_memory_init(void) {
 }
 ```
 
+A common use case for shared memory is to signal to the Loader that we should
+not load the Application on the next boot and instead go into DFU mode. We use a
+simple flag to signal this:
+
 ```c
 bool shared_memory_is_dfu_requested(void) {
-    return prv_get_flag(DFU_REQUESTED);
+    return (shared_memory.flags & DFU_REQUESTED) != 0;
 }
 
 void shared_memory_set_dfu_requested(bool yes) {
-    prv_set_flag(DFU_REQUESTED, yes);
+    shared_memory.flags |= DFU_REQUESTED;
 }
 ```
+
+Using the shell from Tyler's last post, I created a shell command in the
+Application to set that flag and reboot:
 
 ```c
 int cli_command_dfu_mode(int argc, char *argv[]) {
@@ -661,6 +710,9 @@ int cli_command_dfu_mode(int argc, char *argv[]) {
     return 0;
 }
 ```
+
+In the Loader, we systematically check the DFU flag before we start the
+Application.
 
 ```c
 // loader.c
@@ -673,6 +725,13 @@ shared_memory_set_dfu_requested(false);
 ```
 
 ### Boot Stability
+
+An especially terrible way to brick a device is to go into a boot loop. It goes
+like this: a new update has a deadly bug, and crashes shortly upon boot. Your
+device then enters a loop. It starts, goes into the loader, then the
+application, then crashes. Again, and again, and again.
+
+To 
 
 ## References
 
