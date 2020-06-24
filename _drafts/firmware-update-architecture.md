@@ -352,10 +352,11 @@ typedef struct __attribute__((packed)) {
 } image_hdr_t;
 ```
 
-The contents of that header will vary per application, but you must include (1)
-a way to indicate that the header is valid (here we used a constant in
-`image_magic`), (2) a version for the header, and (3) the address of the start
-of your vector table.
+The contents of that header will vary per application, but you must include:
+1. A way to indicate that the header is valid (here we used a constant in
+`image_magic`)
+2. A version for the header, and
+3. The address of the start of your vector table.
 
 Each of our images must fill in its own header. For example, here it is for my
 Application:
@@ -459,7 +460,10 @@ App STARTED - version 1.0.1 (e8e8d53) - CRC 0xeb4f7f52
 ### Loading Images
 
 Both the Bootloader and the Loader need to load firmware images and start them.
-This includes (1) locating them, (2) verifying them, and (3) starting them.
+This includes:
+1. Locating them
+2. Verifying them, and
+3. Starting them.
 
 The code may look something like this:
 
@@ -565,7 +569,11 @@ be transferred.
 Writing a new firmware image is the whole purpose of this exercise, so how do we
 do the deed? We won't cover *transferring* the image over to your firmware,
 that's varies greatly depending on your use, but once the transfer has occured
-we must (1) write the image, (2) verify it, and (3) mark it as valid.
+we must:
+
+1. Write the image
+2. Verify it, and
+3. Mark it as valid.
 
 At the high level, here's our flow:
 
