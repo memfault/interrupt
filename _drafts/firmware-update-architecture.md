@@ -486,8 +486,8 @@ for (image_slot_t slot = IMAGE_SLOT_1; slot < IMAGE_NUM_SLOTS; ++slot) {
 ```
 
 Here our approach to locating images is simple: we use hardcoded "slots" where
-we expect images. Slot 1 is at 0x8004000, and slot 2 is at 0x8020000. We simply
-iterate through the slots looking for valid headers.
+we expect images. Slot 1 is at `0x8004000`, and slot 2 is at `0x8020000`. We
+simply iterate through the slots looking for valid headers.
 
 Remember that the first field of our image header is the "magic" value. In
 `image_get_header` we read the header and verify the magic value.
