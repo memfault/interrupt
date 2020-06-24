@@ -763,7 +763,7 @@ void shared_memory_set_dfu_requested(bool yes) {
 }
 ```
 
-Using the shell from [Tyler's last post]({% 2020-06-09-firmware-shell %}), I
+Using the shell from [Tyler's last post]({% post_url 2020-06-09-firmware-shell %}), I
 created a shell command in the Application to set that flag and reboot:
 
 ```c
