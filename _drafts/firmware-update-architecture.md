@@ -525,35 +525,12 @@ void image_start(const image_hdr_t *hdr) {
 
 ### Writing & Committing Images
 
+Writing a new firmware image is the whole purpose of this exercise, so how do we
+do the deed? We won't cover *transferring* the image over to your firmware,
+that's varies greatly depending on your use, but once the transfer has occured
+we must (1) write the image, (2) verify it, and (3) mark it as valid.
 
-```c
-int dfu_commit_image(image_slot_t slot, const image_hdr_t *hdr) {
-    uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ?
-                               &__slot1rom_start__ : &__slot2rom_start__);
-    uint8_t *data_ptr = (uint8_t *)hdr;
-    for (int i = 0; i < sizeof(image_hdr_t); ++i) {
-        flash_program_byte(addr + i, data_ptr[i]);
-    }
-
-    // new app -- reset the boot counter
-    shared_memory_clear_boot_counter();
-
-    return 0;
-}
-```
-
-```c
-int dfu_invalidate_image(image_slot_t slot) {
-    // We just write 0s over the image header
-    uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ?
-                               &__slot1rom_start__ : &__slot2rom_start__);
-    for (int i = 0; i < sizeof(image_hdr_t); ++i) {
-        flash_program_byte(addr + i, 0);
-    }
-
-    return 0;
-}
-```
+At the high level, here's our flow:
 
 ```c
 uint8_t *data_ptr = FIRMWARE_DATA;
@@ -575,6 +552,54 @@ if (dfu_commit_image(IMAGE_SLOT_2, hdr)) {
 };
 
 scb_reset_system();
+```
+
+Writing the data is relatively straightforward. For flash memory You'll
+typically erase the releavant sector, then use the `page_program` function
+provided with your flash driver to write new data. Make sure however that you do
+not write the image header during this process. The header will only be written
+during the "commit" phase.
+
+We've covered verifying in image in the previous section. Here again we may
+check the CRC, or verify a cryptographic signature.
+
+If at any point the update is interrupted, the header will be missing and our
+Loader will refuse to load image. Once everything checks out, we *commit* the
+image by writing the header. This marks the image as valid and allows it to be
+loaded.
+
+Here is my implementation of the `commit` step, it's nothing too complicated:
+
+```c
+int dfu_commit_image(image_slot_t slot, const image_hdr_t *hdr) {
+    uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ?
+                               &__slot1rom_start__ : &__slot2rom_start__);
+
+    uint8_t *data_ptr = (uint8_t *)hdr;
+    for (int i = 0; i < sizeof(image_hdr_t); ++i) {
+        flash_program_byte(addr + i, data_ptr[i]);
+    }
+
+    return 0;
+}
+```
+
+Just as writing the header is marks an image as valid, we can invalidate an
+image simply by zeroing it out. This is much faster than erasing the whole
+flash, and won't leave us in a half-working state (e.g. having erased only half
+of the image).
+
+```c
+int dfu_invalidate_image(image_slot_t slot) {
+    // We just write 0s over the image header
+    uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ?
+                               &__slot1rom_start__ : &__slot2rom_start__);
+    for (int i = 0; i < sizeof(image_hdr_t); ++i) {
+        flash_program_byte(addr + i, 0);
+    }
+
+    return 0;
+}
 ```
 
 
