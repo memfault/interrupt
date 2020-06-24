@@ -1,5 +1,5 @@
 ---
-title: "Device Firmware Update for Dummies"
+title: "Device Firmware Update Cookbook"
 description: "WIP"
 author: francois
 ---
@@ -301,6 +301,26 @@ blockdiag {
 {% endblockdiag %}{:.diag4}
 
 ## Implementation Cookbook
+
+I have put together a full implementation of the Bootloader, the Loader, and the
+Application in the [Interrupt
+Github
+repository](https://github.com/memfault/interrupt/tree/master/example/fwup-architecture).
+While discussing every line in details is outside of the scope of this
+conversation, I want to highlight a few patterns I have learned over the years.
+These include ways to package firmwar images, write them to flash, share data
+between programs, and more!
+
+This posts builds upon many ideas previously written about on Interrupt. If you
+haven't read them already, I recommend the following:
+* [How to Write a Bootloader from Scratch]({% post_url
+  2019-08-13-how-to-write-a-bootloader-from-scratch %})
+* [How to Write Linker Scripts for Firmware]({% post_url
+  2019-06-25-how-to-write-linker-scripts-for-firmware %})
+* [GNU Build IDs for Firmwre]({% post_url 2019-05-29-gnu-build-id-for-firmware
+  %})
+* [Building a Tiny CLI Shell for Tiny Firmware]({% post_url
+  2020-06-09-firmware-shell %})
 
 ### Image Metadata
 
