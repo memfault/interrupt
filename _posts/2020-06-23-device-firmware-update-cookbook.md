@@ -13,7 +13,7 @@ I have worked on multiple firmware update systems over the year, and every time
 I have learned something new. How do I package my images? How do I make sure I
 don't brick the device? How do I share information between my bootloader and my
 application? Little by little all firmware engineers accumulate answers to
-those questions, and develop favored design patterns.
+those questions and develop favored design patterns.
 
 <!-- excerpt start -->
 In this post, I share the device firmware update architecture I would implement
@@ -22,7 +22,7 @@ particularly useful. The example comes with a fully functional example of a
 multi-stage bootloader with DFU functionality.
 <!-- excerpt end -->
 
-I learned some of these lessons in this post the hard way, and hope I can spare
+I learned some of these lessons in this post the hard way, and I hope I can spare
 you and your colleagues a few sleepless nights spent debugging firmware update
 problems in the wild!
 
@@ -52,7 +52,7 @@ are not familiar with Renode, I recommend reading [my previous blog post]() on
 the topic.
 
 Because we use true firmware images `.bin`'s rather than `elf` files in this post, I had to make two
-change to the renode configuration:
+change to the Renode configuration:
 
 1. I used `sysbus LoadBinary $bin 0x8000000` rather than `LoadELF` to load the
    firmware.
@@ -66,7 +66,7 @@ which was not fully implemented in the emulator. As of this writing, this change
 is still in review and not yet merged into the emulator. You can find the pull
 request [on Github](https://github.com/renode/renode-infrastructure/pull/15/files).
 
-Thankfully, building our own version of renode is relatively
+Thankfully, building our own version of Renode is relatively
 straightforward using [their
 instructions](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html).
 
@@ -86,7 +86,7 @@ You will have to update this script to point at your own `Renode.exe`.
 ### Toolchain
 
 I used the following tools to build my firmware:
-* GNU Make 4.2.1 as build system
+* GNU Make 4.2.1 as the build system
 * `arm-none-eabi-gcc` version 9.2.1 20191025 (release) as compiler
 
 Rather than the STM32Cube HAL, I used an open source MCU HAL called `libopencm3`
@@ -94,7 +94,7 @@ with excellent support for the STM32. I find it easier to use, and like that it
 is open source and on Github. The included `Makefile` will clone `libopencm3`
 during your first build.
 
-### Building & running the example
+### Building & Running the Example
 
 The example can be built with Make. From the `examples/fwup-architecture`
 directory:
@@ -116,7 +116,7 @@ After which you can call `./start.sh` to start Renode. You will need to type the
 
 ![](/img/fwup-architecture/renode-running.png)
 
-## High Level Architecture
+## High-Level Architecture
 
 Over the years, I've come up with a set of basic requirements most DFU systems
 should fulfill. Let's walk through these one by one and iteratively design our
@@ -226,8 +226,8 @@ With that in mind, we should make sure our Loader and Updater do not take more
 code space than absolutely necessary. Are there ways we can update our design to
 use less code space? Absolutely!
 
-The key insight here is that the Updater needs to run very rarely, and that it
-never needs to coexist with the application. We can therefore use the same
+The key insight here is that the Updater needs to run very rarely and that it
+never needs to coexist with the application. We can, therefore, use the same
 "slot" in flash for both the Updater and the Application. The main tradeoff here
 is that our Loader update flow becomes more complicated as we need to do a DFU
 to get the Updater, then another to update the loader, then a third to load the
@@ -329,9 +329,9 @@ In summary, we end up with four programs:
 
 1. An immutable Bootloader whose sole job is to load the Loader, and fallback to
    another image if the Loader is invalid.
-2. A Loader which can verify our Application image, load it, and update it.
+2. A Loader that can verify our Application image, load it, and update it.
 3. An Application which does not do any updates itself
-4. An Updater which temporarily replaces the Application and can update the
+4. An Updater that temporarily replaces the Application and can update the
    Loader.
 
 This is not the only valid firmware update architecture, but it avoids many of
@@ -343,18 +343,18 @@ I have put together a full implementation of the Bootloader, the Loader, and the
 Application in the [Interrupt
 Github
 repository](https://github.com/memfault/interrupt/tree/master/example/fwup-architecture).
-While discussing every line in details is outside of the scope of this
+While discussing every line in detail is outside of the scope of this
 conversation, I want to highlight a few patterns I have learned over the years.
 These include ways to package firmware images, write them to flash, share data
 between programs, and more!
 
-This posts builds upon many ideas previously written about on Interrupt. If you
+This post builds upon many ideas previously written about on Interrupt. If you
 haven't read them already, I recommend the following:
 * [How to Write a Bootloader from Scratch]({% post_url
   2019-08-13-how-to-write-a-bootloader-from-scratch %})
 * [How to Write Linker Scripts for Firmware]({% post_url
   2019-06-25-how-to-write-linker-scripts-for-firmware %})
-* [GNU Build IDs for Firmwre]({% post_url 2019-05-29-gnu-build-id-for-firmware
+* [GNU Build IDs for Firmware]({% post_url 2019-05-29-gnu-build-id-for-firmware
   %})
 * [Building a Tiny CLI Shell for Tiny Firmware]({% post_url
   2020-06-09-firmware-shell %})
@@ -398,7 +398,7 @@ The contents of that header will vary per application, but you must include:
 3. The address of the start of your vector table.
 
 > Note: A "magic" value is typically a constant which is used to identify a file
-> format or data structure. In this case every image should have the 0xcafe
+> format or data structure. In this case, every image should have the 0xcafe
 > bytes in its first two bytes. If the bytes are not there, the image is not
 > valid!
 
@@ -607,14 +607,14 @@ If no image is found, the loader should go into DFU mode and waits for a new ima
 be transferred.
 
 > Note: The `VTOR` register is available on the Cortex-M0+,M3,M4,M7, but not on
-> the older M0. Unfortunately this makes building a bootloader much more
+> the older M0. Unfortunately, this makes building a bootloader much more
 > complicated on that platform.
 
 ### Writing & Committing Images
 
 Writing a new firmware image is the whole purpose of this exercise, so how do we
 do the deed? We won't cover *transferring* the image over to your firmware,
-that varies greatly depending on your use, but once the transfer has occured
+that varies greatly depending on your use, but once the transfer has occurred
 we must:
 
 1. Write the image
@@ -648,17 +648,17 @@ int perform_update(void *fw_payload, size_t fw_payload_len) {
 }
 ```
 
-Writing the data is relatively straightforward. For flash memory you'll
-typically erase the releavant sector, then use the `page_program` function
+Writing the data is relatively straightforward. For flash memory, you'll
+typically erase the relevant sector, then use the `page_program` function
 provided with your flash driver to write new data. Make sure however that you do
 not write the image header during this process. The header will only be written
 during the "commit" phase.
 
-We've covered how to verify an image in the previous section. Here again we may
+We've covered how to verify an image in the previous section. Here again, we may
 check the CRC, or verify a cryptographic signature.
 
 If at any point the update is interrupted, the header will be missing and our
-Loader will refuse to load image. Once everything checks out, we *commit* the
+Loader will refuse to load the image. Once everything checks out, we *commit* the
 image by writing the header. This marks the image as valid and allows it to be
 loaded.
 
@@ -703,7 +703,7 @@ application may want to signal to the loader that it should go into DFU mode on
 the next reboot, and the loader may want to pass arguments to the application.
 
 On some platforms, scratch registers can be used as mailboxes between the
-different programs. This is the case for the STM32. For all others we must make
+different programs. This is the case for the STM32. For all others, we must make
 do with RAM. "But François, isn't RAM volatile"? Not quite: as long as your MCU
 remains powered, the SRAM will hold its state. For short durations, you can
 treat it as non-volatile storage.
@@ -734,8 +734,8 @@ linker script with the `INCLUDE` directive.
 
 Now that we have a region of RAM defined, we can define a structure for it. You
 will want that structure to be packed to guard against alignment mismatches
-across your programs as you update compiler flags and versions. Here again we
-use the `section` attribut to assign our symbol to the `.shared_memory` section.
+across your programs as you update compiler flags and versions. Here again, we
+use the `section` attribute to assign our symbol to the `.shared_memory` section.
 
 ```c
 // shared_memory.c
@@ -775,7 +775,7 @@ void shared_memory_set_dfu_requested(bool yes) {
 }
 ```
 
-Using the shell from [Tyler's last post]({% post_url 2020-06-09-firmware-shell %}), I
+Using the shell from [Tyler's last post on CLI's]({% post_url 2020-06-09-firmware-shell %}), I
 created a shell command in the Application to set that flag and reboot:
 
 ```c
@@ -893,7 +893,7 @@ device. We will cover this in a post next month.
 
 As always, we'd love to hear from you. Do you have design rules of thumb for
 firmware update that we did not cover? Let us know! And if you see anything
-yuo'd like to change, don't hesitate to submit a pull request or open an issue
+you'd like to change, don't hesitate to submit a pull request or open an issue
 on [Github](https://github.com/memfault/interrupt)
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
@@ -902,7 +902,7 @@ straight to your mailbox_
 {:.no_toc}
 ## References
 
-[^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so, and allow us to update out of that state. Phew!
+[^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so and allow us to update out of that state. Phew!
 [^pebble-3]: At the time, we wrote a blog post about it. You can still read it on the [Internet Archive](https://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/)
 
 
