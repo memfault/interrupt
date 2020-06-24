@@ -95,9 +95,10 @@ $(BUILD_DIR)/$(PROJECT)-boot.bin: $(BUILD_DIR)/$(PROJECT)-boot.elf
 	$(Q)$(OCPY) $^ $@ -O binary
 
 $(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.elf
-	$(ECHO) "Creating $@"
+	$(ECHO) "  OBJCOPY	$@"
 	$(Q)$(OCPY) $^ $@ -O binary
-	$(Q)$(PYTHON) patch_image_header.py $@
+	$(ECHO) "  PATCH_IMAGE	$@"
+	$(Q)$(PYTHON) patch_image_header.py $@ > /dev/null
 
 # https://interrupt.memfault.com/blog/gnu-binutils#converting-binaries-into-an-object-o-file
 $(BUILD_DIR)/app_bin.o: $(BUILD_DIR)/$(PROJECT)-app.bin
@@ -128,4 +129,5 @@ $(OPENCM3_LIB): $(OPENCM3_PATH)
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR)
+	$(ECHO) "  CLEAN		rm -rf $(BUILD_DIR)"
+	$(Q)rm -rf $(BUILD_DIR)

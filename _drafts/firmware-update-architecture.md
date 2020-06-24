@@ -825,6 +825,9 @@ int cli_command_mark_stable(int argc, char *argv[]) {
     return 0;
 }
 ```
+
+## Closing
+
 {:.no_toc}
 ## References
 

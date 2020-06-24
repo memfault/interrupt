@@ -34,7 +34,7 @@ def patch_binary_payload(bin_filename):
         )
 
     data_size = len(data)
-    crc32 = binascii.crc32(data)
+    crc32 = binascii.crc32(data) & 0xffffffff
 
     image_hdr_crc_data_size = struct.pack("<LL", crc32, data_size)
     print(
