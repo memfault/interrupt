@@ -30,6 +30,7 @@ SRCS_LOADER = loader.c \
 			  loader_shell_commands.c \
 			  $(BUILD_DIR)/app_bin.c
 SRCS_SHARED = syscalls.c \
+			  crc32.c \
 			  shared_memory.c \
 			  clock.c \
 			  image.c \

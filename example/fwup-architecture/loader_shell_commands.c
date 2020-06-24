@@ -34,7 +34,7 @@ int cli_command_do_dfu(int argc, char *argv[]) {
 
     shell_put_line("Validating image");
     // Check & commit image
-    if (dfu_validate_image(IMAGE_SLOT_2, hdr)) {
+    if (image_validate(IMAGE_SLOT_2, hdr)) {
         shell_put_line("Validation Failed");
         return -1;
     };

@@ -1,5 +1,4 @@
 #include "dfu.h"
-#include "crc32.h"
 #include "memory_map.h"
 #include "shared_memory.h"
 
@@ -17,21 +16,7 @@ int dfu_invalidate_image(image_slot_t slot) {
     return 0;
 }
 
-int dfu_validate_image(image_slot_t slot, image_hdr_t *hdr) {
-    void *addr = (slot == IMAGE_SLOT_1 ? &__slot1rom_start__ : &__slot2rom_start__);
-    addr += sizeof(image_hdr_t);
-    uint32_t len = hdr->data_size;
-    uint32_t a = crc32(addr, len);
-    uint32_t b = hdr->crc;
-    if (a == b) {
-        return 0;
-    } else {
-        printf("CRC Mismatch: %lx vs %lx\n", a, b);
-        return -1;
-    }
-}
-
-int dfu_commit_image(image_slot_t slot, image_hdr_t *hdr) {
+int dfu_commit_image(image_slot_t slot, const image_hdr_t *hdr) {
     uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ?
                                &__slot1rom_start__ : &__slot2rom_start__);
     uint8_t *data_ptr = (uint8_t *)hdr;

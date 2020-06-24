@@ -38,6 +38,6 @@ typedef struct __attribute__((packed)) {
 
 const image_hdr_t *image_get_header(image_slot_t slot);
 
-const vector_table_t *image_get_vectors(image_slot_t slot);
+int image_validate(image_slot_t slot, const image_hdr_t *hdr);
 
-void image_boot_vectors(const vector_table_t *vectors) __attribute__((noreturn));
+void image_start(const image_hdr_t *hdr) __attribute__((noreturn));

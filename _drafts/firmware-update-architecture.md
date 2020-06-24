@@ -355,6 +355,21 @@ image_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
 };
 ```
 
+You will notice the `section` attribute, which is used to place the variable in
+a specific section of our firmware. This is paired with some code in our linker
+script which declares that sections and puts it at the very start of flash:
+
+```
+// app.ld
+SECTIONS
+{
+    .image_hdr : {
+        KEEP (*(.image_hdr))
+    } > slot2rom
+    ...
+};
+```
+
 Some data can simply be hardcoded into the header. In my case, this includes the
 `image_magic`, the semantic version, the image type, the header version, and the
 vector table address. Other bits must be read from the environment and injected
@@ -394,32 +409,245 @@ That's it! We've added the CRC to our `bin` file, the main complexity really is
 the Endian swap. We can now display the information in our firmware:
 
 ```c
-    printf("App STARTED - version %d.%d.%d (%s) - CRC 0x%lx\n",
-           image_hdr.version_major,
-           image_hdr.version_minor,
-           image_hdr.version_patch,
-           image_hdr.git_sha,
-           image_hdr.crc);
+// app.c
+printf("App STARTED - version %d.%d.%d (%s) - CRC 0x%lx\n",
+       image_hdr.version_major,
+       image_hdr.version_minor,
+       image_hdr.version_patch,
+       image_hdr.git_sha,
+       image_hdr.crc);
 ```
 
 And as expected we get:
 
 ```
-Bootloader started
-Booting slot 1 at 0x8005315
-Shared memory uinitialized, setting magic
-Loader STARTED - version 1.0.0 (e8e8d53)
-Booting slot 2 at 0x8020db1
 App STARTED - version 1.0.1 (e8e8d53) - CRC 0xeb4f7f52
 ```
 
+### Loading Images
+
+Both the Bootloader and the Loader need to load firmware images and start them.
+This includes (1) locating them, (2) verifying them, and (3) starting them.
+
+The code may look something like this:
+
+```c
+// boot.c
+for (image_slot_t slot = IMAGE_SLOT_1; slot < IMAGE_NUM_SLOTS; ++slot) {
+    const image_hdr_t *hdr = image_get_header(slot);
+    if (hdr == NULL) {
+        continue;
+    }
+    if (image_validate(slot, hdr) != 0) {
+        continue;
+    }
+
+    printf("Booting slot %d\n", slot);
+    image_start(hdr);
+}
+```
+
+Here our approach to locating images is simple: we use hardcoded "slots" where
+we expect images. Slot 1 is at 0x8004000, and slot 2 is at 0x8020000. We simply
+iterate through the slots looking for valid headers.
+
+Remember that the first field of our image header is the "magic" value. In
+`image_get_header` we read the header and verify the magic value.
+
+```c
+// image.c
+const image_hdr_t *image_get_header(image_slot_t slot) {
+    const image_hdr_t *hdr = NULL;
+
+    switch (slot) {
+        case IMAGE_SLOT_1:
+            hdr = (const image_hdr_t *)&__slot1rom_start__;
+            break;
+        case IMAGE_SLOT_2:
+            hdr = (const image_hdr_t *)&__slot2rom_start__;
+            break;
+        default:
+            break;
+    }
+
+    if (hdr && hdr->image_magic == IMAGE_MAGIC) {
+        return hdr;
+    } else {
+        return NULL;
+    }
+}
+```
+
+To validate the image, we compute its CRC and compare it with the value written
+in the header. This will allow you to catch data corruption or bit errors, and
+save you some trouble down the line. Note that verifying CRC on boot is not
+appropriate for every applicaton, as it can slow down boot significantly.
+
+```c
+int image_validate(image_slot_t slot, const image_hdr_t *hdr) {
+    void *addr = (slot == IMAGE_SLOT_1 ? &__slot1rom_start__ : &__slot2rom_start__);
+    addr += sizeof(image_hdr_t);
+    uint32_t len = hdr->data_size;
+    uint32_t a = crc32(addr, len);
+    uint32_t b = hdr->crc;
+    if (a == b) {
+        return 0;
+    } else {
+        printf("CRC Mismatch: %lx vs %lx\n", a, b);
+        return -1;
+    }
+}
+```
+
+Last but not least we start the image by extracting the vector table address
+from the header, writing it to the `VTOR` register (which tells the chip that
+the vector table address has moved), and branching to it with a bit of assembly.
+
+```c
+static void prv_start_image(void *pc, void *sp) {
+    __asm("           \n\
+          msr msp, r1 \n\
+          bx r0       \n\
+    ");
+}
+
+void image_start(const image_hdr_t *hdr) {
+    const vector_table_t *vectors = (const vector_table_t *)hdr->vector_addr;
+    SCB_VTOR = (uint32_t)vectors;
+    prv_start_image(vectors->reset, vectors->initial_sp_value);
+     __builtin_unreachable();
+}
+```
+
+> Note: The `VTOR` register is available on the Cortex-M0+,M3,M4,M7, but not on
+> the older M0. Unfortunately this makes building a bootloader much more
+> complicated on that platform.
+
 ### Writing & Committing Images
+
+
+```c
+int dfu_commit_image(image_slot_t slot, const image_hdr_t *hdr) {
+    uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ?
+                               &__slot1rom_start__ : &__slot2rom_start__);
+    uint8_t *data_ptr = (uint8_t *)hdr;
+    for (int i = 0; i < sizeof(image_hdr_t); ++i) {
+        flash_program_byte(addr + i, data_ptr[i]);
+    }
+
+    // new app -- reset the boot counter
+    shared_memory_clear_boot_counter();
+
+    return 0;
+}
+```
+
+```c
+int dfu_invalidate_image(image_slot_t slot) {
+    // We just write 0s over the image header
+    uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ?
+                               &__slot1rom_start__ : &__slot2rom_start__);
+    for (int i = 0; i < sizeof(image_hdr_t); ++i) {
+        flash_program_byte(addr + i, 0);
+    }
+
+    return 0;
+}
+```
+
+```c
+uint8_t *data_ptr = FIRMWARE_DATA;
+image_hdr_t *hdr = (image_hdr_t *)data_ptr;
+data_ptr += sizeof(image_hdr_t);
+
+if (dfu_write_data(IMAGE_SLOT_2,
+                   data_ptr,
+                   build_fwup_example_app_bin_len)) {
+    return -1;
+}
+
+if (image_validate(IMAGE_SLOT_2, hdr)) {
+    return -1;
+};
+
+if (dfu_commit_image(IMAGE_SLOT_2, hdr)) {
+    return -1;
+};
+
+scb_reset_system();
+```
+
 
 ### Shared Memory
 
-### Boot Stability
+```c
+// shared_memory.c
+typedef struct __attribute__((packed)) {
+    uint32_t magic;
+    uint32_t flags;
+    uint8_t boot_counter;
+} shared_memory_t;
 
-### Memory Map
+shared_memory_t shared_memory __attribute__((section(".shared_memory")));
+```
+
+```
+// memory_map.ld
+MEMORY
+{
+  sharedram (rwx): ORIGIN = 0x20000000, LENGTH = 256
+  ram (rwx)      : ORIGIN = 0x20000100, LENGTH = 128K - 256
+}
+
+SECTIONS
+{
+    .shared_memory (NOLOAD) : {
+        KEEP(*(.shared_memory))
+    } >sharedram
+}
+```
+
+```c
+void shared_memory_init(void) {
+    if (shared_memory.magic != MAGIC) {
+        printf("Shared memory uinitialized, setting magic\n");
+        memset(&shared_memory, 0, sizeof(shared_memory_t));
+        shared_memory.magic = MAGIC;
+    }
+}
+```
+
+```c
+bool shared_memory_is_dfu_requested(void) {
+    return prv_get_flag(DFU_REQUESTED);
+}
+
+void shared_memory_set_dfu_requested(bool yes) {
+    prv_set_flag(DFU_REQUESTED, yes);
+}
+```
+
+```c
+int cli_command_dfu_mode(int argc, char *argv[]) {
+    shell_put_line("Rebooting into DFU mode");
+    shared_memory_set_dfu_requested(true);
+    scb_reset_system();
+    while (1) {}
+    return 0;
+}
+```
+
+```c
+// loader.c
+if (!shared_memory_is_dfu_requested()) {
+    // start app
+}
+
+printf("Entering DFU Mode\n");
+shared_memory_set_dfu_requested(false);
+```
+
+### Boot Stability
 
 ## References
 

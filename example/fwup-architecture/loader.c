@@ -41,17 +41,17 @@ int main(void) {
             break;
         }
 
-        const vector_table_t *vectors = image_get_vectors(IMAGE_SLOT_2);
-        if (vectors == NULL) {
+        const image_hdr_t *hdr = image_get_header(IMAGE_SLOT_2);
+        if (hdr == NULL) {
             printf("No image found in slot 2\n");
             break;
         }
 
         // Everything checks out, let's boot
         usart_teardown();
-        printf("Booting slot 2 at %p\n", vectors->reset);
+        printf("Booting slot 2\n");
         shared_memory_increment_boot_counter();
-        image_boot_vectors(vectors);
+        image_start(hdr);
     }
 
     printf("Entering DFU Mode\n");

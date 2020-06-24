@@ -17,11 +17,16 @@ int main(void) {
     usart_teardown();
 
     for (image_slot_t slot = IMAGE_SLOT_1; slot < IMAGE_NUM_SLOTS; ++slot) {
-        const vector_table_t *vectors = image_get_vectors(slot);
-        if (vectors != NULL) {
-            printf("Booting slot %d at %p\n", slot, vectors->reset);
-            image_boot_vectors(vectors);
+        const image_hdr_t *hdr = image_get_header(slot);
+        if (hdr == NULL) {
+            continue;
         }
+        if (image_validate(slot, hdr) != 0) {
+            continue;
+        }
+
+        printf("Booting slot %d\n", slot);
+        image_start(hdr);
     }
 
     printf("No valid image found.\n");
