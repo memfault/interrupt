@@ -891,8 +891,6 @@ straight to your mailbox_
 ## References
 
 - [^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so, and allow us to update out of that state. Phew!
-- [^pebble-3]: At the time, we wrote a blog post about it. You can still read it
-    on the [Internet
-Archive](https://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/)
+- [^pebble-3]: At the time, we wrote a blog post about it. You can still read it on the [Internet Archive](https://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/)
 
 
