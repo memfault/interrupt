@@ -4,38 +4,42 @@ PROJECT = fwup-example
 BUILD_DIR = build
 Q ?= @
 
-CC=arm-none-eabi-gcc
-LD=arm-none-eabi-ld
-OCPY=arm-none-eabi-objcopy
-ODUMP=arm-none-eabi-objdump
-MKDIR=mkdir
-XXD=xxd
+CC = arm-none-eabi-gcc
+LD = arm-none-eabi-ld
+OCPY = arm-none-eabi-objcopy
+MKDIR = mkdir
 GIT=git
 ECHO=@echo
 CAT=cat
-CRC=crc32
-DD=dd
-STAT=stat
+PYTHON ?= python
 
 GIT_SHA := \"$(shell $(GIT) rev-parse --short HEAD)\"
 
 SRCS_BOOT = boot.c
-SRCS_APP = app.c \
-		   shell/src/shell.c \
-		   app_shell_commands.c
-SRCS_LOADER = loader.c \
-			  crc32.c \
-			  dfu.c \
-			  shell/src/shell.c \
-			  loader_shell_commands.c \
-			  $(BUILD_DIR)/app_bin.c
-SRCS_SHARED = syscalls.c \
-			  crc32.c \
-			  shared_memory.c \
-			  clock.c \
-			  image.c \
-			  gpio.c \
-			  usart.c
+
+SRCS_APP = \
+  app.c \
+  app_shell_commands.c \
+  shell/src/shell.c \
+
+SRCS_LOADER = \
+  crc32.c \
+  dfu.c \
+  loader.c \
+  loader_shell_commands.c \
+  shell/src/shell.c
+
+SRCS_SHARED = \
+  clock.c \
+  crc32.c \
+  gpio.c \
+  image.c \
+  shared_memory.c \
+  syscalls.c \
+  usart.c \
+
+APP_BIN = \
+  $(BUILD_DIR)/app_bin.o
 
 SRCS_BOOT += $(SRCS_SHARED)
 SRCS_APP += $(SRCS_SHARED)
@@ -47,24 +51,24 @@ DEFINES += STM32F4 \
 		   GIT_SHA=$(GIT_SHA)
 
 CFLAGS += \
-	-mcpu=cortex-m4 \
-	-mfloat-abi=hard \
-	-mfpu=fpv4-sp-d16 \
-	-mthumb \
-	-Wall \
-	-Werror \
-	-std=gnu11 \
-	-O0 \
-	-g \
-	-ffunction-sections \
-	-fdata-sections
+  -mcpu=cortex-m4 \
+  -mfloat-abi=hard \
+  -mfpu=fpv4-sp-d16 \
+  -mthumb \
+  -Wall \
+  -Werror \
+  -std=gnu11 \
+  -O0 \
+  -g \
+  -ffunction-sections \
+  -fdata-sections
 
 LDFLAGS += \
-	-static \
-	-nostartfiles \
-	-specs=nano.specs \
-	-Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group \
-	-Wl,-Map=$(BUILD_DIR)/$(PROJECT).map
+  -static \
+  -nostartfiles \
+  -specs=nano.specs \
+  -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group \
+  -Wl,-Map=$(BUILD_DIR)/$(PROJECT).map
 
 LDFLAGS_BOOT = $(LDFLAGS) -T boot.ld
 LDFLAGS_LOADER = $(LDFLAGS) -T loader.ld
@@ -90,33 +94,14 @@ $(BUILD_DIR)/$(PROJECT)-boot.bin: $(BUILD_DIR)/$(PROJECT)-boot.elf
 	$(ECHO) "  OBJCOPY	$@"
 	$(Q)$(OCPY) $^ $@ -O binary
 
-$(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.hdr $(BUILD_DIR)/$(PROJECT)-%.data
-	$(ECHO) "  CAT		$@"
-	$(Q)$(CAT) $^ > $@
+$(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.elf
+	$(ECHO) "Creating $@"
+	$(Q)$(OCPY) $^ $@ -O binary
+	$(Q)$(PYTHON) patch_image_header.py $@
 
-$(BUILD_DIR)/$(PROJECT)-%.hdr: $(BUILD_DIR)/$(PROJECT)-%.elf $(BUILD_DIR)/$(PROJECT)-%.crc $(BUILD_DIR)/$(PROJECT)-%.size 
-	$(ECHO) "  OBJCOPY	$@"
-	$(Q)$(OCPY) $(word 1, $^) --dump-section .image_hdr=$@
-	$(ECHO) "  DD		$@"
-	$(Q)$(DD) if=$(word 2, $^) of=$@ obs=1 seek=4 conv=notrunc 2>1
-	$(ECHO) "  DD		$@"
-	$(Q)$(DD) if=$(word 3, $^) of=$@ obs=1 seek=8 conv=notrunc 2>1
-
-$(BUILD_DIR)/$(PROJECT)-%.size: $(BUILD_DIR)/$(PROJECT)-%.data
-	$(ECHO) "  STAT		$@"
-	$(Q)$(STAT) -f%z $^ | xargs printf '%08x\n' | $(XXD) -r -p | $(XXD) -p -c1 | tac | $(XXD) -p -r > $@
-
-$(BUILD_DIR)/$(PROJECT)-%.crc: $(BUILD_DIR)/$(PROJECT)-%.data
-	$(ECHO) "  CRC		$@"
-	$(Q)$(CRC) $^ | $(XXD) -r -p | $(XXD) -p -c1 | tac | $(XXD) -p -r > $@
-
-$(BUILD_DIR)/$(PROJECT)-%.data: $(BUILD_DIR)/$(PROJECT)-%.elf
-	$(ECHO) "  OBJCOPY	$@"
-	$(Q)$(OCPY) $^ $@ -O binary --remove-section=.image_hdr
-
-$(BUILD_DIR)/app_bin.c: $(BUILD_DIR)/$(PROJECT)-app.bin
-	$(ECHO) "  XXD		$@"
-	$(Q)$(XXD) -i $< > $@
+# https://interrupt.memfault.com/blog/gnu-binutils#converting-binaries-into-an-object-o-file
+$(BUILD_DIR)/app_bin.o: $(BUILD_DIR)/$(PROJECT)-app.bin
+	$(Q)$(OCPY) -I binary -O elf32-littlearm -B arm --add-section app_binary=$< $< $@
 
 $(BUILD_DIR)/$(PROJECT)-app.elf: $(SRCS_APP) $(OPENCM3_LIB)
 	$(ECHO) "  LD		$@"
@@ -128,7 +113,7 @@ $(BUILD_DIR)/$(PROJECT)-boot.elf: $(SRCS_BOOT) $(OPENCM3_LIB)
 	$(Q)$(MKDIR) -p $(BUILD_DIR)
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_BOOT) $^ -o $@
 
-$(BUILD_DIR)/$(PROJECT)-loader.elf: $(SRCS_LOADER) $(OPENCM3_LIB)
+$(BUILD_DIR)/$(PROJECT)-loader.elf: $(SRCS_LOADER) $(OPENCM3_LIB) $(APP_BIN)
 	$(ECHO) "  LD		$@"
 	$(Q)$(MKDIR) -p $(BUILD_DIR)
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_LOADER) $^ -o $@

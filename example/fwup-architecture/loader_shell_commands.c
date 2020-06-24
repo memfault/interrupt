@@ -11,13 +11,13 @@
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 
-extern char build_fwup_example_app_bin[];
-extern int build_fwup_example_app_bin_len;
+extern char _binary_build_fwup_example_app_bin_start;
+extern char _binary_build_fwup_example_app_bin_size;
 
 int cli_command_do_dfu(int argc, char *argv[]) {
     shell_put_line("Starting update");
 
-    uint8_t *data_ptr = (uint8_t *)build_fwup_example_app_bin;
+    uint8_t *data_ptr = (uint8_t *)&_binary_build_fwup_example_app_bin_start;
 
     // grab header
     image_hdr_t *hdr = (image_hdr_t *)data_ptr;
@@ -27,7 +27,7 @@ int cli_command_do_dfu(int argc, char *argv[]) {
     data_ptr += sizeof(image_hdr_t);
     if (dfu_write_data(IMAGE_SLOT_2,
                        data_ptr,
-                       build_fwup_example_app_bin_len)) {
+                       (uint32_t)&_binary_build_fwup_example_app_bin_size)) {
         shell_put_line("Image Write Failed");
         return -1;
     }
