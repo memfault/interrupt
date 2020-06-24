@@ -828,9 +828,7 @@ int cli_command_mark_stable(int argc, char *argv[]) {
 
 ## References
 
-- [^chris-dfu-debug]: This is not the end to this story. My cofounder Chris
-    eventually found a set of inputs to provide to the device which would set
-the stack just so, and allow us to update out of that state. Phew!
+- [^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so, and allow us to update out of that state. Phew!
 
 
 
