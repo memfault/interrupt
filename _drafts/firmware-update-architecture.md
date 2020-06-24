@@ -29,7 +29,7 @@ to use it for another project. This blog post was the perfect pretext. If you
 are not familiar with Renode, I recommend reading [my previous blog post]() on
 the topic.
 
-Because I use `bin` rather than `elf` files as firmware images, I had to make two
+Because we use true firmware images `.bin`'s rather than `elf` files in this post, I had to make two
 change to the renode configuration:
 1. I used `sysbus LoadBinary $bin 0x8000000` rather than `LoadELF` to load the
    firmware.
@@ -38,7 +38,7 @@ change to the renode configuration:
 different from the default behavior of the STM32.
 
 Additionally, I had to modify Renode slightly to enable software-controlled
-resets. Cortex-M microcontrollers can be reset by writing the AICR register,
+resets. Cortex-M microcontrollers can be reset by writing to the AICR register,
 which was not fully implemented in the emulator. As of this writing, this change
 is still in review and not yet merged into the emulator. You can find the pull
 request [on Github](https://github.com/renode/renode-infrastructure/pull/15/files).
@@ -47,7 +47,7 @@ Thankfully, building our own version of renode is relatively
 straightforward using [their
 instructions](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html).
 
-I updated my start.sh script to run my home-built Renode instance rather than
+I updated my `start.sh` script to run my home-built Renode instance rather than
 the installed binary:
 
 ```
@@ -96,7 +96,7 @@ After which you can call `./start.sh` to start Renode. You will need to type the
 ## High Level Architecture
 
 Over the years, I've come up with a set of basic requirements most DFU systems
-should fulfill. Let's walk through  these one by one and iteratively design our
+should fulfill. Let's walk through these one by one and iteratively design our
 system.
 
 We start with the simplest possible description of what we want to achieve with
@@ -117,14 +117,14 @@ blockdiag {
 }
 {% endblockdiag %}{:.diag1}
 
-This is not a practical design. For one, self modifying code is easy
+This is not a practical design. For one, self-modifying code is easy
 to mess up. Let's see how we might modify this architecture to get to something
 we're happy with.
 
 ### DFU should be separate from the application
 
 The only time I ever broke DFU on a device, I did it without changing a line of
-code relating to DFU. Unbeknownst to me, our DFU processes depended on an
+code related to DFU. Unbeknownst to me, our DFU processes accidentally depended on an
 uninitialized variable which up until then had always ended up being `0`.
 Inevitably a new version reshuffled the content of the stack, and all of a
 sudden our uninitialized variable held a "1". This prevented DFU from taking
@@ -159,11 +159,11 @@ blockdiag {
 ### DFU code should be updatable
 
 While we want to update our DFU code as little as possible, updating it should
-still be *possible*. Invitably we will find bug in our firmware update code
+still be *possible*. Inevitably we will find a bug in our firmware update code
 which we must fix. We may want to change our memory map to allocate more code
 space to our app, or to rotate a security key baked into our Loader.
 
-But where should the code lives that updates our Loader? It cannot be in the
+But where should the code that updates our Loader live? It cannot be in the
 application, or else we would violate the previous principle. It cannot be in
 the Loader itself either. That leaves one option: a third program tasked with
 updating the loader. We'll call it the "Updater".
@@ -568,7 +568,7 @@ be transferred.
 
 Writing a new firmware image is the whole purpose of this exercise, so how do we
 do the deed? We won't cover *transferring* the image over to your firmware,
-that's varies greatly depending on your use, but once the transfer has occured
+that varies greatly depending on your use, but once the transfer has occured
 we must:
 
 1. Write the image
@@ -599,13 +599,13 @@ if (dfu_commit_image(IMAGE_SLOT_2, hdr)) {
 scb_reset_system();
 ```
 
-Writing the data is relatively straightforward. For flash memory You'll
+Writing the data is relatively straightforward. For flash memory you'll
 typically erase the releavant sector, then use the `page_program` function
 provided with your flash driver to write new data. Make sure however that you do
 not write the image header during this process. The header will only be written
 during the "commit" phase.
 
-We've covered verifying in image in the previous section. Here again we may
+We've covered how to verify an image in the previous section. Here again we may
 check the CRC, or verify a cryptographic signature.
 
 If at any point the update is interrupted, the header will be missing and our
@@ -629,7 +629,7 @@ int dfu_commit_image(image_slot_t slot, const image_hdr_t *hdr) {
 }
 ```
 
-Just as writing the header is marks an image as valid, we can invalidate an
+Just as writing the header marks an image as valid, we can invalidate an
 image simply by zeroing it out. This is much faster than erasing the whole
 flash, and won't leave us in a half-working state (e.g. having erased only half
 of the image).
@@ -657,7 +657,7 @@ On some platforms, scratch registers can be used as mailboxes between the
 different programs. This is the case for the STM32. For all others we must make
 do with RAM. "But François, isn't RAM volatile"? Not quite: as long as your MCU
 remains powered, the SRAM will hold its state. For short durations, you can
-treat is as non-volatile storage.
+treat it as non-volatile storage.
 
 The simplest way to carve out an area of RAM to be shared across our programs is
 to declare it in a shared linker script. We've covered linker scripts on
@@ -697,7 +697,7 @@ typedef struct __attribute__((packed)) {
 shared_memory_t shared_memory __attribute__((section(".shared_memory")));
 ```
 
-In the event of power loss, RAM will lost its state. To detect those events we
+In the event of power loss, RAM will lose its state. To detect those events we
 use a magic value here as well. On boot, we check the magic number and
 initialize the struct if it isn't what we'd expect.
 
@@ -825,10 +825,9 @@ int cli_command_mark_stable(int argc, char *argv[]) {
     return 0;
 }
 ```
-
+{:.no_toc}
 ## References
 
 - [^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so, and allow us to update out of that state. Phew!
-
 
 
