@@ -48,7 +48,7 @@ Github repository](https://github.com/memfault/interrupt/tree/master/example/fwu
 
 Since writing about Renode for Interrupt, I’ve been looking for an opportunity
 to use it for another project. This blog post was the perfect pretext. If you
-are not familiar with Renode, I recommend reading [my previous blog post]() on
+are not familiar with Renode, I recommend reading [my previous blog post]({% post_url 2020-03-23-intro-to-renode %}) on
 the topic.
 
 Because we use true firmware images `.bin`'s rather than `elf` files in this post, I had to make two
