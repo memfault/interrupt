@@ -14,8 +14,6 @@ int main(void) {
 
     printf("Bootloader started\n");
 
-    usart_teardown();
-
     for (image_slot_t slot = IMAGE_SLOT_1; slot < IMAGE_NUM_SLOTS; ++slot) {
         const image_hdr_t *hdr = image_get_header(slot);
         if (hdr == NULL) {
@@ -26,6 +24,7 @@ int main(void) {
         }
 
         printf("Booting slot %d\n", slot);
+        usart_teardown();
         image_start(hdr);
     }
 
