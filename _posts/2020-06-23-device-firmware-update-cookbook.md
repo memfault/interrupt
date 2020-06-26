@@ -472,7 +472,7 @@ directly.
 
 This is best done with a simple Python script. Chris whipped one up for my
 example which you can find [alongside the
-code](https://github.com/memfault/interrupt/blob/maaster/example/fwup-architecture/patch_image_header.py).
+code](https://github.com/memfault/interrupt/blob/master/example/fwup-architecture/patch_image_header.py).
 The code calculates the size and CRC for the binary and adds those values to the
 header.
 
