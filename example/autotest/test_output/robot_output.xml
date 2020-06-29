@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20200629 03:50:59.115" generator="Rebot 3.0.4 (Python 2.7.17 on linux2)">
+<suite source="/workspace/tests/test-basic.robot" id="s1" name="Test Suite">
+<kw type="setup" name="Setup" library="renode-keywords">
+<msg timestamp="20200629 03:50:45.099" level="TRACE">Arguments: [  ]</msg>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the results.</doc>
+<arguments>
+<arg>platform.system()</arg>
+<arg>modules=platform</arg>
+</arguments>
+<assign>
+<var>${SYSTEM}</var>
+</assign>
+<msg timestamp="20200629 03:50:45.100" level="TRACE">Arguments: [ 'platform.system()' | modules='platform' ]</msg>
+<msg timestamp="20200629 03:50:45.106" level="TRACE">Return: b'Linux'</msg>
+<msg timestamp="20200629 03:50:45.107" level="INFO">${SYSTEM} = Linux</msg>
+<status status="PASS" endtime="20200629 03:50:45.107" starttime="20200629 03:50:45.100"></status>
+</kw>
+<kw name="Set Variable If" library="BuiltIn">
+<doc>Sets variable based on the given condition.</doc>
+<arguments>
+<arg>not ${SKIP_RUNNING_SERVER} and ${SERVER_REMOTE_DEBUG}</arg>
+<arg>Debug</arg>
+<arg>${CONFIGURATION}</arg>
+</arguments>
+<assign>
+<var>${CONFIGURATION}</var>
+</assign>
+<msg timestamp="20200629 03:50:45.108" level="TRACE">Arguments: [ 'not True and False' | 'Debug' | '${CONFIGURATION}' ]</msg>
+<msg timestamp="20200629 03:50:45.108" level="TRACE">Return: 'Release'</msg>
+<msg timestamp="20200629 03:50:45.109" level="INFO">${CONFIGURATION} = Release</msg>
+<status status="PASS" endtime="20200629 03:50:45.109" starttime="20200629 03:50:45.108"></status>
+</kw>
+<kw name="Create List" library="BuiltIn">
+<doc>Returns a list containing given items.</doc>
+<arguments>
+<arg>--robot-server-port</arg>
+<arg>${PORT_NUMBER}</arg>
+<arg>--hide-log</arg>
+</arguments>
+<assign>
+<var>@{PARAMS}</var>
+</assign>
+<msg timestamp="20200629 03:50:45.109" level="TRACE">Arguments: [ '--robot-server-port' | b'9999' | '--hide-log' ]</msg>
+<msg timestamp="20200629 03:50:45.109" level="TRACE">Return: ['--robot-server-port', b'9999', '--hide-log']</msg>
+<msg timestamp="20200629 03:50:45.109" level="INFO">@{PARAMS} = [ --robot-server-port | 9999 | --hide-log ]</msg>
+<status status="PASS" endtime="20200629 03:50:45.109" starttime="20200629 03:50:45.109"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>${DISABLE_XWT}</arg>
+<arg>Insert Into List</arg>
+<arg>${PARAMS}</arg>
+<arg>0</arg>
+<arg>--disable-xwt</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.110" level="TRACE">Arguments: [ 'False' | 'Insert Into List' | '${PARAMS}' | '0' | '--disable-xwt' ]</msg>
+<msg timestamp="20200629 03:50:45.110" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:45.110" starttime="20200629 03:50:45.110"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>not ${SKIP_RUNNING_SERVER}</arg>
+<arg>File Should Exist</arg>
+<arg>${DIRECTORY}/${BINARY_NAME}</arg>
+<arg>msg=Robot Framework remote server binary not found (${DIRECTORY}/${BINARY_NAME}). Did you forget to build it in ${CONFIGURATION} configuration?</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.110" level="TRACE">Arguments: [ 'not True' | 'File Should Exist' | '${DIRECTORY}/${BINARY_NAME}' | 'msg=Robot Framework remote server binary not found (${DIRECTORY}/${BINARY_NAME}). Did you forget to build it in ${CONFIGURATION} configuration?' ]</msg>
+<msg timestamp="20200629 03:50:45.111" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:45.111" starttime="20200629 03:50:45.110"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>not ${SKIP_RUNNING_SERVER} and not ${SERVER_REMOTE_DEBUG} and not '${SYSTEM}' == 'Windows'</arg>
+<arg>Start Process</arg>
+<arg>mono</arg>
+<arg>${BINARY_NAME}</arg>
+<arg>@{PARAMS}</arg>
+<arg>cwd=${DIRECTORY}</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.111" level="TRACE">Arguments: [ "not True and not False and not 'Linux' == 'Windows'" | 'Start Process' | 'mono' | '${BINARY_NAME}' | '@{PARAMS}' | 'cwd=${DIRECTORY}' ]</msg>
+<msg timestamp="20200629 03:50:45.111" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:45.112" starttime="20200629 03:50:45.111"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>not ${SKIP_RUNNING_SERVER} and not ${SERVER_REMOTE_DEBUG} and '${SYSTEM}' == 'Windows'</arg>
+<arg>Start Process</arg>
+<arg>${BINARY_NAME}</arg>
+<arg>@{PARAMS}</arg>
+<arg>cwd=${DIRECTORY}</arg>
+<arg>shell=true</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.112" level="TRACE">Arguments: [ "not True and not False and 'Linux' == 'Windows'" | 'Start Process' | '${BINARY_NAME}' | '@{PARAMS}' | 'cwd=${DIRECTORY}' | 'shell=true' ]</msg>
+<msg timestamp="20200629 03:50:45.113" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:45.113" starttime="20200629 03:50:45.112"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>not ${SKIP_RUNNING_SERVER} and ${SERVER_REMOTE_DEBUG} and not '${SYSTEM}' == 'Windows'</arg>
+<arg>Start Process</arg>
+<arg>mono</arg>
+<arg>--debug</arg>
+<arg>--debugger-agent\=transport\=dt_socket,address\=0.0.0.0:${SERVER_REMOTE_PORT},server\=y,suspend\=${SERVER_REMOTE_SUSPEND}</arg>
+<arg>${BINARY_NAME}</arg>
+<arg>@{PARAMS}</arg>
+<arg>cwd=${DIRECTORY}</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.114" level="TRACE">Arguments: [ "not True and False and not 'Linux' == 'Windows'" | 'Start Process' | 'mono' | '--debug' | '--debugger-agent\\=transport\\=dt_socket,address\\=0.0.0.0:${SERVER_REMOTE_PORT},server\\=y,suspend\\=${SERVER_REMOTE_SUSPEND}' | '${BINARY_NAME}' | '@{PARAMS}' | 'cwd=${DIRECTORY}' ]</msg>
+<msg timestamp="20200629 03:50:45.114" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:45.114" starttime="20200629 03:50:45.113"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>not ${SKIP_RUNNING_SERVER} and ${SERVER_REMOTE_DEBUG} and '${SYSTEM}' == 'Windows'</arg>
+<arg>Fatal Error</arg>
+<arg>Windows doesn't support server remote debug option.</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.114" level="TRACE">Arguments: [ "not True and False and 'Linux' == 'Windows'" | 'Fatal Error' | "Windows doesn't support server remote debug option." ]</msg>
+<msg timestamp="20200629 03:50:45.114" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:45.115" starttime="20200629 03:50:45.114"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>not '${SYSTEM}' == 'Windows'</arg>
+<arg>Wait Until Keyword Succeeds</arg>
+<arg>60s</arg>
+<arg>1s</arg>
+<arg>Import Library</arg>
+<arg>Remote</arg>
+<arg>http://127.0.0.1:${PORT_NUMBER}/</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.115" level="TRACE">Arguments: [ "not 'Linux' == 'Windows'" | 'Wait Until Keyword Succeeds' | '60s' | '1s' | 'Import Library' | 'Remote' | 'http://127.0.0.1:${PORT_NUMBER}/' ]</msg>
+<kw name="Wait Until Keyword Succeeds" library="BuiltIn">
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<arguments>
+<arg>60s</arg>
+<arg>1s</arg>
+<arg>Import Library</arg>
+<arg>Remote</arg>
+<arg>http://127.0.0.1:${PORT_NUMBER}/</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.115" level="TRACE">Arguments: [ '60s' | '1s' | 'Import Library' | 'Remote' | 'http://127.0.0.1:${PORT_NUMBER}/' ]</msg>
+<kw name="Import Library" library="BuiltIn">
+<doc>Imports a library with the given name and optional arguments.</doc>
+<arguments>
+<arg>Remote</arg>
+<arg>http://127.0.0.1:${PORT_NUMBER}/</arg>
+</arguments>
+<msg timestamp="20200629 03:50:45.116" level="TRACE">Arguments: [ 'Remote' | 'http://127.0.0.1:${PORT_NUMBER}/' ]</msg>
+<msg timestamp="20200629 03:50:46.128" level="FAIL">Getting keyword names from library 'Remote' failed: Calling dynamic method 'get_keyword_names' failed: Connecting remote server at http://127.0.0.1:9999/ failed: [Errno 111] Connection refused</msg>
+<msg timestamp="20200629 03:50:46.128" level="DEBUG">Traceback (most recent call last):
+  None</msg>
+<status status="FAIL" endtime="20200629 03:50:46.128" starttime="20200629 03:50:45.116"></status>
+</kw>
+<kw name="Import Library" library="BuiltIn">
+<doc>Imports a library with the given name and optional arguments.</doc>
+<arguments>
+<arg>Remote</arg>
+<arg>http://127.0.0.1:${PORT_NUMBER}/</arg>
+</arguments>
+<msg timestamp="20200629 03:50:47.129" level="TRACE">Arguments: [ 'Remote' | 'http://127.0.0.1:${PORT_NUMBER}/' ]</msg>
+<msg timestamp="20200629 03:50:48.133" level="FAIL">Getting keyword names from library 'Remote' failed: Calling dynamic method 'get_keyword_names' failed: Connecting remote server at http://127.0.0.1:9999/ failed: [Errno 111] Connection refused</msg>
+<msg timestamp="20200629 03:50:48.133" level="DEBUG">Traceback (most recent call last):
+  None</msg>
+<status status="FAIL" endtime="20200629 03:50:48.133" starttime="20200629 03:50:47.129"></status>
+</kw>
+<kw name="Import Library" library="BuiltIn">
+<doc>Imports a library with the given name and optional arguments.</doc>
+<arguments>
+<arg>Remote</arg>
+<arg>http://127.0.0.1:${PORT_NUMBER}/</arg>
+</arguments>
+<msg timestamp="20200629 03:50:49.134" level="TRACE">Arguments: [ 'Remote' | 'http://127.0.0.1:${PORT_NUMBER}/' ]</msg>
+<msg timestamp="20200629 03:50:49.611" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:49.611" starttime="20200629 03:50:49.133"></status>
+</kw>
+<msg timestamp="20200629 03:50:49.611" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:49.612" starttime="20200629 03:50:45.115"></status>
+</kw>
+<msg timestamp="20200629 03:50:49.612" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:49.612" starttime="20200629 03:50:45.115"></status>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<arguments>
+<arg>'${SYSTEM}' == 'Windows'</arg>
+<arg>Wait Until Keyword Succeeds</arg>
+<arg>60s</arg>
+<arg>1s</arg>
+<arg>Import Library</arg>
+<arg>Remote</arg>
+<arg>http://localhost:${PORT_NUMBER}/</arg>
+</arguments>
+<msg timestamp="20200629 03:50:49.612" level="TRACE">Arguments: [ "'Linux' == 'Windows'" | 'Wait Until Keyword Succeeds' | '60s' | '1s' | 'Import Library' | 'Remote' | 'http://localhost:${PORT_NUMBER}/' ]</msg>
+<msg timestamp="20200629 03:50:49.612" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:49.613" starttime="20200629 03:50:49.612"></status>
+</kw>
+<kw name="Reset Emulation" library="Remote">
+<msg timestamp="20200629 03:50:49.613" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20200629 03:50:49.698" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:49.698" starttime="20200629 03:50:49.613"></status>
+</kw>
+<msg timestamp="20200629 03:50:49.698" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:49.698" starttime="20200629 03:50:45.099"></status>
+</kw>
+<kw type="teardown" name="Teardown" library="renode-keywords">
+<msg timestamp="20200629 03:50:59.050" level="TRACE">Arguments: [  ]</msg>
+<kw name="Run Keyword Unless" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is false.</doc>
+<arguments>
+<arg>${SKIP_RUNNING_SERVER}</arg>
+<arg>Stop Remote Server</arg>
+</arguments>
+<msg timestamp="20200629 03:50:59.050" level="TRACE">Arguments: [ b'True' | 'Stop Remote Server' ]</msg>
+<msg timestamp="20200629 03:50:59.050" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:59.051" starttime="20200629 03:50:59.050"></status>
+</kw>
+<kw name="Run Keyword Unless" library="BuiltIn">
+<doc>Runs the given keyword with the given arguments, if ``condition`` is false.</doc>
+<arguments>
+<arg>${SKIP_RUNNING_SERVER}</arg>
+<arg>Wait For Process</arg>
+</arguments>
+<msg timestamp="20200629 03:50:59.051" level="TRACE">Arguments: [ b'True' | 'Wait For Process' ]</msg>
+<msg timestamp="20200629 03:50:59.051" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:59.051" starttime="20200629 03:50:59.051"></status>
+</kw>
+<msg timestamp="20200629 03:50:59.051" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:59.051" starttime="20200629 03:50:59.050"></status>
+</kw>
+<test id="s1-t1" name="Help Menu">
+<kw type="setup" name="Reset Emulation" library="Remote">
+<msg timestamp="20200629 03:50:49.700" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20200629 03:50:49.703" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:49.703" starttime="20200629 03:50:49.700"></status>
+</kw>
+<kw name="Start Test">
+<msg timestamp="20200629 03:50:49.704" level="TRACE">Arguments: [  ]</msg>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>mach create</arg>
+</arguments>
+<msg timestamp="20200629 03:50:49.704" level="TRACE">Arguments: [ 'mach create' ]</msg>
+<msg timestamp="20200629 03:50:49.859" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:49.859" starttime="20200629 03:50:49.704"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl</arg>
+</arguments>
+<msg timestamp="20200629 03:50:49.859" level="TRACE">Arguments: [ 'machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl' ]</msg>
+<msg timestamp="20200629 03:50:56.778" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:56.778" starttime="20200629 03:50:49.859"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>machine LoadPlatformDescription @${PWD_PATH}/add-ccm.repl</arg>
+</arguments>
+<msg timestamp="20200629 03:50:56.779" level="TRACE">Arguments: [ 'machine LoadPlatformDescription @/workspace/add-ccm.repl' ]</msg>
+<msg timestamp="20200629 03:50:56.798" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:56.798" starttime="20200629 03:50:56.778"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>sysbus LoadELF @${PWD_PATH}/renode-example.elf</arg>
+</arguments>
+<msg timestamp="20200629 03:50:56.799" level="TRACE">Arguments: [ 'sysbus LoadELF @/workspace/renode-example.elf' ]</msg>
+<msg timestamp="20200629 03:50:57.153" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:57.153" starttime="20200629 03:50:56.799"></status>
+</kw>
+<kw name="Create Terminal Tester" library="Remote">
+<arguments>
+<arg>sysbus.uart2</arg>
+</arguments>
+<msg timestamp="20200629 03:50:57.154" level="TRACE">Arguments: [ 'sysbus.uart2' ]</msg>
+<msg timestamp="20200629 03:50:57.175" level="TRACE">Return: 1</msg>
+<status status="PASS" endtime="20200629 03:50:57.175" starttime="20200629 03:50:57.153"></status>
+</kw>
+<kw name="Start Emulation" library="Remote">
+<msg timestamp="20200629 03:50:57.176" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20200629 03:50:57.339" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:57.339" starttime="20200629 03:50:57.175"></status>
+</kw>
+<msg timestamp="20200629 03:50:57.340" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:57.340" starttime="20200629 03:50:49.704"></status>
+</kw>
+<kw name="Wait For Prompt On Uart" library="Remote">
+<arguments>
+<arg>${SHELL_PROMPT}</arg>
+</arguments>
+<msg timestamp="20200629 03:50:57.340" level="TRACE">Arguments: [ 'shell&gt;' ]</msg>
+<msg timestamp="20200629 03:50:57.558" level="TRACE">Return: {b'groups': [], b'line': b'App STARTED\n\n', b'timestamp': 0.0}</msg>
+<status status="PASS" endtime="20200629 03:50:57.558" starttime="20200629 03:50:57.340"></status>
+</kw>
+<kw name="Write Line To Uart" library="Remote">
+<arguments>
+<arg>help</arg>
+</arguments>
+<msg timestamp="20200629 03:50:57.558" level="TRACE">Arguments: [ 'help' ]</msg>
+<msg timestamp="20200629 03:50:57.575" level="TRACE">Return: {b'groups': [], b'line': b'help', b'timestamp': 0.0}</msg>
+<status status="PASS" endtime="20200629 03:50:57.575" starttime="20200629 03:50:57.558"></status>
+</kw>
+<kw name="Wait For Line On Uart" library="Remote">
+<arguments>
+<arg>help: Lists all commands</arg>
+</arguments>
+<msg timestamp="20200629 03:50:57.575" level="TRACE">Arguments: [ 'help: Lists all commands' ]</msg>
+<msg timestamp="20200629 03:50:57.587" level="TRACE">Return: {b'groups': [], b'line': b'help: Lists all commands', b'timestamp': 0.2}</msg>
+<status status="PASS" endtime="20200629 03:50:57.587" starttime="20200629 03:50:57.575"></status>
+</kw>
+<doc>Ping Pong</doc>
+<tags>
+<tag>critical</tag>
+</tags>
+<status status="PASS" endtime="20200629 03:50:57.587" critical="yes" starttime="20200629 03:50:49.698"></status>
+</test>
+<test id="s1-t2" name="Ping">
+<kw type="setup" name="Reset Emulation" library="Remote">
+<msg timestamp="20200629 03:50:57.591" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20200629 03:50:57.643" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:57.643" starttime="20200629 03:50:57.591"></status>
+</kw>
+<kw name="Start Test">
+<msg timestamp="20200629 03:50:57.645" level="TRACE">Arguments: [  ]</msg>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>mach create</arg>
+</arguments>
+<msg timestamp="20200629 03:50:57.645" level="TRACE">Arguments: [ 'mach create' ]</msg>
+<msg timestamp="20200629 03:50:57.650" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:57.650" starttime="20200629 03:50:57.645"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl</arg>
+</arguments>
+<msg timestamp="20200629 03:50:57.651" level="TRACE">Arguments: [ 'machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl' ]</msg>
+<msg timestamp="20200629 03:50:58.155" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.155" starttime="20200629 03:50:57.651"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>machine LoadPlatformDescription @${PWD_PATH}/add-ccm.repl</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.156" level="TRACE">Arguments: [ 'machine LoadPlatformDescription @/workspace/add-ccm.repl' ]</msg>
+<msg timestamp="20200629 03:50:58.171" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.172" starttime="20200629 03:50:58.155"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>sysbus LoadELF @${PWD_PATH}/renode-example.elf</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.172" level="TRACE">Arguments: [ 'sysbus LoadELF @/workspace/renode-example.elf' ]</msg>
+<msg timestamp="20200629 03:50:58.239" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.239" starttime="20200629 03:50:58.172"></status>
+</kw>
+<kw name="Create Terminal Tester" library="Remote">
+<arguments>
+<arg>sysbus.uart2</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.240" level="TRACE">Arguments: [ 'sysbus.uart2' ]</msg>
+<msg timestamp="20200629 03:50:58.242" level="TRACE">Return: 2</msg>
+<status status="PASS" endtime="20200629 03:50:58.242" starttime="20200629 03:50:58.239"></status>
+</kw>
+<kw name="Start Emulation" library="Remote">
+<msg timestamp="20200629 03:50:58.243" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20200629 03:50:58.349" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.349" starttime="20200629 03:50:58.242"></status>
+</kw>
+<msg timestamp="20200629 03:50:58.349" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:58.349" starttime="20200629 03:50:57.644"></status>
+</kw>
+<kw name="Wait For Prompt On Uart" library="Remote">
+<arguments>
+<arg>${SHELL_PROMPT}</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.350" level="TRACE">Arguments: [ 'shell&gt;' ]</msg>
+<msg timestamp="20200629 03:50:58.352" level="TRACE">Return: {b'groups': [], b'line': b'App STARTED\n\n', b'timestamp': 0.9}</msg>
+<status status="PASS" endtime="20200629 03:50:58.352" starttime="20200629 03:50:58.349"></status>
+</kw>
+<kw name="Write Line To Uart" library="Remote">
+<arguments>
+<arg>ping</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.353" level="TRACE">Arguments: [ 'ping' ]</msg>
+<msg timestamp="20200629 03:50:58.359" level="TRACE">Return: {b'groups': [], b'line': b'ping', b'timestamp': 0.0}</msg>
+<status status="PASS" endtime="20200629 03:50:58.359" starttime="20200629 03:50:58.353"></status>
+</kw>
+<kw name="Wait For Line On Uart" library="Remote">
+<arguments>
+<arg>PONG</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.360" level="TRACE">Arguments: [ 'PONG' ]</msg>
+<msg timestamp="20200629 03:50:58.362" level="TRACE">Return: {b'groups': [], b'line': b'PONG', b'timestamp': 1.0}</msg>
+<status status="PASS" endtime="20200629 03:50:58.362" starttime="20200629 03:50:58.359"></status>
+</kw>
+<doc>Prints help menu of the command prompt</doc>
+<tags>
+<tag>non_critical</tag>
+</tags>
+<status status="PASS" endtime="20200629 03:50:58.362" critical="yes" starttime="20200629 03:50:57.589"></status>
+</test>
+<test id="s1-t3" name="Read Var">
+<kw type="setup" name="Reset Emulation" library="Remote">
+<msg timestamp="20200629 03:50:58.366" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20200629 03:50:58.373" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.374" starttime="20200629 03:50:58.366"></status>
+</kw>
+<kw name="Start Test">
+<msg timestamp="20200629 03:50:58.374" level="TRACE">Arguments: [  ]</msg>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>mach create</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.374" level="TRACE">Arguments: [ 'mach create' ]</msg>
+<msg timestamp="20200629 03:50:58.377" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.377" starttime="20200629 03:50:58.374"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.378" level="TRACE">Arguments: [ 'machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl' ]</msg>
+<msg timestamp="20200629 03:50:58.839" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.840" starttime="20200629 03:50:58.378"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>machine LoadPlatformDescription @${PWD_PATH}/add-ccm.repl</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.840" level="TRACE">Arguments: [ 'machine LoadPlatformDescription @/workspace/add-ccm.repl' ]</msg>
+<msg timestamp="20200629 03:50:58.856" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.856" starttime="20200629 03:50:58.840"></status>
+</kw>
+<kw name="Execute Command" library="Remote">
+<arguments>
+<arg>sysbus LoadELF @${PWD_PATH}/renode-example.elf</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.857" level="TRACE">Arguments: [ 'sysbus LoadELF @/workspace/renode-example.elf' ]</msg>
+<msg timestamp="20200629 03:50:58.910" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:58.910" starttime="20200629 03:50:58.857"></status>
+</kw>
+<kw name="Create Terminal Tester" library="Remote">
+<arguments>
+<arg>sysbus.uart2</arg>
+</arguments>
+<msg timestamp="20200629 03:50:58.910" level="TRACE">Arguments: [ 'sysbus.uart2' ]</msg>
+<msg timestamp="20200629 03:50:58.913" level="TRACE">Return: 3</msg>
+<status status="PASS" endtime="20200629 03:50:58.913" starttime="20200629 03:50:58.910"></status>
+</kw>
+<kw name="Start Emulation" library="Remote">
+<msg timestamp="20200629 03:50:58.913" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20200629 03:50:59.019" level="TRACE">Return: b''</msg>
+<status status="PASS" endtime="20200629 03:50:59.019" starttime="20200629 03:50:58.913"></status>
+</kw>
+<msg timestamp="20200629 03:50:59.019" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20200629 03:50:59.019" starttime="20200629 03:50:58.374"></status>
+</kw>
+<kw name="Wait For Prompt On Uart" library="Remote">
+<arguments>
+<arg>${SHELL_PROMPT}</arg>
+</arguments>
+<msg timestamp="20200629 03:50:59.019" level="TRACE">Arguments: [ 'shell&gt;' ]</msg>
+<msg timestamp="20200629 03:50:59.022" level="TRACE">Return: {b'groups': [], b'line': b'App STARTED\n\n', b'timestamp': 0.9}</msg>
+<status status="PASS" endtime="20200629 03:50:59.022" starttime="20200629 03:50:59.019"></status>
+</kw>
+<kw name="Write Line To Uart" library="Remote">
+<arguments>
+<arg>coredump</arg>
+</arguments>
+<msg timestamp="20200629 03:50:59.023" level="TRACE">Arguments: [ 'coredump' ]</msg>
+<msg timestamp="20200629 03:50:59.030" level="TRACE">Return: {b'groups': [], b'line': b'coredump', b'timestamp': 0.0}</msg>
+<status status="PASS" endtime="20200629 03:50:59.030" starttime="20200629 03:50:59.022"></status>
+</kw>
+<kw name="Wait For Line On Uart" library="Remote">
+<arguments>
+<arg>coredump:(.*)</arg>
+<arg>timeout=10 treatAsRegex=true</arg>
+</arguments>
+<assign>
+<var>${p}</var>
+</assign>
+<msg timestamp="20200629 03:50:59.030" level="TRACE">Arguments: [ 'coredump:(.*)' | 'timeout=10 treatAsRegex=true' ]</msg>
+<msg timestamp="20200629 03:50:59.046" level="FAIL">ArgumentException: Type "Nullable`1" does not have a "Parse" method with the requested parameters
+</msg>
+<msg timestamp="20200629 03:50:59.046" level="DEBUG">ArgumentException:   at Antmicro.Renode.Utilities.SmartParser.GetFromCacheOrAdd (System.Collections.Generic.Dictionary`2[TKey,TValue] cacheDict, System.Type outputType, System.Func`1[TResult] function) [0x00025] in &lt;84032f3bfa43463f8725431527b29c24&gt;:0 
+  at Antmicro.Renode.Utilities.SmartParser.TryParse (System.String input, System.Type outputType, System.Object&amp; result) [0x0014d] in &lt;84032f3bfa43463f8725431527b29c24&gt;:0 
+  at Antmicro.Renode.RobotFramework.Keyword.TryParseArguments (System.Reflection.ParameterInfo[] parameters, System.String[] arguments, System.Object[]&amp; parsedArguments) [0x000f8] in &lt;e86a8e092e8e4cf88c78ea4466463b92&gt;:0 
+  at Antmicro.Renode.RobotFramework.Keyword.TryMatchArguments (System.String[] arguments, System.Object[]&amp; parsedArguments) [0x00039] in &lt;e86a8e092e8e4cf88c78ea4466463b92&gt;:0 
+  at Antmicro.Renode.RobotFramework.KeywordManager+&lt;&gt;c__DisplayClass3_0.&lt;TryExecuteKeyword&gt;b__0 (Antmicro.Renode.RobotFramework.Keyword x) [0x00000] in &lt;e86a8e092e8e4cf88c78ea4466463b92&gt;:0 
+  at System.Linq.Enumerable.TryGetFirst[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate, System.Boolean&amp; found) [0x0003f] in &lt;35ad2ebb203f4577b22a9d30eca3ec1f&gt;:0 
+  at System.Linq.Enumerable.FirstOrDefault[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00000] in &lt;35ad2ebb203f4577b22a9d30eca3ec1f&gt;:0 
+  at Antmicro.Renode.RobotFramework.KeywordManager.TryExecuteKeyword (System.String keywordName, System.String[] arguments, System.Object&amp; keywordResult) [0x00029] in &lt;e86a8e092e8e4cf88c78ea4466463b92&gt;:0 
+  at Antmicro.Renode.RobotFramework.XmlRpcServer.RunKeyword (System.String keywordName, System.String[] arguments) [0x00008] in &lt;e86a8e092e8e4cf88c78ea4466463b92&gt;:0 
+</msg>
+<status status="FAIL" endtime="20200629 03:50:59.046" starttime="20200629 03:50:59.030"></status>
+</kw>
+<doc>Reads prompt output into variable</doc>
+<tags>
+<tag>critical</tag>
+</tags>
+<status status="FAIL" endtime="20200629 03:50:59.047" critical="yes" starttime="20200629 03:50:58.364">ArgumentException: Type "Nullable`1" does not have a "Parse" method with the requested parameters
+</status>
+</test>
+<metadata>
+<item name="HotSpot Action">-</item>
+</metadata>
+<status status="FAIL" endtime="20200629 03:50:59.052" starttime="20200629 03:50:45.034"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="2">Critical Tests</stat>
+<stat fail="1" pass="2">All Tests</stat>
+</total>
+<tag>
+<stat fail="1" pass="1">critical</stat>
+<stat fail="0" pass="1">non_critical</stat>
+</tag>
+<suite>
+<stat fail="1" id="s1" name="Test Suite" pass="2">Test Suite</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

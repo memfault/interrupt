@@ -1,0 +1,19 @@
+Preparing suites
+Starting suites
+Running tests/test-basic.robot
++++++ Starting test 'test-basic.Help Menu'
++++++ Finished test 'test-basic.Help Menu' in 7.89 seconds with status [92mOK[0m
++++++ Starting test 'test-basic.Ping'
++++++ Finished test 'test-basic.Ping' in 0.77 seconds with status [92mOK[0m
++++++ Starting test 'test-basic.Read Var'
++++++ Finished test 'test-basic.Read Var' in 0.68 seconds with status [91mfailed[0m
+      ╔═
+      ║ ArgumentException: Type "Nullable`1" does not have a "Parse" method with the requested parameters
+      ║ 
+      ╚═
+Cleaning up suites
+Aggregating all robot results
+Output:  /workspace/test_output/robot_output.xml
+Log:     /workspace/test_output/log.html
+Report:  /workspace/test_output/report.html
+Some tests failed :( See logs for details!
