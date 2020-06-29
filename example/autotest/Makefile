@@ -24,6 +24,7 @@ SRCS_APP = \
   gpio.c \
   usart.c \
   syscalls.c \
+  memfault_wraps.c \
 
 INCLUDES = \
 	. \
@@ -70,6 +71,7 @@ DEFINES += \
   MEMFAULT_EXC_HANDLER_MEMORY_MANAGEMENT=memfault_mem_manage_handler \
   MEMFAULT_EXC_HANDLER_BUS_FAULT=memfault_bus_fault_handler \
   MEMFAULT_EXC_HANDLER_USAGE_FAULT=memfault_usage_fault_handler \
+  MEMFAULT_RAM_BACKED_COREDUMP_SIZE=81920 \
 
 
 CFLAGS += \
@@ -90,7 +92,8 @@ LDFLAGS += \
   -nostartfiles \
   -specs=nano.specs \
   -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group \
-  -Wl,-Map=$(BUILD_DIR)/$(PROJECT).map
+  -Wl,-Map=$(BUILD_DIR)/$(PROJECT).map \
+  -Wl,--wrap=memfault_platform_coredump_get_regions
 
 LDFLAGS_APP = $(LDFLAGS) -T stm32f429i-discovery.ld
 

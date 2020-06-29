@@ -20,8 +20,7 @@ int cli_command_ping(int argc, char *argv[]) {
 }
 
 int cli_command_assert(int argc, char *argv[]) {
-    void (*g_bad_func_call)(void) = (void (*)(void))0x20000100;
-    g_bad_func_call();
+    MEMFAULT_ASSERT(0);
     return 0;
 }
 
