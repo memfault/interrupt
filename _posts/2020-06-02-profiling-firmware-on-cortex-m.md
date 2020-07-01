@@ -686,7 +686,7 @@ See anything you'd like to change? Submit a pull request or open an issue at [Gi
 [^disco]: [STM32F429i Discovery Kit](https://www.st.com/en/evaluation-tools/32f429idiscovery.html)
 [^libopencm3]: [Libopencm3 on GitHub](https://github.com/libopencm3/libopencm3)
 [^tpui]: More info on the TPIU on [ARM's website](https://developer.arm.com/docs/100166/latest/trace-port-interface-unit/about-the-tpiu)
-[^openocd]: More information on getting OpenOCD at [https://openocd.org](https://openocd.org).
+[^openocd]: More information on getting OpenOCD at [http://openocd.org](http://openocd.org).
 [^disco-um]: [STM32F429i Discovery User Manual](https://www.st.com/resource/en/user_manual/dm00093903-discovery-kit-with-stm32f429zi-mcu-stmicroelectronics.pdf)
 [^dwt]: You can read more about DWT counters on [ARM's Website](https://developer.arm.com/docs/ddi0337/e/system-debug/dwt)
 [^tpiu_config]: [OpenOCD docs on tpiu config](http://openocd.org/doc/html/Architecture-and-Core-Commands.html#index-tpiu-config)

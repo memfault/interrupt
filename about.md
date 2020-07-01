@@ -16,10 +16,10 @@ provider of modern software tools for hardware companies. You can contact us at
 [@MemfaultHQ](https://twitter.com/MemfaultHQ).
 
 Posts on Interrupt are licensed under CC-by-SA, see the [License
-file](https://github.com/memfault/interrupt/blob/master/License.md) for
+file](https://github.com/memfault/interrupt/blob/master/license.md) for
 more information.
 
 The Interrupt blog is based on the
 [Emerald](https://github.com/KingFelix/emerald) Jekyll template originally
-authored by [Jacopo Rabolini](www.jacoporabolini.com).
+authored by [Jacopo Rabolini](https://www.jacoporabolini.com).
 
