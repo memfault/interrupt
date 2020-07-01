@@ -9,7 +9,7 @@ Happy New Year! Here are the articles, videos, and tools we've been excited
 about this past month.
 <!-- excerpt end -->
 
-We hope you enjoy these links, and look forward to hearing what you've been
+We hope you enjoy these links, and we look forward to hearing what you've been
 reading in the comments.
 
 ## Articles
