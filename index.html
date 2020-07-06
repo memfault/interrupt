@@ -11,8 +11,9 @@ layout: default
         <div class="by-line">
             <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
             {% assign author = site.data.authors[post.author] %}
+            {% assign author_key = post.author %}
             {% if author %}
-            <span>by <a href="{{ author.web }}">{{ author.name }}</a></span>
+            <span>by <a href="/authors/{{ author_key }}">{{ author.name }}</a></span>
             {% endif %}
         </div>
         <p>{{ post.excerpt }}</p>

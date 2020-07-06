@@ -1,0 +1,12 @@
+{% assign author = include.author %}
+<span>
+    {% if author.twitter %}
+    <a href="https://twitter.com/{{ author.twitter }}"><svg class="svg-icon twitter"><use xlink:href="{{ 'img/social-icons.svg#twitter' | relative_url }}"></use></svg></a>
+    {% endif %}
+    {% if author.linkedin %}
+    <a href="{{ author.linkedin }}"><svg class="svg-icon linkedin"><use xlink:href="{{ 'img/social-icons.svg#linkedin' | relative_url }}"></use></svg></a>
+    {% endif %}
+    {% if author.github %}
+    <a href="https://github.com/{{ author.github }}"><svg class="svg-icon github"><use xlink:href="{{ 'img/social-icons.svg#github' | relative_url }}"></use></svg></a>
+    {% endif %}
+</span>

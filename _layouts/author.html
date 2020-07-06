@@ -1,0 +1,16 @@
+---
+layout: default
+---
+<article id="author-page">
+    <h2><a href="{{ page.author.web }}">{{ page.author.name }}</a></h2>
+    {% include author-social.html author=page.author %}
+    <br>
+    {{ page.author.name }} {{ page.author.blurb }}
+    <h3>Posts</h3>
+        {% assign filtered_posts = site.posts | where: 'author', page.author_key %}
+
+        {% for post in filtered_posts %}
+        <li>{{ post.date | date_to_string }} - <a href="{{ post.url }}">{{ post.title }}</a></li>
+        {% endfor %}
+    <br>
+</article>

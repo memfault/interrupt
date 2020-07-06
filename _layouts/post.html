@@ -3,13 +3,14 @@ layout: default
 ---
 <article id="post-page">
     {% assign author = site.data.authors[page.author] %}
+    {% assign author_key = page.author %}
 
     <script src="/js/anchor.min.js"></script>
     <h2>{{ page.title }}</h2>
     <div class="by-line">
        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date_to_string }}</time>
        {% if author %}
-       <span>by <a href="{{ author.web }}">{{ author.name }}</a></span>
+       <span>by <a href="/authors/{{ author_key }}">{{ author.name }}</a></span>
        {% endif %}
     </div>
     <div class="content">
@@ -24,16 +25,8 @@ layout: default
             <img src="{{ author.image | prepend: site.baseurl | replace: '//', '/' }}"  />
             {% endif %}
             <span>
-                <a href="{{ author.web }}">{{ author.name }}</a> {{ author.blurb }}<br />
-                {% if author.twitter %}
-                <a href="https://twitter.com/{{ author.twitter }}"><svg class="svg-icon twitter"><use xlink:href="{{ 'img/social-icons.svg#twitter' | relative_url }}"></use></svg></a>
-                {% endif %}
-                {% if author.linkedin %}
-                <a href="{{ author.linkedin }}"><svg class="svg-icon linkedin"><use xlink:href="{{ 'img/social-icons.svg#linkedin' | relative_url }}"></use></svg></a>
-                {% endif %}
-                {% if author.github %}
-                <a href="https://github.com/{{ author.github }}"><svg class="svg-icon github"><use xlink:href="{{ 'img/social-icons.svg#github' | relative_url }}"></use></svg></a>
-                {% endif %}
+                <a href="/authors/{{ author_key }}">{{ author.name }}</a> {{ author.blurb }}<br />
+                {% include author-social.html author=author %}
             </span>
 
         </div>
