@@ -1,1 +1,0 @@
-FROM antmicro/renode:latest
