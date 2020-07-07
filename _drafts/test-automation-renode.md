@@ -152,7 +152,7 @@ It's now time to plug things into a continuous integration system for automated 
 
 To start, we'll want to start off by creating a file `.github/workflows/main.yml` in our repo. The `blank` example from Github's [starter-workflows](https://github.com/actions/starter-workflows/blob/master/ci/blank.yml) gives a quick introduction to how the system works. I've copied it down below for easy reference. 
 
-```
+```yaml
 # This is a basic workflow to help you get started with Actions
 
 name: CI
@@ -192,7 +192,7 @@ jobs:
 
 It's time to adapt the sample above to make it build our firmware. First, we'll need to make sure that the `checkout` routine clones submodules as well, since our example repo has a couple of them.
 
-```
+```yaml
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
@@ -205,7 +205,7 @@ jobs:
 
 Next, we'll want to download and configure the ARM embedded toolchain since it isn't installed by default. Thankfully, there is already an Action, [`fiam/arm-none-eabi-gcc`](https://github.com/fiam/arm-none-eabi-gcc), that we can use to install the toolchain for us.
 
-```
+```yaml
     steps:
     [...]
 
@@ -218,7 +218,7 @@ Next, we'll want to download and configure the ARM embedded toolchain since it i
 
 The last thing we need to do is to invoke `make` itself to start the build. 
 
-```
+```yaml
     steps:
     [...]
 
@@ -231,7 +231,7 @@ The last thing we need to do is to invoke `make` itself to start the build.
 
 The next thing we need to do is to get Renode working in CI. For the example, this is as simple as running `./docker-test.sh` since the Github Actions Ubuntu runners have Docker already pre-installed.
 
-```
+```yaml
     steps:
     [...]
 
@@ -241,7 +241,7 @@ The next thing we need to do is to get Renode working in CI. For the example, th
 
 Since the script `docker-test.sh` was configured to output the test artifacts to the folder `test_results/`, we will want to capture that directory and save it as an artifact in the CI build.
 
-```
+```yaml
     steps:
     [...]
 
@@ -255,7 +255,7 @@ Since the script `docker-test.sh` was configured to output the test artifacts to
 
 ### Complete Github Action `main.yml`
 
-```
+```yaml
 name: Renode Automated Tests
 
 on:
