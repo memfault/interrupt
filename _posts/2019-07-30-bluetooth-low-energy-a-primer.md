@@ -3,6 +3,7 @@ title: "Bluetooth Low Energy: A Primer"
 description: "A practical introduction to Bluetooth Low Energy (BLE) with
 examples"
 author: mafaneh
+tags: [ble]
 ---
 ## Introduction
 

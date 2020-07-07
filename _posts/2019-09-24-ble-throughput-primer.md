@@ -4,6 +4,7 @@ description: "An overview of the factors which influence the throughput realized
 Bluetooth Low Energy and step-by-step instructions on how to analyze what is limiting throughput in real applications"
 image: /img/ble-throughput/ble-throughput-preview.png
 author: chris
+tags: [ble]
 ---
 
 Bluetooth Low Energy (BLE) was first added to smartphones in 2011 as part of the iPhone 4S. Since then it has become the de-facto way for smartphones to communicate with external devices. While BLE was initially intended to send small amounts of information back and forth, today many applications stream large amounts of data, such as sensor data for tracking steps, binaries for firmware updates, and even audio. For these types of applications, the speed of transfer is very important.
