@@ -160,7 +160,7 @@ Results will be emitted directly to the console but you can also browse them usi
 command bundled with LLVM. `scan-view` will open an html representation of all the issues
 discovered. From this view, you can easily filter by issue type and dig into the specifics of an analysis pass.
 
-I've included [the full output for the example project here](/llvm_scan_build_report) but here's an
+I've included [the full output for the example project here](/misc/llvm_scan_build_report) but here's an
 example of the type of information you will see:
 
 #### Report Overview

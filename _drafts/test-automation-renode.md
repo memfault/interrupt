@@ -16,12 +16,12 @@ tests and capture results.
 
 An alternative to building a complicated orchestration system for automated
 tests is to use the popular hardware emulator project, Renode, and it's built-in
-RobotFramework integration.
+Robot Framework integration.
 
 <!-- excerpt start -->
 
 In this post, I cover what it takes to build a simple firmware for use with
-Renode, how to build and administer tests with RobotFramework, and how to run
+Renode, how to build and administer tests with Robot Framework, and how to run
 these tests within Github's continuous integration system.
 
 <!-- excerpt end -->
@@ -105,19 +105,21 @@ $ which arm-none-eabi-gcc
 /Users/tyler/miniconda3/envs/renode/bin/arm-none-eabi-gcc
 ```
 
-Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
+Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path. 
 
 > Want to learn more about Conda? Check out my previous post on using [Conda
 > environments for embedded
 > development]({% post_url 2020-01-07-conda-developer-environments %}).
 
-### Renode
+It turns out the Renode team packages the application in a [Renode Conda package](https://anaconda.org/antmicro/renode), but at the time of writing this post, not all platforms had the latest version (v1.9, released in March) built and released. For that reason, we'll install it locally.
+
+### Renode & Robot Framework
 
 To install Renode, I've found the best instructions to be on the
 [Renode Github Page](https://github.com/renode/renode#installation). In the
-repo, I've created a `start.sh` script which points to my local Renode
-installation on my Mac. If you are another platform, you'll have to update this
-script.
+example repo, I've created a `start.sh` script which points to my local Renode
+installation on my Mac. If you are using another platform, you'll have to update this
+script to point to your own Renode start script.
 
 ```bash
 #!/bin/sh
@@ -125,8 +127,8 @@ script.
 sh /Applications/Renode.app/Contents/MacOS/macos_run.command renode-config.resc
 ```
 
-To run Renode with RobotFramework, we'll also need to clone the Renode
-repository and all of its submodules, as well as installing all of the Python
+To run Robot Framework alongside Renode, we'll also need to clone the Renode
+repository and all of its submodules, as well as install all of the Python
 dependencies.
 
 ```
@@ -144,9 +146,7 @@ To use Renode with Robot Framework in CI, it's best to use the official
 tests. If you haven't already, you'll want to install
 [Docker](https://www.docker.com/products/docker-desktop).
 
-
-
-## Github Actions & Renode
+## Github Actions CI & Renode
 
 It's now time to plug things into a continuous integration system for automated testing! In a previous post, we wrote about [building firmware in CircleCI]({% post_url 2019-09-17-continuous-integration-for-firmware %}). This time, we are going to use Github Actions to build and test our firmware, as it's likely the easiest for most people to get up and running. 
 
@@ -299,24 +299,26 @@ jobs:
         path: test_results/
 ```
 
+Now, when we publish a pull-request on Github, we'll immediately see that the build is triggered and our job starts. 
+
+![](/img/test-automation-renode/github-pr-building.png)
+
+If we click on "Details", we can watch each job complete in real time! Below we see that all jobs are successful and that we have two artifacts. One is the ELF file that was built during the job, and the other is a ZIP archive of the Robot Framework test results.
+
+![](/img/test-automation-renode/github-pr-build.png)
+
+The best part about using the Robot Framework integration of Renode is that it generates pretty HTML-based reports, as we saw in the [Introduction to Renode post]({% post_url 2020-03-23-intro-to-renode %}#renode--integration-tests).
+
+> I've included the HTML report for the above test. [Click here to view it](/misc/test-automation-renode/log.html).
+
 
 
 ## Final Thoughts
 
-As an evangelist for developer productivity, I love finding repeated tasks and
-automating the processes, whether that is in the firmware shell, a [project CLI
-on the host
-machine]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}), or in
-[the
-debugger]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}).
 
-I hope this post conveyed the reasons why having a developer-focused interface
-into a firmware-based device is helpful. I'd love to hear about how you think
-about command-line interfaces and also how you strike the balance between
-features and code space usage in your shell.
 
 You can find the examples shown in this post
-[here](https://github.com/memfault/interrupt/tree/master/example/firmware-shell).
+[here](https://github.com/memfault/interrupt-renode-test-automation).
 
 See anything you'd like to change? Submit a pull request or open an issue at
 [Github](https://github.com/memfault/interrupt)
