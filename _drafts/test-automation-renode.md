@@ -43,25 +43,16 @@ Test automation is the practice of testing software and/or hardware in a
 repeatable and scalable way where expected values are compared against actual
 values.
 
-| Type of Testing            | Description                                                                                                            | Test Medium    | Difficulty  |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------- | ----------- |
-| Manual Device Testing      | Manual tests performed on real hardware or development boards by engineers or QA.                                      | Device         | None        |
-| Unit Tests                 | Isolated tests which perform tests on a single module. Usually ran on the host machine and sometimes on a real device. | Host, Device   | Low         |
-| Software Integration Tests | Tests which perform tests on a collection of modules that interact with each other.                                    | Host or Device | Medium      |
-| Emulator Integration Tests | Tests which perform                                                                                                    | Emulator       | Medium\*    |
-| Hardware "Unit Tests"      |                                                                                                                        | Device         | Large       |
-| Hardware Integration Tests |                                                                                                                        | Device         | Large       |
-| Hardware End-to-end Tests  |                                                                                                                        | Device         | Extra Large |
+There are various forms of test automation, and they are usually run within or controlled by a continuous integration system, such as Jenkins, Github Actions, or CircleCI.
 
-\* - Assuming an emulator for the platform is already available through Renode
-or QEMU.
+- Software Unit Tests - Isolated tests which perform tests on a single module. Usually ran on the host machine and sometimes on an emulator or real device.
+- Integration Tests - Tests which perform tests on a collection of modules that interact with each other
+- End-to-end Tests - Tests which exercise an entire technical stack end-to-end. These tests would usually communicate with some sort of backend in the cloud or mobile phone.
 
-## Different Types of Test Automation
+These types of testing are not limited entirely to software, as hardware can be tested in similar ways. "Hardware unit testing" is a concept where individual pieces of the larger hardware board are put under test to ensure the chip itself behaves correctly. Integration tests and end-to-end tests can also be performed on hardware, but the complexity increases exponentially.
 
-Since reading [Francois' introduction to
-Renode]({% post_url 2020-03-23-intro-to-renode %}) post, I've been dying to try
-it out. Many comments in response to this post revolved around whether Renode
-would be a good fit for automated tests in CI. The answer is **absolutely**.
+A middle ground between host-run tests and hardware tests is testing on an emulator which emulates the real hardware as much as possible. Renode has become our favorite emulator at Memfault, and it's list of support boards is growing[^renode_boards]. Renode will emulate many peripherals of the board, including the UART, SPI, I2C, RAM, ROM, and GPIO's. 
+
 
 ## Performing Tests on Device
 
@@ -88,9 +79,18 @@ the examples run fine on the STM32F429i discovery board, they were developed in
 Renode, a popular MCU emulation platform.
 
 You can find the complete code example for this blog post in a separate
-[Github repository](https://github.com/memfault/interrupt-renode-test-automation)
+[Github repository](https://github.com/memfault/interrupt-renode-test-automation).
+
+```
+$ git clone https://github.com/memfault/interrupt-renode-test-automation.git --recurse-submodules
+```
 
 ### Toolchain
+
+I used the following tools to build my firmware:
+
+- GCC 8.3.1 / GNU Arm Embedded Toolchain as our compiler[^gnu_toolchain]
+- GNU Make 4.2.1 as the build system
 
 Running automated tests with Renode unfortunately requires Python 2.7. To keeps
 things simple for me, I decided to use a Conda environment to keep this entire
@@ -99,7 +99,8 @@ environment isolated.
 ```
 $ conda create -n renode
 $ conda activate renode
-$ conda install -c conda-forge -c memfault python=2.7 gcc-arm-none-eabi
+$ conda install -c conda-forge -c memfault \
+      python=2.7 gcc-arm-none-eabi make=4.2.1
 
 $ which arm-none-eabi-gcc
 /Users/tyler/miniconda3/envs/renode/bin/arm-none-eabi-gcc
@@ -111,7 +112,7 @@ Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
 > environments for embedded
 > development]({% post_url 2020-01-07-conda-developer-environments %}).
 
-It turns out the Renode team packages the application in a [Renode Conda package](https://anaconda.org/antmicro/renode), but at the time of writing this post, not all platforms had the latest version (v1.9, released in March) built and released. For that reason, we'll install it locally.
+It turns out the Renode team packages the application in a [Renode Conda package](https://anaconda.org/antmicro/renode), but at the time of writing this post, not all platforms had the latest version released (v1.9, released in March). For that reason, I chose to install it locally for this post.
 
 ### Renode & Robot Framework
 
@@ -145,6 +146,273 @@ To use Renode with Robot Framework in CI, it's best to use the official
 [Renode Docker image](https://hub.docker.com/r/antmicro/renode) for running the
 tests. If you haven't already, you'll want to install
 [Docker](https://www.docker.com/products/docker-desktop).
+
+## Example Firmware Overview
+
+This post builds upon previous ideas and examples written on Interrupt. If you find yourself missing some context, the following posts would be useful:
+
+* [Cortex-M MCU Emulation with Renode]({% post_url 2020-03-23-intro-to-renode %})
+* [Building a Tiny CLI Shell for Tiny Firmware]({% post_url
+  2020-06-09-firmware-shell %})
+
+Rather than the STM32Cube HAL, I used an open-source MCU HAL called `libopencm3`
+with excellent support for the STM32. It is included as a submodule in the repo.
+
+The primary way we'll control the firmware is through a CLI shell written previously and linked above. 
+
+With the shell in place, this means that our main loop of the firmware is simply:
+
+```c
+int main(void) {
+    clock_setup();
+    gpio_setup();
+    usart_setup();
+
+    printf("App STARTED\n");
+
+    // Configure shell
+    sShellImpl shell_impl = {
+      .send_char = usart_putc,
+    };
+    shell_boot(&shell_impl);
+
+    char c;
+    while (1) {
+        c = usart_getc();
+        shell_receive_char(c);
+    }
+
+    return 0;
+}
+```
+
+The supporting `*_setup()` calls and their implementations can be found in the other `.c` files in [`src/`](https://github.com/memfault/interrupt-renode-test-automation/tree/master/src).
+
+
+We can build our example firmware by invoking the build system. 
+
+```
+$ make -j4
+Building libopencm3
+  GENHDR  include/libopencm3/stm32/f4/irq.json
+  [...]
+  AR      libopencm3_stm32f4.a
+  LD    build/renode-example.elf
+```
+
+Now we have our `renode-example.elf` file which we can load into Renode. 
+
+```
+$ ./start.sh
+```
+
+In the Renode Monitor window, we type `start`.
+
+```
+(STM32F4_Discovery) start
+```
+
+And then we see our firmware's shell in the UART window of Renode. 
+
+![](img/test-automation-renode/renode-start.png)
+
+We can interact with it exactly as if it was connected to our computer over USB serial! This would have made writing and testing the firmware for my [Tiny Shell]({% post_url 2020-06-09-firmware-shell %}) post **much** easier. I'm glad I took the time now to learn Renode for the next time. 
+
+## Anatomy of a Robot Framework Test
+
+Now that we've verified that the firmware works within Renode, it's now time to think about how we are going to test our firmware. We have two shell commands, `help` and `ping` which are probably useful "sanity" checks that we can test, so let's start with those. 
+
+If we write `ping` as a command into our shell, the following is printed:
+
+```
+shell> ping
+PONG
+```
+
+It makes logical sense to test that this exact text is printed. Although incredibly basic, this is the code that we are testing in our firmware:
+
+```c
+int cli_command_ping(int argc, char *argv[]) {
+    shell_put_line("PONG");
+    return 0;
+}
+```
+
+The following is a Robot Framework test file that calls the `ping` shell command and expects that `PONG` is printed.
+
+```robot
+# test_basic.py
+
+*** Settings ***
+Suite Setup       Setup
+Suite Teardown    Teardown
+Test Setup        Reset Emulation
+Resource          ${RENODEKEYWORDS}
+
+*** Variables ***
+${SHELL_PROMPT}    shell>
+
+*** Keywords ***
+Start Test
+    Execute Command             mach create
+    Execute Command             machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
+    Execute Command             machine LoadPlatformDescription @${PWD_PATH}/add-ccm.repl
+    Execute Command             sysbus LoadELF @${PWD_PATH}/build/renode-example.elf
+    Create Terminal Tester      sysbus.uart2
+    Start Emulation
+
+*** Test Cases ***
+Ping
+    [Documentation]             Prints help menu of the command prompt
+    [Tags]                      non_critical
+
+    Start Test
+
+    Wait For Prompt On Uart     ${SHELL_PROMPT}
+    Write Line To Uart          ping
+    Wait For Line On Uart       PONG        timeout=2
+```
+
+To help run this test locally, I've created a few extra helpers. First is a script, `run_tests.sh`, which contains the following:
+
+```
+#!/bin/bash -e
+
+RENODE_CHECKOUT=${RENODE_CHECKOUT:-~/code/renode}
+
+${RENODE_CHECKOUT}/test.sh -t "${PWD}/tests/tests.yaml" --variable PWD_PATH:"${PWD}" -r "${PWD}/test_results"
+```
+
+`RENODE_CHECKOUT` is the Renode repo that we cloned (with all submodules initialized!). The second line calls Renode's `test.sh` helper with the test manifest file and tells it where to output the results.
+
+The test manifest file, `tests.yaml` contains a list of tests that `test.sh` should iterate over, and it can be used if we want to add more than a single Robot test file.
+
+```
+# tests.yaml
+- robot:
+    - tests/test-basic.robot
+```
+
+If we run our script, let's see what we get!
+
+```
+# Ensure our Python2.7 environment is activated
+$ conda activate renode
+
+# Go!
+$ ./run_tests.sh
+Preparing suites
+Started Renode instance on port 9999; pid 82717
+Starting suites
+Running tests/test-basic.robot
++++++ Starting test 'test-basic.Ping'
++++++ Finished test 'test-basic.Ping' in 1.55 seconds with status OK
+Cleaning up suites
+Closing Renode pid 82717
+Aggregating all robot results
+Output:  /Users/tyler/dev/interrupt-renode-test-automation/test_results/robot_output.xml
+Log:     /Users/tyler/dev/interrupt-renode-test-automation/test_results/log.html
+Report:  /Users/tyler/dev/interrupt-renode-test-automation/test_results/report.html
+Tests finished successfully :)
+```
+
+Awesome. Our simple test was able to launch the firmware, execute the `ping` command, receive a `PONG` response, and generate a report. 
+
+We can also add another test to this same file to test our `help` command, and we can use multiple `Wait For Line On Uart`, one after the other. We can append the following to the end of `test_basic.robot`:
+
+```robot
+*** Test Cases ***
+Help Menu
+    Start Test
+
+    Wait For Prompt On Uart     ${SHELL_PROMPT}
+    Write Line To Uart          help
+
+    # Expect two lines
+    Wait For Line On Uart       help: Lists all commands      timeout=2
+    Wait For Line On Uart       ping: Prints PONG             timeout=2
+```
+
+The best place to start for inspiration of the various features of Renode's integration with Robot Framework is to search around the Internet. I've search for "Create Terminal Tester" on [GitHub](https://github.com/search?q=%22Create+Terminal+Tester%22&type=Code) and [grep.app](https://grep.app/search?q=Create%20Terminal%20Tester) and found great examples.
+
+## More Robot Framework Tips & Tricks
+
+### UART Timeouts
+
+To keep tests failing quickly, make sure not to forget adding `timeout=<seconds>` to UART expectations.
+
+```
+    Wait For Line On Uart       help: Lists all commands      timeout=2
+```
+
+### Regular Expressions on UART
+
+A cool feature that Renode added was the ability to expect regular expressions from the UART, which allows developers to read in values that change between invocations of the test. For example, we can test the following shell command:
+
+```c
+int cli_command_greet(int argc, char *argv[]) {
+    char buf[64];
+    snprintf(buf, sizeof(buf), "Hello %s!", argv[1]);
+    shell_put_line(buf);
+    return 0;
+}
+```
+
+By using `treatAsRegex=True` and saving this value to `p`, we can then read it out by using `p.groups[0]` and comparing it to the name provided in the test. 
+
+```robot
+*** Test Cases ***
+Greet
+    Start Test
+
+    Wait For Prompt On Uart         ${SHELL_PROMPT}
+    Write Line To Uart              greet Tyler
+
+    ${p}=  Wait For Line On Uart    Hello (\\w+)!     treatAsRegex=true     timeout=2
+    Should Be True                  'Tyler' == """${p.groups[0]}"""
+```
+
+### Comparison Operations
+
+At Pebble, we used dynamic memory allocations. To help us sleep at night and confirm that we always had enough heap available on every release we shipped, we added tests ensuring our high-water-marks were within acceptable limits. A test we might have written at the time would measure the available heap space after all of the tests had finished. 
+
+```robot
+*** Test Cases ***
+High Water Mark
+    Start Test
+
+    Wait For Prompt On Uart         ${SHELL_PROMPT}
+    Write Line To Uart              heap_free
+
+    ${p}=  Wait For Line On Uart    (\\d+)     treatAsRegex=true  timeout=2
+    ${i}=  Convert To Integer       ${p.groups[0]}
+    
+    # Ensure we have 5000 bytes free at the end of the tests
+    Should Be True                  5000 < ${i}
+```
+
+### Line Endings
+
+If your shell uses carriage returns as line endings, make sure to add the following option when creating the tester:
+
+```
+    Create Terminal Tester    ${UART}  endLineOption=TreatCarriageReturnAsEndLine
+```
+
+### Tags & Documentation
+
+You can add a **Tags** and **Documentation** attribute to each test, which will help bucket your tests up into logical groups and help developers know what each test is doing. 
+
+```robot
+*** Test Cases ***
+Command
+    [Documentation]             Some command
+    [Tags]                      critical  uart  factory
+```
+
+![](/img/test-automation-renode/robot-tags.png)
+
+> Adding the tag `non_critical` or `skipped` on a test will allow the test to fail but not mark the entire test run as a failure. You can use this for work-in-progress or flaky tests.
 
 ## Github Actions CI & Renode
 
@@ -328,5 +596,6 @@ See anything you'd like to change? Submit a pull request or open an issue at
 ## References
 
 <!-- prettier-ignore-start -->
-[^sdk_uart]: [Nordic nRF52 SDK - UART](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fcom.nordic.infocenter.sdk5.v15.3.0%2Fgroup__app__uart.html)
+[^gnu_toolchain]: [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+[^renode_boards]: [Renode Supported Boards](https://renode.readthedocs.io/en/latest/introduction/supported-boards.html)
 <!-- prettier-ignore-end -->

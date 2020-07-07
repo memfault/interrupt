@@ -548,7 +548,7 @@ Not how we'd do it in production, but it works!
 
 We can then write a simple Robot Framework script to exercise our firmware:
 
-```
+```robot
 # Filename: test-button.robot
 *** Settings ***
 Suite Setup                   Setup
