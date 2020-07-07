@@ -21,10 +21,24 @@ information.
 
 ## Running locally
 
+### Installing Dependencies
+
+Install the [Ruby version that is listed for GitHub Pages](https://pages.github.com/versions/).
+If you're using `rbenv`, it should have picked the correct version from `.ruby-version` already.
+
+Install dependencies using `bundler` (install via `gem install bundler` if necessary) via
+
+```
+bundle install
+```
+
+### Running the Server
+
 To serve locally, you'll want to change the baseurl. You'll likely also want to
 see your drafts.
 
 We recommend:
+
 ```terminal
 $ bundle install jekyll serve -b / -D
 ```
