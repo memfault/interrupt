@@ -1,27 +1,25 @@
 ---
 layout: default
 ---
+
 <!-- Posts -->
 <ul id="posts">
 
-    <h1>{{ page.title }}</h1>
-
-    {% for post in site.posts %}
-    {% if post.tags contains page.tag %}
+    {% for post in paginator.posts %}
 
     <li class="post">
-        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
         <div class="by-line">
             <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
             {% assign author = site.data.authors[post.author] %}
+            {% assign author_key = post.author %}
             {% if author %}
-            <span>by <a href="{{ author.web }}">{{ author.name }}</a></span>
+            <span>by <a href="/authors/{{ author_key }}">{{ author.name }}</a></span>
             {% endif %}
         </div>
         <p>{{ post.excerpt }}</p>
     </li>
 
-    {% endif %}
     {% endfor %}
 
 </ul>

@@ -17,7 +17,7 @@ from project to project. Seldom are they ever read, let alone modified.
 
 <!-- excerpt start -->
 Throughout the [Zero to main() series]({{ '/tag/zero-to-main' |
-absolute_url  }}) of posts, we demystify what happens between when power is applied
+relative_url  }}) of posts, we demystify what happens between when power is applied
 and your main function is called. In the process, we'll learn how to bootstrap a
 C environment, implement a bootloader, relocate code, and more!
 <!-- excerpt end -->

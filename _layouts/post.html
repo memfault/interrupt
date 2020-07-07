@@ -22,7 +22,7 @@ layout: default
     {% if author %}
         <div class="author">
             {% if author.image %}
-            <img src="{{ author.image | prepend: site.baseurl | replace: '//', '/' }}"  />
+            <img src="{{ author.image | relative_url }}"  />
             {% endif %}
             <span>
                 <a href="/authors/{{ author_key }}">{{ author.name }}</a> {{ author.blurb }}<br />
@@ -35,7 +35,7 @@ layout: default
 </article>
 <script type="text/javascript">
     DiscourseEmbed = { discourseUrl: 'https://community.memfault.com/',
-        discourseEmbedUrl: '{{ site.url }}{{ site.baseurl }}{{ page.url }}' };
+        discourseEmbedUrl: '{{ page.url | absolute_url }}' };
 
     (function() {
         var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;

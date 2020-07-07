@@ -10,14 +10,13 @@ author:
 google_site_verification: 2qyLRd8BiI5o3XnqssLvbzPDJ-2S6ytb9iLoNoz1Z9M
 
 # Build settings
-baseurl: /blog
 destination: ./_site
 include:
     - _redirects
 markdown: kramdown
 permalink: /:title
 paginate: 8
-paginate_path: /page:num/
+paginate_path: "/blog/page:num/"
 source: .
 excerpt_separator: "<!-- excerpt end -->"
 
@@ -43,6 +42,10 @@ plugins:
 
 tag_page: '/tags/'
 category_page: '/categories/'
+collections:
+  posts:
+    output: true
+    permalink: /blog/:title
 
 # Custom variables
 version: "1.1.0"
