@@ -244,7 +244,9 @@ $ ./start.sh
 
 And then we see our firmware's shell in the UART window of Renode.
 
-![](img/test-automation-renode/renode-start.png)
+<p align="center">
+  <img width="700" src="/img/test-automation-renode/renode-start.png"/>
+</p>
 
 We can interact with it exactly as if it was connected to our computer over USB
 serial! This would have made writing and testing the firmware for my [Tiny
@@ -507,7 +509,9 @@ Command
     [Tags]                      critical  uart  factory
 ```
 
-![](/img/test-automation-renode/robot-docs.png)
+<p align="center">
+  <img width="700" src="/img/test-automation-renode/robot-docs.png"/>
+</p>
 
 > Adding the tag `non_critical` or `skipped` on a test will allow the test to
 > fail but not mark the entire test run as a failure. You can use this for
@@ -701,14 +705,18 @@ jobs:
 Now, when we publish a pull-request on GitHub, we'll immediately see that the
 build is triggered and our job starts.
 
-![](/img/test-automation-renode/github-pr-building.png)
+<p align="center">
+  <img width="700" src="/img/test-automation-renode/github-pr-building.png"/>
+</p>
 
 If we click on "Details", we can watch each job complete in real time! Below we
 see that all jobs are successful and that we have two artifacts. One is the ELF
 file that was built during the job, and the other is a ZIP archive of the Robot
 Framework test results.
 
-![](/img/test-automation-renode/github-pr-build.png)
+<p align="center">
+  <img width="700" src="/img/test-automation-renode/github-pr-build.png"/>
+</p>
 
 The best part about using the Robot Framework integration of Renode is that it
 generates pretty HTML-based reports, as we saw in the [Introduction to Renode
