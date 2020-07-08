@@ -1,8 +1,8 @@
 ---
-title: Firmware Testing with Renode and Github Actions
+title: Firmware Testing with Renode and GitHub Actions
 description:
   Automated embedded firmware testing with Renode, Robot Framework, and the
-  Github Actions CI system.
+  GitHub Actions CI system.
 author: tyler
 image: /img/test-automation-renode/cover.png
 ---
@@ -19,14 +19,14 @@ software to orchestrate the tests and capture results.
 
 An alternative to building a complicated orchestration system for automated
 tests is to use the popular hardware emulator project, Renode, and its built-in
-Robot Framework integration. By using Renode in conjunction with Github Actions,
+Robot Framework integration. By using Renode in conjunction with GitHub Actions,
 we can ensure that every pull-request and commit to master passes all our tests.
 
 <!-- excerpt start -->
 
 In this post, I cover what it takes to build a simple firmware for use with
 Renode, how to build and administer tests with Robot Framework, and how to run
-these tests within Github's continuous integration system.
+these tests within GitHub's continuous integration system.
 
 <!-- excerpt end -->
 
@@ -48,7 +48,7 @@ repeatable and scalable way where expected values are compared against actual
 values.
 
 There are various forms of test automation, and they are usually run under a
-continuous integration system, such as Jenkins, Github Actions, or CircleCI.
+continuous integration system, such as Jenkins, GitHub Actions, or CircleCI.
 
 - Software Unit Tests - Isolated tests that exercise a single module. Usually
   run on the host machine and sometimes on an emulator or real device.
@@ -76,10 +76,6 @@ Robot Framework[^robot_framework]. Robot Framework is most popular in the web
 world, but it is generic and powerful enough to be used for many more use-cases.
 It provides the glue between various test scripts, test reporting, and multiple
 machines under test.
-
-## When to Use Emulators for Testing
-
-TODO
 
 ## Using a Shell for Testing
 
@@ -110,7 +106,7 @@ the examples run fine on the STM32F429i discovery board, they were developed in
 Renode, a popular MCU emulation platform.
 
 You can find the complete code example for this blog post in a separate
-[Github repository](https://github.com/memfault/interrupt-renode-test-automation).
+[GitHub repository](https://github.com/memfault/interrupt-renode-test-automation).
 
 ```
 $ git clone --recurse-submodules https://github.com/memfault/interrupt-renode-test-automation.git
@@ -139,8 +135,8 @@ $ which arm-none-eabi-gcc
 
 Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
 
-> Want to learn more about Conda? Check out my previous post on using [Conda
-> environments for embedded
+> Want to learn more about Conda? Check out my previous post on using [Conda >
+> environments for embedded >
 > development]({% post_url 2020-01-07-conda-developer-environments %}).
 
 It turns out the Renode team packages the application in a
@@ -152,7 +148,7 @@ post.
 ### Renode & Robot Framework
 
 To install Renode, I've found the best instructions to be on the
-[Renode Github Page](https://github.com/renode/renode#installation). In the
+[Renode GitHub Page](https://github.com/renode/renode#installation). In the
 example repo, I've created a `start.sh` script which points to my local Renode
 installation on my Mac. If you are using another platform, you'll have to update
 this script to point to your own Renode start script.
@@ -517,16 +513,16 @@ Command
 > fail but not mark the entire test run as a failure. You can use this for
 > work-in-progress or flaky tests.
 
-## Github Actions CI & Renode
+## GitHub Actions CI & Renode
 
 It's now time to plug things into a continuous integration system for automated
 testing! In a previous post, we wrote about [building firmware in
 CircleCI]({% post_url 2019-09-17-continuous-integration-for-firmware %}). This
-time, we are going to use Github Actions to build and test our firmware, as it's
+time, we are going to use GitHub Actions to build and test our firmware, as it's
 likely the easiest for most people to get up and running.
 
 To start, we'll want to start by creating a file `.github/workflows/main.yml` in
-our repo. The `blank` example from Github's
+our repo. The `blank` example from GitHub's
 [starter-workflows](https://github.com/actions/starter-workflows/blob/master/ci/blank.yml)
 gives a quick introduction to how the system works. I've copied it down below
 for easy reference.
@@ -612,13 +608,13 @@ The last thing we need to do is to invoke `make` itself to start the build.
 
 ### Running Renode in CI
 
-The next thing we need to do is to get Renode working in CI. The Github Action
+The next thing we need to do is to get Renode working in CI. The GitHub Action
 runners are standard Linux boxes running Ubuntu. They also have many common
 tools installed that you may need, such as Docker, Make, and many more can be
 installed using `apt-get`.
 
 For our particular use case, we want to be able to run Renode exactly the same
-way locally as we do in Github Actions. The easiest way to accomplish this is to
+way locally as we do in GitHub Actions. The easiest way to accomplish this is to
 use Docker.
 
 I found a
@@ -656,7 +652,7 @@ as an artifact in the CI build.
         path: test_results/
 ```
 
-### Complete Github Action `main.yml`
+### Complete GitHub Action `main.yml`
 
 ```yaml
 name: Renode Automated Tests
@@ -702,7 +698,7 @@ jobs:
           path: test_results/
 ```
 
-Now, when we publish a pull-request on Github, we'll immediately see that the
+Now, when we publish a pull-request on GitHub, we'll immediately see that the
 build is triggered and our job starts.
 
 ![](/img/test-automation-renode/github-pr-building.png)
@@ -738,7 +734,7 @@ Renode has part of this
 Unfortunately, this is yet another piece of functionality that doesn't exist in
 the current public release, so I've
 [copied and modified the code slightly](https://github.com/memfault/interrupt-renode-test-automation/blob/master/tests/common.robot).
-Recall that Github Actions gobbles up the artifacts in the output folder
+Recall that GitHub Actions gobbles up the artifacts in the output folder
 `/test_results` so as long as we place the snapshots in this directory, they
 should be automatically included in our final ZIP.
 
@@ -873,7 +869,7 @@ Renode, version 1.9.0.28176 (169a3c85-202003101417)
 
 That solves the problem of the Monitor window, but we also want to connect to
 the UART without a GUI too. The answer on how to do this was found in a
-[Github Issue on the PlatformIO repo](https://github.com/platformio/platformio-core/issues/3401#issuecomment-597768021).
+[GitHub Issue on the PlatformIO repo](https://github.com/platformio/platformio-core/issues/3401#issuecomment-597768021).
 
 We needed to add the following lines to `renode-config.resc`, which is the
 Renode script that is run every time we launch it.
@@ -984,11 +980,17 @@ know this makes me very happy.
 
 ## Final Thoughts
 
+I learned a lot about Renode through writing this post, and I can tell you that
+**it is awesome**. The project has incredible potential and was reasonable easy
+to get set up with GitHub Actions. I'll definitely be doing most of my STM32
+development with Renode moving forward and am excited to build automated tests
+using Renode to test all aspects of the Memfault Firmware SDK[^memfault_sdk].
+
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt-renode-test-automation).
 
 See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
+[GitHub](https://github.com/memfault/interrupt)
 
 {:.no_toc}
 
@@ -1000,4 +1002,5 @@ See anything you'd like to change? Submit a pull request or open an issue at
 [^renode_boards]: [Renode Supported Boards](https://renode.readthedocs.io/en/latest/introduction/supported-boards.html)
 [^rf_datetime]: [Robot Framework - DateTime Library](https://robotframework.org/robotframework/latest/libraries/DateTime.html)
 [^renode_state_save]: [Renode - State saving and loading](https://renode.readthedocs.io/en/latest/basic/saving.html)
+[^memfault_sdk]: [Memfault Firmware SDK](https://github.com/memfault/memfault-firmware-sdk)
 <!-- prettier-ignore-end -->
