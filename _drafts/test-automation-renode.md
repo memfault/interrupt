@@ -1,22 +1,26 @@
 ---
 title: Firmware Testing with Renode and Github Actions
-description: Automated embedded firmware testing with Renode, Robot Framework, and the Github Actions CI system.
+description:
+  Automated embedded firmware testing with Renode, Robot Framework, and the
+  Github Actions CI system.
 author: tyler
 image: /img/test-automation-renode/cover.png
 ---
 
-Automated firmware testing on real embedded hardware is what every hardware company
-strives to build. The mission is to repeatedly verify that changes to firmware being merged
-into master and shipped to customers will not cause catastrophic failures like power regressions or bootloops. 
+Automated firmware testing on real embedded hardware is what every hardware
+company strives to build. The mission is to repeatedly verify that changes to
+firmware being merged into master and shipped to customers will not cause
+catastrophic failures like power regressions or bootloops.
 
 The problem with automated firmware testing with real hardware is that it's
-**hard**. Not only does the system require a stable firmware to build
-on top of, but it will also require extra hardware, like flashers and power supplies, and software to orchestrate
-the tests and capture results.
+**hard**. Not only does the system require a stable firmware to build on top of,
+but it will also require extra hardware, like flashers and power supplies, and
+software to orchestrate the tests and capture results.
 
 An alternative to building a complicated orchestration system for automated
 tests is to use the popular hardware emulator project, Renode, and its built-in
-Robot Framework integration. By using Renode in conjunction with Github Actions, we can ensure that every pull-request and commit to master passes all our tests. 
+Robot Framework integration. By using Renode in conjunction with Github Actions,
+we can ensure that every pull-request and commit to master passes all our tests.
 
 <!-- excerpt start -->
 
@@ -43,30 +47,35 @@ Test automation is the practice of testing software and/or hardware in a
 repeatable and scalable way where expected values are compared against actual
 values.
 
-There are various forms of test automation, and they are usually run under a 
+There are various forms of test automation, and they are usually run under a
 continuous integration system, such as Jenkins, Github Actions, or CircleCI.
 
-- Software Unit Tests - Isolated tests that exercise a single module.
-  Usually run on the host machine and sometimes on an emulator or real device.
-- Integration Tests - Tests that exercise a collection of modules that
-  interact with each other
+- Software Unit Tests - Isolated tests that exercise a single module. Usually
+  run on the host machine and sometimes on an emulator or real device.
+- Integration Tests - Tests that exercise a collection of modules that interact
+  with each other
 - End-to-end Tests - Tests that exercise an entire technical stack end-to-end.
   These tests would usually communicate with some sort of backend in the cloud
   or a mobile phone.
 
-These testing approaches are not limited entirely to software, as hardware can be
-tested in similar ways. "Hardware unit testing" is a concept where individual
+These testing approaches are not limited entirely to software, as hardware can
+be tested in similar ways. "Hardware unit testing" is a concept where individual
 pieces of the larger hardware board are put under test to ensure the chip itself
 behaves correctly. Integration tests and end-to-end tests can also be performed
-on hardware, but the complexity increases exponentially as more hardware is thrown into the mix.
+on hardware, but the complexity increases exponentially as more hardware is
+thrown into the mix.
 
 A middle ground between host-run tests and hardware tests is testing on an
-emulator which emulates the real hardware as much as possible. Renode, by Antmicro, has become
-our favorite emulator at Memfault, and its list of support boards is continually
-growing[^renode_boards]. Renode emulates many peripherals of the board,
-including the UART, SPI, I2C, RAM, ROM, and GPIO's.
+emulator which emulates the real hardware as much as possible. Renode, by
+Antmicro, has become our favorite emulator at Memfault, and its list of support
+boards is continually growing[^renode_boards]. Renode emulates many peripherals
+of the board, including the UART, SPI, I2C, RAM, ROM, and GPIO's.
 
-Renode has a built-in integration with the open-source testing framework called Robot Framework[^robot_framework]. Robot Framework is most popular in the web world, but it is generic and powerful enough to be used for many more use-cases. It provides the glue between various test scripts, test reporting, and multiple machines under test.
+Renode has a built-in integration with the open-source testing framework called
+Robot Framework[^robot_framework]. Robot Framework is most popular in the web
+world, but it is generic and powerful enough to be used for many more use-cases.
+It provides the glue between various test scripts, test reporting, and multiple
+machines under test.
 
 ## When to Use Emulators for Testing
 
@@ -131,7 +140,8 @@ $ which arm-none-eabi-gcc
 Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
 
 > Want to learn more about Conda? Check out my previous post on using [Conda
-> environments for embedded development]({% post_url 2020-01-07-conda-developer-environments %}).
+> environments for embedded
+> development]({% post_url 2020-01-07-conda-developer-environments %}).
 
 It turns out the Renode team packages the application in a
 [Renode Conda package](https://anaconda.org/antmicro/renode), but at the time of
@@ -158,7 +168,7 @@ repository and all of its submodules, as well as install all of the required
 Python dependencies.
 
 ```
-$ git clone --recurse-submodules git@github.com:renode/renode.git 
+$ git clone --recurse-submodules git@github.com:renode/renode.git
 $ cd renode
 
 # Install Robot Framework and other dependencies
@@ -602,13 +612,26 @@ The last thing we need to do is to invoke `make` itself to start the build.
 
 ### Running Renode in CI
 
-The next thing we need to do is to get Renode working in CI. The Github Action runners are standard Linux boxes running Ubuntu. They also have many common tools installed that you may need, such as Docker, Make, and many more can be installed using `apt-get`. 
+The next thing we need to do is to get Renode working in CI. The Github Action
+runners are standard Linux boxes running Ubuntu. They also have many common
+tools installed that you may need, such as Docker, Make, and many more can be
+installed using `apt-get`.
 
-For our particular use case, we want to be able to run Renode exactly the same way locally as we do in Github Actions. The easiest way to accomplish this is to use Docker.
+For our particular use case, we want to be able to run Renode exactly the same
+way locally as we do in Github Actions. The easiest way to accomplish this is to
+use Docker.
 
-I found a [small script](https://github.com/tensorflow/tensorflow/blob/eefeac0e116b02dbf2c8de171d5ad9fcb700fccb/tensorflow/lite/micro/testing/test_stm32f4_binary.sh) in the TensorFlow Micro project which does exactly what I was looking for. This script builds and runs the official Renode Docker image, the mounts the local project folder, starts the Renode Robot Framework tests, and outputs the results to the mounted folder. 
+I found a
+[small script](https://github.com/tensorflow/tensorflow/blob/eefeac0e116b02dbf2c8de171d5ad9fcb700fccb/tensorflow/lite/micro/testing/test_stm32f4_binary.sh)
+in the TensorFlow Micro project which does exactly what I was looking for. This
+script builds and runs the official Renode Docker image, the mounts the local
+project folder, starts the Renode Robot Framework tests, and outputs the results
+to the mounted folder.
 
-I adapted the above file and saved it as [docker-test.sh](https://github.com/memfault/interrupt-renode-test-automation/blob/master/docker-test.sh). The beauty of this script is that it can be run locally *or* in a CI runner! Therefore, all we need to do in our `main.yml` file is call it.
+I adapted the above file and saved it as
+[docker-test.sh](https://github.com/memfault/interrupt-renode-test-automation/blob/master/docker-test.sh).
+The beauty of this script is that it can be run locally _or_ in a CI runner!
+Therefore, all we need to do in our `main.yml` file is call it.
 
 ```yaml
     steps:
@@ -702,8 +725,8 @@ post]({% post_url 2020-03-23-intro-to-renode %}#renode--integration-tests).
 
 Tests are going to fail in CI, and it's probably a good thing, as that's what CI
 is for. But, it would be a pain to guess and check how to fix issues that only
-occur in CI. Thankfully, Renode can capture the state of the
-system, save it to a file, and load it after-the-fact[^renode_state_save] for postmortem debugging.
+occur in CI. Thankfully, Renode can capture the state of the system, save it to
+a file, and load it after-the-fact[^renode_state_save] for postmortem debugging.
 
 It does this using the monitor commands `Save` and `Load`. Wouldn't it be cool
 if we could call the `Save` command in CI for failing tests and then locally run
@@ -714,9 +737,13 @@ Renode has part of this
 [built-in](https://github.com/renode/renode/blob/05377ef375daa3d5ea0de12633d27bf26e20b3b3/src/Renode/RobotFrameworkEngine/renode-keywords.robot#L77-L86).
 Unfortunately, this is yet another piece of functionality that doesn't exist in
 the current public release, so I've
-[copied and modified the code slightly](https://github.com/memfault/interrupt-renode-test-automation/blob/master/tests/common.robot). Recall that Github Actions gobbles up the artifacts in the output folder `/test_results` so as long as we place the snapshots in this directory, they should be automatically included in our final ZIP.
+[copied and modified the code slightly](https://github.com/memfault/interrupt-renode-test-automation/blob/master/tests/common.robot).
+Recall that Github Actions gobbles up the artifacts in the output folder
+`/test_results` so as long as we place the snapshots in this directory, they
+should be automatically included in our final ZIP.
 
-In the example project, I've added a test that always fails. The C code generates a fault which crashes the device:
+In the example project, I've added a test that always fails. The C code
+generates a fault which crashes the device:
 
 ```c
 int cli_command_fault(int argc, char *argv[]) {
@@ -727,9 +754,9 @@ int cli_command_fault(int argc, char *argv[]) {
 }
 ```
 
-The Robot Framework test fails after it doesn't get a response from the device. 
+The Robot Framework test fails after it doesn't get a response from the device.
 
-``` robot
+```robot
 *** Test Cases ***
 Trigger Fault
     [Documentation]             Should fail, but fine since non_critical
@@ -744,9 +771,11 @@ Trigger Fault
     Wait For Line On Uart           Nope     timeout=2
 ```
 
-By adding the hooks above, every failing test should capture a Renode snapshot. 
+By adding the hooks above, every failing test should capture a Renode snapshot.
 
-I've done a few commits into the example project repo with this test in place, which means there is a ZIP with a Renode snapshot in it. Let's download one of the ZIP archives and extract it.
+I've done a few commits into the example project repo with this test in place,
+which means there is a ZIP with a Renode snapshot in it. Let's download one of
+the ZIP archives and extract it.
 
 ```
 $ tree .
@@ -764,8 +793,8 @@ The `test-basic-Trigger_Fault.fail.save` file is a snapshot from a test and
 shell command that forces a crash.
 
 Let's load it up into Renode & GDB and see what it looks like. I've created
-another script in the project repo to help with loading these save files into Renode,
-`load-save.sh`.
+another script in the project repo to help with loading these save files into
+Renode, `load-save.sh`.
 
 ```bash
 #!/bin/sh
@@ -776,7 +805,8 @@ sh /Applications/Renode.app/Contents/MacOS/macos_run.command --disable-xwt \
   -e 'machine StartGdbServer 3333'
 ```
 
-This script starts Renode in headless mode, loads the save file passed in as an argument with the `Load` command, and starts a GDB server.
+This script starts Renode in headless mode, loads the save file passed in as an
+argument with the `Load` command, and starts a GDB server.
 
 ```
 $ ./load-save.sh test_results/snapshots/test-basic-Trigger_Fault.fail.save
@@ -813,9 +843,13 @@ entirely documented, it's quite easy to never have to use these terminal windows
 directly and you can instead attach to Renode using Telnet. This enables you to
 have use iTerm2, your native clipboard, tmux, etc.
 
-To do so, we need to make a few modifications to the way we launch Renode. We'll pass in the argument `--disable-xwt` to disable the GUI entirely, and `--port <port>` to make the Renode Monitor available through Telnet on that port.
+To do so, we need to make a few modifications to the way we launch Renode. We'll
+pass in the argument `--disable-xwt` to disable the GUI entirely, and
+`--port <port>` to make the Renode Monitor available through Telnet on that
+port.
 
-I've included another script, `start-headless.sh` in the example project which can be used to more easily launch Renode in headless mode.
+I've included another script, `start-headless.sh` in the example project which
+can be used to more easily launch Renode in headless mode.
 
 ```bash
 #!/bin/sh
@@ -823,7 +857,8 @@ sh /Applications/Renode.app/Contents/MacOS/macos_run.command \
     --disable-xwt renode-config.resc --port 33334
 ```
 
-After launching this, a user should be able to use `telnet` to connect to that open port. 
+After launching this, a user should be able to use `telnet` to connect to that
+open port.
 
 ```
 $ telnet 127.0.0.1 33334
@@ -836,9 +871,12 @@ Renode, version 1.9.0.28176 (169a3c85-202003101417)
 (STM32F4_Discovery)
 ```
 
-That solves the problem of the Monitor window, but we also want to connect to the UART without a GUI too. The answer on how to do this was found in a [Github Issue on the PlatformIO repo](https://github.com/platformio/platformio-core/issues/3401#issuecomment-597768021). 
+That solves the problem of the Monitor window, but we also want to connect to
+the UART without a GUI too. The answer on how to do this was found in a
+[Github Issue on the PlatformIO repo](https://github.com/platformio/platformio-core/issues/3401#issuecomment-597768021).
 
-We needed to add the following lines to `renode-config.resc`, which is the Renode script that is run every time we launch it. 
+We needed to add the following lines to `renode-config.resc`, which is the
+Renode script that is run every time we launch it.
 
 ```
 # Publish a Telnet connection to the UART
@@ -848,7 +886,7 @@ emulation CreateServerSocketTerminal 33335 "externalUART"
 connector Connect sysbus.uart2 externalUART
 ```
 
-Now all we need to do is `telnet` again to that port, and we'll have our shell. 
+Now all we need to do is `telnet` again to that port, and we'll have our shell.
 
 ```
 $ telnet 127.0.0.1 33335
