@@ -15,7 +15,7 @@ on top of, but it will also require extra hardware, like flashers and power supp
 the tests and capture results.
 
 An alternative to building a complicated orchestration system for automated
-tests is to use the popular hardware emulator project, Renode, and it's built-in
+tests is to use the popular hardware emulator project, Renode, and its built-in
 Robot Framework integration. By using Renode in conjunction with Github Actions, we can ensure that every pull-request and commit to master passes all our tests. 
 
 <!-- excerpt start -->
@@ -43,19 +43,18 @@ Test automation is the practice of testing software and/or hardware in a
 repeatable and scalable way where expected values are compared against actual
 values.
 
-There are various forms of test automation, and they are usually run within or
-controlled by a continuous integration system, such as Jenkins, Github Actions,
-or CircleCI.
+There are various forms of test automation, and they are usually run under a 
+continuous integration system, such as Jenkins, Github Actions, or CircleCI.
 
-- Software Unit Tests - Isolated tests which perform tests on a single module.
+- Software Unit Tests - Isolated tests which exercise a single module.
   Usually run on the host machine and sometimes on an emulator or real device.
-- Integration Tests - Tests that perform tests on a collection of modules that
+- Integration Tests - Tests that exercise a collection of modules that
   interact with each other
 - End-to-end Tests - Tests that exercise an entire technical stack end-to-end.
   These tests would usually communicate with some sort of backend in the cloud
-  or mobile phone.
+  or a mobile phone.
 
-These types of testing are not limited entirely to software, as hardware can be
+These testing approaches are not limited entirely to software, as hardware can be
 tested in similar ways. "Hardware unit testing" is a concept where individual
 pieces of the larger hardware board are put under test to ensure the chip itself
 behaves correctly. Integration tests and end-to-end tests can also be performed
@@ -88,7 +87,7 @@ The idea is relatively simple.
 3. At the end of the test run, the harness determines whether the test was
    successful or not.
 
-Thankfully for us, Renode has sever utilities and helpers built-in that we can
+Thankfully for us, Renode has several utilities and helpers built-in that we can
 take advantage of.
 
 ## Setup
@@ -129,9 +128,8 @@ $ which arm-none-eabi-gcc
 
 Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
 
-> Want to learn more about Conda? Check out my previous post on using [Conda > >
-> environments for embedded > >
-> development]({% post_url 2020-01-07-conda-developer-environments %}).
+> Want to learn more about Conda? Check out my previous post on using [Conda
+> environments for embedded development]({% post_url 2020-01-07-conda-developer-environments %}).
 
 It turns out the Renode team packages the application in a
 [Renode Conda package](https://anaconda.org/antmicro/renode), but at the time of
@@ -247,7 +245,7 @@ I took the time now to learn Renode for the next time.
 
 ## Anatomy of a Robot Framework Test
 
-Now that we've verified that the firmware works within Renode, it's now time to
+Now that we've verified that the firmware works within Renode, it's time to
 think about how we are going to test our firmware. We have two shell commands,
 `help` and `ping` which are probably useful "sanity" checks that we can test, so
 let's start with those.
@@ -385,7 +383,7 @@ that can be done with this infrastructure.
 ## More Robot Framework Tips & Tricks
 
 The best place to start for inspiration of the various features of Renode's
-integration with Robot Framework is to search around the Internet. I've search
+integration with Robot Framework is to search around the Internet. I've searched
 for "Create Terminal Tester" on
 [GitHub](https://github.com/search?q=%22Create+Terminal+Tester%22&type=Code) and
 [grep.app](https://grep.app/search?q=Create%20Terminal%20Tester) and found great
