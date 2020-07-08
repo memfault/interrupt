@@ -1,8 +1,8 @@
 ---
 title: Firmware Testing with Renode and Github Actions
-description: TODO
+description: Automated embedded firmware testing with Renode, Robot Framework, and the Github Actions CI system.
 author: tyler
-image:
+image: /img/test-automation-renode/cover.png
 ---
 
 Automated firmware testing on real embedded hardware is what every hardware company
