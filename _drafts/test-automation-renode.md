@@ -11,8 +11,8 @@ into master and shipped to customers will not experience bugs.
 
 The problem with automated firmware testing with real hardware is that it's
 **hard**. Not only does the system require a relatively stable firmware to build
-on top of, it will also require extra hardware and software to orchestrate the
-tests and capture results.
+on top of, but it will also require extra hardware and software to orchestrate
+the tests and capture results.
 
 An alternative to building a complicated orchestration system for automated
 tests is to use the popular hardware emulator project, Renode, and it's built-in
@@ -48,10 +48,10 @@ controlled by a continuous integration system, such as Jenkins, Github Actions,
 or CircleCI.
 
 - Software Unit Tests - Isolated tests which perform tests on a single module.
-  Usually ran on the host machine and sometimes on an emulator or real device.
-- Integration Tests - Tests which perform tests on a collection of modules that
+  Usually run on the host machine and sometimes on an emulator or real device.
+- Integration Tests - Tests that perform tests on a collection of modules that
   interact with each other
-- End-to-end Tests - Tests which exercise an entire technical stack end-to-end.
+- End-to-end Tests - Tests that exercise an entire technical stack end-to-end.
   These tests would usually communicate with some sort of backend in the cloud
   or mobile phone.
 
@@ -63,7 +63,7 @@ on hardware, but the complexity increases exponentially.
 
 A middle ground between host-run tests and hardware tests is testing on an
 emulator which emulates the real hardware as much as possible. Renode has become
-our favorite emulator at Memfault, and it's list of support boards is
+our favorite emulator at Memfault, and its list of support boards is
 growing[^renode_boards]. Renode will emulate many peripherals of the board,
 including the UART, SPI, I2C, RAM, ROM, and GPIO's.
 
@@ -84,8 +84,8 @@ The idea is relatively simple.
 3. At the end of the test run, the harness determines whether the test was
    successful or not.
 
-Thankfully for us, Renode has a number of utilities and helpers built-in that we
-can take advantage of.
+Thankfully for us, Renode has sever utilities and helpers built-in that we can
+take advantage of.
 
 ## Setup
 
@@ -109,7 +109,7 @@ I used the following tools to build my firmware:
 - GCC 8.3.1 / GNU Arm Embedded Toolchain as our compiler[^gnu_toolchain]
 - GNU Make 4.2.1 as the build system
 
-Running automated tests with Renode unfortunately requires Python 2.7. To keeps
+Running automated tests with Renode, unfortunately, requires Python 2.7. To keep
 things simple for me, I decided to use a Conda environment to keep this entire
 environment isolated.
 
@@ -125,8 +125,8 @@ $ which arm-none-eabi-gcc
 
 Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
 
-> Want to learn more about Conda? Check out my previous post on using [Conda >
-> environments for embedded >
+> Want to learn more about Conda? Check out my previous post on using [Conda > >
+> environments for embedded > >
 > development]({% post_url 2020-01-07-conda-developer-environments %}).
 
 It turns out the Renode team packages the application in a
@@ -511,8 +511,8 @@ CircleCI]({% post_url 2019-09-17-continuous-integration-for-firmware %}). This
 time, we are going to use Github Actions to build and test our firmware, as it's
 likely the easiest for most people to get up and running.
 
-To start, we'll want to start off by creating a file
-`.github/workflows/main.yml` in our repo. The `blank` example from Github's
+To start, we'll want to start by creating a file `.github/workflows/main.yml` in
+our repo. The `blank` example from Github's
 [starter-workflows](https://github.com/actions/starter-workflows/blob/master/ci/blank.yml)
 gives a quick introduction to how the system works. I've copied it down below
 for easy reference.
@@ -700,7 +700,7 @@ system, save it to a file, and load it after-the-fact[^renode_state_save].
 It does this using the monitor commands `Save` and `Load`. Wouldn't it be cool
 if we could call the `Save` command in CI for failing tests and then locally run
 `Load` in Renode to get the exact state of the device at the time of failure?
-Yes it would be, and of course it's possible!
+Yes it would be.
 
 Renode has part of this
 [built-in](https://github.com/renode/renode/blob/05377ef375daa3d5ea0de12633d27bf26e20b3b3/src/Renode/RobotFrameworkEngine/renode-keywords.robot#L77-L86).
