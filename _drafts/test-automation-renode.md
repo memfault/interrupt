@@ -46,7 +46,7 @@ values.
 There are various forms of test automation, and they are usually run under a 
 continuous integration system, such as Jenkins, Github Actions, or CircleCI.
 
-- Software Unit Tests - Isolated tests which exercise a single module.
+- Software Unit Tests - Isolated tests that exercise a single module.
   Usually run on the host machine and sometimes on an emulator or real device.
 - Integration Tests - Tests that exercise a collection of modules that
   interact with each other
@@ -83,7 +83,7 @@ Firmware]({% post_url 2020-06-09-firmware-shell %}#integration--automated-tests)
 
 The idea is relatively simple.
 
-1. Create a test which will execute a series of shell commands on a device.
+1. Create a test that will execute a series of shell commands on a device.
 2. After each command or series of commands, the results will be compared
    against expected values.
 3. At the end of the test run, the harness determines whether the test was
@@ -384,7 +384,7 @@ that can be done with this infrastructure.
 
 ## More Robot Framework Tips & Tricks
 
-The best place to start for inspiration of the various features of Renode's
+The best place to start for inspiration for the various features of Renode's
 integration with Robot Framework is to search around the Internet. I've searched
 for "Create Terminal Tester" on
 [GitHub](https://github.com/search?q=%22Create+Terminal+Tester%22&type=Code) and
@@ -702,13 +702,13 @@ post]({% post_url 2020-03-23-intro-to-renode %}#renode--integration-tests).
 
 Tests are going to fail in CI, and it's probably a good thing, as that's what CI
 is for. But, it would be a pain to guess and check how to fix issues that only
-occur in CI. Thankfully, Renode has the ability to capture the state of the
+occur in CI. Thankfully, Renode can capture the state of the
 system, save it to a file, and load it after-the-fact[^renode_state_save] for postmortem debugging.
 
 It does this using the monitor commands `Save` and `Load`. Wouldn't it be cool
 if we could call the `Save` command in CI for failing tests and then locally run
 `Load` in Renode to get the exact state of the device at the time of failure?
-Yes it would be.
+Yes, it would be.
 
 Renode has part of this
 [built-in](https://github.com/renode/renode/blob/05377ef375daa3d5ea0de12633d27bf26e20b3b3/src/Renode/RobotFrameworkEngine/renode-keywords.robot#L77-L86).
