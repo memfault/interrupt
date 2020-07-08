@@ -458,7 +458,7 @@ First, compile your binary in two directories. If the binaries match, you are pr
 
 That's it!
 
-## Applying Reproducible Build Metholodogy During Development
+## Applying Reproducible Build Methodology During Development
 
 Over a projects lifetime, you will likely wind up making changes to the product that should have **no** impact on the final binary produced. Some examples of this type of change include:
 
