@@ -1,5 +1,5 @@
 ---
-title: Test Automation with Renode
+title: Firmware Testing with Renode and Github Actions
 description: TODO
 author: tyler
 image:
@@ -129,7 +129,7 @@ sh /Applications/Renode.app/Contents/MacOS/macos_run.command renode-config.resc
 ```
 
 To run Robot Framework alongside Renode, we'll also need to clone the Renode
-repository and all of its submodules, as well as install all of the Python
+repository and all of its submodules, as well as install all of the required Python
 dependencies.
 
 ```
@@ -189,7 +189,7 @@ int main(void) {
 The supporting `*_setup()` calls and their implementations can be found in the other `.c` files in [`src/`](https://github.com/memfault/interrupt-renode-test-automation/tree/master/src).
 
 
-We can build our example firmware by invoking the build system. 
+We can build our example firmware by invoking Make.
 
 ```
 $ make -j4
@@ -204,12 +204,6 @@ Now we have our `renode-example.elf` file which we can load into Renode.
 
 ```
 $ ./start.sh
-```
-
-In the Renode Monitor window, we type `start`.
-
-```
-(STM32F4_Discovery) start
 ```
 
 And then we see our firmware's shell in the UART window of Renode. 
@@ -229,7 +223,7 @@ shell> ping
 PONG
 ```
 
-It makes logical sense to test that this exact text is printed. Although incredibly basic, this is the code that we are testing in our firmware:
+It makes logical sense to test that this exact text is printed. Although incredibly basic, this is the code that we are testing within our firmware:
 
 ```c
 int cli_command_ping(int argc, char *argv[]) {
@@ -244,20 +238,26 @@ The following is a Robot Framework test file that calls the `ping` shell command
 # test_basic.py
 
 *** Settings ***
+# Boilerplate
 Suite Setup       Setup
 Suite Teardown    Teardown
 Test Setup        Reset Emulation
 Resource          ${RENODEKEYWORDS}
 
 *** Variables ***
+# Our shell prompt to expect
 ${SHELL_PROMPT}    shell>
 
 *** Keywords ***
 Start Test
+    # Create the Machine
     Execute Command             mach create
+    # Load the stm32f4 board definitions
     Execute Command             machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
     Execute Command             machine LoadPlatformDescription @${PWD_PATH}/add-ccm.repl
+    # Load the ELF file
     Execute Command             sysbus LoadELF @${PWD_PATH}/build/renode-example.elf
+    # Connect the UART
     Create Terminal Tester      sysbus.uart2
     Start Emulation
 
@@ -293,7 +293,7 @@ The test manifest file, `tests.yaml` contains a list of tests that `test.sh` sho
     - tests/test-basic.robot
 ```
 
-If we run our script, let's see what we get!
+If we run our `run_tests.sh` script and see what we get!
 
 ```
 # Ensure our Python2.7 environment is activated
@@ -333,9 +333,20 @@ Help Menu
     Wait For Line On Uart       ping: Prints PONG             timeout=2
 ```
 
-The best place to start for inspiration of the various features of Renode's integration with Robot Framework is to search around the Internet. I've search for "Create Terminal Tester" on [GitHub](https://github.com/search?q=%22Create+Terminal+Tester%22&type=Code) and [grep.app](https://grep.app/search?q=Create%20Terminal%20Tester) and found great examples.
+This covers the basic functionality for tests, but there is **so much more** that can be done with this infrastructure.
 
 ## More Robot Framework Tips & Tricks
+
+The best place to start for inspiration of the various features of Renode's integration with Robot Framework is to search around the Internet. I've search for "Create Terminal Tester" on [GitHub](https://github.com/search?q=%22Create+Terminal+Tester%22&type=Code) and [grep.app](https://grep.app/search?q=Create%20Terminal%20Tester) and found great examples.
+
+### Built-In Libraries
+
+The official [Robot Framework documentation](https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html) is the best reference to learn what commands come built-in. To use these commands, you may need to include the library. For instance, if you wanted to use the `DateTime` library[^rf_datetime], you'd have to import it at the top of your test suite.
+
+```robot
+*** Settings ***
+Library           DateTime
+```
 
 ### UART Timeouts
 
@@ -345,9 +356,16 @@ To keep tests failing quickly, make sure not to forget adding `timeout=<seconds>
     Wait For Line On Uart       help: Lists all commands      timeout=2
 ```
 
+If you are building Renode from source or have a release greater than 1.9.0, you can also set this globally by overriding the `${DEFAULT_UART_TIMEOUT}` variable in your suite.
+
+```robot
+*** Variables ***
+${DEFAULT_UART_TIMEOUT}     2
+```
+
 ### Regular Expressions on UART
 
-A cool feature that Renode added was the ability to expect regular expressions from the UART, which allows developers to read in values that change between invocations of the test. For example, we can test the following shell command:
+You can expect and validate strings from the UART by using regular expressions, which allows developers to read in values that change between invocations of the test. For example, we can test the following shell command:
 
 ```c
 int cli_command_greet(int argc, char *argv[]) {
@@ -374,7 +392,7 @@ Greet
 
 ### Comparison Operations
 
-At Pebble, we used dynamic memory allocations. To help us sleep at night and confirm that we always had enough heap available on every release we shipped, we added tests ensuring our high-water-marks were within acceptable limits. A test we might have written at the time would measure the available heap space after all of the tests had finished. 
+At Pebble, we used dynamic memory allocations. To help us sleep at night and confirm that we always had enough heap available on every build we shipped, we added tests ensuring our high-water-marks were within acceptable limits. A test we might have written at the time would measure the available heap space after all of the tests had finished. 
 
 ```robot
 *** Test Cases ***
@@ -386,10 +404,12 @@ High Water Mark
 
     ${p}=  Wait For Line On Uart    (\\d+)     treatAsRegex=true  timeout=2
     ${i}=  Convert To Integer       ${p.groups[0]}
-    
+
     # Ensure we have 5000 bytes free at the end of the tests
     Should Be True                  5000 < ${i}
 ```
+
+In our automated tests, we did similar checks to make sure that our performance, power usage, stack, and heap usage were always within acceptable limits.
 
 ### Line Endings
 
@@ -579,7 +599,151 @@ The best part about using the Robot Framework integration of Renode is that it g
 
 > I've included the HTML report for the above test. [Click here to view it](/misc/test-automation-renode/log.html).
 
+## Debugging Failing Tests in CI
 
+Tests are going to fail in CI, and it's probably a good thing, as that's what CI is for. But, it would be a pain to guess and check how to fix issues that only occur in CI. Thankfully, Renode has the ability to capture the state of the system, save it to a file, and load it after-the-fact[^renode_state_save].
+
+It does this using the monitor commands `Save` and `Load`. Wouldn't it be cool if we could call the `Save` command in CI for failing tests and then locally run `Load` in Renode to get the exact state of the device at the time of failure? Yes it would be, and of course it's possible!
+
+Renode has part of this [built-in](https://github.com/renode/renode/blob/05377ef375daa3d5ea0de12633d27bf26e20b3b3/src/Renode/RobotFrameworkEngine/renode-keywords.robot#L77-L86). Unfortunately, this is yet another piece of functionality that doesn't exist in the current public release, so I've [copied the code](https://github.com/memfault/interrupt-renode-test-automation/blob/master/tests/common.robot) (and overrode the snapshot save location) so that these snapshots get uploaded into our Github Actions artifacts!
+
+I've download an example ZIP archive from one of the builds from GitHub and extracted it. 
+
+```
+$ tree .
+test_results
+├── log.html
+├── logs.txt
+├── report.html
+├── robot_output.xml
+├── snapshots
+│   └── test-basic-Trigger_Fault.fail.save
+└── test-basic.xml
+```
+
+The `test-basic-Trigger_Fault.fail.save` file is a snapshot from a test and shell command that forces a crash. 
+
+```c
+int cli_command_fault(int argc, char *argv[]) {
+    void (*g_bad_func_call)(void) = (void (*)(void))0x20000002;
+    g_bad_func_call();
+    return 0;
+}
+```
+
+Let's load it up into Renode & GDB and see what it looks like. I've created another script to help with loading these save files into Renode, `load-save.sh`.
+
+```
+$ ./load-save.sh test_results/snapshots/test-basic-Trigger_Fault.fail.save
+Loaded monitor commands from: ./scripts/monitor.py
+Monitor available in telnet mode on port 1234
+machine-0: GDB server with all CPUs started on port :3333
+```
+
+We see that the GDB port on 3333 is up and running, so let's attach to that port. Don't forget to include the ELF file (which is also saved in the GitHub build artifacts).
+
+```
+$ arm-none-eabi-gdb-py --eval-command="target remote :3333" --se renode-example.elf
+[...]
+(gdb) bt
+#0  blocking_handler () at ../../cm3/vector.c:104
+#1  <signal handler called>
+#2  0x20000002 in rcc_ahb_frequency ()
+#3  0x08000252 in cli_command_fault (argc=1, argv=0x2000ff74) at src/app_shell_commands.c:24
+#4  0x08000528 in prv_process () at src/shell/src/shell.c:113
+#5  0x080005ec in shell_receive_char (c=13 '\r') at src/shell/src/shell.c:147
+#6  0x080001e0 in main () at src/app.c:29
+```
+
+That looks right! `0x20000002` was the bogus address I used which caused a UsageFault, and we can tell it came from the CLI command `fault`.
+
+
+## Improving The Renode Tooling
+
+To improve my workflow with Renode, I needed to do something about the Mono-emulated terminal windows that were spawned with Renode. Although not entirely documented, it's quite easy to never have to use these terminal windows directly and you can instead attach to Renode using Telnet. This enables you to have use iTerm2, your native clipboard, tmux, etc.
+
+Taking inspiration from my previous post, [Building a CLI for Firmware Projects]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}), I wrote a quick and hacky `tasks.py` Invoke file to improve my Renode flows. 
+
+```python
+import time
+
+from invoke import Context, Collection, task
+from telnetlib import Telnet
+from datetime import datetime, timedelta
+
+@task()
+def renode(ctx):
+    """Spawn Renode and attach to its monitor"""
+    ctx.run("./start-headless.sh", asynchronous=True)
+
+    print("Letting Renode boot...")
+    time.sleep(3)
+
+    retry_until = datetime.now() + timedelta(seconds=3)
+    while datetime.now() < retry_until:
+        try:
+            ctx.run('telnet 127.0.0.1 33334', pty=True)
+        except Exception as e:
+            time.sleep(0.5)
+
+@task()
+def console(ctx):
+    """Connect to Renode's UART"""
+    ctx.run('telnet 127.0.0.1 33335', pty=True)
+
+@task()
+def gdb(ctx):
+    """Connect to Renode's GDB connection"""
+    ctx.run("arm-none-eabi-gdb-py "
+            "--eval-command=\"target remote :3333\" "
+            "--se build/renode-example.elf", 
+            pty=True)
+
+@task()
+def test(ctx):
+    """Run tests locally"""
+    ctx.run("./run_tests.sh", pty=True)
+```
+
+Now, all I need to do is install Invoke into my Conda environment, and I'll be able to more easily do everything I want!
+
+```
+$ pip install invoke
+```
+
+I can start Renode and get access to its monitor:
+
+```
+$ invoke renode
+[...]
+Renode, version 1.9.0.28176 (169a3c85-202003101417)
+
+(monitor) i $CWD/renode-config.resc
+Starting emulation...
+(STM32F4_Discovery)
+```
+
+I can get it's shell:
+
+```
+$ inv console
+[...]
+shell>
+```
+
+And I can launch GDB and connect to the instance:
+
+```
+$ inv gdb
+GNU gdb (GNU Tools for Arm Embedded Processors 8-2019-q3-update) 8.3.0.20190703-git
+
+Reading symbols from build/renode-example.elf...
+Remote debugging using :3333
+0x08003fd4 in usart_wait_recv_ready (usart=usart@entry=1073759232) at ../common/usart_common_f124.c:96
+96    while ((USART_SR(usart) & USART_SR_RXNE) == 0);
+```
+
+Much, much better. For those who know me or have read my previous posts, you know this makes me very happy. 
 
 ## Final Thoughts
 
@@ -598,4 +762,6 @@ See anything you'd like to change? Submit a pull request or open an issue at
 <!-- prettier-ignore-start -->
 [^gnu_toolchain]: [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
 [^renode_boards]: [Renode Supported Boards](https://renode.readthedocs.io/en/latest/introduction/supported-boards.html)
+[^rf_datetime]: [Robot Framework - DateTime Library](https://robotframework.org/robotframework/latest/libraries/DateTime.html)
+[^renode_state_save]: [Renode - State saving and loading](https://renode.readthedocs.io/en/latest/basic/saving.html)
 <!-- prettier-ignore-end -->
