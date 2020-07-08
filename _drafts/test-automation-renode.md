@@ -66,6 +66,8 @@ our favorite emulator at Memfault, and its list of support boards is continually
 growing[^renode_boards]. Renode emulates many peripherals of the board,
 including the UART, SPI, I2C, RAM, ROM, and GPIO's.
 
+Renode has a built-in integration with the open-source testing framework called Robot Framework[^robot_framework]. Robot Framework is most popular in the web world, but it is generic and powerful enough to be used for many more use-cases. It provides the glue between various test scripts, test reporting, and multiple machines under test.
+
 ## When to Use Emulators for Testing
 
 TODO
@@ -499,7 +501,7 @@ Command
     [Tags]                      critical  uart  factory
 ```
 
-![](/img/test-automation-renode/robot-tags.png)
+![](/img/test-automation-renode/robot-docs.png)
 
 > Adding the tag `non_critical` or `skipped` on a test will allow the test to
 > fail but not mark the entire test run as a failure. You can use this for
@@ -600,9 +602,13 @@ The last thing we need to do is to invoke `make` itself to start the build.
 
 ### Running Renode in CI
 
-The next thing we need to do is to get Renode working in CI. For the example,
-this is as simple as running `./docker-test.sh` since the Github Actions Ubuntu
-runners have Docker already pre-installed.
+The next thing we need to do is to get Renode working in CI. The Github Action runners are standard Linux boxes running Ubuntu. They also have many common tools installed that you may need, such as Docker, Make, and many more can be installed using `apt-get`. 
+
+For our particular use case, we want to be able to run Renode exactly the same way locally as we do in Github Actions. The easiest way to accomplish this is to use Docker.
+
+I found a [small script](https://github.com/tensorflow/tensorflow/blob/eefeac0e116b02dbf2c8de171d5ad9fcb700fccb/tensorflow/lite/micro/testing/test_stm32f4_binary.sh) in the TensorFlow Micro project which does exactly what I was looking for. This script builds and runs the official Renode Docker image, the mounts the local project folder, starts the Renode Robot Framework tests, and outputs the results to the mounted folder. 
+
+I adapted the above file and saved it as [docker-test.sh](https://github.com/memfault/interrupt-renode-test-automation/blob/master/docker-test.sh). The beauty of this script is that it can be run locally *or* in a CI runner! Therefore, all we need to do in our `main.yml` file is call it.
 
 ```yaml
     steps:
@@ -697,7 +703,7 @@ post]({% post_url 2020-03-23-intro-to-renode %}#renode--integration-tests).
 Tests are going to fail in CI, and it's probably a good thing, as that's what CI
 is for. But, it would be a pain to guess and check how to fix issues that only
 occur in CI. Thankfully, Renode has the ability to capture the state of the
-system, save it to a file, and load it after-the-fact[^renode_state_save].
+system, save it to a file, and load it after-the-fact[^renode_state_save] for postmortem debugging.
 
 It does this using the monitor commands `Save` and `Load`. Wouldn't it be cool
 if we could call the `Save` command in CI for failing tests and then locally run
@@ -708,12 +714,39 @@ Renode has part of this
 [built-in](https://github.com/renode/renode/blob/05377ef375daa3d5ea0de12633d27bf26e20b3b3/src/Renode/RobotFrameworkEngine/renode-keywords.robot#L77-L86).
 Unfortunately, this is yet another piece of functionality that doesn't exist in
 the current public release, so I've
-[copied the code](https://github.com/memfault/interrupt-renode-test-automation/blob/master/tests/common.robot)
-(and overrode the snapshot save location) so that these snapshots get uploaded
-into our Github Actions artifacts!
+[copied and modified the code slightly](https://github.com/memfault/interrupt-renode-test-automation/blob/master/tests/common.robot). Recall that Github Actions gobbles up the artifacts in the output folder `/test_results` so as long as we place the snapshots in this directory, they should be automatically included in our final ZIP.
 
-I've download an example ZIP archive from one of the builds from GitHub and
-extracted it.
+In the example project, I've added a test that always fails. The C code generates a fault which crashes the device:
+
+```c
+int cli_command_fault(int argc, char *argv[]) {
+    // Bad function call!!
+    void (*g_bad_func_call)(void) = (void (*)(void))0x20000002;
+    g_bad_func_call();
+    return 0;
+}
+```
+
+The Robot Framework test fails after it doesn't get a response from the device. 
+
+``` robot
+*** Test Cases ***
+Trigger Fault
+    [Documentation]             Should fail, but fine since non_critical
+    [Tags]                      non_critical  uart  input
+
+    Start Test
+
+    Wait For Prompt On Uart         ${SHELL_PROMPT}
+    Write Line To Uart              fault
+
+    # By now we've crashed
+    Wait For Line On Uart           Nope     timeout=2
+```
+
+By adding the hooks above, every failing test should capture a Renode snapshot. 
+
+I've done a few commits into the example project repo with this test in place, which means there is a ZIP with a Renode snapshot in it. Let's download one of the ZIP archives and extract it.
 
 ```
 $ tree .
@@ -730,17 +763,20 @@ test_results
 The `test-basic-Trigger_Fault.fail.save` file is a snapshot from a test and
 shell command that forces a crash.
 
-```c
-int cli_command_fault(int argc, char *argv[]) {
-    void (*g_bad_func_call)(void) = (void (*)(void))0x20000002;
-    g_bad_func_call();
-    return 0;
-}
+Let's load it up into Renode & GDB and see what it looks like. I've created
+another script in the project repo to help with loading these save files into Renode,
+`load-save.sh`.
+
+```bash
+#!/bin/sh
+
+sh /Applications/Renode.app/Contents/MacOS/macos_run.command --disable-xwt \
+  -e "Load @$1" \
+  -e 'mach set 0' \
+  -e 'machine StartGdbServer 3333'
 ```
 
-Let's load it up into Renode & GDB and see what it looks like. I've created
-another script to help with loading these save files into Renode,
-`load-save.sh`.
+This script starts Renode in headless mode, loads the save file passed in as an argument with the `Load` command, and starts a GDB server.
 
 ```
 $ ./load-save.sh test_results/snapshots/test-basic-Trigger_Fault.fail.save
@@ -769,7 +805,7 @@ $ arm-none-eabi-gdb-py --eval-command="target remote :3333" --se renode-example.
 That looks right! `0x20000002` was the bogus address I used which caused a
 UsageFault, and we can tell it came from the CLI command `fault`.
 
-## Improving The Renode Tooling
+## Using Renode in Headless Mode
 
 To improve my workflow with Renode, I needed to do something about the
 Mono-emulated terminal windows that were spawned with Renode. Although not
@@ -777,9 +813,53 @@ entirely documented, it's quite easy to never have to use these terminal windows
 directly and you can instead attach to Renode using Telnet. This enables you to
 have use iTerm2, your native clipboard, tmux, etc.
 
+To do so, we need to make a few modifications to the way we launch Renode. We'll pass in the argument `--disable-xwt` to disable the GUI entirely, and `--port <port>` to make the Renode Monitor available through Telnet on that port.
+
+I've included another script, `start-headless.sh` in the example project which can be used to more easily launch Renode in headless mode.
+
+```bash
+#!/bin/sh
+sh /Applications/Renode.app/Contents/MacOS/macos_run.command \
+    --disable-xwt renode-config.resc --port 33334
+```
+
+After launching this, a user should be able to use `telnet` to connect to that open port. 
+
+```
+$ telnet 127.0.0.1 33334
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+Renode, version 1.9.0.28176 (169a3c85-202003101417)
+
+(monitor) i $CWD/renode-config.resc
+(STM32F4_Discovery)
+```
+
+That solves the problem of the Monitor window, but we also want to connect to the UART without a GUI too. The answer on how to do this was found in a [Github Issue on the PlatformIO repo](https://github.com/platformio/platformio-core/issues/3401#issuecomment-597768021). 
+
+We needed to add the following lines to `renode-config.resc`, which is the Renode script that is run every time we launch it. 
+
+```
+# Publish a Telnet connection to the UART
+emulation CreateServerSocketTerminal 33335 "externalUART"
+
+# Connect that connection to our UART
+connector Connect sysbus.uart2 externalUART
+```
+
+Now all we need to do is `telnet` again to that port, and we'll have our shell. 
+
+```
+$ telnet 127.0.0.1 33335
+shell>
+shell> help
+...
+```
+
 Taking inspiration from my previous post, [Building a CLI for Firmware
 Projects]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}), I
-wrote a quick and hacky `tasks.py` Invoke file to improve my Renode flows.
+wrote a quick and hacky `tasks.py` Invoke file to improve this flow.
 
 ```python
 import time
@@ -877,6 +957,7 @@ See anything you'd like to change? Submit a pull request or open an issue at
 ## References
 
 <!-- prettier-ignore-start -->
+[^robot_framework]: [Robot Framework](https://robotframework.org/)
 [^gnu_toolchain]: [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
 [^renode_boards]: [Renode Supported Boards](https://renode.readthedocs.io/en/latest/introduction/supported-boards.html)
 [^rf_datetime]: [Robot Framework - DateTime Library](https://robotframework.org/robotframework/latest/libraries/DateTime.html)
