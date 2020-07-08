@@ -5,18 +5,18 @@ author: tyler
 image:
 ---
 
-Automated tested on real embedded hardware is what every hardware company
-strives to build. The mission is to repeatedly verify that changes being merged
-into master and shipped to customers will not experience bugs.
+Automated firmware testing on real embedded hardware is what every hardware company
+strives to build. The mission is to repeatedly verify that changes to firmware being merged
+into master and shipped to customers will not cause catastrophic failures like power regressions or bootloops. 
 
 The problem with automated firmware testing with real hardware is that it's
-**hard**. Not only does the system require a relatively stable firmware to build
-on top of, but it will also require extra hardware and software to orchestrate
+**hard**. Not only does the system require a stable firmware to build
+on top of, but it will also require extra hardware, like flashers and power supplies, and software to orchestrate
 the tests and capture results.
 
 An alternative to building a complicated orchestration system for automated
 tests is to use the popular hardware emulator project, Renode, and it's built-in
-Robot Framework integration.
+Robot Framework integration. By using Renode in conjunction with Github Actions, we can ensure that every pull-request and commit to master passes all our tests. 
 
 <!-- excerpt start -->
 
@@ -37,7 +37,7 @@ straight to your mailbox_
 * auto-gen TOC:
 {:toc}
 
-## What is Test Automation?
+## Automation Testing for Firmware
 
 Test automation is the practice of testing software and/or hardware in a
 repeatable and scalable way where expected values are compared against actual
@@ -59,15 +59,19 @@ These types of testing are not limited entirely to software, as hardware can be
 tested in similar ways. "Hardware unit testing" is a concept where individual
 pieces of the larger hardware board are put under test to ensure the chip itself
 behaves correctly. Integration tests and end-to-end tests can also be performed
-on hardware, but the complexity increases exponentially.
+on hardware, but the complexity increases exponentially as more hardware is thrown into the mix.
 
 A middle ground between host-run tests and hardware tests is testing on an
-emulator which emulates the real hardware as much as possible. Renode has become
-our favorite emulator at Memfault, and its list of support boards is
-growing[^renode_boards]. Renode will emulate many peripherals of the board,
+emulator which emulates the real hardware as much as possible. Renode, by Antmicro, has become
+our favorite emulator at Memfault, and its list of support boards is continually
+growing[^renode_boards]. Renode emulates many peripherals of the board,
 including the UART, SPI, I2C, RAM, ROM, and GPIO's.
 
-## Performing Tests on Device
+## When to Use Emulators for Testing
+
+TODO
+
+## Using a Shell for Testing
 
 Whether tests are being run within Renode or on real hardware, there should be a
 way to easily run tests on a device.
@@ -99,7 +103,7 @@ You can find the complete code example for this blog post in a separate
 [Github repository](https://github.com/memfault/interrupt-renode-test-automation).
 
 ```
-$ git clone https://github.com/memfault/interrupt-renode-test-automation.git --recurse-submodules
+$ git clone --recurse-submodules https://github.com/memfault/interrupt-renode-test-automation.git
 ```
 
 ### Toolchain
@@ -154,7 +158,7 @@ repository and all of its submodules, as well as install all of the required
 Python dependencies.
 
 ```
-$ git clone git@github.com:renode/renode.git --recurse-submodules
+$ git clone --recurse-submodules git@github.com:renode/renode.git 
 $ cd renode
 
 # Install Robot Framework and other dependencies
