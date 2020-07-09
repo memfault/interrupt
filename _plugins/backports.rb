@@ -7,7 +7,7 @@ module Jekyll
 
       def render(context)
         @context = context
-        return relative_url("/img/" + super)
+        return relative_url(super)
       ensure
         @context = nil
       end
