@@ -88,7 +88,7 @@ reserve **Exception Numbers** **1**-**15**, inclusive, for these.
 Six exceptions are always supported and depending on the Cortex-M variant, additional
 handlers will be implemented as well. The minimum set is:
 
-- **Reset** - This is the routine executed when a chip comes out of reset. More details can be found within the [Zero to main() series of posts]({{ '/tag/zero-to-main' | relative_url  }}).
+- **Reset** - This is the routine executed when a chip comes out of reset. More details can be found within the [Zero to main() series of posts]({% tag_url zero-to-main %}).
 - **Non Maskable Interrupt** (`NMI`) - As the name implies, this interrupt cannot be disabled. If
   errors happen in other exception handlers, a NMI will be triggered. Aside from the `Reset`
   exception, it has the highest priority of all exceptions.
@@ -111,7 +111,7 @@ engines or General Purpose Input/Output Pins (**GPIO**s). All of these interrupt
 The **Exception Number** for external interrupts starts at **16**. The ARMv7-M reference manual has a good graphic which displays the Exception number mappings:
 
 {: #exception-number-diagram}
-![](/img/armv-m-exceptions/exception-numbers.png)
+![]({% img_url armv-m-exceptions/exception-numbers.png %})
 
 ## Registers used to configure Cortex-M Exceptions
 
@@ -132,7 +132,7 @@ sections below we will explore the highlights.
 ### Interrupt Control and State Register (ICSR) - 0xE000ED04
 
 `ICSR` bit assignments:
-![](/img/armv-m-exceptions/icsr.png)
+![]({% img_url armv-m-exceptions/icsr.png %})
 
 This register lets one control the NMI, PendSV, and SysTick exceptions and view a
 summary of the current interrupt state of the system.
@@ -149,7 +149,7 @@ The most useful status fields are:
 ### Application Interrupt and Reset Control Register (AIRCR) - 0xE000ED0C
 
 `AIRCR` bit assignments:
-![](/img/armv-m-exceptions/aircr.png)
+![]({% img_url armv-m-exceptions/aircr.png %})
 
 The highlights with respect to exceptions are:
 
@@ -178,7 +178,7 @@ all System Exceptions is 0, the highest configurable priority level. For most ap
 
 This register lets you view the status of or enable various built in exception handlers:
 
-![](/img/armv-m-exceptions/shcsr.png)
+![]({% img_url armv-m-exceptions/shcsr.png %})
 
 > NOTE: For ARMv6-M devices the only value which is implemented is `SVCALLPENDED`
 
@@ -188,7 +188,7 @@ This register lets you view the status of or enable various built in exception h
 
 This register allows you to determine the total number of external interrupt lines supported by an implementation. For ARMv6-M devices (Cortex-M0, Cortex-M0+), this register is not implemented because the number is always 32. For other Cortex-M MCUs, up to 496 lines may be supported! The layout of the register looks like this:
 
-![](/img/armv-m-exceptions/ictr.png)
+![]({% img_url armv-m-exceptions/ictr.png %})
 
 The exact number of interrupts supported is easily computed as `32 * (INTLINESNUM + 1)`
 

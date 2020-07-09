@@ -881,7 +881,7 @@ create short urls and share links with friends.
 
 For example, [here is](https://godbolt.org/z/iqeNUv) an interesting one I was looking at recently.
 
-![](/img/best-of-binutils/compiler-explorer-example.png)
+![]({% img_url best-of-binutils/compiler-explorer-example.png %})
 
 For ARMv7-M, 4 byte loads and store instructions (`ldr` and `str`, respectively) support unaligned
 access. When compiling code for space optimizations (using `-Os` CFLAG), I would have expected unaligned

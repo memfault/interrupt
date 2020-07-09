@@ -35,7 +35,7 @@ Pentium II processors of the 1990s than PIC32 microcontrollers of the
 catching up to CPUs. Consider the amount of RAM available in top-of-the-line
 STM32 chips over the past few years:
 
-![STM32 Available RAM over time](/img/embedded-in-2020/stm32-chart.png)
+![STM32 Available RAM over time]{% img_url embedded-in-2020/stm32-chart.png %}
 
 In the 2010s we largely wrote software assuming it was going to run on something
 like a PIC32 when it was actually going to run on something like a Pentium II.

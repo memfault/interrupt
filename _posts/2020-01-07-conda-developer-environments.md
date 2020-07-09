@@ -65,7 +65,7 @@ it may be time to consider using Conda or similar environment manager.
 
 ## What is Conda?
 
-![Conda](/img/conda-developer-environments/conda.png)
+![Conda]{% img_url conda-developer-environments/conda.png %}
 
 Conda is a "package, dependency and environment management for any
 language"[^1]. It is most popular in the world of data science, but it can

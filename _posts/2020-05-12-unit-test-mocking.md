@@ -312,7 +312,7 @@ with.
 Below is a diagram of our unit test stack, which looks similar to a real
 device's end-to-end stack except for the fake NOR flash at the bottom.
 
-![](/img/unit-testing-mocking/diagram.png)
+![]({% img_url unit-testing-mocking/diagram.png %})
 
 Even though each module is linked to one another, they can be tested
 individually and that's what we'll be doing today.
@@ -358,7 +358,7 @@ section from the previous post to get everything set up.
 The protocol we are going to make a parser for is very simple. Each message has
 a **Command**, a payload **Size**, and a **Payload**.
 
-![](/img/unit-testing-mocking/protocol.png)
+![]({% img_url unit-testing-mocking/protocol.png %})
 
 We added the **command** field because we want to build a flexible protocol that
 can tell the device to do more things than just read and write key/value ("kv")
@@ -878,7 +878,7 @@ infrastructure? Yes it would!
 Recall our protocol diagram which takes data from a remote device, writes
 key/value pairs to flash, and provides responses.
 
-![](/img/unit-testing-mocking/integration-diagram.png)
+![]({% img_url unit-testing-mocking/integration-diagram.png %})
 
 Let's try to create a test that tests this end-to-end within a unit test
 environment. Since we've already written unit tests for the Key/Value store with

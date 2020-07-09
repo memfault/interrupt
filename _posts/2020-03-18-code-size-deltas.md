@@ -30,7 +30,7 @@ immensely helpful when our team at Pebble was trying to
 Below is an example of a type of dashboard we had. When we approached 5kB
 remaining in our firmware image, we knew what to do.
 
-![](/img/code-size-deltas/running-out-code-space.png)
+![]({% img_url code-size-deltas/running-out-code-space.png %})
 
 <!-- excerpt start -->
 
@@ -442,12 +442,12 @@ pretty quick and useful visualizations!
 Here is a chart of the code size of the `.text` region for the last 2,500
 commits:
 
-![](/img/code-size-deltas/zephyr-codesize-chart.png)
+![]({% img_url code-size-deltas/zephyr-codesize-chart.png %})
 
 and here is a way to show the extent of each commit's impact on the overall code
 size:
 
-![](/img/code-size-deltas/zephyr-codesize-table.png)
+![]({% img_url code-size-deltas/zephyr-codesize-table.png %})
 
 If you want to see this data live, check out the
 [Redash instance on Heroku](https://zephyr-codesizes.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default)!
@@ -573,7 +573,7 @@ This is the end of the tutorial, but I wanted to share with you what I found
 works best at the previous companies I've worked for.
 
 - Using Github Actions or the Github API, post a comment on each pull request.
-  Something like: ![](/img/code-size-deltas/github-comment.png)
+  Something like: ![]({% img_url code-size-deltas/github-comment.png %})
 - Automatically add a firmware lead if the code size delta crosses a set
   threshold.
 - Start tracking now. When you run out, it's too late to make changes quickly.

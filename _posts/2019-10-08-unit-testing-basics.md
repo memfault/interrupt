@@ -30,9 +30,8 @@ framework.
 
 <!-- excerpt end -->
 
-This is the second post in our [Building Better Firmware
-series]({{ '/tag/better-firmware' |
-relative_url }}), following the [post]({% post_url 2019-09-17-continuous-integration-for-firmware %})
+This is the second post in our [Building Better Firmware series]({% tag_url better-firmware %}),
+following the [post]({% post_url 2019-09-17-continuous-integration-for-firmware %})
 about Continuous Integration for firmware projects, which is a wonderful pre-cursor
 to this post.
 
@@ -1146,7 +1145,7 @@ tests, so you can be sure that the piece of code was tested in some capacity.
 Note that code coverage doesn't measure the different behaviors a code path
 **could take**, but only that a particular code path **was taken**.
 
-![](/img/unit-testing-basics/code_coverage.png)
+![]({% img_url unit-testing-basics/code_coverage.png %})
 
 Above is a an example coverage report taken from the Memfault Public SDK[^5].
 

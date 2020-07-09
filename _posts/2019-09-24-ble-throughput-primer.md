@@ -67,7 +67,7 @@ For Bluetooth 4.0, the BLE Radio is capable of transmitting 1 symbol per microse
 
 All data during a BLE connection is sent via _Link Layer_ (**LL**) packets. All higher level messages are packed within _Data Payloads_ of _LL Packets_. Below is what a LL Packet sending data looks like (each tick mark represents 1 byte):
 
-![Data exchange](/img/ble-throughput/ll_packet.png)
+![Data exchange]{% img_url ble-throughput/ll_packet.png %}
 
 > NOTE: The astute reader may note that Data Payload can be up to 251 bytes. This however is an optional feature known as "LE Data Packet Length Extension" which we will explore in more detail [below](#ll-data-packet-length-extension)
 
@@ -83,7 +83,7 @@ With the three rules we mentioned about transmissions on the Bluetooth Radio in 
 - Side A waits `T_IFS` before sending any more data
 
 Here's an example exchange of two packets of data in one _Connection Event_:
-![Data exchange](/img/ble-throughput/connection_event.png)
+![Data exchange]{% img_url ble-throughput/connection_event.png %}
 
 The time it takes to transmit one packet can be computed as:
 
@@ -114,7 +114,7 @@ There are only a few different L2CAP channels used for Bluetooth Low Energy:
 
 Below is a diagram of the layout of an L2CAP packet. As you can see there are 4 bytes of overhead (Length + Channel ID) per packet sent.
 
-![Data exchange](/img/ble-throughput/l2cap_packet.png)
+![Data exchange]{% img_url ble-throughput/l2cap_packet.png %}
 
 ### Attribute Protocol (ATT) Packet
 
@@ -133,7 +133,7 @@ accomodate for the ATT protocol overhead), most bluetooth stacks support a maxim
 
 The packet looks like this:
 
-![Data exchange](/img/ble-throughput/att_packet.png)
+![Data exchange]{% img_url ble-throughput/att_packet.png %}
 
 {:.no_toc}
 
@@ -165,7 +165,7 @@ Over the years, the Bluetooth SIG has added a number of additions to the Low Ene
 
 As part of the 4.2 Bluetooth Core Specification revision, a new feature known as _LE Data Packet Length Extension_ was added [^1]. This _optional_ feature allows for a device to extend the length of the Data Payload in a [Link Layer packet](#ll-packet) from 27 up to 251 bytes! This means that instead of sending 27 bytes of data in a 41 byte payload, 251 bytes of data can now be sent in a 265 byte payload. Furthermore, we can send a lot more data with fewer `T_IFS` gaps. Let's take a look at what exchanging a maximally sized packet looks like:
 
-![](/img/ble-throughput/ble-throughput-dple.png)
+![]({% img_url ble-throughput/ble-throughput-dple.png %})
 
 We can calculate the raw data throughput and see that this modification yields greater than a _2x_ improvement on the maximum raw data throughput which can be achieved!
 
@@ -175,7 +175,7 @@ We can calculate the raw data throughput and see that this modification yields g
 
 As part of the 5.0 Bluetooth Core Specification revision, a new feature known as "LE 2M PHY"[^4] was added. As you may recall in the section [above](#ble-radio), we discussed how the BLE Radio is capable of transmitting 1 symbol per μs for a bitrate of 1Mbps. This revision to the Bluetooth Low Energy Physical Layer (PHY), allows for a symbol rate of 2Mbps. This means we can transmit each individual bit in half the time. However, the 150μs IFS is still needed between transmissions. Let's take a look on how this impacts the throughput when sending packets that are using the data packet length extension feature:
 
-![](/img/ble-throughput/ble-throughput-dple-and-2m-phy.png)
+![]({% img_url ble-throughput/ble-throughput-dple-and-2m-phy.png %})
 
 We can calculate this throughput and see the modification yields almost a _4x_ improvement over the original maximal raw data speed that could be achived with BLE 4.0
 
@@ -232,11 +232,11 @@ The number of packets which can be transmitted in one _connection event_ is limi
 
 The end of a connection event is controlled by the _More Data_ (_MD_) bit in the header of the link layer packet discussed [above](#ll-packet). The LL packet header looks like this:
 
-![](/img/ble-throughput/ll-pdu-header.png)
+![]({% img_url ble-throughput/ll-pdu-header.png %})
 
 A good description of how the MD bit works can be found in the Bluetooth Core Specification [^4]
 
-![](/img/ble-throughput/ll-md-bit-desc.png)
+![]({% img_url ble-throughput/ll-md-bit-desc.png %})
 
 If you have a protocol analyzer, you can analyze how the MD is being set to figure out what side of the connection is responsible for limiting the throughput.
 
@@ -246,7 +246,7 @@ If you have a protocol analyzer, you can analyze how the MD is being set to figu
 
 Many devices only support a subset of the valid connection parameter range (7.5ms - 4s). For example, Apple documents this information quite well in Section "25.6 Connection Parameters" of the "Accessory Design Guidelines For Apple Devices" [^7]:
 
-> ![](/img/ble-throughput/apple-connection-parameters.png)
+> ![]({% img_url ble-throughput/apple-connection-parameters.png %})
 
 A longer connection event in itself isn't necessarily a problem for throughput. Some devices will send and recieve data for an entire connection event so if you are streaming data continuously the same throughput can be realized even if you are using a 30ms interval instead of a 15ms interval.
 

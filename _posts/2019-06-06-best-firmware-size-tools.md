@@ -13,7 +13,7 @@ Whether they are trying to cram in another feature, or to make enough space for
 updates](https://sbabic.github.io/swupdate/overview.html#double-copy-with-fall-back)
 more code space is always better.
 
-In this [series of posts]({{ '/tag/fw-code-size' | relative_url }}) 
+In this [series of posts]({% tag_url fw-code-size %}) 
 series of posts, we'll explore ways to save code space and ways not to
 do it. We will cover compiler options, coding style, logging, as well as
 desperate hacks when all you need is another 24 bytes.
@@ -222,12 +222,12 @@ coworker at Pebble.
 Puncover will give you a full hierarchical view of both code size and static
 memory per module, file, and function. See the screenshot below:
 
-![](/img/code-size-1/puncover-1.png)
+![]({% img_url code-size-1/puncover-1.png %})
 
 It also shows you details for each function, including callers, callees, and
 disassembly.
 
-![](/img/code-size-1/puncover-2.png)
+![]({% img_url code-size-1/puncover-2.png %})
 
 Truly, it is a firmware analysis swiss army knife!
 

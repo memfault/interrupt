@@ -225,7 +225,7 @@ writes `0x9C` to the slave at address `0x66`.
 </script>
 -->
 
-![](/img/i2c-in-a-nutshell/full-i2c-command-narrow.png)
+![]({% img_url i2c-in-a-nutshell/full-i2c-command-narrow.png %})
 
 > Note: A NACK is not necessarily an error condition, it sometimes can be used to end
 > a read. For example, reading 8 bytes from an I2C EEPROM would be implemented
@@ -375,8 +375,8 @@ If it is toggling, set your oscilloscope to trigger on an edge, and look at the
 signal. It will likely look like one of these two scope shots shared on
 StackExchange [^3]:
 
-![](/img/i2c-in-a-nutshell/weak-pull-ups.png)
-![](/img/i2c-in-a-nutshell/strong-pull-ups.png)
+![]({% img_url i2c-in-a-nutshell/weak-pull-ups.png %})
+![]({% img_url i2c-in-a-nutshell/strong-pull-ups.png %})
 
 Notice how the second image has sharp, square pulses while the first image has
 rounded ones? This is your tell. Round pulses are an indications that your

@@ -138,7 +138,7 @@ From "6.36.3 Watchdog reset":
 > The watchdog must be configured before it is started. After it is started, the watchdog’s configuration
 > registers, which comprise registers CRV, RREN, and CONFIG, will be blocked for further configuration.
 > The watchdog can be reset from several reset sources, see Reset behavior on page 70
-> [...] ![](/img/watchdog/nrf52-reset-sources.png)
+> [...] ![]({% img_url watchdog/nrf52-reset-sources.png %})
 
 The important takeaway here is that a normal reset ("Soft reset") does _not_ reset the watchdog
 timer. This could cause issues, for example, if the main application enabled the watchdog but the
@@ -160,7 +160,7 @@ Great! So when a debugger is attached we can configure the peripheral to pause t
 {: #wdt-debug-behavior}
 Reading further into the datasheet, it actually looks like the documentation is **not** entirely correct. By _default_, the watchdog _is_ disabled for us when the debugger is halted (bit 3 defaults to 0) so we can just leverage the chip default configuration!
 
-![](/img/watchdog/nrf52-wdt-config-reg.png)
+![]({% img_url watchdog/nrf52-wdt-config-reg.png %})
 
 #### 3. Watchdog Expiration Behavior
 
@@ -180,7 +180,7 @@ So an interrupt can be enabled to fire upon a watchdog timeout. However, once th
 
 Section "5.3.7.11 RESETREAS" of the data sheet contains a summary of the reset reasons.
 
-![](/img/watchdog/nrf52-reasetreas-reg.png)
+![]({% img_url watchdog/nrf52-reasetreas-reg.png %})
 
 The important things to note here are that reading bit 1 will tell us whether or not a watchdog reset took place and that we will have to write 1 to the bits we want to clear so they don't stick across reboots.
 
@@ -742,7 +742,7 @@ Coredump uploaded successfully!
 
 Then from the Memfault Issue Detail UI we can easily view the Pong task and see it's blocked waiting on a call to `xQueueSemaphoreTake`.
 
-![](/img/watchdog/nrf52-watchdog-crash-memfault.png)
+![]({% img_url watchdog/nrf52-watchdog-crash-memfault.png %})
 
 ### Using GDB Python to prevent Software Watchdog Misfires
 

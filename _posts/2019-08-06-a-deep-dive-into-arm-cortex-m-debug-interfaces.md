@@ -40,7 +40,7 @@ The **Debug Port** can be used to configure transactions and read or write to on
 
 The most common type of Access Port is known as the `MEM-AP` which exposes an interface to different Memory buses available on a given ARM chip. On `ARM Cortex-M`, the `MEM-AP` which is typically accessed is known as the `AHB-AP`. The default APs that are selected can be found in the `APSEL` part of the **DP** `AP Select Register`[^1]:
 
-![](/img/debuggers/apsel.png)
+![]({% img_url debuggers/apsel.png %})
 
 #### AHB-AP
 
@@ -139,24 +139,24 @@ For this setup we will use:
 
 The end to end path of our debug setup looks like this:
 
-![](/img/debuggers/debugger-nrf52840-dk.png)
+![]({% img_url debuggers/debugger-nrf52840-dk.png %})
 
 The following image from the ARM Debug Interface Architecture manual[^2] captures what the path
 looks like inside the NRF52840. The "physical connection" in this case is the SWD path in the image above.
 
-![](/img/debuggers/debugger-dp-ap.png)
+![]({% img_url debuggers/debugger-dp-ap.png %})
 
 ## Prepping the board
 
 On the nRF52840-DK board I see `P18` is labeled as "Debug In". Looking at the schematics[^19], I can easily see the pinout:
 
-![](/img/debuggers/p18-assignments.png)
+![]({% img_url debuggers/p18-assignments.png %})
 
 I attached the Saleae ground to Pin 9, wire 0 to `SWDIO` at P18 Pin 2, and wire 1 to `SWDCLK` at P18 Pin 4.
 
 In the Saleae Logic App, I then enabled these 2 pins, and added the SWD analyzer:
 
-![](/img/debuggers/saleae_setup.png)
+![]({% img_url debuggers/saleae_setup.png %})
 
 ## Flashing the App
 
@@ -198,11 +198,11 @@ $4 = (int *) 0x20000108 <g_crash_config>
 
 The first transaction we see over the wire gets decoded by the Saleae as follows:
 
-![](/img/debuggers/first_transaction.png)
+![]({% img_url debuggers/first_transaction.png %})
 
 We see it's an `ABORT` Debug Port write. This is a good operation to run before issuing any transactions because it will reset the state of the current `AP` and put the debugger into a known state. If you wanted to decode the transaction without the Saleae analyzer, the ADIv5 reference manual[^2] provides the information needed. The structure for a write operation looks like this:
 
-![](/img/debuggers/swd_write_op.png)
+![]({% img_url debuggers/swd_write_op.png %})
 
 ### Saleae CSV Trace
 

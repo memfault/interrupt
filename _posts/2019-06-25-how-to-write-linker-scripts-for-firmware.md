@@ -6,8 +6,7 @@ author: francois
 tags: [zero-to-main]
 ---
 
-This is the second post in our [Zero to main() series]({{ '/tag/zero-to-main' |
-relative_url  }}).
+This is the second post in our [Zero to main() series]({% tag_url zero-to-main %}).
 
 <!-- excerpt start -->
 [Last time]({{ site.url }}{% post_url 2019-05-14-zero-to-main-1 %}), we talked about
