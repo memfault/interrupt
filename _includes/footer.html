@@ -1,10 +1,10 @@
 <footer class="footer">
   <div class="footer-links">
-    <a href="{{ 'feed.xml' | relative_url }}">
+    <a href="{{ 'feed.xml' | absolute_url }}">
       <svg class="svg-icon orange"><use xlink:href="{{ 'img/social-icons.svg#rss' | relative_url }}"></use></svg><span>RSS</span>
     </a>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://eepurl.com/gpRedv">Subscribe</a>&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="/contributing">Contribute</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="{{ '/contributing' | relative_url }}">Contribute</a>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://community.memfault.com">Community</a>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://memfault.com">Memfault.com</a>&nbsp;&nbsp;&nbsp;&nbsp;
   </div>

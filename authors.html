@@ -5,11 +5,11 @@ title: Authors
 
 <ul>
   {% for author in site.data.authors %}
-    <h2><a href="/authors/{{ author[0] }}">{{ author[1].name }}</a></h2>
+    <h2><a href="{{ '/authors/' | append:author[0] | relative_url }}">{{ author[1].name }}</a></h2>
     <ul>
       {% assign filtered_posts = site.posts | where: 'author', author[0] %}
       {% for post in filtered_posts %}
-        <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+        <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
       {% endfor %}
     </ul>
   {% endfor %}

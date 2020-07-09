@@ -1,16 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; URL=/blog/">
-    <title>Interrupt</title>
-</head>
-<body>
-    <script>
-        setTimeout(function() {
-            location.href = "/blog"
-        }, 3000)
-    </script>
-</body>
-</html>
+---
+layout: default
+---
+
+<!-- Posts -->
+<ul id="posts">
+
+    {% for post in paginator.posts %}
+
+    <li class="post">
+        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        <div class="by-line">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
+            {% assign author = site.data.authors[post.author] %}
+            {% assign author_key = post.author %}
+            {% if author %}
+            <span>by <a href="{{ '/authors/' | append:author_key | relative_url }}">{{ author.name }}</a></span>
+            {% endif %}
+        </div>
+        <p>{{ post.excerpt }}</p>
+    </li>
+
+    {% endfor %}
+
+</ul>
