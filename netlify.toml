@@ -6,5 +6,5 @@
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 [context.deploy-preview]
-  command = "jekyll build -D"
+  command = "jekyll build -D && mv _site/blog/{_redirects,404.html} _site"
 
