@@ -1,5 +1,5 @@
 [build]
-  command = "jekyll build"
+  command = "jekyll build && mv _site/blog/{_redirects,404.html} _site"
   publish = "_site"
 
 
