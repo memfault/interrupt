@@ -114,7 +114,7 @@ $ arm-none-eabi-gdb mandel.elf
 You should now be seeing the Mandelbrot fractal on the LCD of the Discovery
 board. Here it is!
 
-![](/img/profiling/mandelbrot.jpg)
+![]({% img_url profiling/mandelbrot.jpg %})
 
 ## Poor Man's Profiler
 
@@ -277,7 +277,7 @@ Next, we configure our MCU to output PC Sampling events. This is done using the
 DWT Control Register. The register is at address `0xE0001000`, I've reproduced
 its layout below:
 
-![](/img/profiling/dwt-control-register.png)
+![]({% img_url profiling/dwt-control-register.png %})
 
 For our use case, we care about the following bits:
 - Bit 12: PCSAMPLEENA. Setting this to 1 will enable PC sampling events.

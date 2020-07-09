@@ -1,14 +1,14 @@
 <header id="header">
-  <a href="{{ site.baseurl }}">
-    <img id='logo' src="{{ 'img/interrupt-logo.svg' | relative_url }}" alt="Interrupt Logo">
+  <a href="{{ '/' | relative_url }}">
+    <img id='logo' src="{% img_url interrupt-logo.svg %}" alt="Interrupt Logo">
     <h1>Interrupt</h1>
   </a>
   <br />
   <a href="{{ 'feed.xml' | relative_url }}">
-    <svg class="svg-icon rss"><use xlink:href="{{ 'img/social-icons.svg#rss' | relative_url }}"></use></svg><span>RSS</span>
+    <svg class="svg-icon rss"><use xlink:href="{% img_url social-icons.svg#rss %}"></use></svg><span>RSS</span>
   </a>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="http://eepurl.com/gpRedv">Subscribe</a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="/contributing">Contribute</a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="/tags">Tags</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="{{ '/contributing' | relative_url }}">Contribute</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="{{ '/tags' | relative_url }}">Tags</a>&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://community.memfault.com">Community</a>&nbsp;&nbsp;&nbsp;&nbsp;
 </header>

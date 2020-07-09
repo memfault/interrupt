@@ -52,14 +52,14 @@ The MPU is configured using just five registers! A great way to build an underst
 ### MPU Type Register
 
 `MPU_TYPE` - Address 0xE000ED90 register bit assignments:
-![](/img/armv7m_mpu/mpu_type.png)
+![]({% img_url armv7m_mpu/mpu_type.png %})
 
 This register is present regardless of whether or not the MPU was implemented on the _Cortex-M_ device being used. This is pretty nice because it allows us to dynamically determine at runtime or via a [GDB Python script]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) whether or not an MPU is present and use it. The **only** field of interest here is `DREGION` which reveals the number of MPU regions which were implemented. A value of 0 for `DREGION` indicates the MPU was not implemented.
 
 ### MPU Control Register
 
 `MPU_CTRL` - Address 0xE000ED94 register bit assignments:
-![](/img/armv7m_mpu/mpu_ctrl.png)
+![]({% img_url armv7m_mpu/mpu_ctrl.png %})
 
 This register is how we actually enable the MPU. Until the `ENABLE` bit is set, the MPU configuration in other registers have no effect.
 
@@ -70,7 +70,7 @@ This register is how we actually enable the MPU. Until the `ENABLE` bit is set, 
 ### MPU Region Number Register
 
 `MPU_RNR` - Address 0xE000ED98 register bit assignments:
-![](/img/armv7m_mpu/mpu_rnr.png)
+![]({% img_url armv7m_mpu/mpu_rnr.png %})
 
 As we saw in the `MPU_TYPE` register above, the MPU is broken into a certain number of configurable-regions. The _M0+_, _M3_ & _M4_ can support up to 8 regions when the MPU is implemented and the M7 can support up to 16! The `REGION` field is used to select the active region we want to read or update. Once the region is selected, we can read or write `MPU_RBAR` & `MPU_RASR` to see the configuration and make changes.
 
@@ -81,7 +81,7 @@ As we saw in the `MPU_TYPE` register above, the MPU is broken into a certain num
 ### MPU Region Base Address Register
 
 `MPU_RBAR` Address 0xE000ED9C register bit assignments:
-![](/img/armv7m_mpu/mpu_rbar.png)
+![]({% img_url armv7m_mpu/mpu_rbar.png %})
 
 This register is used to control the starting address (aka the _base address_) that we want to cover with the region selected in `MPU_RNR`. For example, if we wanted to protect the address range starting at the beginning of a SRAM range (i.e `0x20000000`) using `REGION 0`, we would first set `MPU_RNR` to 0 and then set `MPU_RBAR` to `0x20000000`)
 
@@ -94,7 +94,7 @@ To reduce the number of writes needed to change the configuration, the `VALID` b
 ### MPU Region Attribute and Size Register
 
 `MPU_RASR` - Address 0xE000EDA0 register bit assignments:
-![](/img/armv7m_mpu/mpu_rasr.png)
+![]({% img_url armv7m_mpu/mpu_rasr.png %})
 
 This is the register where nearly all of the MPU configuration magic actually happens. The `ENABLE` bit controls whether or not the region is active (when the MPU itself has been enabled by setting the `ENABLE` bit in `MPU_CTRL`).
 
@@ -106,7 +106,7 @@ The configuration can be broken down into four main parts:
 
 This config is comprised of the `TEX` (_Type Extension Mask_), `C` (_Cacheable_), `B` (_Bufferable_), & `S` (_Shareable_) fields. More details about each memory attribute can be found in the _Summary of ARMv7 memory attributes_ of the [ARMv7-M reference manual](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf). Typically, these settings do not matter much for a single core _Cortex-M_ implementation. I usually follow the recommendations in the table below from [here](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0552a/BABDJJGF.html):
 
-![](/img/armv7m_mpu/mpu_rasr_attr_rec.png)
+![]({% img_url armv7m_mpu/mpu_rasr_attr_rec.png %})
 
 If you are using a more complex _Cortex-M_ setup (like a _Cortex-M7_ with a cache), the vendor data sheet may have a section with better recommendations.
 
@@ -115,7 +115,7 @@ If you are using a more complex _Cortex-M_ setup (like a _Cortex-M7_ with a cach
 #### 2. Access permissions & Execute Never encoding
 
 This part is comprised of the `AP` (_Access Permissions_) fields used to control the rules around how the region can be accessed:
-![](/img/armv7m_mpu/mpu_rasr_ap.png)
+![]({% img_url armv7m_mpu/mpu_rasr_ap.png %})
 
 There is also the `XN` (_Execute Never_) field, used to control whether or not the processor can fetch instructions from this region. If the `XN` bit is set, an instruction fetch from the region will cause a fault.
 
@@ -254,7 +254,7 @@ MemoryManagement_Handler () at ../../../main.c:20
 When a MemManage fault is hit there are a couple registers that are very helpful to look at.
 
 The first is the MemManage Status Register (`MMFSR`) - 0xE000ED28:
-![](/img/armv7m_mpu/mpu_mmfsr.png)
+![]({% img_url armv7m_mpu/mpu_mmfsr.png %})
 
 The second is the MemManage Fault Address Register (`MMFAR`) located at 0xE000ED34 which contains the address of the access which triggered the fault provided `MMFSR.MMARVALID` is set.
 

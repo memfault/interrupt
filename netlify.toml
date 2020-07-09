@@ -1,10 +1,9 @@
 [build]
-  command = "jekyll build"
+  command = "jekyll build && cp _redirects _site/"
   publish = "_site"
 
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 [context.deploy-preview]
-  command = "jekyll build -D"
-
+  command = "jekyll build -D && cp _redirects _site/"

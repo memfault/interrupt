@@ -489,7 +489,7 @@ occurs. The C standard defines this as[^17]:
 
 Then the following set of rules are applied to the promoted values:
 
-> ![](/img/compiler-flags/arithmetic-conversions-int.png)
+> ![]({% img_url compiler-flags/arithmetic-conversions-int.png %})
 
 It can be hard to keep track of the set of conversions taking place but fortunately the
 `-Wconversion` option can be used to generate warnings when **implicit** conversions that are
@@ -552,7 +552,7 @@ You can find all the details about optimization flags in the "Optimization Optio
 GNU GCC docs[^5]. `-Os`, optimize for size, is generally the optimization flag you will see used
 for embedded systems. It enables a good balance of flags which optimize for size _as well as
 speed_. Forgetting to flip on this flag can have serious code size impacts. For more details check
-out the [interrupt series]({{ '/tag/fw-code-size' | relative_url  }}) of posts about it!
+out the [interrupt series]({% tag_url fw-code-size %}) of posts about it!
 
 ### \-ffunction-sections, \-fdata-sections, & \-\-gc-sections
 

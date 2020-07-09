@@ -13,13 +13,13 @@ Not convinced?
 
 I'll leave you with a few figures taken from the 2017 Embedded/EETimes **Embedded Markets Study** survey which showcase the significance of debugging in the professional life of a firmware developer.
 
-![](/img/gdb-tips-and-tricks/Job-Functions.png)
+![]({% img_url gdb-tips-and-tricks/Job-Functions.png %})
 <br>
 
-![](/img/gdb-tips-and-tricks/Design-time.png)
+![]({% img_url gdb-tips-and-tricks/Design-time.png %})
 <br>
 
-![](/img/gdb-tips-and-tricks/Tool-improvement.png)
+![]({% img_url gdb-tips-and-tricks/Tool-improvement.png %})
 <br>
 
 Let's face it..
@@ -87,7 +87,7 @@ Installation of the nRF5 SDK is straightforward. All you need to do is download 
 Once you extract it, you should see the following directory structure:
 
 
-![](/img/gdb-tips-and-tricks/nRF5_SDK_folder.png)
+![]({% img_url gdb-tips-and-tricks/nRF5_SDK_folder.png %})
 
 
 ### 2. nRF5 Command Line Tools
@@ -98,14 +98,14 @@ Next, we need to install the nRF5 Command Line Tools. These include **nrfjprog**
 First, make sure you select the appropriate operating system (macOS in our case).
 
 
-![](/img/gdb-tips-and-tricks/nRF5_Command_Line_Tools.png)
+![]({% img_url gdb-tips-and-tricks/nRF5_Command_Line_Tools.png %})
 <br/>
 
 Select the latest version, and then click "Download File".
 
 This is what the contents of the folder should look like:
 
-![](/img/gdb-tips-and-tricks/nRF5_Command_Line_Tools_Folder.png)
+![]({% img_url gdb-tips-and-tricks/nRF5_Command_Line_Tools_Folder.png %})
 
 ### 3. SEGGER J-Link
 The SEGGER J-Link software is needed for the GDB Server interface to the nRF52 chipset on the development kit.
@@ -115,13 +115,13 @@ So let's go ahead and download the software.
 [**Link to download SEGGER J-Link Software**](https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack)
 
 
-![](/img/gdb-tips-and-tricks/J-Link_Software_Download.png)
+![]({% img_url gdb-tips-and-tricks/J-Link_Software_Download.png %})
 <br/>
 
 This download (for macOS) is a .**pkg** installer file. Once you download it, simply double-click it and go through the installation process.
 
 
-![](/img/gdb-tips-and-tricks/J-Link_Installation.png)
+![]({% img_url gdb-tips-and-tricks/J-Link_Installation.png %})
 
 
 ### 4. GNU Arm Embedded Toolchain
@@ -130,13 +130,13 @@ The next software package that we need to install is the GNU Arm Embedded Toolch
 **[Direct link to download the GNU Arm Embedded Toolchain (version 7-2017-q4-major)](https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2017q4/gcc-arm-none-eabi-7-2017-q4-major-mac.tar.bz2?revision=7f453378-b2c3-4c0d-8eab-e7d5db8ea32e?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Mac%20OS%20X,7-2017-q4-major)**
 
 
-![](/img/gdb-tips-and-tricks/GNU_Arm_Embedded_Download.png)
+![]({% img_url gdb-tips-and-tricks/GNU_Arm_Embedded_Download.png %})
 <br/>
 
 After you download the package, simply extract it to your folder of choice.
 
 
-![](/img/gdb-tips-and-tricks/GNU_Arm_Download_Folder.png)
+![]({% img_url gdb-tips-and-tricks/GNU_Arm_Download_Folder.png %})
 
 
 ### 5. Serial Terminal Program
@@ -194,7 +194,7 @@ In our tutorial, we'll be using the UART example included as part of the nRF5 SD
 
 You'll notice there are many subfolders in that folder. We are mostly interested in the following highlighted folder in the screenshot:
 
-![](/img/gdb-tips-and-tricks/uart_folder.png)
+![]({% img_url gdb-tips-and-tricks/uart_folder.png %})
 <br/>
 
 Before we build the example, let's make sure we have the right compiler flags for debugging. This is necessary to include debugging symbols that help GDB present useful debugging information to the user. 
@@ -246,7 +246,7 @@ $ make
 The output should look something like this:
 
 
-![](/img/gdb-tips-and-tricks/Make_Output.png)
+![]({% img_url gdb-tips-and-tricks/Make_Output.png %})
 
 
 ### 2. Hardware Setup
@@ -260,7 +260,7 @@ Here are the steps to accomplish this:
 	- **SW9** (nRF power source) set to "VDD"
 	- **Power** set to "ON"
 
-	![](/img/gdb-tips-and-tricks/nRF52840_dev_kit.png)
+	![]({% img_url gdb-tips-and-tricks/nRF52840_dev_kit.png %})
 	
 - Erase the development kit by running the following command:
 
@@ -291,13 +291,13 @@ There are three parts to get this working:
 - Make sure the serial port settings are correct (listed at [this link](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/uart_example.html)):
  
 	
-	![](/img/gdb-tips-and-tricks/CoolTerm_Settings.png)
+	![]({% img_url gdb-tips-and-tricks/CoolTerm_Settings.png %})
 	
 	Now, hit **OK**. 
 
 - Finally, connect to the serial port by clicking the "Connect" button:
 	
-	![](/img/gdb-tips-and-tricks/CoolTerm_Connect.png)
+	![]({% img_url gdb-tips-and-tricks/CoolTerm_Connect.png %})
 	
 	You may not see any output since the program probably started before you connected. To reset the development board, we can simply run the following command from the Terminal:
 	
@@ -308,7 +308,7 @@ There are three parts to get this working:
 	If all goes well, you should see the following printed in the Terminal window:
 	
 	
-	![](/img/gdb-tips-and-tricks/CoolTerm_Output.png)
+	![]({% img_url gdb-tips-and-tricks/CoolTerm_Output.png %})
 	
 
 ## Debugging the Program
@@ -333,7 +333,7 @@ There are a few steps to get this working.
 	
 	The output should look something like this:
 	
-	![](/img/gdb-tips-and-tricks/GDB_Server_Run.png)
+	![]({% img_url gdb-tips-and-tricks/GDB_Server_Run.png %})
 	
 	
 - **Running GDB**
@@ -347,7 +347,7 @@ There are a few steps to get this working.
 	```
 	
 	
-	![](/img/gdb-tips-and-tricks/arm_gdb_run.png)
+	![]({% img_url gdb-tips-and-tricks/arm_gdb_run.png %})
 	
 
 	Next, we want to tell GDB what output file is used for the program running on the development kit. We do so with the following command within the GDB console:
@@ -357,7 +357,7 @@ There are a few steps to get this working.
 	```
 
 	
-	![](/img/gdb-tips-and-tricks/arm_gdb_file.png)
+	![]({% img_url gdb-tips-and-tricks/arm_gdb_file.png %})
 	
 	
 - **Connecting GDB to the Remote Target**
@@ -369,13 +369,13 @@ There are a few steps to get this working.
 	```
 	
 	
-	![](/img/gdb-tips-and-tricks/arm_gdb_target.png)
+	![]({% img_url gdb-tips-and-tricks/arm_gdb_target.png %})
 	
 	
 	The GDB Server (which should be left running in another Terminal window) will show something like the following:
 	
 	
-	![](/img/gdb-tips-and-tricks/GDB_Server_connected.png)
+	![]({% img_url gdb-tips-and-tricks/GDB_Server_connected.png %})
 	
 
 ### 2. GDB Commands
@@ -390,19 +390,19 @@ The first command you should be aware of is the **help** command. You can use **
 
 For example, let's run **help** for the "breakpoint" command:
 
-![](/img/gdb-tips-and-tricks/gdb_help.png)
+![]({% img_url gdb-tips-and-tricks/gdb_help.png %})
 
 #### Breakpoint
 The Breakpoint command is used to set a breakpoint at a location telling the debugger to halt the application when the program reaches that line of code. You can use the shortcut **b** instead of spelling out the full name, too.
 
-![](/img/gdb-tips-and-tricks/gdb_breakpoint.png)
+![]({% img_url gdb-tips-and-tricks/gdb_breakpoint.png %})
 
 
 #### Continue
 The **Continue** command is used to continue execution after a breakpoint was hit. You can simply use the shortcut **c** instead of spelling out the full word.
 
 
-![](/img/gdb-tips-and-tricks/gdb_continue.png)
+![]({% img_url gdb-tips-and-tricks/gdb_continue.png %})
 
 
 #### Breakpoints with Condition
@@ -412,7 +412,7 @@ This is where the **Breakpoint with condition** command comes in.
 
 In our example program, the code in **main.c** at **line 175** checks the character sent from the UART to see if it matches the `q` or `Q` character:
 
-![](/img/gdb-tips-and-tricks/main_code_175.png)
+![]({% img_url gdb-tips-and-tricks/main_code_175.png %})
 <br/>
 
 We can set a breakpoint that only stops the program if we receive a specific character (other than `q` or `Q`), for example: `s`.
@@ -425,7 +425,7 @@ Now, if we set this breakpoint, we can run the program as normal and then type t
 
 We'll see that the application halts only if that character is sent across the UART.
 
-![](/img/gdb-tips-and-tricks/gdb_conditional_breakpoint_halt.png)
+![]({% img_url gdb-tips-and-tricks/gdb_conditional_breakpoint_halt.png %})
 
 
 #### Backtrace
@@ -433,7 +433,7 @@ The Backtrace command is used to show the call stack of the program at the curre
 
 Here's what the output of **backtrace** looks like when adding the "full" option to show all the local variables as well:
 
-![](/img/gdb-tips-and-tricks/gdb_bt_full.png)
+![]({% img_url gdb-tips-and-tricks/gdb_bt_full.png %})
 
 If you want to make it look "pretty" with some basic formatting, you could use the following command:
 
@@ -443,20 +443,20 @@ If you want to make it look "pretty" with some basic formatting, you could use t
 
 Here's a screenshot showing the difference between the output with "pretty" being **on** or **off**:
 
-![](/img/gdb-tips-and-tricks/gdb_pretty_bt_full.png)
+![]({% img_url gdb-tips-and-tricks/gdb_pretty_bt_full.png %})
 
 #### Step
 The **Step** command is used to *step* through and execute your source code during debugging. It **will** step into any function in its path, however it **will not** step into functions that do not contain debugging information.
 
 For reference, here's our code again from main.c:
 
-![](/img/gdb-tips-and-tricks/main_code_175.png)
+![]({% img_url gdb-tips-and-tricks/main_code_175.png %})
 <br/>
 
 Let's take a look at how the Step command behaves after hitting the breakpoint at main.c:175 that we had set.
 
 
-![](/img/gdb-tips-and-tricks/gdb_step.png)
+![]({% img_url gdb-tips-and-tricks/gdb_step.png %})
 
  
 Notice that GDB stepped into the function **app_uart_get()** after reaching line 172.
@@ -467,7 +467,7 @@ The **List** command shows the source code for the current Program Counter (PC).
 Here's an example of using **List** after we hit our breakpoint at **main.c:175**.
 
 
-![](/img/gdb-tips-and-tricks/gdb_list.png)
+![]({% img_url gdb-tips-and-tricks/gdb_list.png %})
 
 
 #### Info
@@ -477,15 +477,15 @@ Here are some examples for uses of **Info**.
 
 - **Info locals**: shows information about all local variables.
 	
-	![](/img/gdb-tips-and-tricks/gdb_info_locals.png)
+	![]({% img_url gdb-tips-and-tricks/gdb_info_locals.png %})
 	
 - **Info variables**: shows information about all types of variables (local and global).
 	
-	![](/img/gdb-tips-and-tricks/gdb_info_variables.png)
+	![]({% img_url gdb-tips-and-tricks/gdb_info_variables.png %})
 	
 - **Info files**: shows information about all files being debugged. 
 	
-	![](/img/gdb-tips-and-tricks/gdb_info_files.png)
+	![]({% img_url gdb-tips-and-tricks/gdb_info_files.png %})
 
 #### Logging
 One useful feature within GDB is the ability to log all output to a text file. This makes it much easier to share the output of GDB with others, or to simply save the output for later reference.

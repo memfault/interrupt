@@ -9,8 +9,7 @@ tags: [zero-to-main]
 image: /img/zero-to-main/newlib.png
 ---
 
-This is the fourth post in our [Zero to main() series]({{ '/tag/zero-to-main' |
-relative_url  }}), where we worked methodically to demystify what happens to
+This is the fourth post in our [Zero to main() series]({% tag_url zero-to-main %}), where we worked methodically to demystify what happens to
 firmware before the main() function is called. So far, we bootstrapped a C
 environment, wrote a linker script from scratch, and implemented our own
 bootloader.

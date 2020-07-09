@@ -76,7 +76,7 @@ Every technology has its own benefits and limitations, and BLE is no exception. 
 ## Bluetooth Low Energy Architecture
 Here’s a diagram showing the different levels of the architecture of BLE:
 
-![](/img/ble-primer/ble_architecture.png)
+![]({% img_url ble-primer/ble_architecture.png %})
 
 The good thing is that, as a developer looking to develop BLE applications, you won’t have to worry much about the layers below the Security Manager and Attribute Protocol. But lets at least cover the definitions of these layers:
 
@@ -117,7 +117,7 @@ Keep in mind that a single device may operate in multiple Roles at the same time
 ### Advertising & Scanning
 In the Advertising state a device sends out packets containing useful data for others to receive and process. The packets are sent at a fixed interval defined as the Advertising Interval. There are 40 RF channels in BLE, each separated by 2 MHz (center-to-center), as shown in the following figure. Three of these channels are called the Primary Advertising Channels, while the remaining 37 channels are used for Secondary Advertisements and for Data Packet transfer during a Connection.
 
-![](/img/ble-primer/ble_channels.png)
+![]({% img_url ble-primer/ble_channels.png %})
 
 Advertisements always start with Advertisement Packets sent on the 3 Primary Advertising Channels (or a subset of these Channels). This allows Centrals to find the Advertising device (Peripheral or Broadcaster) and parse its Advertising packets. The Central can then Initiate a Connection if the Advertiser allows it (Peripheral devices).
 
@@ -232,7 +232,7 @@ Installation of the nRF5 SDK is straightforward. All you need to do is download 
 
 Once you extract it, you should see the following directory structure:
 
-![](/img/ble-primer/nRF5_SDK_folder.png)
+![]({% img_url ble-primer/nRF5_SDK_folder.png %})
 
 #### 2. nRF5 Command Line Tools
 Next, we need to install the nRF5 Command Line Tools. These include **nrfjprog**, which is a tool for programming your nRF52 development kit via the Segger J-Link debugger and needed in our case for working from the command line.
@@ -241,14 +241,14 @@ Next, we need to install the nRF5 Command Line Tools. These include **nrfjprog**
 
 First, make sure you select the appropriate operating system (macOS in our case).
 
-![](/img/ble-primer/nRF5_Command_Line_Tools.png)
+![]({% img_url ble-primer/nRF5_Command_Line_Tools.png %})
 <br/>
 
 Select the latest version, and then click "Download File".
 
 This is what the contents of the folder should look like:
 
-![](/img/ble-primer/nRF5_Command_Line_Tools_Folder.png)
+![]({% img_url ble-primer/nRF5_Command_Line_Tools_Folder.png %})
 
 #### 3. SEGGER J-Link
 The SEGGER J-Link software is needed for the GDB Server interface to the nRF52 chipset on the development kit.
@@ -257,24 +257,24 @@ So let's go ahead and download the software.
 
 [**Link to download SEGGER J-Link Software**](https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack)
 
-![](/img/ble-primer/J-Link_Software_Download.png)
+![]({% img_url ble-primer/J-Link_Software_Download.png %})
 <br/>
 
 This download (for macOS) is a .**pkg** installer file. Once you download it, simply double-click it and go through the installation process.
 
-![](/img/ble-primer/J-Link_Installation.png)
+![]({% img_url ble-primer/J-Link_Installation.png %})
 
 #### 4. GNU Arm Embedded Toolchain
 The next software package that we need to install is the GNU Arm Embedded Toolchain which includes the compiler (gcc) and debugger (gdb) for the Arm architecture (which the nRF52840 chipset is based on).
 
 **[Direct link to download the GNU Arm Embedded Toolchain (version 7-2017-q4-major)](https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2017q4/gcc-arm-none-eabi-7-2017-q4-major-mac.tar.bz2?revision=7f453378-b2c3-4c0d-8eab-e7d5db8ea32e?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Mac%20OS%20X,7-2017-q4-major)**
 
-![](/img/ble-primer/GNU_Arm_Embedded_Download.png)
+![]({% img_url ble-primer/GNU_Arm_Embedded_Download.png %})
 <br/>
 
 After you download the package, simply extract it to your folder of choice.
 
-![](/img/ble-primer/GNU_Arm_Download_Folder.png)
+![]({% img_url ble-primer/GNU_Arm_Download_Folder.png %})
 
 
 #### 5. Serial Terminal Program
@@ -328,7 +328,7 @@ We will be using one of the BLE examples provided as part of the nRF5 SDK as a s
 
 The example is provided as a boilerplate template that you could use whenever you're developing an nRF52 BLE application from scratch. Here's a screenshot of the contents of this example's folder:
 
-![](/img/ble-primer/ble_peripheral_folder.png)
+![]({% img_url ble-primer/ble_peripheral_folder.png %})
 
 The example consists of a single source file named `main.c`, which we'll be modifying to do the following:
 
@@ -560,7 +560,7 @@ That's it for `main.c`! The source code for `main.c` is available on [GitHub](ht
 
 For implementation of our Simple Service we will create two source files: `simple_service.h` and `simple_service.c` and place them in the same folder as `main.c`.
 
-![](/img/ble-primer/simple_service_files_folder.png)
+![]({% img_url ble-primer/simple_service_files_folder.png %})
 
 ##### GATT Service and Characteristic UUIDs
 
@@ -585,7 +585,7 @@ The digits in **bold** represent the 16-bit value.
 
 We can simply generate one UUID for the Service and increment it for the Characteristic, and as long as it doesn't use the same "base" as the SIG Adopted UUIDs, we'll be good!
 
-![](/img/ble-primer/online_guid_generator.png)
+![]({% img_url ble-primer/online_guid_generator.png %})
 
 So, we'll use:
 
@@ -998,7 +998,7 @@ $ make
 
 Sometimes, it's a good idea to run `make clean` before running `make` just to make sure you are starting from a clean state. You should see an output similar to this when it finishes:
 
-![](/img/ble-primer/make_output.png)
+![]({% img_url ble-primer/make_output.png %})
 
 #### 2. Hardware Setup
 The second step is to get the hardware set up to run the example.
@@ -1012,7 +1012,7 @@ Here are the steps to accomplish this:
 	- **Power** set to "ON"
 	
 	<br/>
-	![](/img/ble-primer/nRF52840_dev_kit.png)
+	![]({% img_url ble-primer/nRF52840_dev_kit.png %})
 	
 - Erase the development kit by running the following command. This will erase the chipset on the board, just to make sure we are starting from a clean slate.
 
@@ -1048,13 +1048,13 @@ There are three parts to get this working:
 - Run the CoolTerm application
 - Make sure the serial port settings are correct (listed at [this link](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/uart_example.html)):
  
-	![](/img/ble-primer/CoolTerm_Settings.png)
+	![]({% img_url ble-primer/CoolTerm_Settings.png %})
 	
 	Now, hit **OK**. 
 
 - Finally, connect to the serial port by clicking the "Connect" button:
 	
-	![](/img/ble-primer/CoolTerm_Connect.png)
+	![]({% img_url ble-primer/CoolTerm_Connect.png %})
 	
 	You may not see any output since the program probably started before you connected. To reset the development board, we can simply run the following command from the Terminal:
 	
@@ -1064,7 +1064,7 @@ There are three parts to get this working:
 	
 The first time you run the application you'll most likely get an error that looks something like this:
 
-![](/img/ble-primer/ram_offset_size_error.png)
+![]({% img_url ble-primer/ram_offset_size_error.png %})
 
 This is due to the fact that we modified the value of the macro for the number of vendor-specific UUIDs in the SoftDevice. The good part is that the log output tells us exactly which values we need to use for RAM offset and RAM size to fix this problem.
 
@@ -1077,13 +1077,13 @@ and
 RAM (rwx) :  LENGTH
 ```
 
-![](/img/ble-primer/linker_file.png)
+![]({% img_url ble-primer/linker_file.png %})
 
 Now we just need to repeat the steps of cleaning, building, and flashing the SoftDevice, and application to the target.
 
 If all goes well, you should now see the following printed in the Terminal window:
 	
-![](/img/ble-primer/CoolTerm_Output.png)
+![]({% img_url ble-primer/CoolTerm_Output.png %})
 
 ### Testing the Application
 Even though we verified that our application is running correctly and no errors show up in the terminal window, we still need to verify its BLE functionality. The easiest way to do so is by running a BLE Central mobile app such as nRF Connect ([iOS](https://apps.apple.com/us/app/nrf-connect/id1054362403) or [Android](https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp&hl=en_US)) or LightBlue ([iOS](https://apps.apple.com/us/app/lightblue-explorer/id557428110) or [Android](https://play.google.com/store/apps/details?id=com.punchthrough.lightblueexplorer&hl=en_US)).
@@ -1101,28 +1101,28 @@ Let's go through each of these tests. We'll be using LightBlue for our tests her
 #### 1. Advertisements
 Once you launch LightBlue, you'll be presented with a screen showing all the BLE devices advertising in the vicinity. *Make sure you have Bluetooth enabled on your phone first*.
 
-![](/img/ble-primer/lightblue_main_screen.png) 
+![]({% img_url ble-primer/lightblue_main_screen.png %}) 
 
 #### 2. Connection
 Now that we verified that we can discover our device ("Memfault_Example"), we can attempt to connect to it. Simply click on the device and it should initiate a connection. You should momentarily see a message similar to the following before it establishes the connection:
 
-![](/img/ble-primer/lightblue_connecting.png)
+![]({% img_url ble-primer/lightblue_connecting.png %})
 
 After the connection is established, you will be presented with a screen similar to this:
 
-![](/img/ble-primer/device_connected.png)
+![]({% img_url ble-primer/device_connected.png %})
 
 #### 3. GATT Service & Characteristic Discovery
 The previous screen also verifies that the Simple Service was discovered correctly and it contains our Button 1 Characteristic.
 
 If we click on the Simple Service, we should see the Button 1 Characteristic:
 
-![](/img/ble-primer/simple_service.png)
+![]({% img_url ble-primer/simple_service.png %})
 
 #### 4. Characteristic Value Read
 To verify that we can read the value of the Button 1 Characteristic, we can tap on "Read again". To verify further, we can hold down Button 1 on the development board and then click "Read again". This time it should display a value of 0x01.
 
-![](/img/ble-primer/button_read.jpeg)
+![]({% img_url ble-primer/button_read.jpeg %})
  
 #### 5. Notifications
 Finally, let's verify that we can get notified when the Button 1 state changes. We can do so by clicking on the "Listen for notifications" button.
@@ -1131,11 +1131,11 @@ Once you click on it, you can test it by pressing Button 1 and releasing it a fe
 
 Notifications disabled:
 
-![](/img/ble-primer/notifications_disabled.png)
+![]({% img_url ble-primer/notifications_disabled.png %})
 
 Notifications enabled:
 
-![](/img/ble-primer/notifications_working.png)
+![]({% img_url ble-primer/notifications_working.png %})
 
 ## Closing
 That's it for this post. We covered a whole lot here!

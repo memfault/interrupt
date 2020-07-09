@@ -6,8 +6,8 @@ author: francois
 tags: [zero-to-main]
 ---
 
-This is the third post in our [Zero to main() series]({{ '/tag/zero-to-main' |
-relative_url  }}), where we bootstrap a working firmware from zero code on a
+This is the third post in our [Zero to main() series]({% tag_url zero-to-main %}),
+where we bootstrap a working firmware from zero code on a
 cortex-M series microcontroller.
 
 Previously, [we wrote a startup file to bootstrap our C environment]({% post_url

@@ -301,7 +301,7 @@ For breakpoint management, there are two register types you will care about insi
 
 #### Flash Patch Control Register, FP_CTRL, 0xE0002000
 
-![](/img/breakpoint/fp-ctrl.png)
+![]({% img_url breakpoint/fp-ctrl.png %})
 
 The `FP_CTRL` is where you can find out information about how many hardware breakpoints are supported and enable the **FPB**. Notably,
 
@@ -317,7 +317,7 @@ Comparators for breakpoints will always be `FP_COMP0` up to the number of suppor
 
 ##### Version 1 Layout
 
-![](/img/breakpoint/fp-comp-rev1.png)
+![]({% img_url breakpoint/fp-comp-rev1.png %})
 
 `ENABLE` flips on the individual comparator and `REPLACE` controls the behavior as follows:
 
@@ -332,11 +332,11 @@ Comparators for breakpoints will always be `FP_COMP0` up to the number of suppor
 
 The Version 2 Layout is a little more straightforward. Bit 0, Breakpoint Enable (**BE**), controls whether or not the breakpoint is enabled:
 
-![](/img/breakpoint/fp-comp-rev2-dcba.png)
+![]({% img_url breakpoint/fp-comp-rev2-dcba.png %})
 
 Bit 31:1 is the address to break on:
 
-![](/img/breakpoint/fp-comp-rev2-bpaddr.png)
+![]({% img_url breakpoint/fp-comp-rev2-bpaddr.png %})
 
 > Note this is able to cover the entire 32-bit address space even though the bottom bit is used
 > for **BE** because bit 0 is used to convey whether the ARM or Thumb instruction set is
@@ -459,7 +459,7 @@ The astute observer may realize right away this is the encoding for a breakpoint
 
 #### BKPT Instruction Encoding
 
-![](/img/breakpoint/bkpt-instruction-cortex-m.png)
+![]({% img_url breakpoint/bkpt-instruction-cortex-m.png %})
 
 ### Using all the Hardware Breakpoints
 

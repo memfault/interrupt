@@ -5,12 +5,12 @@ layout: default
     {% assign author = site.data.authors[page.author] %}
     {% assign author_key = page.author %}
 
-    <script src="/js/anchor.min.js"></script>
+    <script src="{{ '/js/anchor.min.js' | relative_url }}"></script>
     <h2>{{ page.title }}</h2>
     <div class="by-line">
        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date_to_string }}</time>
        {% if author %}
-       <span>by <a href="/authors/{{ author_key }}">{{ author.name }}</a></span>
+       <span>by <a href="{{ '/authors/' | append:author_key | relative_url }}">{{ author.name }}</a></span>
        {% endif %}
     </div>
     <div class="content">
@@ -22,10 +22,10 @@ layout: default
     {% if author %}
         <div class="author">
             {% if author.image %}
-            <img src="{{ author.image | prepend: site.baseurl | replace: '//', '/' }}"  />
+            <img src="{{ author.image | relative_url }}"  />
             {% endif %}
             <span>
-                <a href="/authors/{{ author_key }}">{{ author.name }}</a> {{ author.blurb }}<br />
+                <a href="{{ '/authors/' | append:author_key | relative_url }}">{{ author.name }}</a> {{ author.blurb }}<br />
                 {% include author-social.html author=author %}
             </span>
 
@@ -35,7 +35,7 @@ layout: default
 </article>
 <script type="text/javascript">
     DiscourseEmbed = { discourseUrl: 'https://community.memfault.com/',
-        discourseEmbedUrl: '{{ site.url }}{{ site.baseurl }}{{ page.url }}' };
+        discourseEmbedUrl: '{{ page.url | absolute_url }}' };
 
     (function() {
         var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;

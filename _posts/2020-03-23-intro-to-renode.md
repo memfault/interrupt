@@ -69,9 +69,9 @@ To verify your Renode installation, you can run one of the examples:
 
 1. Open Renode, on MacOS I prefer to use the command line directly with `$ sh /Applications/Renode.app/Contents/MacOS/macos_run.command`
 2. A Renode terminal window will open. Load the example with `start @scripts/single-node/stm32f4_discovery.resc`
-   ![](/img/intro-to-renode/renode-first-demo-start.png)
+   ![]({% img_url intro-to-renode/renode-first-demo-start.png %})
 3. A second terminal window should open, displaying serial output
-   ![](/img/intro-to-renode/renode-first-demo-output.png)
+   ![]({% img_url intro-to-renode/renode-first-demo-output.png %})
 
 ## Running our firmware in Renode
 
@@ -312,7 +312,7 @@ Putting it all together we have:
 
 We now run `start` on our machine, and voila!
 
-![](/img/intro-to-renode/renode-hello-world.png)
+![]({% img_url intro-to-renode/renode-hello-world.png %})
 
 ### Automating setup with a `.resc` script
 
@@ -622,7 +622,7 @@ Tests finished successfully :)
 
 Success! As a bonus, the robot framework generates some pretty HTML reports:
 
-![](/img/intro-to-renode/renode-test-result.png)
+![]({% img_url intro-to-renode/renode-test-result.png %})
 
 ## Closing
 

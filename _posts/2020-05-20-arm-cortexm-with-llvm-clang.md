@@ -165,11 +165,11 @@ example of the type of information you will see:
 
 #### Report Overview
 
-![](/img/llvm/example_llvm_scanbuild_report.png)
+![]({% img_url llvm/example_llvm_scanbuild_report.png %})
 
 #### Report Analysis Example
 
-![](/img/llvm/example_llvm_scanbuild_analysis.png)
+![]({% img_url llvm/example_llvm_scanbuild_analysis.png %})
 
 #### Running scan-build
 

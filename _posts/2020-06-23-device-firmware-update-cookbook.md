@@ -114,7 +114,7 @@ $ make
 After which you can call `./start.sh` to start Renode. You will need to type the
 `start` command in the Renode window to get the emulation going.
 
-![](/img/fwup-architecture/renode-running.png)
+![]({% img_url fwup-architecture/renode-running.png %})
 
 ## High-Level Architecture
 
