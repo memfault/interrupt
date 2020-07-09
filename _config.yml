@@ -17,7 +17,7 @@ include:
 markdown: kramdown
 permalink: /:title
 paginate: 8
-paginate_path: "/page:num/"
+paginate_path: /page:num/
 source: .
 excerpt_separator: "<!-- excerpt end -->"
 
@@ -44,11 +44,7 @@ plugins:
 tag_page: '/tags/'
 category_page: '/categories/'
 
-# Custom variables
-version: "1.1.0"
-
 # Options
-custom_header: true
 custom_nav_footer: true
 reverse: false
 
