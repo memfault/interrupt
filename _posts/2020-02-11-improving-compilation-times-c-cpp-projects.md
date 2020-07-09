@@ -546,7 +546,7 @@ char *extra(void) {
 ```
 
 Recall that the inclusion of the `stm32f4xx.h` header caused the build
-[time to slow down by \~150 ms](#large-files--problem) for this file.
+[time to slow down by \~150 ms](#large-files--slow-builds) for this file.
 
 If we create a `precompiled.h` file with the contents below
 
