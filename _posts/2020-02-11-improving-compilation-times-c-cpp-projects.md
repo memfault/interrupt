@@ -356,7 +356,7 @@ Check out the dependency graph below for the file `FreeRTOSConfig.h` mentioned
 above:
 
 <p align="center">
-  <img width="600" src="/img/faster-compilation/aws-freertos-nrf52-dependencies.svg" alt="AWS FreeRTOS nrf52 config dependency issues" />
+  <img width="600" src="{% img_url faster-compilation/aws-freertos-nrf52-dependencies.svg %}" alt="AWS FreeRTOS nrf52 config dependency issues" />
 </p>
 
 You can see that, while the `FreeRTOSConfig.h` header should have little to no

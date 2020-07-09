@@ -4,7 +4,7 @@ description:
   Automated embedded firmware testing with Renode, Robot Framework, and the
   GitHub Actions CI system.
 author: tyler
-image: /img/test-automation-renode/cover.png
+image: img/test-automation-renode/cover.png
 ---
 
 Automated firmware testing on real embedded hardware is what every hardware
@@ -245,7 +245,7 @@ $ ./start.sh
 And then we see our firmware's shell in the UART window of Renode.
 
 <p align="center">
-  <img width="700" src="/img/test-automation-renode/renode-start.png"/>
+  <img width="700" src="{% img_url test-automation-renode/renode-start.png %}"/>
 </p>
 
 We can interact with it exactly as if it was connected to our computer over USB
@@ -510,7 +510,7 @@ Command
 ```
 
 <p align="center">
-  <img width="700" src="/img/test-automation-renode/robot-docs.png"/>
+  <img width="700" src="{% img_url test-automation-renode/robot-docs.png %}"/>
 </p>
 
 > Adding the tag `non_critical` or `skipped` on a test will allow the test to
@@ -706,7 +706,7 @@ Now, when we publish a pull-request on GitHub, we'll immediately see that the
 build is triggered and our job starts.
 
 <p align="center">
-  <img width="700" src="/img/test-automation-renode/github-pr-building.png"/>
+  <img width="700" src="{% img_url test-automation-renode/github-pr-building.png %}"/>
 </p>
 
 If we click on "Details", we can watch each job complete in real time! Below we
@@ -715,7 +715,7 @@ file that was built during the job, and the other is a ZIP archive of the Robot
 Framework test results.
 
 <p align="center">
-  <img width="700" src="/img/test-automation-renode/github-pr-build.png"/>
+  <img width="700" src="{% img_url test-automation-renode/github-pr-build.png %}"/>
 </p>
 
 The best part about using the Robot Framework integration of Renode is that it
