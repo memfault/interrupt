@@ -11,12 +11,12 @@ Interrupt is sponsored by [Memfault](https://memfault.com)
 Interrupt welcomes submissions on embedded software topics.
 
 Prior to getting in touch, you should get yourself acquainted with our [Code of
-Conduct](https://interrupt.memfault.com/code-of-conduct).
+Conduct](https://interrupt.memfault.com/blog/code-of-conduct).
 
 To submit your content, either email us at
 interrupt@memfault.com, or open a pull request!
 
-See [Contributing](https://interrupt.memfault.com/contributing) for more
+See [Contributing](https://interrupt.memfault.com/blog/contributing) for more
 information.
 
 ## Running locally
