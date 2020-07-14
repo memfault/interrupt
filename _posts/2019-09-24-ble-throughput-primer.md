@@ -67,7 +67,7 @@ For Bluetooth 4.0, the BLE Radio is capable of transmitting 1 symbol per microse
 
 All data during a BLE connection is sent via _Link Layer_ (**LL**) packets. All higher level messages are packed within _Data Payloads_ of _LL Packets_. Below is what a LL Packet sending data looks like (each tick mark represents 1 byte):
 
-![Data exchange]{% img_url ble-throughput/ll_packet.png %}
+![]({% img_url ble-throughput/ll_packet.png %})
 
 > NOTE: The astute reader may note that Data Payload can be up to 251 bytes. This however is an optional feature known as "LE Data Packet Length Extension" which we will explore in more detail [below](#ll-data-packet-length-extension)
 
@@ -83,7 +83,7 @@ With the three rules we mentioned about transmissions on the Bluetooth Radio in 
 - Side A waits `T_IFS` before sending any more data
 
 Here's an example exchange of two packets of data in one _Connection Event_:
-![Data exchange]{% img_url ble-throughput/connection_event.png %}
+![]({% img_url ble-throughput/connection_event.png %})
 
 The time it takes to transmit one packet can be computed as:
 
@@ -114,7 +114,7 @@ There are only a few different L2CAP channels used for Bluetooth Low Energy:
 
 Below is a diagram of the layout of an L2CAP packet. As you can see there are 4 bytes of overhead (Length + Channel ID) per packet sent.
 
-![Data exchange]{% img_url ble-throughput/l2cap_packet.png %}
+![]({% img_url ble-throughput/l2cap_packet.png %})
 
 ### Attribute Protocol (ATT) Packet
 
@@ -133,7 +133,7 @@ accomodate for the ATT protocol overhead), most bluetooth stacks support a maxim
 
 The packet looks like this:
 
-![Data exchange]{% img_url ble-throughput/att_packet.png %}
+![]({% img_url ble-throughput/att_packet.png %})
 
 {:.no_toc}
 
