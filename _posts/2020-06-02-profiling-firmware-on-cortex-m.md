@@ -23,7 +23,7 @@ profiling techniques. All you need is a debugger and a laptop to get started.
 In this post, we explore different techniques that can be used to profile
 firmware applications running on ARM Cortex-M microcontrollers. To profile our
 Mandelbrot application on STM32, we start with a naive debugger-based sampling
-method, and eventually discover ITM, DWT cycle counters, and more! 
+method, and eventually discover ITM, DWT cycle counters, and more!
 <!-- excerpt end -->
 
 
@@ -65,7 +65,7 @@ Manual, Section 6.13[^disco-um].
 Simply grab a soldering iron and bridge the two pads labeled "SB9" with a bit
 of solder or a 0-ohm resistor. Here is my handywork:
 
-<img src="/img/profiling/solder-bridge.jpg" width="450" />
+<img width="450" src="{% img_url profiling/solder-bridge.jpg %}"/>
 
 ### Code Under Test
 
@@ -323,7 +323,7 @@ If all went well, we now have a file named `itm.fifo` which contains binary ITM
 data. We must now decode it!
 
 The packet format is specified in detail in the [ARM v7m Architecture Reference
-Manual](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf). Thankfully, 
+Manual](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf). Thankfully,
 others have gone through the trouble of implementing decoders for us.
 
 My favorite tool here is the `itm-tools` suite from Jorge Aparicio, which is
