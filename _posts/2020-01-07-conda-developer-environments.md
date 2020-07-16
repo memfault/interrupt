@@ -65,7 +65,7 @@ it may be time to consider using Conda or similar environment manager.
 
 ## What is Conda?
 
-![Conda]{% img_url conda-developer-environments/conda.png %}
+![Conda]({% img_url conda-developer-environments/conda.png %})
 
 Conda is a "package, dependency and environment management for any
 language"[^1]. It is most popular in the world of data science, but it can
@@ -535,7 +535,7 @@ developers are not yet built for Conda and hosted on the Conda Forge repository.
 Fret not, as building and publishing Conda packages is relatively simple. We'll
 quickly walk through how I built and published the `gcc-arm-none-eabi` package
 that is hosted [here](https://anaconda.org/memfault/gcc-arm-none-eabi) and built
-from the official
+
 [ARM GNU Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
 
 Creating a package for this toolchain is straight-forward since the binaries are

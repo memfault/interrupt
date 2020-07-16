@@ -9,14 +9,17 @@ tags: [zero-to-main]
 This is the second post in our [Zero to main() series]({% tag_url zero-to-main %}).
 
 <!-- excerpt start -->
+
 [Last time]({{ site.url }}{% post_url 2019-05-14-zero-to-main-1 %}), we talked about
 bootstrapping a C environment on an MCU before invoking our `main` function. One
 thing we took for granted was the fact that functions and data end up in the
 right place in our binary. Today, we're going to dig into how that happens by
 learning about memory regions and linker scripts.
+
 <!-- excerpt end -->
 
 You may remember the following things happening auto-magically:
+
 1. We used variables like `&_ebss`, `&_sdata`, ...etc. to know where each of our
    sections was placed in flash and to define where some needed to go in RAM.
 2. A pointer to our `ResetHandler` was found at address 0x00000004 for the MCU
@@ -34,8 +37,8 @@ somewhere is the linker script.
 Once again, we will use our simple "minimal" program, available [on
 Github](https://github.com/memfault/zero-to-main/blob/master/minimal).
 
-*Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox*
+_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
+posts straight to your mailbox_
 
 ## Brief Primer on Linking
 
@@ -72,6 +75,7 @@ $ arm-none-eabi-nm build/objs/a/b/c/minimal.o
 ```
 
 As expected, it does not have addresses yet. We then link everything with:
+
 ```
 $ arm-none-eabi-gcc <LDFLAGS> build/objs/a/b/c/minimal.o <other object files> -o build/minimal.elf
 ```
@@ -98,10 +102,11 @@ Overflow](https://stackoverflow.com/questions/3322911/what-do-linkers-do).
 ## Anatomy of a Linker Script
 
 A linker script contains four things:
-* Memory layout: what memory is available where
-* Section definitions: what part of a program should go where
-* Options: commands to specify architecture, entry point, ...etc. if needed
-* Symbols: variables to inject into the program at link time
+
+- Memory layout: what memory is available where
+- Section definitions: what part of a program should go where
+- Options: commands to specify architecture, entry point, ...etc. if needed
+- Symbols: variables to inject into the program at link time
 
 ## Memory Layout
 
@@ -121,16 +126,17 @@ MEMORY
 ```
 
 Where
-* `name` is a name you want to use for this region. Names do not carry meaning,
+
+- `name` is a name you want to use for this region. Names do not carry meaning,
   so you're free to use anything you want. You'll often find "flash", and "ram"
-as region names.
-* `(attr)` are optional attributes for the region, like whether it's writable
-   (`w`), readable (`r`), or executable (`x`). Flash memory is usually `(rx)`,
-while ram is `rwx`. Marking a region as non-writable does not magically make it
-write protected: these attributes are meant to describe the properties of the
-memory, not set it.
-* `origin` is the start address of the memory region.
-* `len` is the size of the memory region, in bytes.
+  as region names.
+- `(attr)` are optional attributes for the region, like whether it's writable
+  (`w`), readable (`r`), or executable (`x`). Flash memory is usually `(rx)`,
+  while ram is `rwx`. Marking a region as non-writable does not magically make it
+  write protected: these attributes are meant to describe the properties of the
+  memory, not set it.
+- `origin` is the start address of the memory region.
+- `len` is the size of the memory region, in bytes.
 
 The memory map for the SAMD21G18 chip we've got on our board can be found in its
 [datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/SAMD21-Family-DataSheet-DS40001882D.pdf)
@@ -171,23 +177,27 @@ MEMORY
 Code and data are bucketed into sections, which are contiguous areas of memory.
 There are no hard rules about how many sections you should have, or what they
 should be, but you typically want to put symbols in the same section if:
+
 1. They should be in the same region of memory, or
 2. They need to be initialized together.
 
 In our previous post, we learned about two types of symbols that are initialized
 in bulk:
+
 1. Initialized static variables which must be copied from flash
 2. Uninitialized static variables which must be zeroed.
 
 Our linker script concerns itself with two more things:
+
 1. Code and constant data, which can live in read-only memory (e.g. flash)
 2. Reserved sections of RAM, like a stack or a heap
 
 By convention, we name those sections as follow:
+
 1. `.text` for code & constants
 2. `.bss` for unintialized data
-4. `.stack` for our stack
-3. `.data` for initialized data
+3. `.stack` for our stack
+4. `.data` for initialized data
 
 The [elf spec](http://refspecs.linuxbase.org/elf/elf.pdf) holds a full list.
 Your firmware will work just fine if you call them anything else, but your
@@ -247,6 +257,7 @@ of the sections from our input object files we want in `.text`.
 
 To find out what sections are in our object file, we can once again use
 `objdump`:
+
 ```
 $ arm-none-eabi-objdump -h
 build/objs/a/b/c/minimal.o:     file format elf32-littlearm
@@ -406,7 +417,7 @@ At boot, the `Reset_Handler` copies the data from flash to RAM before the `main`
 function is called.
 
 To make this possible, every section in our linker script has two addresses,
-its *load* address (LMA) and its *virtual* address (VMA). In a firmware context,
+its _load_ address (LMA) and its _virtual_ address (VMA). In a firmware context,
 the LMA is where your JTAG loader needs to place the section and the VMA is
 where the section is found during execution.
 
@@ -489,22 +500,22 @@ SECTIONS
 
 You can find the full details on linker script sections syntax in the
 [ld
-manual](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/sections.html#OUTPUT-SECTION-DESCRIPTION).
+manual](https://sourceware.org/binutils/docs/ld/SECTIONS.html#SECTIONS).
 
 ## Variables
 
 In the first post, our `ResetHandler` relied on seemingly magic variables to know
 the address of each of our sections of memory. It turns out, those variable came
-from the linker script!
 
 In order to make section addresses available to code, the linker is able
-to generate symbols and add them to the program. 
+to generate symbols and add them to the program.
 
 You can find the syntax in the [linker
-documentation](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/assignments.html),
+documentation](https://sourceware.org/binutils/docs/ld/Simple-Assignments.html#Simple-Assignments),
 it looks exactly like a C assignment: `symbol = expression;`
 
 Here, we need:
+
 1. `_etext` the end of the code in `.text` section in flash.
 2. `_sdata` the start of the `.data` section in RAM
 3. `_edata` the end of the `.data` section in RAM
@@ -516,6 +527,7 @@ of the location counter (`.`) at the start and at the end of each section
 definition.
 
 The code is below:
+
 ```
     .text :
     {
@@ -552,10 +564,9 @@ uint8_t *data_byte = &_sdata;
 You can read more details about this in the [binutils
 docs](https://sourceware.org/binutils/docs/ld/Source-Code-Reference.html).
 
-
 ## Closing
 
-I hope this post gave you confidence in writing your own linker scripts. 
+I hope this post gave you confidence in writing your own linker scripts.
 
 In my next post, we'll talk about writing a bootloader to assist with loading
 and starting your application.

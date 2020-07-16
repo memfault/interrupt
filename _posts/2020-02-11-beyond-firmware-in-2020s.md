@@ -2,9 +2,9 @@
 title: "Beyond Firmware in the 2020s"
 author: rameen
 excerpt: "In the next decade the capabilities of software for
-    embedded systems will catch up to those of hardware, 'firmware' will become
-    increasingly difficult to distinguish from 'software', and a new discipline
-    altogether will begin to take shape."
+  embedded systems will catch up to those of hardware, 'firmware' will become
+  increasingly difficult to distinguish from 'software', and a new discipline
+  altogether will begin to take shape."
 ---
 
 > Editor's note: We're starting off February with a think piece from Rameen
@@ -35,7 +35,7 @@ Pentium II processors of the 1990s than PIC32 microcontrollers of the
 catching up to CPUs. Consider the amount of RAM available in top-of-the-line
 STM32 chips over the past few years:
 
-![STM32 Available RAM over time]{% img_url embedded-in-2020/stm32-chart.png %}
+![STM32 Available RAM over time]({% img_url embedded-in-2020/stm32-chart.png %})
 
 In the 2010s we largely wrote software assuming it was going to run on something
 like a PIC32 when it was actually going to run on something like a Pentium II.

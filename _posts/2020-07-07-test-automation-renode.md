@@ -136,8 +136,8 @@ $ which arm-none-eabi-gcc
 Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
 
 > Want to learn more about Conda? Check out my previous post on using [Conda >
-> environments for embedded >
-> development]({% post_url 2020-01-07-conda-developer-environments %}).
+> > environments for embedded >
+> > development]({% post_url 2020-01-07-conda-developer-environments %}).
 
 It turns out the Renode team packages the application in a
 [Renode Conda package](https://anaconda.org/antmicro/renode), but at the time of
@@ -723,7 +723,7 @@ generates pretty HTML-based reports, as we saw in the [Introduction to Renode
 post]({% post_url 2020-03-23-intro-to-renode %}#renode--integration-tests).
 
 > I've included the HTML report for the above test.
-> [Click here to view it](/misc/test-automation-renode/log.html).
+> [Click here to view it](/blog/misc/test-automation-renode/log.html).
 
 ## Debugging Failing Tests in CI
 
@@ -905,10 +905,11 @@ wrote a quick and hacky `tasks.py` Invoke file to improve this flow.
 
 ```python
 import time
-
-from invoke import Context, Collection, task
-from telnetlib import Telnet
 from datetime import datetime, timedelta
+from telnetlib import Telnet
+
+from invoke import Collection, Context, task
+
 
 @task()
 def renode(ctx):
