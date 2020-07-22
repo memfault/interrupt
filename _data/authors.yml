@@ -76,3 +76,12 @@ shiva:
     image: /img/author/shiva.jpg
     github: shivarajagopal
     blurb: is an embedded software engineer at Fitbit.
+jaredwolff:
+    name: Jared Wolff
+    email: hello@jaredwolff.com
+    web: https://www.jaredwolff.com
+    linkedin: https://www.linkedin.com/in/jaredwolff/
+    image: /img/author/jaredwolff.jpg
+    twitter: jaredwolff
+    github: jaredwolff
+    blurb: Hardware and firmware enthusiast. Proud father of the <a href="https://www.jaredwolff.com/store/nrf91-feather/">nRF9160 Feather.</a>
