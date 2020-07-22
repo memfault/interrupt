@@ -1,6 +1,6 @@
 ---
 title: "How to Build Drivers for Zephyr"
-description: "A guide on how to build custom drivers for hardware on Zephyr."
+description: "A guide on how to build custom drivers for hardware on the Zephyr RTOS using the Device Driver Model."
 image: /img/building-drivers-on-zephyr/cover.png
 author: jaredwolff
 ---
@@ -63,7 +63,8 @@ board_runner_args(jlink "--device=cortex-m33" "--speed=4000")
 include(${ZEPHYR_BASE}/boards/common/nrfjprog.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
 ```
-([Original Github code here.]([here](https://github.com/zephyrproject-rtos/zephyr/blob/master/boards/arm/circuitdojo_feather_nrf9160/board.cmake).))
+
+([Original Github code here](https://github.com/zephyrproject-rtos/zephyr/blob/master/boards/arm/circuitdojo_feather_nrf9160/board.cmake))
 
 As you can see, the nRF9160 Feather supports the `nrfjprog` and `jlink` options.
 
@@ -156,12 +157,12 @@ menu "Asset tracker"
 rsource "src/ui/Kconfig"
 
 config APPLICATION_WORKQUEUE_STACK_SIZE
-	int "Application workqueue stack size"
-	default 4096
+    int "Application workqueue stack size"
+    default 4096
 
 config APPLICATION_WORKQUEUE_PRIORITY
-	int "Application workqueue priority"
-	default SYSTEM_WORKQUEUE_PRIORITY
+    int "Application workqueue priority"
+    default SYSTEM_WORKQUEUE_PRIORITY
 
 menu "GPS"
 ...
@@ -323,10 +324,10 @@ rsource "pcf85063a/Kconfig"
 # PCF85063A Nano Power Real time Clock configuration options
 
 menuconfig PCF85063A
-	bool "PCF85063A Three Axis Accelerometer"
-	depends on (I2C && HAS_DTS_I2C)
-	help
-	  Enable SPI/I2C-based driver for PCF85063A based RTC
+    bool "PCF85063A Three Axis Accelerometer"
+    depends on (I2C && HAS_DTS_I2C)
+    help
+      Enable SPI/I2C-based driver for PCF85063A based RTC
 ```
 
 As you can imagine, it's more complicated when your drivers are many levels deep. In any case, the above example should give you an idea of how to organize your `Kconfig` and `CMakeLists.txt`.
@@ -339,10 +340,10 @@ In my case, I needed to use I2C to get the PCF85063A working. Here's what the nR
 
 ```
 &i2c1 {
-	compatible = "nordic,nrf-twim";
-	status = "okay";
-	sda-pin = <26>;
-	scl-pin = <27>;
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    sda-pin = <26>;
+    scl-pin = <27>;
 };
 ```
 
@@ -350,16 +351,16 @@ Here's what it looked like after:
 
 ```
 &i2c1 {
-	compatible = "nordic,nrf-twim";
-	status = "okay";
-	sda-pin = <26>;
-	scl-pin = <27>;
+    compatible = "nordic,nrf-twim";
+    status = "okay";
+    sda-pin = <26>;
+    scl-pin = <27>;
 
-	pcf85063a@51 {
-			compatible = "nxp,pcf85063a";
-			label = "PCF85063A";
-			reg = <0x51>;
-	};
+    pcf85063a@51 {
+        compatible = "nxp,pcf85063a";
+        label = "PCF85063A";
+        reg = <0x51>;
+    };
 
 };
 ```
@@ -419,14 +420,14 @@ This allows the bulk of this private code to remain private. It's only accessibl
 You can also change *when* the driver gets initialized by changing the **level** argument. Here are the levels as shown in `linker-defs.h`:
 
 ```c
-#define	INIT_SECTIONS()					\
-		__init_start = .;			\
-		CREATE_OBJ_LEVEL(init, PRE_KERNEL_1)	\
-		CREATE_OBJ_LEVEL(init, PRE_KERNEL_2)	\
-		CREATE_OBJ_LEVEL(init, POST_KERNEL)	\
-		CREATE_OBJ_LEVEL(init, APPLICATION)	\
-		CREATE_OBJ_LEVEL(init, SMP)		\
-		__init_end = .;				\
+#define	INIT_SECTIONS()                  \
+    __init_start = .;                    \
+    CREATE_OBJ_LEVEL(init, PRE_KERNEL_1) \
+    CREATE_OBJ_LEVEL(init, PRE_KERNEL_2) \
+    CREATE_OBJ_LEVEL(init, POST_KERNEL)  \
+    CREATE_OBJ_LEVEL(init, APPLICATION)  \
+    CREATE_OBJ_LEVEL(init, SMP)          \
+    __init_end = .;                      \
 ```
 
 In most cases, `POST_KERNEL` is good enough. If you need immediate initialization, then one of the `PRE_KERNEL` options is better.
@@ -455,15 +456,15 @@ That was a mouthful. Let's see what it actually looks like:
 
 ```c
 static const struct counter_driver_api pcf85063a_driver_api = {
-  .start = pcf85063a_start,
-  .stop = pcf85063a_stop,
-  .get_value = pcf85063a_get_value,
-  .set_alarm = pcf85063a_set_alarm,
-  .cancel_alarm = pcf85063a_cancel_alarm,
-  .set_top_value = pcf85063a_set_top_value,
-  .get_pending_int = pcf85063a_get_pending_int,
-  .get_top_value = pcf85063a_get_top_value,
-  .get_max_relative_alarm = pcf85063a_get_max_relative_alarm,
+    .start = pcf85063a_start,
+    .stop = pcf85063a_stop,
+    .get_value = pcf85063a_get_value,
+    .set_alarm = pcf85063a_set_alarm,
+    .cancel_alarm = pcf85063a_cancel_alarm,
+    .set_top_value = pcf85063a_set_top_value,
+    .get_pending_int = pcf85063a_get_pending_int,
+    .get_top_value = pcf85063a_get_top_value,
+    .get_max_relative_alarm = pcf85063a_get_max_relative_alarm,
 };
 ```
 
@@ -473,23 +474,23 @@ Implementing a function looked something like this:
 static int pcf85063a_start(struct device *dev)
 {
 
-	// Get the data pointer
-	struct pcf85063a_data *data = pcf85063a_dev->driver_data;
+    // Get the data pointer
+    struct pcf85063a_data *data = pcf85063a_dev->driver_data;
 
-	// Turn it back on (active low)
-	uint8_t reg = 0;
-	uint8_t mask = PCF85063A_CTRL1_STOP;
+    // Turn it back on (active low)
+    uint8_t reg = 0;
+    uint8_t mask = PCF85063A_CTRL1_STOP;
 
-	// Write back the updated register value
-	int ret = i2c_reg_update_byte(data->i2c, DT_REG_ADDR(DT_DRV_INST(0)),
-																PCF85063A_CTRL1, mask, reg);
-	if (ret)
-	{
-		LOG_ERR("Unable to stop RTC. (err %i)", ret);
-		return ret;
-	}
+    // Write back the updated register value
+    int ret = i2c_reg_update_byte(data->i2c, DT_REG_ADDR(DT_DRV_INST(0)),
+                                  PCF85063A_CTRL1, mask, reg);
+    if (ret)
+    {
+        LOG_ERR("Unable to stop RTC. (err %i)", ret);
+        return ret;
+    }
 
-	return 0;
+    return 0;
 }
 ```
 
@@ -500,29 +501,29 @@ typedef int (*counter_api_start)(struct device *dev);
 typedef int (*counter_api_stop)(struct device *dev);
 typedef int (*counter_api_get_value)(struct device *dev, u32_t *ticks);
 typedef int (*counter_api_set_alarm)(struct device *dev, u8_t chan_id,
-				const struct counter_alarm_cfg *alarm_cfg);
+        const struct counter_alarm_cfg *alarm_cfg);
 typedef int (*counter_api_cancel_alarm)(struct device *dev, u8_t chan_id);
 typedef int (*counter_api_set_top_value)(struct device *dev,
-					 const struct counter_top_cfg *cfg);
+        const struct counter_top_cfg *cfg);
 typedef u32_t (*counter_api_get_pending_int)(struct device *dev);
 typedef u32_t (*counter_api_get_top_value)(struct device *dev);
 typedef u32_t (*counter_api_get_max_relative_alarm)(struct device *dev);
 typedef u32_t (*counter_api_get_guard_period)(struct device *dev, u32_t flags);
 typedef int (*counter_api_set_guard_period)(struct device *dev, u32_t ticks,
-						u32_t flags);
+        u32_t flags);
 
 __subsystem struct counter_driver_api {
-	counter_api_start start;
-	counter_api_stop stop;
-	counter_api_get_value get_value;
-	counter_api_set_alarm set_alarm;
-	counter_api_cancel_alarm cancel_alarm;
-	counter_api_set_top_value set_top_value;
-	counter_api_get_pending_int get_pending_int;
-	counter_api_get_top_value get_top_value;
-	counter_api_get_max_relative_alarm get_max_relative_alarm;
-	counter_api_get_guard_period get_guard_period;
-	counter_api_set_guard_period set_guard_period;
+    counter_api_start start;
+    counter_api_stop stop;
+    counter_api_get_value get_value;
+    counter_api_set_alarm set_alarm;
+    counter_api_cancel_alarm cancel_alarm;
+    counter_api_set_top_value set_top_value;
+    counter_api_get_pending_int get_pending_int;
+    counter_api_get_top_value get_top_value;
+    counter_api_get_max_relative_alarm get_max_relative_alarm;
+    counter_api_get_guard_period get_guard_period;
+    counter_api_set_guard_period set_guard_period;
 };
 ```
 
@@ -545,8 +546,8 @@ During the early stages of your app, you can fetch your device. Using the **labe
 rtc = device_get_binding("PCF85063A");
 if (rtc == NULL)
 {
-  LOG_ERR("Failed to get RTC device binding\n");
-  return;
+    LOG_ERR("Failed to get RTC device binding\n");
+    return;
 }
 
 LOG_INF("device is %p, name is %s", rtc, log_strdup(rtc->name));
@@ -559,19 +560,19 @@ In my case, my code uses the `counter_get_pending_int` and `counter_cancel_chann
 ```c
 if (!timer_flag)
 {
-	int ret = counter_get_pending_int(rtc);
-	LOG_INF("Interrupt? %d", ret);
+    int ret = counter_get_pending_int(rtc);
+    LOG_INF("Interrupt? %d", ret);
 
-	if (ret == 1)
-	{
-		timer_flag = true;
+    if (ret == 1)
+    {
+        timer_flag = true;
 
-		int ret = counter_cancel_channel_alarm(rtc, 0);
-		if (ret)
-		{
-			LOG_ERR("Unable to cancel channel alarm!");
-		}
-	}
+        int ret = counter_cancel_channel_alarm(rtc, 0);
+        if (ret)
+        {
+            LOG_ERR("Unable to cancel channel alarm!");
+        }
+    }
 }
 ```
 
