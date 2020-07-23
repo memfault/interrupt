@@ -1,7 +1,8 @@
 .highlight pre {
     background-color: #272822;
     padding: 20px;
-    overflow: scroll;
+    overflow-y: hidden;
+    overflow-x: auto;
 }
 
 .highlight {
