@@ -584,7 +584,7 @@ In this article, we talked about what makes a driver in Zephyr, a driver. You've
 
 Curious about the nRF9160 Feather? It's open-source and is available for pre-order this week!
 
-![nRF9160 Feather + OSHWA](/img/building-drivers-on-zephyr/feather-with-oshwa.png)
+![nRF9160 Feather + OSHWA]({% img_url building-drivers-on-zephyr/feather-with-oshwa.png %})
 
 You can [check it out here.][nrf9160-feather]
 
