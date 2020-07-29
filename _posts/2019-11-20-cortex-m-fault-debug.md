@@ -240,7 +240,7 @@ When a lockup happens, the processor will repeatedly fetch the same fixed instru
 
 At this point we have gone over all the pieces of information which can be manually examined to determine what caused a fault. While this might be fun the first couple times, it can become a tiresome and error prone process if you wind up doing it often. In the following sections we'll explore how we can automate this analysis!
 
-### Halting & Determing Core Register State
+### Halting & Determining Core Register State
 
 What if we are trying to debug an issue that is **not** easy to reproduce? Even if we have a debugger attached, useful state may be overwritten before we have a chance to halt the debugger and take a look.
 
