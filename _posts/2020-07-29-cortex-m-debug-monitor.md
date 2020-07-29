@@ -1,5 +1,5 @@
 ---
-title: "Step-through debugging via a UART on ARM Cortex-M MCUs"
+title: "Step-through debugging with no debugger on Cortex-M"
 description: "An exploration of how to debug running devices by taking advantage of debug monitor
 mode on ARM Cortex-M MCUs"
 image: /img/debugmon/debug-via-shell.png
