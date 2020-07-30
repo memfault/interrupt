@@ -7,7 +7,7 @@ author: cyril
 
 <!-- excerpt start -->
 
-Having a logger display execution information on the terminal is pretty common for Firmware developers. What's a bit less common is having an instant stack trace when the program crashes.
+Having a logger display execution information on the terminal is pretty common for firmware developers. What's less common is having an instant stack trace when the program crashes.
 
 <!-- excerpt end -->
 
@@ -52,8 +52,8 @@ First, we need to clone the CrashCatcher repo. Using nRF52's SDK, I find it conv
 
 ```bash
 # From the SDK root directory
-cd external
-git clone --recursive https://github.com/adamgreen/CrashCatcher.git
+$ cd external
+$ git clone --recursive https://github.com/adamgreen/CrashCatcher.git
 ```
 
 The nRF52 SDK provides an implementation of the HardFault handler that can be enabled through a defined macro in the config file `sdk_config.h` using `HARDFAULT_HANDLER_ENABLED`. We don't want to enable the default handler as we will reimplement our own so make sure the macro equals `0`.
@@ -136,12 +136,14 @@ We can see printed the registers and memory regions in the hexadecimal format. W
 
 We are going to use a Python script to print the log and the crash information. The script will take the serial port such as `/dev/ttyUSB0` on Linux-based OSes and the path to the program file as arguments (`path/to/app_elf.out`).
 
-Thanks to the `pyserial` package, it is very easy to read the log, line by line. For each line, we want to check if the message contains the starting flag: `###CRASH###`. Once we detect the flag, we are going to store the messages printed into a temporary file while we wait for the ending flag: `###END###`. If you don't have it already, install Python (>=3.5) and `pyserial` using `pip` or in your `conda` environment.
+Thanks to the `pyserial` package, it is very easy to read the log, line by line. For each line, we want to check if the message contains the starting flag: `###CRASH###`. Once we detect the flag, we are going to store the messages printed into a temporary file while we wait for the ending flag: `###END###`. If you don't have it already, install Python (>=3.5) and `pyserial` using `pip` or using [Conda]({% post_url 2020-01-07-conda-developer-environments %}).
 
 As we want to print the stack trace directly from our client, we are going to use GDB and CrashDebug together. The full command is described in the documentation[^crashdebug]. In order to print the crash location and the local variables I will need to execute `bt full` right from GDB and do not forget to quit to get back to the Python script:
 
 ```
-arm-none-eabi-gdb main.elf -ex "set target-charset ASCII" -ex "target remote | CrashDebug --elf main.elf --dump MainCrashDump.txt" -ex "bt full" -ex "quit"
+$ arm-none-eabi-gdb main.elf -ex "set target-charset ASCII" \
+    -ex "target remote | CrashDebug --elf main.elf \
+    --dump MainCrashDump.txt" -ex "bt full" -ex "quit"
 ```
 
 You can add some GDB commands to print even more information like `info registers`.
@@ -205,13 +207,13 @@ while 1:
 
     # Print out the line
     print(line.decode('utf-8').rstrip())
-
 ```
 
 Let's test with our latest program to see how awesome it is. Here is an example of a program of mine. The crash is happening in `app.c`, line 1173. We can see some local variables in the current context `app_start()` such as `err_code` but also variables from the caller `main()`:
 
 ```
-$ python dump.py /dev/ttyUSB0 ../../../my-awesome-product/awesome-app/awesome-board/_build/app_debug.out
+$ python dump.py /dev/ttyUSB0 \ 
+    ../../../my-awesome-product/awesome-app/awesome-board/_build/app_debug.out
 
 [...]
 <INFO> Everything is going well so far 🌸
@@ -273,7 +275,7 @@ Implementing this trick will probably take you dozens of minutes but can make yo
 
 Such stack tracing has long been implemented in higher-level programming languages but tools for Firmware development have always been lagging compared to most of the software industry. This post provides yet another attempt to bridge the gap by building our tools. 
 
-We are looking forward to have your comments and tips in the comments. 
+I look forward to your comments and tips in the comments.
 
 
 ## 🔗 References
