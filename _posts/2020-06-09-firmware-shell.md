@@ -655,7 +655,7 @@ I won't go very deep in this section, but I do want to give a rough idea of how
 one would implement unit tests for a shell.
 
 Using CppUTest and a similar structure to our previous [Unit Testing
-Basics]({% post_url 2019-10-08-unit-testing-basics %} post, we arrive at the
+Basics]({% post_url 2019-10-08-unit-testing-basics %}) post, we arrive at the
 following structure within our `part2/` example:
 
 ```
