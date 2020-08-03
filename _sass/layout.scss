@@ -7,7 +7,7 @@ html, body {
 
 /* Navigation */
 
-#nav, #nav-left { 
+#nav, #nav-left {
   a {
     display: block;
     color: $background-color;
@@ -248,7 +248,9 @@ code {
   color: $background-color;
   padding: 4px 8px;
   font-weight: 400;
-  padding: 0.5em 1em;
+	display: inline-block;
+	margin-bottom: 0.5em;
+  padding: 0.2em 1em;
   -webkit-border-radius: 4px;
      -moz-border-radius: 4px;
       -ms-border-radius: 4px;
@@ -263,15 +265,13 @@ footer {
   text-align: center;
   padding: 0.6667em 0;
   text-align: center;
-  position: absolute;
   width: 100%;
   bottom: 0;
 }
 
 #wrap {
-	min-height:100%; 
+	min-height:100%;
 	position:relative;
-	padding-bottom: 105px;
 }
 
 .footer-links {
