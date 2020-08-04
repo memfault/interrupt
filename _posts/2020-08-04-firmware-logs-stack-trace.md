@@ -1,5 +1,5 @@
 ---
-title: Boost your log messages with instant crash analysis
+title: Parsing Logs for Instant Crash Analysis
 description: A stack trace for embedded software. Get all the information you need to debug firmware crashes right into your logs, in a few easy steps. 
 image: /img/logs-stack-trace/colorful_stack_unbundling.gif
 author: cyril
@@ -28,7 +28,7 @@ straight to your mailbox_
 * auto-gen TOC:
 {:toc}
 
-## 📰 The logging interface
+## 📰 The Logging Interface
 
 Logging was historically done using the UART peripheral on the microcontroller. One could also use semihosting but it is more and more common to see Segger's RTT (Real-Time Transfer) being used as it is very efficient: it doesn't affect real-time behavior. I am still using the serial interface for some projects because using RTT requires to connect the debugger, which I don't do every time. Moreover, the RTT Client used to be a bit buggy. I hope that's not the case anymore and I should probably consider using RTT more than I do. In the last few years, I have been using RTT only to debug the bootloader on several targets. 🙄
 
@@ -36,13 +36,13 @@ In order to implement stack unbundling from the terminal client, we need to rece
 
 We could implement stack tracing from an RTT Client but it might be more interesting to have GDB connected if your debugger is attached anyway. For a good starting point, we have you covered[^debug_fault]
 
-## 💥 Catching crashes
+## 💥 Catching Crashes
 
 You might have guessed already that in order to have a stack trace, we need to dump the stack when the crash occurs. To do so, we are going to modify the `HardFault_Handler` to send the stack region through our logging interface. Then we need to parse that stack helped with the symbols defined in our program and GDB.
 
 Hopefully, we won't reinvent the wheel as Adam Green[^adamgreen] made those tools available on Github with CrashCatcher[^crashcatcher] and CrashDebug[^crashdebug]. 🙏
 
-### 🧪 Stack dumping
+### 🧪 Stack Dumping
 
 We need to start by reimplementing a "useful" `HardFault_Handler`. I said "useful" because most default handlers do nothing but rebooting or looping indefinitely. 
 
@@ -132,7 +132,7 @@ F20000007800000000E0070068FF0020
 
 We can see printed the registers and memory regions in the hexadecimal format. We need to save that stack trace and make use of it.
 
-### 🔬 Stack analysis
+### 🔬 Stack Analysis
 
 We are going to use a Python script to print the log and the crash information. The script will take the serial port such as `/dev/ttyUSB0` on Linux-based OSes and the path to the program file as arguments (`path/to/app_elf.out`).
 
@@ -246,7 +246,7 @@ Isn't it awesome? 😃 No, it's not, it's crashing. 😜
 
 From now on, whenever you will have a HardFault, you'll now be able to debug it quite quickly. 🚀
 
-## 🌈 Bonus: make it colorful
+## 🌈 Bonus: Make it Colorful
 
 I have long been using the same Python script to print out the log messages. This one is making things clear by printing the host date, the target date (and the difference between the two), the active tasks count, the filename and line the message is being printed from, all of this using colors! 
 
