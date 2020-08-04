@@ -13,7 +13,7 @@ Having a logger display execution information on the terminal is pretty common f
 
 In this post, I will introduce a few tools to implement a beautiful boosted logger. The example presented here is based on the nRF52 device and its SDK compiled with the GCC toolchain but can be ported to any other Cortex-M microcontroller.
 
-This post was originally published on [Cyril's website](http://www.cyrilfougeray.com/2020/07/27/firmware-logs-with-stack-trace.html).
+> This post was originally published on [Cyril's website](http://www.cyrilfougeray.com/2020/07/27/firmware-logs-with-stack-trace.html).
 
 _Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
 straight to your mailbox_
