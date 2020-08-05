@@ -1,6 +1,6 @@
 ---
 title: Parsing Logs Messages for Instant Crash Analysis
-description: A stack trace for embedded software. Get all the information you need to debug firmware crashes right into your logs, in a few easy steps. 
+description: A stack trace for embedded software. Get all the information you need to debug firmware crashes right into your logs, in a few easy steps.
 image: /img/logs-stack-trace/colorful_stack_unbundling.gif
 author: cyril
 ---
@@ -44,7 +44,7 @@ Hopefully, we won't reinvent the wheel as Adam Green[^adamgreen] made those tool
 
 ### 🧪 Stack Dumping
 
-We need to start by reimplementing a "useful" `HardFault_Handler`. I said "useful" because most default handlers do nothing but rebooting or looping indefinitely. 
+We need to start by reimplementing a "useful" `HardFault_Handler`. I said "useful" because most default handlers do nothing but rebooting or looping indefinitely.
 
 To perform the stack dump, we are going to use CrashCatcher. If you want to read more about that tool, head on to the git repo[^crashcatcher]. Let's start.
 
@@ -64,8 +64,8 @@ Now, we need to add the source files in the Makefile. In the case you want to im
 SRC_FILES ?= \
     [...] \
     $(SDK_ROOT)/external/CrashCatcher/Core/src/CrashCatcher.c \
-    $(SDK_ROOT)/external/CrashCatcher/Core/src/CrashCatcher_armv7m.S 
-    # ☝️ for armv7m, there are other architectures available, make sure to use 
+    $(SDK_ROOT)/external/CrashCatcher/Core/src/CrashCatcher_armv7m.S
+    # ☝️ for armv7m, there are other architectures available, make sure to use
     # the good one for your project
 
 INC_FOLDERS += \
@@ -78,7 +78,7 @@ If you take a look at `CrashCatcher_armv7m.S`, you will find a definition, in As
 
 Let's jump directly in `CrashCatcher_Entry`. Adam did all the work of getting the stack and registers ready for us to be printed out to the serial interface.
 
-CrashCatcher is flexible enough so that we can choose how the data is sent for post-mortem analysis by defining the functions to do so ourselves. I chose to transfer it directly using the serial interface but we could use RTT or probably any other interface. We could have chosen to store the dumped memory into Flash for a transfer later on, using Wi-Fi or Bluetooth for example. We need to keep in mind that we are in the HardFault handler though... 
+CrashCatcher is flexible enough so that we can choose how the data is sent for post-mortem analysis by defining the functions to do so ourselves. I chose to transfer it directly using the serial interface but we could use RTT or probably any other interface. We could have chosen to store the dumped memory into Flash for a transfer later on, using Wi-Fi or Bluetooth for example. We need to keep in mind that we are in the HardFault handler though...
 
 Last but not least, we can also define which memory regions to be dumped.
 
@@ -110,7 +110,7 @@ To continue, we are going to define those functions in a new file. Those are cal
 - `CrashCatcherReturnCodes CrashCatcher_DumpEnd(void)`
     - Send a flag to warn that the dump is fully sent: `###END###`
 
-As an example, I made that C source file available on Github[^log_files_example]. Make sure to add yours to your Makefile before compiling your program. You don't need a header file as the signatures are taken from `CrashCatcher.h`. 
+As an example, I made that C source file available on Github[^log_files_example]. Make sure to add yours to your Makefile before compiling your program. You don't need a header file as the signatures are taken from `CrashCatcher.h`.
 
 Now, we have the RAM content dumped to our host using the serial interface whenever a HardFault occurs. Let's try.
 
@@ -212,7 +212,7 @@ while 1:
 Let's test with our latest program to see how awesome it is. Here is an example of a program of mine. The crash is happening in `app.c`, line 1173. We can see some local variables in the current context `app_start()` such as `err_code` but also variables from the caller `main()`:
 
 ```
-$ python dump.py /dev/ttyUSB0 \ 
+$ python dump.py /dev/ttyUSB0 \
     ../../../my-awesome-product/awesome-app/awesome-board/_build/app_debug.out
 
 [...]
@@ -233,8 +233,8 @@ Crash info retrieved.
         app_start_config = 0x0
         err_code = 0x0
         bt_addr = {
-          addr_id_peer = 0x0, 
-          addr_type = 0x1, 
+          addr_id_peer = 0x0,
+          addr_type = 0x1,
           addr = "\332\241\255x\362\342"
         }
 
@@ -248,7 +248,7 @@ From now on, whenever you will have a HardFault, you'll now be able to debug it 
 
 ## 🌈 Bonus: Make it Colorful
 
-I have long been using the same Python script to print out the log messages. This one is making things clear by printing the host date, the target date (and the difference between the two), the active tasks count, the filename and line the message is being printed from, all of this using colors! 
+I have long been using the same Python script to print out the log messages. This one is making things clear by printing the host date, the target date (and the difference between the two), the active tasks count, the filename and line the message is being printed from, all of this using colors!
 
 Here is a snippet of the log after a pin reset. We can see the main product information as an example. I synced the time using an Android application before the reset but we can still see the internal clock being 2 seconds behind the host clock, This is because of the pin reset which takes time for that specific application. Depending on the log level, colors like green, orange, and red are used.
 
@@ -273,7 +273,7 @@ The Python script is not the only piece needed to print such a beautiful log obv
 
 Implementing this trick will probably take you dozens of minutes but can make you gain way more if done well. It will be a pleasure to have instant analysis when you usually needed to replicate the bug.
 
-Such stack tracing has long been implemented in higher-level programming languages but tools for Firmware development have always been lagging compared to most of the software industry. This post provides yet another attempt to bridge the gap by building our tools. 
+Such stack tracing has long been implemented in higher-level programming languages but tools for Firmware development have always been lagging compared to most of the software industry. This post provides yet another attempt to bridge the gap by building our tools.
 
 I look forward to your comments and tips in the comments.
 
@@ -284,8 +284,7 @@ I look forward to your comments and tips in the comments.
 [^debug_fault]: [Debug faults on Cortex-M](https://interrupt.memfault.com/blog/cortex-m-fault-debug)
 [^adamgreen]: [Adam Green's Github page](https://github.com/adamgreen)
 [^crashcatcher]: [CrashCatcher repository](https://github.com/adamgreen/CrashCatcher)
-[^crashdebug]: [CrashDebug repository]((https://github.com/adamgreen/CrashDebug))
+[^crashdebug]: [CrashDebug repository](https://github.com/adamgreen/CrashDebug)
 [^log_files_example]: [Source files example for dumping the stack on the target](https://github.com/fouge/nrf_utils/blob/master/debug/log)
 [^crashdebug_exe]: [CrashDebug executables](https://github.com/adamgreen/CrashDebug/tree/master/bins)
 <!-- prettier-ignore-end -->
- 
