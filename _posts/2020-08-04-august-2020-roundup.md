@@ -1,5 +1,5 @@
 ---
-title: "What we've been reading in August"
+title: "What we've been reading in July"
 author: tyler
 tags: [roundup]
 ---
@@ -7,7 +7,7 @@ tags: [roundup]
 <!-- excerpt start -->
 
 Here are the articles, videos, and tools that we've been excited about this
-August.
+July.
 
 <!-- excerpt end -->
 
