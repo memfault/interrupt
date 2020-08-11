@@ -1,5 +1,5 @@
 ---
-title: "A Practical Guide to Watchdogs for Embedded Systems"
+title: "A Guide to Watchdog Timers for Embedded Systems"
 description: "A step by step guide covering how to integrate watchdog timers (both hardware and software)
 on embedded systems, best practices, and how to debug and root cause the errors which lead to watchdog resets."
 tag: [better-firmware, cortex-m]
