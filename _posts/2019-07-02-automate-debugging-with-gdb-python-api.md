@@ -34,8 +34,7 @@ Manually inspecting hundreds of crashes is no fun ... but fortunately, GDB allow
 
 In this series of posts we will explore some of the GDB Python APIs and how they can be used.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 ## Getting started with GDB Python
 
@@ -388,8 +387,8 @@ We hope this post gave you a useful overview of how to add custom GDB commands a
 
 Do you already have some ideas about how the Python API could be applied to automate parts of your debugging flow ... perhaps a command to walk custom heaps or display the contents in a memory-mapped filesystem? Or maybe you are already have some great examples of how you have used GDB Python? Either way, let us know in the discussion area below!
 
-Next time, we'll talk about how to use third-party Python packages within GDB using virtual environments. 
+Next time, we'll talk about how to use third-party Python packages within GDB using virtual environments.
 
-_EDIT: Post written!_ - [Using Python PyPi Packages with GDB]({% post_url 2019-07-23-using-pypi-packages-with-GDB %}) 
+_EDIT: Post written!_ - [Using Python PyPi Packages with GDB]({% post_url 2019-07-23-using-pypi-packages-with-GDB %})
 
-_All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-post/). See anything you'd like to change? Submit a pull request!_
+_All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-post/)._ {% include submit-pr.html %}

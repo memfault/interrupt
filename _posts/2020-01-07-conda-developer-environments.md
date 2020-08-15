@@ -28,8 +28,7 @@ environment.
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 

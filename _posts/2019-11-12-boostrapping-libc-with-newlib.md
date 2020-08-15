@@ -102,14 +102,14 @@ int main() {
     for (int i = 0; i < 100000; ++i) {}
   }
 }
-``` 
+```
 
 ## Implementing Newlib
 ### Why Newlib?
 
 There are several implementations of the C Standard Library, starting with the
 venerable `glibc` found on most GNU/Linux systems. Alternative implementations
-include Musl libc[^2], Bionic libc[^3], ucLibc[^4], and dietlibc[^5]. 
+include Musl libc[^2], Bionic libc[^3], ucLibc[^4], and dietlibc[^5].
 
 Newlib is an implementation of the C Standard Library targeted at bare-metal
 embedded systems that is maintained by RedHat. It has become the de-facto standard
@@ -243,7 +243,7 @@ The complete list of them is provided below:
 ```
 _exit, close, environ, execve, fork, fstat, getpid, isatty, kill,
 link, lseek, open, read, sbrk, stat, times, unlink, wait, write
-``` 
+```
 
 You’ll notice that several of the syscalls relate to filesystem operation or
 process control. These do not make much sense in a firmware context, so we’ll
@@ -266,7 +266,7 @@ int fstat(int file, struct stat *st) {
 #### lseek
 
 `lseek` repositions the file offset of the open file associated with the file
-descriptor `fd` to the argument `offset` according to the directive `whence`. 
+descriptor `fd` to the argument `offset` according to the directive `whence`.
 
 Here we can simply return 0, which implies the file is empty.
 
@@ -345,7 +345,7 @@ int main() {
 #### read
 
 `read`  attempts to read up to `count` bytes from file descriptor `fd` into the
-buffer at `buf`. 
+buffer at `buf`.
 
 Similarly to `write`, we want `read` to read bytes from serial:
 
@@ -369,7 +369,7 @@ it increases the size of the heap.
 
 What does `printf` have to do with the heap, you will justly ask? It turns out
 that newlib’s `printf` implementations allocates data on the heap and depends on
-a working `malloc` implementation. 
+a working `malloc` implementation.
 
 The source for `printf` is hard to follow, but you will find that indeed [it
 calls
@@ -526,7 +526,7 @@ Although we could perfectly well stop here, we can improve a bit over the above.
 
 In our example, `printf` depends implicitly on `serial_init` being called. This
 isn’t the end of the world, but it goes against the spirit of a standard library
-function which should be usable anywhere in our program. 
+function which should be usable anywhere in our program.
 
 Instead, let’s see what we can do so that this works:
 
@@ -594,7 +594,7 @@ code](https://github.com/bminor/newlib/blob/master/newlib/libc/misc/init.c).
 All we need to do is call `__libc_init_array` prior to `main` in our
 `Reset_Handler`, and we are good to go.
 
-```c 
+```c
 void Reset_Handler(void)
 {
   /* ... */
@@ -658,7 +658,7 @@ because it is too large or because it depends on dynamic memory management.
 Using Marco Paland’s excellent alternative[^7] is as simple as a Makefile change.
 
 We first clone it in our firmware’s folder under `lib/printf`, and update our
-Makefile to reflect the change: 
+Makefile to reflect the change:
 
 ```makefile
 PROJECT := with-libc
@@ -709,7 +709,7 @@ SRCS = \
 	$(PROJECT).c
 
 include ../common-standalone.mk
-``` 
+```
 
 > Note that the `__libc_init_array` functionality is not found in every standard
 > C library. You will either need to avoid using it, or bring in Newlib’s
@@ -729,8 +729,7 @@ Next time in the series, we'll talk about Rust!
 
 _EDIT: Post written!_ - [From Zero to main(): Bare metal Rust]({% post_url 2019-12-17-zero-to-main-rust-1 %})
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 ## Reference Links
 

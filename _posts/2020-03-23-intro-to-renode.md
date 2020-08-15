@@ -23,8 +23,7 @@ through integrated tests, and shorten the iteration cycle of development.
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -634,7 +633,7 @@ custom Platform Description files and some Python peripheral implementations.
 
 All the code used in this blog post is aavailable on
 [Github](https://github.com/memfault/interrupt/tree/master/example/renode).
-See anything you'd like to change? Submit a pull request!
+{% include submit-pr.html %}
 
 {:.no_toc}
 

@@ -44,8 +44,7 @@ calculate code size deltas on every pull requests to keep it to a minimum.
 > this example
 > [code size dashboard for the Zephyr Project](https://zephyr-codesizes.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default).
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -597,8 +596,8 @@ are a list of the resources I would start with:
 - [Puncover](https://github.com/HBehrens/puncover)
 
 _All the code used in this blog post is available on
-[Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/).
-See anything you'd like to change? Submit a pull request!_
+[Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/)._
+{% include submit-pr.html %}
 
 {:.no_toc}
 

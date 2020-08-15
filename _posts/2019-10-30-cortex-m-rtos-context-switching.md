@@ -23,8 +23,7 @@ porting an RTOS to a platform. We will also walk through a practical example of 
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -971,8 +970,7 @@ works.
 We'd love to hear interesting RTOS bugs you have tracked down or other topics you would like to see
 covered on the topic. Let me know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 ## Reference Links
 

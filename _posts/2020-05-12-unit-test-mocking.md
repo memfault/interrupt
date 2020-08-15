@@ -37,8 +37,7 @@ everything you would need to know to get started writing unit tests for your
 embedded software project in C or C++ using CppUTest. We are going to jump
 quickly into the content so it's best to have read that post first.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -1032,8 +1031,7 @@ them in the comments!
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt/tree/master/example/unit-testing).
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

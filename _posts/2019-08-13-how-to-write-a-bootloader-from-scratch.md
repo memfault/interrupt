@@ -27,8 +27,7 @@ bootloader, how to implement one, and cover a few advanced techniques you may
 use to make your bootloader more useful.
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -111,7 +110,7 @@ I decided to go with a 16kB region, leading to the following memory map:
 
 We can transcribe that memory into a linker script:
 
-``` 
+```
 /* memory_map.ld */
 MEMORY
 {
@@ -172,7 +171,7 @@ SECTIONS
         *(.rodata*)
         _etext = .;
     } > bootrom
-  ... 
+  ...
 }
 ```
 
@@ -203,10 +202,10 @@ bit of assembly code.
 ARM MCUs use the [`msr` instruction
 ](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289882044.htm) to
 load immediate or register data into system registers, in this case the MSP
-register or “Main Stack Pointer”. 
+register or “Main Stack Pointer”.
 
 Jumping to an address is done with a branch, in our case with a [`bx`
-instruction](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289866466.htm). 
+instruction](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289866466.htm).
 
 We wrap those two into a `start_app` function which accepts our `pc` and `sp` as
 arguments, and get our minimal bootloader:
@@ -257,7 +256,7 @@ SECTIONS
         *(.rodata*)
         _etext = .;
     } > approm
-  ... 
+  ...
 }
 ```
 
@@ -298,7 +297,7 @@ our `Reset_Handler`:
 uint32_t *vector_table = (uint32_t *) &_stext;
 uint32_t *vtor = (uint32_t *)0xE000ED08;
 *vtor = ((uint32_t) vector_table & 0xFFFFFFF8);
-``` 
+```
 
 One quirk of the ARMv7-m architecture is the alignment requirement for the
 vector table, as specified in section B1.5.3 of the [reference
@@ -376,7 +375,7 @@ To do that, you must go through the following steps:
 3. Concatenate the two
 
 Creating a binary from an elf file is done with `objcopy` . To
-accommodate our use case, `objcopy` has some handy options: 
+accommodate our use case, `objcopy` has some handy options:
 
 ```
 $ arm-none-eabi-objcopy --help | grep -C 2 pad
@@ -558,7 +557,7 @@ SECTIONS {
 We then update our bootloader to copy our code from one to the other before
 starting the app:
 
-```c 
+```c
   /* booloader.c */
 
   /* copy app code to eram */
@@ -626,11 +625,4 @@ Next time in the series, we'll talk about bootstrapping the C library!
 
 _EDIT: Post written!_ - [Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
-
-
-
-
-
-
+{% include newsletter.html %}

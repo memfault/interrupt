@@ -27,8 +27,7 @@ method, and eventually discover ITM, DWT cycle counters, and more!
 <!-- excerpt end -->
 
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -52,7 +51,7 @@ support for our Discovery board, we simply need to connect our board to our
 laptop over USB via the "USB-STLINK" port, and run the following command on
 a recent version of the tool:
 
-```
+```bash
 $ openocd -f board/stm32f429disc1.cfg
 ```
 
@@ -677,7 +676,7 @@ with an open source tool such as openOCD and a single pin!
 Are there profiling tools or methods you've used to great effect? Let us know in
 the comments below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

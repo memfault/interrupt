@@ -597,7 +597,7 @@ I hope this post gave you a useful overview of the benefits of reproducible buil
 
 Are the builds for your project reproducible today? Are there other matters on the topic that you would have liked to see us cover? Let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

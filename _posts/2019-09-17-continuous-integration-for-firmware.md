@@ -75,14 +75,13 @@ codebase working at scale. As complexity and velocity grow:
 * Finding when and where an issue was introduced gets more difficult
 * Side effects are less well understood, making it more likely that a change in
    one part of the codebase will break a feature in another.
-* Testing every feature and hardware configuration takes more and more time. 
+* Testing every feature and hardware configuration takes more and more time.
 
 Additionally, CI infrastructure serves as a reference environment which can be
 used to reproduce builds and generate shipping images. No more "it works on
 my machine". If it fails in CI, it must be considered broken.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 ## Continuous Integration Systems
 
@@ -140,7 +139,7 @@ $ cd ChibiOS/ext
 $ 7za x fatfs-0.13c_patched.7z
 # Build the example
 $ cd ../demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB
-$ make -j 
+$ make -j
 ```
 
 Which should give us:
@@ -193,7 +192,7 @@ collection of steps executed sequentially in a specific environment. A
 based on more complex logic.
 
 You can read more about Steps, Jobs, and Workflows in CircleCI’s
-documentation[^3] 
+documentation[^3]
 
 For our hello world example, we will have a single job, with the following steps:
 1. Check out the code repository
@@ -356,7 +355,7 @@ bones,  so to avoid having to install many common packages, we instead use the
 Next, we’ll want to install some firmware specific tools such as our compiler.
 This is easily done with a **Step**.
 
-```yaml 
+```yaml
 - run:
     name: Install apt dependencies
     command: sudo apt install p7zip-full gcc-arm-none-eabi binutils-arm-none-eabi
@@ -437,7 +436,7 @@ job page:
 
 ![]({% img_url circle-ci/real_build_ended.png %})
 
-Where we can now find our artifacts! 
+Where we can now find our artifacts!
 
 ![]({% img_url circle-ci/chibios_artifact.png %})
 
@@ -479,7 +478,7 @@ ChibiOS comes with many such tests. For example, the RT kernel tests can be foun
 
 ```shell
 ~/ChibiOS $ cd test/rt/testbuild
-~/ChibiOS/test/rt/testbuild $ make 
+~/ChibiOS/test/rt/testbuild $ make
 [...]
 Compiling oslib_test_sequence_006.c
 Compiling oslib_test_sequence_007.c

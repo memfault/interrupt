@@ -206,7 +206,7 @@ This mirrors what the C standards tells us:
 
 > All objects with static storage duration shall be initialized (set to their
 > initial values) before program startup. The manner and timing of such
-> initialization are otherwise unspecified. 
+> initialization are otherwise unspecified.
 
 (Section 5.1.2, Execution environment)
 
@@ -314,9 +314,8 @@ Nordic](https://github.com/NordicSemiconductor/nrfx/blob/6f54f689e9555ea18f9aca8
 
 ## Closing
 
-All the code used in this blog post is available on 
-[Github](https://github.com/memfault/zero-to-main/tree/master/minimal). See
-anything you'd like to change? Submit a pull request!
+All the code used in this blog post is available on
+[Github](https://github.com/memfault/zero-to-main/tree/master/minimal). {% include submit-pr.html %}
 
 More complex programs often require a more complicated `Reset_Handler`. For
 example:
@@ -325,8 +324,8 @@ example:
   _EDIT: Post written!_ - [From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
 3. More complex memory layouts can add a few copy / zero loops
 
-We'll cover all of them in future posts. But before that, 
-we'll talk about how the magical memory region variables come about, 
+We'll cover all of them in future posts. But before that,
+we'll talk about how the magical memory region variables come about,
 how our `Reset_Handler`'s address ends up at `0x00000004`, and how to write a
 linker script in our next post!
 

@@ -21,8 +21,7 @@ firmware engineers encounter it on most projects. In this post, we explain how I
 works, explore common bugs and investigate how to debug these issues.
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -44,7 +43,7 @@ signalling).
    interfaces as well as fan control, temperature sensing and other low-speed
 contol loops.
 4. Historically, it has been less onerous for manufacturers to include than
-   competing protocols like Maxim's 1-wire protocol[^4]. 
+   competing protocols like Maxim's 1-wire protocol[^4].
 
 Many of the sensors and actuators in devices all around us use I2C:
 temperature sensors, accelerometers, gyroscopes, fans, video bridging chips,
@@ -76,7 +75,7 @@ transmitted bit.
 For example, this is `0xC9` over I2C:
 
 <script type="WaveDrom">
-{ signal : 
+{ signal :
   [
     { name: "SDA",  wave: "101.0.10.101." },
     { name: "SCL",  wave: "1.n........h."},
@@ -103,7 +102,7 @@ In the diagram below, we indicate the START and STOP condition with "S" and "P"
 respectively.
 
 <script type="WaveDrom">
-{ signal : 
+{ signal :
   [
     { name: "SDA",  wave: "101.0.10.101." },
     { name: "SCL",  wave: "1.n........h."},
@@ -125,7 +124,7 @@ To communicate with a slave device, an I2C master simply needs to write its
 below captures an I2C transaction to a slave with address 0x66:
 
 <script type="WaveDrom">
-{ signal : 
+{ signal :
   [
     { name: "SDA",  wave: "101.0.1.010|.101." },
     { name: "SCL",  wave: "1.n........|...h."},
@@ -154,7 +153,7 @@ a `0` means it is a write.
 The example below shows a read sent to the slave device at address `0x66`.
 
 <script type="WaveDrom">
-{ signal : 
+{ signal :
   [
     { name: "SDA",  wave: "101.0.1.010|.101." },
     { name: "SCL",  wave: "1.n........|...h."},
@@ -167,7 +166,7 @@ The example below shows a read sent to the slave device at address `0x66`.
 
 A common pattern is to send a write followed by a read. For example, many
 devices expose several registers that can be read/written by first sending the
-register address to the device in with a write command. 
+register address to the device in with a write command.
 
 To achieve this, the I2C master must first send a write command with the
 register address, followed by a second START condition and a full read command
@@ -177,7 +176,7 @@ For example, this is what a write-then-read transaction to read register `0x11`
 from the slave device at address `0x66` would look like:
 
 <script type="WaveDrom">
-{ signal : 
+{ signal :
   [
     { name: "", wave: "x==..==...==..==.=x", data: ["S", "Address: 0x66", "W",
 "Reg Address: 0x11", "S", "Address: 0x66", "R", "Data", "P"]}
@@ -213,7 +212,7 @@ writes `0x9C` to the slave at address `0x66`.
 
 <!-- Can't get the narrow skin to work, so using an image
 <script type="WaveDrom">
-{ signal : 
+{ signal :
   [
     { name: "SDA",  wave: "101.0.1.01010.1..0.101."},
     { name: "SCL",  wave: "1.n..................h."},
@@ -308,7 +307,7 @@ addresses.
 Often times, you will see the following on your logic analyzer:
 
 <script type="WaveDrom">
-{ signal : 
+{ signal :
   [
     { name: "SDA",  wave: "101.0.1.010.1."},
     { name: "SCL",  wave: "1.n.........h."},
@@ -346,7 +345,7 @@ in reset. Grab your voltmeter and start checking pins:
   regulator or toggle a MOSFET.
 * Is the chip power the correct voltage?
 * Does your slave device have a reset pin? Check that pin and make sure reset is
-  not asserted. 
+  not asserted.
 * Does it have an I2C-enable pin? Is that in the correct state?
 
 If all the voltages are correct, test another board or replace the IC. Perhaps
@@ -406,11 +405,9 @@ Did I miss any obscure part of the standard, or forget to mention a debugging
 technique you find particularly useful? Let us know in the discussion area
 below!
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 ## Reference

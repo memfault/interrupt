@@ -37,8 +37,7 @@ somewhere is the linker script.
 Once again, we will use our simple "minimal" program, available [on
 Github](https://github.com/memfault/zero-to-main/blob/master/minimal).
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 ## Brief Primer on Linking
 
@@ -576,8 +575,7 @@ _EDIT: Post written!_ - [Writing a Bootloader from Scratch]({% post_url 2019-08-
 As with previous posts, code examples are available on Github in the [zero to main
 repository](https://github.com/memfault/zero-to-main)
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include submit-pr.html %}
+
+{% include newsletter.html %}

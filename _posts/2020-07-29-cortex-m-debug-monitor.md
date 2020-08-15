@@ -29,8 +29,7 @@ example of installing breakpoints and single-stepping on a running device!
 > In my opinion, DebugMonitor handling is an underutilized feature that can be applied creatively
 > for a variety of debug use cases. I hope by the end of this article I can convince you of this as well!
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -667,7 +666,7 @@ about creative ways the feature can be leveraged.
 Have you used the monitor mode debugging for any projects you've worked on. If so, we'd love to hear
 what you used it for in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

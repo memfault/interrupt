@@ -17,8 +17,7 @@ In this article, we dive into the factors which influence BLE throughput. We wil
 
 I recommend starting with our [Primer on Bluetooth Low Energy]({% post_url 2019-07-30-bluetooth-low-energy-a-primer %}) if this is your first time working with BLE.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -351,7 +350,7 @@ I hope this post gave you a useful overview of the factors which control BLE thr
 
 Are there any other topics related to BLE throughput you'd like us to explore further? Are there any cool optimizations you have made in the BLE stack you use today? Let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 
