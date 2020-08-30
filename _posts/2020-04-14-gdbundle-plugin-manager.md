@@ -63,8 +63,7 @@ for you.
 > [gdbundle](https://github.com/memfault/gdbundle) works perfectly with LLDB as
 > well.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -493,8 +492,8 @@ nothing without the community and willing developers to hack something together.
 looking forward to any feature requests or issues that you can think of!
 
 _All the code used in this blog post is available on
-[Github](https://github.com/memfault/interrupt/tree/master/example/gdbundle-plugin-manager/).
-See anything you'd like to change? Submit a pull request!_
+[Github](https://github.com/memfault/interrupt/tree/master/example/gdbundle-plugin-manager/)._
+{% include submit-pr.html %}
 
 {:.no_toc}
 

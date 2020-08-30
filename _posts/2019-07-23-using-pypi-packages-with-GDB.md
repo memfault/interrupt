@@ -88,8 +88,7 @@ print(x)
 
 Let's go ahead and try it out!
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 ## Setting up GDB's Python and PyPi
 
@@ -487,5 +486,5 @@ If you use `lldb`, here is an
 [`.lldbinit` Github Gist](https://gist.github.com/tyhoff/7a286945ef75947ad49a347dbc8708ca).
 
 _All the code used in this blog post is available on
-[Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-pypi-post/).
-See anything you'd like to change? Submit a pull request!_
+[Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-pypi-post/)._
+{% include submit-pr.html %}

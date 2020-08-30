@@ -5,7 +5,7 @@ author: francois
 tags: [fw-code-size]
 ---
 
-## Introduction 
+## Introduction
 
 This is the second post in our [Firmware Code Size Optimization]({% tag_url fw-code-size %}) series. [Last time]({% post_url
 2019-06-06-best-firmware-size-tools %}), we talked about measuring code size as a
@@ -22,8 +22,7 @@ You would think that a single flag could be used for “make this as small as
 possible”, but unfortunately it isn’t so. Instead, code size optimization
 involves complicated trade-offs that must be considered on a case by case basis.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -170,7 +169,7 @@ the rest of the file is compiled with the regular options.
 
 Now that we’ve set the appropriate optimization level, we turn our attention to
 dead code elimination. Most programs contain dead code: it may come from
-libraries you use partially, or test functions you left in the final program. 
+libraries you use partially, or test functions you left in the final program.
 
 Since the compiler operates on one file at a time, it does not have enough
 context to decide whether a function is dead code or not. Consider a library
@@ -385,8 +384,7 @@ few compiler flag changes cut it down by more than half!
 Future posts in this series will consider coding style, and even some desperate
 hacks one can use to slim down code size further.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 ## Reference & Links
 

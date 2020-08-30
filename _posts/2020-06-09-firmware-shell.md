@@ -26,8 +26,7 @@ applicable to most embedded systems.
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -982,8 +981,7 @@ features and code space usage in your shell.
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt/tree/master/example/firmware-shell).
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

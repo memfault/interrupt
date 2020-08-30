@@ -20,8 +20,7 @@ some faults without rebooting the MCU. We include practical examples, with a ste
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -1081,7 +1080,7 @@ I hope this post gave you a useful overview of how to debug a HardFault on a Cor
 Are there tricks you like to use that I didn't mention or other topics about faults you'd like to learn more about?
 Let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

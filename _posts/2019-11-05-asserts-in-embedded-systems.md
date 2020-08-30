@@ -61,8 +61,7 @@ device, all while keeping the code size usage to a minimum.
 - The examples below are implemented for the ARM Cortex-M series of MCUs. Many
   of the concepts can be generalized to other architectures.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 ## Making the Most of Asserts
 
@@ -650,8 +649,7 @@ only one piece of this puzzle, and they need to be paired with solid debugging
 infrastructure such as logging, postmortem backtrace and coredump collection,
 and automated analysis of these diagnostics.
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 ## Reference Links
 

@@ -21,8 +21,7 @@ In this article, we will discuss the basic types of breakpoints (hardware and so
 > Note: While the focus of the article will be about breakpoints and how they work for firmware based on ARM Cortex-M MCUs, the
 > general ideas presented apply to any compiled language and debugger.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -667,7 +666,7 @@ I hope this post taught you something new about breakpoints and that the next ti
 
 I'd be curious to hear if you are making use of the ARM Cortex-M **FPB** in interesting ways for your product or if there are other topics you would have liked to have seen covered with respect to breakpoints. Either way, let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

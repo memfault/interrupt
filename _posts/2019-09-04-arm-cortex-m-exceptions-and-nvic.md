@@ -739,7 +739,7 @@ topic but I've always found it hard to find a single place that aggregates the u
 Are there any other topics related to interrupts you'd like us to delve into? (No pun intended :D) Do you leverage any of
 ARMs fancy exception configuration features in your products? Let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

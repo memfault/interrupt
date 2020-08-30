@@ -1,13 +1,13 @@
 ---
 # This is a template for Interrupt posts. Use previous, more recent posts from the _posts/
 # directory for more inspiration and patterns.
-# 
+#
 # When submitting a post for publishing, submit a PR with the post in the _drafts/ directory
 # and it will be moved to _posts/ on the date of publish.
-# 
+#
 # e.g.
-# $ cp _drafts/_template.md _drafts/my_post.md 
-# 
+# $ cp _drafts/_template.md _drafts/my_post.md
+#
 # It will now show up in the front page when running Jekyll locally.
 
 title: Post Title
@@ -27,8 +27,7 @@ Excerpt Content
 
 Optional motivation to continue onwards
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -45,11 +44,9 @@ straight to your mailbox_
 
 
 <!-- Interrupt Keep START -->
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[GitHub](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 <!-- Interrupt Keep END -->
 
 {:.no_toc}

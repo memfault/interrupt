@@ -30,8 +30,7 @@ these tests within GitHub's continuous integration system.
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -998,8 +997,7 @@ using Renode to test all aspects of the Memfault Firmware SDK[^memfault_sdk].
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt-renode-test-automation).
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[GitHub](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

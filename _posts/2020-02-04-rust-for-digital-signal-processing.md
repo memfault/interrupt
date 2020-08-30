@@ -32,8 +32,7 @@ firmware today, and compare the process and performance to the equivalent code
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -333,7 +332,7 @@ Like most compilers, `rustc` has multiple optimization levels[^3].
 
 #### Speed
 
-Here, the C project has been compiled using GCC's `-03` optimization level which 
+Here, the C project has been compiled using GCC's `-03` optimization level which
 turns on all optimizations for performance, no matter the code size or compilation time[^4].
 
 As for Rust, we have been compiling in debug mode, which disables all optimizations. One simple
@@ -368,7 +367,7 @@ Function written using C: **3 930** instructions counted
 The Rust function is about **1.8 times faster** than the CMSIS-DSP
 implementation.
 
-#### Code size 
+#### Code size
 
 Firmware is often constrained by code size just as much as it is by performance.
 We must make sure that Rust performance does not come at an unreasonable code
@@ -497,8 +496,7 @@ order to enjoy the productivity gains brought with Rust is an exciting prospect.
 Have you built digital signal processing pipelines in Rust? I'd love to hear
 your experience in the comments!
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 

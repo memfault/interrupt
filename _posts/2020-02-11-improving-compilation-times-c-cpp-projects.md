@@ -27,8 +27,7 @@ couple extra tips for those using the GNU GCC compiler.
 
 Hold on tight, as there is a lot to talk about.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -626,8 +625,8 @@ Do you have any further ideas or ways that you have employed to speed up your
 firmware builds? I'd love to hear them!
 
 _All the code used in this blog post is available on
-[Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/).
-See anything you'd like to change? Submit a pull request!_
+[Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/)._
+{% include submit-pr.html %}
 
 {:.no_toc}
 

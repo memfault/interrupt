@@ -976,7 +976,7 @@ LLVM/Clang and some of the neat things you can do once you have that working.
 I'd love to hear if you already using LLVM/Clang in your embedded project today and if so, whether
 it is for static analysis or for generating actual binaries. Either way, let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

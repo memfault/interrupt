@@ -20,8 +20,7 @@ In this article we will discuss the last line of defense in embedded systems -- 
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -868,7 +867,7 @@ I hope this post gave you a useful overview of how to think about utilizing watc
 Do you have suggestions about how to use watchdogs that I didn't mention in this post or have any other questions on the topic?
 Let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

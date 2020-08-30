@@ -26,8 +26,7 @@ I learned some of these lessons in this post the hard way, and I hope I can spar
 you and your colleagues a few sleepless nights spent debugging firmware update
 problems in the wild!
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 ## Table of Contents
 
@@ -896,13 +895,10 @@ firmware update that we did not cover? Let us know! And if you see anything
 you'd like to change, don't hesitate to submit a pull request or open an issue
 on [Github](https://github.com/memfault/interrupt)
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 ## References
 
 [^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so and allow us to update out of that state. Phew!
 [^pebble-3]: At the time, we wrote a blog post about it. You can still read it on the [Internet Archive](https://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/)
-
-

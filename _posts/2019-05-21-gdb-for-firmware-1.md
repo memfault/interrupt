@@ -38,9 +38,9 @@ GDB was developed by Richard Stallman in 1986 as part of the GNU system. It is o
 
 Some of the most important are:
 
-- GDB supports a vast number of architectures including: ARM, x86, MIPS, and many more. Because of this, a firmware developer's knowledge and expertise with GDB is potentially transferrable across many projects. 
+- GDB supports a vast number of architectures including: ARM, x86, MIPS, and many more. Because of this, a firmware developer's knowledge and expertise with GDB is potentially transferrable across many projects.
 - GDB is command-line based which gives it high flexibility and usability in debugging tasks that require some level of automation. This became especially true with the release of the Python API for GDB in GDB's release version 7.0 (in 2011).
-- GDB supports remote debugging. This is crucial for embedded systems where the development environment resides on an architecture different from the target system (e.g. developing on a Windows machine for an ARM-based target). 
+- GDB supports remote debugging. This is crucial for embedded systems where the development environment resides on an architecture different from the target system (e.g. developing on a Windows machine for an ARM-based target).
 
 Because of these reasons, we believe it is extremely helpful for a firmware developer to at least get **some** exposure to using GDB.
 
@@ -160,7 +160,7 @@ Once you've done that, go ahead and add the following lines to the bottom of the
 ```
 export PATH = "<Your Folder>/nRF-Command-Line-Tools_9_8_1_OSX/nrfjprog":$PATH
 export PATH = "<Your Folder>/gcc-arm-none-eabi-7-2017-q4-major/bin":$PATH
-``` 
+```
 
 Make sure to replace `<Your Folder>` with the appropriate folder name where you placed those packages on your system.
 
@@ -177,7 +177,7 @@ To verify, you can type the following command:
 ```terminal
 $ echo $PATH
 /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/mafaneh/Memfault/nRF-Command-Line-Tools_9_8_1_OSX/nrfjprog:/Users/mafaneh/Memfault/gcc-arm-none-eabi-7-2017-q4-major/bin
-``` 
+```
 
 That's it for the setup part, now on to the fun part!
 
@@ -197,7 +197,7 @@ You'll notice there are many subfolders in that folder. We are mostly interested
 ![]({% img_url gdb-tips-and-tricks/uart_folder.png %})
 <br/>
 
-Before we build the example, let's make sure we have the right compiler flags for debugging. This is necessary to include debugging symbols that help GDB present useful debugging information to the user. 
+Before we build the example, let's make sure we have the right compiler flags for debugging. This is necessary to include debugging symbols that help GDB present useful debugging information to the user.
 
 To check the compiler flags, edit the `Makefile` located at `<nRF5_SDK_Folder>/examples/peripheral/uart/pca10056/blank/armgcc`.
 
@@ -261,13 +261,13 @@ Here are the steps to accomplish this:
 	- **Power** set to "ON"
 
 	![]({% img_url gdb-tips-and-tricks/nRF52840_dev_kit.png %})
-	
+
 - Erase the development kit by running the following command:
 
 	```terminal
 	$ nrfjprog -f NRF52 --eraseall
 	```
-	
+
 - The final step is to flash the development kit with the example's binary.
 
 	To do so, run the following command from the folder `<nRF5_SDK_Folder>/examples/peripheral/blinky/pca10056/blank/armgcc`.
@@ -275,7 +275,7 @@ Here are the steps to accomplish this:
 	```terminal
 	$ nrfjprog -f NRF52 --program _build/nrf52840_xxaa.hex --chiperase
 	```
-	
+
 That's it!
 
 Now the nRF52840 development kit should be flashed with the UART example and it should be running properly.
@@ -289,27 +289,27 @@ There are three parts to get this working:
 
 - Run the CoolTerm application
 - Make sure the serial port settings are correct (listed at [this link](https://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.3.0/uart_example.html)):
- 
-	
+
+
 	![]({% img_url gdb-tips-and-tricks/CoolTerm_Settings.png %})
-	
-	Now, hit **OK**. 
+
+	Now, hit **OK**.
 
 - Finally, connect to the serial port by clicking the "Connect" button:
-	
+
 	![]({% img_url gdb-tips-and-tricks/CoolTerm_Connect.png %})
-	
+
 	You may not see any output since the program probably started before you connected. To reset the development board, we can simply run the following command from the Terminal:
-	
+
 	```terminal
 	$ nrfjprog -f NRF52 --reset
 	```
-	
+
 	If all goes well, you should see the following printed in the Terminal window:
-	
-	
+
+
 	![]({% img_url gdb-tips-and-tricks/CoolTerm_Output.png %})
-	
+
 
 ## Debugging the Program
 Now that we have the application running properly, let's go ahead and set up the debugger.
@@ -318,65 +318,65 @@ Now that we have the application running properly, let's go ahead and set up the
 There are a few steps to get this working.
 
 - **JLinkGDBServer**
-	
+
 	As part of the SEGGER J-Link Software we installed, the program JLinkGDBServer is included. This is the GDB Server application that will interface directly with the development kit and the nRF52840 chipset. It will open up a port (we chose port 2331) over the network to allow connections from a GDB Client.
-	
+
 	To start the J-Link GDB Server, run the following command:
-	
+
 	```terminal
 	$ JLinkGDBServerCL -device nrf52840_xxaa -if swd -port 2331
 	```
-	
+
 	- "**-device**" specifies the device type ("nrf52840_xxaa" in our case).
 	- "**-if**" specifies the debug interface ("swd" refers to Serial Wire Debug which is an alternative to JTAG that is relatively recent and is used for ARM processors. Keep in mind that some chipsets may not support SWD and will require JTAG instead.)
 	- "**-port**" specifies the network port where the GDB Server will be accessible by the GDB Client.
-	
+
 	The output should look something like this:
-	
+
 	![]({% img_url gdb-tips-and-tricks/GDB_Server_Run.png %})
-	
-	
+
+
 - **Running GDB**
 
 	Now that the GDB Server is running, we have to connect to it from a GDB Client. In our case, the client is the `arm-none-eabi-gdb` program included as part of the GNU Arm Embedded Toolchain we downloaded earlier.
-	
+
 	To make things easier, run the following command from the output folder where the binary images for the compiled example are located (`<nRF5_SDK_Folder>/examples/peripheral/uart/pca10056/blank/armgcc/_build/`).
-	
+
 	```terminal
 	$ arm-none-eabi-gdb
 	```
-	
-	
+
+
 	![]({% img_url gdb-tips-and-tricks/arm_gdb_run.png %})
-	
+
 
 	Next, we want to tell GDB what output file is used for the program running on the development kit. We do so with the following command within the GDB console:
-	
+
 	```bash
 	(gdb) file nrf52840_xxaa.out
 	```
 
-	
+
 	![]({% img_url gdb-tips-and-tricks/arm_gdb_file.png %})
-	
-	
+
+
 - **Connecting GDB to the Remote Target**
-	
+
 	The last step is to connect to the GDB server:
-	
+
 	```bash
 	(gdb) target remote localhost:2331
 	```
-	
-	
+
+
 	![]({% img_url gdb-tips-and-tricks/arm_gdb_target.png %})
-	
-	
+
+
 	The GDB Server (which should be left running in another Terminal window) will show something like the following:
-	
-	
+
+
 	![]({% img_url gdb-tips-and-tricks/GDB_Server_connected.png %})
-	
+
 
 ### 2. GDB Commands
 Now that we've been able to connect the debugger to the nRF52 chipset on the development kit, it's time to start having some fun!
@@ -458,7 +458,7 @@ Let's take a look at how the Step command behaves after hitting the breakpoint a
 
 ![]({% img_url gdb-tips-and-tricks/gdb_step.png %})
 
- 
+
 Notice that GDB stepped into the function **app_uart_get()** after reaching line 172.
 
 #### List
@@ -476,15 +476,15 @@ The **Info** command has many uses, but as the name implies, it is used to displ
 Here are some examples for uses of **Info**.
 
 - **Info locals**: shows information about all local variables.
-	
+
 	![]({% img_url gdb-tips-and-tricks/gdb_info_locals.png %})
-	
+
 - **Info variables**: shows information about all types of variables (local and global).
-	
+
 	![]({% img_url gdb-tips-and-tricks/gdb_info_variables.png %})
-	
-- **Info files**: shows information about all files being debugged. 
-	
+
+- **Info files**: shows information about all files being debugged.
+
 	![]({% img_url gdb-tips-and-tricks/gdb_info_files.png %})
 
 #### Logging
@@ -507,7 +507,7 @@ Some ideas for future GDB-related posts include:
 
 What other GDB tips and tricks do you know? Are you facing any problems or struggles with using GDB?
 
-Let us know in the discussion area below! 
+Let us know in the discussion area below!
 
 ## Useful Resources
 Finally, I'll leave you with some useful GDB resources that I've referred to over the years:

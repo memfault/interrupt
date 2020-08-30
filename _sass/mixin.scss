@@ -39,3 +39,24 @@
   padding: 72px 0;
   text-align: center;
 }
+
+
+@mixin setFeatured($name) {
+    background-color: $blue;
+    color: $white;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    .#{$name}-link {
+      font-weight: bold !important;
+      color: white;
+      &:hover,
+      &:focus,
+      &:active,
+      &visited {
+        color: white;
+      }
+    }
+    .#{$name}-content {
+      margin-bottom: 0;
+    }
+}

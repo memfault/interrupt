@@ -18,8 +18,7 @@ In this article, we will deep dive into the unit and walk through a few practica
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -395,4 +394,4 @@ We hope this post gave you a useful overview of how the _ARMv6-M_ & _ARMv7-M_ MP
 
 Do you use the MPU on your products? Have you had a use case where you've leveraged some of the more interesting configuration options (i.e `SRD` region masking or more complex selection of `TEX`, `S`, `C`, `B` values for a _Cortex-M7_ with some caches)? Or do you have any questions about the material in the blog post or wish there were some other details we covered? Let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request on [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}

@@ -588,7 +588,7 @@ Curious about the nRF9160 Feather? It's open-source and is available for pre-ord
 
 You can [check it out here.][nrf9160-feather]
 
-See anything you’d like to change? Submit a pull request or open an issue at [GitHub](https://github.com/memfault/interrupt).
+{% include submit-pr.html %}
 
 {:.no_toc}
 ## References

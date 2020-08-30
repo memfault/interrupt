@@ -3,7 +3,9 @@ title: Parsing Logs Messages for Instant Crash Analysis
 description: A stack trace for embedded software. Get all the information you need to debug firmware crashes right into your logs, in a few easy steps.
 image: /img/logs-stack-trace/colorful_stack_unbundling.gif
 author: cyril
+toc: true
 ---
+
 
 <!-- excerpt start -->
 
@@ -15,8 +17,7 @@ In this post, I will introduce a few tools to implement a beautiful boosted logg
 
 > This post was originally published on [Cyril's website](http://www.cyrilfougeray.com/2020/07/27/firmware-logs-with-stack-trace.html).
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 ![Colorful stack]({% img_url logs-stack-trace/colorful_stack_unbundling.gif %})
 

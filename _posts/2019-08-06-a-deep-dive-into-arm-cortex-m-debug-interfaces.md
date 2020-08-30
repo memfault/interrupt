@@ -15,8 +15,7 @@ In this article we will walk up through the hardware and software stack that ena
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest
-posts straight to your mailbox_
+{% include newsletter.html %}
 
 ## The ARM Debugger Stack
 
@@ -340,7 +339,7 @@ Future topics we'd love to delve into related to debuggers include the Embedded 
 
 Are there other topics you'd like us to cover? Or are there topics in this article you'd love to see more details on? Just let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request on [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 ## Useful Reference Links
 

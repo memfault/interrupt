@@ -111,8 +111,7 @@ set up expectations up front.
    leave software stability to unit tests. If time allows, then build these
    types of tests.
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 ## Framework-less Unit Tests
 
@@ -1249,8 +1248,7 @@ writing a unit test for your next new embedded software module.
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt/tree/master/example/unit-testing).
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -1263,5 +1261,4 @@ straight to your mailbox_
 [^5]: [Memfault Public SDK](https://github.com/memfault/memfault-firmware-sdk)
 [^6]: [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer)
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}

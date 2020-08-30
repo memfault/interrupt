@@ -19,8 +19,7 @@ each flag has by walking through practical C code examples.
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
 {:.no_toc}
 
@@ -881,8 +880,7 @@ you some ideas of items to look into.
 
 Are there flags you wish I had also mentioned in this article? Let me know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 

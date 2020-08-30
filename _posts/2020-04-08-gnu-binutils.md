@@ -1012,7 +1012,7 @@ I hope you learned something new about how to analyze binaries reading this arti
 
 Are there are tools or commands you find useful that we did not mention? Let us know in the discussion area below!
 
-See anything you'd like to change? Submit a pull request or open an issue at [Github](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 {:.no_toc}
 
