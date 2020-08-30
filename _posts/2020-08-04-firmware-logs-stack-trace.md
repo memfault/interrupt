@@ -21,13 +21,7 @@ In this post, I will introduce a few tools to implement a beautiful boosted logg
 
 ![Colorful stack]({% img_url logs-stack-trace/colorful_stack_unbundling.gif %})
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## 📰 The Logging Interface
 

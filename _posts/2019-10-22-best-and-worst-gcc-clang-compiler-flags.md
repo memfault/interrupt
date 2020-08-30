@@ -21,13 +21,7 @@ each flag has by walking through practical C code examples.
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 {:.no_toc}
 

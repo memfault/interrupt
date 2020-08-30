@@ -28,11 +28,7 @@ problems in the wild!
 
 {% include newsletter.html %}
 
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Setup
 

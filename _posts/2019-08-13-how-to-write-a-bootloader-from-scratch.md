@@ -29,13 +29,7 @@ use to make your bootloader more useful.
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Why you may need a bootloader
 

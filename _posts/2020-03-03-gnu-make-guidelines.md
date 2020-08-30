@@ -23,13 +23,7 @@ guided tour through some of my favorite/most used Make concepts and features ðŸ¤
 
 If you feel like you already know Make pretty well, feel free to skip the tutorial portion and [jump to my personal recommendations](#recommendations).
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## What is GNU Make?
 

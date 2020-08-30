@@ -57,13 +57,7 @@ print out “Hello, World”! We will also learn how to replace parts or all of 
 standard C library.
 <!-- excerpt end -->
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 
 ## Setup

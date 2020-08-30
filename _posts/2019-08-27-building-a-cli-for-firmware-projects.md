@@ -18,13 +18,7 @@ how to think about a project's CLI and implementing one using the
 
 <!-- excerpt end -->
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## A Project CLI?
 

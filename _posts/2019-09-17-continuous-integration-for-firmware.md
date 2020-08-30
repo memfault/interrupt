@@ -28,13 +28,7 @@ This is the first post in our [Building Better Firmware series]({% tag_url bette
 cover testing techniques, test driven development, fuzzing, and continuous
 deployment.
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## What is Continuous Integration?
 

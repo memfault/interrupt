@@ -46,13 +46,7 @@ calculate code size deltas on every pull requests to keep it to a minimum.
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Why Track Code Size?
 

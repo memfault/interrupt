@@ -22,13 +22,7 @@ based ARM Cortex-M project to cross-compile with LLVM/Clang.
 > general overview of LLVM as well as the features leveraged can be applied to any architecture
 > supported by the toolchain.
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Background of GCC and Clang
 

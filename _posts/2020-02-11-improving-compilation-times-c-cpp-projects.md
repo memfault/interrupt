@@ -29,13 +29,7 @@ Hold on tight, as there is a lot to talk about.
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Why Speed Up Firmware Build?
 
