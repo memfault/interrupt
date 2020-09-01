@@ -1,0 +1,29 @@
+:name: nRF52 Device Metrics
+:description: Example of gathering nRF52 device metrics
+
+$name?="NRF52"
+$bin?=@gcc/build/nrf52.elf
+
+# Create Machine & Load config
+mach create $name
+machine LoadPlatformDescription @platforms/cpus/nrf52840.repl
+
+# Create a terminal window showing the output of UART2
+showAnalyzer sysbus.uart0
+
+# Create a Telnet connection to the UART
+emulation CreateServerSocketTerminal 33335 "externalUART"
+connector Connect sysbus.uart0 externalUART
+
+# Enable GDB
+machine StartGdbServer 3333
+
+macro reset
+"""
+    sysbus LoadELF $bin
+"""
+
+runMacro $reset
+
+# Start without user confirmation
+start
