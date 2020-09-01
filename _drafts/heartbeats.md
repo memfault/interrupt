@@ -6,10 +6,13 @@ tags: monitoring
 ---
 
 Releasing a connected device in today's world without some form of monitoring in
-place is a recipe for trouble. How would you know how often or if a device is
+place is a recipe for trouble. How would you know how often or if devices are
 experiencing faults or crashing? How can the release lead be confident that no
 connectivity, performance, or battery-life regressions have occurred between the
 past and current firmware update?
+
+The answer is that you need device monitoring in place long before ever shipping a 
+firmware update to devices in the field. 
 
 I've personally committed several performance and battery-life regressions that
 were never caught in internal beta testing of 50 devices. They were always
@@ -49,34 +52,47 @@ relate to us in the world of embedded systems.
 
 ### Application Performance Monitoring (APM)
 
-Software services: New Relic[^new_relic], Datadog[^datadog],
-ScoutAPM[^scout_apm]
+Application performance monitoring services collect and aggregate different metrics on computer systems and software, and they alert customers when these numbers either increase or decrease in abnormal ways. Common metrics that are collected by APM's are:
 
-StatsD, CollectD, Prometheus, Datadog, etc.
+- CPU, RAM, and hard drive usage
+- Response times and values
+- Request rates and failures
+
+Along with the ability to collect customized metrics, these aggregates paint an overall picture of how an application, server, or fleet of either are performing at any given time. 
+
+APM's aren't a new concept, as one of the largest ones, New Relic, was founded in 2008 and is now a publicly traded company. 
+
+**Software services:** New Relic[^new_relic], Datadog[^datadog],
+ScoutAPM[^scout_apm]<br>
+**Open Source Libraries**: StatsD[^statsd], CollectD[^collectd], Prometheus[^prometheus]
 
 ### Tracing and Logging
 
-I've grouped these into a single group because accomplish the same goal. They
+I've grouped these into a single group because accomplish the same goal. Traces and logs
 give you an in-depth timeline view of what happened on a single device and allow
 you to zero-in on issues as long as you know what you are looking for. The
 amount of data necessary to be collected by tracing and logging tools is
 immense, and most of the data doesn't get used or processed.
 
-Software services: New Relic[^new_relic], Datadog[^datadog] Firmware services:
-Percepio[^percepio]
+I view tracing and logging as a warehouse of data that is only queried when developers **know** there is an issue.
+
+**Software services:** New Relic[^new_relic], Datadog[^datadog]<br>
+**Firmware services:** Percepio[^percepio]
 
 ### Crash Analysis
 
-These systems usually require an SDK to be shipped with the application. For
-firmware, they would likely install hooks into the
+How nice would it be to have in-depth analysis and alerts for every unique crash, fault, assert, and error log that devies in the field expeirence? That is what these services provide. 
+
+When any of the listed error handlers are triggered, these libraries gather all of the relevant data, such as previous logs, backtraces of the currently running threads, local variables, global variables, etc. and push all of this data to a central server to be processed. These issues are then presented in a bug-tracker like fashion to the user.
+
+These systems usually require an SDK to be shipped with the application. These services must build and support an SDK that is written in the same language and for the same framework as the application they are monitor. 
+
+For firmware, they would likely install hooks into the
 [assert]({% post_url 2019-11-05-asserts-in-embedded-systems %}),
 [fault]({% post_url 2019-11-20-cortex-m-fault-debug %}), and
 [logging]({% post_url 2020-08-04-firmware-logs-stack-trace %}) handlers.
 
-Once an SDK captures the data from faults or logs, it sends the data to a server
-for post-processing and show the issues in a bug-tracker like fashion.
-
-Software services: Sentry[^sentry], Rollbar[^rollbar], Bugsnag[^bugsnag]
+Software services: Sentry[^sentry], Rollbar[^rollbar], Bugsnag[^bugsnag]<br>
 Firmware services: Memfault[^memfault]
 
 ### Instantaenous State Monitoring
@@ -90,7 +106,7 @@ want to know, like heap usage, current battery life, or whether certain
 peripherals are on or off. These values can be queried across the entire fleet
 or a subset of devices, but trends or custom queries are more difficult.
 
-For instance, attempted to query for the amount of time the Bluetooth radio is
+For instance, attempting to query for the amount of time the Bluetooth radio is
 on per day is nearly impossible, unless the infrastructure is **100% certain**
 that it received every state change event from the device related to Bluetooth.
 
@@ -288,7 +304,8 @@ Below is a chart of a single device recording its time connected to Wi-Fi
 measured in both ways.
 
 <p align="center">
-  <img width="600" src="/img/device-metrics/wifi-time-connected.svg" alt="ble-time-connected" />
+  <img width="600" src="{% img_url device-metrics/wifi-time-connected.svg %}" />
+  
 </p>
 
 When looking at this chart, it is clear by looking at the heartbeat metric in
@@ -301,13 +318,13 @@ four devices sending continuous sums of the Wi-Fi connected time, and the second
 is four devices sending a proper heartbeat with values that are reset hourly.
 
 <p align="center">
-  <img width="600" src="/img/device-metrics/multiple-devices-continuous.svg" alt="ble-time-connected" />
+  <img width="600" src="{% img_url device-metrics/multiple-devices-continuous.svg %}" alt="ble-time-connected" />
 </p>
 
 Yuck! We can't make any sense of this information in its current form.
 
 <p align="center">
-  <img width="600" src="/img/device-metrics/multiple-devices-heartbeat.svg" alt="ble-time-connected" />
+  <img width="600" src="{% img_url device-metrics/multiple-devices-heartbeat.svg %}" alt="ble-time-connected" />
 </p>
 
 Much better! With this new information, we can easily spot that Device 3
@@ -563,7 +580,8 @@ various counters, counted timers, and gauges from the system for this 15 second
 interval.
 
 <p align="center">
-  <img width="600" src="/img/device-metrics/freertos-example-output.png" alt="freertos-example-output" />
+
+  <img width="600" src="{% img_url device-metrics/freertos-example-output.png %}" alt="freertos-example-output" />
 </p>
 
 ## Go/No-Go Metrics
@@ -645,4 +663,16 @@ average of this delta over **all heartbeats** of the particular release.
 <!-- prettier-ignore-start -->
 [^statsd_metrics]: [StatsD Metric Types](https://github.com/statsd/statsd/blob/master/docs/metric_types.md)
 [^grafana]: [Grafana](https://grafana.com)
+[^new_relic]: [New Relic](https://newrelic.com/)
+[^datadog]: [Datadog](https://www.datadoghq.com/)
+[^scout_apm]: [Scout APM](https://scoutapm.com/)
+[^statsd]: [StatsD](https://github.com/statsd/statsd)
+[^collectd]: [CollectD](https://collectd.org/)
+[^prometheus]: [Prometheus](https://prometheus.io/)
+[^grafana]: [Grafana](https://grafana.com)
 <!-- prettier-ignore-end -->
+
+
+**Software services:** New Relic[^new_relic], Datadog[^datadog],
+ScoutAPM[^scout_apm]<br>
+**Open Source Libraries**: StatsD[^statsd], CollectD[^collectd], Prometheus[^prometheus]
