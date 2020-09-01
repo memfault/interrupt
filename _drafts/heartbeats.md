@@ -600,7 +600,7 @@ whether a release candidate was worthy of a production rollout or not.
 
 ### Crash Free Hours (or Days)
 
-As mentioned above, gauge make it incredibly simple to detect the prevelance and
+As mentioned above, gauges make it incredibly simple to detect the prevelance and
 presence of an event across all devices of a fleet. Imagine you want to know
 roughly how many crash-free hours there are in the last 24 hours on a particular
 release.
