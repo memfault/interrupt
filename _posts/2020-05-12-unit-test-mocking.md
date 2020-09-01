@@ -39,13 +39,7 @@ quickly into the content so it's best to have read that post first.
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Stubs, Mocks, and Fakes Review
 

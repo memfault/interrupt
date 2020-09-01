@@ -22,13 +22,7 @@ some faults without rebooting the MCU. We include practical examples, with a ste
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Determining What Caused The Fault
 

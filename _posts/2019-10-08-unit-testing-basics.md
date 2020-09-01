@@ -35,13 +35,7 @@ following the [post]({% post_url 2019-09-17-continuous-integration-for-firmware 
 about Continuous Integration for firmware projects, which is a wonderful pre-cursor
 to this post.
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Unit Testing Overview
 

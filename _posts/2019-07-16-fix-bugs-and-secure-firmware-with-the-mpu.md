@@ -20,13 +20,7 @@ In this article, we will deep dive into the unit and walk through a few practica
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## A Little History
 

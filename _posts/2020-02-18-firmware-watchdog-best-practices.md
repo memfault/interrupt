@@ -22,13 +22,7 @@ In this article we will discuss the last line of defense in embedded systems -- 
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## The Hardware Watchdog
 

@@ -34,13 +34,7 @@ firmware today, and compare the process and performance to the equivalent code
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Building a Rust library
 

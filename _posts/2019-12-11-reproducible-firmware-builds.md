@@ -13,13 +13,7 @@ In this article we will discuss what a **Reproducible Build** is, walk through t
 
 <!-- excerpt end -->
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Reproducible Builds
 

@@ -25,13 +25,7 @@ through integrated tests, and shorten the iteration cycle of development.
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## What is Renode?
 

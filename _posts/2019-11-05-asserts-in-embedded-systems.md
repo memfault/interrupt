@@ -41,13 +41,7 @@ device, all while keeping the code size usage to a minimum.
 > worse: the system could behave in unpredictable way and perform poorly, lose
 > customer information, …etc.
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ### Article Disclaimers
 

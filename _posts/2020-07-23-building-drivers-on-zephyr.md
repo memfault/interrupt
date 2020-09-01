@@ -17,12 +17,7 @@ This is the guide I wish existed while I was developing some drivers for the [nR
 In this post, I’ll go over some of the nuances related to creating drivers for your peripherals on Zephyr. We’ll talk about Device Tree organization, `Kconfig`, and `CMakeLists.txt` files. By the end, you should have an idea on how to tackle your own Zephyr driver aspirations!
 <!-- excerpt end -->
 
-{:.no_toc}
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Example Walkthrough
 

@@ -28,13 +28,7 @@ applicable to most embedded systems.
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Why Build a Device Shell?
 

@@ -23,13 +23,7 @@ ARMCC, etc).
 
 <!-- excerpt end -->
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Terminology
 

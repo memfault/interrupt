@@ -31,13 +31,7 @@ example of installing breakpoints and single-stepping on a running device!
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Basic Terminology
 

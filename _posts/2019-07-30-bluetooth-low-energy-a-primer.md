@@ -21,12 +21,7 @@ works, dig into each protocol layer, and walk you through an example setting
 up BLE on a Nordic nRF52 microcontroller.
 <!-- excerpt end -->
 
-## Table of Contents
-{:.no_toc}
- 
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Basics of Bluetooth Low Energy (BLE)
 Bluetooth Low Energy (BLE) is a low power wireless technology used for connecting devices with each other. BLE operates in the **2.4 GHz ISM (Industrial, Scientific, and Medical)** band, and is targeted towards applications that need to consume less power and may need to run on batteries for longer periods of time — months, and even years.

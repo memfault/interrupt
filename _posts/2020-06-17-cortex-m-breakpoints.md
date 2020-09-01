@@ -23,13 +23,7 @@ In this article, we will discuss the basic types of breakpoints (hardware and so
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Basic Terminology
 

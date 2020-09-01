@@ -19,13 +19,7 @@ I recommend starting with our [Primer on Bluetooth Low Energy]({% post_url 2019-
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Bluetooth Low Energy Packet Structure
 

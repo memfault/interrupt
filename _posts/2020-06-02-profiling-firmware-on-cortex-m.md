@@ -29,13 +29,7 @@ method, and eventually discover ITM, DWT cycle counters, and more!
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Setup
 

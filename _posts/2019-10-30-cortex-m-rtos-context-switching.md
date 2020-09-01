@@ -25,13 +25,7 @@ porting an RTOS to a platform. We will also walk through a practical example of 
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Cortex-M ARM MCU Features
 

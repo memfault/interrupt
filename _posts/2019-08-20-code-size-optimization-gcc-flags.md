@@ -24,13 +24,7 @@ involves complicated trade-offs that must be considered on a case by case basis.
 
 {% include newsletter.html %}
 
-{:.no_toc}
-
-## Table of Contents
-
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+{% include toc.html %}
 
 ## Setting the stage
 
