@@ -222,7 +222,7 @@ This calculation is relatively easy assuming we are able to process logs
 linearly. We see at 11:30 the device was connected to Wi-Fi, then disconnected
 at 11:45, so the time connected this hour was 15 minutes.
 
-Let's make this problem a little trickier.
+Let's present a problem that happens all the time with embedded systems.
 
 ```
 [E][11:30:00] Wi-Fi connected
@@ -231,6 +231,8 @@ Let's make this problem a little trickier.
 
 [I][12:30:00] Wi-Fi connected
 ```
+
+Oh no! A dropped log message.
 
 Can we compute accurately how long the device was connected to Wi-Fi given the
 information above? **No we can't**. We'd probably throw away this event during
@@ -267,8 +269,8 @@ all of the following benefits:
   versions, and specific devices
 - Minimal data, bandwidth and connectivity requirements
 - Clock time not required
-- "Cheap" infrastructure requirements
-- Useful even with 10 devices and can scale to 1000's+
+- Cost-effective infrastructure
+- Useful even with 5 devices and can scale to 1000's+
 
 We will go through each common approach to gathering monitoring data from
 devices and asses them on the above requirements.
@@ -398,7 +400,14 @@ might send a heartbeat every minute, and power-optimized devices might send one
 every hour or each day.
 
 Heartbeats differ from all of the other types mentioned above because the data
-is pre-aggregated on the device. Instead of sending raw log
+is pre-aggregated on the device. Instead of sending raw log data and having to
+do stream processing on the logs to pull out metric data, we store the metric
+directly on the device!
+
+> The below examples use the heartbeat library I mentioned
+> [here](#heartbeat-library-example)
+
+Below, we increment the count of flash write errors seen on a device:
 
 ```c
 void flash_write(...) {
@@ -411,18 +420,42 @@ void flash_write(...) {
 }
 ```
 
+Here, we record that the device experienced a 7% drop in battery life over the
+last hour.
+
 ```c
 void device_metrics_flush(void) {
-  // Mark that the battery life dropped by 7% in the hour
   device_metrics_set(kDeviceMetric_BatteryDrain, 7)
 }
 ```
 
-There is a critical piece of information to understand about heartbeats that
-make them work as well as they do. After the individual metrics are collected
-from the device and a heartbeat is packaged up, the **metric values aggregated
-from this interval are cleared**. This means the next heartbeat will contain
-entirely new data not based upon the previous interval.
+Recall the [difficult-to-calculate metric](#transforming-logs-into-metrics) of
+Wi-Fi connected time per hour. It's easy when you count the time connected on
+the device!
+
+```c
+static uint32_t s_wifi_ticks;
+
+void wifi_connected_callback(void) {
+  // Start timer when Wi-Fi connects
+  device_metrics_timer_start(&s_wifi_ticks);
+}
+
+void wifi_disconnected_callback(void) {
+  // Stop timer when Wi-Fi connects
+  device_metrics_timer_end(kDeviceMetricWifiConnectedDuration
+                           &s_wifi_ticks);
+}
+```
+
+There is a critical rule to follow with heartbeats that make them work as well
+as they do. After the individual metrics are collected from the device and a
+heartbeat is packaged up, the **metric values aggregated from this interval are
+cleared**. This means the next heartbeat will contain entirely new data not
+based upon the previous interval.
+
+> More information on resetting metrics for each heartbeat can be found
+> [here](#resetting-data-for-each-heartbeat).
 
 **Pros:** Least amount of data sent, easily parsed by server, pre-aggregated for
 easier fleet metric analysis, can be pushed easily into a database or data
@@ -446,7 +479,6 @@ measured in both ways.
 
 <p align="center">
   <img width="600" src="{% img_url device-metrics/wifi-time-connected.svg %}" />
-  
 </p>
 
 When looking at this chart, it is clear by looking at the heartbeat metric in
