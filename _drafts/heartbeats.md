@@ -11,25 +11,26 @@ experiencing faults or crashing? How can the release lead be confident that no
 connectivity, performance, or battery-life regressions have occurred between the
 past and current firmware update?
 
-The answer is that you need device monitoring in place long before ever shipping a 
-firmware update to devices in the field. 
+The answer is that you need device monitoring in place long before ever shipping
+a firmware update to devices in the field.
 
-I've introduced several performance and battery-life regressions that
-were never caught in internal beta testing of 50 devices. They were always
-subtle changes, such as an "optimization" that ended up causing high file system
-churn (which reduced battery life), or issues that crop up when connected over
-certain transports or to different mobile phone models. These bugs were
-caught in one of two ways: either a customer angry enough would submit a bug
-report, or we'd catch the regression on our internal dashboards which were
-powered by our suite of SQL queries that would run periodically.
+I've introduced several performance and battery-life regressions that were never
+caught in internal beta testing of 50 devices. They were always subtle changes,
+such as an "optimization" that ended up causing high file system churn (which
+reduced battery life), or issues that crop up when connected over certain
+transports or to different mobile phone models. These bugs were caught in one of
+two ways: either a customer angry enough would submit a bug report, or we'd
+catch the regression on our internal dashboards which were powered by our suite
+of SQL queries that would run periodically.
 
 <!-- excerpt start -->
 
-In this post, we lay the foundation for how an organization should
-instrument their embedded firmware to measure performance, stability, and the
-overall "health" of each device and an entire fleet of devices. We also compare
-and contrast the various approaches that projects generally take and discuss why
-I believe the strategy of heartbeats is the clear winner.
+In this post, we lay the foundation for how an organization should instrument
+their embedded firmware to measure performance, stability, and the overall
+"health" of each device and an entire fleet of devices. We'll compare and
+contrast the various approaches projects generally take to surface these metrics
+and I'll discuss why I believe heartbeat metrics are the best method for driving
+product decisions.
 
 <!-- excerpt end -->
 
@@ -52,45 +53,80 @@ relate to us in the world of embedded systems.
 
 ### Application Performance Monitoring (APM)
 
-Application performance monitoring services collect and aggregate different metrics on computer systems and software, and they alert customers when these numbers either increase or decrease in abnormal ways. Common metrics that are collected by APM's are:
+Application performance monitoring services collect and aggregate different
+metrics on computer systems and software, and they alert customers when these
+numbers either increase or decrease in abnormal ways. Common metrics that are
+collected by APM's are:
 
 - CPU, RAM, and hard drive usage
 - Response times and values
 - Request rates and failures
 
-Along with the ability to collect customized metrics, these aggregates paint an overall picture of how an application, server, or fleet of either are performing at any given time. 
+They work by installing hooks in various places in the code. Common examples are
+the pre/post request handlers for a web application and the pre/post handlers
+for a database transaction. By hooking into both sides of common operations,
+they are able to take a snapshot of the system before and after, and compare
+memory usage and time deltas.
 
-APM's aren't a new concept, as one of the largest ones, New Relic, was founded in 2008 and is now a publicly traded company. 
+When an APM is hooked up to every instance of an application, it can paint a
+detailed picture of how an application, server, or fleet of either are
+performing at any given time.
+
+APM's aren't a new concept, as one of the largest ones, New Relic, was founded
+in 2008 and is now a publicly-traded company.
 
 **Software services:** New Relic[^new_relic], Datadog[^datadog],
-ScoutAPM[^scout_apm]<br>
-**Open Source Libraries**: StatsD[^statsd], CollectD[^collectd], Prometheus[^prometheus]
+ScoutAPM[^scout_apm]<br> **Open Source Libraries**: StatsD[^statsd],
+CollectD[^collectd], Prometheus[^prometheus]
 
 ### Tracing and Logging
 
-I've grouped these into a single group because accomplish the same goal. Traces and logs
-give you an in-depth timeline view of what happened on a single device and allow
-you to zero-in on issues as long as you know what you are looking for. The
-amount of data necessary to be collected by tracing and logging tools is
-immense, and most of the data doesn't get used or processed.
+I've grouped these into a single group because accomplish the same goal.
 
-I view tracing and logging as a warehouse of data that is only queried when developers **know** there is an issue.
+Traces and logs give you an in-depth timeline view of what happened on a single
+device and allow you to zero-in on issues as long as you know what you are
+looking for. They work by having the developer install logs or trace events
+during the coding phase or automatically by installing hooks in the context
+switch handler and various system API calls.
 
-**Software services:** New Relic[^new_relic], Datadog[^datadog]<br>
-**Firmware services:** Percepio[^percepio]
+Traces and logs, just like an APM, can tell you where most of the time is spent
+in an application or system, but there are drawbacks.
 
-### Crash Analysis
+The amount of data collected by tracing and logging tools is immense, and most
+of the data doesn't get used or processed. In their raw form, they are not
+easily aggregated or actionable.
 
-How nice would it be to have in-depth analysis and alerts for every unique crash, fault, assert, and error log that devies in the field expeirence? That is what these services provide. 
+I view tracing and logging as a silo of (valuable) data that is only queried
+when developers **know** there is an issue with a specific device.
 
-When any of the listed error handlers are triggered, these libraries gather all of the relevant data, such as previous logs, backtraces of the currently running threads, local variables, global variables, etc. and push all of this data to a central server to be processed. These issues are then presented in a bug-tracker like fashion to the user.
+**Software services:** New Relic[^new_relic], Datadog[^datadog]<br> **Firmware
+services:** Percepio[^percepio]
 
-These systems usually require an SDK to be shipped with the application. These services must build and support an SDK that is written in the same language and for the same framework as the application they are monitor. 
+### Crash Reporting
+
+How nice would it be to have in-depth analysis and alerts for every unique
+crash, fault, assert, and error log that devices in the field experience? That
+is what these services provide.
+
+When any of the listed error handlers are triggered, these libraries gather all
+of the relevant data, such as previous logs, backtraces of the currently running
+threads, local variables, global variables, etc. and push all of this data to a
+central server to be processed. These issues are then de-duplicated and
+presented in a bug-tracker like fashion to the user.
+
+These systems usually require an SDK to be shipped with the application. These
+services must build and support an SDK that is written in the same language and
+for the same framework as the application they are monitor.
 
 For firmware, they would likely install hooks into the
 [assert]({% post_url 2019-11-05-asserts-in-embedded-systems %}),
 [fault]({% post_url 2019-11-20-cortex-m-fault-debug %}), and
 [logging]({% post_url 2020-08-04-firmware-logs-stack-trace %}) handlers.
+
+The beautiful thing about crash reporting tools is they are relatively easy to
+integrate because the entry-points they hook into are standardized by the
+language and frameworks. They also surface hard to reproduce or never before
+seen issues easily and provide a wealth of data to fix the problem quickly.
 
 Software services: Sentry[^sentry], Rollbar[^rollbar], Bugsnag[^bugsnag]<br>
 Firmware services: Memfault[^memfault]
@@ -101,10 +137,13 @@ This is the category that most of today's "IoT monitoring solutions" fall into.
 They assume a near-constant connection to the Internet and hold the state of
 every device in the service.
 
-These systems can ingest many of the system vitals that developers and managers
-want to know, like heap usage, current battery life, or whether certain
-peripherals are on or off. These values can be queried across the entire fleet
-or a subset of devices, but trends or custom queries are more difficult.
+Devices can either push this information whenever states change, at regular
+intervals, or the remote server can pull data as well.
+
+These systems ingest many of the system vitals that developers and managers want
+to know, like heap usage, current battery life, or whether certain peripherals
+are on or off. These values can be queried across the entire fleet or a subset
+of devices, but trends or custom queries are more difficult.
 
 For instance, attempting to query for the amount of time the Bluetooth radio is
 on per day is nearly impossible, unless the infrastructure is **100% certain**
@@ -115,21 +154,110 @@ is one of the best predictors of battery-life drain and performance.
 
 ### What About Embedded Systems?
 
-None of the above services or strategies listed are directly applicable to
-embedded systems given the restrictions and limitations commonly found in the
-hardware (err, well, until we build Memfault).
+Most of the above services or strategies listed above are not applicable to
+constrained embedded systems. Save for Memfault and Percepio, most of the
+solutions would require orders of magnitude more memory, CPU, power, and
+Internet bandwidth.
 
-## Forms of Device Metrics
+There is hope though. We will explore how we can manage to get the most
+important and actionable metrics out of embedded systems and gain an
+understanding about how devices are performing in the field.
 
-Embedded systems have quirks about them that make then more difficult
-to track than web applications or mobile phones. Embedded
-systems don't have the memory, storage, speed, or a constant connection to the
-Internet. Many embedded systems don't even know the clock time! Due to these
-constraints, solutions for how to capture, send, and receive data from embedded
-systems tend to look very different compared to their software counterparts.
+## Logging and Metrics
 
-Throughout this post, we'll discuss ways to track
-device metrics, and compare and contrast them.
+I want to quickly cover the difference and use-cases for two common forms of
+data collected from systems: logs and metrics.
+
+### Logs
+
+Logs are immutable events that happened over time to a single device. They are
+instrumental in debugging as they help a developer determine what happened
+before and after issues occur.
+
+Logs are usually forwarded from individual devices to a centralized data store
+such as S3, or to a log aggregator to be further transformed and processed.
+Unfortunately, more often than not, the logs are ingested and forgotten about.
+
+A developer might dig up a particular device's log files in response to a
+customer support request, but that requires a `pull-logs-from-s3.py` script and
+a decent amount of time to determine where the device behaved unexpectedly.
+
+### Metrics
+
+Metrics are a set of numbers that give information about a particular process or
+activity. They are measured over intervals of time and are usually just numbers.
+This means that they pre-processed and more compact than logs, which means that
+you can store and query many more of them at once.
+
+Metrics themselves don't help developers debug individual instances of issues or
+bugs, but they help organizations **detect** issues by measuring the data points
+that matter most. For many hardware makers, these metrics might be:
+
+- Crash-free hours
+- Average battery life
+- Wi-Fi/BLE connected time per hour
+
+### Transforming Logs into Metrics
+
+Logs can be transformed, processed, and aggregated into metrics, but this
+usually involves massive and complex data pipelines.
+
+After working as a firmware engineer at a few hardware companies in the past, I
+can tell you that I was out of my depth trying to parse logs at scale, and I was
+rarely getting the help I needed from the web and infrastructure teams because
+they had their own roadmaps to complete.
+
+The other problem with logs is that they generally log state transitions and
+force the developer or log aggregator to measure the time between these state
+transitions. Let's try to calculate one of the important device metrics above,
+Wi-Fi connected time per hour.
+
+```
+[E][11:30:00] Wi-Fi connected
+[W][11:45:00] Wi-Fi disconnected, reason: -2
+[I][12:30:00] Wi-Fi connected
+```
+
+This calculation is relatively easy assuming we are able to process logs
+linearly. We see at 11:30 the device was connected to Wi-Fi, then disconnected
+at 11:45, so the time connected this hour was 15 minutes.
+
+Let's make this problem a little trickier.
+
+```
+[E][11:30:00] Wi-Fi connected
+
+# Wi-Fi disconnect event lost by device or in transport
+
+[I][12:30:00] Wi-Fi connected
+```
+
+Can we compute accurately how long the device was connected to Wi-Fi given the
+information above? **No we can't**. We'd probably throw away this event during
+processing or accidentally include it and say Wi-Fi was connected for the entire
+hour.
+
+We can do better.
+
+### Do We Need Both?
+
+Logs and metrics ultimately serve different purposes. You need logs to debug
+hard to reproduce issues and to verify if a particular device has hardware
+issues, and you need metrics to make informed product and business decisions.
+
+**Whether you transform logs into metrics or collect metrics directly in the
+manners mentioned in this article is up to you.**
+
+## Collecting Data from Devices
+
+Embedded systems have quirks about them that make then more difficult to track
+than web applications or mobile phones. Connectivity is slow and unreliable,
+timestamps are rarely accurate if they exist at all, and storage, CPU, RAM,
+power, and bandwidth are all limited.
+
+Due to these constraints, the solutions for how to capture, send, and receive
+data from embedded systems tend to look very different compared to their
+software counterparts.
 
 Optimally, we want to build a metric and monitoring solution that can provide
 all of the following benefits:
@@ -137,7 +265,7 @@ all of the following benefits:
 - Easy to implement
 - Can measure "health" easily across the entire fleet, different firmware
   versions, and specific devices
-- Minimal data and connectivity
+- Minimal data, bandwidth and connectivity requirements
 - Clock time not required
 - "Cheap" infrastructure requirements
 - Useful even with 10 devices and can scale to 1000's+
@@ -145,7 +273,7 @@ all of the following benefits:
 We will go through each common approach to gathering monitoring data from
 devices and asses them on the above requirements.
 
-### Logging
+### Plain Text Logging
 
 The first solution that most companies deploy for remote device monitoring is to
 piggy-back off of their existing UART logging setup that developers used for
@@ -154,14 +282,14 @@ important.
 
 ```
 [E][1598845590] Flash sector write error: 6
+[W][1598845590] Wi-Fi disconnected, reason: -2
 [I][1598845592] Battery status: 67%, 3574 mV
 ```
 
 The device firmware generates these logs and writes them to a RAM buffer and
 eventually flushed to persistent storage such as NOR flash in a circular buffer
 fashion. Periodically, these logs are vacuumed up by the system and pushed (or
-pulled) to a central location, usually, an AWS S3 bucket segmented by device, to
-rest indefinitely and be forgotten.
+pulled) to a central location,
 
 Every so often, a single device's logs might be dug up by the engineer who has
 written a `pull-logs-from-s3.py` to track down a bug that a customer had
@@ -173,9 +301,9 @@ can build it yourself[^logging_pipeline] or use your web team's favorite logging
 aggregator, but both of those will cost many thousands of dollars in either
 engineering resources or SaaS bills respectively.
 
-**Pros:** easy to implement, lots of data in logs<br> **Cons:** Data-intensive,
-expensive to parse, many transformations and aggregations to get to actionable
-fleet-level metrics
+**Pros:** easy to implement, lots of data in logs<br>**Cons:** Data and
+bandwidth intensive, expensive to parse, many transformations and aggregations
+to get to actionable fleet-level metrics, power intensive
 
 ### Structured Logging
 
@@ -184,8 +312,9 @@ parseable log-line, which helps pull out the structured bits, but doesn't help
 you extract the useful data bits, such as the flash sector write error or
 battery life measurement.
 
-```
+```json
 {"level": "e", "timestamp": 1598845590, "line": "Flash sector write error: 6"}
+{"level": "w", "timestamp": 1598845590, "line": "Wi-Fi disconnected, reason: -2"}
 {"level": "i", "timestamp": 1598845592, "line": "Battery status: 67%, 3574 mV"}
 ```
 
@@ -194,17 +323,17 @@ systems are Protobuf, CBOR, or a custom binary packed C/C++ structure. Don't use
 JSON, it's a waste of precious space.
 
 **Pros:** easy to implement, lots of data in logs, scripting around logging
-becomes easier (coloring, re-writing, etc)<br> **Cons:** Even more data
+becomes easier (coloring, re-writing, etc)<br>**Cons:** Even more data
 intensive, expensive to parse, many transformations and aggregations to get to
 actionable fleet-level metrics
 
-### Structured Events
+### Binary Logging
 
 If more structure is desired, the next evolution is typically in the form of
-structured events. This will take each log-line and convert it into a structure
-known by the service that parses the data.
+binary logs or events. This will take each log-line and convert it into a
+structure known by the service that parses the data.
 
-```
+```c
 typedef struct PACKED {
   uint16_t   type;
   uint8_t:4  thread_id;
@@ -213,20 +342,28 @@ typedef struct PACKED {
 } Event_Base;
 
 typedef struct PACKED {
-  Event_Base  base; // contains event metadata
-  FlashOp     op; // Read, WriteSector, etc.
-  int16_t     err; // -6
+  Event_Base  base;  // contains event metadata
+  FlashOp     op;    // Read, WriteSector, etc.
+  int16_t     err;   // -6
   uint32_t    extra; // num pages, num bytes, etc.
 } Event_FlashError;
 
 typedef struct PACKED {
-  Event_Base  base; // contains event metadata
-  uint16_t    mv;
-  uint8_t     pct;
+  Event_Base  base;      // contains event metadata
+  bool        connected; // false
+  int16_t     reason;    // -2
+  uint8_t     rssi;      // (-) 70
+} Event_WiFiState;
+
+typedef struct PACKED {
+  Event_Base  base;  // contains event metadata
+  uint16_t    mv;    // 3,574
+  uint8_t     pct;   // 67
   BattState   state; // charging, battery, full, etc.
 } Event_BatteryStat;
 
 void events_record_flash_error(FlashOp op, int16_t err, uint32_t extra);
+void events_record_wifi_state_change(bool connected, int16_t reason, uint8_t rssi);
 void events_record_battery_stat(uint16_t mv, BattState state);
 ```
 
@@ -234,20 +371,21 @@ Each time the system would normally produce a logline for a flash error or a
 battery stat, it would instead serialize the information into a C struct, write
 it to flash, and send these up to a server immediately or in batches. The server
 which parses and transforms this data will need to always know _exactly_ how to
-parse these structures, for every version in the past and future. A word of
+parse these structures, for every version, both past and future. A word of
 warning to the reader: parsing bitfields in Python/Ruby/JavaScript/etc. isn't
 trivial.
 
-> I've designed the structure above by using C structs for easy comprehension by
-> the reader. If this architecture is used in production, I would **highly
-> recommend** using Protobuf or another message packing protocol for more
-> resilient parsing and backward-compatibility.
+I've designed the structures above by using C structs for easy comprehension by
+the reader. If this architecture is used in production, I would **highly
+recommend** using Protobuf or another message packing protocol for more
+resilient parsing and backward-compatibility. It solves many of the deficiencies
+with structured events.
 
 **Pros:** Compact data format and less data usage than (structured) logging, all
 events adhere to patterns and guidelines, easily actionable on a
 device-level<br> **Cons:** Difficult to parse, not immediately useful to
-developers without scripts, requires device and parsing server to keep structure
-definition in sync
+developers without scripts, requires device and parsing server to keep the
+structure definitions in sync
 
 ### Heartbeats
 
@@ -258,6 +396,9 @@ statistics aggregated from the last time period. Devices that have a constant
 connection to the Internet and either a powered connection or a large battery
 might send a heartbeat every minute, and power-optimized devices might send one
 every hour or each day.
+
+Heartbeats differ from all of the other types mentioned above because the data
+is pre-aggregated on the device. Instead of sending raw log
 
 ```c
 void flash_write(...) {
@@ -460,6 +601,7 @@ calculate the prevalence of an issue across all devices. Some useful metrics to
 keep track of include:
 
 - hour's battery life drain in the last hour
+- current battery life
 - current heap bytes used/free
 - PC/LR from the last crash if it occurred within the hour
 - hour's heap high-water mark (reset each hour!)
@@ -600,8 +742,8 @@ whether a release candidate was worthy of a production rollout or not.
 
 ### Crash Free Hours (or Days)
 
-As mentioned above, gauges make it incredibly simple to detect the prevelance and
-presence of an event across all devices of a fleet. Imagine you want to know
+As mentioned above, gauges make it incredibly simple to detect the prevelance
+and presence of an event across all devices of a fleet. Imagine you want to know
 roughly how many crash-free hours there are in the last 24 hours on a particular
 release.
 
@@ -671,8 +813,3 @@ average of this delta over **all heartbeats** of the particular release.
 [^prometheus]: [Prometheus](https://prometheus.io/)
 [^grafana]: [Grafana](https://grafana.com)
 <!-- prettier-ignore-end -->
-
-
-**Software services:** New Relic[^new_relic], Datadog[^datadog],
-ScoutAPM[^scout_apm]<br>
-**Open Source Libraries**: StatsD[^statsd], CollectD[^collectd], Prometheus[^prometheus]
