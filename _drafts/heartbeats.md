@@ -14,20 +14,20 @@ past and current firmware update?
 The answer is that you need device monitoring in place long before ever shipping a 
 firmware update to devices in the field. 
 
-I've personally committed several performance and battery-life regressions that
+I've introduced several performance and battery-life regressions that
 were never caught in internal beta testing of 50 devices. They were always
 subtle changes, such as an "optimization" that ended up causing high file system
 churn (which reduced battery life), or issues that crop up when connected over
-certain transports or to different mobile phone models. These issues were only
+certain transports or to different mobile phone models. These bugs were
 caught in one of two ways: either a customer angry enough would submit a bug
 report, or we'd catch the regression on our internal dashboards which were
 powered by our suite of SQL queries that would run periodically.
 
 <!-- excerpt start -->
 
-In this post, we will lay the foundation for how an organization should
+In this post, we lay the foundation for how an organization should
 instrument their embedded firmware to measure performance, stability, and the
-overall "health" of each device and an entire fleet of devices. We will compare
+overall "health" of each device and an entire fleet of devices. We also compare
 and contrast the various approaches that projects generally take and discuss why
 I believe the strategy of heartbeats is the clear winner.
 
@@ -95,7 +95,7 @@ For firmware, they would likely install hooks into the
 Software services: Sentry[^sentry], Rollbar[^rollbar], Bugsnag[^bugsnag]<br>
 Firmware services: Memfault[^memfault]
 
-### Instantaenous State Monitoring
+### Instantaneous State Monitoring
 
 This is the category that most of today's "IoT monitoring solutions" fall into.
 They assume a near-constant connection to the Internet and hold the state of
@@ -121,15 +121,15 @@ hardware (err, well, until we build Memfault).
 
 ## Forms of Device Metrics
 
-Embedded systems inherently have quirks about them that make then more difficult
-to track than other "things", like web applications or mobile phones. Embedded
-systems don't have the memory, storage, speed, or constant connection to the
+Embedded systems have quirks about them that make then more difficult
+to track than web applications or mobile phones. Embedded
+systems don't have the memory, storage, speed, or a constant connection to the
 Internet. Many embedded systems don't even know the clock time! Due to these
 constraints, solutions for how to capture, send, and receive data from embedded
-systems tend to look very different compared to their counterparts.
+systems tend to look very different compared to their software counterparts.
 
-Throughout this post, we'll discuss various solutions that are taken to track
-device metrics and compare and contrast them.
+Throughout this post, we'll discuss ways to track
+device metrics, and compare and contrast them.
 
 Optimally, we want to build a metric and monitoring solution that can provide
 all of the following benefits:
