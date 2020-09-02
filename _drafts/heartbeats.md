@@ -278,8 +278,8 @@ devices and asses them on the above requirements.
 ### Plain Text Logging
 
 The first solution that most companies deploy for remote device monitoring is to
-piggy-back off of their existing UART logging setup that developers used for
-local debugging. The programmer writes various logs that they think are
+piggy-back off of their existing UART-style logging setup that developers used
+for local debugging. The programmer writes various logs that they think are
 important.
 
 ```
@@ -303,9 +303,9 @@ can build it yourself[^logging_pipeline] or use your web team's favorite logging
 aggregator, but both of those will cost many thousands of dollars in either
 engineering resources or SaaS bills respectively.
 
-**Pros:** easy to implement, lots of data in logs<br>**Cons:** Data and
-bandwidth intensive, expensive to parse, many transformations and aggregations
-to get to actionable fleet-level metrics, power intensive
+Logging will also generate an enormous about of data, which will in turn use
+more CPU and power, require more storage, cause more flash wear, and use more
+bandwidth to send the data.
 
 ### Structured Logging
 
@@ -315,19 +315,19 @@ you extract the useful data bits, such as the flash sector write error or
 battery life measurement.
 
 ```json
-{"level": "e", "timestamp": 1598845590, "line": "Flash sector write error: 6"}
-{"level": "w", "timestamp": 1598845590, "line": "Wi-Fi disconnected, reason: -2"}
-{"level": "i", "timestamp": 1598845592, "line": "Battery status: 67%, 3574 mV"}
+{"level": "e", "time": 1598845590, "line": "Flash sector write error: 6"}
+{"level": "w", "time": 1598845590, "line": "Wi-Fi disconnected, reason: -2"}
+{"level": "i", "time": 1598845592, "line": "Battery status: 67%, 3574 mV"}
 ```
 
 A structured log can take any serialized form, but the most common for embedded
 systems are Protobuf, CBOR, or a custom binary packed C/C++ structure. Don't use
 JSON, it's a waste of precious space.
 
-**Pros:** easy to implement, lots of data in logs, scripting around logging
-becomes easier (coloring, re-writing, etc)<br>**Cons:** Even more data
-intensive, expensive to parse, many transformations and aggregations to get to
-actionable fleet-level metrics
+Structured logging makes it easier for developers to build scripts around
+viewing logs locally and might help with integration into a commercial log
+aggregator, but that is about it. It keeps with it all of the cons of plain text
+logging.
 
 ### Binary Logging
 
@@ -337,31 +337,31 @@ structure known by the service that parses the data.
 
 ```c
 typedef struct PACKED {
-  uint16_t   type;
-  uint8_t:4  thread_id;
-  uint8_t:4  level;
-  uint8_t    reserved;
+    uint16_t   type;
+    uint8_t:4  thread_id;
+    uint8_t:4  level;
+    uint8_t    reserved;
 } Event_Base;
 
 typedef struct PACKED {
-  Event_Base  base;  // contains event metadata
-  FlashOp     op;    // Read, WriteSector, etc.
-  int16_t     err;   // -6
-  uint32_t    extra; // num pages, num bytes, etc.
+    Event_Base  base;  // contains event metadata
+    FlashOp     op;    // Read, WriteSector, etc.
+    int16_t     err;   // -6
+    uint32_t    extra; // num pages, num bytes, etc.
 } Event_FlashError;
 
 typedef struct PACKED {
-  Event_Base  base;      // contains event metadata
-  bool        connected; // false
-  int16_t     reason;    // -2
-  uint8_t     rssi;      // (-) 70
+    Event_Base  base;      // contains event metadata
+    bool        connected; // false
+    int16_t     reason;    // -2
+    uint8_t     rssi;      // (-) 70
 } Event_WiFiState;
 
 typedef struct PACKED {
-  Event_Base  base;  // contains event metadata
-  uint16_t    mv;    // 3,574
-  uint8_t     pct;   // 67
-  BattState   state; // charging, battery, full, etc.
+    Event_Base  base;  // contains event metadata
+    uint16_t    mv;    // 3,574
+    uint8_t     pct;   // 67
+    BattState   state; // charging, battery, full, etc.
 } Event_BatteryStat;
 
 void events_record_flash_error(FlashOp op, int16_t err, uint32_t extra);
@@ -383,11 +383,14 @@ recommend** using Protobuf or another message packing protocol for more
 resilient parsing and backward-compatibility. It solves many of the deficiencies
 with structured events.
 
-**Pros:** Compact data format and less data usage than (structured) logging, all
-events adhere to patterns and guidelines, easily actionable on a
-device-level<br> **Cons:** Difficult to parse, not immediately useful to
-developers without scripts, requires device and parsing server to keep the
-structure definitions in sync
+Binary logging will use less data, storage, and bandwidth which is a huge boon
+to developers because it might mean they can _log even more_.
+
+Although Protobuf solves many of the problems around parsing, keeping the
+definitions in sync between device and server and always using the right one is
+still a challenge. Another unfortunate truth about binary logging is that a
+developer can no longer just connect to a UART and understand the logs.
+**Scripts will be required**.
 
 ### Heartbeats
 
@@ -411,25 +414,33 @@ Below, we increment the count of flash write errors seen on a device:
 
 ```c
 void flash_write(...) {
-  ...
-  if (retval < 0) {
-    // Record there was an error
-    device_metrics_incr(kDeviceMetric_FlashError);
-  }
-  return retval;
+    ...
+    if (retval < 0) {
+        // Record there was an error
+        device_metrics_incr(kDeviceMetric_FlashError);
+    }
+    return retval;
 }
 ```
 
-Here, we record that the device experienced a 7% drop in battery life over the
+Here, we record that the device experienced a % drop in battery life over the
 last hour.
+
+<a name="battery-life-drain-metric"></a>
 
 ```c
 void device_metrics_flush(void) {
-  device_metrics_set(kDeviceMetric_BatteryDrain, 7)
+    ...
+    static int32_t s_prev_battery_pct;
+    const int32_t current_battery_pct = battery_get_pct();
+    const int32_t battery_delta = current_battery_pct - s_prev_battery_pct;
+    device_metrics_set(kDeviceMetricId_BatteryLifeDrain, battery_delta);
 }
 ```
 
-Recall the [difficult-to-calculate metric](#transforming-logs-into-metrics) of
+<a name="wifi-ble-connectivity-metric"></a>
+
+Recall the [difficult-to-calculate metric](#wifi-ble-connectivity-metric) of
 Wi-Fi connected time per hour. It's easy when you count the time connected on
 the device!
 
@@ -437,14 +448,14 @@ the device!
 static uint32_t s_wifi_ticks;
 
 void wifi_connected_callback(void) {
-  // Start timer when Wi-Fi connects
-  device_metrics_timer_start(&s_wifi_ticks);
+    // Start timer when Wi-Fi connects
+    device_metrics_timer_start(&s_wifi_ticks);
 }
 
 void wifi_disconnected_callback(void) {
-  // Stop timer when Wi-Fi connects
-  device_metrics_timer_end(kDeviceMetricWifiConnectedDuration
-                           &s_wifi_ticks);
+    // Stop timer when Wi-Fi connects
+    device_metrics_timer_end(kDeviceMetricWifiConnectedDuration
+                            &s_wifi_ticks);
 }
 ```
 
@@ -462,9 +473,57 @@ easier fleet metric analysis, can be pushed easily into a database or data
 warehouse, no clock time necessary<br> **Cons:** Only alerts developers that
 there _is_ a problem with a device or fleet (not how to fix it),
 
-## Why Heartbeats Are Wonderful
+### Raw Data Types Summary
+
+In summary, let's compare the methods of collecting data against each other.
+
+|                                  | Logging | Structured Logging | Structured Events | Heartbeats |
+| -------------------------------- | ------- | ------------------ | ----------------- | ---------- |
+| Easy to implement                | ✅      | ✅                 | ❌                | ✅         |
+| Fleet / version health           | ⚠️      | ⚠️                 | ⚠️                | ✅         |
+| Minimal data and connectivity    | ⚠️      | ⚠️                 | ✅                | ✅         |
+| Wall time not required           | ❌      | ❌                 | ❌                | ✅         |
+| Cheap / scalable infrastructure  | ❌      | ❌                 | ⚠️                | ✅         |
+| Good for debugging device issues | ✅      | ✅                 | ✅                | ⚠️         |
+
+Where ✅ is a benefit, ⚠️ is neutral, and ❌ is not a benefit.
+
+## Heartbeat Best Practices
+
+I have a few tips on how to use heartbeats, and the best practices to follow.
+
+### Heartbeat Timestamps
+
+In my experience, heartbeats serve three primary purposes.
+
+1. To enable calculations of important metrics across an entire fleet of
+   devices.
+2. To enable calculations of important metrics between different firmware
+   versions.
+3. To present a device's vitals and metrics in a timeline view.
+
+Recall that with logs, we needed to include timestamps with each log line to
+enable us to process logs linearly and determine the time between events.
+
+What I didn't realize until writing this post was that heartbeats don't always
+need timestamps to calculate health metrics! Many constrained embedded devices
+do not synchronize their clocks and have no notion of wall time, only an
+internal tick count. As long as a device knows approximately how long a minute,
+hour, or day is, they can generate a useful heartbeat.
+
+For 1 and 3, having a timestamp is really useful if you wanted to limit queries
+to the last 24 hours of data or last week. However, for 2, you just need to
+group all firmware version hourly heartbeats together and perform aggregates on
+them! It doesn't _really_ matter when they were.
+
+If a developer wants to see a timeline view of a device's vitals, such as heap
+statistics, battery life, and utilization data for the last week, then
+timestamps are essential for every heartbeat.
 
 ### Resetting Data for Each Heartbeat
+
+Once the heartbeat interval has finished and the metrics have been flushed, each
+metric value hould be reset.
 
 Let me try to emphasize how important this is with an example. Let's imagine my
 fictitious smart-toaster company is trying to measure how long, on average, all
@@ -481,71 +540,78 @@ measured in both ways.
   <img width="600" src="{% img_url device-metrics/wifi-time-connected.svg %}" />
 </p>
 
-When looking at this chart, it is clear by looking at the heartbeat metric in
-hour 3 that there was a dip in time connected. This is not immediately obvious
-when looking at a chart of a continuously summed number.
+When looking at this chart, it is clear by looking at the heartbeat metric (red
+line) in hour 3 that there was a dip in time connected. This is not immediately
+obvious when looking at a chart of a continuously summed number.
 
-This article isn't really about measuring statistics for a single device though.
-We are measuring for the entire fleet! Below are two charts. The first one is of
-four devices sending continuous sums of the Wi-Fi connected time, and the second
-is four devices sending a proper heartbeat with values that are reset hourly.
+To calculate the average time connected per hour, we use two different
+calculations.
 
-<p align="center">
-  <img width="600" src="{% img_url device-metrics/multiple-devices-continuous.svg %}" alt="ble-time-connected" />
-</p>
-
-Yuck! We can't make any sense of this information in its current form.
-
-<p align="center">
-  <img width="600" src="{% img_url device-metrics/multiple-devices-heartbeat.svg %}" alt="ble-time-connected" />
-</p>
-
-Much better! With this new information, we can easily spot that Device 3
-probably has a toaster that is far away from their wireless router and it has
-trouble connected, and that most of the devices have pretty good connected
-times.
-
-You might be thinking...can't we use (and abuse) our database to help us compute
-deltas for each device between each hour? If you want to keep your sanity and
-put your company's money to better use, then please don't try to do this.
-
-If you wanted to compute deltas between each continuous sum sent, you would
-need:
-
-- The device to send an accurate tick count since boot or the wall clock time
-  (no Jan 1st 1970 timestamps)
-- Be very sure there is no missing data or the queries will have to fill in the
-  gaps with inaccurate data
-- Perform complex queries segmented by device, which will take longer as device
-  counts reach into the thousands
-
-If values are reset for each interval and my toaster company wants to know our
-average connected time per hour, we just take the average (or median, p95, etc)
-of all of the metrics!
-
-For our above charts, that would simply be (not that the numbers are important):
+For the continuous sum, we can just divide the final number by the number of
+hours:
 
 ```
-(3600 + 3600 + 1800 + 3000 +
- 3600 + 3600 + 2000 + 3600 +
- 3600 + 3400 + 2500 + 3600 +
- 3600 + 3600 + 2000 + 3200) / 16
-
-= 3143.75
+19800 seconds / 6 hours = 3,300 seconds per hour
 ```
 
-And that's it! We now know the average time connected for these 4 devices. No
-complex math, no fudging numbers, nothing. We can take this number to our
-manager and we can use it as a metric for any future release.
+or get this value by computing the deltas between each event received:
 
-The beautiful thing about this is that these calculations can scale to thousands
-of devices and hours and it remains simple to compute these resulting metrics.
+```
+  (3600 - 0) + (7200 - 3600) + (9000 - 7200)
++ (12600 - 9000) + (16200 - 12600) + (19800 - 16200)
+= 19800 seconds
+
+19800 seconds / 6 hours = 3,300 seconds per hour
+```
+
+See how that got a little messy quickly?
+
+To compute this metric for the heartbeat data where the values are reset each
+hour, we just add all the intervals and divide by the number of heartbeats
+
+```
+(3600 + 3600 + 1800 + 3600 + 3600 + 3600) / 6 = 3,300 seconds per hour
+```
+
+The real issue comes into play when we want to compute a particular metric
+across all hours of a particular firmware version or group of devices. If every
+hour's metric is based upon the previous hours data, for every single device,
+what happens if we miss a subset of heartbeats from a device?
+
+Do we extrapolate the data across the missing points? Do throw out the remainder
+of the device's session data until the device reboots? Maybe we should just
+ignore devices that have missing data in our queries.
+
+All of those are easily solved by just resetting the values for each heartbeat!
+If a heartbeat doesn't have a complete interval recorded, just throw it out. In
+the past, I've actually put this as a column in the database row,
+`is_full_hour`.
+
+### Extra Metadata to Include
+
+Metrics are only useful if you can tie them back to a specific device, firmware
+version, and possibly time.
+
+Therefore, the following are what I suggest to capture and send up with every
+heartbeat or each batch of heartbeats.
+
+- **Firmware Version**: This should tie to one and only one firmware. Ideally a
+  semantic version or a [build
+  id]({% post_url 2019-05-29-gnu-build-id-for-firmware%}).
+- **Device Serial Number**: You want to be able to type back heartbeats to the
+  device they came from to do more fine-grained queries.
+- **Timestamp**: The timestamp interval the heartbeat relates to.
+  [More information](#heartbeat-timestamps)
+- **Heartbeat Duration**: The last thing I would suggest including is the actual
+  duration of the heartbeat interval. A device might reboot mid-way through a
+  heartbeat interval, and you'll want to be able to either normalize this data
+  or throw out incomplete heartbeat intervals from your queries.
 
 ## Metric Type Explanations
 
 In this section, we'll go over the different types of metrics you are likely to
-see in a dashboard such as Grafana[^grafana]. They map closely and were inspired
-by the types from StatsD[^statsd_metrics].
+see in a dashboard built with a tool like Grafana[^grafana]. They map closely
+and were inspired by the types from StatsD[^statsd_metrics].
 
 I've also created a simplistic heartbeat metric library and example FreeRTOS
 firmware to paint a picture of how this subsystem could work and to help inspire
@@ -554,7 +620,7 @@ you, the reader, as to what you could collect.
 
 ### Counters
 
-Couters are the most basic type. They store an accumulated value for the
+Counters are the most basic type. They store an accumulated value for the
 heartbeat duration which is reset at the end of the interval.
 
 These metrics are useful for detecting changes in the usage patterns of the
@@ -606,6 +672,7 @@ Some timed counters that I've found indispensable in the past include:
 - how long a particular feature was used for
 - time spent waiting for mutexes
 - time spent during flash operations
+- time elapsed (start/stop timer between flush calls)
 
 Below is a simple use case of measuring the total time per hour that the Wi-Fi
 radio was turned on.
@@ -646,17 +713,17 @@ using the heartbeat library.
 
 ```c
 static void prv_device_metrics_flush_callback(bool is_flushing) {
-  static int32_t s_prev_battery_pct;
+    static int32_t s_prev_battery_pct;
 
-  if (is_flushing) {
-    // End of heartbeat interval
-    const int32_t current_battery_pct = battery_get_pct();
-    const int32_t battery_delta = current_battery_pct - s_prev_battery_pct;
-    device_metrics_set(kDeviceMetricId_BatteryLifeDrain, battery_delta);
-  } else {
-    // Start of heartbeat interval
-    s_prev_battery_pct = battery_get_pct();
-  }
+    if (is_flushing) {
+        // End of heartbeat interval
+        const int32_t current_battery_pct = battery_get_pct();
+        const int32_t battery_delta = current_battery_pct - s_prev_battery_pct;
+        device_metrics_set(kDeviceMetricId_BatteryLifeDrain, battery_delta);
+    } else {
+        // Start of heartbeat interval
+        s_prev_battery_pct = battery_get_pct();
+    }
 }
 ```
 
@@ -671,7 +738,7 @@ but inspiring way).
 You can find the library within the
 [Interrupt Github repo](https://github.com/memfault/interrupt/blob/master/example/device-metrics).
 
-The metrics in the example library stored in a `int32_t` array for simplicity,
+The metrics in the example library stored in an `int32_t` array for simplicity,
 but there are optimizations that can be made to store values of various lengths
 or signedness. Assuming 4 bytes per metric, you can reasonably store hundreds of
 different metrics in RAM at any one time and flush them to persistent storage
@@ -754,7 +821,6 @@ various counters, counted timers, and gauges from the system for this 15 second
 interval.
 
 <p align="center">
-
   <img width="600" src="{% img_url device-metrics/freertos-example-output.png %}" alt="freertos-example-output" />
 </p>
 
@@ -770,11 +836,13 @@ to be gathered from internal and beta devices to predict the success of a
 firmware update.
 
 Below, I've listed a few of the metrics that we used at Pebble to determine
-whether a release candidate was worthy of a production rollout or not.
+whether a release candidate was worthy of a production rollout or not. With
+these calculations, you can easily compare metrics across firmware versions and
+validate or reject the latest release candidate.
 
 ### Crash Free Hours (or Days)
 
-As mentioned above, gauges make it incredibly simple to detect the prevelance
+As mentioned above, gauges make it incredibly simple to detect the prevalence
 and presence of an event across all devices of a fleet. Imagine you want to know
 roughly how many crash-free hours there are in the last 24 hours on a particular
 release.
@@ -787,38 +855,49 @@ metric, you can do this easily! The only two values of this metric, maybe
 Let's imagine that we have 1,000 devices, and of the 24,000 heartbeats from all
 devices in the last 24 hours, 2,000 of those reported a `1` (crashed).
 
-```
-       number of crash hours
- ( 1 - --------------------- ) * 100 = crash-free hours
-       total number of hours
+$$\left(1-\frac{\#\:crashing\: hours}{\#\: total\: hours\:}\right) \times 100 = \textbf{ % crash-free hours}$$
 
-(1 - (2,000 / 24,000)) * 100 = 91.6% crash-free hours
-```
+<hr>
+
+$$\left(1-\frac{2000}{24000}\right) \times 100 = \textbf{91.6% crash-free hours}$$
 
 This is a very good metric to use to gauge stability between releases, and it's
 incredibly simple to calculate once the data is in a database table.
 
 ### Battery Life Trends
 
-If each device records the percentage or mV battery drain per hour in a
-heartbeat metric, then it can easily project what the battery life of a firmware
-release will be with only a handful of devices over just a few hours. This is
-_incredibly_ useful if your devices have a battery life of weeks and you would
-rather not wait weeks for a device to complete its charge-discharge cycle.
+If each device records the percentage or mV
+[battery drain per hour](#battery-life-drain-metric) in a heartbeat metric, then
+it can easily project what the battery life of a firmware release will be with
+only a handful of devices over just a few hours. This is _incredibly_ useful if
+your devices have a battery life of weeks and you would rather not wait weeks
+for a device to complete its charge-discharge cycle.
 
-To do this, simply record the before and after battery life percentage (assuming
-the device was not plugged into a charger) in a gauge metric, and then take the
-average of this delta over **all heartbeats** of the particular release.
+To do this, simply record the delta in battery life during the heartbeat
+interval (assuming the device was not plugged into a charger) in a gauge metric,
+and then take the average of this delta over **all heartbeats** of the
+particular release.
 
-## Metric Types Summary
+<div>
+<span>$$\left(100 \div \frac{total\:battery\:pct\:drained\:over\:all\:heartbeats}{\#\:of\:heartbeats}\right)$$</span>
+<span>$$ = \textbf{projected days battery life}$$</span>
+</div>
 
-|                                 | Logging | Structured Logging | Structured Events | Heartbeats |
-| ------------------------------- | ------- | ------------------ | ----------------- | ---------- |
-| Easy to implement               | ✅      | ✅                 | ❌                | ✅         |
-| Fleet / version health          | ⚠️      | ⚠️                 | ⚠️                | ✅         |
-| Minimal data and connectivity   | ⚠️      | ⚠️                 | ✅                | ✅         |
-| Clock time not required         | ❌      | ❌                 | ❌                | ✅         |
-| Cheap / scalable infrastructure | ❌      | ❌                 | ⚠️                | ✅         |
+### Wi-Fi / BLE Connected Hours
+
+This is a crucial metric to track for devices that connect to a plethora of
+Wi-Fi routers and mobile phones on various versions of iOS or Android. Knowing
+from past experience, it seems like _anything_ can affect connectivity
+performance and there are constantly regressions.
+
+Once again, the metric is very easily to calculate assuming that the
+[Wi-Fi / BLE connectivity is tracked](#wifi-ble-connectivity-metric) within an
+hourly heartbeat.
+
+<div>
+<span>$$\left(\frac{total\:time\:connected\:over\:all\:heartbeats}{\#\:of\:heartbeats}\right) \times 100$$</span>
+<span>$$ = \textbf{ % connected hours}$$</span>
+</div>
 
 ## Conclusion
 

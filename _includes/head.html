@@ -14,6 +14,16 @@
       gtag('config', 'UA-133918181-3');
   </script>
 
+  <!-- https://zjuwhw.github.io/2017/06/04/MathJax.html -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
   <title>{%if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
   <link rel="icon" href="{% img_url favicon.png %}" type="image/png" />
