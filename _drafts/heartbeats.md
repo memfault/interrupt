@@ -849,7 +849,7 @@ implemented "go, no-go" meetings and policies around them, and require metrics
 to be gathered from internal and beta devices to predict the success of a
 firmware update.
 
-Below, I've listed a few of the metrics that we used at Pebble to determine
+Below, I've listed a few of the metrics that I've used in the past to determine
 whether a release candidate was worthy of a production rollout or not. With
 these calculations, you can compare metrics across firmware versions and
 validate or reject the latest release candidate.
@@ -918,18 +918,17 @@ hourly heartbeat.
 In this article, I've primarily covered how to think about, track, and store
 heartbeat metrics and how they compare against logging. I have completely
 ignored how to get the metrics **off** of the device and into something that
-developers and decision-makers can query. This is on purpose.
+developers and decision-makers can query. This is on purpose as it merits an article of its own.
 
-I imagine that every company has their favorite cloud vendor, their favorite
-database or data warehouse, and systems in place around device and data privacy.
-I could produce a one-off solution that a single developer could prop up
-themselves, but collecting metrics and making business decisions from these
-metrics is a problem that the entire company should be on board with.
+Some of the things that will need to be addressed include:
+* what the transport path & protocol looks like
+* how to efficiently ingest the data
+* what database / data warehouse to use
+* how to scale the solution as your fleet grows
+* how to visualize the data at the device and fleet level
+* how to alert on the data collected
 
-Bring in an infrastructure engineer from your company into the conversations and
-ask them how best to ingest and query these heartbeat metrics.
-
-If you'd rather just have someone else do it entirely, reach out to one of us at
+If you'd rather use a fully managed solution, reach out to one of us at
 Memfault. We'd be happy to guide you in the right direction and suggest a
 solution, whether it's our solution or not.
 
