@@ -1,11 +1,14 @@
 ---
 title: Tracking Fleet Health with Heartbeat Metrics
-description: Monitoring and tracking embedded devices using heartbeat metrics, as an alternative to log processing, helps hardware and IoT companies derisk firmware updates and alerts them to issues quickly.
+description:
+  Monitoring and tracking embedded devices using heartbeat metrics, as an
+  alternative to log processing, helps hardware and IoT companies derisk
+  firmware updates and alerts them to issues quickly.
 author: tyler
 tags: monitoring
 image: /img/device-metrics/heartbeats-cover.png
 kramdown:
-    toc_levels: 1..2
+  toc_levels: 1..2
 ---
 
 Releasing a connected device in today's world without some form of monitoring in
@@ -14,17 +17,18 @@ experiencing faults or crashing? How can the release lead be confident that no
 connectivity, performance, or battery-life regressions have occurred between the
 past and current firmware update?
 
-**The answer is that you need device monitoring in place long before ever shipping
-a firmware update to devices in the field.**
+**The answer is that you need device monitoring in place long before ever
+shipping a firmware update to devices in the field.**
 
-There have been several occasions in the past where I've introduced several performance and battery-life regressions that were never
-caught in internal beta testing of 50 devices. They were always subtle changes,
-such as an "optimization" that ended up causing high file system churn (which
-reduced battery life), or issues that crop up when connected over certain
-transports or to different mobile phone models. These bugs were caught in one of
-two ways: either a customer angry enough would submit a bug report, or we'd
-catch the regression on our internal dashboards which were powered by our suite
-of SQL queries that would run periodically.
+There have been several occasions in the past where I've introduced several
+performance and battery-life regressions that were never caught in internal beta
+testing of 50 devices. They were always subtle changes, such as an
+"optimization" that ended up causing high file system churn (which reduced
+battery life), or issues that crop up when connected over certain transports or
+to different mobile phone models. These bugs were caught in one of two ways:
+either a customer angry enough would submit a bug report, or we'd catch the
+regression on our internal dashboards which were powered by our suite of SQL
+queries that would run periodically.
 
 <!-- excerpt start -->
 
@@ -37,9 +41,9 @@ product decisions.
 
 <!-- excerpt end -->
 
-> This post is guaranteed to be the tip of the iceberg in a series of posts about
-> how to do device monitoring _properly_ at scale. With this in mind, this post
-> will be slightly more high-level than a typical "Interrupt" post.
+> This post is guaranteed to be the tip of the iceberg in a series of posts
+> about how to do device monitoring _properly_ at scale. With this in mind, this
+> post will be slightly more high-level than a typical "Interrupt" post.
 
 {% include newsletter.html %}
 
@@ -68,8 +72,8 @@ collected by APM's are:
 They work by installing hooks in various places in the code. Common examples are
 the pre/post request handlers for a web application and the pre/post handlers
 for a database transaction. By hooking into both sides of common operations,
-they can take a snapshot of the system before and after, and compare
-memory usage and time deltas.
+they can take a snapshot of the system before and after, and compare memory
+usage and time deltas.
 
 When an APM is hooked up to every instance of an application, it can paint a
 detailed picture of how an application, server, or fleet of either are
@@ -178,8 +182,9 @@ instrumental in debugging as they help a developer determine what happened
 before and after issues occur.
 
 Logs are usually forwarded from individual devices to a centralized datastore
-such as S3, or to a log aggregator, such as Elastisearch, to be further transformed and processed.
-Unfortunately, more often than not, the logs are ingested and forgotten about.
+such as S3, or to a log aggregator, such as Elastisearch, to be further
+transformed and processed. Unfortunately, more often than not, the logs are
+ingested and forgotten about.
 
 A developer might dig up a particular device's log files in response to a
 customer support request, but that requires a `pull-logs-from-s3.py` script and
@@ -189,8 +194,8 @@ a decent amount of time to determine where the device behaved unexpectedly.
 
 Metrics are a set of numbers that give information about a particular process or
 activity. They are measured over intervals of time and are usually just numbers.
-This means that they are pre-processed and more compact than logs, which means that
-you can store and query many more of them at once.
+This means that they are pre-processed and more compact than logs, which means
+that you can store and query many more of them at once.
 
 Metrics themselves don't help developers debug individual instances of issues or
 bugs, but they help organizations **detect** issues by measuring the data points
@@ -221,9 +226,9 @@ Wi-Fi connected time per hour.
 [I][12:30:00] Wi-Fi connected
 ```
 
-This calculation is relatively easy assuming we can process logs
-linearly. We see at 11:30 the device was connected to Wi-Fi, then disconnected
-at 11:45, so the time connected this hour was 15 minutes.
+This calculation is relatively easy assuming we can process logs linearly. We
+see at 11:30 the device was connected to Wi-Fi, then disconnected at 11:45, so
+the time connected this hour was 15 minutes.
 
 Let's present a problem that happens all the time with embedded systems.
 
@@ -255,10 +260,10 @@ manners mentioned in this article is up to you.
 
 ## Collecting Metrics from Devices
 
-Embedded systems have quirks that make them more difficult to track
-than web applications or mobile phones. Connectivity is slow and unreliable,
-timestamps are rarely accurate if they exist at all, and storage, CPU, RAM,
-power, and bandwidth are all limited.
+Embedded systems have quirks that make them more difficult to track than web
+applications or mobile phones. Connectivity is slow and unreliable, timestamps
+are rarely accurate if they exist at all, and storage, CPU, RAM, power, and
+bandwidth are all limited.
 
 Due to these constraints, the solutions for how to capture, send, and receive
 data from embedded systems tend to look very different compared to their
@@ -292,18 +297,18 @@ important.
 ```
 
 The device firmware generates these logs, writes them to a RAM buffer, and
-eventually flushes them to persistent storage such as NOR flash in a circular buffer
-fashion. Periodically, these logs are vacuumed up by the system and pushed (or
-pulled) to a central location.
+eventually flushes them to persistent storage such as NOR flash in a circular
+buffer fashion. Periodically, these logs are vacuumed up by the system and
+pushed (or pulled) to a central location.
 
-Every so often, a single device's logs might be manually dug up by the engineer to track down a bug that a customer had
-reported.
+Every so often, a single device's logs might be manually dug up by the engineer
+to track down a bug that a customer had reported.
 
 Logs are great for local debugging, but at scale, they are incredibly difficult
 to make sense of and provide useful data about an entire fleet of devices. You
 can build it yourself[^logging_pipeline] or use your web team's favorite logging
-aggregator. However, both of those approaches can become a significant cost in either
-engineering resources or SaaS bills respectively.
+aggregator. However, both of those approaches can become a significant cost in
+either engineering resources or SaaS bills respectively.
 
 Logging will also generate an enormous amount of data, which will in turn use
 more CPU and power, require more storage, cause more flash wear, and use more
@@ -328,8 +333,8 @@ JSON, it's a waste of precious space.
 
 Structured logging makes it easier for developers to build scripts around
 viewing logs locally and might help with integration into a commercial log
-aggregator, but that is about it. It carries with it all of the cons of plain text
-logging described above.
+aggregator, but that is about it. It carries with it all of the cons of plain
+text logging described above.
 
 ### Binary Logging
 
@@ -413,8 +418,8 @@ is pre-aggregated on the device. Instead of sending raw log data and having to
 do stream processing on the logs to pull out metric data, we store the metric
 directly on the device!
 
-> The following examples use the heartbeat library I will go into more details about 
-> [below](#heartbeat-library-example)
+> The following examples use the heartbeat library I will go into more details
+> about [below](#heartbeat-library-example)
 
 Below, we increment the count of flash write errors seen on a device:
 
@@ -474,9 +479,17 @@ based upon the previous interval.
 > More information on resetting metrics for each heartbeat can be found
 > [here](#resetting-data-for-each-heartbeat).
 
-How a project chooses to persist heartbeats to flash and send them over the wire is something I don't discuss in depth in this post. If I were to build that system today, I would use CBOR or Protobuf (with a stable Protobuf definition file). A small web application would accept the payloads, unpackage them, and push them into a database. I might also use Memfault (depends on whether there is a free infrastructure engineer at the time).
+How a project chooses to persist heartbeats to flash and send them over the wire
+is something I don't discuss in depth in this post. If I were to build that
+system today, I would use CBOR or Protobuf (with a stable Protobuf definition
+file). A small web application would accept the payloads, unpackage them, and
+push them into a database. I might also use Memfault (depends on whether there
+is a free infrastructure engineer at the time).
 
-Heartbeats aren't a magic bullet. Since they only store aggregated data and not the raw form, they aren't as useful for post-mortem debugging as logs would be. However, they are more compact and easier to ultimate store and process once they are pushed to the cloud. 
+Heartbeats aren't a magic bullet. Since they only store aggregated data and not
+the raw form, they aren't as useful for post-mortem debugging as logs would be.
+However, they are more compact and easier to ultimate store and process once
+they are pushed to the cloud.
 
 ### Raw Data Types Summary
 
@@ -501,8 +514,7 @@ I have a few tips on how to use heartbeats, and the best practices to follow.
 
 In my experience, heartbeats serve three primary purposes.
 
-1. To enable calculations of important metrics across an entire fleet of
-   devices
+1. To enable calculations of important metrics across an entire fleet of devices
 2. To enable calculations of important metrics between different firmware
    versions
 3. To present a device's vitals and metrics in a timeline view
@@ -516,10 +528,10 @@ do not synchronize their clocks and have no notion of wall time, only an
 internal tick count. As long as a device knows approximately how long a minute,
 hour, or day is, they can generate a useful heartbeat.
 
-For 1 and 3, having a timestamp is useful if you wanted to limit queries
-to the last 24 hours of data or last week. However, for 2, you just need to
-group all firmware version hourly heartbeats and perform aggregates on
-them! It doesn't _really_ matter when they were.
+For 1 and 3, having a timestamp is useful if you wanted to limit queries to the
+last 24 hours of data or last week. However, for 2, you just need to group all
+firmware version hourly heartbeats and perform aggregates on them! It doesn't
+_really_ matter when they were.
 
 If a developer wants to see a timeline view of a device's vitals, such as heap
 statistics, battery life, and utilization data for the last week, then
@@ -596,7 +608,8 @@ ignore devices that have missing data in our queries.
 
 All of those are easily solved by just resetting the values for each heartbeat!
 
-In summary, if you ever imagine aggregating a metric across multiple devices, be sure to reset your metrics at the beginning of each interval.
+In summary, if you ever imagine aggregating a metric across multiple devices, be
+sure to reset your metrics at the beginning of each interval.
 
 ### Extra Metadata to Include
 
@@ -611,8 +624,8 @@ heartbeat or each batch of heartbeats.
   id]({% post_url 2019-05-29-gnu-build-id-for-firmware%}).
 - **Device Serial Number**: You want to be able to type back heartbeats to the
   device they came from to do more fine-grained queries.
-- **Timestamp**: The timestamp interval the heartbeat relates to (when available).
-  [More information](#heartbeat-timestamps)
+- **Timestamp**: The timestamp interval the heartbeat relates to (when
+  available). [More information](#heartbeat-timestamps)
 - **Heartbeat Duration**: The last thing I would suggest including is the actual
   duration of the heartbeat interval. A device might reboot mid-way through a
   heartbeat interval, and you'll want to be able to either normalize this data
@@ -884,29 +897,31 @@ incredibly simple to calculate once the data is in a database table.
 
 If each device records the percentage or mV
 [battery drain per hour](#battery-life-drain-metric) in a heartbeat metric, then
-you can project what the battery life of a firmware release will be with
-only a handful of devices over just a few hours. This is _incredibly_ useful if
-your devices have a battery life of weeks and you would rather not wait weeks
-for a device to complete its charge-discharge cycle.
+you can project what the battery life of a firmware release will be with only a
+handful of devices over just a few hours. This is _incredibly_ useful if your
+devices have a battery life of weeks and you would rather not wait weeks for a
+device to complete its charge-discharge cycle.
 
-To do this, record the delta in battery life during the heartbeat
-interval (assuming the device was not plugged into a charger) in a gauge metric,
-and then take the average of this delta over **all heartbeats** of the
-particular release.
+To do this, record the delta in battery life during the heartbeat interval
+(assuming the device was not plugged into a charger) in a gauge metric, and then
+take the average of this delta over **all heartbeats** of the particular
+release.
 
 <div>
 <span>$$\left(100 \div \frac{total\:battery\:pct\:drained\:over\:all\:heartbeats}{\#\:of\:heartbeats}\right)$$</span>
 <span>$$ = \textbf{projected days battery life}$$</span>
 </div>
 
-> It might be helpful to scale out the battery life beyond just 1-100 so that devices with a long battery life won't report zero as the delta for every heartbeat.
+> It might be helpful to scale out the battery life beyond just 1-100 so that
+> devices with a long battery life won't report zero as the delta for every
+> heartbeat.
 
 ### Wi-Fi / BLE Connected Hours
 
 This is a crucial metric to track for devices that connect to a plethora of
 Wi-Fi routers and mobile phones on various versions of iOS or Android. Knowing
-from experience, it seems like _anything_ can affect connectivity
-performance and there are constantly regressions occurring.
+from experience, it seems like _anything_ can affect connectivity performance
+and there are constantly regressions occurring.
 
 Once again, the metric can be calculated easily assuming the
 [Wi-Fi / BLE connectivity is tracked](#wifi-ble-connectivity-metric) within an
@@ -922,15 +937,17 @@ hourly heartbeat.
 In this article, I've primarily covered how to think about, track, and store
 heartbeat metrics and how they compare against logging. I have completely
 ignored how to get the metrics **off** of the device and into something that
-developers and decision-makers can query. This is on purpose as it merits an article of its own.
+developers and decision-makers can query. This is on purpose as it merits an
+article of its own.
 
 Some of the things that will need to be addressed include:
-* what the transport path & protocol looks like
-* how to efficiently ingest the data
-* what database / data warehouse to use
-* how to scale the solution as your fleet grows
-* how to visualize the data at the device and fleet level
-* how to alert on the data collected
+
+- what the transport path & protocol looks like
+- how to efficiently ingest the data
+- what database / data warehouse to use
+- how to scale the solution as your fleet grows
+- how to visualize the data at the device and fleet level
+- how to alert on the data collected
 
 If you'd rather use a fully managed solution, reach out to one of us at
 Memfault. We'd be happy to guide you in the right direction and suggest a
@@ -938,11 +955,21 @@ solution, whether it's our solution or not.
 
 ## Conclusion
 
-I'm glad I finally got around to writing this post. The topic of generating, collecting, and tracking metrics for embedded systems at scale is not a topic that is discussed enough on the Internet. I hope the ideas and methods discussed in this post have put some incarnation of heartbeat metrics on the roadmap, whether it's replacing some form of logging or being added as a complement to it. 
+I'm glad I finally got around to writing this post. The topic of generating,
+collecting, and tracking metrics for embedded systems at scale is not a topic
+that is discussed enough on the Internet. I hope the ideas and methods discussed
+in this post have put some incarnation of heartbeat metrics on the roadmap,
+whether it's replacing some form of logging or being added as a complement to
+it.
 
-During my days at Pebble, I was the release lead for several firmware releases, and my job was made easier by the fact that the firmware and infrastructure teams had invested a lot of time and energy into building one of the best analytics systems I've come across in a hardware company. I hope you all either have the same already or will soon.
+During my days at Pebble, I was the release lead for several firmware releases,
+and my job was made easier by the fact that the firmware and infrastructure
+teams had invested a lot of time and energy into building one of the best
+analytics systems I've come across in a hardware company. I hope you all either
+have the same already or will soon.
 
-I'd love to hear about how you think about metrics and embedded systems and what you or your organization has built to tackle these problems in the comments. 
+I'd love to hear about how you think about metrics and embedded systems and what
+you or your organization has built to tackle these problems in the comments.
 
 <!-- Interrupt Keep START -->
 
