@@ -766,7 +766,7 @@ of a couple of regions in your external flash chip.
 I want to use this section to convince you that implementing heartbeats is a
 relatively painless and worthwhile endeavor. Take the example library as an
 inspiration, but do appreciate that it isn't far from Memfault's
-[production worthy equivalent](https://github.com/memfault/memfault-firmware-sdk/blob/master/components/metrics/src/memfault_metrics.c).
+[production worthy equivalent](https://github.com/memfault/memfault-firmware-sdk/blob/3566178/components/metrics/include/memfault/metrics/metrics.h#L9-L28).
 
 The first and most important thing is to define the metric types.
 
