@@ -409,8 +409,8 @@ is pre-aggregated on the device. Instead of sending raw log data and having to
 do stream processing on the logs to pull out metric data, we store the metric
 directly on the device!
 
-> The below examples use the heartbeat library I mentioned
-> [here](#heartbeat-library-example)
+> The following examples use the heartbeat library I will go into more details about 
+> [below](#heartbeat-library-example)
 
 Below, we increment the count of flash write errors seen on a device:
 
@@ -596,8 +596,7 @@ If a heartbeat doesn't have a complete interval recorded, just throw it out. In
 the past, I've actually put this as a column in the database row,
 `is_full_hour`.
 
-In summary, if you ever imagine aggregating a metric across multiple devices, it
-should not be a continuous sum spanning multiple heartbeats.
+In summary, if you ever imagine aggregating a metric across multiple devices, be sure to reset your metrics at the beginning of each interval.
 
 ### Extra Metadata to Include
 
@@ -612,7 +611,7 @@ heartbeat or each batch of heartbeats.
   id]({% post_url 2019-05-29-gnu-build-id-for-firmware%}).
 - **Device Serial Number**: You want to be able to type back heartbeats to the
   device they came from to do more fine-grained queries.
-- **Timestamp**: The timestamp interval the heartbeat relates to.
+- **Timestamp**: The timestamp interval the heartbeat relates to (when available).
   [More information](#heartbeat-timestamps)
 - **Heartbeat Duration**: The last thing I would suggest including is the actual
   duration of the heartbeat interval. A device might reboot mid-way through a
@@ -641,7 +640,7 @@ experiencing between releases.
 
 Metrics that would be perfect for **counters** could be the number of:
 
-- bytes sent/received over connectivity
+- bytes sent/received over a device's transport path
 - connectivity disconnect events
 - flash bytes written
 - flash sector erases
@@ -676,7 +675,7 @@ performance, expected battery-life, and user-experience.
 Some timed counters that I've found indispensable in the past include:
 
 - CPU utilization
-- CPU asleep time
+- CPU sleep time
 - BLE, Wi-Fi radio utilization
 - thread utilization
 - sensor and peripheral utilization
