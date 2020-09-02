@@ -472,6 +472,8 @@ based upon the previous interval.
 > More information on resetting metrics for each heartbeat can be found
 > [here](#resetting-data-for-each-heartbeat).
 
+How a project chooses to persist heartbeats to flash and send them over the wire is something I don't discuss in depth in this post. If I were to build that system today, I would use CBOR or Protobuf (with a stable Protobuf definition file). A small web application would accept the payloads, unpackage them, and push them into a database. I might also use Memfault (depends on whether there is a free infrastructure engineer at the time).
+
 Heartbeats aren't a magic bullet. Since they only store aggregated data and not the raw form, they aren't as useful for post-mortem debugging as logs would be. However, they are more compact and easier to ultimate store and process once they are pushed to the cloud. 
 
 ### Raw Data Types Summary
