@@ -58,6 +58,7 @@ millions of servers or containers.
 I'd like to talk about a few different variations of monitoring and how they
 relate to us in the world of embedded systems.
 
+{:.no_toc}
 ### Application Performance Monitoring (APM)
 
 Application performance monitoring services collect and aggregate different
@@ -86,6 +87,7 @@ in 2008 and is now a publicly-traded company.
 ScoutAPM[^scout_apm]<br> **Open Source Libraries**: StatsD[^statsd],
 CollectD[^collectd], Prometheus[^prometheus]
 
+{:.no_toc}
 ### Tracing and Logging
 
 I've grouped these into a single group because they accomplish the same goal.
@@ -109,6 +111,7 @@ when developers **know** there is an issue with a specific device.
 **Software services:** New Relic[^new_relic], Datadog[^datadog]<br> **Firmware
 services:** Percepio[^percepio]
 
+{:.no_toc}
 ### Crash Reporting
 
 How nice would it be to have in-depth analysis and alerts for every unique
@@ -138,6 +141,7 @@ seen issues easily and provide a wealth of data to fix the problem quickly.
 Software services: Sentry[^sentry], Rollbar[^rollbar], Bugsnag[^bugsnag]<br>
 Firmware services: Memfault[^memfault]
 
+{:.no_toc}
 ### Instantaneous State Monitoring
 
 This is the category that most of today's "IoT monitoring solutions" fall into.
@@ -159,6 +163,7 @@ that it received every state change event from the device.
 The statistic of time-active is a critical measurement for embedded devices, and
 is one of the best predictors of battery-life drain and performance.
 
+{:.no_toc}
 ### What About Embedded Systems?
 
 Most of the above services or strategies listed above do not apply to
@@ -175,6 +180,7 @@ understanding of how devices are performing in the field.
 I want to quickly cover the difference and use-cases for two common forms of
 data collected from systems: logs and metrics.
 
+{:.no_toc}
 ### Logs
 
 Logs are immutable events that happened over time to a single device. They are
@@ -190,6 +196,7 @@ A developer might dig up a particular device's log files in response to a
 customer support request, but that requires a `pull-logs-from-s3.py` script and
 a decent amount of time to determine where the device behaved unexpectedly.
 
+{:.no_toc}
 ### Metrics
 
 Metrics are a set of numbers that give information about a particular process or
@@ -205,6 +212,7 @@ that matter most. For many hardware makers, these metrics might be:
 - Average battery life
 - Wi-Fi/BLE connected time per hour
 
+{:.no_toc}
 ### Transforming Logs into Metrics
 
 Logs can be transformed, processed, and aggregated into metrics, but this
@@ -249,6 +257,7 @@ hour.
 
 We can do better.
 
+{:.no_toc}
 ### Do We Need Both?
 
 Logs and metrics ultimately serve different purposes. You need logs to debug
@@ -283,6 +292,7 @@ all of the following benefits:
 We will go through each common approach to gathering monitoring data from
 devices and assess them on the above requirements.
 
+{:.no_toc}
 ### Plain Text Logging
 
 The first solution that most companies deploy for remote device monitoring is to
@@ -314,6 +324,7 @@ Logging will also generate an enormous amount of data, which will in turn use
 more CPU and power, require more storage, cause more flash wear, and use more
 bandwidth to send the data.
 
+{:.no_toc}
 ### Structured Logging
 
 A close cousin to logging is structured logging. It is essentially a more-easily
@@ -336,6 +347,7 @@ viewing logs locally and might help with integration into a commercial log
 aggregator, but that is about it. It carries with it all of the cons of plain
 text logging described above.
 
+{:.no_toc}
 ### Binary Logging
 
 If more structure is desired, the next evolution is typically in the form of
@@ -403,6 +415,7 @@ still a challenge. Another unfortunate truth about binary logging is that a
 developer can no longer just connect to a UART and understand the logs.
 **Scripts are required**.
 
+{:.no_toc}
 ### Heartbeats
 
 A device heartbeat can be thought of as a periodic "pulse" sent from a device to
@@ -491,6 +504,7 @@ the raw form, they aren't as useful for post-mortem debugging as logs would be.
 However, they are more compact and easier to ultimate store and process once
 they are pushed to the cloud.
 
+{:.no_toc}
 ### Raw Data Types Summary
 
 In summary, let's compare the methods of collecting data for use as metrics.
@@ -510,6 +524,7 @@ Where ✅ is a benefit, ⚠️ is neutral, and ❌ is not a benefit.
 
 I have a few tips on how to use heartbeats, and the best practices to follow.
 
+{:.no_toc}
 ### Heartbeat Timestamps
 
 In my experience, heartbeats serve three primary purposes.
@@ -544,6 +559,7 @@ use as a "boot ID" of sorts, and then use milliseconds-since-boot as the
 timestamp. It should work well enough given the device sends these logs to a
 server every so often
 
+{:.no_toc}
 ### Resetting Data for Each Heartbeat
 
 Once the heartbeat interval has finished and the metrics have been flushed, each
@@ -611,6 +627,7 @@ All of those are easily solved by just resetting the values for each heartbeat!
 In summary, if you ever imagine aggregating a metric across multiple devices, be
 sure to reset your metrics at the beginning of each interval.
 
+{:.no_toc}
 ### Extra Metadata to Include
 
 Metrics are only useful if you can tie them back to a specific device, firmware
@@ -642,6 +659,7 @@ firmware to paint a picture of how this subsystem could work and to help inspire
 you, the reader, as to what you could collect.
 [Skip ahead to the code if you like](#heartbeat-library-example).
 
+{:.no_toc}
 ### Counters
 
 Counters are the most basic type. They store an accumulated value for the
@@ -676,6 +694,7 @@ void ble_send(void *buf, size_t len) {
 }
 ```
 
+{:.no_toc}
 ### Timed Counters
 
 Timed Counters (or Timers in StatsD[^statsd]) are essentially counters
@@ -718,6 +737,7 @@ void wifi_off(void) {
 > the same aggregates per heartbeat interval using an extra 4-8 bytes of extra
 > RAM per aggregate (except for the 90th percentile).
 
+{:.no_toc}
 ### Gauges
 
 Gauges are constant values and are not aggregated by the metrics system. In the
@@ -776,6 +796,7 @@ hour, that is only ~25kB of storage required per day or roughly 200 kB per week.
 Given how critical this information is to detect issues, it is a fantastic use
 of a couple of regions in your external flash chip.
 
+{:.no_toc}
 ### Heartbeat Library Design
 
 I want to use this section to convince you that implementing heartbeats is a
@@ -830,6 +851,7 @@ void device_metrics_flush(void);
 void device_metrics_reset_all(void);
 ```
 
+{:.no_toc}
 ### Running the Example
 
 I'm primarily using [Renode]({% post_url 2020-03-23-intro-to-renode %}) to do
@@ -869,6 +891,7 @@ whether a release candidate was worthy of a production rollout or not. With
 these calculations, you can compare metrics across firmware versions and
 validate or reject the latest release candidate.
 
+{:.no_toc}
 ### Crash Free Hours (or Days)
 
 As mentioned above, gauges make it incredibly simple to detect the prevalence
@@ -893,6 +916,7 @@ $$\left(1-\frac{2000}{24000}\right) \times 100 = \textbf{91.6% crash-free hours}
 This is a very good metric to use to gauge stability between releases, and it's
 incredibly simple to calculate once the data is in a database table.
 
+{:.no_toc}
 ### Battery Life Trends
 
 If each device records the percentage or mV
@@ -916,6 +940,7 @@ release.
 > devices with a long battery life won't report zero as the delta for every
 > heartbeat.
 
+{:.no_toc}
 ### Wi-Fi / BLE Connected Hours
 
 This is a crucial metric to track for devices that connect to a plethora of
