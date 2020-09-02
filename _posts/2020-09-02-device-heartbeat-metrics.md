@@ -1,7 +1,7 @@
 ---
-title: Tracking Fleet Health with Heartbeat Metrics
+title: Monitoring Fleet Health with Heartbeat Metrics
 description:
-  Monitoring and tracking embedded devices using heartbeat metrics, as an
+  Monitoring and tracking embedded devices using heartbeat metrics, an
   alternative to log processing, helps hardware and IoT companies derisk
   firmware updates and alerts them to issues quickly.
 author: tyler
