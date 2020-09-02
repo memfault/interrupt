@@ -66,7 +66,7 @@ collected by APM's are:
 They work by installing hooks in various places in the code. Common examples are
 the pre/post request handlers for a web application and the pre/post handlers
 for a database transaction. By hooking into both sides of common operations,
-they are able to take a snapshot of the system before and after, and compare
+they can take a snapshot of the system before and after, and compare
 memory usage and time deltas.
 
 When an APM is hooked up to every instance of an application, it can paint a
@@ -117,7 +117,7 @@ presented in a bug-tracker like fashion to the user.
 
 These systems usually require an SDK to be shipped with the application. These
 services must build and support an SDK that is written in the same language and
-for the same framework as the application they are monitor.
+for the same framework as the application they monitor.
 
 For firmware, they would likely install hooks into the
 [assert]({% post_url 2019-11-05-asserts-in-embedded-systems %}),
@@ -155,14 +155,14 @@ is one of the best predictors of battery-life drain and performance.
 
 ### What About Embedded Systems?
 
-Most of the above services or strategies listed above are not applicable to
+Most of the above services or strategies listed above do not apply to
 constrained embedded systems. Save for Memfault and Percepio, most of the
 solutions would require orders of magnitude more memory, CPU, power, and
 Internet bandwidth.
 
 There is hope though. We will explore how we can manage to get the most
 important and actionable metrics out of embedded systems and gain an
-understanding about how devices are performing in the field.
+understanding of how devices are performing in the field.
 
 ## Logging and Metrics
 
@@ -175,7 +175,7 @@ Logs are immutable events that happened over time to a single device. They are
 instrumental in debugging as they help a developer determine what happened
 before and after issues occur.
 
-Logs are usually forwarded from individual devices to a centralized data store
+Logs are usually forwarded from individual devices to a centralized datastore
 such as S3, or to a log aggregator, such as Elastisearch, to be further transformed and processed.
 Unfortunately, more often than not, the logs are ingested and forgotten about.
 
@@ -219,7 +219,7 @@ Wi-Fi connected time per hour.
 [I][12:30:00] Wi-Fi connected
 ```
 
-This calculation is relatively easy assuming we are able to process logs
+This calculation is relatively easy assuming we can process logs
 linearly. We see at 11:30 the device was connected to Wi-Fi, then disconnected
 at 11:45, so the time connected this hour was 15 minutes.
 
@@ -253,7 +253,7 @@ manners mentioned in this article is up to you.
 
 ## Collecting Metrics from Devices
 
-Embedded systems have quirks which make them more difficult to track
+Embedded systems have quirks that make them more difficult to track
 than web applications or mobile phones. Connectivity is slow and unreliable,
 timestamps are rarely accurate if they exist at all, and storage, CPU, RAM,
 power, and bandwidth are all limited.
@@ -289,7 +289,7 @@ important.
 [I][1598845592] Battery status: 67%, 3574 mV
 ```
 
-The device firmware generates these logs, writes them to a RAM buffer and
+The device firmware generates these logs, writes them to a RAM buffer, and
 eventually flushes them to persistent storage such as NOR flash in a circular buffer
 fashion. Periodically, these logs are vacuumed up by the system and pushed (or
 pulled) to a central location.
@@ -472,10 +472,7 @@ based upon the previous interval.
 > More information on resetting metrics for each heartbeat can be found
 > [here](#resetting-data-for-each-heartbeat).
 
-**Pros:** Least amount of data sent, easily parsed by server, pre-aggregated for
-easier fleet metric analysis, can be pushed easily into a database or data
-warehouse, no clock time necessary<br> **Cons:** Only alerts developers that
-there _is_ a problem with a device or fleet (not how to fix it),
+Heartbeats aren't a magic bullet. Since they only store aggregated data and not the raw form, they aren't as useful for post-mortem debugging as logs would be. However, they are more compact and easier to ultimate store and process once they are pushed to the cloud. 
 
 ### Raw Data Types Summary
 
@@ -501,10 +498,10 @@ I have a few tips on how to use heartbeats, and the best practices to follow.
 In my experience, heartbeats serve three primary purposes.
 
 1. To enable calculations of important metrics across an entire fleet of
-   devices.
+   devices
 2. To enable calculations of important metrics between different firmware
-   versions.
-3. To present a device's vitals and metrics in a timeline view.
+   versions
+3. To present a device's vitals and metrics in a timeline view
 
 Recall that with logs, we needed to include timestamps with each log line to
 enable us to process logs linearly and determine the time between events.
@@ -515,9 +512,9 @@ do not synchronize their clocks and have no notion of wall time, only an
 internal tick count. As long as a device knows approximately how long a minute,
 hour, or day is, they can generate a useful heartbeat.
 
-For 1 and 3, having a timestamp is really useful if you wanted to limit queries
+For 1 and 3, having a timestamp is useful if you wanted to limit queries
 to the last 24 hours of data or last week. However, for 2, you just need to
-group all firmware version hourly heartbeats together and perform aggregates on
+group all firmware version hourly heartbeats and perform aggregates on
 them! It doesn't _really_ matter when they were.
 
 If a developer wants to see a timeline view of a device's vitals, such as heap
@@ -852,7 +849,7 @@ firmware update.
 
 Below, I've listed a few of the metrics that we used at Pebble to determine
 whether a release candidate was worthy of a production rollout or not. With
-these calculations, you can easily compare metrics across firmware versions and
+these calculations, you can compare metrics across firmware versions and
 validate or reject the latest release candidate.
 
 ### Crash Free Hours (or Days)
@@ -863,7 +860,7 @@ roughly how many crash-free hours there are in the last 24 hours on a particular
 release.
 
 By recording _whether the device faulted or crashed in the last hour_ in a gauge
-metric, you can do this easily! The only two values of this metric, maybe
+metric, you can do this! The only two values of this metric, maybe
 `kDeviceMetric_DidCrash`, are `0` and `1`, where `0` is it hasn't crashed and
 `1` mean it has crashed in the last hour.
 
@@ -883,7 +880,7 @@ incredibly simple to calculate once the data is in a database table.
 
 If each device records the percentage or mV
 [battery drain per hour](#battery-life-drain-metric) in a heartbeat metric, then
-it can easily project what the battery life of a firmware release will be with
+you can project what the battery life of a firmware release will be with
 only a handful of devices over just a few hours. This is _incredibly_ useful if
 your devices have a battery life of weeks and you would rather not wait weeks
 for a device to complete its charge-discharge cycle.
@@ -902,10 +899,10 @@ particular release.
 
 This is a crucial metric to track for devices that connect to a plethora of
 Wi-Fi routers and mobile phones on various versions of iOS or Android. Knowing
-from past experience, it seems like _anything_ can affect connectivity
-performance and there are constantly regressions.
+from experience, it seems like _anything_ can affect connectivity
+performance and there are constantly regressions occurring.
 
-Once again, the metric is very easily to calculate assuming that the
+Once again, the metric can be calculated easily assuming the
 [Wi-Fi / BLE connectivity is tracked](#wifi-ble-connectivity-metric) within an
 hourly heartbeat.
 
