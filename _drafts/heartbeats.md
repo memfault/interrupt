@@ -250,7 +250,7 @@ issues, and you need metrics to make informed product and business decisions.
 **Whether you transform logs into metrics or collect metrics directly in the
 manners mentioned in this article is up to you.**
 
-## Collecting Data from Devices
+## Collecting Metrics from Devices
 
 Embedded systems have quirks about them that make then more difficult to track
 than web applications or mobile phones. Connectivity is slow and unreliable,
@@ -335,12 +335,14 @@ If more structure is desired, the next evolution is typically in the form of
 binary logs or events. This will take each log-line and convert it into a
 structure known by the service that parses the data.
 
+Here are a few hypothetical events and their companion logging functions.
+
 ```c
 typedef struct PACKED {
-    uint16_t   type;
-    uint8_t:4  thread_id;
-    uint8_t:4  level;
-    uint8_t    reserved;
+    uint16_t  type;
+    uint8_t   thread_id:4;
+    uint8_t   level:4;
+    uint8_t   reserved;
 } Event_Base;
 
 typedef struct PACKED {
@@ -381,7 +383,7 @@ I've designed the structures above by using C structs for easy comprehension by
 the reader. If this architecture is used in production, I would **highly
 recommend** using Protobuf or another message packing protocol for more
 resilient parsing and backward-compatibility. It solves many of the deficiencies
-with structured events.
+with binary logging.
 
 Binary logging will use less data, storage, and bandwidth which is a huge boon
 to developers because it might mean they can _log even more_.
@@ -390,7 +392,7 @@ Although Protobuf solves many of the problems around parsing, keeping the
 definitions in sync between device and server and always using the right one is
 still a challenge. Another unfortunate truth about binary logging is that a
 developer can no longer just connect to a UART and understand the logs.
-**Scripts will be required**.
+**Scripts are required**.
 
 ### Heartbeats
 
@@ -475,16 +477,16 @@ there _is_ a problem with a device or fleet (not how to fix it),
 
 ### Raw Data Types Summary
 
-In summary, let's compare the methods of collecting data against each other.
+In summary, let's compare the methods of collecting data for use as metrics.
 
-|                                  | Logging | Structured Logging | Structured Events | Heartbeats |
-| -------------------------------- | ------- | ------------------ | ----------------- | ---------- |
-| Easy to implement                | ✅      | ✅                 | ❌                | ✅         |
-| Fleet / version health           | ⚠️      | ⚠️                 | ⚠️                | ✅         |
-| Minimal data and connectivity    | ⚠️      | ⚠️                 | ✅                | ✅         |
-| Wall time not required           | ❌      | ❌                 | ❌                | ✅         |
-| Cheap / scalable infrastructure  | ❌      | ❌                 | ⚠️                | ✅         |
-| Good for debugging device issues | ✅      | ✅                 | ✅                | ⚠️         |
+|                                  | Logging | Structured Logging | Binary Logging | Heartbeats |
+| -------------------------------- | ------- | ------------------ | -------------- | ---------- |
+| Easy to implement                | ✅      | ✅                 | ❌             | ✅         |
+| Fleet / version health           | ⚠️      | ⚠️                 | ⚠️             | ✅         |
+| Minimal data and connectivity    | ⚠️      | ⚠️                 | ✅             | ✅         |
+| Wall time not required           | ❌      | ❌                 | ❌             | ✅         |
+| Cheap / scalable infrastructure  | ❌      | ❌                 | ⚠️             | ✅         |
+| Good for debugging device issues | ✅      | ✅                 | ✅             | ⚠️         |
 
 Where ✅ is a benefit, ⚠️ is neutral, and ❌ is not a benefit.
 
@@ -520,10 +522,17 @@ If a developer wants to see a timeline view of a device's vitals, such as heap
 statistics, battery life, and utilization data for the last week, then
 timestamps are essential for every heartbeat.
 
+If the device doesn't and will never have access to the wall time and you want a
+robust solution for viewing logs in a timeline from a single device, I suggest
+generating a random (or better, monotonically increasing) integer on boot for
+use as a "boot ID" of sorts, and then use milliseconds-since-boot as the
+timestamp. It should work well enough given the device sends these logs to a
+server every so often
+
 ### Resetting Data for Each Heartbeat
 
 Once the heartbeat interval has finished and the metrics have been flushed, each
-metric value hould be reset.
+metric value should be reset.
 
 Let me try to emphasize how important this is with an example. Let's imagine my
 fictitious smart-toaster company is trying to measure how long, on average, all
@@ -575,7 +584,7 @@ hour, we just add all the intervals and divide by the number of heartbeats
 
 The real issue comes into play when we want to compute a particular metric
 across all hours of a particular firmware version or group of devices. If every
-hour's metric is based upon the previous hours data, for every single device,
+hour's metric is based upon the previous hour's data, for every single device,
 what happens if we miss a subset of heartbeats from a device?
 
 Do we extrapolate the data across the missing points? Do throw out the remainder
@@ -586,6 +595,9 @@ All of those are easily solved by just resetting the values for each heartbeat!
 If a heartbeat doesn't have a complete interval recorded, just throw it out. In
 the past, I've actually put this as a column in the database row,
 `is_full_hour`.
+
+In summary, if you ever imagine aggregating a metric across multiple devices, it
+should not be a continuous sum spanning multiple heartbeats.
 
 ### Extra Metadata to Include
 
@@ -899,6 +911,26 @@ hourly heartbeat.
 <span>$$ = \textbf{ % connected hours}$$</span>
 </div>
 
+## What's Next?
+
+In this article, I've primarily covered how to think about, track, and store
+heartbeat metrics and how they compare against logging. I have completely
+ignored how to get the metrics **off** of the device and into something that
+developers and decision-makers can query. This is on purpose.
+
+I imagine that every company has their favorite cloud vendor, their favorite
+database or data warehouse, and systems in place around device and data privacy.
+I could produce a one-off solution that a single developer could prop up
+themselves, but collecting metrics and making business decisions from these
+metrics is a problem that the entire company should be on board with.
+
+Bring in an infrastructure engineer from your company into the conversations and
+ask them how best to ingest and query these heartbeat metrics.
+
+If you'd rather just have someone else do it entirely, reach out to one of us at
+Memfault. We'd be happy to guide you in the right direction and suggest a
+solution, whether it's our solution or not.
+
 ## Conclusion
 
 <!-- Interrupt Keep START -->
@@ -916,6 +948,7 @@ hourly heartbeat.
 <!-- prettier-ignore-start -->
 [^statsd_metrics]: [StatsD Metric Types](https://github.com/statsd/statsd/blob/master/docs/metric_types.md)
 [^grafana]: [Grafana](https://grafana.com)
+[^renode_nrf52]: [Renode nRF52 Announcement](https://renode.io/news/renode-1.10-release/)
 [^new_relic]: [New Relic](https://newrelic.com/)
 [^datadog]: [Datadog](https://www.datadoghq.com/)
 [^scout_apm]: [Scout APM](https://scoutapm.com/)
@@ -923,4 +956,8 @@ hourly heartbeat.
 [^collectd]: [CollectD](https://collectd.org/)
 [^prometheus]: [Prometheus](https://prometheus.io/)
 [^grafana]: [Grafana](https://grafana.com)
+[^sentry]: [Sentry](https://sentry.io)
+[^bugsnag]: [Bugsnag](https://www.bugsnag.com/)
+[^percepio]: [Percepio](https://percepio.com/)
+[^logging_pipeline]: [The log/event processing pipeline you can't have](https://apenwarr.ca/log/20190216)
 <!-- prettier-ignore-end -->
