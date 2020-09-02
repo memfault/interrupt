@@ -6,9 +6,7 @@ description:
   firmware updates and alerts them to issues quickly.
 author: tyler
 tags: monitoring
-image: /img/device-metrics/heartbeats-cover.png
-kramdown:
-  toc_levels: 1..2
+image: /img/device-heartbeat-metrics/heartbeats-cover.png
 ---
 
 Releasing a connected device in today's world without some form of monitoring in
@@ -577,7 +575,7 @@ Below is a chart of a single device recording its time connected to Wi-Fi
 measured in both ways.
 
 <p align="center">
-  <img width="600" src="{% img_url device-metrics/wifi-time-connected.svg %}" />
+  <img width="600" src="{% img_url device-heartbeat-metrics/wifi-time-connected.svg %}" />
 </p>
 
 When looking at this chart, it is clear by looking at the heartbeat metric (red
@@ -785,7 +783,7 @@ firmware which captures some metrics about the system (in a relatively contrived
 but inspiring way).
 
 You can find the library within the
-[Interrupt Github repo](https://github.com/memfault/interrupt/blob/master/example/device-metrics).
+[Interrupt Github repo](https://github.com/memfault/interrupt/blob/master/example/device-heartbeat-metrics).
 
 The metrics in the example library stored in an `int32_t` array for simplicity,
 but there are optimizations that can be made to store values of various lengths
@@ -861,7 +859,7 @@ with an nRF52 device and with Renode.
 
 ```
 $ git clone https://github.com/memfault/interrupt.git
-$ cd examples/device-metrics
+$ cd examples/device-heartbeat-metrics
 
 # Build and start Renode
 $ make -C gcc && ./start.sh
@@ -872,7 +870,7 @@ various counters, counted timers, and gauges from the system for this 15 second
 interval.
 
 <p align="center">
-  <img width="600" src="{% img_url device-metrics/freertos-example-output.png %}" alt="freertos-example-output" />
+  <img width="600" src="{% img_url device-heartbeat-metrics/freertos-example-output.png %}" alt="freertos-example-output" />
 </p>
 
 ## Go/No-Go Metrics
