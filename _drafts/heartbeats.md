@@ -4,6 +4,8 @@ description: Monitoring and tracking embedded devices using heartbeat metrics, a
 author: tyler
 tags: monitoring
 image: /img/device-metrics/heartbeats-cover.png
+kramdown:
+    toc_levels: 1..2
 ---
 
 Releasing a connected device in today's world without some form of monitoring in
@@ -12,8 +14,8 @@ experiencing faults or crashing? How can the release lead be confident that no
 connectivity, performance, or battery-life regressions have occurred between the
 past and current firmware update?
 
-The answer is that you need device monitoring in place long before ever shipping
-a firmware update to devices in the field.
+**The answer is that you need device monitoring in place long before ever shipping
+a firmware update to devices in the field.**
 
 There have been several occasions in the past where I've introduced several performance and battery-life regressions that were never
 caught in internal beta testing of 50 devices. They were always subtle changes,
@@ -35,9 +37,9 @@ product decisions.
 
 <!-- excerpt end -->
 
-This post is guaranteed to be the tip of the iceberg in a series of posts about
-how to do device monitoring _properly_ at scale. With this in mind, this post
-will be slightly more high-level than a typical "Interrupt" post.
+> This post is guaranteed to be the tip of the iceberg in a series of posts about
+> how to do device monitoring _properly_ at scale. With this in mind, this post
+> will be slightly more high-level than a typical "Interrupt" post.
 
 {% include newsletter.html %}
 
@@ -935,6 +937,12 @@ Memfault. We'd be happy to guide you in the right direction and suggest a
 solution, whether it's our solution or not.
 
 ## Conclusion
+
+I'm glad I finally got around to writing this post. The topic of generating, collecting, and tracking metrics for embedded systems at scale is not a topic that is discussed enough on the Internet. I hope the ideas and methods discussed in this post have put some incarnation of heartbeat metrics on the roadmap, whether it's replacing some form of logging or being added as a complement to it. 
+
+During my days at Pebble, I was the release lead for several firmware releases, and my job was made easier by the fact that the firmware and infrastructure teams had invested a lot of time and energy into building one of the best analytics systems I've come across in a hardware company. I hope you all either have the same already or will soon.
+
+I'd love to hear about how you think about metrics and embedded systems and what you or your organization has built to tackle these problems in the comments. 
 
 <!-- Interrupt Keep START -->
 
