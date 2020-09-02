@@ -338,6 +338,8 @@ structure known by the service that parses the data.
 Here are a few hypothetical events and their companion logging functions.
 
 ```c
+#define PACKED __attribute__((packed))
+
 typedef struct PACKED {
     uint16_t  type;
     uint8_t   thread_id:4;
@@ -483,7 +485,7 @@ In summary, let's compare the methods of collecting data for use as metrics.
 | -------------------------------- | ------- | ------------------ | -------------- | ---------- |
 | Easy to implement                | ✅      | ✅                 | ❌             | ✅         |
 | Fleet / version health           | ⚠️      | ⚠️                 | ⚠️             | ✅         |
-| Minimal data and connectivity    | ⚠️      | ⚠️                 | ✅             | ✅         |
+| Minimal bandwidth required       | ⚠️      | ⚠️                 | ✅             | ✅         |
 | Wall time not required           | ❌      | ❌                 | ❌             | ✅         |
 | Cheap / scalable infrastructure  | ❌      | ❌                 | ⚠️             | ✅         |
 | Good for debugging device issues | ✅      | ✅                 | ✅             | ⚠️         |
@@ -592,9 +594,6 @@ of the device's session data until the device reboots? Maybe we should just
 ignore devices that have missing data in our queries.
 
 All of those are easily solved by just resetting the values for each heartbeat!
-If a heartbeat doesn't have a complete interval recorded, just throw it out. In
-the past, I've actually put this as a column in the database row,
-`is_full_hour`.
 
 In summary, if you ever imagine aggregating a metric across multiple devices, be sure to reset your metrics at the beginning of each interval.
 
