@@ -1,8 +1,9 @@
 ---
 title: Tracking Fleet Health with Heartbeat Metrics
-description: TODO
+description: Monitoring and tracking embedded devices using heartbeat metrics, as an alternative to log processing, helps hardware and IoT companies derisk firmware updates and alerts them to issues quickly.
 author: tyler
 tags: monitoring
+image: /img/device-metrics/heartbeats-cover.png
 ---
 
 Releasing a connected device in today's world without some form of monitoring in
@@ -13,7 +14,6 @@ past and current firmware update?
 
 The answer is that you need device monitoring in place long before ever shipping
 a firmware update to devices in the field.
-
 
 There have been several occasions in the past where I've introduced several performance and battery-life regressions that were never
 caught in internal beta testing of 50 devices. They were always subtle changes,
