@@ -47,7 +47,7 @@ product decisions.
 
 {% include toc.html %}
 
-## Monitoring Overview
+## Fleet Monitoring Overview
 
 Device and software monitoring is not a new concept. There have been many new
 ambitious projects to solve the problem from a couple of devices to monitoring
@@ -173,7 +173,7 @@ There is hope though. We will explore how we can manage to get the most
 important and actionable metrics out of embedded systems and gain an
 understanding of how devices are performing in the field.
 
-## Logging and Metrics
+## Logging vs Metrics
 
 I want to quickly cover the difference and use-cases for two common forms of
 data collected from systems: logs and metrics.
@@ -646,7 +646,7 @@ heartbeat or each batch of heartbeats.
   heartbeat interval, and you'll want to be able to either normalize this data
   or throw out incomplete heartbeat intervals from your queries.
 
-## Metric Type Explanations
+## Heartbeat Metric Type Explanations
 
 In this section, we'll go over the different types of metrics you are likely to
 see in a dashboard built with a tool like Grafana[^grafana]. They map closely
@@ -873,7 +873,7 @@ interval.
   <img width="600" src="{% img_url device-heartbeat-metrics/freertos-example-output.png %}" alt="freertos-example-output" />
 </p>
 
-## Go/No-Go Metrics
+## Go/No-Go Metrics for Deploying Firmware Updates
 
 Deploying a firmware update can be either a huge success or a nightmare. They
 have the potential to solve every bug users might experience or brick and turn
