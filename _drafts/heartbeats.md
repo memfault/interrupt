@@ -1023,4 +1023,6 @@ you or your organization has built to tackle these problems in the comments.
 [^bugsnag]: [Bugsnag](https://www.bugsnag.com/)
 [^percepio]: [Percepio](https://percepio.com/)
 [^logging_pipeline]: [The log/event processing pipeline you can't have](https://apenwarr.ca/log/20190216)
+[^rollbar]: [Rollbar](https://rollbar.com/)
+[^memfault]: [Memfault](https://memfault.com)
 <!-- prettier-ignore-end -->
