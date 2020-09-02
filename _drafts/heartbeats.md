@@ -14,7 +14,8 @@ past and current firmware update?
 The answer is that you need device monitoring in place long before ever shipping
 a firmware update to devices in the field.
 
-I've introduced several performance and battery-life regressions that were never
+
+There have been several occasions in the past where I've introduced several performance and battery-life regressions that were never
 caught in internal beta testing of 50 devices. They were always subtle changes,
 such as an "optimization" that ended up causing high file system churn (which
 reduced battery life), or issues that crop up when connected over certain
@@ -175,7 +176,7 @@ instrumental in debugging as they help a developer determine what happened
 before and after issues occur.
 
 Logs are usually forwarded from individual devices to a centralized data store
-such as S3, or to a log aggregator to be further transformed and processed.
+such as S3, or to a log aggregator, such as Elastisearch, to be further transformed and processed.
 Unfortunately, more often than not, the logs are ingested and forgotten about.
 
 A developer might dig up a particular device's log files in response to a
@@ -247,8 +248,8 @@ Logs and metrics ultimately serve different purposes. You need logs to debug
 hard to reproduce issues and to verify if a particular device has hardware
 issues, and you need metrics to make informed product and business decisions.
 
-**Whether you transform logs into metrics or collect metrics directly in the
-manners mentioned in this article is up to you.**
+Whether you transform logs into metrics or collect metrics directly in the
+manners mentioned in this article is up to you.
 
 ## Collecting Metrics from Devices
 
