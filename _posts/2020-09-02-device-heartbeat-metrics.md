@@ -7,8 +7,6 @@ description:
 author: tyler
 tags: monitoring
 image: /img/device-heartbeat-metrics/heartbeats-cover.png
-kramdown:
-  toc_levels: 1..2
 ---
 
 Releasing a connected device in today's world without some form of monitoring in
