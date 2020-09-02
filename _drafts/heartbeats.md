@@ -887,7 +887,7 @@ only a handful of devices over just a few hours. This is _incredibly_ useful if
 your devices have a battery life of weeks and you would rather not wait weeks
 for a device to complete its charge-discharge cycle.
 
-To do this, simply record the delta in battery life during the heartbeat
+To do this, record the delta in battery life during the heartbeat
 interval (assuming the device was not plugged into a charger) in a gauge metric,
 and then take the average of this delta over **all heartbeats** of the
 particular release.
@@ -896,6 +896,8 @@ particular release.
 <span>$$\left(100 \div \frac{total\:battery\:pct\:drained\:over\:all\:heartbeats}{\#\:of\:heartbeats}\right)$$</span>
 <span>$$ = \textbf{projected days battery life}$$</span>
 </div>
+
+> It might be helpful to scale out the battery life beyond just 1-100 so that devices with a long battery life won't report zero as the delta for every heartbeat.
 
 ### Wi-Fi / BLE Connected Hours
 
