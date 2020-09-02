@@ -147,7 +147,7 @@ of devices, but trends or custom queries are more difficult.
 
 For instance, attempting to query for the amount of time the Bluetooth radio is
 on per day is nearly impossible, unless the infrastructure is **100% certain**
-that it received every state change event from the device related to Bluetooth.
+that it received every state change event from the device.
 
 The statistic of time-active is a critical measurement for embedded devices, and
 is one of the best predictors of battery-life drain and performance.
@@ -186,7 +186,7 @@ a decent amount of time to determine where the device behaved unexpectedly.
 
 Metrics are a set of numbers that give information about a particular process or
 activity. They are measured over intervals of time and are usually just numbers.
-This means that they pre-processed and more compact than logs, which means that
+This means that they are pre-processed and more compact than logs, which means that
 you can store and query many more of them at once.
 
 Metrics themselves don't help developers debug individual instances of issues or
@@ -252,7 +252,7 @@ manners mentioned in this article is up to you.**
 
 ## Collecting Metrics from Devices
 
-Embedded systems have quirks about them that make then more difficult to track
+Embedded systems have quirks which make them more difficult to track
 than web applications or mobile phones. Connectivity is slow and unreliable,
 timestamps are rarely accurate if they exist at all, and storage, CPU, RAM,
 power, and bandwidth are all limited.
@@ -273,7 +273,7 @@ all of the following benefits:
 - Useful even with 5 devices and can scale to 1000's+
 
 We will go through each common approach to gathering monitoring data from
-devices and asses them on the above requirements.
+devices and assess them on the above requirements.
 
 ### Plain Text Logging
 
@@ -288,22 +288,21 @@ important.
 [I][1598845592] Battery status: 67%, 3574 mV
 ```
 
-The device firmware generates these logs and writes them to a RAM buffer and
-eventually flushed to persistent storage such as NOR flash in a circular buffer
+The device firmware generates these logs, writes them to a RAM buffer and
+eventually flushes them to persistent storage such as NOR flash in a circular buffer
 fashion. Periodically, these logs are vacuumed up by the system and pushed (or
-pulled) to a central location,
+pulled) to a central location.
 
-Every so often, a single device's logs might be dug up by the engineer who has
-written a `pull-logs-from-s3.py` to track down a bug that a customer had
+Every so often, a single device's logs might be manually dug up by the engineer to track down a bug that a customer had
 reported.
 
 Logs are great for local debugging, but at scale, they are incredibly difficult
 to make sense of and provide useful data about an entire fleet of devices. You
 can build it yourself[^logging_pipeline] or use your web team's favorite logging
-aggregator, but both of those will cost many thousands of dollars in either
+aggregator. However, both of those approaches can become a significant cost in either
 engineering resources or SaaS bills respectively.
 
-Logging will also generate an enormous about of data, which will in turn use
+Logging will also generate an enormous amount of data, which will in turn use
 more CPU and power, require more storage, cause more flash wear, and use more
 bandwidth to send the data.
 
@@ -326,8 +325,8 @@ JSON, it's a waste of precious space.
 
 Structured logging makes it easier for developers to build scripts around
 viewing logs locally and might help with integration into a commercial log
-aggregator, but that is about it. It keeps with it all of the cons of plain text
-logging.
+aggregator, but that is about it. It carries with it all of the cons of plain text
+logging described above.
 
 ### Binary Logging
 
