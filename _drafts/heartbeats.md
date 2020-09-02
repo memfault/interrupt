@@ -28,7 +28,7 @@ of SQL queries that would run periodically.
 
 In this post, we lay the foundation for how an organization should instrument
 their embedded firmware to measure performance, stability, and the overall
-"health" of each device and an entire fleet of devices. We'll compare and
+"health" of each device and an entire fleet of devices. We also compare and
 contrast the various approaches projects generally take to surface these metrics
 and I'll discuss why I believe heartbeat metrics are the best method for driving
 product decisions.
@@ -82,7 +82,7 @@ CollectD[^collectd], Prometheus[^prometheus]
 
 ### Tracing and Logging
 
-I've grouped these into a single group because accomplish the same goal.
+I've grouped these into a single group because they accomplish the same goal.
 
 Traces and logs give you an in-depth timeline view of what happened on a single
 device and allow you to zero-in on issues as long as you know what you are
@@ -701,13 +701,18 @@ void wifi_off(void) {
 }
 ```
 
+> In StatsD, the timer implementation will store the average, 90th percentile,
+> min, max, and count for the current interval. Our heartbeats could also store
+> the same aggregates per heartbeat interval using an extra 4-8 bytes of extra
+> RAM per aggregate (except for the 90th percentile).
+
 ### Gauges
 
 Gauges are constant values and are not aggregated by the metrics system. In the
 heartbeat metric library, these can be set at the beginning of the hour or the
 end of the hour.
 
-Gauges are useful for obtaining a random sampling of system state and to easily
+Gauges are useful for obtaining a sampling of the system state and to easily
 calculate the prevalence of an issue across all devices. Some useful metrics to
 keep track of include:
 
