@@ -1,10 +1,9 @@
 # Interrupt
 
-## About
+Interrupt is a community for embedded software makers and professionals alike. 
 
-Interrupt is a community for embedded software makers.
-
-Interrupt is sponsored by [Memfault](https://memfault.com)
+- [Interrupt Slack Channel](https://interrupt-slack.herokuapp.com/)
+- [Interrupt Discourse](https://community.memfault.com/)
 
 ## Contributing
 
@@ -31,3 +30,8 @@ $ bundle exec jekyll serve -D
 ## Acknowledgements
 
 Interrupt is based on the Emerald theme by [Jacopo Rabolini](https://www.jacoporabolini.com/). Emerald is available on [Github](https://github.com/KingFelix/emerald).
+
+
+----
+
+Interrupt is sponsored and edited by [Memfault](https://memfault.com)
