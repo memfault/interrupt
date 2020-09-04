@@ -54,20 +54,19 @@ TEST(TestProtocolParser, Hello) {
   };
 
   mock()
-      .expectOneCall("a")
-      .withMemoryBufferParameter("buffer", 
-                                 payload_bytes, 
+      .expectOneCall("prv_command_hello")
+      .withMemoryBufferParameter("buffer",
+                                 payload_bytes,
                                  sizeof(payload_bytes))
       .withParameter("len", sizeof(payload_bytes))
       .ignoreOtherParameters();
 
   size_t len = s_resp_buffer_len;
   eProtocolCode rv = protocol_handle(
-      in_bytes, sizeof(in_bytes), 
+      in_bytes, sizeof(in_bytes),
       s_resp_buffer, &len);
 
   CHECK_EQUAL(kProtocolCode_Ok, rv);
-  mock().checkExpectations();
 }
 
 TEST(TestProtocolParser, MessageTooShort) {

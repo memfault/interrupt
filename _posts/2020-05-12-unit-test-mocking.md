@@ -205,11 +205,12 @@ mocks using Ruby, CppUMock mocks are just normal functions with some extra
 book-keeping done using `expectCall` and `actualCall`.
 
 When using CppUMock, if you have a few functions you are trying to mock out,
-it's probably best to keep them defined in test file, especially if you think
+it's probably best to keep them defined in the test file, especially if you think
 it's an isolated case. If you are mocking out a large number of functions, or
 think it might be used by other teammates or in future tests, go ahead and move
-it to its own file. Mocks can be easily generated for CppUMock using one of two
-tools, [mockify](https://github.com/marco-m/mockify) or
+it to its own file. Mocks can be easily generated for CppUMock using any of the
+following tools: [CppUMockGen](https://github.com/jgonzalezdr/CppUMockGen),
+[mockify](https://github.com/marco-m/mockify), or
 [cpputest_mockify](https://github.com/kesyog/cpputest_mockify).
 
 The [Memfault Firmware SDK](https://github.com/memfault/memfault-firmware-sdk)

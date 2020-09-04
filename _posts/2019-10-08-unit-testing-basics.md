@@ -1066,7 +1066,7 @@ $ brew install cpputest
 On Ubuntu, it can be installed using `apt`:
 
 ```
-$ sudo apt-get install cpputest
+$ sudo apt install cpputest
 ```
 
 {:.no_toc}
@@ -1082,7 +1082,7 @@ project. It should build quite easily once some paths are patched up.
 
 ```
 $ git clone https://github.com/memfault/interrupt.git
-$ cd examples/unit-testing/minimal/tests
+$ cd interrput/examples/unit-testing/minimal/tests
 
 # macOS
 $ make
@@ -1117,15 +1117,15 @@ Most unit test frameworks will generate separate binaries for each `.cpp` unit
 test file written so that you can load them in a debugger (lldb or gdb).
 
 ```
-$ lldb build/kv_store/kv_store_tests
-(lldb) target create "build/kv_store/kv_store_tests"
-Current executable set to 'build/kv_store/kv_store_tests' (x86_64).
+$ lldb build/sum/sum_tests
+(lldb) target create "build/sum/sum_tests"
+Current executable set to 'build/sum/sum_tests' (x86_64).
 (lldb) run
-Process 96031 launched 'build/kv_store/kv_store_tests' (x86_64)
+Process 257894 launched: 'build/sum/sum_tests' (x86_64)
 .
-OK (1 tests, 1 ran, 5 checks, 0 ignored, 0 filtered out, 7 ms)
+OK (1 tests, 1 ran, 1 checks, 0 ignored, 0 filtered out, 0 ms)
 
-Process 96031 exited with status = 0 (0x00000000)
+Process 257894 exited with status = 0 (0x00000000)
 ```
 
 {:.no_toc}
@@ -1138,9 +1138,39 @@ tests, so you can be sure that the piece of code was tested in some capacity.
 Note that code coverage doesn't measure the different behaviors a code path
 **could take**, but only that a particular code path **was taken**.
 
-![]({% img_url unit-testing-basics/code_coverage.png %})
+```
+$ sudo apt install lcov
+$ make lcov
+make -f minimal/tests/makefiles/Makefile_sum.mk
+make[1]: Entering directory 'minimal/tests'
+Running build/sum/sum_tests
+.
+OK (1 tests, 1 ran, 1 checks, 0 ignored, 0 filtered out, 0 ms)
 
-Above is a an example coverage report taken from the Memfault Public SDK[^5].
+make[1]: Leaving directory 'minimal/tests'
+lcov --base-directory . --directory . -c -o build/lcov.info --exclude "*cpputest/*" --exclude "*tests/*"
+
+...
+
+genhtml -o test_coverage -t "coverage" --num-spaces 4 build/lcov.info -o build/test_coverage/
+Reading data file build/lcov.info
+Found 1 entries.
+Writing .css and .png files.
+Generating output.
+Processing file minimal/my_sum.c
+Writing directory view page.
+Overall coverage rate:
+  lines......: 100.0% (2 of 2 lines)
+    functions..: 100.0% (1 of 1 function)
+
+$ firefox build/test_coverage/index.html
+```
+
+![]({% img_url unit-testing-basics/code_coverage_minimal.png %})
+
+Above is a coverage report from our minimal example. Below is a more realistic report from the Memfault Public SDK[^5].
+
+![]({% img_url unit-testing-basics/code_coverage.png %})
 
 {:.no_toc}
 
