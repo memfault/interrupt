@@ -25,7 +25,7 @@ Clone the repo, install dependencies, and serve:
 $ git clone https://github.com/memfault/interrupt.git
 $ cd interrupt
 $ bundle install
-$ bundle exec jekyll serve
+$ bundle exec jekyll serve -D
 ```
 
 ## Acknowledgements
