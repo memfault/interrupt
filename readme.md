@@ -10,27 +10,24 @@ Interrupt is sponsored by [Memfault](https://memfault.com)
 
 Interrupt welcomes submissions on embedded software topics.
 
-Prior to getting in touch, you should get yourself acquainted with our [Code of
-Conduct](https://interrupt.memfault.com/blog/code-of-conduct).
+Prior to getting in touch, you should get yourself acquainted with our [Code of Conduct](https://interrupt.memfault.com/blog/code-of-conduct).
 
-To submit your content, either email us at
-interrupt@memfault.com, or open a pull request!
+To submit your content, either email us at interrupt@memfault.com, or open a pull request!
 
-See [Contributing](https://interrupt.memfault.com/blog/contributing) for more
-information.
+See [Contributing](https://interrupt.memfault.com/blog/contributing) for more information.
 
 ## Running locally
 
-To serve locally, you'll want to change the baseurl. You'll likely also want to
-see your drafts.
+Follow the instructions in the [Jekyll quickstart guide](https://jekyllrb.com/docs/) to install Ruby and Jekyll and bundler.
 
-We recommend:
-```terminal
-$ bundle install jekyll serve -b / -D
+Clone the repo, install dependencies, and serve:
+```
+$ git clone https://github.com/memfault/interrupt.git
+$ cd interrupt
+$ bundle install
+$ bundle exec jekyll serve -D
 ```
 
 ## Acknowledgements
 
-Interrupt is based on the Emerald theme by [Jacopo
-Rabolini](https://www.jacoporabolini.com/). Emerald is available on
-[Github](https://github.com/KingFelix/emerald).
+Interrupt is based on the Emerald theme by [Jacopo Rabolini](https://www.jacoporabolini.com/). Emerald is available on [Github](https://github.com/KingFelix/emerald).
