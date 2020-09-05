@@ -128,9 +128,7 @@ $ which arm-none-eabi-gcc
 
 Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
 
-> Want to learn more about Conda? Check out my previous post on using [Conda >
-> > environments for embedded >
-> > development]({% post_url 2020-01-07-conda-developer-environments %}).
+> Want to learn more about Conda? Check out my previous post on using [Conda environments for embedded development]({% post_url 2020-01-07-conda-developer-environments %}).
 
 It turns out the Renode team packages the application in a
 [Renode Conda package](https://anaconda.org/antmicro/renode), but at the time of
