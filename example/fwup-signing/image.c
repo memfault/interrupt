@@ -68,21 +68,23 @@ int image_validate(image_slot_t slot, const image_hdr_t *hdr) {
         return -1;
     }
 
+    return 0;
+}
+
+int image_check_signature(image_slot_t slot, const image_hdr_t *hdr) {
+    void *addr = (slot == IMAGE_SLOT_1 ? &__slot1rom_start__ : &__slot2rom_start__);
+    addr += sizeof(image_hdr_t);
+    uint32_t len = hdr->data_size;
+
     uint8_t hash[CF_SHA256_HASHSZ];
     prv_sha256(addr, len, hash);
 
     const struct uECC_Curve_t *curve = uECC_secp256k1();
-    if (uECC_valid_public_key(PUBKEY, curve)) {
-        printf("Valid public key\n");
-    } else {
-        printf("Invalid public key\n");
+    if (!uECC_valid_public_key(PUBKEY, curve)) {
         return -1;
     }
 
-    if (uECC_verify(PUBKEY, hash, CF_SHA256_HASHSZ, hdr->ecdsa_sig, curve)) {
-        printf("Valid signature\n");
-    } else {
-        printf("Invalid signature\n");
+    if (!uECC_verify(PUBKEY, hash, CF_SHA256_HASHSZ, hdr->ecdsa_sig, curve)) {
         return -1;
     }
 

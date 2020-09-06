@@ -32,10 +32,16 @@ int cli_command_do_dfu(int argc, char *argv[]) {
         return -1;
     }
 
-    shell_put_line("Validating image");
     // Check & commit image
+    shell_put_line("Validating image");
     if (image_validate(IMAGE_SLOT_2, hdr)) {
         shell_put_line("Validation Failed");
+        return -1;
+    };
+
+    shell_put_line("Checking signature");
+    if (image_check_signature(IMAGE_SLOT_2, hdr)) {
+        shell_put_line("Signature does not match");
         return -1;
     };
 

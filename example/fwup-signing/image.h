@@ -41,4 +41,6 @@ const image_hdr_t *image_get_header(image_slot_t slot);
 
 int image_validate(image_slot_t slot, const image_hdr_t *hdr);
 
+int image_check_signature(image_slot_t slot, const image_hdr_t *hdr);
+
 void image_start(const image_hdr_t *hdr) __attribute__((noreturn));
