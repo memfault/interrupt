@@ -1138,8 +1138,19 @@ tests, so you can be sure that the piece of code was tested in some capacity.
 Note that code coverage doesn't measure the different behaviors a code path
 **could take**, but only that a particular code path **was taken**.
 
+To generate a coverage report for our minimal example, let's first install `lcov`.
+
 ```
+# macOS
+$ brew install lcov
+
+# Linux
 $ sudo apt install lcov
+```
+
+Next, we'll run our unit tests while testing for coverage.
+
+```
 $ make lcov
 make -f minimal/tests/makefiles/Makefile_sum.mk
 make[1]: Entering directory 'minimal/tests'
@@ -1155,10 +1166,25 @@ lcov --base-directory . --directory . -c -o build/lcov.info --exclude "*cpputest
 Overall coverage rate:
   lines......: 100.0% (2 of 2 lines)
     functions..: 100.0% (1 of 1 function)
+```
+
+You can see the very end reports a simple coverage report in the terminal, but a
+more detailed report can be found in the HTML website that was generated. We can
+open it from the terminal:
+
+```
+# macOS
+$ open build/test_coverage/index.html
+
+# Linux
+$ firefox build/test_coverage/index.html
+```
+
+Below is the coverage report for our minimal example. It's quite basic because there isn't much code being tested. 
 
 ![]({% img_url unit-testing-basics/code_coverage_minimal.png %})
 
-Above is a coverage report from our minimal example. Below is a more realistic report from the Memfault Public SDK[^5].
+Below is a more realistic report from the Memfault Public SDK[^5].
 
 ![]({% img_url unit-testing-basics/code_coverage.png %})
 
