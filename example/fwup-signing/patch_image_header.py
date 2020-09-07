@@ -23,7 +23,7 @@ def patch_binary_payload(bin_filename, pk_filename):
     """
     IMAGE_HDR_SIZE_BYTES = 96
     IMAGE_HDR_MAGIC = 0xCAFE
-    IMAGE_HDR_VERSION = 1
+    IMAGE_HDR_VERSION = 2
 
     with open(bin_filename, "rb") as f:
         image_hdr = f.read(IMAGE_HDR_SIZE_BYTES)
