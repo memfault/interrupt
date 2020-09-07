@@ -27,6 +27,8 @@ The tests can be run by running:
 ```
 $ cd minimal/tests
 $ make
+$ make lcov
+$ # open build/test_coverage/index.html
 ```
 
 ## Complex Example
@@ -38,7 +40,9 @@ The tests can be run by running:
 
 ```
 $ cd complex
-$ git clone https://github.com/ARMmbed/littlefs.git
+$ git clone -b v2.1.2 https://github.com/ARMmbed/littlefs.git
 $ cd tests
 $ make
+$ make lcov
+$ # open build/test_coverage/index.html
 ```
