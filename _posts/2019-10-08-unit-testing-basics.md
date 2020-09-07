@@ -1152,19 +1152,9 @@ lcov --base-directory . --directory . -c -o build/lcov.info --exclude "*cpputest
 
 ...
 
-genhtml -o test_coverage -t "coverage" --num-spaces 4 build/lcov.info -o build/test_coverage/
-Reading data file build/lcov.info
-Found 1 entries.
-Writing .css and .png files.
-Generating output.
-Processing file minimal/my_sum.c
-Writing directory view page.
 Overall coverage rate:
   lines......: 100.0% (2 of 2 lines)
     functions..: 100.0% (1 of 1 function)
-
-$ firefox build/test_coverage/index.html
-```
 
 ![]({% img_url unit-testing-basics/code_coverage_minimal.png %})
 
