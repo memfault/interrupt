@@ -55,15 +55,19 @@ change to the Renode configuration:
    0x8000000`. By default, Renode looks for the vector table at `0x0` which
 different from the default behavior of the STM32.
 
-Additionally, I had to modify Renode slightly to enable software-controlled
+**Update: As of July 2020, Renode has merged our updates to implement the AICR
+register so you can run our code on a standard Renode built**
+
+~~Additionally, I had to modify Renode slightly to enable software-controlled
 resets. Cortex-M microcontrollers can be reset by writing to the AICR register,
 which was not fully implemented in the emulator. As of this writing, this change
 is still in review and not yet merged into the emulator. You can find the pull
-request [on Github](https://github.com/renode/renode-infrastructure/pull/15/files).
+request [on
+Github](https://github.com/renode/renode-infrastructure/pull/15/files).~~
 
-Thankfully, building our own version of Renode is relatively
+~~Thankfully, building our own version of Renode is relatively
 straightforward using [their
-instructions](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html).
+instructions](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html).~~
 
 I updated my `start.sh` script to run my home-built Renode instance rather than
 the installed binary:
