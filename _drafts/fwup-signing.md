@@ -92,6 +92,8 @@ integers, each 32 bytes long.
 4. The public key and the hash can be used to verify the signature was generated
    using matching inputs.
 
+## Firmware Signing Implementation
+
 ### Setup
 
 Like we did in previous post, we use [Renode]({% post_url
