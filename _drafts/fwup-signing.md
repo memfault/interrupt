@@ -1,10 +1,21 @@
 ---
-title: "Authenticate firmware builds with code signing"
+title: "Secure firmware update with code signing"
 description: WIP
 author: francois
 ---
 
+[Previously]({% post_url 2020-06-23-device-firmware-update-cookbook %}), we
+wrote about implementing firmware update for our devices. One important detail
+we did not cover is firmware update security.
+
+Much can be done - and written - about firmware update security, but perhaps the
+most important bit is firmware signing. Other security measures are not much use
+if we cannot verify the authenticity of a firmware update!
+
 <!-- excerpt start -->
+In this post, we explain why firmware signing is important, how it works, and
+what algorithm should be used to implement it. We also detail a full
+implementation built with open source, cross platform libraries.
 <!-- excerpt end -->
 
 {% include newsletter.html %}
@@ -98,6 +109,10 @@ integers, each 32 bytes long.
    using matching inputs.
 
 ## Firmware Signing Implementation
+
+Our implementation builds upon the code we wrote for our firmware update
+architecture post. You may find that code on Github at 
+https://github.com/memfault/interrupt/tree/20ec4ba2d0def6214aa808717446cdbaced1c352/example/fwup-architecture.
 
 ### Setup
 
@@ -605,6 +620,9 @@ App STARTED - version 1.0.1 (19dcbe5) - CRC 0x1b11019d
 
 shell>
 ```
+
+The full example is available on Github at
+https://github.com/memfault/interrupt/tree/master/example/fwup-signing.
 
 > Note: While researching this post I came across Tinycrypt, an open source
 > library maintained by Intel. Tinycript combines micro-ecc with additional
