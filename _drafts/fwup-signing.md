@@ -693,7 +693,21 @@ verification on a production system to an insecure key.
 
 ## Closing
 
+Hope this post has convinced you that firmware signing can be implemented
+relatively simply, and that there are important benefits to doing so.
 
+There is much more we could do to secure our firmware update process. For
+example, we should make sure we lock our flash when our application is running
+to avoid an bug in our firmware being used to modify it. We also should consider
+a more robust mechanism to "unlock" than our special Loader with development
+keys.
+
+These will perhaps be topics for future blog posts :-).
+
+As always, we'd love to hear from you. How do you secure your firmware update
+process? Let us know! And if you see anything you'd like to change, don't
+hesitate to submit a pull request or open an issue on
+[Github](https://github.com/memfault/interrupt)
 
 <!-- Interrupt Keep START -->
 
@@ -706,4 +720,15 @@ verification on a production system to an insecure key.
 {:.no_toc}
 
 ## References
+
+[^mbedtls]: [mbedtls](https://tls.mbed.org/) has a ecdsa module at
+  https://tls.mbed.org/api/ecdsa_8h.html.
+[^wolfssl]: [WolfSSL](https://www.wolfssl.com/) ha a ecdsa module at
+  https://github.com/wolfSSL/wolfssl/blob/master/cyassl/ctaocrypt/ecc.h
+[^micro-ecc]: https://github.com/kmackay/micro-ecc
+[^micro-ecc-representation]:
+  https://github.com/kmackay/micro-ecc#point-representation
+[^cifra]: https://github.com/ctz/cifra
+[^vault]: https://www.vaultproject.io/
+[^kms]: https://aws.amazon.com/kms/
 
