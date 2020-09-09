@@ -303,9 +303,9 @@ Often times, you will see the following on your logic analyzer:
 <script type="WaveDrom">
 { signal :
   [
-    { name: "SDA",  wave: "101.0.1.010.1."},
+    { name: "SDA",  wave: "101.0.1.01.01."},
     { name: "SCL",  wave: "1.n.........h."},
-    { name: "bits", wave: "x==========x=x",  data: ["S", "1", "1", "0", "0", "1", "1","0","1","0","P"]},
+    { name: "bits", wave: "x==========x=x",  data: ["S", "1", "1", "0", "0", "1", "1","0","1","1","P"]},
     { name: "data", wave: "x.=......==x..", data: ["Address: 0x66","W", "N"]}
   ],
 }
