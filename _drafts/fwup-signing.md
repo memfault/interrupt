@@ -669,7 +669,22 @@ reason.
 
 ### Development Keys
 
+Since we've taken great pains to make sure our engineers do *not* have direct
+access to the key, how can we enable them to load custom firmware images on
+their development devices?
 
+We need a set of development keys which are used for that use case only. All
+development systems have the development public key hardcoded in rather than the
+production key. The development private key can only be used to sign firmware
+for these development systems, so it isn't sensitive and can be stored in the
+repository.
+
+Production systems should continue to use the production key, and will not
+accept firmware signed with the development key. In the event we want to load a
+development build on a production system - say, for debugging - we load a
+special Loader on it which is signed with the production key but contains the
+development key. This special Loader must be safeguarded: it downgrades
+verification on a production system to an insecure key.
 
 ## Closing
 
