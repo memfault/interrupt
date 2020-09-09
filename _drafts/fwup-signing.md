@@ -12,6 +12,11 @@ author: francois
 
 ## Firmware Signing Explained
 
+> Note: the next few sections provide an overview of code signing, why it
+> matters, and how it works. If you'd like to skip straight to implementation,
+> click
+> [here](#firmware-signing-implementation).
+
 ### What is code signing
 
 Code signing is a method of proving a file was created by a trusted source and
@@ -687,6 +692,8 @@ development key. This special Loader must be safeguarded: it downgrades
 verification on a production system to an insecure key.
 
 ## Closing
+
+
 
 <!-- Interrupt Keep START -->
 
