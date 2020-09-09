@@ -45,7 +45,7 @@ are able to cover most if not all of the code paths, argument bounds, and
 failure cases of the software under test.
 
 Through proper use of unit tests, and especially while using practices from Test
-Driven Development (TTD)[^0], the time it takes to **stabilize** embedded
+Driven Development (TDD)[^0], the time it takes to **stabilize** embedded
 software can decrease dramatically, making individuals and teams more productive
 and firmware less likely to experience functional bugs, control flow bugs, and
 even fatal issues, such as memory leaks and (gasp!) bootloops.
@@ -73,7 +73,7 @@ by the team doubling down on unit testing the firmware.
 ### Life After Unit Testing (Possibly)
 
 At a previous company, after scrapping most legacy code and writing new modules
-with 90%+ code coverage and through the use of TTD, this is what development
+with 90%+ code coverage and through the use of TDD, this is what development
 felt like sometimes.
 
 - You write a new file, maybe an in-flash log storage module, and it works the
