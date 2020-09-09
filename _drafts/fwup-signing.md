@@ -57,9 +57,9 @@ it has been tampered with. The bootloader can then decide to either warn the
 user, void the device's warranty, or simply refuse to run the unauthenticated
 binary.
 
-With more and more devices connected to the internet, security is an
+With more and more devices connected to the Internet, security is an
 increasingly hot topic in firmware development. A device which accepts firmware
-updates over the wireless or internet connectivity but does not verify it opens
+updates wirelessly or over Internet connectivity but does not verify it opens
 itself to compromise. By feeding it with a malicious firmware image, an attacker
 might:
 * Brick the device, or the whole fleet
@@ -67,7 +67,7 @@ might:
 * Strategically malfunction at a critical time
 
 These are highly undesirable outcomes, which can be effected at scale due to the
-internet of things. In 2020, it is reckless to implement firmware update for our
+Internet of things. In 2020, it is reckless to implement firmware update for our
 systems without some form of authentication.
 
 > **What signing is not**: code signing is an important component of firmware
@@ -752,4 +752,3 @@ hesitate to submit a pull request or open an issue on
 [^cifra]: https://github.com/ctz/cifra
 [^vault]: https://www.vaultproject.io/
 [^kms]: https://aws.amazon.com/kms/
-
