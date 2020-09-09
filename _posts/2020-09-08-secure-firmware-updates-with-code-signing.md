@@ -747,14 +747,12 @@ hesitate to submit a pull request or open an issue on
 
 ## References
 
-[^mbedtls]: [mbedtls](https://tls.mbed.org/) has a ecdsa module at
-  https://tls.mbed.org/api/ecdsa_8h.html.
-[^wolfssl]: [WolfSSL](https://www.wolfssl.com/) ha a ecdsa module at
-  https://github.com/wolfSSL/wolfssl/blob/master/cyassl/ctaocrypt/ecc.h
-[^micro-ecc]: https://github.com/kmackay/micro-ecc
-[^micro-ecc-representation]:
-  https://github.com/kmackay/micro-ecc#point-representation
-[^cifra]: https://github.com/ctz/cifra
-[^vault]: https://www.vaultproject.io/
-[^kms]: https://aws.amazon.com/kms/
-
+<!-- prettier-ignore-start -->
+[^mbedtls]: [mbedtls](https://tls.mbed.org/) has a ecdsa module at https://tls.mbed.org/api/ecdsa_8h.html.
+[^wolfssl]: [WolfSSL](https://www.wolfssl.com/) has a ecdsa module at https://github.com/wolfSSL/wolfssl/blob/master/cyassl/ctaocrypt/ecc.h
+[^micro-ecc]: [micro-ecc on Github](https://github.com/kmackay/micro-ecc)
+[^micro-ecc-representation]: The key representation used by micro-ecc is detailed [here](https://github.com/kmackay/micro-ecc#point-representation)
+[^cifra]: [CIFRA on Github](https://github.com/ctz/cifra)
+[^vault]: [Hashicorp Vault](https://www.vaultproject.io/)
+[^kms]: [Amazon KMS](https://aws.amazon.com/kms/)
+<!-- prettier-ignore-end -->
