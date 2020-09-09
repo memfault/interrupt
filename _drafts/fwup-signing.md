@@ -34,20 +34,20 @@ binary change by so much as 1 bit the signature would no longer be valid.
 
 By implementing signature verification in our bootloader we can identify
 whether or not a given firmware update was provided by the manufacturer, or if
-it has been tempered with. The bootloader can then decide to either warn the
+it has been tampered with. The bootloader can then decide to either warn the
 user, void the device's warranty, or simply refuse to run the unauthenticated
 binary.
 
 With more and more devices connected to the internet, security is an
 increasingly hot topic in firmware development. A device which accepts firmware
 updates over the wireless or internet connectivity but does not verify it opens
-itself to compromise. By feeding it with a malicious firmware image, attacker
+itself to compromise. By feeding it with a malicious firmware image, an attacker
 might:
 * Brick the device, or the whole fleet
 * Snoop on end users and compromise their privacy and security
 * Strategically malfunction at a critical time
 
-These are highly undesirable outcome, which can be effected at scale due to the
+These are highly undesirable outcomes, which can be effected at scale due to the
 internet of things. In 2020, it is reckless to implement firmware update for our
 systems without some form of authentication.
 
@@ -61,7 +61,7 @@ systems without some form of authentication.
 ### ECDSA
 
 Several algorithms can be used to sign firmware, including RSA, DSA, and ECDSA.
-In this post, we focus on ECDSA for a few reason:
+In this post, we focus on ECDSA for a few reasons:
 
 1. Security: ECDSA is the latest and greatest in terms of signature algorithms.
    While standard DSA is considered broken by most, ECDSA is expected to remain
@@ -96,10 +96,8 @@ integers, each 32 bytes long.
 
 ### Setup
 
-Like we did in previous post, we use [Renode]({% post_url
-2020-03-23-intro-to-renode %}) to run the examples in this post. Our previous
-[firmware update post]({% post_url 2020-06-23-device-firmware-update-cookbook
-%}) contains detailed instructions. In short:
+Like we did our previous post, the [Firmware Update Cookbook]({% post_url 2020-06-23-device-firmware-update-cookbook%}), we use [Renode]({% post_url
+2020-03-23-intro-to-renode %}) to run the examples in this post. The previous post contains detailed instructions, but in short:
 
 ```
 # Clone the repository & navigate to the example
@@ -117,7 +115,7 @@ by invoking Renode with the following flags:
 mono64 $RENODE_EXE_PATH renode-config.resc --port 4444 --disable-xwt
 ```
 
-We can then use telnet to connect to the renode console:
+We can then use telnet to connect to the Renode console:
 
 ```
 $ telnet localhost 4444
@@ -213,19 +211,19 @@ With the following functionality for each block:
    the Loader.
 
 The Loader, the Application, and the Updater all need to be signed since they
-can be updated. Components that updates other components need to implement our
+can be updated. Components that update other components need to implement our
 signature verification algorithm, in our case that's the Loader and the Updater.
 
 ### Generating public/private key pairs
 
-Before we can begin, we must generate a pair of keys. Our **private key** also
-known as **signing key** is used to create the signatures, and should be kept
+Before we can begin, we must generate a pair of keys. Our **private key**, also
+known as a **signing key**, is used to create the signatures, and should be kept
 private. Anyone with access to the key will be able to sign firmware on your
-behalf. Our **public key** also known as **validation key** is used to verify
-signature. It can be freely distributed.
+behalf. Our **public key**, also known as a **validation key**, is used to verify
+the signature. It can be freely distributed.
 
 Several tools can be used to generate our key pair but the simplest is
-`openssl`, a cross platform cryptography tools.
+`openssl`, a cross platform cryptography toolset.
 
 First, we generate our private key:
 ```
@@ -389,7 +387,7 @@ We now have a build process that generates signed binaries!
 
 ### Verifying signatures in our Loader
 
-Now that our firmware builds are signed, lets verify those signatures in our
+Now that our firmware builds are signed, let's verify those signatures in our
 Loader!
 
 Remember that the process takes two steps:
@@ -462,7 +460,7 @@ Note that we had to select the same curve we used to generate the key, here
 Last but not least, we need to verify the signature itself. This requires
 computing the SHA-256, and using `uECC_verify`.
 
-Many MCUs have hardware implementations of SHA-256, but in our case we used a
+Many MCUs have hardware implementations of SHA-256, but in our case, we used a
 software implementation provided by a library called CIFRA[^cifra]. We only need
 to add two files from CIFRA to our build: `cifra/src/sha256.c` and `cifra/src/blockwise.c`,
 as well as two paths to our include path: `cifra/src` and `cifra/src/ext`.
@@ -480,7 +478,7 @@ static void prv_sha256(const void *buf, uint32_t size, uint8_t *hash_out)
 }
 ```
 
-Note that `cf_sha256_update` can be called mutliple time, so if you are
+Note that `cf_sha256_update` can be called mutliple times, so if you are
 validating a binary that isn't memory mapped you can calculate the hash
 iteratively rather than all at once. For example, here's an implementation that
 reads from a POSIX file:
@@ -638,5 +636,4 @@ shell>
 {:.no_toc}
 
 ## References
-
 
