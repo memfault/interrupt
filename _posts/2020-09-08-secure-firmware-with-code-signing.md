@@ -1,5 +1,5 @@
 ---
-title: "Secure firmware update with code signing"
+title: "Secure firmware updates with code signing"
 description: 
   Firmware update signing is the cornerstone of a modern firmware update system.
   In this article we explain why it matters, and how firmware signing can be
@@ -61,9 +61,9 @@ it has been tampered with. The bootloader can then decide to either warn the
 user, void the device's warranty, or simply refuse to run the unauthenticated
 binary.
 
-With more and more devices connected to the Internet, security is an
+With more and more devices connected to the internet, security is an
 increasingly hot topic in firmware development. A device which accepts firmware
-updates wirelessly or over Internet connectivity but does not verify it opens
+updates over the wireless or internet connectivity but does not verify it opens
 itself to compromise. By feeding it with a malicious firmware image, an attacker
 might:
 * Brick the device, or the whole fleet
@@ -71,7 +71,7 @@ might:
 * Strategically malfunction at a critical time
 
 These are highly undesirable outcomes, which can be effected at scale due to the
-Internet of things. In 2020, it is reckless to implement firmware update for our
+internet of things. In 2020, it is reckless to implement firmware update for our
 systems without some form of authentication.
 
 > **What signing is not**: code signing is an important component of firmware
@@ -117,8 +117,9 @@ integers, each 32 bytes long.
 
 ## Firmware Signing Implementation
 
-Our implementation builds upon the code we wrote for our firmware update
-architecture post. You may find that code on Github at 
+Our implementation builds upon the code we wrote for our [firmware update
+architecture post](({% post_url 2020-06-23-device-firmware-update-cookbook %})).
+You may find that code on Github at
 https://github.com/memfault/interrupt/tree/20ec4ba2d0def6214aa808717446cdbaced1c352/example/fwup-architecture.
 
 ### Setup
@@ -756,3 +757,4 @@ hesitate to submit a pull request or open an issue on
 [^cifra]: https://github.com/ctz/cifra
 [^vault]: https://www.vaultproject.io/
 [^kms]: https://aws.amazon.com/kms/
+
