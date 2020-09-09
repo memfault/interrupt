@@ -119,7 +119,7 @@ integers, each 32 bytes long.
 
 Our implementation builds upon the code we wrote for our [firmware update
 architecture post]({% post_url 2020-06-23-device-firmware-update-cookbook%} ).
-You may find that code on Github at [interrupt@96186a0](https://github.com/memfault/interrupt/tree/20ec4ba2d0def6214aa808717446cdbaced1c352/example/fwup-architecture).
+You may find that code on Github at [interrupt@20ec4ba](https://github.com/memfault/interrupt/tree/20ec4ba2d0def6214aa808717446cdbaced1c352/example/fwup-architecture).
 
 ### Setup
 
