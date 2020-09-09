@@ -1,6 +1,9 @@
 ---
 title: "Secure firmware update with code signing"
-description: WIP
+description: 
+  Firmware update signing is the cornerstone of a modern firmware update system.
+In this article we explain why it matters, and how firmware signing can be
+implemented.
 author: francois
 ---
 
