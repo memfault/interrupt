@@ -1,6 +1,6 @@
 ---
 title: "Secure firmware updates with code signing"
-description: 
+description:
   Firmware update signing is the cornerstone of a modern firmware update system.
   In this article we explain why it matters, and how firmware signing can be
   implemented.
@@ -101,7 +101,7 @@ saves both code space and RAM and makes ECDSA well suited to embedded
 environments.
 
 Understanding the math behind ECDSA is outside of the scope of this article, but
-here is a high level overview of how the process works: 
+here is a high level overview of how the process works:
 1. A cryptographic hash of the firmware  binary is created. Any cryptographic
    hashing algorithm should work, though SHA-2 family hashes are recommended. In
 the case of SHA-256, this yields a 32-byte number.
@@ -254,12 +254,12 @@ Several tools can be used to generate our key pair but the simplest is
 `openssl`, a cross platform cryptography toolset.
 
 First, we generate our private key:
-```
+```bash
 $ openssl ecparam -name secp256k1 -genkey -noout -out private.pem
 ```
 
 Then we create a public key to go with this private key:
-```
+```bash
 $ openssl ec -in private.pem -pubout -out public.pem
 ```
 
@@ -267,7 +267,7 @@ At this point we should have two files: `public.pem` and `private.pem`.
 
 We can test the sign/verify flow with openssl as well. To sign a file we do:
 
-```
+```bash
 $ openssl dgst -sha256 -sign private.pem -out build/fwup-example.bin.sig build/fwup-example.bin
 ```
 
@@ -276,8 +276,8 @@ is the signature file we want to create.
 
 The signature can then be verified with:
 
-```
-$ openssl dgst -sha256 -sign private.pem -out build/fwup-example.bin.sig build/fwup-example.bin
+```bash
+$ openssl dgst -sha256 -verify public.pem -signature build/fwup-example.bin.sig build/fwup-example.bin
 Verified OK
 ```
 
