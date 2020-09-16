@@ -6,7 +6,7 @@ tag: [cortex-m]
 author: chris
 ---
 
-One of the most challenging types of issues to debug is memory corruption! Memory corruption can be caused for a variety of reasons including when data is used after it has been freed, a read or write goes past the end of a buffer, thread safety constructs are missing, or a linker script is misconfigured. By the time the system finally faults or encounters an error, the original operation which spiralled the system into the bad state is often lost!
+One of the most challenging types of issues to debug is memory corruption! Memory corruption can be caused by a variety of reasons including when data is used after it has been freed, a read or write goes past the end of a buffer, thread safety constructs are missing, or a linker script is misconfigured. By the time the system finally faults or encounters an error, the original operation which spiraled the system into the bad state is often lost!
 
 Data breakpoints ("Watchpoints") can be used to catch memory corruption at the source and have personally saved me a tremendous amount of time debugging nefarious issues over the years. Whether you are a watchpoint power user or haven't used them before, I hope this article can teach you something new!
 
@@ -25,7 +25,7 @@ In this post we will explore how to save time debugging by making the most of wa
 
 ## Basic Terminology
 
-Watchpoints are very similar to breakpoints and in fact are often referred to as "data breakpoints". Where breakpoints allow you to halt program flow based on a certain instruction being executed, watchpoints allow you to halt flow based on a particular data access. For example, halting when a variable gets updated, a region of the stack is written to, or a buffer is read from. Watchpoints can be used to monitor "write", "read" or "read/write" accesses.
+Watchpoints are very similar to breakpoints and are often referred to as "data breakpoints". Where breakpoints allow you to halt program flow based on a certain instruction being executed, watchpoints allow you to halt flow based on a particular data access. Watchpoints can be used to monitor "write", "read" or "read/write" accesses. For example, a watchpoint might be configured to trip when a variable gets updated, a region of the stack is written to, or a particular buffer is read from. 
 
 In order for watchpoints to work and system execution to not grind to a halt, native hardware support for this functionality is required. This is implemented at the silicon level with a comparator. Every time a data access is made, the address accessed is compared against the value in the watchpoint comparator which can be done in parallel to the normal execution flow. If the value of the comparator matches the address being accessed, the system emits an event and the MCU is halted. If they do not match, the system keeps running as normal and there is no overhead to the operation!
 
@@ -93,7 +93,7 @@ shell>
 
 ### Enabling Watchpoints with GDB
 
-Almost all debuggers expose some way to configure watchpoints via their interface. For GDB, this is done through the `watch expr` command, which will configure a watchpoint for the address described in `expr`. GDB also exposes a `rwatch` command (for data breakpoints on read accesses) and `awatch` (for data breakpoints on read or write accesses).
+Almost all debuggers expose some way to configure watchpoints via their interface. For GDB, this is done through the `watch <expr>` command, which will configure a watchpoint for the address described in `<expr>`. GDB also exposes a `rwatch` command (for data breakpoints on read accesses) and `awatch` (for data breakpoints on read or write accesses).
 
 Let's walk through a few examples of how we would monitor for changes to the following C variable.
 
@@ -103,7 +103,7 @@ uint8_t g_array[17]
 
 ```
 (gdb) p &g_array
-(gdb) $1 = (volatile uint8_t (*)[17]) 0x200029a0 <g_array>
+$1 = (volatile uint8_t (*)[17]) 0x200029a0 <g_array>
 ```
 
 #### Watch for writes to a variable
@@ -149,7 +149,7 @@ Hardware watchpoint 1: *(uint8_t[2] *)0x200029a0
 (gdb) continue
 ```
 
-##### Update g_array from CLI
+##### Update `g_array` from CLI
 
 ```bash
 shell> arr_read 0
@@ -216,7 +216,7 @@ Let's walk through a couple of the most common use-cases through examples!
 
 ### Memory Corruption
 
-Consider the following (albeit contrived) accel driver:
+Consider the following (albeit contrived) accelerometer driver:
 
 ```c
 // accel.h
@@ -816,7 +816,7 @@ What is more problematic is the `DWT_MASK2` setting. It should be `4` to watch t
 
 ### Configuring Watchpoints in C Code
 
-It's also possible to generate watchpoints from C code:
+It's also possible to generate watchpoints from C code. Here's a function that does just that:
 
 ```c
 void dwt_install_watchpoint(
@@ -835,7 +835,7 @@ void dwt_install_watchpoint(
 }
 ```
 
-For example, let's we can enable one over the first 16 bytes of the `g_array` at address `0x200029a0` that we were examining earlier:
+For example, let's enable one over the first 16 bytes of the `g_array` at address `0x200029a0` that we were examining earlier:
 
 ```bash
 shell> watchpoint_set 0 6 0x200029a0 4
