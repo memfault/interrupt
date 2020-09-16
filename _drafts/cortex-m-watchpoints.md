@@ -25,7 +25,7 @@ In this post we will explore how to save time debugging by making the most of wa
 
 ## Basic Terminology
 
-Watchpoints are very similar to breakpoints and are often referred to as "data breakpoints". Where breakpoints allow you to halt program flow based on a certain instruction being executed, watchpoints allow you to halt flow based on a particular data access. Watchpoints can be used to monitor "write", "read" or "read/write" accesses. For example, a watchpoint might be configured to trip when a variable gets updated, a region of the stack is written to, or a particular buffer is read from. 
+Watchpoints are very similar to breakpoints and are often referred to as "data breakpoints". Where breakpoints allow you to halt program flow based on a certain instruction being executed, watchpoints allow you to halt flow based on a particular data access. Watchpoints can be used to monitor "write", "read" or "read/write" accesses. For example, a watchpoint might be configured to trip when a variable gets updated, a region of the stack is written to, or a particular buffer is read from.
 
 In order for watchpoints to work and system execution to not grind to a halt, native hardware support for this functionality is required. This is implemented at the silicon level with a comparator. Every time a data access is made, the address accessed is compared against the value in the watchpoint comparator which can be done in parallel to the normal execution flow. If the value of the comparator matches the address being accessed, the system emits an event and the MCU is halted. If they do not match, the system keeps running as normal and there is no overhead to the operation!
 
@@ -91,11 +91,11 @@ $ miniterm.py /dev/cu.usbmodem* 115200 --raw
 shell>
 ```
 
-### Enabling Watchpoints with GDB
+## Watchpoints with GDB
 
 Almost all debuggers expose some way to configure watchpoints via their interface. For GDB, this is done through the `watch <expr>` command, which will configure a watchpoint for the address described in `<expr>`. GDB also exposes a `rwatch` command (for data breakpoints on read accesses) and `awatch` (for data breakpoints on read or write accesses).
 
-Let's walk through a few examples of how we would monitor for changes to the following C variable.
+In the following sections we will walk through configurations and examples for monitoring changes to the following C variable.
 
 ```c
 uint8_t g_array[17]
@@ -106,6 +106,8 @@ uint8_t g_array[17]
 $1 = (volatile uint8_t (*)[17]) 0x200029a0 <g_array>
 ```
 
+### Commands
+
 #### Watch for writes to a variable
 
 ```
@@ -114,7 +116,11 @@ $1 = (volatile uint8_t (*)[17]) 0x200029a0 <g_array>
 
 The above _should_ trigger a watchpoint when a write takes place anywhere in `g_array`.
 
-> Tip: Watchpoint tracing is dependent on the functionality supported by the hardware. Watching data of completely arbitrary sizes is typically not supported by hardware. For best reliability on embedded systems, I recommend using watchpoints with sizes of native types (byte, half-word, and word).
+> Tip: Watchpoint tracing is dependent on the functionality supported by the hardware. Watching
+> data of completely arbitrary sizes is typically not supported by hardware. For best reliability
+> on embedded systems, I recommend using watchpoints with sizes of native types (byte, half-word,
+> and word). We will walk through these limitations for ARM Cortex-M in the sections below or you
+> can find more details in the architecture reference manual. [^10]
 
 #### Watch for writes to an address
 
@@ -132,16 +138,27 @@ The above will trigger a watchpoint when a write takes place anywhere between `0
 
 The above will trigger a watchpoint when a write takes place anywhere between `0x200029a0` & `0x200029a2`.
 
-#### Trying it out with GDB
 
-The example app has two CLI commands you can use to poke at `g_array`:
+#### Watch for reads to an array
+
+```
+(gdb) rwatch *(uint8_t[2] *)0x200029a0
+```
+
+The above will trigger a watchpoint when a read takes place anywhere between `0x200029a0` &
+`0x200029a2`.
+
+
+### Example
+
+The example app has two CLI commands we can use to test configuring watchpoints:
 
 - `arr_read [idx]` to read a byte at the given index
 - `arr_write [idx] [val]` to write a byte value at a given index.
 
-Let's try it out!
+#### Write Watchpoint Example
 
-##### Enable Watchpoint in GDB
+Let's start by configuring a write watchpoint on the first two bytes of `g_array`:
 
 ```
 (gdb) watch *(uint8_t[2] *)0x200029a0
@@ -149,7 +166,7 @@ Hardware watchpoint 1: *(uint8_t[2] *)0x200029a0
 (gdb) continue
 ```
 
-##### Update `g_array` from CLI
+We can then perform read and writes on `g_array` from the CLI:
 
 ```bash
 shell> arr_read 0
@@ -165,7 +182,7 @@ Write - Addr: 0x200029a0, Index: 0, Value: 0x00000001
 # Debugger should have halted
 ```
 
-##### Halted GDB on Watchpoint
+In the lasst command we changed the value at array index 1 which should have triggered a halt:
 
 ```
 (gdb) c
@@ -179,7 +196,7 @@ New value = "\001"
 153   return 0;
 ```
 
-##### Installing a Read Watchpoint
+#### Read Watchpoint Example
 
 We can also add a watchpoint that will only trigger on a read access using `rwatch`. Let's try it out:
 
@@ -385,7 +402,22 @@ It looks like the `len` for the `buf` argument may be incorrect.
 [...]
 ```
 
-Now we can see the issue! `s_graphics_buf` was defined as a `uint16_t` and we are passing the total size 4. However the function expected the array length, 2. This means we are writing past the end of the buffer into whatever variable comes after it. We can confirm in GDB that `s_registered_handler` has been allocated right after `s_graphics_buf` and is getting corrupted:
+Now we can see the issue!
+
+
+`s_graphics_buf` is `uint16_t` array with two array entries. The for loop in `graphics_boot` is
+setting each entry in the array to `0xffee`. However, when we review the call to `graphics_boot`,
+we see the size of the buffer (`sizeof(s_graphics_buf)`) was passed instead of the array length
+`sizeof(s_graphics_buf) / sizeof(s_graphics_buf[0])`:
+
+```c
+  graphics_boot(s_graphics_buf, sizeof(s_graphics_buf));
+```
+
+This means the for loop is writing to indexes 2 & 3 of the `buf` and we are clobbering memory past
+the end of the buffer!
+
+We can confirm in GDB that `s_registered_handler` has been allocated right after `s_graphics_buf` and is getting corrupted:
 
 ```
 (gdb) x/a s_graphics_buf
@@ -683,7 +715,11 @@ Now that we have a basic understanding let's look at a few practical configurati
 | `watch *(uint8_t[4] *)0x20000010` <br /> (Any write between 0x20000010- 0x20000014) | 0x6          | 0x20000010 | 0x2      |
 | `rwatch *(uint8_t[16] *)0x20000020` <br /> (Any read between 0x20000020-0x2000002F) | 0x5          | 0x20000020 | 0x4      |
 
-> Note: An important observation here is it is only possible to watch ranges of addresses that are aligned on the size being watched. For example, if you wanted to watch 4 bytes starting at 0x20000002, you would need two watchpoints (`DWT_COMP=0x20000002`, `DWT_MASK=1` & `DWT_COMP=0x20000004`, `DWT_MASK=1`).
+> Note: An important observation here is it is only possible to watch ranges of addresses that are
+> aligned on the size being watched. For example, if you wanted to watch 4 bytes starting at
+> 0x20000002, you would need two watchpoints (`DWT_COMP=0x20000002`, `DWT_MASK=1` &
+> `DWT_COMP=0x20000004`, `DWT_MASK=1`). GDB does not manage this for you so care should be taken to
+> install watchpoints on aligned boundaries.
 
 ##### Examining DWT Configuration
 
@@ -754,7 +790,7 @@ void dwt_reset(void) {
 
 ###### Inspecting watchpoints configured with GDB
 
-Let's configure the watchpoints from [above](#dwt-cortex-m-examples) and take trace things!
+Let's configure the watchpoints from [above](#dwt-cortex-m-examples) and examine the watchpoint configuration:
 
 ```
 (gdb) watch *(uint8_t *)0x20000001
@@ -848,6 +884,8 @@ shell> arr_write 15 2
 Write - Addr: 0x200029af, Index: 15, Value: 0x00000002
 # Debugger should have halted
 ```
+
+As expected, our debugger halts:
 
 ```
 Program received signal SIGTRAP, Trace/breakpoint trap.
@@ -1078,6 +1116,7 @@ I'd be curious to hear if you are making use of the watchpoints in interesting w
 
 I haven't found too many resources about watchpoints on the web, but here's a few other articles on the topic I've enjoyed:
 
+- [Examining The Stack For Fun And Profit](https://www.embeddedrelated.com/showarticle/1330.php)
 - [Making use of Cortex-M watchpoints at Runtime](https://m0agx.eu/2018/08/25/cortex-m-debugging-runtime-memory-corruption/)
 - [Configuring watchpoints for ARM in eclipse](https://mcuoneclipse.com/2018/08/12/tutorial-catching-rogue-memory-accesses-with-arm-watchpoint-comparators-and-instruction-trace/)
 
