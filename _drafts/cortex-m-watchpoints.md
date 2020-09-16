@@ -6,7 +6,7 @@ tag: [cortex-m]
 author: chris
 ---
 
-One of the most challenging types of issues to debug is memory corruption! Memory corruption can be caused by a variety of reasons including when data is used after it has been freed, a read or write goes past the end of a buffer, thread safety constructs are missing, or a linker script is misconfigured. By the time the system finally faults or encounters an error, the original operation which spiraled the system into the bad state is often lost!
+One of the most challenging types of issues to debug is memory corruption! Memory corruption can be caused for a variety of reasons including when data is used after it has been freed, a read or write goes past the end of a buffer, thread safety constructs are missing, or a linker script is misconfigured. By the time the system finally faults or encounters an error, the original operation which spiraled the system into the bad state is often lost!
 
 Data breakpoints ("Watchpoints") can be used to catch memory corruption at the source and have personally saved me a tremendous amount of time debugging nefarious issues over the years. Whether you are a watchpoint power user or haven't used them before, I hope this article can teach you something new!
 
@@ -182,7 +182,7 @@ Write - Addr: 0x200029a0, Index: 0, Value: 0x00000001
 # Debugger should have halted
 ```
 
-In the lasst command we changed the value at array index 1 which should have triggered a halt:
+In the last command we changed the value at array index 1 which should have triggered a halt:
 
 ```
 (gdb) c
@@ -382,7 +382,7 @@ New value = 65518
 5     for (size_t i = 0; i < len; i++) {
 ```
 
-This is suspicious! The memory where we store the accel data handler is getting updated from our graphics stack. Let's examine the code
+This is suspicious! `s_data_processed_cb` is getting updated from our graphics stack?! Let's examine the code
 
 ```
 (gdb) list graphics_boot
@@ -393,7 +393,9 @@ This is suspicious! The memory where we store the accel data handler is getting 
 7     }
 ```
 
-It looks like the `len` for the `buf` argument may be incorrect.
+The fact that we are writing over `s_data_processed_cb` suggests the `len` parameter above may be
+incorrect and we are writing past the end of the array.
+
 
 ```
 (gdb) list s_graphics_buf
@@ -405,17 +407,16 @@ It looks like the `len` for the `buf` argument may be incorrect.
 Now we can see the issue!
 
 
-`s_graphics_buf` is `uint16_t` array with two array entries. The for loop in `graphics_boot` is
+`s_graphics_buf` is `uint16_t` array with two entries. The for loop in `graphics_boot` is
 setting each entry in the array to `0xffee`. However, when we review the call to `graphics_boot`,
-we see the size of the buffer (`sizeof(s_graphics_buf)`) was passed instead of the array length
+we see the size of the buffer,`sizeof(s_graphics_buf)`, was passed instead of the array length,
 `sizeof(s_graphics_buf) / sizeof(s_graphics_buf[0])`:
 
 ```c
   graphics_boot(s_graphics_buf, sizeof(s_graphics_buf));
 ```
 
-This means the for loop is writing to indexes 2 & 3 of the `buf` and we are clobbering memory past
-the end of the buffer!
+This means the for loop is writing at indexes 2 & 3 which is past the end of the array and we are clobbering memory!
 
 We can confirm in GDB that `s_registered_handler` has been allocated right after `s_graphics_buf` and is getting corrupted:
 
@@ -668,7 +669,11 @@ The `DWT_FUNCTION` register definition looks like this:
 where,
 
 - `MATCHED` Indicates if there was a match since the last time the register was read. This can be used by a debugger to determine if this was the source of the debug event emitted. It's cleared on read so you will likely never see it set when using a debugger.
-- `DATAVADDR1`, `DATAVADDR0`, `DATAVSIZE`, `LNK1ENA` We won't go into too many details but these registers can be used to trigger a watchpoint event when a certain "data value" pattern is written over an address range. I'm not aware of an easy way to configure this with most debuggers, but the feature is really neat! For example, you can use it to to halt at a specific loop iteration or if a certain data pattern is written anywhere in RAM! This type of watchpoint is only implemented in comparator 1 for most Cortex-M targets.
+- `DATAVADDR1`, `DATAVADDR0`, `DATAVSIZE`, `LNK1ENA` We won't go into too many details but these
+  registers can be used to trigger a watchpoint event when a certain "data value" pattern is
+  written over an address range. I'm not aware of an easy way to configure this with most
+  debuggers, but the feature is really neat! For example, you can use it to to halt at a specific
+  index in a for loop or if a certain data pattern is written anywhere in RAM! This type of watchpoint is only implemented in comparator 1 for most Cortex-M targets.
 - `CYCMATCH` Only implemented for comparator 0. This can be used to trigger a watchpoint after a certain number of CPU cycles have passed.
 - `FUNCTION` - Controls the type of comparison which is performed. When this field is set to 0, the comparator is disabled.
 
@@ -847,7 +852,7 @@ DWT Dump:
 
 For the most part, things look like they line up with expectations. For the read watchpoint at `0x20000020`, we expect to see `0x00000006` for `DWT_FUNC1` but some extra bits were left set. These bits map to `DATAVSIZE` which is not used in our current config and `LNK1ENA` which is a read only bit so these settings are fine.
 
-What is more problematic is the `DWT_MASK2` setting. It should be `4` to watch the 16 bytes that was requested. However, it was set to 2. It appears there is a limitation of the SEGGER watchpoint implementation and only 1, 2, and 4-byte watchpoints work.
+What is more problematic is the `DWT_MASK2` setting. It should be `4` to watch the 16 bytes that were requested. However, it was set to 2. It appears there is a limitation in the SEGGER watchpoint implementation and only 1, 2, and 4-byte watchpoints work!
 
 ## Advanced Topics
 
@@ -872,7 +877,7 @@ void dwt_install_watchpoint(
 }
 ```
 
-For example, let's enable one over the first 16 bytes of the `g_array` at address `0x200029a0` that we were examining earlier:
+For example, we can enable one over the first 16 bytes of the `g_array` at address `0x200029a0` that we were examining earlier:
 
 ```bash
 shell> watchpoint_set 0 6 0x200029a0 4
@@ -1057,13 +1062,13 @@ The commands can be added to a GDB session by sourcing the script:
 
 This script implements two utilities:
 
-- `watch_ext -c <address_to_watch> -s <size>` - This is identical to `watch *(uint8_t[<size>]
+- `watch_ext -c <address_to_watch> -s <size>`: This is equivalent to GDB's `watch *(uint8_t[<size>]
   *)<address_to_watch>` except that a helpful error is raised if the configuration requested is
-  invalid due to the [limitations](#watchpoint-limitations) we discussed above and that the system
+  invalid due to the [limitations we discussed above](#watchpoint-limitations) and that the system
   will always halt on the write access rather than [only halting when a value changes](#gdb-implementation-quirks).
-- `watch_ext -c <pattern_to_watch> -s <size> --compare-value` - This command will halt anytime
+- `watch_ext -c <pattern_to_watch> -s <size> --compare-value`: This command will halt anytime
   `<pattern_to_watch>` is stored somewhere in RAM. The `size` is the size of the pattern and must
-  be 1, 2, or 4 bytes. There's no way to configure this with a GDB command.
+  be 1, 2, or 4 bytes. There's no way to configure something like this with GDB directly!
 
 At the moment there is no command to disable the watchpoints once enabled or track "Old Value" and
 "New Value" like GDB does natively. Both are do-able in GDB python and are left as an exercise to the reader.
