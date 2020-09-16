@@ -715,6 +715,7 @@ Now that we have a basic understanding let's look at a few practical configurati
 | `watch *(uint8_t[4] *)0x20000010` <br /> (Any write between 0x20000010- 0x20000014) | 0x6          | 0x20000010 | 0x2      |
 | `rwatch *(uint8_t[16] *)0x20000020` <br /> (Any read between 0x20000020-0x2000002F) | 0x5          | 0x20000020 | 0x4      |
 
+{: #watchpoint-limitations}
 > Note: An important observation here is it is only possible to watch ranges of addresses that are
 > aligned on the size being watched. For example, if you wanted to watch 4 bytes starting at
 > 0x20000002, you would need two watchpoints (`DWT_COMP=0x20000002`, `DWT_MASK=1` &
@@ -1046,6 +1047,26 @@ class WatchpointExtensionCliCmd(gdb.Command):
 
 WatchpointExtensionCliCmd()
 ```
+
+The commands can be added to a GDB session by sourcing the script:
+
+```
+# Script is at $INTERRUPT_REPO/examples/watchpoints/gdb_watchpoint_ext.py
+(gdb) source gdb_watchpoint_ext.py
+```
+
+This script implements two utilities:
+
+- `watch_ext -c <address_to_watch> -s <size>` - This is identical to `watch *(uint8_t[<size>]
+  *)<address_to_watch>` except that a helpful error is raised if the configuration requested is
+  invalid due to the [limitations](#watchpoint-limitations) we discussed above and that the system
+  will always halt on the write access rather than [only halting when a value changes](#gdb-implementation-quirks).
+- `watch_ext -c <pattern_to_watch> -s <size> --compare-value` - This command will halt anytime
+  `<pattern_to_watch>` is stored somewhere in RAM. The `size` is the size of the pattern and must
+  be 1, 2, or 4 bytes. There's no way to configure this with a GDB command.
+
+At the moment there is no command to disable the watchpoints once enabled or track "Old Value" and
+"New Value" like GDB does natively. Both are do-able in GDB python and are left as an exercise to the reader.
 
 ### Data Value Watchpoint Example Using GDB Python
 
