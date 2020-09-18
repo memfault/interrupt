@@ -315,7 +315,9 @@ Nordic](https://github.com/NordicSemiconductor/nrfx/blob/6f54f689e9555ea18f9aca8
 ## Closing
 
 All the code used in this blog post is available on
-[Github](https://github.com/memfault/zero-to-main/tree/master/minimal). {% include submit-pr.html %}
+[Github](https://github.com/memfault/zero-to-main/tree/master/minimal).
+
+{% include submit-pr.html %}
 
 More complex programs often require a more complicated `Reset_Handler`. For
 example:
