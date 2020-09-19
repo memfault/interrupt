@@ -56,7 +56,7 @@ $ JLinkGDBServer  -if swd -device nRF52840_xxAA  -nogui
 
 ```bash
 $ git clone https://github.com/memfault/interrupt.git
-$ cd examples/watchpoint
+$ cd example/watchpoints
 
 # Build
 $ make
@@ -694,8 +694,6 @@ For the typical, "data address" watchpoint we have talked about so far in the ar
 If we have configured the `DWT_FUNCTION` register to look for a data address access, this register simply holds that address.
 
 #### Comparator Mask registers, DWT_MASK, 0xE0001024 + 16n
-
-![]({% img_url watchpoint/dwt-mask.png %})
 
 The setting in the `MASK` defines the number of bits to ignore when performing a comparison. The maximum mask size is implementation defined but you can easily figure out the max size by writing 0x1F to the field and seeing which bits remain set. For example, on the NRF52:
 
