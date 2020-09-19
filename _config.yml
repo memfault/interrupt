@@ -42,6 +42,9 @@ plugins:
 tag_page: '/tags/'
 category_page: '/categories/'
 
+sass:
+    style: compressed
+    
 # Options
 custom_nav_footer: true
 reverse: false
