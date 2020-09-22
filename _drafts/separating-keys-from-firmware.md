@@ -1,17 +1,20 @@
 ---
-title: Separating unique parameters from firmware
+title: Separating Unique Parameters from Firmware
 description:
-  Post Description (~140 words, used for discoverability and SEO)
 author: amundas
 ---
 
-When writing firmware for embedded systems, more often than not this firmware is
-meant to run on a number of identical devices. These devices often have their
-own ID, keys or some other unique parameters. When developing firmware most of
-us start out by hardcoding these parameters and recompiling the code every time
-a new device needs to be programmed. While this is fine for most of us during
-early development, it becomes increasingly harder to keep things tidy as the
-number of devices grows.
+When writing firmware for embedded systems, the firmware is usually meant to run
+on a number of identical devices. These devices often have their own serial
+number, public and private keys, or some other unique parameters. These
+parameters need to be provisioned per device, either by generating unique
+firmwares or by writing the values to the device's persistent storage, like
+external flash or the EEPROM.
+
+During the firmware development phase, most of us start out by hardcoding these
+parameters and recompiling the code every time a new device needs to be
+programmed. While this is fine during the early development stages, it doesn't
+scale as the number of devices grows.
 
 <!-- excerpt start -->
 
@@ -42,31 +45,31 @@ devices, we want to keep the number of final programming steps to a minimum. We
 will use Make, python and shell scripts to automate as much as possible,
 including keeping track of which devices have been programmed.
 
-### Example devices
+### Our Example
 
 As an example, we will use SAMR35 based LoRaWAN nodes for our devices. Simple
 IoT devices often have identical hardware and firmware but need to have a unique
 ID and their own encryption keys. For LoRaWAN devices using Over The Air
-Activation (OTAA) these unique parameters are DevEUI (unique device ID), AppEUI
-(unique application ID) and AppKey (encryption key used during activation). The
-LoRa nodes for this example are connected to
+Activation (OTAA), these unique parameters are the DevEUI (unique device ID),
+AppEUI (unique application ID) and AppKey (encryption key used during
+activation). The LoRa nodes for this example are connected to
 [The Things Network](https://www.thethingsnetwork.org/) (TTN), which has a CLI
 that we can use to get the parameters and register new devices. The firmware for
 these example devices is written in C. The environment in this example uses
 bash, GCC, a makefile, and J-Link Commander for programming.
 
-### A note on security
+### A Note on Security
 
 In this example, we will store an encryption key in standard flash memory.
-Whether this is a good idea or not depends on your application, although most
+Whether this is a good idea or not depends on your application. Although most
 MCUs allow you to enable readback protection, these mechanisms have been
 defeated for a number of popular devices. Secure key storage can be done with
-secure elements like the ATECC608A, or special purpose registers if your device
-includes these. The goal with this post is to show a method for programming
-unique parameters separately from the firmware, security considerations is a
-topic for another post.
+secure elements like the ATECC608A[^atecc608a], or special purpose registers if
+your device includes these. The goal with this post is to show a method for
+programming unique parameters separately from the firmware. More advanced
+security considerations are a topic for another post.
 
-## Preparing the firmware
+## Preparing the Firmware
 
 In order to reach our goal, the first thing we have to do is to replace our
 hardcoded values from the firmware. In my case, I used to have some lines in a C
@@ -76,9 +79,9 @@ file where the device-specific variables where declared as follows:
 const uint8_t device_eui[8] = { 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
 ```
 
-Now instead, we will tell the firmware where to find the unique parameters, but
-we won't hardcode their values. For this, we need some addresses that we know
-won't be used for anything else. Here I used an address near the end of the
+Instead of this, we will tell the firmware where to find the unique parameters,
+but we won't hardcode their values. For this, we need some addresses that we
+know won't be used for anything else. Here I used an address near the end of the
 flash-memory of my MCU. Now the firmware is ready, and the next step is to put
 the unique parameters at the addresses that we specified here.
 
@@ -94,21 +97,24 @@ const uint8_t *app_key      =   (uint8_t *) KEYS_BASE_ADDR + 16;
 ### Creating HEX files
 
 Personally, I have experimented with a couple of different ways of preparing the
-parameters, one option is to create C files containing the parameters before
+parameters. One option is to create C files containing the parameters before
 compiling them to binaries that can be flashed to the correct addresses. This
 method does, however, contain quite a lot of steps, and I have found that
-generating Intel HEX files directly to be easier. Hex files basically consist of
-lines of hexadecimal data, called records, that specify both an address and the
-data to write at this address. The
+generating Intel HEX files directly to be easier.
+
+Hex files consist of lines of hexadecimal data, called records, that specify
+both an address and the data to write at this address. The
 [Wikipedia entry](https://en.wikipedia.org/wiki/Intel_HEX) on the Intel HEX
-format explains the file format quite clearly, based on this we can create a
-python script that generates HEX files with our parameters at the addresses we
-specified in the firmware.
+format explains the file format quite clearly.
+
+Based on this we can create a python script that generates HEX files with our
+parameters at the addresses we specified in the firmware.
 
 ```python
 #!/usr/bin/env python3
-#generateHexFile.py
-#usage: ./generateHexFile.py <DevEUI> <AppEUI> <AppKey> <NodeName>"
+
+# generateHexFile.py
+# usage: ./generateHexFile.py <DevEUI> <AppEUI> <AppKey> <NodeName>"
 import sys
 # The hex format puts data at (baseAddr << 4) +  addr, which is why we shift
 baseAddr = 0x18000
@@ -116,7 +122,8 @@ baseAddr = baseAddr >> 4
 
 hexOut = ""
 
-# Probably not working for all record types. I use it for data, end of file, and extended segment address
+# Probably not working for all record types.
+#  I use it for data, end of file, and extended segment address
 def getRecordLine(address, nBytes, recordType, dataString):
    record = "%02X%04X%02X%s"%(nBytes, address, recordType, dataString)
    data = int(record, 16)
@@ -140,10 +147,9 @@ hexOut += getRecordLine(0, 0, 1, "")
 
 #print to stdout
 print(hexOut)
-
 ```
 
-### Generating files and keeping them tidy
+### Generating Files and Keeping Them Tidy
 
 The next steps are to get the actual values of the parameters and to structure
 our files in a tidy fashion. In this example, we will store the unique
@@ -155,21 +161,24 @@ parameters are stored in `keys/free/<node_name>` and used parameters in
 `keys/used/<node_name>`.
 
 While the generation of the files and the registration of new devices could be
-done when programming new devices, I would argue that it is better to generate a
-bunch of files ahead of time. This makes the production setup more robust since
-it would not depend on some external service.
+done when programming new devices, I believe it is better to generate a bunch of
+files ahead of time. This makes the production setup more robust since it would
+not depend on some external service.
 
-Since we are registering our devices with TTN, we will use the TTN CLI (ttnctl)
-to register a new device in our selected TTN application and return the
-parameters that we want. The shell script below registers a device, generates a
-human-readable file, and finally calls the python script to generate a
-corresponding HEX file. There is a lot of sed commands here to get hold of the
+Since we are registering our devices with TTN, we will use the TTN CLI
+(ttnctl)[^ttnctl] to register a new device in our selected TTN application and
+return the parameters that we want. The shell script below registers a device,
+generates a human-readable file, and finally calls the python script to generate
+a corresponding HEX file. There is a lot of sed commands here to get hold of the
 parameters we need, but the general idea is what's important.
 
 ```shell
-
 #!/usr/bin/env bash
-# Usage: ./registerNode.sh <node-name>. Files ../keys/free/node-name/node-name.key and ../keys/free/node-name/node-name.hex will be created
+
+# Usage: ./registerNode.sh <node-name>.
+# Files ../keys/free/node-name/node-name.key and
+#  ../keys/free/node-name/node-name.hex will be created
+
 # The sed command below removes ANSI color formatting
 output="$(ttnctl devices register "$1" | sed 's/\x1b\[[0-9;]*m//g')"
 
@@ -183,7 +192,6 @@ mkdir ../keys/free/$DevID
 printf "DevID: $DevID\nDevEUI: $DevEUI\nAppEUI: $AppEUI\nAppKey: $AppKey\n" > ../keys/free/$DevID/$DevID.key
 # Create hex file with keys
 ./generateHexFile.py $DevEUI $AppEUI $AppKey $DevID > ../keys/free/$DevID/$DevID.hex
-
 ```
 
 An example of a human-readable file, `keys/free/node_id/node_id.key`, generated
@@ -208,29 +216,34 @@ was a good idea to also generate the more easily readable version of the file.
 :00000001FF
 ```
 
-_The shell script in this section lets TTN come up with a DevEUI for simplicity,
-check out
-[this link](https://www.thethingsnetwork.org/forum/t/deveui-for-non-hardware-assigned-values/2093/22)
-to see why you should not do that._
+> The shell script in this section lets TTN come up with a DevEUI for
+> simplicity. Check out [this link](https://www
+> thethingsnetwork.org/forum/t/deveui-for-non-hardware-assigned-values/2093/22)
+> to see why you should not do that.
 
-## Programming a device with our new setup
+## Programming a Device
 
-Personally, I tend to use a phony make target to flash my devices, but if you
-prefer to use something else that should be easily achievable. We want our make
+Personally, I tend to use a phony Make target to flash my devices, but if you
+prefer to use something else that should be easily achievable. We want our Make
 target to flash the firmware and the unique parameters of our device, as well as
 moving a newly used set of parameters to the "used" folder.
 
-In this example, the make target will call J-Link Commander (JLinkExe) in order
-to actually flash the device. A lot of the manufacturer-specific tools such as
-nrfjprog or simplicity commander are based on JlinkExe. I have personally found
-it easier to generate a jlink script before flashing than to try and control a
-J-link Commander session from a make target.
+In the below example, the Make target will call J-Link Commander
+(JLinkExe[^jlinkexe]) in order to actually flash the device. A lot of the
+manufacturer-specific tools such as `nrfjprog` (from Nordic) or Simplicity
+Commander (from Silicon Labs) are based on JlinkExe. I have found that the best
+way to automate J-Link Commander is by scripting it.
 
-The make target below generates a J-Link Commander script that loads the
+The Make target below generates a J-Link Commander script that loads the
 firmware and the keys of a specified device, then the target executes the
 script, and moves the keys to the "used" folder if this is the first time they
 have been used. Flashing a new device can now be done by running
-`make flash NODE_ID=<nodeid> KEY_FOLDER=free`.
+
+```
+$ make flash NODE_ID=<nodeid> KEY_FOLDER=free
+```
+
+The Makefile I used can be found below.
 
 ```make
 # Device name. Set develop as default
@@ -250,17 +263,23 @@ ifeq ($(KEY_FOLDER), free))
 endif
 ```
 
-## Sharing keys across a team
+## Sharing Keys Across a Team
 
 I have used the word "tidy" to describe the folder structure used here several
-times, but if these files are stored locally on a single developer's machine, or
-checked into a git repository, tidy won't be the word you are thinking of! The
-solution to this problem that I have been using, is simply to use a
+times, but if these files are stored locally on a single developer's machine or
+checked into a git repository, tidy won't be the word you are thinking of!
+
+The solution to this problem that I have been using, is simply to use a
 cloud-storage synced folder for storing the keys (Dropbox, Drive, Onedrive etc).
 This will also give you a safe backup of these important files, and an easy way
 to share them across a team.
 
-## Final thoughts
+If you are sharing sensitive keys, such as private keys used for secure
+connections to a cloud provider, it would also be advised to encrypt these files
+and folders at rest using a passphrase, or by using a secret key management
+service such as Hashicorp Vault.
+
+## Final Thoughts
 
 Hopefully you will find this post helpful when creating a new project, or
 tidying up an old one! As always, there are many ways to achieve the same thing,
@@ -283,5 +302,7 @@ See anything you'd like to change? Submit a pull request or open an issue at
 ## References
 
 <!-- prettier-ignore-start -->
-[^reference_key]: [Post Title](https://example.com)
+[^atecc608a]: [Microchip ATECC608A Secure Element](https://www.microchip.com/wwwproducts/en/ATECC608A)
+[^ttnctl]: [The Things Network CLI](https://www.thethingsnetwork.org/docs/network/cli/quick-start.html)
+[^jlinkexe]: [J-Link Commander](https://www.segger.com/products/debug-probes/j-link/tools/j-link-commander/)
 <!-- prettier-ignore-end -->
