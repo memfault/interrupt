@@ -60,7 +60,7 @@ ARCH_CFLAGS += \
   -mthumb -mcpu=cortex-m4 \
   -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
-CC_VERSION_INFO ="$(shell $(CC) -v 2>&1)"
+CC_VERSION_INFO ="$(shell $(CC) -v 2>&1 | head -2)"
 
 ifneq '' '$(findstring clang,$(CC_VERSION_INFO))'
 $(info ===Clang Compiler Detected===)
@@ -157,7 +157,7 @@ $(DEP_DIR):
 # FreeRTOS should really be included as a submodule in a real project
 # Let's do a cheap hack and clone it here instead
 $(FREERTOS_PORT_ROOT):
-	git clone git@github.com:FreeRTOS/FreeRTOS-Kernel.git $(FREERTOS_ROOT_DIR)
+	git clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git $(FREERTOS_ROOT_DIR)
 
 $(OBJ_FILES): $(SRC_FILES) Makefile
 
