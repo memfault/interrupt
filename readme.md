@@ -1,6 +1,6 @@
 # Interrupt
 
-Interrupt is a community for embedded software makers and professionals alike. 
+Interrupt is a community for embedded software makers and professionals alike.
 
 - [Interrupt Slack Channel](https://interrupt-slack.herokuapp.com/)
 - [Interrupt Discourse](https://community.memfault.com/)
@@ -15,7 +15,9 @@ To submit your content, either email us at interrupt@memfault.com, or open a pul
 
 See [Contributing](https://interrupt.memfault.com/blog/contributing) for more information.
 
-## Running locally
+## Running
+
+### locally
 
 Follow the instructions in the [Jekyll quickstart guide](https://jekyllrb.com/docs/) to install Ruby and Jekyll and bundler.
 
@@ -25,6 +27,18 @@ $ git clone https://github.com/memfault/interrupt.git
 $ cd interrupt
 $ bundle install
 $ bundle exec jekyll serve -D
+```
+
+### with docker
+
+Follow the instructions in the [Install Docker Engine](https://docs.docker.com/engine/install/) according to your operating system.
+
+Clone the repo, build and run:
+```
+$ git clone https://github.com/memfault/interrupt.git
+$ cd interrupt
+$ ./build.sh
+$ ./interrupt-server.sh --run --build
 ```
 
 ## Acknowledgements
