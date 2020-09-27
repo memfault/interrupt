@@ -17,7 +17,9 @@ To submit your content, either email us at interrupt@memfault.com, or open a pul
 
 See [Contributing](https://interrupt.memfault.com/contributing) for more information.
 
-## Running locally
+## Running
+
+### locally
 
 Follow the instructions in the [Jekyll quickstart guide](https://jekyllrb.com/docs/) to install Ruby and Jekyll and bundler.
 
@@ -29,6 +31,18 @@ $ cd interrupt
 $ pip install -r requirements.txt
 $ bundle install
 $ bundle exec jekyll serve --drafts --incremental --livereload
+```
+
+### with docker
+
+Follow the instructions in the [Install Docker Engine](https://docs.docker.com/engine/install/) according to your operating system.
+
+Clone the repo, build and run:
+```
+$ git clone https://github.com/memfault/interrupt.git
+$ cd interrupt
+$ ./build.sh
+$ ./interrupt-server.sh --run --build
 ```
 
 ## Acknowledgements
