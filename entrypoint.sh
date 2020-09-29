@@ -1,7 +1,5 @@
 #!/bin/bash
-set -o errexit
-set -o nounset
-set -o pipefail
+set -euo pipefail
 
 function help()
 {
@@ -24,7 +22,7 @@ RUN=false
 
 ! PARAMS=$(getopt --options=$OPTSTR --longoptions=$LONGOPTS --name "$0"  -- "$@")
 
-if [ ${PIPESTATUS[0]} -ne 0 ]; then
+if [ "${PIPESTATUS[0]}" -ne 0 ]; then
     exit 2
 fi
 
@@ -84,5 +82,5 @@ if [ $RUN = true ]; then
   LAUNCH_INTERRUPT+="RUBYOPT='-W0' bundle exec jekyll serve -D"
 fi
 
-echo $LAUNCH_INTERRUPT
-eval $LAUNCH_INTERRUPT
+echo "$LAUNCH_INTERRUPT"
+eval "$LAUNCH_INTERRUPT"
