@@ -905,11 +905,15 @@ metric, you can do this! The only two values of this metric, maybe
 Let's imagine that we have 1,000 devices, and of the 24,000 heartbeats from all
 devices in the last 24 hours, 2,000 of those reported a `1` (crashed).
 
-$$\left(1-\frac{\#\:crashing\: hours}{\#\: total\: hours\:}\right) \times 100 = \textbf{ % crash-free hours}$$
+<span align="center">
+  <img src="{% img_url device-heartbeat-metrics/crash-free-hours-latex-1.svg %}" />
+</span>
 
 <hr>
 
-$$\left(1-\frac{2000}{24000}\right) \times 100 = \textbf{91.6% crash-free hours}$$
+<span align="center">
+  <img src="{% img_url device-heartbeat-metrics/crash-free-hours-latex-2.svg %}" />
+</span>
 
 This is a very good metric to use to gauge stability between releases, and it's
 incredibly simple to calculate once the data is in a database table.
@@ -930,8 +934,12 @@ take the average of this delta over **all heartbeats** of the particular
 release.
 
 <div>
-<span>$$\left(100 \div \frac{total\:battery\:pct\:drained\:over\:all\:heartbeats}{\#\:of\:heartbeats}\right)$$</span>
-<span>$$ = \textbf{projected days battery life}$$</span>
+<span align="center">
+  <img src="{% img_url device-heartbeat-metrics/battery-life-latex-1.svg %}" />
+</span>
+<span align="center">
+  <img src="{% img_url device-heartbeat-metrics/battery-life-latex-2.svg %}" />
+</span>
 </div>
 
 > It might be helpful to scale out the battery life beyond just 1-100 so that
@@ -951,8 +959,12 @@ Once again, the metric can be calculated easily assuming the
 hourly heartbeat.
 
 <div>
-<span>$$\left(\frac{total\:time\:connected\:over\:all\:heartbeats}{\#\:of\:heartbeats}\right) \times 100$$</span>
-<span>$$ = \textbf{ % connected hours}$$</span>
+<span align="center">
+  <img src="{% img_url device-heartbeat-metrics/wifi-ble-hours-latex-1.svg %}" />
+</span>
+<span align="center">
+  <img src="{% img_url device-heartbeat-metrics/wifi-ble-hours-latex-2.svg %}" />
+</span>
 </div>
 
 ## What's Next?
@@ -1024,15 +1036,3 @@ you or your organization has built to tackle these problems in the comments.
 [^rollbar]: [Rollbar](https://rollbar.com/)
 [^memfault]: [Memfault](https://memfault.com)
 <!-- prettier-ignore-end -->
-
-
-<!-- https://zjuwhw.github.io/2017/06/04/MathJax.html -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [['$','$'], ['\\(','\\)']],
-      processEscapes: true
-    }
-  });
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
