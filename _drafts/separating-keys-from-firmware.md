@@ -63,7 +63,7 @@ bash, GCC, a makefile, and J-Link Commander for programming.
 In this example, we will store an encryption key in standard flash memory.
 Whether this is a good idea or not depends on your application. Although most
 MCUs allow you to enable readback protection, these mechanisms have been
-defeated for a number of popular devices. Secure key storage can be done with
+defeated for a number of popular devices [^nrf51_bug] [^ncc_readback]. Secure key storage can be done with
 secure elements like the ATECC608A[^atecc608a], or special purpose registers if
 your device includes these. The goal with this post is to show a method for
 programming unique parameters separately from the firmware. More advanced
@@ -217,8 +217,8 @@ was a good idea to also generate the more easily readable version of the file.
 ```
 
 > The shell script in this section lets TTN come up with a DevEUI for
-> simplicity. Check out [this link](https://www
-> thethingsnetwork.org/forum/t/deveui-for-non-hardware-assigned-values/2093/22)
+> simplicity. Check out [this link](https://www.
+> thethingsnetwork.org/forum/t/deveui-for-non-hardware-assigned-values/2093/23)
 > to see why you should not do that.
 
 ## Programming a Device
@@ -305,4 +305,6 @@ See anything you'd like to change? Submit a pull request or open an issue at
 [^atecc608a]: [Microchip ATECC608A Secure Element](https://www.microchip.com/wwwproducts/en/ATECC608A)
 [^ttnctl]: [The Things Network CLI](https://www.thethingsnetwork.org/docs/network/cli/quick-start.html)
 [^jlinkexe]: [J-Link Commander](https://www.segger.com/products/debug-probes/j-link/tools/j-link-commander/)
+[^nrf51_bug]: [nRF51 readback protection buypass](https://blog.includesecurity.com/2015/11/NordicSemi-ARM-SoC-Firmware-dumping-technique.html)
+[^ncc_readback]: [Whitepaper on MCU readback protection buypass](https://research.nccgroup.com/wp-content/uploads/2020/02/NCC-Group-Whitepaper-Microcontroller-Readback-Protection-1.pdf)
 <!-- prettier-ignore-end -->
