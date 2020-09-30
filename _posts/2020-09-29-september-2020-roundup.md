@@ -7,7 +7,7 @@ tags: [roundup]
 <!-- excerpt start -->
 
 Here are the articles, videos, and tools that we've been excited about this
-August and September
+August and September.
 
 <!-- excerpt end -->
 
@@ -27,6 +27,8 @@ Tons and tons of content from this year's Linux Plumber's conference. Notable re
 Simple article about using Docker for building and testing by an engineer from Very, an IoT services company behind the [Nerves framework](https://www.nerves-project.org/).
 - [What's Wrong with MQTT](https://www.rtautomation.com/mqtt/whats-wrong-with-mqtt/) by John S Rinaldi<br>
 John digs into why he believes MQTT isn't the answer that everyone is looking for when it comes to protocols for low power, low bandwidth devices. 
+- [A Field Guide to CoAP — Part 1](https://medium.com/@jonathanberi/a-field-guide-to-coap-part-1-75576d3c768b) by Jonathan Beri<br>
+Jonathan writes about the Constrained Application Protocol (CoAP) in the first of a four-part series on the topic. A very good overview and is a good follow-up read to the post above.
 - [Stopping Bugs: Seven Layers of Defense](https://covemountainsoftware.com/2020/08/16/stopping-bugs-seven-layers-of-defense/) by Matthew Eshleman<br>
 A good overview of the layers of the development process where bugs should be *caught*, starting from the requirements and specs to the customer (ouch).
 - [Preview PineTime Watch Faces in your Web Browser with WebAssembly](https://lupyuen.github.io/pinetime-rust-mynewt/articles/simulator) by Lee Lup Yuen<br>
