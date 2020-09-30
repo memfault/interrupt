@@ -1024,3 +1024,15 @@ you or your organization has built to tackle these problems in the comments.
 [^rollbar]: [Rollbar](https://rollbar.com/)
 [^memfault]: [Memfault](https://memfault.com)
 <!-- prettier-ignore-end -->
+
+
+<!-- https://zjuwhw.github.io/2017/06/04/MathJax.html -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
