@@ -1,5 +1,5 @@
 ---
-title: "What we've been reading in September (and August)"
+title: "What we've been reading in September"
 author: tyler
 tags: [roundup]
 ---
@@ -21,7 +21,7 @@ reading in the comments.
 A post on EmbeddedArtistry detailing the experience and structure of writing an embedded application in Rust.
 - [Visualization of stateless UART/SPI exported call sequences](https://lowerstrata.net/post/serial-tracing/) by Aleksandr Koltsoff<br>
 A creative post detailing how one can use a spare UART or SPI interface, a simple tracer, and a set of Python scripts to visualize tracing data using Chrome's built-in Trace Event profiling tool.
-- [Linux Plumbers Conference 2020 Recordings](https://linuxplumbersconf.org/event/7/page/100-watch-live-free)t<br>The Linux Plumbers  from the [2020 Linux Plumbers Conference](https://linuxplumbersconf.org/)<br>
+- [Linux Plumbers Conference 2020 Recordings](https://linuxplumbersconf.org/event/7/page/100-watch-live-free)<br>The Linux Plumbers  from the [2020 Linux Plumbers Conference](https://linuxplumbersconf.org/)<br>
 Tons and tons of content from this year's Linux Plumber's conference. Notable recordings relevant to the embedded space are the talk [Using Zephyr, Linux and Greybus for IoT](https://linuxplumbersconf.org/event/7/contributions/814/attachments/672/1284/Using_Linux_Zephyr_and_Greybus_for_IoT_slides.pdf) by Chris Fried and this snippet from one of the GNU Tools Track [talking about GCC's new `-fanalyzer` option](https://youtu.be/oMOH79wpqOw?t=10713) presented by the author of the feature.
 - [How to Implement Firmware CI/CD with Docker](https://www.verypossible.com/insights/firmware-ci/cd-with-docker) by Daniel Lindeman<br>
 Simple article about using Docker for building and testing by an engineer from Very, an IoT services company behind the [Nerves framework](https://www.nerves-project.org/).
