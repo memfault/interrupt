@@ -1,6 +1,6 @@
 ---
 title: Separating Unique Parameters from Firmware
-description:
+description: [TODO]
 author: amundas
 ---
 
@@ -25,65 +25,60 @@ for use in production.
 
 <!-- excerpt end -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
-{:.no_toc}
+{% include toc.html %}
 
-## Table of Contents
+## Setup
 
-<!-- prettier-ignore -->
-* auto-gen TOC:
-{:toc}
+Before we get started let's write down our requirements and describe our setup.
 
-## The Goal
+### Requirements
 
-The goal of this post is to present a general method for how to make programming
-of a common firmware, and some unique parameters two separate things. Since we
-do not want to make things more complicated for ourselves when flashing the
-devices, we want to keep the number of final programming steps to a minimum. We
-will use Make, python and shell scripts to automate as much as possible,
-including keeping track of which devices have been programmed.
+Our goal is simple: 
+1. We want a general method to separately load firmware and unique parameters
+   onto devices
+2. We want to keep the number of programming steps to a minimum, and rely on
+   widely available tools
+3. We want to use off the shelf tools such as Make, python and shell scripts
+   rather than build a custom solution.
 
-### Our Example
+### Hardware and Software
 
-As an example, we will use SAMR35 based LoRaWAN nodes for our devices. Simple
-IoT devices often have identical hardware and firmware but need to have a unique
-ID and their own encryption keys. For LoRaWAN devices using Over The Air
-Activation (OTAA), these unique parameters are the DevEUI (unique device ID),
-AppEUI (unique application ID) and AppKey (encryption key used during
-activation). The LoRa nodes for this example are connected to
-[The Things Network](https://www.thethingsnetwork.org/) (TTN), which has a CLI
-that we can use to get the parameters and register new devices. The firmware for
-these example devices is written in C. The environment in this example uses
-bash, GCC, a makefile, and J-Link Commander for programming.
+This blog post was written using using a SAMR35-based LoRaWAN nodes.
 
-### A Note on Security
+LoRaWAN relies on a few device parameters that have to be unique:
+1. the DevEUI (unique device ID),
+2. the AppEUI (unique application ID) 
+3. the AppKey (encryption key used during activation).
 
-In this example, we will store an encryption key in standard flash memory.
-Whether this is a good idea or not depends on your application. Although most
-MCUs allow you to enable readback protection, these mechanisms have been
-defeated for a number of popular devices [^nrf51_bug] [^ncc_readback]. Secure key storage can be done with
-secure elements like the ATECC608A[^atecc608a], or special purpose registers if
-your device includes these. The goal with this post is to show a method for
-programming unique parameters separately from the firmware. More advanced
-security considerations are a topic for another post.
+ The LoRa nodes for this example are connected to [The Things
+Network](https://www.thethingsnetwork.org/) (a.k.a. "TTN"), which has a CLI that we can
+use to get the parameters and register new devices.
 
-## Preparing the Firmware
+All of our firmwre is written in C and compiled with GCC. We use J-Link
+Commander for programming, and a `Makefile` with some bash scripts for
+automation.
 
-In order to reach our goal, the first thing we have to do is to replace our
-hardcoded values from the firmware. In my case, I used to have some lines in a C
-file where the device-specific variables where declared as follows:
+## Preparing our Firmware
+
+The first thing we have to do is to look for hardcoded identifiers and remove
+them from our firmware. For example, it is common to declare a device ID as a
+C-array:
 
 ```c
 const uint8_t device_eui[8] = { 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
 ```
 
-Instead of this, we will tell the firmware where to find the unique parameters,
-but we won't hardcode their values. For this, we need some addresses that we
-know won't be used for anything else. Here I used an address near the end of the
-flash-memory of my MCU. Now the firmware is ready, and the next step is to put
-the unique parameters at the addresses that we specified here.
+Instead, let's allocate some storage for those identifiers and point our
+firmware to it.
+
+You can chose to put unique parameters in any non-volatile storage
+available on device. If you're lucky enough to have memory mapped flash
+available on your MCU, this is often the simplest place to use.
+
+In this case, we have plenty of flash so we will allocate some addresses towards
+the end of our flash and use them to store our identifiers:
 
 ```c
 #define KEYS_BASE_ADDR          0x18000
@@ -92,23 +87,40 @@ const uint8_t *app_eui      =   (uint8_t *) KEYS_BASE_ADDR + 8;
 const uint8_t *app_key      =   (uint8_t *) KEYS_BASE_ADDR + 16;
 ```
 
-## Preparing the unique parameters
+You may also create a section in your linker script to achieve the same result.
 
-### Creating HEX files
+> *A Note on Security* In this post, we store encryption keys in standard flash
+> memory. Whether or not this is a good idea depends on your application.
+>
+> Although most MCUs allow you to enable readback protection, these mechanisms
+> have been defeated for a number of popular devices [^nrf51_bug]
+> [^ncc_readback].  Secure key storage can instead be done using secure elements
+> like the ATECC608A[^atecc608a], or special purpose registers if your device
+> includes them.
+>
+> More advanced security considerations are a topic for another post.
 
-Personally, I have experimented with a couple of different ways of preparing the
-parameters. One option is to create C files containing the parameters before
-compiling them to binaries that can be flashed to the correct addresses. This
-method does, however, contain quite a lot of steps, and I have found that
-generating Intel HEX files directly to be easier.
+## Generating Parameter Files
+
+With that done, we need to generate a file that contains our unique parameters.
+We need that file to contain the data as well as the address at which it should
+be written.
+
+One option would be to create C files containing the parameters before compiling
+them to binaries that can be flashed to the correct addresses. Instead we
+settled on creating IHEX files since they exactly meet our requirements, are
+simple to generate and come with lots of great tooling.
+
+### Building HEX File Programatically
 
 Hex files consist of lines of hexadecimal data, called records, that specify
 both an address and the data to write at this address. The
 [Wikipedia entry](https://en.wikipedia.org/wiki/Intel_HEX) on the Intel HEX
 format explains the file format quite clearly.
 
-Based on this we can create a python script that generates HEX files with our
-parameters at the addresses we specified in the firmware.
+Based on this we can create a python script that generates our HEX files with
+the given parameters at the desired addresses. The Python code below does just
+that:
 
 ```python
 #!/usr/bin/env python3
@@ -149,28 +161,36 @@ hexOut += getRecordLine(0, 0, 1, "")
 print(hexOut)
 ```
 
-### Generating Files and Keeping Them Tidy
+### Automating File Generation
 
-The next steps are to get the actual values of the parameters and to structure
-our files in a tidy fashion. In this example, we will store the unique
-parameters for IoT nodes in folders based on some name (e.g serial number) and
-keep track of which are used and which are free. In addition, we will create a
-human-readable file containing the same information as the HEX files to be
-stored in the same folder. We will continue with a structure like this: Free
-parameters are stored in `keys/free/<node_name>` and used parameters in
-`keys/used/<node_name>`.
-
-While the generation of the files and the registration of new devices could be
-done when programming new devices, I believe it is better to generate a bunch of
-files ahead of time. This makes the production setup more robust since it would
-not depend on some external service.
+Now that we have a file format and a script to generate it, let's create some
+provisioning files!
 
 Since we are registering our devices with TTN, we will use the TTN CLI
 (ttnctl)[^ttnctl] to register a new device in our selected TTN application and
-return the parameters that we want. The shell script below registers a device,
-generates a human-readable file, and finally calls the python script to generate
-a corresponding HEX file. There is a lot of sed commands here to get hold of the
-parameters we need, but the general idea is what's important.
+return the parameters that we want. This is done by calling `ttnctl devices
+register [node_name]` where `node_name` is a unique string we use to identify
+that node, oftentime this is simply the serial number of the device.
+
+While the generation of the files and the registration of new devices could be
+done just in time when programming new devices, I believe it is better to
+generate a bunch of files ahead of time. This makes the production setup more
+robust since it would not depend on some external service which may not be
+reachable from th factory floor.
+
+To keep things organized we will store all of our generated artifacts in folders
+based on the node name and keep track of which are used and which are free. We
+store free parameters are stored in `keys/free/<node_name>` and used parameters
+in `keys/used/<node_name>`.
+
+In addition to the hex file, we also generate a human-readable file containing
+the unique parameters files and store it in the same folder. It might come in
+handy!
+
+The shell script below registers a device, generates a human-readable file, and
+finally calls the python script to generate a corresponding HEX file. There is a
+lot of sed commands here to get hold of the parameters we need, but the general
+idea is what's important.
 
 ```shell
 #!/usr/bin/env bash
@@ -194,8 +214,8 @@ printf "DevID: $DevID\nDevEUI: $DevEUI\nAppEUI: $AppEUI\nAppKey: $AppKey\n" > ..
 ./generateHexFile.py $DevEUI $AppEUI $AppKey $DevID > ../keys/free/$DevID/$DevID.hex
 ```
 
-An example of a human-readable file, `keys/free/node_id/node_id.key`, generated
-by the script is shown below:
+Here is an example of the resulting human-readable file
+(`keys/free/node_id/node_id.key`), generated by the script:
 
 ```
 DevID: node_id
@@ -219,29 +239,27 @@ was a good idea to also generate the more easily readable version of the file.
 > The shell script in this section lets TTN come up with a DevEUI for
 > simplicity. Check out [this link](https://www.
 > thethingsnetwork.org/forum/t/deveui-for-non-hardware-assigned-values/2093/23)
-> to see why you should not do that.
+> to see why you should not do that in production.
 
 ## Programming a Device
 
-Personally, I tend to use a phony Make target to flash my devices, but if you
-prefer to use something else that should be easily achievable. We want our Make
-target to flash the firmware and the unique parameters of our device, as well as
-moving a newly used set of parameters to the "used" folder.
+Loading `hex` files is supported by most loaders and debuggers. I chose to use
+JLink's excellent tools[^jlinkexe], but could just as well have used vendor
+toolchains such as `nrfjprog` from Nordic or Simplicity Commander from Silicon
+Labs.
 
-In the below example, the Make target will call J-Link Commander
-(JLinkExe[^jlinkexe]) in order to actually flash the device. A lot of the
-manufacturer-specific tools such as `nrfjprog` (from Nordic) or Simplicity
-Commander (from Silicon Labs) are based on JlinkExe. I have found that the best
-way to automate J-Link Commander is by scripting it.
+The JLink command to load a hex file is `loadfile [path].hex\nr\nq`.
 
-The Make target below generates a J-Link Commander script that loads the
+Rather that invoke JLink Commander directly, I tend to use a phony Make target
+to flash my devices, but if you prefer to use something else that should be
+easily achievable. We want our Make target to flash the firmware and the unique
+parameters of our device, as well as moving a newly used set of parameters to
+the "used" folder.
+
+The Make target generates a J-Link Commander script that loads the
 firmware and the keys of a specified device, then the target executes the
 script, and moves the keys to the "used" folder if this is the first time they
-have been used. Flashing a new device can now be done by running
-
-```
-$ make flash NODE_ID=<nodeid> KEY_FOLDER=free
-```
+have been used. 
 
 The Makefile I used can be found below.
 
@@ -263,37 +281,40 @@ ifeq ($(KEY_FOLDER), free))
 endif
 ```
 
+Flashing a new device can now be done by running:
+
+```
+$ make flash NODE_ID=<nodeid> KEY_FOLDER=free
+```
+
 ## Sharing Keys Across a Team
 
-I have used the word "tidy" to describe the folder structure used here several
-times, but if these files are stored locally on a single developer's machine or
-checked into a git repository, tidy won't be the word you are thinking of!
+We have created a relatively tidy folder structure, but if these files are
+stored locally on a single developer's machine or checked into a git repository,
+you will still have a mess on your hands!
 
-The solution to this problem that I have been using, is simply to use a
-cloud-storage synced folder for storing the keys (Dropbox, Drive, Onedrive etc).
-This will also give you a safe backup of these important files, and an easy way
-to share them across a team.
+The solution to this problem is simply to use a cloud-storage synced folder for
+storing the keys (Dropbox, Drive, Onedrive etc).  This will also give you a safe
+backup of these important files, and an easy way to share them across a team.
 
 If you are sharing sensitive keys, such as private keys used for secure
 connections to a cloud provider, it would also be advised to encrypt these files
-and folders at rest using a passphrase, or by using a secret key management
+and folders at rest using a passphrase, or to use a secret key management
 service such as Hashicorp Vault.
 
 ## Final Thoughts
 
-Hopefully you will find this post helpful when creating a new project, or
-tidying up an old one! As always, there are many ways to achieve the same thing,
+I hope this post has convinced you that is isn't too hard to move away from
+hardcoded identifiers. As always, there are many ways to achieve the same thing,
 the method described here has been my preferred method after trying a lot of
 different solutions with varying success. Feel free to comment or contact me if
 you have any ideas related to this that you would like to share!
 
 <!-- Interrupt Keep START -->
 
-_Like Interrupt? [Subscribe](http://eepurl.com/gpRedv) to get our latest posts
-straight to your mailbox_
+{% include newsletter.html %}
 
-See anything you'd like to change? Submit a pull request or open an issue at
-[GitHub](https://github.com/memfault/interrupt)
+{% include submit-pr.html %}
 
 <!-- Interrupt Keep END -->
 
