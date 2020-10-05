@@ -5,10 +5,10 @@ author: amundas
 ---
 
 When writing firmware for embedded systems, the firmware is usually meant to run
-on a number of identical devices. These devices often have their own serial
+on many identical devices. These devices often have their own serial
 number, public and private keys, or some other unique parameters. These
 parameters need to be provisioned per device, either by generating unique
-firmwares or by writing the values to the device's persistent storage, like
+firmware binaries or by writing the values to the device's persistent storage, like
 external flash or the EEPROM.
 
 During the firmware development phase, most of us start out by hardcoding these
@@ -36,27 +36,27 @@ Before we get started let's write down our requirements and describe our setup.
 ### Requirements
 
 Our goal is simple: 
-1. We want a general method to separately load firmware and unique parameters
+1. We want a general method to separately load firmware and unique parameters.
    onto devices
-2. We want to keep the number of programming steps to a minimum, and rely on
-   widely available tools
-3. We want to use off the shelf tools such as Make, python and shell scripts
+2. We want to keep the number of programming steps to a minimum and rely on
+   widely available tools.
+3. We want to use off the shelf tools such as Make, Python, and shell scripts
    rather than build a custom solution.
 
 ### Hardware and Software
 
-This blog post was written using using a SAMR35-based LoRaWAN nodes.
+This blog post was written using a SAMR35-based LoRaWAN node.
 
 LoRaWAN relies on a few device parameters that have to be unique:
-1. the DevEUI (unique device ID),
+1. the DevEUI (unique device ID)
 2. the AppEUI (unique application ID) 
-3. the AppKey (encryption key used during activation).
+3. the AppKey (encryption key used during activation)
 
  The LoRa nodes for this example are connected to [The Things
 Network](https://www.thethingsnetwork.org/) (a.k.a. "TTN"), which has a CLI that we can
 use to get the parameters and register new devices.
 
-All of our firmwre is written in C and compiled with GCC. We use J-Link
+All of our firmware is written in C and compiled with GCC. We use J-Link
 Commander for programming, and a `Makefile` with some bash scripts for
 automation.
 
@@ -73,8 +73,8 @@ const uint8_t device_eui[8] = { 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff }
 Instead, let's allocate some storage for those identifiers and point our
 firmware to it.
 
-You can chose to put unique parameters in any non-volatile storage
-available on device. If you're lucky enough to have memory mapped flash
+You can choose to put unique parameters in any non-volatile storage
+available on the device. If you're lucky enough to have memory-mapped flash
 available on your MCU, this is often the simplest place to use.
 
 In this case, we have plenty of flash so we will allocate some addresses towards
@@ -94,7 +94,7 @@ You may also create a section in your linker script to achieve the same result.
 >
 > Although most MCUs allow you to enable readback protection, these mechanisms
 > have been defeated for a number of popular devices [^nrf51_bug]
-> [^ncc_readback].  Secure key storage can instead be done using secure elements
+> [^ncc_readback]. Secure key storage can instead be done using secure elements
 > like the ATECC608A[^atecc608a], or special purpose registers if your device
 > includes them.
 >
@@ -107,7 +107,7 @@ We need that file to contain the data as well as the address at which it should
 be written.
 
 One option would be to create C files containing the parameters before compiling
-them to binaries that can be flashed to the correct addresses. Instead we
+them to binaries that can be flashed to the correct addresses. Instead, we
 settled on creating IHEX files since they exactly meet our requirements, are
 simple to generate and come with lots of great tooling.
 
@@ -118,7 +118,7 @@ both an address and the data to write at this address. The
 [Wikipedia entry](https://en.wikipedia.org/wiki/Intel_HEX) on the Intel HEX
 format explains the file format quite clearly.
 
-Based on this we can create a python script that generates our HEX files with
+Based on this we can create a Python script that generates our HEX files with
 the given parameters at the desired addresses. The Python code below does just
 that:
 
@@ -170,13 +170,13 @@ Since we are registering our devices with TTN, we will use the TTN CLI
 (ttnctl)[^ttnctl] to register a new device in our selected TTN application and
 return the parameters that we want. This is done by calling `ttnctl devices
 register [node_name]` where `node_name` is a unique string we use to identify
-that node, oftentime this is simply the serial number of the device.
+that node, oftentimes this is simply the serial number of the device.
 
 While the generation of the files and the registration of new devices could be
 done just in time when programming new devices, I believe it is better to
 generate a bunch of files ahead of time. This makes the production setup more
 robust since it would not depend on some external service which may not be
-reachable from th factory floor.
+reachable from the factory floor.
 
 To keep things organized we will store all of our generated artifacts in folders
 based on the node name and keep track of which are used and which are free. We
@@ -184,11 +184,11 @@ store free parameters are stored in `keys/free/<node_name>` and used parameters
 in `keys/used/<node_name>`.
 
 In addition to the hex file, we also generate a human-readable file containing
-the unique parameters files and store it in the same folder. It might come in
+the unique parameters and store it in the same folder. It might come in
 handy!
 
 The shell script below registers a device, generates a human-readable file, and
-finally calls the python script to generate a corresponding HEX file. There is a
+finally calls the Python script to generate a corresponding HEX file. There is a
 lot of sed commands here to get hold of the parameters we need, but the general
 idea is what's important.
 
@@ -250,7 +250,7 @@ Labs.
 
 The JLink command to load a hex file is `loadfile [path].hex\nr\nq`.
 
-Rather that invoke JLink Commander directly, I tend to use a phony Make target
+Rather than invoke JLink Commander directly, I tend to use a phony Make target
 to flash my devices, but if you prefer to use something else that should be
 easily achievable. We want our Make target to flash the firmware and the unique
 parameters of our device, as well as moving a newly used set of parameters to
@@ -294,12 +294,12 @@ stored locally on a single developer's machine or checked into a git repository,
 you will still have a mess on your hands!
 
 The solution to this problem is simply to use a cloud-storage synced folder for
-storing the keys (Dropbox, Drive, Onedrive etc).  This will also give you a safe
+storing the keys (Dropbox, Drive, Onedrive, etc). This will also give you a safe
 backup of these important files, and an easy way to share them across a team.
 
 If you are sharing sensitive keys, such as private keys used for secure
 connections to a cloud provider, it would also be advised to encrypt these files
-and folders at rest using a passphrase, or to use a secret key management
+and folders at rest using a passphrase or to use a secret key management
 service such as Hashicorp Vault.
 
 ## Final Thoughts
