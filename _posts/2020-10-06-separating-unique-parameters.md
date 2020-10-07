@@ -1,5 +1,5 @@
 ---
-title: Separating Unique Parameters from Firmware
+title: Separating Unique Parameters from Firmware Binaries
 description: Post covering how to provision unique parameters, such as serial numbers or public and private encryption keys, onto firmware-based devices.
 author: amundas
 ---
