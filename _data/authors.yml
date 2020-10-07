@@ -85,3 +85,10 @@ jaredwolff:
     twitter: jaredwolff
     github: jaredwolff
     blurb: Hardware and firmware enthusiast. Proud father of the <a href="https://www.jaredwolff.com/store/nrf91-feather/">nRF9160 Feather.</a>
+amundas:
+    name: Amund Askeland
+    email: amund.ask@gmail.com
+    github: amundas
+    linkedin: https://www.linkedin.com/in/amund-askeland-9a2545149/
+    blurb: is a hardware and software enthusiast currently working on a PhD in embedded security.
+    image: /img/author/amund.png
