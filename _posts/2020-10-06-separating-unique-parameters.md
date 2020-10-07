@@ -178,9 +178,9 @@ generate a bunch of files ahead of time. This makes the production setup more
 robust since it would not depend on some external service which may not be
 reachable from the factory floor.
 
-To keep things organized we will store all of our generated artifacts in folders
-based on the node name and keep track of which are used and which are free. We
-store free parameters are stored in `keys/free/<node_name>` and used parameters
+To keep things organized, we will store all of our generated artifacts in folders
+based on the node name and keep track of which are used and which are free. The 
+free parameters are stored in `keys/free/<node_name>` and used parameters
 in `keys/used/<node_name>`.
 
 In addition to the hex file, we also generate a human-readable file containing
@@ -304,7 +304,7 @@ service such as Hashicorp Vault.
 
 ## Final Thoughts
 
-I hope this post has convinced you that is isn't too hard to move away from
+I hope this post has convinced you that it isn't too hard to move away from
 hardcoded identifiers. As always, there are many ways to achieve the same thing,
 the method described here has been my preferred method after trying a lot of
 different solutions with varying success. Feel free to comment or contact me if
