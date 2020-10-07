@@ -89,15 +89,13 @@ const uint8_t *app_key      =   (uint8_t *) KEYS_BASE_ADDR + 16;
 
 You may also create a section in your linker script to achieve the same result.
 
-> *A Note on Security* In this post, we store encryption keys in standard flash
+> **A Note on Security** In this post, we store encryption keys in standard flash
 > memory. Whether or not this is a good idea depends on your application.
->
 > Although most MCUs allow you to enable readback protection, these mechanisms
 > have been defeated for a number of popular devices [^nrf51_bug]
 > [^ncc_readback]. Secure key storage can instead be done using secure elements
 > like the ATECC608A[^atecc608a], or special purpose registers if your device
 > includes them.
->
 > More advanced security considerations are a topic for another post.
 
 ## Generating Parameter Files
