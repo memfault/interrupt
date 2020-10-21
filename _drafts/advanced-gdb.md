@@ -1,40 +1,40 @@
 ---
-title: Advanced GDB
-description: TODO
+title: Advanced GDB Usage
+description: A collection of advanced GDB tips, extensions, and .gdbinit macros to speed up your debugging experience with the GNU debugger.
 author: tyler
 ---
 
-We are going to talk about GDB in depth in this post.
+About 6 years ago, when I was in my first few months at Pebble as a firmware engineer, I decided to take an entire work day to read through the entire manual of the GNU debugger, GDB. It was by far one of my best decisions as an early professional engineer. After that day, I felt like I was 10x faster at debugging the Pebble firmware and our suite of unit tests. I even had a new `.gdbinit` script with a few macros and configuration flags to boot, which I continue to amend to this day.
+
+Over the years, I've learned from many firmware developers and am here writing this post to share what I've learned along the way. If you have any comments or suggestions about this post, I would love to hear from you in [Interrupt's Slack channel](https://interrupt-slack.herokuapp.com/).
 
 <!-- excerpt start -->
 
-Excerpt Content
+In this post, we discuss some of the more advanced and powerful commands of the GNU debugger, GDB, as well as cover some of the best practices and hacks I've found over the years that help make GDB more pleasant to use.
 
 <!-- excerpt end -->
 
-Optional motivation to continue onwards
+Although there might be debuggers and interfaces out there that provide better experiences that using GDB directly, many of them are built on top of GDB and provide raw access to the GDB shell, where you can build and use automations through the [Python scripting API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}).
+
+> At the end of most of the sections, there are links to either the GDB manual or original content to learn more about the topic discussed.
 
 {% include newsletter.html %}
 
 {% include toc.html %}
 
-## Help Menus
+## Essentials
+
+### Navigate the Help Menus
 
 There's no better place to start than first teaching how to fish within GDB. Surprisingly, and maybe unsurprisingly, GDB has over 1500+ commands!
 
 ```
+# Count number of GDB commands in the master help list
 $ gdb --batch -ex 'help all' | grep '\-\-' | wc
     1512   16248  117306
 ```
 
-With this in mind, the most useful command within GDB is one that searches all the "help" menus of each command.
-
-```
-(gdb) help apropos
-Search for commands matching a REGEXP
-```
-
-To use it, simply type `apropos <regex>
+With this in mind, the most useful command within GDB is `apropos`, the one that searches all the "help" menus of each command. To use it, simply type `apropos <regex>`.
 
 ```
 (gdb) apropos symbol
@@ -44,11 +44,73 @@ attach -- Attach to a process or file outside of GDB.
 ...
 ```
 
+To get the individual help menu of any command in GDB, just type `help <command>` and GDB will output everything it knows about the command or subcommand.
+
+```
+(gdb) help apropos
+Search for commands matching a REGEXP
+```
+
+If help is used on a parent command:
+
+```
+(gdb) help info
+Generic command for showing things about the program being debugged.
+
+List of info subcommands:
+
+info address -- Describe where symbol SYM is stored.
+info all-registers -- List of all registers and their contents, for selected stack frame.
+info args -- All argument variables of current stack frame or those matching REGEXPs.
+...
+```
+
+[Reference](https://www.sourceware.org/gdb/current/onlinedocs/gdb.html#index-apropos)
+
+### GDB History
+
+The second most important thing after you figure what command you want and how to run it, is to persist that knowledge for your future self! You can do this easily by enabling command history.
+
+By default, GDB does not save any history of the commands that were run during each sessions. This is especially annoying because GDB supports `CTRL+R` for history search!
+
+To fix this, we can place the following in our `.gdbinit`.
+
+```
+set history save on
+set history size 10000
+set history filename ~/.gdb_history
+```
+
+With this in place, GDB will now keep the last 10,000 commands in a file ~/.gdb_history.
+
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Command-History.html)
+
+### Sharing `.gdbinit` Files
+
+I'm a huge believer in developer productivity and sharing my best-practices with co-workers and the greater community is a component of this. In the past, I've made it a point to have per-project GDB configuration files that are automatically loaded for everyone by default.
+
+This could be in a bash script `debug.sh` which developers use instead of typing `gdb` and all the arguments by hand:
+
+```
+#!/bin/sh
+
+gdb build/symbols.elf \
+    -ix=./gdb/project.gdbinit \
+    --ex='source ./gdb/extra_gdb.py' \
+	"$@"
+```
+
+Better yet, you can build a [Project CLI using Invoke]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}) which wraps the GDB invocation into an `invoke debug` command.
+
+This ensures that everyone working on the project has the lastest set of configuration flags and [GDB Python scripts]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) to accelerate their debugging.
+
 ## Source Files
+
+With the essentials out of the way, let's dive into GDB! The first thing to talk about is how best to view and navigate source code.
 
 ### Search Paths
 
-Many times, the CI system builds with absolute paths instead of relative paths, which causes GDB not to be able to find the source files. 
+Many times, the CI system builds with absolute paths instead of relative paths, which causes GDB not to be able to find the source files.
 
 ```
 (gdb) f 1
@@ -56,7 +118,7 @@ Many times, the CI system builds with absolute paths instead of relative paths, 
 1952	../nrf5_sdk/components/libraries/cli/nrf_cli.c: No such file or directory.
 ```
 
-If you are proactive and want to fix this permanently in the build step, you can follow the steps in a previous post about [Reproducible Firmware Builds]({% post_url 2019-12-11-reproducible-firmware-builds %}) to make the paths relative. 
+If you are proactive and want to fix this permanently in the build step, you can follow the steps in a previous post about [Reproducible Firmware Builds]({% post_url 2019-12-11-reproducible-firmware-builds %}) to make the paths relative.
 
 If you want to patch it up now in GDB, you can use a combination of the `set substitute-path` and `directory` commands in GDB, depending on how the paths are built.
 
@@ -74,7 +136,7 @@ Source directories searched: /[...]/sdk/embedded/platforms/nrf5/nrf5_sdk:$cdir:$
 
 ### `list` Command
 
-To quickly view ten lines of source-code context within GDB, you can use the `list` command. 
+To quickly view ten lines of source-code context within GDB, you can use the `list` command.
 
 ```
 (gdb) list
@@ -156,7 +218,7 @@ To show the registers at the top of the window, you can type:
 
 ### Alternate GDB Interfaces
 
-Although TUI is nice, I don't know many people who actually use it. It's great for quick observations and exploration, but I would suggest spending the 15-30 minutes to get something set up that is more powerful and permanent. 
+Although TUI is nice, I don't know many people who actually use it. It's great for quick observations and exploration, but I would suggest spending the 15-30 minutes to get something set up that is more powerful and permanent.
 
 I would suggest looking into using [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard) or [Conque-GDB](https://github.com/vim-scripts/Conque-GDB) if you'd like to stick with GDB itself.
 
@@ -180,7 +242,7 @@ If you are looking to do remote debugging on devices connected with OpenOCD, PyO
 
 ### Printing Registers
 
-You can print the register values within GDB using `info registers`. 
+You can print the register values within GDB using `info registers`.
 
 ```
 (gdb) info registers
@@ -251,7 +313,7 @@ Num     Type           Disp Enb Address    What
 
 #### Backtrace for All Threads
 
-To quickly gain an understanding of all of the threads, you can print the backtrace of all threads using the following: 
+To quickly gain an understanding of all of the threads, you can print the backtrace of all threads using the following:
 
 ```
 (gdb) thread apply all bt
@@ -268,11 +330,12 @@ define btall
 thread apply all backtrace
 end
 ```
+
 ### Memory
 
 #### Listing Memory Regions
 
-It's possible to list the memory regions of the binary currently being debugging by running the `info files` command. 
+It's possible to list the memory regions of the binary currently being debugging by running the `info files` command.
 
 ```
 (gdb) info files
@@ -297,35 +360,55 @@ Local exec file:
 	0x200117c0 - 0x200117e0 is net_if_dev
 ```
 
-This is especially helpful when you are trying to figure out exactly where a variable exists in memory. 
+This is especially helpful when you are trying to figure out exactly where a variable exists in memory.
 
-#### Examing Memory using `x`
+#### Examine Memory using `x`
 
-Many developers know how to use GDB's `print`, but less know about the more powerful `x` (for "e__x__amine") command. The `x` command is used to examine memory using several formats. 
+Many developers know how to use GDB's `print`, but less know about the more powerful `x` (for "e**x**amine") command. The `x` command is used to examine memory using several formats.
 
-My most common use of `x` is looking at the stack memory of a thread that has faulted due to a stack overflow.
+My most common use of `x` is looking at the stack memory of a system that doesn't have a valid backtrace in GDB. If we know the stack area name and size, we can quickly print the entire contents and see if there are valid function references.
+
+I'm looking at a Zephyr RTOS based system and one of the stack regions is called `my_stack_area`. Let's dump the entire contents.
+
+First we find the size of the stack:
 
 ```
-"HardFault_Handler () at memfault/sdk/embedded/src/memfault_fault_handling.c:123
-123	memfault/sdk/embedded/src/memfault_fault_handling.c: No such file or directory.
+(gdb) p sizeof(my_stack_area)
+$1 = 2980
+```
+
+It's 2980 bytes, so we want to print 2980/4 = 745 words. That should be `x/745a` then.
+
+```
+(gdb) x/745a my_stack_area
+0x2000a3c0 <my_stack_area>:	0xaaaaaaaa	0xaaaaaaaa	0xaaaaaaaa	0xaaaaaaaa
+0x2000a3d0 <my_stack_area+16>:	0xaaaaaaaa	0xaaaaaaaa	0xaaaaaaaa	0xaaaaaaaa
+... A lot more 0xaaaaaaaa
+0x2000a8d0 <my_stack_area+1296>:	0xaaaaaaaa	0xaaaaaaaa	0x190	0x2000a900 <my_stack_area+1344>
+0x2000a8e0 <my_stack_area+1312>:	0x18f	0x0	0x2000a298 <my_stack_area2+152>	0x18f
+0x2000a8f0 <my_stack_area+1328>:	0x20000434 <my_work_q>	0x8021063 <process_accel_data_worker_task>	0x0	0x802108d <process_accel_data_worker_task+42>
+0x2000a900 <my_stack_area+1344>:	0x1	0x20002	0x40002	0x60002
+0x2000a910 <my_stack_area+1360>:	0x80002	0xc0004	0x100004	0x160006
+0x2000a920 <my_stack_area+1376>:	0x1c0006	0x240008	0x2c0008	0x38000c
+... A lot of accel int32_t readings
+0x2000af30 <my_stack_area+2928>:	0x92f5648a	0xf83c6547	0x5d9a654f	0xc39f6605
+0x2000af40 <my_stack_area+2944>:	0x0	0x8021505 <z_work_q_main+68>	0x0	0x80214c1 <z_work_q_main>
+0x2000af50 <my_stack_area+2960>:	0x0	0x80214b9 <z_thread_entry+12>	0x0	0xaaaaaaaa
+0x2000af60 <my_stack_area+2976>:	0xaaaaaaaa
+```
+
+We can easily see some references to functions in this stack, such as `process_accel_data_worker_task`, `z_work_q_main`, and `z_thread_entry`. This stack dump technique is especially useful if your GDB provides you with no backtrace information, such as:
+
+```
 (gdb) bt
-#0  HardFault_Handler () at memfault/sdk/embedded/src/memfault_fault_handling.c:123
-#1  <signal handler called>
-#2  0x0badcafe in ?? ()
-#3  0x000292a2 in cli_execute (p_cli=0x3ad00 <m_cli>) at ../nrf5_sdk/components/libraries/cli/nrf_cli.c:2554
-#4  cli_state_collect (p_cli=<optimized out>) at ../nrf5_sdk/components/libraries/cli/nrf_cli.c:1952
-#5  nrf_cli_process (p_cli=<optimized out>) at ../nrf5_sdk/components/libraries/cli/nrf_cli.c:2852
-#6  0x22334454 in ?? ()
-```
-As you can see, we don't get much information about what happened during this hard fault. But we can print the contents of the stack by using `x/a $sp` 
-
+#0  0x00015f5a in ?? ()
 ```
 
-```
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Memory.html)
 
 #### Searching Memory using `find`
 
-Sometimes you know a pattern that you are looking for in memory, and you want to quickly find out if it exists in memory on the system. Maybe it's a magic string or a specific 4 byte pattern, like `0xdeadbeef`. 
+Sometimes you know a pattern that you are looking for in memory, and you want to quickly find out if it exists in memory on the system. Maybe it's a magic string or a specific 4 byte pattern, like `0xdeadbeef`.
 
 Let's search for the string `shell_uart`, which is the task name of a thread in my Zephyr system. I'll search the entire writeable RAM space, which can be found by running the `info files` command mentioned previously.
 
@@ -355,9 +438,39 @@ The `find` command can also be useful for finding pointers pointing to arbitrary
 6 patterns found.
 ```
 
-It looks like there are some references on the `mgmt_stack`, and a few other references, which are actually pointers from linked lists. 
+It looks like there are some references on the `mgmt_stack`, and a few other references, which are actually pointers from linked lists.
 
 Using `find` can help track down memory leaks, memory corruption, and possible hard faults by seeing what pieces of system are continuing to reference memory or values when they shouldn't.
+
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Searching-Memory.html)
+
+### Hex Dump with `xxd`
+
+I love `xxd` for printing files in hexdump format, and we should be able to have the same within GDB. Below is a bit of a hack to bring `xxd` into GDB but it works perfectly.
+
+```
+define xxd
+  dump binary memory /tmp/dump.bin $arg0 ((char *)$arg0)+$arg1
+  shell xxd /tmp/dump.bin
+end
+document xxd
+  Runs xxd on a memory ADDR and LENGTH
+
+  xxd ADDR LENTH
+end
+```
+
+If I place the above in my `.gdbinit`, I should now have a command `xxd` in GDB that I can use to hexdump an address and length.
+
+```
+(gdb) xxd &shell_uart_out_buffer sizeof(shell_uart_out_buffer)
+00000000: 1b5b 6d74 3a7e 2420 0000 0000 0000 0000  .[mt:~$ ........
+00000010: 0000 0000 0000 0000 0000 0000 0000       ..............
+```
+
+I find this most useful when dumping the contents of log buffers.
+
+[Reference](https://sourceware.org/gdb/onlinedocs/gdb/Dump_002fRestore-Files.html)
 
 ## Variables
 
@@ -376,7 +489,7 @@ dft_out = 0x2000a900 <my_stack_area+1344>
 num_samples = 536912536
 ```
 
-You can also print all static and global variables in the system by using `info variables`, but that will print *a lot* of variables out to your screen. It's better to filter through them!
+You can also print all static and global variables in the system by using `info variables`, but that will print _a lot_ of variables out to your screen. It's better to filter through them!
 
 The command `info variables` can optional take a regular expression that will perform a search against the name of the variable.
 
@@ -412,9 +525,11 @@ File zephyr/kernel/mempool.c:
 ...
 ```
 
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Symbols.html#index-info-variables)
+
 ### Referencing Specific Variables
 
-If you work on a large project with many modules, you'll likely have static and global variables with the same name. 
+If you work on a large project with many modules, you'll likely have static and global variables with the same name.
 
 ```
 (gdb) info variables lock
@@ -441,7 +556,7 @@ $8 = (struct k_spinlock *) 0x2000a0c4 <lock>
 
 You can also reference specific variables from **functions** using a similar syntax. This is most helpful for referencing `static` variables within functions from the global context.
 
-For example, in the Memfault Firmware SDK, we have a function ``memfault_platform_coredump_get_regions` which contains a static variable `s_coredump_regions`. [Source](https://github.com/memfault/memfault-firmware-sdk/blob/2fe6fc870fd75599243eb7068624d66176213e34/ports/panics/src/memfault_platform_ram_backed_coredump.c#L55)
+For example, in the Memfault Firmware SDK, we have a function ``memfault_platform_coredump_get_regions`which contains a static variable`s_coredump_regions`. [Source](https://github.com/memfault/memfault-firmware-sdk/blob/2fe6fc870fd75599243eb7068624d66176213e34/ports/panics/src/memfault_platform_ram_backed_coredump.c#L55)
 
 In GDB, we are unable to print that variable directly:
 
@@ -452,6 +567,8 @@ No symbol "s_coredump_regions" in current context.
 
 But, if we reference the function directly, we can print the value:
 
+{% raw %}
+
 ```
 (gdb) p memfault_platform_coredump_get_regions::s_coredump_regions
 $3 = {{
@@ -461,9 +578,13 @@ $3 = {{
   }}
 ```
 
-### History Variables
+{% endraw %}
 
-Every time you print an expression in GDB, it will print the value, but in the format of`$<integre> = <value>`. 
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Variables.html)
+
+### Value History
+
+Every time you print an expression in GDB, it will print the value, but in the format of`$<integre> = <value>`.
 
 ```
 (gdb) p "hello"
@@ -476,6 +597,20 @@ The `$1` is a variable, which you can use at any point in the debugging session 
 (gdb) p $1
 $2 = "hello"
 ```
+
+Can't remember exactly which variable you want in the past? Just use `show values` to print the most recent ten.
+
+```
+(gdb) show values
+$1 = 800
+$2 = 2980
+$3 = (uint32_t *) 0x3128115f
+$4 = (uint32_t *) 0x2000a900 <my_stack_area+1344>
+$5 = 536912536
+$6 = 400
+```
+
+[Reference](https://sourceware.org/gdb/onlinedocs/gdb/Value-History.html#Value-History)
 
 ### Convenience Variables
 
@@ -502,7 +637,7 @@ You can also use convenience variables to help you print pieces of data with an 
 $37 = (const struct shell_static_entry (*)[5]) 0x8031650 <shell_wifi_commands>
 ```
 
-The above array is a list of `shell_static_entry` structs, each of which have many fields. Browsing through lists of structs is sometimes cumbersome, especially if I'm only trying to look at a single field. 
+The above array is a list of `shell_static_entry` structs, each of which have many fields. Browsing through lists of structs is sometimes cumbersome, especially if I'm only trying to look at a single field.
 
 Convenience variables can help with this.
 
@@ -516,12 +651,14 @@ $39 = 0x80314e0 "\"<SSID>\"\n<SSID length>\n<channel number (optional), 0 means 
 $40 = 0x803155c "Disconnect from Wifi AP"
 ...
 ```
+
 Each time I press enter, the previous command is executed and `i` increments!
 
+[Reference](https://sourceware.org/gdb/onlinedocs/gdb/Convenience-Vars.html)
 
 ### The `$` Variable
 
-In GDB, the value of `$` is the value returned from the previous command. 
+In GDB, the value of `$` is the value returned from the previous command.
 
 ```
 (gdb) p "hello"
@@ -552,6 +689,7 @@ $68 = (struct k_thread *) 0x200022ac <eswifi_spi0+20>
 $69 = (struct k_thread *) 0x2000a120 <k_sys_work_q+20>
 ```
 
+[Reference](https://sourceware.org/gdb/onlinedocs/gdb/Value-History.html#Value-History)
 
 ## Artificial Arrays
 
@@ -578,36 +716,21 @@ We can print this entire array using one of two ways. First, we can cast it to a
 $10 = {0, 1, 2, 3, 4, 5, ...
 ```
 
-Or we can use GDB's artificial arrays! An artificial array is denoted by using the binary operator `@`. The left operand of `@` should be the first element in thee array. The right operand should be the desired length of the array. 
+Or we can use GDB's artificial arrays! An artificial array is denoted by using the binary operator `@`. The left operand of `@` should be the first element in thee array. The right operand should be the desired length of the array.
 
 ```
 (gdb) p *elements@100
 $11 = {0, 1, 2, 3, 4, 5, ...
 ```
 
-## GDB History
-
-By default, GDB does not save any history of the commands that were run during each sessions. This is especially annoying because GDB supports `CTRL+R` for history search!
-
-To fix this, we can place the following in our `.gdbinit`.
-
-```
-set history save on
-set history size 10000
-set history filename ~/.gdb_history
-```
-
-With this in place, GDB will now keep the last 10,000 commands in a file ~/.gdb_history. 
-
-[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Command-History.html)
-
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Arrays.html)
 
 ## Pretty Printers
 
-GDB Pretty Printers are essentially printing plugins that you can register with GDB. Everytime a value is printed in GDB, GDB will check to see if there are any registered pretty printers for that type, and will use it to print instead. 
+GDB Pretty Printers are essentially printing plugins that you can register with GDB. Everytime a value is printed in GDB, GDB will check to see if there are any registered pretty printers for that type, and will use it to print instead.
 
-For instance, imagine we have a `struct Uuid` type in our codebase. 
-`
+For instance, imagine we have a `struct Uuid` type in our codebase. `
+
 ```c
 typedef struct Uuid {
   uint8_t bytes[16];
@@ -666,7 +789,7 @@ $3 = 100
 
 [Reference](https://stackoverflow.com/a/39663128)
 
-## External Commands
+## Interactions Outside of GDB
 
 ### Run Make within GDB
 
@@ -681,29 +804,7 @@ Compiling file: memfault_batched_events.c
 ...
 ```
 
-### Hex Dump with `xxd`
-
-I love `xxd` for printing files in hexdump format, and we should be able to have the same within GDB. Below is a bit of a hack to bring `xxd` into GDB but it works perfectly. 
-
-```
-define xxd
-  dump binary memory /tmp/dump.bin $arg0 ((char *)$arg0)+$arg1
-  shell xxd /tmp/dump.bin
-end
-document xxd
-  Runs xxd on a memory ADDR and LENGTH
-
-  xxd ADDR LENTH
-end
-```
-
-If I place the above in my `.gdbinit`, I should now have a command `xxd` in GDB that I can use to hexdump an address and length.
-
-```
-(gdb) xxd &shell_uart_out_buffer sizeof(shell_uart_out_buffer)
-00000000: 1b5b 6d74 3a7e 2420 0000 0000 0000 0000  .[mt:~$ ........
-00000010: 0000 0000 0000 0000 0000 0000 0000       ..............
-```
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Shell-Commands.html)
 
 ### Running Shell Commands
 
@@ -715,11 +816,39 @@ Compiling file: arch_arm_cortex_m.c
 Compiling file: memfault_batched_events.c
 ```
 
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Shell-Commands.html)
+
+### Outputting to File
+
+You can output GDB's stdout to a file by using GDB's built in logging functionality.
+
+```
+(gdb) set logging on
+Copying output to gdb.txt.
+Copying debug output to gdb.txt.
+```
+
+Now, any command you run during this session will have its output written to this file as well.
+
+```
+(gdb) p "hello"
+$1 = "hello"
+(gdb) quit
+
+$ cat gdb.txt
+$1 = "hello"
+quit
+```
+
+This is most useful when you have a GDB script or Python command that outputs structured data, such as JSON, which you want to then use outside of the GDB session.
+
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Logging-Output.html)
+
 ## Embedded Specific Enhancements
 
 ### Thread Awareness
 
-If you are using PyOCD, OpenOCD, or JLink, ensure you are using a gdbserver that is compatible with your RTOS so that you can get the backtraces for all threads. 
+If you are using PyOCD, OpenOCD, or JLink, ensure you are using a gdbserver that is compatible with your RTOS so that you can get the backtraces for all threads.
 
 For OpenOCD and PyOCD, you can view their supported RTOS's and source code for them in Github ([OpenOCD](https://github.com/ntfreak/openocd/tree/master/src/rtos), [PyOCD](https://github.com/pyocd/pyOCD/tree/master/pyocd/rtos))
 
@@ -729,7 +858,7 @@ To integrate an RTOS with Jlink, you'll have to either use ChibiOS or FreeRTOS, 
 
 With the help of [PyCortexMDebug](https://github.com/bnahill/PyCortexMDebug), you can parse SVD files and read peripheral register values more easily. To get started, first acqure the .svd file from your vendor or look at the [cmsis-svd](https://github.com/posborne/cmsis-svd) repo on Github.
 
-Once you have the file, clone the PyCortexMDebug repo. 
+Once you have the file, clone the PyCortexMDebug repo.
 
 ```
 $ git clone https://github.com/bnahill/PyCortexMDebug
@@ -757,11 +886,12 @@ Available Peripherals:
 
 ## Conclusion
 
-
 <!-- Interrupt Keep START -->
+
 {% include newsletter.html %}
 
 {% include submit-pr.html %}
+
 <!-- Interrupt Keep END -->
 
 {:.no_toc}
