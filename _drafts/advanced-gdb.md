@@ -28,7 +28,7 @@ Although there might be debuggers and interfaces out there that provide better e
 
 ### Navigate the Help Menus
 
-There's no better place to start than first teaching how to fish within GDB. Surprisingly, and maybe unsurprisingly, GDB has over 1500+ commands!
+There's no better place to start learned GDB than to first learn how to search the help menus. Surprisingly, and maybe unsurprisingly, GDB has over 1500+ commands!
 
 ```
 # Count number of GDB commands in the master help list
@@ -36,7 +36,7 @@ $ gdb --batch -ex 'help all' | grep '\-\-' | wc
     1512   16248  117306
 ```
 
-With this in mind, the most useful command within GDB is `apropos`, the one that searches all the "help" menus of each command. To use it, simply type `apropos <regex>`.
+With this in mind, the most useful command within GDB is `apropos`, which searches all the "help" menus of each command. To use it, simply type `apropos <regex>`.
 
 ```
 (gdb) apropos symbol
@@ -46,14 +46,14 @@ attach -- Attach to a process or file outside of GDB.
 ...
 ```
 
-To get the individual help menu of any command in GDB, just type `help <command>` and GDB will output everything it knows about the command or subcommand.
+To get the individual help menu of any command in GDB, just type `help <command>`, and GDB will output everything it knows about the command or subcommand.
 
 ```
 (gdb) help apropos
 Search for commands matching a REGEXP
 ```
 
-If help is used on a parent command:
+If help is used on a collection of commands:
 
 ```
 (gdb) help info
@@ -73,9 +73,9 @@ info args -- All argument variables of current stack frame or those matching REG
 
 ### GDB History
 
-The second most important thing after you figure what command you want and how to run it is to persist that knowledge for your future self! You can do this easily by enabling command history.
+Next, we need to ensure that command history is enabled.
 
-By default GDB does not save any history of the commands that were run during each session. This is especially annoying because GDB supports `CTRL+R` for history search!
+By default GDB does not save any history of the commands that were run during each session. This is especially annoying because GDB supports `CTRL+R` for history search just like your shell!
 
 To fix this, we can place the following in our `.gdbinit`.
 
@@ -93,7 +93,7 @@ With this in place, GDB will now keep the last 10,000 commands in a file ~/.gdb_
 
 ### Sharing `.gdbinit` Files
 
-I'm a huge believer in developer productivity and sharing my best-practices with co-workers and the greater community is a component of this. In the past, I've made it a point to have per-project GDB configuration files that are automatically loaded for everyone by default.
+I'm a huge believer in developer productivity, and I try my best to share my best-practices with co-workers and the greater community. In the past, I've made it a point to have per-project GDB configuration files that are automatically loaded for everyone by default.
 
 This could be in a bash script `debug.sh` which developers use instead of typing `gdb` and all the arguments by hand:
 
@@ -112,31 +112,36 @@ This ensures that everyone working on the project has the latest set of configur
 
 ## Source Files
 
-With the essentials out of the way, let's dive into GDB! The first thing to talk about is how best to view and navigate source code.
+With the essentials out of the way, let's dive into learning GDB! The first thing to talk about is how best to view and navigate the source code while debugging.
 
 {:.no_toc}
 
 ### Directory Search Paths
 
-Many times, the CI system builds with absolute paths instead of relative paths, which causes GDB not to be able to find the source files.
+Many times, the CI system builds with absolute paths instead of paths relative to the project root, which causes GDB not to be able to find the source files.
+
+It will produce an error like below:
 
 ```
 (gdb) f 1
-#2  cli_state_collect (p_cli=0x3ad00 <m_cli>) at ../nrf5_sdk/components/libraries/cli/nrf_cli.c:1952
-1952	../nrf5_sdk/components/libraries/cli/nrf_cli.c: No such file or directory.
+#2  cli_state_collect (p_cli=0x3ad00 <m_cli>) at
+    ../nrf5_sdk/components/libraries/cli/nrf_cli.c:1952
+1952	../nrf5_sdk/components/libraries/cli/nrf_cli.c:
+    No such file or directory.
 ```
 
-If you are proactive and want to fix this permanently in the build step, you can follow the steps in a previous post about [Reproducible Firmware Builds]({% post_url 2019-12-11-reproducible-firmware-builds %}) to make the paths relative.
+If you are proactive and want to fix this permanently in the build step, you can follow the steps in Interrupt's post about [Reproducible Firmware Builds]({% post_url 2019-12-11-reproducible-firmware-builds %}) to make the paths relative.
 
 If you want to patch it up now in GDB, you can use a combination of the `set substitute-path` and `directory` commands in GDB, depending on how the paths are built.
 
-To fix the above issue, all I needed to do was to add my local directory. After adding it, GDB can find the source code of the line in the frame.
+To fix the above issue, all I needed to do was to add a local directory. After adding it, GDB can find the source code of the line in the frame.
 
 ```
 (gdb) directory sdk/embedded/platforms/nrf5/nrf5_sdk/
 Source directories searched: /[...]/sdk/embedded/platforms/nrf5/nrf5_sdk:$cdir:$cwd
 (gdb) f 1
-#1  0x000292a2 in cli_execute (p_cli=0x3ad00 <m_cli>) at ../nrf5_sdk/components/libraries/cli/nrf_cli.c:2554
+#1  0x000292a2 in cli_execute (p_cli=0x3ad00 <m_cli>) at
+    ../nrf5_sdk/components/libraries/cli/nrf_cli.c:2554
 2554	        p_cli->p_ctx->p_current_stcmd->handler(p_cli,
 ```
 
@@ -146,7 +151,7 @@ Source directories searched: /[...]/sdk/embedded/platforms/nrf5/nrf5_sdk:$cdir:$
 
 ### Source Context with `list`
 
-To quickly view ten lines of source-code context within GDB, you can use the `list` command.
+Sometimes, you just want to quickly at a few lines above and below the current line. To quickly view ten lines of source-code context within GDB, you can use the `list` command.
 
 ```
 (gdb) list
@@ -202,6 +207,8 @@ If you want something more powerful than `disassemble`, you can use `objdump` it
 
 ## GDB Visual Interfaces
 
+There are many visual interfaces that are built into or on top of GDB. Let's go through a few of the most popular ones.
+
 {:.no_toc}
 
 ### GDB TUI
@@ -234,9 +241,9 @@ To show the registers at the top of the window, you can type:
 
 ### Alternate GDB Interfaces
 
-Although TUI is nice, I don't know many people who use it. It's great for quick observations and exploration, but I would suggest spending the 15-30 minutes to get something set up that is more powerful and permanent.
+Although TUI is nice, I don't know many people who use it and see it more as a gimmick. It's great for quick observations and exploration, but I would suggest spending the 15-30 minutes to get something set up that is more powerful and permanent.
 
-I would suggest looking into using [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard) or [Conque-GDB](https://github.com/vim-scripts/Conque-GDB) if you'd like to stick with GDB itself.
+I would suggest looking into using [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard) or [Conque-GDB](https://github.com/vim-scripts/Conque-GDB) if you'd like to stick with using GDB itself.
 
 For a full list of GUI enhancements to GDB, you can check out the list of plugins from my [previous post on GDBundle]({% post_url 2020-04-14-gdbundle-plugin-manager %}#neat-gdb-script-repositories).
 
@@ -248,7 +255,7 @@ For a full list of GUI enhancements to GDB, you can check out the list of plugin
 
 ![](https://raw.githubusercontent.com/cs01/gdbgui/master/screenshots/gdbgui.png)
 
-It's a great tool if you don't want to use a vendor-provided debugger but still want to have a visual way to interface with GDB.
+gdbgui is great tool if you don't want to use a vendor-provided debugger but still want to have a visual way to interface with GDB.
 
 {:.no_toc}
 
@@ -312,6 +319,17 @@ $3 = (void (*)()) 0x802f03c <vPortEnterCritical+32>
 ```
 
 Notice these are the same values as above when we used `info registers`.
+
+If your gdbserver supports it, you can also set these register values! This is really useful for when you are trying to debug a hard fault and all you have are the `sp`, `lr`, and `pc` registers.
+
+```
+(gdb) set $pc = <pc from fault handler>
+(gdb) set $lr = <lr from fault handler>
+(gdb) set $sp = <sp from fault handler>
+
+# Hopefully now a real backtrace!
+(gdb) bt
+```
 
 ## Memory
 
@@ -436,7 +454,7 @@ Using `find` can help track down memory leaks, memory corruption, and possible h
 
 ### Hex Dump with `xxd`
 
-I love `xxd` for printing files in hexdump format, and we should be able to have the same within GDB. Below is a bit of a hack to bring `xxd` into GDB but it works perfectly.
+I love `xxd` for printing files in hexdump format in the shell, but GDB doesn't have anything similar built-in Below is a bit of a hack to bring `xxd` into GDB but it works perfectly.
 
 ```
 define xxd
@@ -454,15 +472,19 @@ If I place the above in my `.gdbinit`, I should now have a command `xxd` in GDB 
 
 ```
 (gdb) xxd &shell_uart_out_buffer sizeof(shell_uart_out_buffer)
-00000000: 1b5b 6d74 3a7e 2420 0000 0000 0000 0000  .[mt:~$ ........
-00000010: 0000 0000 0000 0000 0000 0000 0000       ..............
+00000000: 6d66 6c74 3e68 656c 700a 6372 6173 680a  mflt>help.crash.
+00000010: 6163 6365 6c65 726f 6d65 7465 720a 7761  accelerometer.wa
+00000020: 7463 6864 6f67 0a74 696d 6572 730a 6578  tchdog.timers.ex
+00000030: 6974 0a                                  it.
 ```
 
-I find this most useful when dumping the contents of log buffers.
+I find this most useful when dumping the contents of log buffers, but it is a great compliment to using the `x` command to see if a binary buffer contains ASCII data.
 
 [Reference](https://sourceware.org/gdb/onlinedocs/gdb/Dump_002fRestore-Files.html)
 
 ## Variables
+
+Next up, let's learn to find and print out any variable on the system.
 
 {:.no_toc}
 
@@ -535,7 +557,6 @@ File zephyr/zephyr/kernel/mutex.c:
 
 File zephyr/zephyr/kernel/poll.c:
 36:	static struct k_spinlock lock;
-
 ...
 ```
 
@@ -594,7 +615,7 @@ The `$1` is a variable, which you can use at any point in the debugging session 
 $2 = "hello"
 ```
 
-Can't remember exactly which variable you want in the past? Just use `show values` to print the most recent ten.
+Can't remember exactly which variable existed in the past? Just use `show values` to print the most recent ten.
 
 ```
 (gdb) show values
@@ -620,7 +641,7 @@ GDB also allows you to create and retrieve any number of variables within a debu
 $4 = 5
 ```
 
-These are useful when you are using complex expressions, possibly involving casts and nested structs.
+These are useful when you are using complex expressions, possibly involving casts and nested structs, that you want to recall later.
 
 ```
 (gdb) set $wifi = mgmt_thread_data.next_thread.next_thread
@@ -628,7 +649,7 @@ These are useful when you are using complex expressions, possibly involving cast
 $11 = (struct k_thread *) 0x200022ac <eswifi_spi0+20>
 ```
 
-You can also use convenience variables to help you print pieces of data with an array of structs.
+You can also use convenience variables to help you print fields within an array of structs.
 
 ```
 (gdb) p &shell_wifi_commands
@@ -644,13 +665,13 @@ Let's print the `help` element from struct in the array. I'll set `$i = 0` as my
 ```
 (gdb) set $i = 0
 (gdb) print shell_wifi_commands[$i++]->help
-$39 = 0x80314e0 "\"<SSID>\"\n<SSID length>\n<channel number (optional), 0 means all>\n<PSK (optional: valid only for secured SSIDs)>"
+$1 = 0x80314e0 "\"<SSID>\"\n<SSID length>\n<channel number (optional), 0 means all>\n<PSK (optional: valid only for secured SSIDs)>"
 (gdb) <enter>
-$40 = 0x803155c "Disconnect from Wifi AP"
+$2 = 0x803155c "Disconnect from Wifi AP"
 ...
 ```
 
-Each time I press enter, the previous command is executed and `i` increments!
+Each time I press enter, the previous command is executed and `i` increments, printing me the data in the next struct in the array.
 
 [Reference](https://sourceware.org/gdb/onlinedocs/gdb/Convenience-Vars.html)
 
@@ -749,6 +770,8 @@ Num     Type           Disp Enb Address    What
 1       hw watchpoint  keep y              i stop only if i == 100
 ```
 
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Set-Watchpoints.html)
+
 ## Backtrace for All Threads
 
 To quickly gain an understanding of all of the threads, you can print the backtrace of all threads using the following:
@@ -768,6 +791,8 @@ define btall
 thread apply all backtrace
 end
 ```
+
+[Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Threads.html) [Bonus Reference for Backtrace Formatting](https://sourceware.org/gdb/current/onlinedocs/gdb/Backtrace.html)
 
 ## Pretty Printers
 
