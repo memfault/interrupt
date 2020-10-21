@@ -4,7 +4,7 @@ description: A collection of advanced GDB tips, extensions, and .gdbinit macros 
 author: tyler
 ---
 
-About 6 years ago, when I was in my first few months at Pebble as a firmware engineer, I decided to take an entire workday to read through the entire manual of the GNU debugger, GDB. It was by far one of my best decisions as an early professional engineer. After that day, I felt like I was 10x faster at debugging the Pebble firmware and our suite of unit tests. I even had a new `.gdbinit` script with a few macros and configuration flags to boot, which I continue to amend to this day.
+About 6 years ago, when I was in my first few months at Pebble as a firmware engineer, I decided to take an entire workday to read through the majority of the GDB manual. It was by far one of my best decisions as an early professional engineer. After that day, I felt like I was 10x faster at debugging the Pebble firmware and our suite of unit tests. I even had a new `.gdbinit` script with a few macros and configuration flags to boot, which I continue to amend to this day.
 
 Over the years, I've learned from many firmware developers and am here writing this post to share what I've learned along the way. If you have any comments or suggestions about this post, I would love to hear from you in [Interrupt's Slack channel](https://interrupt-slack.herokuapp.com/).
 
@@ -16,13 +16,15 @@ In this post, we discuss some of the more advanced and powerful commands of the 
 
 Although there might be debuggers and interfaces out there that provide better experiences that using GDB directly, many of them are built on top of GDB and provide raw access to the GDB shell, where you can build and use automation through the [Python scripting API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}).
 
-> At the end of most of the sections, there are links to either the GDB manual or original content to learn more about the topic discussed.
+> At the end of most of the sections, there are links to either subpages with the [GDB manual](https://sourceware.org/gdb/current/onlinedocs/gdb/) or to the original content to learn more about the topic discussed.
 
 {% include newsletter.html %}
 
 {% include toc.html %}
 
 ## Essentials
+
+{:.no_toc}
 
 ### Navigate the Help Menus
 
@@ -67,6 +69,8 @@ info args -- All argument variables of current stack frame or those matching REG
 
 [Reference](https://www.sourceware.org/gdb/current/onlinedocs/gdb.html#index-apropos)
 
+{:.no_toc}
+
 ### GDB History
 
 The second most important thing after you figure what command you want and how to run it is to persist that knowledge for your future self! You can do this easily by enabling command history.
@@ -84,6 +88,8 @@ set history filename ~/.gdb_history
 With this in place, GDB will now keep the last 10,000 commands in a file ~/.gdb_history.
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Command-History.html)
+
+{:.no_toc}
 
 ### Sharing `.gdbinit` Files
 
@@ -108,7 +114,9 @@ This ensures that everyone working on the project has the latest set of configur
 
 With the essentials out of the way, let's dive into GDB! The first thing to talk about is how best to view and navigate source code.
 
-### Search Paths
+{:.no_toc}
+
+### Directory Search Paths
 
 Many times, the CI system builds with absolute paths instead of relative paths, which causes GDB not to be able to find the source files.
 
@@ -134,7 +142,9 @@ Source directories searched: /[...]/sdk/embedded/platforms/nrf5/nrf5_sdk:$cdir:$
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Source-Path.html)
 
-### `list` Command
+{:.no_toc}
+
+### Source Context with `list`
 
 To quickly view ten lines of source-code context within GDB, you can use the `list` command.
 
@@ -159,6 +169,8 @@ If you want to set a larger or smaller default number of lines shown with this c
 ```
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/List.html)
+
+{:.no_toc}
 
 ### Viewing Assembly With `disassemble`
 
@@ -190,6 +202,8 @@ If you want something more powerful than `disassemble`, you can use `objdump` it
 
 ## GDB Visual Interfaces
 
+{:.no_toc}
+
 ### GDB TUI
 
 GDB has a built-in graphical interface for viewing source code, registers, assembly, and other various items, and it's quite simple to use!
@@ -216,6 +230,8 @@ To show the registers at the top of the window, you can type:
 (gdb) tui reg general
 ```
 
+{:.no_toc}
+
 ### Alternate GDB Interfaces
 
 Although TUI is nice, I don't know many people who use it. It's great for quick observations and exploration, but I would suggest spending the 15-30 minutes to get something set up that is more powerful and permanent.
@@ -223,6 +239,8 @@ Although TUI is nice, I don't know many people who use it. It's great for quick 
 I would suggest looking into using [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard) or [Conque-GDB](https://github.com/vim-scripts/Conque-GDB) if you'd like to stick with GDB itself.
 
 For a full list of GUI enhancements to GDB, you can check out the list of plugins from my [previous post on GDBundle]({% post_url 2020-04-14-gdbundle-plugin-manager %}#neat-gdb-script-repositories).
+
+{:.no_toc}
 
 ### gdbgui
 
@@ -232,6 +250,8 @@ For a full list of GUI enhancements to GDB, you can check out the list of plugin
 
 It's a great tool if you don't want to use a vendor-provided debugger but still want to have a visual way to interface with GDB.
 
+{:.no_toc}
+
 ### VSCode
 
 VSCode has pretty good support for GDB baked in. If you are just using GDB to debug C/C++ code locally on your machine, you should be able to follow the [official instructions](https://code.visualstudio.com/docs/cpp/cpp-debug).
@@ -239,6 +259,10 @@ VSCode has pretty good support for GDB baked in. If you are just using GDB to de
 If you are looking to do remote debugging on devices connected with OpenOCD, PyOCD, or JLink, you'll want to look into the [Platform.io](https://marketplace.visualstudio.com/items?itemName=platformio.platformio-ide) or [Cortex-Debug](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug) extensions.
 
 ## Registers
+
+The next topic to cover is interacting with registers through GDB.
+
+{:.no_toc}
 
 ### Printing Registers
 
@@ -272,6 +296,8 @@ control        0x6                 6
 
 You can also use `info registers all` if there are more registers on your system that aren't printed by default, but do note they may or may not be valid values (depending on your system and gdbserver).
 
+{:.no_toc}
+
 ### Register Variables
 
 GDB provides you access to the values of the system registers in the form of variables, such as `$pc` or `$sp` for the program counter or stack pointer.
@@ -287,53 +313,11 @@ $3 = (void (*)()) 0x802f03c <vPortEnterCritical+32>
 
 Notice these are the same values as above when we used `info registers`.
 
-#### Conditional Breakpoints and Watchpoints
+## Memory
 
-A conditional breakpoint in GDB follows the format `break WHERE if CONDITION`. It will only bubble up a breakpoint to the user if `CONDITION` is true.
+{:.no_toc}
 
-Let's imagine we are trying to triage a reproducible memory corruption bug. You don't exactly know when or how a `num_samples` argument is being corrupted with the value of `0xdeadbeef` when the function `compute_fft` is called. We can improve our investigation using conditional breakpoints.
-
-```
-(gdb) break compute_fft if num_samples == 0xdeadbeef
-```
-
-You can use register values (`$sp`, `$pc`, etc.) in the conditional expressions as well.
-
-Note that the expressions are evaluated host side within GDB, so the system halts every time, but GDB will only prompt the user when the expression is true. Therefore, system performance might be impacted.
-
-You can also do the same with watchpoints, which will only prompt the user in GDB if the conditional is true.
-
-```
-(gdb) watch i if i == 100
-
-(gdb) info watchpoints
-Num     Type           Disp Enb Address    What
-1       hw watchpoint  keep y              i stop only if i == 100
-```
-
-#### Backtrace for All Threads
-
-To quickly gain an understanding of all of the threads, you can print the backtrace of all threads using the following:
-
-```
-(gdb) thread apply all bt
-
-# Shortcut
-(gdb) taa bt
-```
-
-In my personal `.gdbinit`, I have the following alias set to `btall`.
-
-```
-# Print backtrace of all threads
-define btall
-thread apply all backtrace
-end
-```
-
-### Memory
-
-#### Listing Memory Regions
+### Listing Memory Regions
 
 It's possible to list the memory regions of the binary currently being debugging by running the `info files` command.
 
@@ -362,7 +346,9 @@ Local exec file:
 
 This is especially helpful when you are trying to figure out exactly where a variable exists in memory.
 
-#### Examine Memory using `x`
+{:.no_toc}
+
+### Examine Memory using `x`
 
 Many developers know how to use GDB's `print`, but less know about the more powerful `x` (for "e**x**amine") command. The `x` command is used to examine memory using several formats.
 
@@ -406,7 +392,9 @@ We can easily see some references to functions in this stack, such as `process_a
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Memory.html)
 
-#### Searching Memory using `find`
+{:.no_toc}
+
+### Searching Memory using `find`
 
 Sometimes you know a pattern that you are looking for in memory, and you want to quickly find out if it exists in memory on the system. Maybe it's a magic string or a specific 4-byte pattern, like `0xdeadbeef`.
 
@@ -444,6 +432,8 @@ Using `find` can help track down memory leaks, memory corruption, and possible h
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Searching-Memory.html)
 
+{:.no_toc}
+
 ### Hex Dump with `xxd`
 
 I love `xxd` for printing files in hexdump format, and we should be able to have the same within GDB. Below is a bit of a hack to bring `xxd` into GDB but it works perfectly.
@@ -473,6 +463,8 @@ I find this most useful when dumping the contents of log buffers.
 [Reference](https://sourceware.org/gdb/onlinedocs/gdb/Dump_002fRestore-Files.html)
 
 ## Variables
+
+{:.no_toc}
 
 ### Searching for Variables
 
@@ -526,6 +518,8 @@ File zephyr/kernel/mempool.c:
 ```
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Symbols.html#index-info-variables)
+
+{:.no_toc}
 
 ### Referencing Specific Variables
 
@@ -582,7 +576,9 @@ $3 = {{
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Variables.html)
 
-### Value History
+{:.no_toc}
+
+### Value History Variables
 
 Every time you print an expression in GDB, it will print the value, but in the format of`$<integre> = <value>`.
 
@@ -611,6 +607,8 @@ $6 = 400
 ```
 
 [Reference](https://sourceware.org/gdb/onlinedocs/gdb/Value-History.html#Value-History)
+
+{:.no_toc}
 
 ### Convenience Variables
 
@@ -656,6 +654,8 @@ Each time I press enter, the previous command is executed and `i` increments!
 
 [Reference](https://sourceware.org/gdb/onlinedocs/gdb/Convenience-Vars.html)
 
+{:.no_toc}
+
 ### The `$` Variable
 
 In GDB, the value of `$` is the value returned from the previous command.
@@ -695,7 +695,7 @@ $69 = (struct k_thread *) 0x2000a120 <k_sys_work_q+20>
 
 It is often useful to print a contiguous region of memory as if it were an array. A common occurrence of this is when using `malloc` to allocate a buffer for a list of integers.
 
-```
+```c
 int num_elements = 100;
 int *elements = malloc(num_elements * sizeof(int));
 ```
@@ -724,6 +724,50 @@ $11 = {0, 1, 2, 3, 4, 5, ...
 ```
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Arrays.html)
+
+## Conditional Breakpoints and Watchpoints
+
+A conditional breakpoint in GDB follows the format `break WHERE if CONDITION`. It will only bubble up a breakpoint to the user if `CONDITION` is true.
+
+Let's imagine we are trying to triage a reproducible memory corruption bug. You don't exactly know when or how a `num_samples` argument is being corrupted with the value of `0xdeadbeef` when the function `compute_fft` is called. We can improve our investigation using conditional breakpoints.
+
+```
+(gdb) break compute_fft if num_samples == 0xdeadbeef
+```
+
+You can use register values (`$sp`, `$pc`, etc.) in the conditional expressions as well.
+
+Note that the expressions are evaluated host side within GDB, so the system halts every time, but GDB will only prompt the user when the expression is true. Therefore, system performance might be impacted.
+
+You can also do the same with watchpoints, which will only prompt the user in GDB if the conditional is true.
+
+```
+(gdb) watch i if i == 100
+
+(gdb) info watchpoints
+Num     Type           Disp Enb Address    What
+1       hw watchpoint  keep y              i stop only if i == 100
+```
+
+## Backtrace for All Threads
+
+To quickly gain an understanding of all of the threads, you can print the backtrace of all threads using the following:
+
+```
+(gdb) thread apply all bt
+
+# Shortcut
+(gdb) taa bt
+```
+
+In my personal `.gdbinit`, I have the following alias set to `btall`.
+
+```
+# Print backtrace of all threads
+define btall
+thread apply all backtrace
+end
+```
 
 ## Pretty Printers
 
@@ -761,6 +805,8 @@ $6 = {
 
 ## Struct Operations
 
+{:.no_toc}
+
 ### `sizeof`
 
 You can easily get the size of any type using `sizeof` within GDB, as you would in C.
@@ -769,6 +815,8 @@ You can easily get the size of any type using `sizeof` within GDB, as you would 
 (gdb) p sizeof(struct k_thread)
 $5 = 160
 ```
+
+{:.no_toc}
 
 ### `offsetof`
 
@@ -791,6 +839,8 @@ $3 = 100
 
 ## Interactions Outside of GDB
 
+{:.no_toc}
+
 ### Run Make within GDB
 
 Executing the command `make` directly in GDB will trigger Make from the current working directory.
@@ -806,6 +856,8 @@ Compiling file: memfault_batched_events.c
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Shell-Commands.html)
 
+{:.no_toc}
+
 ### Running Shell Commands
 
 You can also run arbitrary shell commands within GDB. This is especially useful to me when I'm working on my firmware projects because I always wrap Make with [an Invoke-based CLI]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}) for building and debugging my projects.
@@ -817,6 +869,8 @@ Compiling file: memfault_batched_events.c
 ```
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Shell-Commands.html)
+
+{:.no_toc}
 
 ### Outputting to File
 
@@ -846,6 +900,8 @@ This is most useful when you have a GDB script or Python command that outputs st
 
 ## Embedded Specific Enhancements
 
+{:.no_toc}
+
 ### Thread Awareness
 
 If you are using PyOCD, OpenOCD, or JLink, ensure you are using a gdbserver that is compatible with your RTOS so that you can get the backtraces for all threads.
@@ -853,6 +909,8 @@ If you are using PyOCD, OpenOCD, or JLink, ensure you are using a gdbserver that
 For OpenOCD and PyOCD, you can view their supported RTOS's and source code for them in Github ([OpenOCD](https://github.com/ntfreak/openocd/tree/master/src/rtos), [PyOCD](https://github.com/pyocd/pyOCD/tree/master/pyocd/rtos))
 
 To integrate an RTOS with Jlink, you'll have to either use ChibiOS or FreeRTOS, which they support by default, or [write your own JLink RTOS plugin](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/thread-aware-debugging/). You can reference [Github](https://github.com/search?q=RTOS_GetCurrentThreadId&type=code) to gain an understanding of how to write one.
+
+{:.no_toc}
 
 ### SVD Files and Peripheral Registers
 
@@ -886,6 +944,8 @@ Available Peripherals:
 
 ## Conclusion
 
+I have only scratched the surface of what GDB is capable of and the commands and tools mentioned here are mostly built into the application itself. The real fun begins when you start extending GDB using it's Python API.
+
 <!-- Interrupt Keep START -->
 
 {% include newsletter.html %}
@@ -896,8 +956,13 @@ Available Peripherals:
 
 {:.no_toc}
 
-## References
+## Further Reading
 
 <!-- prettier-ignore-start -->
-[^reference_key]: [Post Title](https://example.com)
+
+- [GDBundle: GDB's Missing Package manager]({% post_url 2020-04-14-gdbundle-plugin-manager %})
+- [Automate Debugging with GDB Python API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %})
+- GDB Manual - <a>https://sourceware.org/gdb/current/onlinedocs/gdb/</a>
+- 8 gdb tricks you should know - <a>https://blogs.oracle.com/linux/8-gdb-tricks-you-should-know-v2</a>
+
 <!-- prettier-ignore-end -->
