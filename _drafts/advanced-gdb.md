@@ -4,7 +4,7 @@ description: A collection of advanced GDB tips, extensions, and .gdbinit macros 
 author: tyler
 ---
 
-About 6 years ago, when I was in my first few months at Pebble as a firmware engineer, I decided to take an entire work day to read through the entire manual of the GNU debugger, GDB. It was by far one of my best decisions as an early professional engineer. After that day, I felt like I was 10x faster at debugging the Pebble firmware and our suite of unit tests. I even had a new `.gdbinit` script with a few macros and configuration flags to boot, which I continue to amend to this day.
+About 6 years ago, when I was in my first few months at Pebble as a firmware engineer, I decided to take an entire workday to read through the entire manual of the GNU debugger, GDB. It was by far one of my best decisions as an early professional engineer. After that day, I felt like I was 10x faster at debugging the Pebble firmware and our suite of unit tests. I even had a new `.gdbinit` script with a few macros and configuration flags to boot, which I continue to amend to this day.
 
 Over the years, I've learned from many firmware developers and am here writing this post to share what I've learned along the way. If you have any comments or suggestions about this post, I would love to hear from you in [Interrupt's Slack channel](https://interrupt-slack.herokuapp.com/).
 
@@ -14,7 +14,7 @@ In this post, we discuss some of the more advanced and powerful commands of the 
 
 <!-- excerpt end -->
 
-Although there might be debuggers and interfaces out there that provide better experiences that using GDB directly, many of them are built on top of GDB and provide raw access to the GDB shell, where you can build and use automations through the [Python scripting API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}).
+Although there might be debuggers and interfaces out there that provide better experiences that using GDB directly, many of them are built on top of GDB and provide raw access to the GDB shell, where you can build and use automation through the [Python scripting API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}).
 
 > At the end of most of the sections, there are links to either the GDB manual or original content to learn more about the topic discussed.
 
@@ -69,9 +69,9 @@ info args -- All argument variables of current stack frame or those matching REG
 
 ### GDB History
 
-The second most important thing after you figure what command you want and how to run it, is to persist that knowledge for your future self! You can do this easily by enabling command history.
+The second most important thing after you figure what command you want and how to run it is to persist that knowledge for your future self! You can do this easily by enabling command history.
 
-By default, GDB does not save any history of the commands that were run during each sessions. This is especially annoying because GDB supports `CTRL+R` for history search!
+By default GDB does not save any history of the commands that were run during each session. This is especially annoying because GDB supports `CTRL+R` for history search!
 
 To fix this, we can place the following in our `.gdbinit`.
 
@@ -102,7 +102,7 @@ gdb build/symbols.elf \
 
 Better yet, you can build a [Project CLI using Invoke]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}) which wraps the GDB invocation into an `invoke debug` command.
 
-This ensures that everyone working on the project has the lastest set of configuration flags and [GDB Python scripts]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) to accelerate their debugging.
+This ensures that everyone working on the project has the latest set of configuration flags and [GDB Python scripts]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) to accelerate their debugging.
 
 ## Source Files
 
@@ -160,7 +160,7 @@ If you want to set a larger or smaller default number of lines shown with this c
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/List.html)
 
-### Viewing Assembly With `disasseble`
+### Viewing Assembly With `disassemble`
 
 It's useful to dive into the assembly of a specific function. GDB has this capability built-in and can even interleave the source code with the assembly (by using the `/s` option).
 
@@ -218,7 +218,7 @@ To show the registers at the top of the window, you can type:
 
 ### Alternate GDB Interfaces
 
-Although TUI is nice, I don't know many people who actually use it. It's great for quick observations and exploration, but I would suggest spending the 15-30 minutes to get something set up that is more powerful and permanent.
+Although TUI is nice, I don't know many people who use it. It's great for quick observations and exploration, but I would suggest spending the 15-30 minutes to get something set up that is more powerful and permanent.
 
 I would suggest looking into using [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard) or [Conque-GDB](https://github.com/vim-scripts/Conque-GDB) if you'd like to stick with GDB itself.
 
@@ -230,7 +230,7 @@ For a full list of GUI enhancements to GDB, you can check out the list of plugin
 
 ![](https://raw.githubusercontent.com/cs01/gdbgui/master/screenshots/gdbgui.png)
 
-It's a really great tool if you don't want to use a vendor-provided debugger but still want to have a visual way to interface with GDB.
+It's a great tool if you don't want to use a vendor-provided debugger but still want to have a visual way to interface with GDB.
 
 ### VSCode
 
@@ -297,7 +297,7 @@ Let's imagine we are trying to triage a reproducible memory corruption bug. You 
 (gdb) break compute_fft if num_samples == 0xdeadbeef
 ```
 
-You can also use register values (`$sp`, `$pc`, etc.) in the conditional expressions as well.
+You can use register values (`$sp`, `$pc`, etc.) in the conditional expressions as well.
 
 Note that the expressions are evaluated host side within GDB, so the system halts every time, but GDB will only prompt the user when the expression is true. Therefore, system performance might be impacted.
 
@@ -408,7 +408,7 @@ We can easily see some references to functions in this stack, such as `process_a
 
 #### Searching Memory using `find`
 
-Sometimes you know a pattern that you are looking for in memory, and you want to quickly find out if it exists in memory on the system. Maybe it's a magic string or a specific 4 byte pattern, like `0xdeadbeef`.
+Sometimes you know a pattern that you are looking for in memory, and you want to quickly find out if it exists in memory on the system. Maybe it's a magic string or a specific 4-byte pattern, like `0xdeadbeef`.
 
 Let's search for the string `shell_uart`, which is the task name of a thread in my Zephyr system. I'll search the entire writeable RAM space, which can be found by running the `info files` command mentioned previously.
 
@@ -440,7 +440,7 @@ The `find` command can also be useful for finding pointers pointing to arbitrary
 
 It looks like there are some references on the `mgmt_stack`, and a few other references, which are actually pointers from linked lists.
 
-Using `find` can help track down memory leaks, memory corruption, and possible hard faults by seeing what pieces of system are continuing to reference memory or values when they shouldn't.
+Using `find` can help track down memory leaks, memory corruption, and possible hard faults by seeing what pieces of the system are continuing to reference memory or values when they shouldn't.
 
 [Reference](https://sourceware.org/gdb/current/onlinedocs/gdb/Searching-Memory.html)
 
@@ -476,7 +476,7 @@ I find this most useful when dumping the contents of log buffers.
 
 ### Searching for Variables
 
-To print the local and argument varialbes, we can use `info locals` and `info args`.
+To print the local and argument variables, we can use `info locals` and `info args`.
 
 ```
 (gdb) info locals
@@ -637,7 +637,7 @@ You can also use convenience variables to help you print pieces of data with an 
 $37 = (const struct shell_static_entry (*)[5]) 0x8031650 <shell_wifi_commands>
 ```
 
-The above array is a list of `shell_static_entry` structs, each of which have many fields. Browsing through lists of structs is sometimes cumbersome, especially if I'm only trying to look at a single field.
+The above array is a list of `shell_static_entry` structs, each of which has many fields. Browsing through lists of structs is sometimes cumbersome, especially if I'm only trying to look at a single field.
 
 Convenience variables can help with this.
 
@@ -667,7 +667,7 @@ $63 = "hello"
 $64 = "hello"
 ```
 
-This is useful in it's own right, but it is especially useful for helping me with one of my least favorite tasks in GDB: iterating over linked lists.
+This is useful in its own right, but it is especially useful for helping me with one of my least favorite tasks in GDB: iterating over linked lists.
 
 You may have done something similar to the following:
 
@@ -727,7 +727,7 @@ $11 = {0, 1, 2, 3, 4, 5, ...
 
 ## Pretty Printers
 
-GDB Pretty Printers are essentially printing plugins that you can register with GDB. Everytime a value is printed in GDB, GDB will check to see if there are any registered pretty printers for that type, and will use it to print instead.
+GDB Pretty Printers are essentially printing plugins that you can register with GDB. Every time a value is printed in GDB, GDB will check to see if there are any registered pretty printers for that type, and will use it to print instead.
 
 For instance, imagine we have a `struct Uuid` type in our codebase. `
 
@@ -746,7 +746,7 @@ $6 = {
 }
 ```
 
-That's pretty useless to us as we can't read it like a uuid should be written. It would be great if it was printed in the form of `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`. Pretty printers to the rescue!
+That's pretty useless to us as we can't read it like a UUID should be written. It would be great if it was printed in the form of `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`. Pretty printers to the rescue!
 
 After [writing a custom pretty printer using GDB's Python API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}), our UUID's will be printed in a human-readable format.
 
@@ -820,7 +820,7 @@ Compiling file: memfault_batched_events.c
 
 ### Outputting to File
 
-You can output GDB's stdout to a file by using GDB's built in logging functionality.
+You can output GDB's stdout to a file by using GDB's built-in logging functionality.
 
 ```
 (gdb) set logging on
@@ -852,11 +852,11 @@ If you are using PyOCD, OpenOCD, or JLink, ensure you are using a gdbserver that
 
 For OpenOCD and PyOCD, you can view their supported RTOS's and source code for them in Github ([OpenOCD](https://github.com/ntfreak/openocd/tree/master/src/rtos), [PyOCD](https://github.com/pyocd/pyOCD/tree/master/pyocd/rtos))
 
-To integrate an RTOS with Jlink, you'll have to either use ChibiOS or FreeRTOS, which they support by default, or [write your own JLink RTOS plugin](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/thread-aware-debugging/). You can reference [Github](https://github.com/search?q=RTOS_GetCurrentThreadId&type=code) to gain an understanding about how to write one.
+To integrate an RTOS with Jlink, you'll have to either use ChibiOS or FreeRTOS, which they support by default, or [write your own JLink RTOS plugin](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/thread-aware-debugging/). You can reference [Github](https://github.com/search?q=RTOS_GetCurrentThreadId&type=code) to gain an understanding of how to write one.
 
 ### SVD Files and Peripheral Registers
 
-With the help of [PyCortexMDebug](https://github.com/bnahill/PyCortexMDebug), you can parse SVD files and read peripheral register values more easily. To get started, first acqure the .svd file from your vendor or look at the [cmsis-svd](https://github.com/posborne/cmsis-svd) repo on Github.
+With the help of [PyCortexMDebug](https://github.com/bnahill/PyCortexMDebug), you can parse SVD files and read peripheral register values more easily. To get started, first acquire the .svd file from your vendor or look at the [cmsis-svd](https://github.com/posborne/cmsis-svd) repo on Github.
 
 Once you have the file, clone the PyCortexMDebug repo.
 
