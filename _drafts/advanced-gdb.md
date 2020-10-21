@@ -10,7 +10,7 @@ Over the years, I've learned from many firmware developers and am here writing t
 
 <!-- excerpt start -->
 
-In this post, we discuss some of the more advanced and powerful commands of the GNU debugger, GDB, as well as cover some of the best practices and hacks I've found over the years that help make GDB more pleasant to use.
+In this reference-style post, we discuss some of the more advanced and powerful commands of the GNU debugger, GDB, as well as cover some of the best practices and hacks I've found over the years that help make GDB more pleasant to use.
 
 <!-- excerpt end -->
 
@@ -23,6 +23,8 @@ Although there might be debuggers and interfaces out there that provide better e
 {% include toc.html %}
 
 ## Essentials
+
+First, we need to cover the items which I feel are most important for any developer or team to work efficiently within GDB.
 
 {:.no_toc}
 
@@ -970,6 +972,8 @@ Available Peripherals:
 ## Conclusion
 
 I have only scratched the surface of what GDB is capable of and the commands and tools mentioned here are mostly built into the application itself. The real fun begins when you start extending GDB using it's Python API.
+
+What are your favorite commands in GDB or Python extensions that you've written? I would love to hear from you in [Interrupt's Slack channel](https://interrupt-slack.herokuapp.com/).
 
 <!-- Interrupt Keep START -->
 
