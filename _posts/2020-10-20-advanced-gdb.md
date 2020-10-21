@@ -992,7 +992,7 @@ What are your favorite commands in GDB or Python extensions that you've written?
 
 - [GDBundle: GDB's Missing Package manager]({% post_url 2020-04-14-gdbundle-plugin-manager %})
 - [Automate Debugging with GDB Python API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %})
-- GDB Manual - <a>https://sourceware.org/gdb/current/onlinedocs/gdb/</a>
-- 8 gdb tricks you should know - <a>https://blogs.oracle.com/linux/8-gdb-tricks-you-should-know-v2</a>
+- <a href="https://sourceware.org/gdb/current/onlinedocs/gdb/">GDB Manual</a>
+- <a href="https://blogs.oracle.com/linux/8-gdb-tricks-you-should-know-v2">8 gdb tricks you should know</a>
 
 <!-- prettier-ignore-end -->
