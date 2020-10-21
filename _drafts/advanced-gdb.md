@@ -14,7 +14,7 @@ In this post, we discuss some of the more advanced and powerful commands of the 
 
 <!-- excerpt end -->
 
-Although there might be debuggers and interfaces out there that provide better experiences that using GDB directly, many of them are built on top of GDB and provide raw access to the GDB shell, where you can build and use automation through the [Python scripting API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}).
+Although there might be debuggers and interfaces out there that provide better experiences than using GDB directly, many of them are built on top of GDB and provide raw access to the GDB shell, where you can build and use automation through the [Python scripting API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}).
 
 > At the end of most of the sections, there are links to either subpages with the [GDB manual](https://sourceware.org/gdb/current/onlinedocs/gdb/) or to the original content to learn more about the topic discussed.
 
@@ -28,7 +28,7 @@ Although there might be debuggers and interfaces out there that provide better e
 
 ### Navigate the Help Menus
 
-There's no better place to start learned GDB than to first learn how to search the help menus. Surprisingly, and maybe unsurprisingly, GDB has over 1500+ commands!
+There's no better place to start learning GDB than to first learn how to search the help menus. Surprisingly, or maybe unsurprisingly, GDB has over 1500+ commands!
 
 ```
 # Count number of GDB commands in the master help list
@@ -151,7 +151,7 @@ Source directories searched: /[...]/sdk/embedded/platforms/nrf5/nrf5_sdk:$cdir:$
 
 ### Source Context with `list`
 
-Sometimes, you just want to quickly at a few lines above and below the current line. To quickly view ten lines of source-code context within GDB, you can use the `list` command.
+Sometimes, you just want to quickly add a few lines above and below the current line. To quickly view ten lines of source-code context within GDB, you can use the `list` command.
 
 ```
 (gdb) list
@@ -179,7 +179,7 @@ If you want to set a larger or smaller default number of lines shown with this c
 
 ### Viewing Assembly With `disassemble`
 
-It's useful to dive into the assembly of a specific function. GDB has this capability built-in and can even interleave the source code with the assembly (by using the `/s` option).
+It's often useful to dive into the assembly of a specific function. GDB has this capability built-in and can even interleave the source code with the assembly (by using the `/s` option).
 
 ```
 (gdb) disassemble /s nrf_cli_cmd_echo_on
@@ -337,7 +337,7 @@ If your gdbserver supports it, you can also set these register values! This is r
 
 ### Listing Memory Regions
 
-It's possible to list the memory regions of the binary currently being debugging by running the `info files` command.
+It's possible to list the memory regions of the binary currently being debugged by running the `info files` command.
 
 ```
 (gdb) info files
@@ -505,7 +505,7 @@ num_samples = 536912536
 
 You can also print all static and global variables in the system by using `info variables`, but that will print _a lot_ of variables out to your screen. It's better to filter through them!
 
-The command `info variables` can optional take a regular expression that will perform a search against the name of the variable.
+The command `info variables` can optionally take a regular expression that will perform a search against the name of the variable.
 
 ```
 (gdb) info variables coredump*
