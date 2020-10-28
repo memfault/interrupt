@@ -28,7 +28,9 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 - [Embedded Programming Without the IDE (2016)](http://reecestevens.me/blog/2016/07/08/embedded-programming-without-ide/) by Reece Stevens<br>Another helpful post for those trying to switch away from vendor IDE's to Make + GCC builds. 
 - [My toothbrush streams gyroscope data](https://blog.johannes-mittendorfer.com/artikel/2020/10/my-toothbrush-streams-gyroscope-data) by Johannes Mittendorfer<br>It turns out the new Sonicare toothbrushes stream out gyroscope data over BLE characteristics. Johannes writes about his experience reverse-engineering the protocol. The post even includes a Python library to decipher the data being sent by the toothbrush. 
 - [Compile and Flash Micropython Firmware on STM32F7](https://neil.computer/notes/how-to-compile-and-flash-micropython-firmware-on-stm32f7/) by Neil Panchal<br>A short note-to-self post documenting how to build and flash MicroPython on an STM32F7.
-
+- [Definitely not Windows 95: What operating systems keep things running in space?](https://arstechnica.com/features/2020/10/the-space-operating-systems-booting-up-where-no-one-has-gone-before/) by ArsTechnica<br>Ars does some digging on the software that runs on satellites and finds that RTOS's are quite common!
+- [Keil Studio Online](https://os.mbed.com/keil/)<br>I didn't see this when it was first announced, but it looks like Keil is going to the cloud! Based upon Eclipse Theia, which was based upon VSCode, it uses WebUSB to interact with local devices and promises multi-platform support.
+- [Reddit - temporarily-bricked Ferrari due to no cell reception](https://old.reddit.com/r/Justrolledintotheshop/comments/j914fh/dude_comes_straight_from_the_dealership_for_a/)<br>A hilarious short story about a Ferrari which failed mid-update and was left "broken" in DFU mode unable to update due to lack of cell reception.
 
 ## Neat Open Source Projects
 
@@ -39,14 +41,9 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 - [Three open source Sonos projects: efficient embedded development in Rust ](https://tech-blog.sonos.com/posts/three-open-source-sonos-projects-in-rust/)<br>I'm happy to see Sonos keeping some of the open-source projects alive from [Snips](https://snips.ai/), the company they acquired a bit ago. The projects include an on-device test library, a neural network inference library, and a tool that helps bind C, C++, and Rust.
 - [MicroMod by SparkFun](https://www.sparkfun.com/pages/micromod)<br>A modular hardware system built by SparkFun that allows one to switch out "processor boards" on "carrier boards". I'm curious to see where this goes!
 - [brainstorm/bbtrackball-rs](https://github.com/brainstorm/bbtrackball-rs)<br>A Rust-based blackberry-style trackball firmware. It also mostly works on OSX! It seems to be more of a learning exercise.
-- [FsmPro](https://www.fsmpro.io/#feature-area)*<br>A nice finite state machine generator for Windows and Linux that generates C code from diagrams.
-
-* Not an open-source project, but felt I should include it.
+- [FsmPro](https://www.fsmpro.io/#feature-area)*<br>A nice finite state machine generator for Windows and Linux that generates C code from diagrams. Not an open-source project, but felt I should include it.
 
 ## News
 
 - [Google and Facebook Select Zephyr RTOS for Next Generation Products](https://www.zephyrproject.org/google-and-facebook-select-zephyr-rtos-for-next-generation-products/)<br>Although we don't have much further information, it appears Google and Facebook are supporting the Zephyr project and will be using it in future products. I guess instead of buying an RTOS, Facebook and Google will just support the already existing one. I support this.
 - [Introducing Twilio Microvisor IoT Platform](https://www.twilio.com/blog/introducing-microvisor)<br>Twilio announced what I think is the coolest use-case of ARM's TrustZone. It allows you to debug and flash chips remotely and securely if you are using Twilio's software or boards. There's more information to be uncovered about this.
-- [Definitely not Windows 95: What operating systems keep things running in space?](https://arstechnica.com/features/2020/10/the-space-operating-systems-booting-up-where-no-one-has-gone-before/) by ArsTechnica<br>Ars does some digging on the software that runs on satellites and finds that RTOS's are quite common!
-- [Keil Studio Online](https://os.mbed.com/keil/)<br>I didn't see this when it was first announced, but it looks like Keil is going to the cloud! Based upon Eclipse Theia, which was based upon VSCode, it uses WebUSB to interact with local devices and promises multi-platform support.
-- [Reddit - temporarily-bricked Ferrari due to no cell reception](https://old.reddit.com/r/Justrolledintotheshop/comments/j914fh/dude_comes_straight_from_the_dealership_for_a/)<br>A hilarious short story about a Ferrari which failed mid-update and was left "broken" in DFU mode unable to update due to lack of cell reception.
