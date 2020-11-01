@@ -1,0 +1,9 @@
+# pragma once
+
+# define FLASH_AREA_BOOTLOADER 0
+# define FLASH_DEVICE_INTERNAL_FLASH 0
+
+# define FLASH_AREA_IMAGE_SCRATCH 255
+
+# define FLASH_AREA_IMAGE_PRIMARY(x) ((x == 0) ? 1 : 255)
+# define FLASH_AREA_IMAGE_SECONDARY(x) ((x == 0) ? 2 : 255)
