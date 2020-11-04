@@ -13,7 +13,7 @@ simplify and standardize the approach to these problems.  MCUboot was chosen as 
 be used with the Zephyr RTOS[^2]. Implementations using MCUboot have even been incorporated in
 semiconductor provided SDKs such as Nordic's nRF Connect SDK [^2] for the NRF91 & NRF53 MCUs.
 
-If you are working on a new project,  MCUboot is worth a look! At the very least, some of design
+If you are working on a new project,  MCUboot is worth a look! At the very least, some of the design
 decisions can be used to help guide your own solution.
 
 <!-- excerpt start -->
@@ -63,7 +63,7 @@ are installed and mark images as ready for upgrade.
 
 ## MCUboot Configuration Options
 
-MCUboot has a number of configuration options which are controlled by`MCUBOOT_` defines added to a configuration header. The best documentation for the options available that I could find was the [Kconfig](https://github.com/mcu-tools/MCUboot/blob/master/boot/zephyr/Kconfig) wrapper in the port for the Zephyr RTOS.
+MCUboot has many configuration options which are controlled by`MCUBOOT_` defines added to a configuration header. The best documentation for the options available that I could find was the [Kconfig](https://github.com/mcu-tools/MCUboot/blob/master/boot/zephyr/Kconfig) wrapper in the port for the Zephyr RTOS.
 While a full discussion of configuration options is outside the scope of this article, there are a
 few that are particularly interesting and deserve a brief overview.
 
@@ -83,7 +83,7 @@ MCUboot has a number of ways "upgrades" from the "secondary" to "primary" slot c
 
 #### Swap Mode
 
-Several of the upgrade strategies MCUboot support swapping the primary and secondary images. If the new image installed is not working well, one can then revert back to the image that was installed prior to the upgrade.
+Several of the upgrade strategies MCUboot support swapping the primary and secondary images. If the new image installed is not working well, one can then revert to the image that was installed before the upgrade.
 
 * `MCUBOOT_SWAP_USING_MOVE`: This strategy relies on an extra sector of space being in the primary "slot". For this strategy, the bootloader will shift the entire firmware binary in the primary slot up by one sector and then "swap" the sectors between the secondary and primary slots.
 
@@ -105,7 +105,7 @@ If a hardware accelerator is available, a port can be implemented to take advant
 The `MCUBOOT_VALIDATE_PRIMARY_SLOT` flag controls whether or not images are validated on each boot. The default setting is to validate on boot. If your image is large or your MCUs clock is slow, a hardware crypto accelerator will likely have a noticeable difference on your boot time.
 
 > For an initial port, I'd recommend starting with one of the software crypto libraries, measuring
-> what the boot and upgrade times look like and making a decision over whether or not the accelerator is needed from those results.
+> what the boot and upgrade times look like, and making a decision over whether or not the accelerator is needed from those results.
 
 ## MCUboot Image Binaries
 
@@ -376,10 +376,10 @@ I typically like to breakdown a port of a library into several incremental steps
 
 1. Add C sources from the library to the project and get everything to compile and add a call to the
    library from the application to force the dependencies to be pulled in. Upon completion of this
-   step you will see many "undefined references" at link time.
-2. Fix the link time issues by adding stub implementations for all the dependencies to a port file
-   (i.e `mcuboot_port.c`). At this point we have an application that links but doesn't yet do
-   anything. We can ballpark the codesize impact of the library by taking a look at the size of our
+   step, you will see many "undefined references" at link time.
+2. Fix the link-time issues by adding stub implementations for all the dependencies to a port file
+   (i.e `mcuboot_port.c`). At this point, we have an application that links but doesn't yet do
+   anything. We can ballpark the code size impact of the library by taking a look at the size of our
    image at this point.
 3. Walk through and fill in the stub implementations we used to get a link with a real implementation.
 
@@ -490,9 +490,9 @@ fatal error: flash_map_backend/flash_map_backend.h: No such file or directory
    33 | #include "flash_map_backend/flash_map_backend.h"
    ```
 
-There's some notes about this in the porting document about defining the flash interface. For the port, we need to create a `flash_map_backend.h` with these definitions.
+There are some notes about this in the porting document about defining the flash interface. For the port, we need to create a `flash_map_backend.h` with these definitions.
 
-> It's odd these functions are not defined in a header in the library itself but it
+> Oddly, these functions are not defined in a header in the library itself but it
 > looks like we are expected to copy/paste them into a new file in our porting layer.
 
 Here's what the file winds up looking like:
@@ -675,7 +675,7 @@ Examining the missing symbols we have three classes:
 
 #### Remove Dependencies on Newlib stdio
 
-This one is a little strange. Newlib calls like `_write`, `_read` etc should only get pulled into a
+This one is a little strange. Newlib calls like `_write`, `_read`, etc should only get pulled into a
 build when there is a dependency on `stdio`. It would be surprising if MCUboot had a dependency like
 this. One indirect source of these dependencies is Newlib's `assert()` implementation. Inspecting the MCUboot source, `<assert.h>` is included from a number of files.
 
@@ -888,7 +888,7 @@ Notably, for the flash storage available, we will need to look up the following 
 This information is generally available in one of the vendor datasheets or SDKs. For example, in
 the NRF52840, we have 1MB of internal flash with erase sector sizes of 4kB.
 
-> Fun fact: For other MCUs, the layout can be a bit more complex. For example sometimes the first few sectors
+> Fun fact: For other MCUs, the layout can be a bit more complex. For example, sometimes the first few sectors
 >will be smaller (so a bootloader can be put in a small slot). In particular, the layouts for STM32 parts can get quite interesting:
 >
 > ![]({% img_url MCUboot/stm32f4-flash-example.png %})
@@ -1193,7 +1193,7 @@ $ python external/MCUboot/scripts/imgtool.py sign \
 
 where
 
-* `--header-size` Controls the size of the binary header. Usually the ARM vector table comes immediately after the image header so we need to make sure things are sized appropriately such that the vector table is [aligned appropriately]({% post_url 2019-08-13-how-to-write-a-bootloader-from-scratch %}#making-our-app-bootloadable)
+* `--header-size` Controls the size of the binary header. Usually, the ARM vector table comes immediately after the image header so we need to make sure things are sized appropriately such that the vector table is [aligned appropriately]({% post_url 2019-08-13-how-to-write-a-bootloader-from-scratch %}#making-our-app-bootloadable)
 * `--pad-header` causes the binary passed to be prefixed with the header information. Another option is to pre-add a zero-filled region to the binary and then it will be filled with the header.
 
 We can automate the generation of this binary from the ELF by adding it to our Makefile:
@@ -1315,7 +1315,7 @@ Sweet, it works!
 I hope this article taught you a little bit about what MCUboot is, the features it offers, and how
 to go about porting it to your own application. I definitely think MCUboot is worth a look if you find yourself tasked with implementing a secure bootloader for a Cortex-M MCU. A lot of the tricky signing & binary packaging problems have already been thought through and tested in the field with this implementation.
 
-With major semiconductor companies shipping MCUboot ports as part of their SDKs, I see the bootloader only becomming more popular in the years to come.
+With major semiconductor companies shipping MCUboot ports as part of their SDKs, I see the bootloader only becoming more popular in the years to come.
 
 If you have used MCUboot before, I'd be especially curious to hear what your experiences have been, what configuration flags you have found most useful, and what else you would have mentioned in a post about it!
 
@@ -1328,7 +1328,7 @@ Either way, looking forward to hearing your thoughts in the discussion area belo
 A few interesting articles I've enjoyed about MCUboot:
 
 - [MCUboot Security](https://www.zephyrproject.org/MCUboot-security-part-1/)
-- [Zephyr & MCUboot security assesment](https://research.nccgroup.com/2020/05/26/research-report-zephyr-and-MCUboot-security-assessment/)
+- [Zephyr & MCUboot security assessment](https://research.nccgroup.com/2020/05/26/research-report-zephyr-and-MCUboot-security-assessment/)
 
 ## References
 
