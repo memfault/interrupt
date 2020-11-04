@@ -6,9 +6,9 @@ author: chris
 ---
 
 In previous articles such as [How to Write a Bootloader from Scratch]({% post_url
-2019-08-13-how-to-write-a-bootloader-from-scratch %}), [device firmware update strategies]({% post_url 2020-06-23-device-firmware-update-cookbook %}), & [how to securely sign firmware updates]({% post_url 2020-09-08-secure-firmware-updates-with-code-signing %}), we have explored the various pieces that make up a bootloader and DFU subsystem. We have seen there's a lot of pieces that need to come together for the system to work reliably and be secure.
+2019-08-13-how-to-write-a-bootloader-from-scratch %}), [device firmware update strategies]({% post_url 2020-06-23-device-firmware-update-cookbook %}), & [how to securely sign firmware updates]({% post_url 2020-09-08-secure-firmware-updates-with-code-signing %}), we have explored the various pieces that make up a bootloader and DFU subsystem. We have seen there are a lot of pieces that need to come together for the system to work reliably and be secure.
 
-Over the last few years, an interesting open-source project, MCUboot, has surfaced seeking to
+Over the last few years, an interesting open-source project, [MCUboot](https://github.com/mcu-tools/mcuboot), has surfaced seeking to
 simplify and standardize the approach to these problems.  MCUboot was chosen as the bootloader to
 be used with the Zephyr RTOS[^2]. Implementations using MCUboot have even been incorporated in
 semiconductor provided SDKs such as Nordic's nRF Connect SDK [^2] for the NRF91 & NRF53 MCUs.
@@ -34,8 +34,8 @@ step-by-step how to port it to a custom platform and test our port out on a Cort
 
 ## What is MCUboot?
 
-MCUboot is a library which can be integrated into a bootloader to deal with securely
-performing firmware update and verification. The project seeks to standardize two key areas:
+[MCUboot](https://github.com/mcu-tools/mcuboot) is a library which can be integrated into a bootloader to securely
+perform firmware updates. The project seeks to standardize two key areas:
 
 1. Secure Bootloader Functionality: that is, a bootloader that will only launch images that can be cryptographically verified
 2. Standardized Flash Layout: A common way to define the flash layout of an embedded system. That is, a way to define, where binaries live and how other regions of flash are used.
@@ -89,7 +89,7 @@ Several of the upgrade strategies MCUboot support swapping the primary and secon
 
 * `MCUBOOT_SWAP_USING_SCRATCH`: This relies on allocating a "scratch" flash region. Sectors are temporarily stashed in the scratch region while the primary & secondary slots are being swapped. If the scratch area is small, there can be a lot of wear on the internal flash because every single sector gets copied in here during the swap.
 
-The benefit of the swap approach is a buggy firmware can be rolled back to the previous version. The disadvantage of the strategy is it adds a lot of complexity to the bootloader system and can wear down the flash faster due to the heavier writing. It also means any firmware installed needs to support a "downgrade" path for it to serve as a recovery mechanism.
+The benefit of the swap approach is the ability to roll back a buggy firmware to a previous version. The disadvantage of the strategy is it adds a lot of complexity to the bootloader system and can wear down the flash faster due to the heavier writing. It also means any firmware installed needs to support the downgrade path.
 
 > Idea: An alternative and simpler recovery mechanism could be to use `MCUBOOT_OVERWRITE_ONLY`, which stores a
 > "recovery" image elsewhere on flash and copies the recovery image into the secondary slot for
@@ -1333,7 +1333,7 @@ A few interesting articles I've enjoyed about MCUboot:
 ## References
 
 [^1]: [MCUboot Github Project](https://github.com/mcu-tools/MCUboot)
-[^2]: [nRF Connect SDK using MCUboot](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/MCUboot/readme-ncs.html)
+[^2]: [nRF Connect SDK using MCUboot](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/mcuboot/readme-ncs.html)
 [^3]: [imgtool script](https://github.com/mcu-tools/MCUboot/blob/master/scripts/imgtool.py)
 [^4]: [Details about image trailer](https://github.com/mcu-tools/MCUboot/blob/master/docs/design.md#image-trailer)
 [^miniterm]: [PySerial Miniterm](https://pyserial.readthedocs.io/en/latest/tools.html#module-serial.tools.miniterm)
