@@ -70,7 +70,7 @@ DEP_CFLAGS = -MT $@ -MMD -MP -MF $(DEP_DIR)/$(*F).d
 
 all: $(MCUBOOT_IMG0_BIN)
 
-flash: $(TARGET_ELF)
+flash: $(MCUBOOT_IMG0_BIN)
 	arm-none-eabi-gdb-py --eval-command="target remote localhost:2331"  \
 	    --ex="mon reset" --ex="restore $(MCUBOOT_IMG0_BIN) binary 0x8000" --ex="mon reset"  --se=$(TARGET_ELF)
 

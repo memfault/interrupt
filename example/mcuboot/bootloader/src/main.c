@@ -47,12 +47,12 @@ static void do_boot(struct boot_rsp *rsp) {
   // We run from internal flash. Base address of this medium is 0x0
   uint32_t vector_table = 0x0 + rsp->br_image_off + rsp->br_hdr->ih_hdr_size;
 
-  EXAMPLE_LOG("  Vector Table Start Address: 0x%x. PC=0x%x, SP=0x%x",
-              (int)vector_table, app_start, app_sp);
-
   uint32_t *app_code = (uint32_t *)vector_table;
   uint32_t app_sp = app_code[0];
   uint32_t app_start = app_code[1];
+
+  EXAMPLE_LOG("  Vector Table Start Address: 0x%x. PC=0x%x, SP=0x%x",
+              (int)vector_table, app_start, app_sp);
 
   // We need to move the vector table to reflect the location of the main application
   volatile uint32_t *vtor = (uint32_t *)0xE000ED08;
@@ -64,6 +64,14 @@ static void do_boot(struct boot_rsp *rsp) {
 int main(void) {
   prv_enable_vfp();
   uart_boot();
+
+  // because a bootloader is a good opportunity for a little ASCII art!
+  EXAMPLE_LOG("\n\n___  ________ _   _ _                 _   ");
+  EXAMPLE_LOG("|  \\/  /  __ \\ | | | |               | |  ");
+  EXAMPLE_LOG("| .  . | /  \\/ | | | |__   ___   ___ | |_ ");
+  EXAMPLE_LOG("| |\\/| | |   | | | | '_ \\ / _ \\ / _ \\| __|");
+  EXAMPLE_LOG("| |  | | \\__/\\ |_| | |_) | (_) | (_) | |_ ");
+  EXAMPLE_LOG("\\_|  |_/\\____/\\___/|_.__/ \\___/ \\___/ \\__|");
 
   EXAMPLE_LOG("==Starting Bootloader==");
 

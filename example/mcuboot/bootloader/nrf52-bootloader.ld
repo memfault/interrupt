@@ -18,7 +18,7 @@ SECTIONS
         ** and the offsets don't deviate from what we use in the blog post writeup
         */
         . = 0x240;
-    } > FLASH
+    } > BOOTLOADER
 
     .dummy_funcs :
     {
@@ -29,24 +29,24 @@ SECTIONS
     .got :
     {
         KEEP(*(.got .got.*))
-    } > FLASH
+    } > BOOTLOADER
 
     .text :
     {
         *(.text .text.* .gnu.linkonce.t.*)
         *(.glue_7t) *(.glue_7)
         *(.rodata .rodata* .gnu.linkonce.r.*)
-    } > FLASH
+    } > BOOTLOADER
 
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > FLASH
+    } > BOOTLOADER
 
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    } > FLASH
+    } > BOOTLOADER
 
     . = ALIGN(4);
     _etext = .;

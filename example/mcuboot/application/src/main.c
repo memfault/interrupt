@@ -40,7 +40,6 @@ int main(void) {
   boot_set_confirmed();
 
   EXAMPLE_LOG("==Main Application Booted==");
-  EXAMPLE_LOG("A modified application image");
 
   shell_processing_loop();
 
