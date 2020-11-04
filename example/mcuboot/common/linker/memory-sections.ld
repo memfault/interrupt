@@ -1,0 +1,8 @@
+/* NRF52 Memory Layout */
+MEMORY
+{
+  BOOTLOADER (rx) : ORIGIN = 0x0, LENGTH = 0x8000
+  IMG_HDR (rx) : ORIGIN = 0x8000, LENGTH = 0x200
+  FLASH (rx) : ORIGIN = 0x8200, LENGTH = 0xF8000 - 0x200
+  RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x40000
+}
