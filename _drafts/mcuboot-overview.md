@@ -6,25 +6,25 @@ author: chris
 ---
 
 In previous articles such as [How to Write a Bootloader from Scratch]({% post_url
-2019-08-13-how-to-write-a-bootloader-from-scratch %}), [device firmware update strategies]({% post_url 2020-06-23-device-firmware-update-cookbook %}), & [how to securely sign firmware updates]({% post_url 2020-09-08-secure-firmware-updates-with-code-signing %}), we have explored the various pieces that make up a bootloader and DFU subsystem. We have seen there's a lot of pieces that need to come together in order for the system to work reliably and be secure.
+2019-08-13-how-to-write-a-bootloader-from-scratch %}), [device firmware update strategies]({% post_url 2020-06-23-device-firmware-update-cookbook %}), & [how to securely sign firmware updates]({% post_url 2020-09-08-secure-firmware-updates-with-code-signing %}), we have explored the various pieces that make up a bootloader and DFU subsystem. We have seen there's a lot of pieces that need to come together for the system to work reliably and be secure.
 
-Over the last few years, an interesting open source project, MCUboot, has surfaced seeking to
+Over the last few years, an interesting open-source project, MCUboot, has surfaced seeking to
 simplify and standardize the approach to these problems.  MCUboot was chosen as the bootloader to
 be used with the Zephyr RTOS[^2]. Implementations using MCUboot have even been incorporated in
-Semiconductor provider SDKs such as Nordic's nRF Connect SDK [^2] where for the NRF91 & NRF53 MCUs.
+semiconductor provided SDKs such as Nordic's nRF Connect SDK [^2] for the NRF91 & NRF53 MCUs.
 
-If you are working on a new project,  MCUboot is worth a look! At the very least some of design
+If you are working on a new project,  MCUboot is worth a look! At the very least, some of design
 decisions can be used to help guide your own solution.
 
 <!-- excerpt start -->
 
-In this article we will explore the feature set of MCUboot & how it works. We will walk through
-step-by-step how to port it to a custom platform, and test our port out on a Cortex-M based development board.
+In this article, we will explore the feature set of MCUboot & how it works. We will walk through
+step-by-step how to port it to a custom platform and test our port out on a Cortex-M based development board.
 
 <!-- excerpt end -->
 
 > Note: While the focus of this article is about MCUboot, the general strategy outlined for porting
-> MCUboot to a new platform can be used as a guide for incorporating other third party libraries
+> MCUboot to a new platform can be used as a guide for incorporating other third-party libraries
 > into an embedded project.
 
 
@@ -34,15 +34,15 @@ step-by-step how to port it to a custom platform, and test our port out on a Cor
 
 ## What is MCUboot?
 
-The core of MCUboot is a library which can be integrated into a bootloader to deal with securely
+MCUboot is a library which can be integrated into a bootloader to deal with securely
 performing firmware update and verification. The project seeks to standardize two key areas:
 
 1. Secure Bootloader Functionality: that is, a bootloader that will only launch images that can be cryptographically verified
-2. Standardized Flash Layout: A common way to define the flash layout of an embeded system. That is, a way to define, where binaries live and how other regions of flash are used.
+2. Standardized Flash Layout: A common way to define the flash layout of an embedded system. That is, a way to define, where binaries live and how other regions of flash are used.
 
 In addition to these features, MCUboot also includes options for encrypting/decrypting firmware
-binaries, performing upgrades in a fault tolerant manner (i.e resumption across inopportune
-reboots), and system recovery if a bad firmware image is installed.
+binaries, performing upgrades in a fault-tolerant manner (i.e resumption across inopportune
+reboots), and recovering the system if a bad firmware image is installed.
 
 For a custom project, MCUboot is a C library you would include in your bootloader and main application. The surface area for the bootloader is one function which will be called to determine the image to boot or upgrade:
 
@@ -69,7 +69,7 @@ few that are particularly interesting and deserve a brief overview.
 
 ### Upgrade Strategies
 
-For upgrades MCUboot uses the following nomenclature:
+For upgrades, MCUboot uses the following nomenclature:
 * `images` - The individual firmware binaries that run on a system. For a typical setup, there will
   be one application image but MCUboot also has some initial support for managing multiple images
   as well. (For example, when using a Cortex-M33 with ARM Trustzone enabled, you may want to have a "Secure" Image and "Non-Secure" Image.)
@@ -83,24 +83,24 @@ MCUboot has a number of ways "upgrades" from the "secondary" to "primary" slot c
 
 #### Swap Mode
 
-Several of the upgrade strategies MCUboot supports, swap the primary and secondary images. If the new image installed is not working well, one can then revert back to the image that was installed prior to the upgrade.
+Several of the upgrade strategies MCUboot support swapping the primary and secondary images. If the new image installed is not working well, one can then revert back to the image that was installed prior to the upgrade.
 
-* `MCUBOOT_SWAP_USING_MOVE`: This  strategy relies on an extra sector of space being in the primary "slot". For this strategy, the bootloader will shift the entire firmware binary in the primary slot up by one sector and then "swap" the sectors between the secondary and primary slots.
+* `MCUBOOT_SWAP_USING_MOVE`: This strategy relies on an extra sector of space being in the primary "slot". For this strategy, the bootloader will shift the entire firmware binary in the primary slot up by one sector and then "swap" the sectors between the secondary and primary slots.
 
 * `MCUBOOT_SWAP_USING_SCRATCH`: This relies on allocating a "scratch" flash region. Sectors are temporarily stashed in the scratch region while the primary & secondary slots are being swapped. If the scratch area is small, there can be a lot of wear on the internal flash because every single sector gets copied in here during the swap.
 
 The benefit of the swap approach is a buggy firmware can be rolled back to the previous version. The disadvantage of the strategy is it adds a lot of complexity to the bootloader system and can wear down the flash faster due to the heavier writing. It also means any firmware installed needs to support a "downgrade" path for it to serve as a recovery mechanism.
 
-> Idea: An alternative and simpler recovery mechanism could be to use `MCUBOOT_OVERWRITE_ONLY`, store a
-> "recovery" image elsewhere on flash and copy the recovery image into the secondary slot for
-> situations where it's deemed necessary to boot into a fallback mode.
+> Idea: An alternative and simpler recovery mechanism could be to use `MCUBOOT_OVERWRITE_ONLY`, which stores a
+> "recovery" image elsewhere on flash and copies the recovery image into the secondary slot for
+> situations where it is deemed necessary to boot into a fallback mode.
 
 ### Crypto Backends
 
-MCUboot does not implement it's own cryptographic libaries (thank goodness). Instead it expects you
+MCUboot does not implement its own cryptographic libraries (thank goodness). Instead, it expects you
 to link an existing implementation. There are default ports available for [Tinycrypt](https://github.com/intel/tinycrypt) and [Mbed TLS](https://github.com/ARMmbed/mbedtls) which can be enabled using the `MCUBOOT_USE_TINYCRYPT` and `MCUBOOT_USE_MBED_TLS` flags, respectively.
 
-If a hardware accelertor is available a port can be implemented to take advantage of that as well. There is already an implementation present for the NRF platform crypto engine which can be enabled with `MCUBOOT_USE_CC310`.
+If a hardware accelerator is available, a port can be implemented to take advantage of that as well. There is already an implementation present for the NRF platform crypto engine which can be enabled with `MCUBOOT_USE_CC310`.
 
 The `MCUBOOT_VALIDATE_PRIMARY_SLOT` flag controls whether or not images are validated on each boot. The default setting is to validate on boot. If your image is large or your MCUs clock is slow, a hardware crypto accelerator will likely have a noticeable difference on your boot time.
 
@@ -109,7 +109,7 @@ The `MCUBOOT_VALIDATE_PRIMARY_SLOT` flag controls whether or not images are vali
 
 ## MCUboot Image Binaries
 
-A MCUboot binary image is built by wrapping the original binary with a header and "trailer". There is a python script, [imgtool.py](https://github.com/mcu-tools/MCUboot/blob/master/scripts/imgtool.py) included in the project which can be used to generate this image.
+An MCUboot binary image is built by wrapping the original binary with a header and "trailer". There is a Python script, [imgtool.py](https://github.com/mcu-tools/MCUboot/blob/master/scripts/imgtool.py) included in the project which can be used to generate this image.
 
 The header contains basic information about the image binary such as size and versioning information:
 
@@ -143,7 +143,7 @@ struct image_header {
 The original binary image is suffixed with Type-Length-Value (TLV) pairs. This is where information
 about how the image was signed and encrypted lives. Users can also add custom pairs if there is
 other metadata they would like to add to an image. Using TLV pairs avoids the need to budget space
-for features not being used for a particular application and gives the end user flexiblity over the
+for features not being used for a particular application and gives the end-user flexibility over the
 type of information included.
 
 ```c
@@ -195,7 +195,7 @@ struct image_tlv {
 
 ## Fault Tolerance
 
-Metadata about the image to run and whether or not to perform an upgrade is tracked in what is referred to as "Image Trailers". This information is located at the end of each "slot" in use and looks like this:
+Metadata about the staged image and whether or not to perform an upgrade is tracked in what is referred to as "Image Trailers". This information is located at the end of each "slot" in use and looks like this:
 
 ```
      0                   1                   2                   3
@@ -226,7 +226,7 @@ Metadata about the image to run and whether or not to perform an upgrade is trac
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
 
-A full discussion can be found in the design document located inside the MCUboot repository [^4] but in short on boot the "Swap status" is checked to resolve if an upgrade was in progress and resume it. The status of "Swap info", "Copy done", & "Image Ok" is checked to decide if an upgrade should be performed or not.
+A full discussion can be found in the design document located inside the MCUboot repository [^4]. In short, on boot, the "Swap status" is checked to resolve if an upgrade was in progress and resume it. The status of "Swap info", "Copy done", & "Image Ok" is checked to decide if an upgrade should be performed or not.
 
 ## Example Project Setup
 
@@ -253,7 +253,7 @@ $ nrfjprog --eraseall
 To flash the board, you will need to start a JLinkGDBServer:
 
 ```bash
-JLinkGDBServer  -if swd -device nRF52840_xxAA  -nogui
+$ JLinkGDBServer  -if swd -device nRF52840_xxAA  -nogui
 ```
 
 In another terminal build and flash the bootloader:
@@ -289,13 +289,13 @@ No bootable image found. Falling into Bootloader CLI:
 shell>
 ```
 
-You can then flash a working application by compiling and flashing the application
+You can then flash a working application by compiling and flashing the application.
 
 ```bash
-cd example/MCUboot/application
-make flash
+$ cd example/MCUboot/application
+$ make flash
 
-make flash
+$ make flash
 Compiling external/MCUboot/boot/bootutil/src/bootutil_misc.c
 Linking library
 Restoring binary file application/build/nrf52-app.bin into memory (0x8000 to 0x9e58)
@@ -315,7 +315,7 @@ shell>
 
 #### 1. Compile a new Application
 
-Compile a new application with some kind of change so you can easily confirm it was installed
+Compile a new application with some kind of change so you can easily confirm it was installed.
 
 ```
 --- a/example/MCUboot/application/src/main.c
@@ -374,7 +374,7 @@ The MCUboot project has a few resources that can help you along:
 
 I typically like to breakdown a port of a library into several incremental steps:
 
-1. Add C sources from library to project and get everything to compile and add a call to the
+1. Add C sources from the library to the project and get everything to compile and add a call to the
    library from the application to force the dependencies to be pulled in. Upon completion of this
    step you will see many "undefined references" at link time.
 2. Fix the link time issues by adding stub implementations for all the dependencies to a port file
@@ -403,7 +403,7 @@ boot/bootutil/
 
 As a starting point we can add those sources and the include directory to our build system:
 
-```
+```makefile
 MCUBOOT_DIR := $(ROOT_DIR)/external/MCUboot/boot/bootutil
 MCUBOOT_SRC_DIR := $(MCUBOOT_DIR)/src
 MCUBOOT_INC_DIR := $(MCUBOOT_DIR)/include
@@ -457,7 +457,7 @@ $ cp external/MCUboot/samples/mcuboot_config/mcuboot_config.template.h common/in
 
 In our Makefile, we can add the new include path to build as follows:
 
-```
+```makefile
 COMMON_DIR = $(ROOT_DIR)/common
 # ...
 INCLUDE_PATHS += -I$(COMMON_DIR)/include
@@ -465,7 +465,7 @@ INCLUDE_PATHS += -I$(COMMON_DIR)/include
 
 #### Resolving sysflash.h and flash_map_backend.h dependencies
 
-Attempting to compile again we see more errors:
+Attempting to compile again, we see more errors:
 
 ```
 $ make
@@ -490,7 +490,7 @@ fatal error: flash_map_backend/flash_map_backend.h: No such file or directory
    33 | #include "flash_map_backend/flash_map_backend.h"
    ```
 
-There's some notes about this in the porting document about defining the flash interface. For the port we need to create a `flash_map_backend.h` with these definitions.
+There's some notes about this in the porting document about defining the flash interface. For the port, we need to create a `flash_map_backend.h` with these definitions.
 
 > It's odd these functions are not defined in a header in the library itself but it
 > looks like we are expected to copy/paste them into a new file in our porting layer.
@@ -553,9 +553,9 @@ int flash_area_id_from_image_slot(int slot);
 
 This part of the API was something I was curious about. There are a lot of ways flash layouts can
 differ on embedded systems. For example, sometimes there are multiple flash devices (internal
-flash, NOR flash, eMMC). Additionally flashes have different erase and write sizes. Furthermore for
-some flash devices, the sector sizes may differ within the same part. Scanning the header it looks
-like all of these description challenges are coveredin the API design. Neat!
+flash, NOR flash, eMMC). Additionally, flash chips have different erase and write sizes. Furthermore, for
+some flash devices, the sector sizes may differ within the same part. Scanning the header, it looks
+like all of these description challenges are covered in the API design. Neat!
 
 The last two dependency functions in the list give us a better idea of what needs to be provided in `sysflash/sysflash.h`. We need to define macros MCUboot uses to map from an `image_index`and slot id (0=primary, 1=secondary) to the `fa_id` our port uses to identify a flash area. With that in mind we can go back and fill in that header:
 
@@ -622,12 +622,12 @@ loader.c:38:10: fatal error: os/os_malloc.h: No such file or directory
    38 | #include <os/os_malloc.h>
 ```
 
-It looks like there are a few dependencies within MCUboot on malloc.
+It looks like there are a few dependencies within MCUboot on `malloc`.
 
 > This is something we'd want to audit in more detail before shipping to understand the exact
 > amount of space needed. For bootloaders, it is often favorable to have everything statically allocated.
 
-It's nice that a header is exposed that let's us override implementations. In our case since the
+It's nice that a header is exposed that lets us override implementations. In our case since the
 example app is making use of the malloc provided by Newlib, we can just `#include <stdlib.h>:
 
 ```c
@@ -676,7 +676,7 @@ Examining the missing symbols we have three classes:
 #### Remove Dependencies on Newlib stdio
 
 This one is a little strange. Newlib calls like `_write`, `_read` etc should only get pulled into a
-build when there is a dependency on stdio. It would be surprising if MCUboot had a dependency like
+build when there is a dependency on `stdio`. It would be surprising if MCUboot had a dependency like
 this. One indirect source of these dependencies is Newlib's `assert()` implementation. Inspecting the MCUboot source, `<assert.h>` is included from a number of files.
 
 However, what we can do instead is override the default assert handler by adding an override to `mcuboot_config.h` which causes `mcuboot_config/mcuboot_assert.h` to be included instead of `<assert.h>`:
@@ -725,15 +725,15 @@ make  2>&1 | rg ": undefined.*" -o | sort -u
 : undefined reference to `tc_sha256_update'
 ```
 
-Sweet all the newlib undefined references are gone.
+Sweet. All of the Newlib undefined references are gone.
 
 #### Resolving Tinycrypt Dependencies
 
-The `tc_*` calls are library calls into the Tinycrypt library (because we are using `MCUBOOT_USE_TINYCRYPT`). The exact deps will change depending on what is enabled in the bootloader (SHA256, Code Signing, Encryption). For the purposes of this inital port, we'll just be using SHA256 based validation to check for image corruption.
+The `tc_*` calls are library calls into the Tinycrypt library (because we are using `MCUBOOT_USE_TINYCRYPT`). The exact dependencies will change depending on what is enabled in the bootloader (SHA256, Code Signing, Encryption). For the purposes of this initial port, we'll just be using SHA256 based validation to check for image corruption.
 
 Tinycrypt can easily be added to a project by adding the sources to the Makefile and is included as a submodule within the MCUboot repo:
 
-```
+```makefile
 TINYCRYPT_DIR := $(ROOT_DIR)/external/MCUboot/ext/tinycrypt/lib
 TINYCRYPT_SRC_DIR := $(TINYCRYPT_DIR)/source
 TINYCRYPT_INC_DIR := $(TINYCRYPT_DIR)/include
@@ -776,9 +776,9 @@ make  2>&1 | rg ": undefined.*" -o | sort -u
 
 #### Resolving Flash Dependencies
 
-Finally we have gotten to the meat of the port, the flash dependencies required by MCUboot. Let's
+Finally, we have gotten to the meat of the port, the flash dependencies required by MCUboot. Let's
 add stub implementations for each of the dependency functions that just return error codes when
-called for now.
+called.
 
 ```c
 // mcu_port.c
@@ -885,7 +885,7 @@ Notably, for the flash storage available, we will need to look up the following 
 * the total size of the flash
 * the erase size of sectors within each flash
 
-This information is generally available in one of the vendor datasheets or SDKs. For example, for
+This information is generally available in one of the vendor datasheets or SDKs. For example, in
 the NRF52840, we have 1MB of internal flash with erase sector sizes of 4kB.
 
 > Fun fact: For other MCUs, the layout can be a bit more complex. For example sometimes the first few sectors
@@ -906,7 +906,7 @@ This gives us the following target layout for our application:
 |Data Storage| |0x48000|0x100000| 736kB|
 
 
-> For a real application, it's likely the configuration will be more complex than this. For example the upgrade slot may live on external flash to support larger binaries on device.
+> For a real application, it's likely the configuration will be more complex than this. For example, the upgrade slot may live on external flash to support larger binaries on the device.
 
 ### Implementing Flash Backend Dependencies
 
@@ -959,9 +959,9 @@ where,
 
 > Note these regions must all be defined along erase sector boundaries for upgrades to work correctly and to avoid corrupting adjacent slots!
 
-#### Implementing `flash_area_open()` / `flash_area_close`
+#### Implementing `flash_area_open` / `flash_area_close`
 
-This is how MCUboot determines information about flash areas being written to / read from. The "id" passed into the function is the "slot" it would like to try and read. In our setup, since we have defined all the flash regions statically at compile time we can walk through the structure and return the appropriate information to the library:
+This is how MCUboot determines information about flash areas being written to / read from. The "id" passed into the function is the "slot" it would like to try and read. In our setup, since we have defined all the flash regions statically at compile time, we can walk through the structure and return the appropriate information to the library:
 
 ```c
 #define ARRAY_SIZE(arr) sizeof(arr)/sizeof(arr[0])
@@ -1007,10 +1007,12 @@ int flash_area_id_from_multi_image_slot(int image_index, int slot) {
     MCUBOOT_LOG_ERR("Unexpected Request: image_index=%d, slot=%d", image_index, slot);
     return -1; /* flash_area_open will fail on that */
 }
+```
 
 > If you are using the `MCUBOOT_SWAP_USING_SCRATCH=1` configuration, the `FLASH_AREA_IMAGE_SCRATCH`
 > slot identifier may also be passed in the "slot" argument and will need to be handled.
 
+```c
 int flash_area_id_from_image_slot(int slot) {
   return flash_area_id_from_multi_image_slot(0, slot);
 }
@@ -1059,13 +1061,13 @@ int flash_area_get_sectors(int fa_id, uint32_t *count,
 
 #### Implementing `flash_area_read`, `flash_area_write`, `flash_area_erase`
 
-Finally we need to implement the APIs that MCUboot uses to program flash. The example application
+Finally, we need to implement the APIs that MCUboot uses to program flash. The example application
 used in this article has a minimal flash driver implementation for the NRF52 in
 `minimal_nrf52_flash.c`. The functions are all named `example_internal_flash_*`. Most vendor SDKs
 provide something similar that you could use for these implementations.
 
-For initial bringup we will also add:
-* Diagnostic Logging so we can see what addresses writes and erases are being issued to
+For initial bringup, we will also add:
+* Diagnostic logging so we can see what addresses writes and erases are being issued to
 * A validation pass that makes sure writes and erases are working as expected. A bug in how we are performing program operations is generally the most common reason an image will fail to install so best to catch it at the source.
 
 Taking all that into account, we have the following:
@@ -1164,23 +1166,29 @@ void example_assert_handler(const char *file, int line) {
 }
 ```
 
-## Creating a MCUboot Image
+## Creating an MCUboot Image
 
-At this point we have implemented all the dependencies required to perform an upgrade within MCU boot.
+At this point, we have implemented all the dependencies required to perform an upgrade within MCU boot.
 
-Now that we have ported the bootloader itself, we need to generate a MCUboot compatible binary
+Now that we have ported the bootloader itself, we need to generate an MCUboot compatible binary
 image that can be launched. This can easily be done using the `imgtool` utility included in the project. The tool can operate on a binary file.
 
 As we have discussed in [this post]({% post_url 2019-08-13-how-to-write-a-bootloader-from-scratch %}#putting-it-all-together), an ELF can be converted to a binary using `objcopy`:
 
 ```bash
-arm-none-eabi-objcopy build/nrf52-app.elf nrf52-app-no-header.bin -O binary
+$ arm-none-eabi-objcopy build/nrf52-app.elf nrf52-app-no-header.bin -O binary
 ```
 
 The `imgtool sign` command can be used to add the MCUboot Image header and trailer to the binary image:
 
 ```bash
-python external/MCUboot/scripts/imgtool.py sign --header-size 0x200 --align 4 --slot-size 0x20000 -v 1.0.0 --pad-header build/nrf52-app-no-header.bin build/nrf52-app.bin
+$ python external/MCUboot/scripts/imgtool.py sign \
+    --header-size 0x200 \
+    --align 4 \
+    --slot-size 0x20000 \
+    --version 1.0.0 \
+    --pad-header \
+    build/nrf52-app-no-header.bin build/nrf52-app.bin
 ```
 
 where
@@ -1190,7 +1198,7 @@ where
 
 We can automate the generation of this binary from the ELF by adding it to our Makefile:
 
-```
+```makefile
 $(MCUBOOT_IMG0_BIN): $(TARGET_BIN)
     @python $(IMGTOOL_PY) sign --header-size 0x200 --align 8 -S 131072 -v 1.0.0 --pad-header $(TARGET_BIN) $(MCUBOOT_IMG0_BIN)
     @echo "Generated $(patsubst $(ROOT_DIR)/%,%,$@)"
@@ -1245,8 +1253,7 @@ static void do_boot(struct boot_rsp *rsp) {
 
 ## Triggering Firmware Upgrades from Main Application
 
-
-MCUboot has a few API that we will typically want to call from the main application to put the
+MCUboot has a few functions that we will typically want to call from the main application to put the
 firmware update process in motion:
 
 1. `boot_set_pending(int permanent)` - This triggers a write to the image trailer in flash that
@@ -1262,9 +1269,9 @@ Both of these utilities can be picked up by compiling `bootutil_misc.c` and the 
 
 I've added a `swap_images` CLI command which calls `boot_set_pending()` and triggers a
 reboot. `boot_set_confirmed()` is called by the main application once initialization routines have
-run succesfully.
+run successfully.
 
-```
+```c
 static int prv_swap_images(int argc, char *argv[]) {
   EXAMPLE_LOG("Triggering Image Swap");
 
