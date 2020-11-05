@@ -560,7 +560,7 @@ all about it in the comments, or at
 
 ## Reference & Links
 
-[^1]: For example, see [this medium post](https://medium.com/equisense/firmware-quality-assurance-continuous-delivery-125884194ea5) by the equisense team.
+[^1]: For example, see [this post](http://www.cyrilfougeray.com/2020/10/03/firmware-qa-ci-cd.html) by an Equisense team member.
 [^2]: [Circle CI](https://circleci.com)
 [^3]: [Circle CI Documentation - Jobs, Steps, Workflows]((https://circleci.com/docs/2.0/jobs-steps/#section=getting-started).)
 [^4]: [Checkout Step - CircleCI](https://circleci.com/docs/2.0/configuration-reference/#checkout)

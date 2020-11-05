@@ -15,7 +15,7 @@ process when debugging. Yet, the answer sometimes lies in that particular file.
 
 The map file provides valuable information that can help you understand and optimize memory.
 I highly recommend keeping that file for any firmware running in production.
-This is one of the few artifacts I keep in [my CD pipeline](https://medium.com/equisense/firmware-quality-assurance-continuous-delivery-125884194ea5).
+This is one of the few artifacts I keep in [my CD pipeline](http://www.cyrilfougeray.com/2020/10/03/firmware-qa-ci-cd.html).
 
 The map file is a symbol table for the whole program. Let's dive
 into it to see how simple it is and how you can effectively use it.
