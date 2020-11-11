@@ -314,7 +314,7 @@ investigation ended. I did give them a few points for offering IAR and Keil.
 * Lots of bundled examples ✅
 * Single zip, no install needed ❌
 
-### Cypress PSoC6, Maxim DARWIN 0/10
+### Cypress PSoC Creator, Maxim DARWIN 0/10
 Cypress and Maxim both make interesting chips: the former has a popular family
 of BLE MCUs under its PSoC brand, the latter makes MCUs with very large flash or
 RAM which can be put to good use.
