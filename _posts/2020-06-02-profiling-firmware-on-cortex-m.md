@@ -301,7 +301,7 @@ Using OpenOCD, we write the register so that PCSAMPLEENA = 1, CYCCNTENA = 1,
 CYCTAP = 1, and POSTPRESET = 3. This requires the following command:
 
 ```
-(gdb) monitor mmw 0xE0001000 0x1207 0x103FF
+(gdb) monitor mww 0xE0001000 0x1207 0x103FF
 ```
 
 Last but not least, we enable ITM port 0 which is a built in openOCD feature:
