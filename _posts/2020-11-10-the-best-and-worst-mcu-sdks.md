@@ -7,7 +7,7 @@ author: francois
 ---
 
 In 2020, an MCU is much more than a hunk of silicon. Indeed, it comes with a
-whole ecosystem including a BSP, integrated third party libraries, tooling,
+whole ecosystem including a BSP, integrated third-party libraries, tooling,
 field application support,  and more.
 
 As firmware engineers, we are often handed down an MCU selection as a fait
@@ -35,7 +35,7 @@ setup (MacOS, vim). Your mileage may vary!
 
 ## What I’m looking for in a chip SDK
 
-My ideal chip SDK provides for a way to build and flash projects using tools of
+My ideal chip SDK provides a way to build and flash projects using tools of
 my choosing. This seems like a low bar, but few meet it. Here are things chip
 SDKs should **not** do.
 
@@ -43,13 +43,13 @@ SDKs should **not** do.
 
 I left Windows behind when I worked at Sun Microsystems, and I have not looked
 back. Today, my daily driver is a MacBook Air.  Unfortunately, some chip vendors
-require that you use their Windows-based tools to setup and build your projects.
+require that you use their Windows-based tools to set up and build your projects.
 Now that most compilers are cross-platform, there is no excuse for it.
 
-### Don’t chose my IDE for me!
+### Don’t choose my IDE for me!
 
 I’ve been using `vim` since college, and you can take it from my cold, dead
-hands. I love `vim`! I have it configured just saw. It’s lightweight, it’s fast,
+hands. I love `vim`! I have it configured just so. It’s lightweight, it’s fast,
 and modal editing is the way to work (prove me wrong!). So you’ll understand my
 dismay at the spate of Eclipse-based IDEs chip vendors want to foist upon me. I
 want nothing to do with their boated, Java environments.
@@ -129,7 +129,7 @@ You’ll be left with an `axf` (aka an ELF) and a `bin`  file in the `gcc` folde
 
 NXP Kinetis traces its lineage to Motorola via Freescale. It is one of two
 Cortex-M lines from NXP (the other being the LPC).  Like many MCU vendors, NXP
-generates their SDK via a configurator and provide an Eclipse-based IDE, both
+generates their SDK via a configurator and provides an Eclipse-based IDE, both
 under the “MCUXpresso” brand.
 
 #### Why the rating
@@ -176,7 +176,7 @@ ST has gone through multiple iterations of the SDK for the STM32 family of ICs.
 The latest is called STM32 Cube, which replaces the venerable Standard
 Peripheral Library. While Cube introduces a lot of complexity, it does so for a
 good reason: the STM32 family has grown to include 14 distinct series of MCUs
-from the very low power L0 to the very high performance H7.
+from the very low power L0 to the very high-performance H7.
 
 #### Why the rating
 
@@ -214,7 +214,7 @@ came as a single archive.
 ![](img/best-and-worst-mcu-sdks/83E37D9A-5975-4815-8937-437DA8675C0D.png)
 
 Recently acquired by Microchip, Atmel has been making SAM-family MCUs for a long
-time. The SAMD21 is well liked in hobbyist circles and is featured in several
+time. The SAMD21 is well-liked in hobbyist circles and is featured in several
 Arduino and Adafruit designs. Atmel’s peripheral library, AXF, went through a
 similar transformation to ST’s: it went from a single zip archive to a
 configurator.
@@ -226,7 +226,7 @@ configurator.
 * Lots of bundled examples ✅
 * Single zip, no install needed ❌
 
-Atmel’s configurator is web based, and a tad more ergonomic than ST’s. However,
+Atmel’s configurator is web-based, and a tad more ergonomic than ST’s. However,
 the resulting Makefiles are much worse and even feature a bug (I had to fix OS
 detection).
 
@@ -255,17 +255,17 @@ detection).
     ```
 11. Run `make`
 
-### Silabs Simplicy Studio - 5/10
+### Silabs Simplicity Studio - 5/10
 
 ![](img/best-and-worst-mcu-sdks/3F4AD307-656B-4664-B988-4F5A301BD771.png)
 
-Silabs Cortex-M MCU come from its acquisition of Energy Micro who was famous for
+Silabs Cortex-M MCU comes from its acquisition of Energy Micro who was famous for
 the very low power consumption of their MCUs. Silabs now makes a range of
 Cortex-M based MCUs, some with 2.4GHz radios.
 
 Like many of the vendors in the lower half of this list, Silabs distributes
-their SDK alongside an Eclipse-based IDE. In their case they call it “Simplicity
-Studio”. While Simplicity is the best of those IDEs, it does leaves those of us
+its SDK alongside an Eclipse-based IDE. In their case, they call it “Simplicity
+Studio”. While Simplicity is the best of those IDEs, it does leave those of us
 who do not love Eclipse with few solutions. Here, I chose to use Eclipse to
 generate Makefiles.
 
@@ -297,10 +297,10 @@ IDEs, it generates poor Makefiles with hardcoded paths everywhere.
 ### Infineon XMC4000, Renesas RA4 3/10
 
 Infineon and Renesas MCUs are popular for industrial applications and in the
-automative industry. In both cases, the standard setup is a Windows executable
+automotive industry. In both cases, the standard setup is a Windows executable
 which installs an eclipse-based IDE.
 
-All is not lost however, as they also provide a peripheral library which can be downloaded standalone.:
+All is not lost, however, as they also provide a peripheral library which can be downloaded standalone.:
 * Infineon calls theirs XMC Lib: http://dave.infineon.com/Libraries/XMCLib/XMC_Peripheral_Library_v2.1.24.zip
 * Renesas has the “Example Project Bundle”: [Download Detail Page, Renesas Electronics](https://www.renesas.com/us/en/software/D6004702.html)
 
@@ -319,8 +319,8 @@ Cypress and Maxim both make interesting chips: the former has a popular family
 of BLE MCUs under its PSoC brand, the latter makes MCUs with very large flash or
 RAM which can be put to good use.
 
-Unfortunately, I could not get anywhere with either. It seems PSoC creator is
-required to setup a PSoC6 project, but the app is windows-only.  Meanwhile all I
+Unfortunately, I could not get anywhere with either. It seems the PSoC creator is
+required to set up a PSoC6 project, but the app is windows-only.  Meanwhile, all I
 could find from Maxim is a Windows installer for the “ARM Cortex toolchain.
 
 ## Conclusion
@@ -328,7 +328,7 @@ could find from Maxim is a Windows installer for the “ARM Cortex toolchain.
 I hope you came away from this post with a better understanding of the different
 setup steps required for different MCU SDKs.
 
-You will note that I only looked at setup in this post. In the future, I intend
+You will note that I only looked at the setup procedures in this post. In the future, I intend
 to compare APIs, ecosystem, and tools.
 
 Do you have a favorite MCU SDK? We'd love to hear about it in the comments!
