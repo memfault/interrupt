@@ -310,7 +310,7 @@ investigation ended. I did give them a few points for offering IAR and Keil.
 #### Why the rating
 
 * Cross-platform ❌
-* Supports armcc/Keil, IAR, and Makefiles ⚠️ (only IAR and GCC are supported by simplicity studio)
+* Supports armcc/Keil, IAR, and Makefiles ❌ 
 * Lots of bundled examples ✅
 * Single zip, no install needed ❌
 
