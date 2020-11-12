@@ -178,6 +178,12 @@ Peripheral Library. While Cube introduces a lot of complexity, it does so for a
 good reason: the STM32 family has grown to include 14 distinct series of MCUs
 from the very low power L0 to the very high-performance H7.
 
+> Note: Reader Nathan Jones [pointed
+> out](https://community.memfault.com/t/the-best-and-worst-mcu-sdks-interrupt/294/12)
+> after the initial publication of this post that monolithic SDK downloads do
+> still exist for STM32. For example, [here is the SDK for the
+> STM32F1](https://www.st.com/content/st_com/en/products/embedded-software/mcu-mpu-embedded-software/stm32-embedded-software/stm32cube-mcu-mpu-packages/stm32cubef1.html)
+
 #### Why the rating
 
 * Cross-platform ✅
