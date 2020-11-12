@@ -38,6 +38,11 @@ plugins:
   - jekyll-paginate
   - jekyll-seo-tag
   - jekyll-diagrams
+  - jekyll-target-blank
+
+target-blank:
+   noopener: false
+   noreferrer: false
 
 tag_page: '/tags/'
 category_page: '/categories/'
