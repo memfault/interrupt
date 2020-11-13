@@ -13,7 +13,7 @@ systems. See [Contributing](contributing) for more information.
 Interrupt is sponsored and edited by [Memfault](https://memfault.com), a
 provider of modern software tools for hardware companies. You can contact us at
 [interrupt@memfault.com](mailto:interrupt@memfault.com) or on Twitter at
-[@MemfaultHQ](https://twitter.com/MemfaultHQ).
+[@memfault](https://twitter.com/memfault).
 
 Posts on Interrupt are licensed under CC-by-SA, see the [License
 file](https://github.com/memfault/interrupt/blob/master/license.md) for
