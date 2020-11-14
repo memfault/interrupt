@@ -6,7 +6,7 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 # gem "rails"
 
-gem "jekyll", "~> 3.8"
+gem "jekyll", "~> 4.1.1"
 
 gem "jekyll-paginate", "~> 1.1"
 gem "jekyll-feed", "~> 0.12.1"
@@ -17,3 +17,4 @@ group :jekyll_plugins do
 end
 
 gem "jekyll-target-blank", "~> 2.0"
+gem "liquid-c"
