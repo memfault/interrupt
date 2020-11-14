@@ -1,9 +1,24 @@
 ---
-title: The Best and Worst MCU SDKs
+title: "MCU SDKs Reviewed: Setup"
 description:
   A detailed comparison of ARM Cortex-M Microcontroller SDKs and BSPs, from best
   to worst.
 author: francois
+---
+
+**November 12, 2020 Update:** After receiving some great feedback from readers,
+I made some major updates to this post:
+- I changed the title to make it clear it is focused on setup
+- I changed the Cypress entry from PSoC creator to the newer Modus Toolbox. Its
+  grade went from 0/10 to 8/10!
+- I changed the STM32 entry from CubeMX to the direct downloads from Github.
+  Its grade went from 8/10 to 10/10!
+- I changed the Silabs entry from Simplicity Studio to the direct SDK download.
+  Its grade went from 5/10 to 9/10!
+
+Thank you to all of the wonderful readers who pointed out bits and pieces that
+were missing from the post, and thank you for reading!
+
 ---
 
 In 2020, an MCU is much more than a hunk of silicon. Indeed, it comes with a
@@ -55,17 +70,39 @@ dismay at the spate of Eclipse-based IDEs chip vendors want to foist upon me. I
 want nothing to do with their boated, Java environments.
 
 Instead of Eclipse-based IDE, I suggest SDKs provide Makefiles. `make` is the
-lowest common denominator build system, and is well supported by many tools.
-Bonus points for project files for IAR and Keil, since many of you like those
+lowest common denominator build system, and is well supported by many tools. You
+can even use Eclipse with Makefiles! Bonus points for project files for other
+IDEs such as IAR Embedded Workbench and Keil, since many of you like those
 tools.
 
-### Do include some examples
+### Don't choose my compiler for me!
 
-If a picture is worth a thousand words, then a working code example is worth a
-million. Give me one example of each of the main use cases for your MCU. Bonus
-points if you give me an example for each peripheral.
+There are many excellent C compilers out there. Some optimize for code space
+better, others generate higher performance code. Some are certified for safety
+critical software, others are open source.
 
-## Ten Popular Chip SDKs, Ranked
+While I am partial to GCC, I believe SDKs today should support the three major
+ARM compilers: armcc, iar, and arm-gcc.
+
+I prefer to bring my own compiler, rather than to find it bundled with the chip
+SDK. I often compile my own version of the ARM toolchain, for example to enable
+Python3 support in `arm-none-eabi-gdb`. Sometimes this means I have to fight
+with the SDK's build system to use the toolchain I want.
+
+### **Do** put it under revision control
+
+It is critical to stay up to date on your chip SDK. While every vendor uses a
+versioning scheme of sort, I suggest they go a step further and put their SDKs
+under version control. A few already do!
+
+This allows engineers to quickly looks through the last few commits, and
+understand what exactly has changed since they last picked up a release.
+
+Github is a great place to do that, many engineers already use the platform
+daily. It also comes with issue reporting & management tools which can be used
+to collect feedback from users and communicate the resolution of specific bugs.
+
+## The Results
 
 ### Nordic Semi nRF5-SDK - 10/10
 
@@ -74,14 +111,15 @@ and nRF52840. All feature a 2.4GHz radio, which may deter you if all you want is
 an MCU.
 
 The nRF5-SDK (soon to be replaced by the equally excellent nRF-Connect-SDK), is
-in my view the best chip SDK out there.
+in my view the easiest chip SDK to use out there.
 
 #### Why the rating
 
 * Cross-platform ✅
 * Supports armcc/Keil, IAR, and Makefiles ✅
 * Lots of bundled examples ✅
-* Single zip, no install needed ✅ 
+* Simple download, no install needed ✅ 
+* Github distribution ✅
 
 The nRF5 SDK does everything right. No registration, no install, no online
 configurator. It even is distributed under a BSD license!
@@ -96,6 +134,95 @@ configurator. It even is distributed under a BSD license!
 
 This will generate a `bin`, `elf`, and `hex` file (among others) under `_build`.
 
+### STM32 Cube - 10/10
+
+![](img/best-and-worst-mcu-sdks/6DA202F6-ED4E-4FFE-94B7-3A549D0F212F.png)
+
+ST has gone through multiple iterations of the SDK for the STM32 family of ICs.
+The latest is called STM32 Cube, which replaces the venerable Standard
+Peripheral Library. While Cube introduces a lot of complexity, it does so for a
+good reason: the STM32 family has grown to include 14 distinct series of MCUs
+from the very low power L0 to the very high-performance H7.
+
+> Note: Reader Nathan Jones [pointed
+> out](https://community.memfault.com/t/the-best-and-worst-mcu-sdks-interrupt/294/12)
+> after the initial publication of this post that monolithic SDK downloads do
+> still exist for STM32. For example, [here is the SDK for the
+> STM32F1](https://www.st.com/content/st_com/en/products/embedded-software/mcu-mpu-embedded-software/stm32-embedded-software/stm32cube-mcu-mpu-packages/stm32cubef1.html)
+
+#### Why the rating
+
+* Cross-platform ✅
+* Supports armcc/Keil, IAR, and Makefiles ✅
+* Lots of bundled examples ✅
+* Simple download, no install needed ✅
+* Github distribution ✅
+
+While Cube comes with support for many IDEs, and more examples than any other
+MCU SDK, it wraps it all in a clunky desktop app. I had a terrible time using
+STM32CubeMX: I had to install it on my laptop, it’s slow, it’s large, it’s
+clunky. I do not like it.
+
+STM32CubeMX generates a “project” directory based on your configuration. This
+means that you won’t have all the example code in one folder, and instead will
+need to generate different projects for different examples.
+
+Necessary complexity? Perhaps. But I miss the simpler Peripheral Library which
+came as a single archive.
+
+#### Compiling a Hello World example
+
+1. Download and install CubeMX: [STM32CubeMX - STM32Cube initialization code generator - STMicroelectronics](https://www.st.com/en/development-tools/stm32cubemx.html). Note: this requires registration on ST’s website
+
+3. Select “ACCESS TO MCU SELECTOR”
+4. Select the part you are using. In my case “STM32F429IE”
+5. In the Configuration view, click on the “Project Manager” tab
+6. Enter a project name, a path, and select a toolchain. In my case “Makefile”
+7. Click on “Generate Code” at the top right
+8. `cd` to the generated project directory
+9. Compile the project with your build system. In my case with `make`.
+
+
+
+### Silabs Gecko SDK - 9/10
+
+Silabs Cortex-M MCU comes from its acquisition of Energy Micro, a company famous for
+the very low power consumption of their MCUs. Silabs now makes a range of
+Cortex-M based MCUs, some with 2.4GHz radios.
+
+Like many of the vendors in the lower half of this list, Silabs distributes
+its SDK alongside an Eclipse-based IDE. In their case, they call it “Simplicity
+Studio”. While Simplicity is the best of those IDEs, it clocks in at 5GB and can
+be slow on older laptops.
+
+Thankfully, Silabs also distributes a standalone SDK: the Gecko SDK. While the
+SDK requires registration to download, it contains 
+
+#### Why the rating
+
+* Cross-platform ✅
+* Supports armcc/Keil, IAR, and Makefiles ✅
+* Lots of bundled examples ✅
+* Simple download, no install needed ✅
+* Github distribution ⚠️
+
+Simplicity studio is huge (~1GB), slow, and complicated. Like all Eclipse-based
+IDEs, it generates poor Makefiles with hardcoded paths everywhere. 
+
+#### Step by step hello world example
+
+1. Register at silabs.com
+2. Download and install Simplicity Studio: [Simplicity Studio - Silicon Labs](https://www.silabs.com/products/development-tools/software/simplicity-studio)
+3. Setup SDKs on first run
+4. Click on File -> New -> Silicon Labs Project Wizard
+5. Under “Target Device”, select your MCU
+6. Click “Next”
+7. Select “Empty C project”
+8. Click “Next”
+9. Give the project a name, and select “Copy contents” under “With project files”
+10. Once the project is created, build it with Project -> Build Project
+11. Use the generated makefiles in the project folder
+
 ### Texas Instruments TivaWare - 9/10
 
 The Tiva C series is the latest entry in Texas Instruments’s line of Cortex-M
@@ -107,7 +234,8 @@ like solid microcontrollers with a broad range of peripherals (including USB).
 * Cross-platform ✅
 * Supports armcc/Keil, IAR, and Makefiles ✅
 * Lots of bundled examples ✅
-* Single zip, no install needed ✅ 
+* Simple download, no install needed ✅ 
+* Github distribution ❌
 
 Like Nordic, Texas Instruments gets a lot right: single-zip download, multi-IDE
 support (including Makefiles), and lots of examples. I knocked off a point for
@@ -137,7 +265,8 @@ under the “MCUXpresso” brand.
 * Cross-platform ✅
 * Supports armcc/Keil, IAR, and Makefiles ✅
 * Lots of bundled examples ✅
-* Single zip, no install needed ⚠️
+* Simple download, no install needed ⚠️
+* Github distribution ❌
 
 I found the online MCUXpresso SDK builder a breeze to use. It is snappy,
 straightforward, and it keeps track of all your previously configured SDKs.
@@ -168,52 +297,15 @@ e.g. `ARMGCC_DIR=/usr/local/Cellar/arm-none-eabi-gcc/9-2019-q4-major sh build_de
 
 This will generate an ELF file.
 
-### STM32 Cube - 8/10
+### Cypress Modus Toolbox 8/10
 
-![](img/best-and-worst-mcu-sdks/6DA202F6-ED4E-4FFE-94B7-3A549D0F212F.png)
+Cypress and Maxim both make interesting chips: the former has a popular family
+of BLE MCUs under its PSoC brand, the latter makes MCUs with very large flash or
+RAM which can be put to good use.
 
-ST has gone through multiple iterations of the SDK for the STM32 family of ICs.
-The latest is called STM32 Cube, which replaces the venerable Standard
-Peripheral Library. While Cube introduces a lot of complexity, it does so for a
-good reason: the STM32 family has grown to include 14 distinct series of MCUs
-from the very low power L0 to the very high-performance H7.
-
-> Note: Reader Nathan Jones [pointed
-> out](https://community.memfault.com/t/the-best-and-worst-mcu-sdks-interrupt/294/12)
-> after the initial publication of this post that monolithic SDK downloads do
-> still exist for STM32. For example, [here is the SDK for the
-> STM32F1](https://www.st.com/content/st_com/en/products/embedded-software/mcu-mpu-embedded-software/stm32-embedded-software/stm32cube-mcu-mpu-packages/stm32cubef1.html)
-
-#### Why the rating
-
-* Cross-platform ✅
-* Supports armcc/Keil, IAR, and Makefiles ✅
-* Lots of bundled examples ✅
-* Single zip, no install needed ❌
-
-While Cube comes with support for many IDEs, and more examples than any other
-MCU SDK, it wraps it all in a clunky desktop app. I had a terrible time using
-STM32CubeMX: I had to install it on my laptop, it’s slow, it’s large, it’s
-clunky. I do not like it.
-
-STM32CubeMX generates a “project” directory based on your configuration. This
-means that you won’t have all the example code in one folder, and instead will
-need to generate different projects for different examples.
-
-Necessary complexity? Perhaps. But I miss the simpler Peripheral Library which
-came as a single archive.
-
-#### Compiling a Hello World example
-
-1. Download and install CubeMX: [STM32CubeMX - STM32Cube initialization code generator - STMicroelectronics](https://www.st.com/en/development-tools/stm32cubemx.html). Note: this requires registration on ST’s website
-
-3. Select “ACCESS TO MCU SELECTOR”
-4. Select the part you are using. In my case “STM32F429IE”
-5. In the Configuration view, click on the “Project Manager” tab
-6. Enter a project name, a path, and select a toolchain. In my case “Makefile”
-7. Click on “Generate Code” at the top right
-8. `cd` to the generated project directory
-9. Compile the project with your build system. In my case with `make`.
+Unfortunately, I could not get anywhere with either. It seems the PSoC creator is
+required to set up a PSoC6 project, but the app is windows-only.  Meanwhile, all I
+could find from Maxim is a Windows installer for the “ARM Cortex toolchain.
 
 ###  Atmel START for SAMD - 7/10
 
@@ -230,7 +322,7 @@ configurator.
 * Cross-platform ✅
 * Supports armcc/Keil, IAR, and Makefiles ✅
 * Lots of bundled examples ✅
-* Single zip, no install needed ❌
+* Simple download, no install needed ❌
 
 Atmel’s configurator is web-based, and a tad more ergonomic than ST’s. However,
 the resulting Makefiles are much worse and even feature a bug (I had to fix OS
@@ -252,7 +344,7 @@ detection).
     @@ -22,7 +22,7 @@ else
                     MK_DIR = mkdir -p
             endif
-    
+
     +       ifeq ($(shell uname | cut -d _ -f 1), Darwin)
     -       ifeq ($(shell uname | cut -d _ -f 1), DARWIN)
                     MK_DIR = mkdir -p
@@ -260,45 +352,6 @@ detection).
      endif
     ```
 11. Run `make`
-
-### Silabs Simplicity Studio - 5/10
-
-![](img/best-and-worst-mcu-sdks/3F4AD307-656B-4664-B988-4F5A301BD771.png)
-
-Silabs Cortex-M MCU comes from its acquisition of Energy Micro who was famous for
-the very low power consumption of their MCUs. Silabs now makes a range of
-Cortex-M based MCUs, some with 2.4GHz radios.
-
-Like many of the vendors in the lower half of this list, Silabs distributes
-its SDK alongside an Eclipse-based IDE. In their case, they call it “Simplicity
-Studio”. While Simplicity is the best of those IDEs, it does leave those of us
-who do not love Eclipse with few solutions. Here, I chose to use Eclipse to
-generate Makefiles.
-
-#### Why the rating
-
-* Cross-platform ✅
-* Supports armcc/Keil, IAR, and Makefiles ❌ (only IAR and GCC are supported by simplicity studio)
-* Lots of bundled examples ✅
-* Single zip, no install needed ❌
-
-Simplicity studio is huge (~1GB), slow, and complicated. Like all Eclipse-based
-IDEs, it generates poor Makefiles with hardcoded paths everywhere. 
-
-#### Step by step hello world example
-
-1. Register at silabs.com
-2. Download and install Simplicity Studio: [Simplicity Studio - Silicon Labs](https://www.silabs.com/products/development-tools/software/simplicity-studio)
-3. Setup SDKs on first run
-4. Click on File -> New -> Silicon Labs Project Wizard
-5. Under “Target Device”, select your MCU
-6. Click “Next”
-7. Select “Empty C project”
-8. Click “Next”
-9. Give the project a name, and select “Copy contents” under “With project files”
-10. Once the project is created, build it with Project -> Build Project
-11. Use the generated makefiles in the project folder
-
 
 ### Infineon XMC4000, Renesas RA4 3/10
 
@@ -318,9 +371,10 @@ investigation ended. I did give them a few points for offering IAR and Keil.
 * Cross-platform ❌
 * Supports armcc/Keil, IAR, and Makefiles ❌ 
 * Lots of bundled examples ✅
-* Single zip, no install needed ❌
+* Simple download, no install needed ❌
 
 ### Cypress PSoC Creator, Maxim DARWIN 0/10
+
 Cypress and Maxim both make interesting chips: the former has a popular family
 of BLE MCUs under its PSoC brand, the latter makes MCUs with very large flash or
 RAM which can be put to good use.
