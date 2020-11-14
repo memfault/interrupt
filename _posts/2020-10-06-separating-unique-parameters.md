@@ -235,8 +235,8 @@ was a good idea to also generate the more easily readable version of the file.
 ```
 
 > The shell script in this section lets TTN come up with a DevEUI for
-> simplicity. Check out [this link](https://www.
-> thethingsnetwork.org/forum/t/deveui-for-non-hardware-assigned-values/2093/23)
+> simplicity. Check out
+> [this link](https://www.thethingsnetwork.org/forum/t/deveui-for-non-hardware-assigned-values/2093/23)
 > to see why you should not do that in production.
 
 ## Programming a Device
