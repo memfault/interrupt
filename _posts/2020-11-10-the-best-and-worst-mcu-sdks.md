@@ -125,7 +125,7 @@ You’ll be left with an `axf` (aka an ELF) and a `bin`  file in the `gcc` folde
 
 ### NXP MCUXpresso - 9/10
 
-![](img/best-and-worst-mcu-sdks/E2992448-AC4D-4A31-9B86-E4806F729E51.png)
+![]({% img_url best-and-worst-mcu-sdks/E2992448-AC4D-4A31-9B86-E4806F729E51.png %})
 
 NXP Kinetis traces its lineage to Motorola via Freescale. It is one of two
 Cortex-M lines from NXP (the other being the LPC).  Like many MCU vendors, NXP
@@ -170,7 +170,7 @@ This will generate an ELF file.
 
 ### STM32 Cube - 8/10
 
-![](img/best-and-worst-mcu-sdks/6DA202F6-ED4E-4FFE-94B7-3A549D0F212F.png)
+![]({% img_url best-and-worst-mcu-sdks/6DA202F6-ED4E-4FFE-94B7-3A549D0F212F.png %})
 
 ST has gone through multiple iterations of the SDK for the STM32 family of ICs.
 The latest is called STM32 Cube, which replaces the venerable Standard
@@ -217,7 +217,7 @@ came as a single archive.
 
 ###  Atmel START for SAMD - 7/10
 
-![](img/best-and-worst-mcu-sdks/83E37D9A-5975-4815-8937-437DA8675C0D.png)
+![]({% img_url best-and-worst-mcu-sdks/83E37D9A-5975-4815-8937-437DA8675C0D.png %})
 
 Recently acquired by Microchip, Atmel has been making SAM-family MCUs for a long
 time. The SAMD21 is well-liked in hobbyist circles and is featured in several
@@ -263,7 +263,7 @@ detection).
 
 ### Silabs Simplicity Studio - 5/10
 
-![](img/best-and-worst-mcu-sdks/3F4AD307-656B-4664-B988-4F5A301BD771.png)
+![]({% img_url best-and-worst-mcu-sdks/3F4AD307-656B-4664-B988-4F5A301BD771.png %})
 
 Silabs Cortex-M MCU comes from its acquisition of Energy Micro who was famous for
 the very low power consumption of their MCUs. Silabs now makes a range of
