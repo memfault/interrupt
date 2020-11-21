@@ -1,10 +1,18 @@
 ROOT_DIR := $(abspath .)
 BUILD_DIR  := $(ROOT_DIR)/build
-Q ?= @
+
+ifeq ($(V), 1)
+Q =
+else
+Q = @
+endif
 
 FREERTOS_ROOT_DIR := $(ROOT_DIR)/freertos_kernel
 
-COMPILER ?= arm-none-eabi-gcc
+COMPILER ?= arm-none-eabi-
+
+CC = $(COMPILER)gcc
+DUMP = $(COMPILER)objdump
 
 PROJECT_SRC_DIR = $(ROOT_DIR)/src
 
@@ -41,7 +49,7 @@ TARGET ?= nrf52
 LDSCRIPT = $(ROOT_DIR)/$(TARGET).ld
 TARGET_ELF = $(BUILD_DIR)/$(TARGET).elf
 
-LDFLAGS += -T$(LDSCRIPT)
+LDFLAGS += -T$(LDSCRIPT) --specs=nano.specs
 LDFLAGS += -Wl,-Map,$(BUILD_DIR)/$(TARGET).map
 
 DEP_DIR = $(BUILD_DIR)/dep
@@ -59,8 +67,10 @@ clean:
 
 $(TARGET_ELF): $(OBJ_FILES) $(LDSCRIPT)
 	@echo "Linking library"
-	@arm-none-eabi-gcc $(CFLAGS) $(LDFLAGS) $(OBJ_FILES) -o $@ -Wl,-lc -Wl,-lgcc
+	$(Q) $(CC) $(CFLAGS) $(LDFLAGS) $(OBJ_FILES) -o $@ -Wl,-lc -Wl,-lgcc
 	@echo "Generated $(patsubst $(ROOT_DIR)/%,%,$@)"
+	$(Q) $(DUMP) -S $@ > $@.asm
+	@echo "Generated $(patsubst $(ROOT_DIR)/%,%,$@.asm)"
 
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
@@ -73,4 +83,4 @@ $(OBJ_FILES): $(SRC_FILES) Makefile
 $(BUILD_DIR)/%.o: $(ROOT_DIR)/%.c | $(BUILD_DIR) $(DEP_DIR) $(FREERTOS_PORT_ROOT)
 	@echo "Compiling $(patsubst $(ROOT_DIR)/%,%,$<)"
 	@mkdir -p $(dir $@)
-	$(Q) arm-none-eabi-gcc $(DEP_CFLAGS) $(CFLAGS) $(INCLUDE_PATHS) -c -o $@ $<
+	$(Q) $(CC) $(DEP_CFLAGS) $(CFLAGS) $(INCLUDE_PATHS) -c -o $@ $<
