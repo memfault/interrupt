@@ -23,6 +23,7 @@ $baseline-height: 2rem;
 $main-color: #141845;
 $background-color: #FDFDFD;
 $text-color: #222222;
+
 $link-color: $main-color;
 
 $theme-color: $main-color;
@@ -31,6 +32,13 @@ $theme-color: $main-color;
 $main-color-dark: #FDFDFD;
 $background-color-dark: #141845;
 $text-color-dark: #FDFDFD;
+
+
+// Addition colors
+$light-grey: #CBD6E2;
+$disabled-color: rgba(103, 113, 144, 1.0);
+$background-color2: #F5F8FA;
+$dark-grey: #33475b;
 
 /*- Base settings -*/
 
