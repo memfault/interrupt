@@ -127,6 +127,7 @@ html, body {
   padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 
   @media (min-width: 940px) {
     flex-direction: row;
@@ -151,10 +152,14 @@ html, body {
   aside {
     order: 0;
     width: 100%;
+    display: none;
 
     @media (min-width: 940px) {
+      display: block;
       order: 1;
       width: 300px;
+      position: sticky;
+      top: 20px;
     }
   }
 }
@@ -457,15 +462,15 @@ footer {
 .share-buttons-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 30px;
 
-  @media (min-width: 940px) {
-    flex-direction: row;
-  }
-
-  > h2 {
-    margin-right: 25px;
+  > h3 {
+    font-size: 24px;
+    color: $dark-grey;
+    margin-bottom: 0;
+    margin-bottom: 10px;
+    font-family: Helvetica, sans-serif;
   }
 }
 
