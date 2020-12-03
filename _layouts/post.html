@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: split-view
 ---
+
 <article id="post-page">
     {% assign author = site.data.authors[page.author] %}
     {% assign author_key = page.author %}
@@ -31,6 +32,7 @@ layout: default
 
         </div>
     {% endif %}
+
     <div id='discourse-comments'></div>
 </article>
 <script type="text/javascript">
