@@ -1,10 +1,11 @@
+---
 title: What About PlatformIO?
 description:
     An overview of PlatformIO, as well as a getting started example on STM32.
 author: francois
 ---
 
-A few weeks ago, I wrote about MCU SDKs and how frustrating I sometimes found it
+A few weeks ago, [I wrote about MCU SDKs]({% post_url 2020-11-10-the-best-and-worst-mcu-sdks %}) and how frustrating I sometimes found it
 to be confronted with one Eclipse-based IDE after another. If you haven't read
 my latest updates to that post, check it out!
 
@@ -98,7 +99,7 @@ $ pio boards
 
 ### Package Management
 
-PlatformIO hosts a registry of embedded library which can be added to every
+PlatformIO hosts a registry of embedded libraries which can be added to every
 project. Popular libraries like the lwIP networking stack, the nanopb protocol
 buffer implementation, or the mbedTLS SSL library are all available in one form
 or another.
@@ -159,15 +160,15 @@ environment. SCons scripts are written in Python.
 
 Two hooks are available for those scripts: a PRE hook which runs before the
 build executes, a POST hook which runs after the build. You can use these hooks
-to chaange the build instructions for individual files, pre-process some source
+to change the build instructions for individual files, pre-process some source
 code, or post-process the build artifacts[^advanced_scripting].
 
-While some may chafe at the need to learn yet another build system - are for one
+While some may chafe at the need to learn yet another build system - I for one
 still like my Makefiles - SCons is a mature and powerful build system.
 
 ## Getting Started with the PlatformIO CLI
 
-My favorite way to use PlatformIO is the CLI, also known as "PlatformIO Core".
+My favorite way to use PlatformIO is with the CLI, also known as "PlatformIO Core".
 Although some people swear by the VSCode plugin, I prefer my PlatformIO separate
 from my IDE so I can use trusty old Vim.
 
@@ -217,7 +218,7 @@ Project has been successfully initialized! Useful commands:
 
 ### Toolchains and linker scripts
 
-On many of my project, I use a specific version of the GCC toolchain, and to
+On many of my projects, I use a specific version of the GCC toolchain, and to
 write my own linker script. You'll have to update your `platformio.ini` to
 enable both of those things:
 
@@ -338,7 +339,7 @@ All with minimal configuration!
 ### Unit Tests
 
 Regular readers of Interrupt will know that we are [big fans of unit
-testing XXX TODO](). PlatformIO has built in supports for running tests on your
+testing]({% post_url 2019-10-08-unit-testing-basics %}). PlatformIO has built in supports for running tests on your
 host or on target.
 
 For a simple example, consider this trivial library:
