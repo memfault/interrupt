@@ -1,13 +1,14 @@
 ---
-title: What About PlatformIO?
+title: Seamless firmware development with PlatformIO
 description:
     An overview of PlatformIO, as well as a getting started example on STM32.
 author: francois
 ---
 
-A few weeks ago, [I wrote about MCU SDKs]({% post_url 2020-11-10-the-best-and-worst-mcu-sdks %}) and how frustrating I sometimes found it
-to be confronted with one Eclipse-based IDE after another. If you haven't read
-my latest updates to that post, check it out!
+A few weeks ago, [I wrote about MCU SDKs]({% post_url
+2020-11-10-the-best-and-worst-mcu-sdks %}) and how frustrating I sometimes found
+it to be confronted with one Eclipse-based IDE after another. If you haven't
+read my latest updates to that post, check it out!
 
 But what if I told you that there exists a embedded project management tool
 which ties you neither to a toolchain, nor to a development environment? Did I
@@ -15,8 +16,8 @@ mention it is available for Windows, Linux, and Mac?
 
 <!-- excerpt start -->
 
-In this post, I'm like to introduce PlatformIO. I go over what PlatformIO is,
-how you can use it for your project, and what it is very good at.  I also
+In this post, I'd like to introduce PlatformIO. I will go over what PlatformIO
+is, how you can use it for your project, and what it is good at.  I also
 highlight a few shortcomings worth keeping in mind.
 
 <!-- excerpt end -->
@@ -89,12 +90,14 @@ boards. The list changes regularly, as the project is very active. Here's the
 command you want to run:
 
 ```
-# List platforms
-$ pio platform search
-# List frameworks
-$ pio platform frameworks
-# List boards
-$ pio boards
+  # List platforms
+  $ pio platform search
+  
+  # List frameworks
+  $ pio platform frameworks
+  
+  # List boards
+  $ pio boards
 ```
 
 ### Package Management
@@ -416,14 +419,12 @@ test/test_add/test_add.c:13:test_add    [PASSED]
 -----------------------
 1 Tests 0 Failures 0 Ignored
 OK
-======================================== [PASSED] Took 1.27 seconds
-========================================
+======================================== [PASSED] Took 1.27 seconds ========================================
 
 Test      Environment    Status    Duration
 --------  -------------  --------  ------------
 test_add  native         PASSED    00:00:01.265
-======================================= 1 succeeded in 00:00:01.265
-=======================================
+======================================= 1 succeeded in 00:00:01.265 =======================================
 ```
 
 ## Conclusion
