@@ -1,6 +1,6 @@
 title: What About PlatformIO?
 description:
-    WIP
+    An overview of PlatformIO, as well as a getting started example on STM32.
 author: francois
 ---
 
