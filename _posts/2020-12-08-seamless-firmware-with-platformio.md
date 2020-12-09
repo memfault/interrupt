@@ -10,7 +10,7 @@ A few weeks ago, [I wrote about MCU SDKs]({% post_url
 it to be confronted with one Eclipse-based IDE after another. If you haven't
 read my latest updates to that post, check it out!
 
-But what if I told you that there exists a embedded project management tool
+But what if I told you that there exists an embedded project management tool
 which ties you neither to a toolchain, nor to a development environment? Did I
 mention it is available for Windows, Linux, and Mac?
 
@@ -33,7 +33,7 @@ embedded that is the best I've seen yet. I hope you will give it a whirl!
 
 ## What is PlatformIO?
 
-PlatformIO is a set of open source tools targetted at professional embedded
+<a href="https://platformio.org/" target="_blank">PlatformIO</a> is a set of open source tools targetted at professional embedded
 developers.  Foremost of those tools is the PlatformIO Plugin for VSCode which
 is used by hundreds of thousands of embedded developers to create, compile,
 debug, and test embedded projects.
