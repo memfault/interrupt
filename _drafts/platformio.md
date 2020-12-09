@@ -172,7 +172,9 @@ Although some people swear by the VSCode plugin, I prefer my PlatformIO separate
 from my IDE so I can use trusty old Vim.
 
 In this next section, I will walk you through installing the CLI, starting a
-project, adding some libraries, and compiling your work.
+project, adding some libraries, and compiling your work. All code is available
+in the the [Interrupt Github repository](https://github.com/memfault/interrupt),
+under `example/platformio`.
 
 ### Installing the CLI
 
@@ -425,7 +427,27 @@ test_add  native         PASSED    00:00:01.265
 
 ## Conclusion
 
+There's a lot to like about PlatformIO. It's an open source cross platform tool
+that makes it easy to setup, build, and test an embedded project no matter what
+IDE you use or what OS you run on your laptop.
 
+Best of all, having a package manager for embedded project is fantastic and
+will I hope further encourage people to collaborate and leverage excellent open
+source libraries like mbedTLS.
+
+At the same time, the low number of supported vendor SDKs ("frameworks") makes
+PlatformIO impractical for many professional projects. Unless you are on an
+STM32 or an Espressif chip, you likely will need to do a lot of extra work to
+add support for your platform of choice to PlatformIO.
+
+Last but not least while the nomenclature is a bit wonky, the PlatformIO
+documentation is excellent with tons of examples. The engineers behind the
+projects are also very active on twitter and on their discussion board. Props to
+them for excellent support!
+
+I look forward to watching PlatformIO grow over the next few years, and cannot
+wait to use it for a future project. Look our for `platformio.ini` files in
+future Interrupt examples!
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
