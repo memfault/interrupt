@@ -25,7 +25,7 @@ but yet it doesn't help solve the issue. The software was built with "Defensive
 Programming" practices in mind, which allows for the firmware to keep running
 even when incorrect behavior occurs.
 
-Usually, I would prefer the firmware crash, print a useful error, and guide me
+Usually, I would prefer that the firmware crash, print a useful error, and guide me
 exactly to where the issue is. This the guiding principle of "Offensive
 Programming", which goes one step further than "Defensive Programming".
 
@@ -39,7 +39,7 @@ can surface bugs and help developers root cause them immediately at runtime.
 <!-- excerpt end -->
 
 By taking defensive and offensive programming to the extreme, you'll be able to
-track down those 1 in 1,000 hour bugs, effeciently root cause them, and keep
+track down those 1 in 1,000-hour bugs, efficiently root cause them, and keep
 your end-users happy. And, as a bonus, keep your sanity.
 
 {% include newsletter.html %}
@@ -129,7 +129,7 @@ for the developer to root cause the issue or capture a core dump, and then reset
 it back to a known working state.
 
 In embedded systems, where the entire stack from hardware to software is often
-built and controlled by a single organization, any bug is a responsibility of
+built and controlled by a single organization, any bug is the responsibility of
 the engineers in that organization to root cause and fix. Offensive programming
 can be a useful approach to surface bugs that might otherwise take weeks to
 reproduce or never be found.
@@ -158,7 +158,7 @@ your embedded system is experiencing:
   developer to further inspect what was the root issue. You can also choose to spin indefinitely and have the watchdog [clean up]({% post_url 2020-02-18-firmware-watchdog-best-practices %}).
 
 This is just scratching the surface of OffP programming techniques, but I hope
-you now have an idea of what this article is al about!
+you now have an idea of what this article is all about!
 
 ### Benefits of Offensive Programming
 
@@ -173,10 +173,9 @@ On one hand, when the device experiences unforeseen issues, you can leave the
 system running in an undefined and unpredictable state. Maybe the heap is out of
 memory, or the system failed to put a critical event in a queue and we've
 dropped data, or maybe a thread has deadlocked and there is no automated
-recovery mechanism.
+recovery mechanism. Some devices don't even have power buttons and need to be manually unplugged or the batteries pulled out!
 
-On the other hand, you can force a reset to a known state, preventing the device
-from getting into this undefined state in the first place. If the device was out
+On the other hand, devices in an unintended state are essentially broken devices and should be reset. If the device was out
 of heap, it likely isn't going to recover and there exists a leak. If a thread
 has deadlocked, it also isn't going to recover. Not to mention, running in an
 undefined state leaves firmware open to security holes and is exactly what we
@@ -200,13 +199,14 @@ following benefits:
   tracking down what `-3` or `unknown_error` means and how it bubbled up through
   the system.
 - **Awareness of prevalence** - Developers don't notice bugs unless they are
-  obvious. By forcing the software to reset, awareness of these unknown bugs is
+  obvious or dropped in their inbox as a bug report. By forcing the software to reset, awareness of these unknown bugs is
   increased and developers can more easily understand how often they are
-  occurring.
+  occurring. 
+- **Returning system to sane state** - If your comms thread is deadlocked, no data will be sent from your device to the outside world, making your device a brick until a user manually resets it. By resetting the device, you are more likely to put the device back into a functioning state. Most embedded devices have very quick reboot times, so it isn't a huge deal.
 
 ## Offensive Programming in Practice
 
-Let's dig into some concrete examples about bugs we can find using Offensive
+Let's dig into some concrete examples of bugs we can find using Offensive
 Programming practices.
 
 ### Argument Validation
@@ -234,7 +234,7 @@ to define `configASSERT` themselves[^freertos_asserts].
 ### Resource Depletion
 
 Although using dynamic memory in embedded systems is sometimes frowned upon, it
-is often necessary in complex systems that don't have enough static memory to go
+is often necessary for complex systems that don't have enough static memory to go
 around. Even when dynamic memory is used, running out of memory should rarely
 occur. When memory is low, systems should adapt and put back pressure on any
 data flowing into the system and rate-limit memory-intensive operations.
@@ -260,10 +260,11 @@ void *malloc_assert(size_t n) {
 In code where the calls to `malloc()` should never fail, such as for the allocation of RTOS primitives, request and response buffers, etc., we can use this asserted
 version.
 
-Another common issue with RTOS-based systems is a queue becoming full and not
-being processed quick enough. As with memory depletion, this isn't a
-show-stopping issue, because the system might recover, but we want to look into
-it and see if it's something we can prevent from happening at all. We can add an
+Another common issue with RTOS-based systems is a queue becoming full due to not
+being processed quickly enough. As with memory depletion, this isn't a
+show-stopping issue because the system might recover, but we could very well be dropping events that are critical to the operation of the device! This is an issue that should be investigated and ideally prevent from ever happening.
+
+We can add an
 `ASSERT()` to confirm that each queue insertion succeeded, or maybe even wrap
 that function if we want.
 
@@ -393,7 +394,7 @@ transition errors from happening to begin with, but if that isn't the case, this
 one is important and worth putting in your state machines.
 
 Let's pretend we have two states, `kState_Flushing`, and `kState_Committing`,
-where commit happens after and only after a flush state. We can assert this
+where the commit happens after and only after a flush state. We can assert this
 state change in our function as a sanity check.
 
 ```c
