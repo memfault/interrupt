@@ -7,11 +7,12 @@ author: tyler
 image: img/offensive-programming/cover.png
 ---
 
-One of the worst things about embedded development is receiving a return value
-of `-1` or `unknown_error` from a function, with no other information about why
-the failure took place.
+One of the worst things about embedded development (especially in C) is
+receiving a return value of `-1` or `unknown_error` from a function, with no
+other information about why the failure took place. It provides no information
+about where the error bubbled up from!
 
-We've all been there as embedded developers, bringing up new boards, drivers,
+We've all been here as embedded developers, bringing up new boards, drivers,
 modules, and applications, wondering why and how we got into this mess. Root
 causing these issues is like peeling an onion: each layer we dig into while
 debugging, we smile a bit less and a few more tears are released. Ultimately,
@@ -418,11 +419,11 @@ _Static_assert(sizeof(MyStruct) == 16,
 Thankfully, those strings don't get included in the final firmware binary so you
 are free to make them as long as you like!
 
-## Trusting Internal vs External Code
+## Handling External & Application Code
 
-There are places where one wouldn't want to use offensive programming practices.
-Primarily, it's when the developer is not fully in control of the software,
-hardware, or incoming data. These could be any of the following:
+There are places where one would not want to use offensive programming
+practices. Primarily, it's when the developer is not fully in control of the
+software, hardware, or incoming data. These could be any of the following:
 
 - Hardware & hardware drivers
 - Contents of flash or persistent storage
@@ -512,14 +513,14 @@ compiled.
   #define MY_ASSERT(expr, msg)    \
     do {                          \
       if (!(expr)) {              \
-        /* log error */           \
+        /* log error to buffer */ \
       }                           \
     } while (0)
 #else
   #define MY_ASSERT(expr, msg)    \
     do {                          \
       if (!(expr)) {              \
-        /* assert error */        \
+        /* core dump */           \
       }                           \
     } while (0)
 #endif
@@ -535,7 +536,8 @@ firmware, even if only just a few of them, I promise they'll pay dividends and
 you'll be able to root cause issues more quickly than before.
 
 I'd love to hear about any other strategies that you all take to surface bugs
-that are hidden in your firmware!
+that are hidden in your firmware! Come find me in the
+[Interrupt Slack](https://interrupt-slack.herokuapp.com/).
 
 <!-- Interrupt Keep START -->
 
