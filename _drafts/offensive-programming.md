@@ -68,13 +68,13 @@ This practice of writing code to aggressively surface errors is what is known as
 
 ## Offensive Programming
 
-Offensive programming (referred to from here on as OffP), although seemingly opposite in word choice, actually expands upon defensive programming and takes it one step further. Instead of just accepting that `malloc()` can fail, software with OffP in mind might assert that `malloc()` *never* fails. If a `malloc()` call does fail, the software should crash, print enough information for the developer to root cause the issue or capture a core dump, and then reset it back to a known working state.
+Offensive programming (referred to from here on as OffP), although seemingly opposite in word choice, actually expands upon defensive programming and takes it one step further. Instead of just accepting that `malloc()` can fail, software with OffP in mind might assert that `malloc()` *never* fails. If a `malloc()` call does fail, the software fatally assert, print enough information for the developer to root cause the issue or capture a core dump, and then reset it back to a known working state.
 
-In embedded systems, where the entire stack from hardware to software is often built and controlled by a single organization, offensive programming can be a useful approach to surface bugs that might otherwise take weeks to reproduce or never be found.
+In embedded systems, where the entire stack from hardware to software is often built and controlled by a single organization, any bug is a responsibility of the engineers in that organization to root cause and fix. Offensive programming can be a useful approach to surface bugs that might otherwise take weeks to reproduce or never be found. 
 
-OffP can take many forms inside of software, but the most common way is to use [assertions]({% post_url 2019-11-05-asserts-in-embedded-systems %}) liberally and creatively against developer and system state errors.
+OffP can take many forms inside of software, but the most common way is to use [assertions]({% post_url 2019-11-05-asserts-in-embedded-systems %}) liberally and creatively against developer errors and system state behavior.
 
-Let's run through a few hypothetical situations. If your embedded system is experiencing:
+Let's run through a few hypothetical situations and how you could use OffP. If your embedded system is experiencing:
 
 - **Performance issues** - such as the GUI freezing or slow response times to button presses, you can use [watchdogs]({% post_url 2020-02-18-firmware-watchdog-best-practices %}) or timers and assertions to crash the system when the system stalls so that a developer can figure out what exactly was consuming CPU time.
 - **Memory issues** - such as high stack usage, no free heap memory, or excessive fragmentation, trigger a crash of the system and capture the relevant parts for analysis by a developer to figure out where the system went sideways. It's rarely the final call to `malloc()` or the highest function in the stack that pushes the system over the edge, but everything that led up to it. 
