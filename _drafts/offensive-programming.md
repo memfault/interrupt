@@ -25,8 +25,8 @@ but yet it doesn't help solve the issue. The software was built with "Defensive
 Programming" practices in mind, which allows for the firmware to keep running
 even when incorrect behavior occurs.
 
-Usually, I would prefer that the firmware crash, print a useful error, and guide me
-exactly to where the issue is. This the guiding principle of "Offensive
+Usually, I would prefer that the firmware crash, print a useful error, and guide
+me exactly to where the issue is. This the guiding principle of "Offensive
 Programming", which goes one step further than "Defensive Programming".
 
 <!-- excerpt start -->
@@ -152,10 +152,12 @@ your embedded system is experiencing:
   out where the system went sideways. It's rarely the final call to `malloc()`
   or the highest function in the stack that pushes the system over the edge, but
   everything that led up to it.
-- **Locking issues** - set a low-ish timeout (5 seconds) on RTOS functions, such a
-  `mutex_lock` and `queue_put`. Setting a low timeout will cause the system to
+- **Locking issues** - set a low-ish timeout (5 seconds) on RTOS functions, such
+  a `mutex_lock` and `queue_put`. Setting a low timeout will cause the system to
   crash if the operation did not succeed in the allotted time, again allowing a
-  developer to further inspect what was the root issue. You can also choose to spin indefinitely and have the watchdog [clean up]({% post_url 2020-02-18-firmware-watchdog-best-practices %}).
+  developer to further inspect what was the root issue. You can also choose to
+  spin indefinitely and have the watchdog [clean
+  up]({% post_url 2020-02-18-firmware-watchdog-best-practices %}).
 
 This is just scratching the surface of OffP programming techniques, but I hope
 you now have an idea of what this article is all about!
@@ -173,13 +175,14 @@ On one hand, when the device experiences unforeseen issues, you can leave the
 system running in an undefined and unpredictable state. Maybe the heap is out of
 memory, or the system failed to put a critical event in a queue and we've
 dropped data, or maybe a thread has deadlocked and there is no automated
-recovery mechanism. Some devices don't even have power buttons and need to be manually unplugged or the batteries pulled out!
+recovery mechanism. Some devices don't even have power buttons and need to be
+manually unplugged or the batteries pulled out!
 
-On the other hand, devices in an unintended state are essentially broken devices and should be reset. If the device was out
-of heap, it likely isn't going to recover and there exists a leak. If a thread
-has deadlocked, it also isn't going to recover. Not to mention, running in an
-undefined state leaves firmware open to security holes and is exactly what we
-want to avoid.
+On the other hand, devices in an unintended state are essentially broken devices
+and should be reset. If the device was out of heap, it likely isn't going to
+recover and there exists a leak. If a thread has deadlocked, it also isn't going
+to recover. Not to mention, running in an undefined state leaves firmware open
+to security holes and is exactly what we want to avoid.
 
 On top of preventing your firmware from running in an unpredictable state,
 triggering asserts and faults at the exact moment of the bug helps developers
@@ -199,10 +202,14 @@ following benefits:
   tracking down what `-3` or `unknown_error` means and how it bubbled up through
   the system.
 - **Awareness of prevalence** - Developers don't notice bugs unless they are
-  obvious or dropped in their inbox as a bug report. By forcing the software to reset, awareness of these unknown bugs is
-  increased and developers can more easily understand how often they are
-  occurring. 
-- **Returning system to sane state** - If your comms thread is deadlocked, no data will be sent from your device to the outside world, making your device a brick until a user manually resets it. By resetting the device, you are more likely to put the device back into a functioning state. Most embedded devices have very quick reboot times, so it isn't a huge deal.
+  obvious or dropped in their inbox as a bug report. By forcing the software to
+  reset, awareness of these unknown bugs is increased and developers can more
+  easily understand how often they are occurring.
+- **Returning system to sane state** - If your comms thread is deadlocked, no
+  data will be sent from your device to the outside world, making your device a
+  brick until a user manually resets it. By resetting the device, you are more
+  likely to put the device back into a functioning state. Most embedded devices
+  have very quick reboot times, so it isn't a huge deal.
 
 ## Offensive Programming in Practice
 
@@ -234,8 +241,8 @@ to define `configASSERT` themselves[^freertos_asserts].
 ### Resource Depletion
 
 Although using dynamic memory in embedded systems is sometimes frowned upon, it
-is often necessary for complex systems that don't have enough static memory to go
-around. Even when dynamic memory is used, running out of memory should rarely
+is often necessary for complex systems that don't have enough static memory to
+go around. Even when dynamic memory is used, running out of memory should rarely
 occur. When memory is low, systems should adapt and put back pressure on any
 data flowing into the system and rate-limit memory-intensive operations.
 
@@ -257,16 +264,18 @@ void *malloc_assert(size_t n) {
 }
 ```
 
-In code where the calls to `malloc()` should never fail, such as for the allocation of RTOS primitives, request and response buffers, etc., we can use this asserted
-version.
+In code where the calls to `malloc()` should never fail, such as for the
+allocation of RTOS primitives, request and response buffers, etc., we can use
+this asserted version.
 
 Another common issue with RTOS-based systems is a queue becoming full due to not
 being processed quickly enough. As with memory depletion, this isn't a
-show-stopping issue because the system might recover, but we could very well be dropping events that are critical to the operation of the device! This is an issue that should be investigated and ideally prevent from ever happening.
+show-stopping issue because the system might recover, but we could very well be
+dropping events that are critical to the operation of the device! This is an
+issue that should be investigated and ideally prevent from ever happening.
 
-We can add an
-`ASSERT()` to confirm that each queue insertion succeeded, or maybe even wrap
-that function if we want.
+We can add an `ASSERT()` to confirm that each queue insertion succeeded, or
+maybe even wrap that function if we want.
 
 ```c
 void critical_event(void) {
@@ -316,14 +325,14 @@ out. The worst part about these issues is that they often aren't brought to
 developers' attention until it's too late.
 
 To help catch these issues before pushing firmware to external users, you can
-create and configure your [task watchdogs]({% post_url 2020-02-18-firmware-watchdog-best-practices %}#adding-a-task-watchdog)
+create and configure your [task
+watchdogs]({% post_url 2020-02-18-firmware-watchdog-best-practices %}#adding-a-task-watchdog)
 to be more aggressive, set up timers to assert after a few seconds during
 potentially long operations, and make sure to set timeouts on your threading
 system calls.
 
-
-To assert that a mutex was successfully locked, we can pass a timeout into most RTOS calls
-and assert that it succeeded.
+To assert that a mutex was successfully locked, we can pass a timeout into most
+RTOS calls and assert that it succeeded.
 
 ```c
 void timing_sensitive_task(void) {
@@ -336,7 +345,9 @@ void timing_sensitive_task(void) {
 }
 ```
 
-Or, if a [task watchdog]({% post_url 2020-02-18-firmware-watchdog-best-practices %}#adding-a-task-watchdog) is configured to detect stalls, you can just wait indefinitely!
+Or, if a [task
+watchdog]({% post_url 2020-02-18-firmware-watchdog-best-practices %}#adding-a-task-watchdog)
+is configured to detect stalls, you can just wait indefinitely!
 
 ```c
 void timing_sensitive_task(void) {
@@ -510,10 +521,11 @@ firmware. This includes argument validation, watchdog timeouts to detect
 deadlocks, bugs potentially leading to memory corruption, etc. It's better to
 return the device to a known state than to limp along.
 
-What we can often consider disabling completely are marginal issues, such as software stalls, 
-such as software stalls, malloc and queue failures (which are handled), and
-timeouts. These types of issues aren't guaranteed to recover or go away, but
-they may be acceptable depending on the context and how the device is used.
+What we can often consider disabling completely are marginal issues, such as
+software stalls, such as software stalls, malloc and queue failures (which are
+handled), and timeouts. These types of issues aren't guaranteed to recover or go
+away, but they may be acceptable depending on the context and how the device is
+used.
 
 If you choose to reduce the aggressiveness of the checks, consider keeping the
 hooks and timeouts and instead log them somewhere, rather than reset the system.
