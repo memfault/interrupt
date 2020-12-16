@@ -14,10 +14,10 @@ about where the error bubbled up from!
 
 We've all been here as embedded developers, bringing up new boards, drivers,
 modules, and applications, wondering why and how we got into this mess. Root
-causing these issues is like peeling an onion: each layer we dig into while
-debugging, we smile a bit less and a few more tears are released. Ultimately,
-these sorts of issues are a result of developer error, either calling functions
-out of order, at the wrong time, or with incorrect arguments. They could also be
+causing these issues is like peeling an onion: each layer we dig through while
+debugging, we smile a bit less and a few more tears are shed. These sorts of
+issues are often a result of developer error, either calling functions out of
+order, at the wrong time, or with incorrect arguments. They could also be
 because the system was in a bad state, such as out of memory or deadlocked.
 
 The firmware _knows_ there is an issue, and it likely knows _what the issue is_,
@@ -40,7 +40,7 @@ can surface bugs and help developers root cause them immediately at runtime.
 
 By taking defensive and offensive programming to the extreme, you'll be able to
 track down those 1 in 1,000 hour bugs, effeciently root cause them, and keep
-your end-users happy.
+your end-users happy. And, as a bonus, keep your sanity.
 
 {% include newsletter.html %}
 
@@ -56,14 +56,14 @@ unplanned issues. A simple example of DefP is checking for `NULL` after calling
 ```c
 void do_something(void) {
   uint8_t *buf = malloc(128);
-  if (!buf) {
+  if (buf == NULL) {
     // handle this gracefully!
   }
 }
 ```
 
 DefP sounds nice, and it is nice! The firmware that we write should never
-catastrophically fail due to unforeseen circumstances.
+catastrophically fail due to unforeseen circumstances if we don't want it to.
 
 DefP really shines when interacting directly with hardware, proprietary
 libraries, and external inputs that we don't have direct control over. Hardware
@@ -84,17 +84,22 @@ should be a thin but sturdy wall of DefP between the outside world and hardware,
 and then the majority of your code inside the walls should be more aggressively
 checking for errors and yelling at developers when they do the wrong thing.
 
+<p align="center">
+  <img width="600" src="{% img_url offensive-programming/internal-software.png %}" alt="internal-software" />
+  If code paths originate from or pass through the red zones, then DefP is likely a better approach.
+</p>
+
 For instance, let's assume we have an internal function,
 `hash32_djb2(const char *str, size_t len)`, which takes in the string we should
 hash and a length. This function is **never** going to be directly used by any
 external consumers, which leaves only internal developers.
 
-By having a check like the following:
+By having a check and return value like the following:
 
 ```c
 uint32_t hash32_djb2(const char *str, int len)
 {
-  if (!str) {
+  if (str == NULL) {
     // Invalid argument
     return 0;
   }
@@ -102,12 +107,14 @@ uint32_t hash32_djb2(const char *str, int len)
 ```
 
 You are only shooting yourself and your fellow developers in the feet. If any
-developer passes in a `NULL` string to this function, it's likely their own bug
-and they should immediately become aware of the bug, or else it might slip into
-production accidentally.
+developer passes a `NULL` string to this function, it will return `0` and be
+stored as a valid hash!
+
+The `NULL` string argument is likely the developer's own bug, and they should
+immediately become aware of the bug, or else it might slip into production.
 
 This practice of writing code to aggressively surface errors is what is known as
-Offensive Programming.
+"Offensive" Programming.
 ([Merriam Webster definition #1](https://www.merriam-webster.com/dictionary/offensive),
 "making attack")
 
@@ -140,15 +147,15 @@ your embedded system is experiencing:
   timers and assertions to crash the system when the system stalls so that a
   developer can figure out what exactly was consuming CPU time.
 - **Memory issues** - such as high stack usage, no free heap memory, or
-  excessive fragmentation, trigger a crash of the system and capture the
-  relevant parts for analysis by a developer to figure out where the system went
-  sideways. It's rarely the final call to `malloc()` or the highest function in
-  the stack that pushes the system over the edge, but everything that led up to
-  it.
-- **Locking issues** - set a low-ish timeout on RTOS functions, such a
+  excessive fragmentation, trigger a crash of the system when these states are
+  detected and capture the relevant parts for analysis by a developer to figure
+  out where the system went sideways. It's rarely the final call to `malloc()`
+  or the highest function in the stack that pushes the system over the edge, but
+  everything that led up to it.
+- **Locking issues** - set a low-ish timeout (5 seconds) on RTOS functions, such a
   `mutex_lock` and `queue_put`. Setting a low timeout will cause the system to
   crash if the operation did not succeed in the allotted time, again allowing a
-  developer to further inspect what was the root issue.
+  developer to further inspect what was the root issue. You can also choose to spin indefinitely and have the watchdog [clean up]({% post_url 2020-02-18-firmware-watchdog-best-practices %}).
 
 This is just scratching the surface of OffP programming techniques, but I hope
 you now have an idea of what this article is al about!
@@ -156,9 +163,9 @@ you now have an idea of what this article is al about!
 ### Benefits of Offensive Programming
 
 You might be asking why you should instrument your code and firmware with a
-bunch of asserts, timers, watchdogs, and coordinated faults, and that's
-reasonable. Software crashing on an embedded system doesn't just take down a
-thread, it often takes the entire system down with it and forces a reboot!
+bunch of asserts, timers, watchdogs, and coordinated faults, and that's a
+reasonable question. Software crashes on an embedded system don't just take down
+a thread, but often the entire system as well.
 
 There are two sides to this double-edged sword.
 
@@ -190,30 +197,30 @@ following benefits:
   you are integrating with. By having assertions and OffP practices in the
   surrounding layers, if a developer does anything misaligned with the API
   specs, the system will immediately alert the developer. It's better than
-  tracking down what `-3` or `known_error` means and how it was bubbled up
-  through the system.
-- **Awareness of prevalence** - No developer or customer notices bugs unless the
-  bug is obvious. By forcing the software to reset, awareness of these undefined
-  bugs is increased and developers can now understand how often they are
+  tracking down what `-3` or `unknown_error` means and how it bubbled up through
+  the system.
+- **Awareness of prevalence** - Developers don't notice bugs unless they are
+  obvious. By forcing the software to reset, awareness of these unknown bugs is
+  increased and developers can more easily understand how often they are
   occurring.
 
 ## Offensive Programming in Practice
 
-Let's dig into some concrete examples about bugs we can find by using Offensive
+Let's dig into some concrete examples about bugs we can find using Offensive
 Programming practices.
 
 ### Argument Validation
 
-If a developer comes along and tries to use an API and passes invalid arguments
-into the function, make sure the application yells at them to fix the issue.
-There is nothing worse than receiving a `-1` return value and digging through 10
-layers of firmware code only to find out the real reason was that you passed in
-a string of 20 characters when the maximum was 16 or because you accidentally
+If a developer tries to use an API and passes invalid arguments into the
+function, make sure the application yells at them to fix the issue. There is
+nothing worse than receiving a `-1` return value and digging through 10 layers
+of firmware code only to find out the real reason was that you passed in a
+string of 20 characters when the maximum was 16 or because you accidentally
 passed a null pointer due to an uninitialized variable.
 
 ```c
 void device_set_name(char *name, size_t name_len) {
-  ASSERT(name && name_len =< 16);
+  ASSERT(name && name_len <= 16);
   ...
 }
 ```
@@ -222,22 +229,21 @@ The only time I would choose, or at least heavily debate, to not use asserts to
 validate arguments is when I am building a library that will be used by people
 outside of my organization. In those cases, I would make the validation asserts
 optional, just as FreeRTOS does with their RTOS functions by allowing developers
-to define ``configASSERT` themselves[^freertos_asserts].
+to define `configASSERT` themselves[^freertos_asserts].
 
 ### Resource Depletion
 
 Although using dynamic memory in embedded systems is sometimes frowned upon, it
-is often necessary to use it on complex systems that don't have enough static
-memory to go around. Even when dynamic memory is used, running out of memory
-should rarely occur. When memory is low, systems should adapt and put back
-pressure on any data flowing into the system and rate-limit memory-intensive
-operations.
+is often necessary in complex systems that don't have enough static memory to go
+around. Even when dynamic memory is used, running out of memory should rarely
+occur. When memory is low, systems should adapt and put back pressure on any
+data flowing into the system and rate-limit memory-intensive operations.
 
 However, if a firmware _does_ deplete the dynamic memory pool, we want to know
 when and why it happened! It could be a memory leak or an accidental allocation
 that consumed most of the heap. Running out of memory might not be a
 show-stopping issue because the system _might_ recover, but if we are in the
-development or internal testing phase, we need to investigate this issue.
+development or internal testing phase, let's find out why we ran out!
 
 To do this, we can add an assert inside of a `malloc()` function that verifies
 that the call did not fail.
@@ -251,16 +257,15 @@ void *malloc_assert(size_t n) {
 }
 ```
 
-In code where the calls to `malloc()` should never fail, such as RTOS structure
-allocation, request and response buffers, etc., we can use this asserted
+In code where the calls to `malloc()` should never fail, such as for the allocation of RTOS primitives, request and response buffers, etc., we can use this asserted
 version.
 
-Another common issue with RTOS-based systems is a queue becoming full and
-possibly not emptying quickly enough. As with memory depletion, this isn't a
+Another common issue with RTOS-based systems is a queue becoming full and not
+being processed quick enough. As with memory depletion, this isn't a
 show-stopping issue, because the system might recover, but we want to look into
-it and see if it's something we can alleviate. We can add an `ASSERT()` to
-confirm that each queue insertion succeeded, or maybe even wrap that function if
-we want.
+it and see if it's something we can prevent from happening at all. We can add an
+`ASSERT()` to confirm that each queue insertion succeeded, or maybe even wrap
+that function if we want.
 
 ```c
 void critical_event(void) {
@@ -305,21 +310,37 @@ of lag or stalls.
 
 I can't count the number of times while working on previous projects that slow
 flash operations caused the system to freeze for 2-3 seconds at a time, wreaking
-havoc on the user experience causing other operations in the system to time out.
-The worst part about these issues is that they often aren't brought to our
-attention until the end-users complain.
+havoc on the user experience or causing other operations in the system to time
+out. The worst part about these issues is that they often aren't brought to
+developers' attention until it's too late.
 
 To help catch these issues before pushing firmware to external users, you can
-create and configure your [task
-watchdogs]({% post_url 2020-02-18-firmware-watchdog-best-practices %})#adding-a-task-watchdog)
+create and configure your [task watchdogs]({% post_url 2020-02-18-firmware-watchdog-best-practices %}#adding-a-task-watchdog)
 to be more aggressive, set up timers to assert after a few seconds during
 potentially long operations, and make sure to set timeouts on your threading
 system calls.
 
+
+To assert that a mutex was successfully locked, we can pass a timeout into most RTOS calls
+and assert that it succeeded.
+
 ```c
 void timing_sensitive_task(void) {
-  const bool success = mutex_lock(&s_mutex, 1000 /* wait 1s */);
+  // Task watchdog will assert a stall
+  const bool success = mutex_lock(&s_mutex, 1000 /* 1 second */);
   ASSERT(success);
+  {
+    ...
+  }
+}
+```
+
+Or, if a [task watchdog]({% post_url 2020-02-18-firmware-watchdog-best-practices %}#adding-a-task-watchdog) is configured to detect stalls, you can just wait indefinitely!
+
+```c
+void timing_sensitive_task(void) {
+  // Task watchdog will assert a stall
+  mutex_lock(&s_mutex, INFINITY);
   {
     ...
   }
@@ -328,7 +349,7 @@ void timing_sensitive_task(void) {
 
 Since a hiccup and stall here and there isn't the end of the world, when you
 build the final image that you'll push to customers, you can either tune down or
-(gasp!) remove these asserts altogether.
+(gasp!) remove these checks altogether.
 
 ### Use After Free Bugs
 
@@ -341,6 +362,11 @@ use the buffer and write and read data from it.
 However, sometimes, it will result in memory corruption and present itself in
 the strangest of ways. Memory corruption bugs are notoriously difficult to
 debug.
+
+> If you are struggling with memory corruption issues, you might want to read
+> [this section on catching memory corruption
+> bugs]({% post_url 2020-09-16-cortex-m-watchpoints %}#memory-corruption) from a
+> previous post.
 
 One way to help prevent use-after-free bugs is to scrub the entire contents of
 the memory with an invalid address that, when accessed, would cause a
@@ -425,7 +451,7 @@ There are places where one would not want to use offensive programming
 practices. Primarily, it's when the developer is not fully in control of the
 software, hardware, or incoming data. These could be any of the following:
 
-- Hardware & hardware drivers
+- Hardware & peripheral drivers
 - Contents of flash or persistent storage
 - HAL or 3rd-party libraries
 - Data or external inputs from comms stacks
@@ -441,11 +467,6 @@ To prevent bugs from stomping on your lawn, you can isolate these outside layers
 with a shim layer that uses defensive programming. This ensures that any bad
 inputs, corrupted data, and nefarious actors receive error codes instead of
 crashing the software.
-
-<p align="center">
-  <img width="600" src="{% img_url offensive-programming/internal-software.png %}" alt="internal-software" />
-  If code paths originate from <b>Internal Software</b> and stay in <b>Internal Software</b>, then OffP should be used. If code paths originate from or pass through the red zones, then DefP is likely a better approach.
-</p>
 
 One important thing, that can't be stressed enough, is that you can almost
 always trust and assume that developers and code internal to your organization
@@ -488,7 +509,7 @@ firmware. This includes argument validation, watchdog timeouts to detect
 deadlocks, bugs potentially leading to memory corruption, etc. It's better to
 return the device to a known state than to limp along.
 
-What we can turn down to level 3/10 or disable completely are the UX-like bugs,
+What we can often consider disabling completely are marginal issues, such as software stalls, 
 such as software stalls, malloc and queue failures (which are handled), and
 timeouts. These types of issues aren't guaranteed to recover or go away, but
 they may be acceptable depending on the context and how the device is used.
@@ -497,7 +518,7 @@ If you choose to reduce the aggressiveness of the checks, consider keeping the
 hooks and timeouts and instead log them somewhere, rather than reset the system.
 For inspiration, check out
 [ARM MBed's Error Handling API](https://os.mbed.com/docs/mbed-os/v6.5/apis/error-handling.html),
-which keeps a circular buffer of errors that the system has experienced in a
+which keeps a circular buffer of warnings that the system has experienced in a
 region of RAM that is kept between reboots. The idea is that all layers of the
 firmware use a single error API and then developers can do what they want with
 them. If you have logging infrastructure in place, you can log them out on boot,
