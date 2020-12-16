@@ -48,10 +48,10 @@ your end-users happy. And, as a bonus, keep your sanity.
 
 ## Defensive Programming
 
-Defensive programming (referred to from here on as DefP) is the practice of
-writing software to enable continuous operation after and while experiencing
-unplanned issues. A simple example of DefP is checking for `NULL` after calling
-`malloc()`, and ensuring that the program gracefully handles the case.
+Defensive programming is the practice of writing software to enable continuous
+operation after and while experiencing unplanned issues. A simple example is
+checking for `NULL` after calling `malloc()`, and ensuring that the program
+gracefully handles the case.
 
 ```c
 void do_something(void) {
@@ -62,31 +62,32 @@ void do_something(void) {
 }
 ```
 
-DefP sounds nice, and it is nice! The firmware that we write should never
-catastrophically fail due to unforeseen circumstances if we don't want it to.
+Defensive programming sounds nice, and it is nice! The firmware that we write
+should never catastrophically fail due to unforeseen circumstances if we don't
+want it to.
 
-DefP really shines when interacting directly with hardware, proprietary
-libraries, and external inputs that we don't have direct control over. Hardware
-may have glitches or behave differently in various environments, heavyweight
-libraries often are riddled with bugs, and the outside world will send whatever
-it wants over communication protocols.
+Defensive programming really shines when interacting directly with hardware,
+proprietary libraries, and external inputs that we don't have direct control
+over. Hardware may have glitches or behave differently in various environments,
+heavyweight libraries often are riddled with bugs, and the outside world will
+send whatever it wants over communication protocols.
 
-As with most things, DefP can be abused and the benefits become outweighed by
-the negatives. If many modules are layered on top of one another, each using
-DefP techniques, bugs can and will be created, lost, and/or obscured.
-
-{:.no_toc}
+As with most things, defensive programming can be abused and the benefits become
+outweighed by the negatives. If many modules are layered on top of one another,
+each using defensive programming techniques, bugs can and will be created, lost,
+and/or obscured.
 
 ### Problems with Defensive Programming
 
-The key to DefP is to use it at the exterior interfaces of your firmware. There
-should be a thin but sturdy wall of DefP between the outside world and hardware,
-and then the majority of your code inside the walls should be more aggressively
-checking for errors and yelling at developers when they do the wrong thing.
+The key to defensive programming is to use it at the exterior interfaces of your
+firmware. There should be a thin but sturdy wall of defensive programming
+between the outside world and hardware, and then the majority of your code
+inside the walls should be more aggressively checking for errors and yelling at
+developers when they do the wrong thing.
 
 <p align="center">
   <img width="600" src="{% img_url offensive-programming/internal-software.png %}" alt="internal-software" />
-  If code paths originate from or pass through the red zones, then DefP is likely a better approach.
+  If code paths originate from or pass through the red zones, then defensive programming is a good approach.
 </p>
 
 For instance, let's assume we have an internal function,
@@ -120,13 +121,13 @@ This practice of writing code to aggressively surface errors is what is known as
 
 ## Offensive Programming
 
-Offensive programming (referred to from here on as OffP), although seemingly
-opposite in word choice, actually expands upon defensive programming and takes
-it one step further. Instead of just accepting that `malloc()` can fail,
-software with OffP in mind might assert that `malloc()` _never_ fails. If a
-`malloc()` call does fail, the software fatally assert, print enough information
-for the developer to root cause the issue or capture a core dump, and then reset
-it back to a known working state.
+Offensive programming, although seemingly opposite in word choice, actually
+expands upon defensive programming and takes it one step further. Instead of
+just accepting that `malloc()` can fail, software with offensive programming in
+mind might assert that `malloc()` _never_ fails. If a `malloc()` call does fail,
+the software fatally assert, print enough information for the developer to root
+cause the issue or capture a core dump, and then reset it back to a known
+working state.
 
 In embedded systems, where the entire stack from hardware to software is often
 built and controlled by a single organization, any bug is the responsibility of
@@ -134,12 +135,13 @@ the engineers in that organization to root cause and fix. Offensive programming
 can be a useful approach to surface bugs that might otherwise take weeks to
 reproduce or never be found.
 
-OffP can take many forms inside of software, but the most common way is to use
+Offensive programming can take many forms inside of software, but the most
+common way is to use
 [assertions]({% post_url 2019-11-05-asserts-in-embedded-systems %}) liberally
 and creatively against developer errors and system state behavior.
 
-Let's run through a few hypothetical situations and how you could use OffP. If
-your embedded system is experiencing:
+Let's run through a few hypothetical situations and how you could use offensive
+programming. If your embedded system is experiencing:
 
 - **Performance issues** - such as the GUI freezing or slow response times to
   button presses, you can use
@@ -159,8 +161,8 @@ your embedded system is experiencing:
   spin indefinitely and have the watchdog [clean
   up]({% post_url 2020-02-18-firmware-watchdog-best-practices %}).
 
-This is just scratching the surface of OffP programming techniques, but I hope
-you now have an idea of what this article is all about!
+This is just scratching the surface of offensive programming techniques, but I
+hope you now have an idea of what this article is all about!
 
 ### Benefits of Offensive Programming
 
@@ -213,8 +215,8 @@ following benefits:
 
 ## Offensive Programming in Practice
 
-Let's dig into some concrete examples of bugs we can find using Offensive
-Programming practices.
+Let's dig into some concrete examples of bugs we can find using offensive
+programming practices.
 
 ### Argument Validation
 
@@ -375,10 +377,12 @@ However, sometimes, it will result in memory corruption and present itself in
 the strangest of ways. Memory corruption bugs are notoriously difficult to
 debug.
 
+<!-- prettier-ignore-start -->
 > If you are struggling with memory corruption issues, you might want to read
 > [this section on catching memory corruption
 > bugs]({% post_url 2020-09-16-cortex-m-watchpoints %}#memory-corruption) from a
 > previous post.
+<!-- prettier-ignore-end -->
 
 One way to help prevent use-after-free bugs is to scrub the entire contents of
 the memory with an invalid address that, when accessed, would cause a
@@ -467,7 +471,8 @@ software, hardware, or incoming data. These could be any of the following:
 - Contents of flash or persistent storage
 - HAL or 3rd-party libraries
 - Data or external inputs from comms stacks
-- Language interpreters, such as MicroPython[^micropython] or JerryScript[^jerryscript]
+- Language interpreters, such as MicroPython[^micropython] or
+  JerryScript[^jerryscript]
 - 3rd party applications written by external developers
 
 All of these variables or inputs are outside the control of the developer, and
@@ -565,7 +570,7 @@ compiled.
 I love when my firmware and tools work with me instead of against me. If the
 firmware knows that there is an issue, it should make that fact front and center
 and maybe even point me to a Wiki page explaining what I did wrong! This is what
-Offensive Programming is all about. If you implement these ideas into your
+offensive programming is all about. If you implement these ideas into your
 firmware, even if only just a few of them, I promise they'll pay dividends and
 you'll be able to root cause issues more quickly than before.
 
