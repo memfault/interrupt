@@ -4,7 +4,7 @@ description:
   Embedded systems can benefit from defensive and offensive programming with the
   use of asserts, timeouts, and watchdogs.
 author: tyler
-image: img/offensive-programming/cover.png
+image: img/defensive-and-offensive-programming/cover.png
 ---
 
 One of the worst things about embedded development (especially in C) is
@@ -86,7 +86,7 @@ inside the walls should be more aggressively checking for errors and yelling at
 developers when they do the wrong thing.
 
 <p align="center">
-  <img width="600" src="{% img_url offensive-programming/internal-software.png %}" alt="internal-software" />
+  <img width="600" src="{% img_url defensive-and-offensive-programming/internal-software.png %}" alt="internal-software" />
   If code paths originate from or pass through the red zones, then defensive programming is a good approach.
 </p>
 
