@@ -467,7 +467,7 @@ software, hardware, or incoming data. These could be any of the following:
 - Contents of flash or persistent storage
 - HAL or 3rd-party libraries
 - Data or external inputs from comms stacks
-- Language interpreters, such as MicroPython or JerryScript
+- Language interpreters, such as MicroPython[^micropython] or JerryScript[^jerryscript]
 - 3rd party applications written by external developers
 
 All of these variables or inputs are outside the control of the developer, and
@@ -586,11 +586,9 @@ that are hidden in your firmware! Come find me in the
 ## References
 
 <!-- prettier-ignore-start -->
-[^base64]: [Base64 Wikipedia](https://en.wikipedia.org/wiki/Base64)
 [^micropython]: [MicroPython](https://micropython.org/)
 [^jerryscript]: [JerryScript](https://jerryscript.net/)
 [^use-after-free]: [CWE-416: Use After Free](https://cwe.mitre.org/data/definitions/416.html)
-[^gassle]: [The Embedded Muse - Issue 299](http://www.ganssle.com/tem/tem299.html)
 [^freertos_asserts]: [FreeRTOS - xTaskCreateStatic](https://github.com/FreeRTOS/FreeRTOS-Kernel/blob/7c67f18ceebd48ae751693377166df0c52f4a562/tasks.c#L589-L605)
 [^static_assert]: [static_assert - CppReference](https://en.cppreference.com/w/c/language/_Static_assert)
 <!-- prettier-ignore-end -->
