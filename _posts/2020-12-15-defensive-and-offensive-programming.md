@@ -527,10 +527,9 @@ deadlocks, bugs potentially leading to memory corruption, etc. It's better to
 return the device to a known state than to limp along.
 
 What we can often consider disabling completely are marginal issues, such as
-software stalls, such as software stalls, malloc and queue failures (which are
-handled), and timeouts. These types of issues aren't guaranteed to recover or go
-away, but they may be acceptable depending on the context and how the device is
-used.
+software stalls, malloc and queue failures (which are handled), and timeouts.
+These types of issues aren't guaranteed to recover or go away, but they may be
+acceptable depending on the context and how the device is used.
 
 If you choose to reduce the aggressiveness of the checks, consider keeping the
 hooks and timeouts and instead log them somewhere, rather than reset the system.
