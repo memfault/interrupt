@@ -5,7 +5,7 @@ tag: [cortex-m]
 author: chris
 ---
 
-In a previous post, we have talked about debugging memory corruption issues by making use of [watchpoints]({% post_url 2020-09-16-cortex-m-watchpoints %}). You may recall in that post we had to _reproduce_ the failure so we could halt the core with a watchpoint installed and debug when it happened.
+In a previous post, we talked about debugging memory corruption issues by making use of [watchpoints]({% post_url 2020-09-16-cortex-m-watchpoints %}). You may recall in that post we had to _reproduce_ the failure so we could halt the core with a watchpoint installed and debug when it happened.
 
 But what if an issue is hard to reproduce or the device isn't at your desk? In these scenarios, the execution history (instruction trace) can be invaluable for root causing this class of problem.
 
@@ -349,7 +349,7 @@ $ make flash
 
 ### Basic Usage Example
 
-The default mode for the test application does nothing exciting but will serve as a good way to sanity check our decoder is working as expected. When the application start's up it enters an infinite loop. The loop halts with a breakpoint instruction every five iterations:
+The default mode for the test application does nothing exciting but will serve as a good way to sanity check our decoder is working as expected. When the application starts up, it enters an infinite loop. The loop halts with a breakpoint instruction every five iterations:
 
 ```c
 __attribute__((optimize("O0")))
@@ -479,6 +479,8 @@ Neat, so two trace packets (16 bytes of data) tells us the exact last 23 instruc
 
 ### Stack Overflow Debug Example
 
+Let's now go over an example of how to debug a stack overflow using the MTB.
+
 #### Context
 
 Most RTOS' implement a simple stack overflow detection scheme.
@@ -495,7 +497,7 @@ First, when a new task is created the stack is scrubbed with a known pattern. Fo
     #endif /* tskSET_NEW_STACKS_TO_KNOWN_VALUE */
 ```
 
-Then, everytime a task context switch takes place the bottom of the stack is checked to see if it matches the known pattern. The FreeRTOS logic looks like this:
+Then, every time a task context switch takes place, the bottom of the stack is checked to see if it matches the known pattern. The FreeRTOS logic looks like this:
 
 ```c
 #define taskCHECK_FOR_STACK_OVERFLOW()                                                            \
@@ -715,7 +717,7 @@ static void bad_asm_function(void) {
 }
 ```
 
-But hopefullt, the example conveys the general idea how this type of trace can be useful for root causing this class of bug!
+Although contrived, I hope the example conveys the general idea how this type of trace can be useful for root causing this class of bug!
 
 ## Postmortem Analysis
 
