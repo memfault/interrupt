@@ -1,13 +1,17 @@
 ---
-title: "Cortex-M33 Instruction Tracing Without a Debugger"
+title: "ARM Cortex-M33 Instruction Tracing Without a Debugger"
 description: "A step by step guide on how to configure and leverage the Cortex M33 Micro Trace Buffer (MTB) for instruction tracing using Dialog Semiconductor's DA14695 MCU"
 tag: [cortex-m]
 author: chris
 ---
 
-In a previous post, we talked about debugging memory corruption issues by making use of [watchpoints]({% post_url 2020-09-16-cortex-m-watchpoints %}). You may recall in that post we had to _reproduce_ the failure so we could halt the core with a watchpoint installed and debug when it happened.
+In a previous post, we talked about debugging memory corruption issues by making use of
+[watchpoints]({% post_url 2020-09-16-cortex-m-watchpoints %}). You may recall in that post we had
+to _reproduce_ the failure so we could halt the core with a watchpoint installed in order to debug
+what happened.
 
-But what if an issue is hard to reproduce or the device isn't at your desk? In these scenarios, the execution history (instruction trace) can be invaluable for root causing this class of problem.
+But what if an issue is hard to reproduce or the device isn't at your desk? In these scenarios, the
+execution history (instruction trace) can be invaluable for root causing the underlying issue.
 
 <!-- excerpt start -->
 
@@ -15,7 +19,7 @@ In this post we will explore how to perform instruction tracing without a debugg
 
 <!-- excerpt end -->
 
-> Note: The Micro Trace Buffer (MTB) is an optional feature of the ARM architecture. Many silicon vendors do not include the optional feature in their MCUs. Kudos to Dialog for doing so!
+> Note: The Micro Trace Buffer (MTB) is an optional feature of the ARM architecture. Many silicon vendors do not include the feature in their MCUs. Kudos to Dialog for doing so!
 
 {% include newsletter.html %}
 
@@ -27,7 +31,9 @@ The Micro Trace Buffer (MTB) is a peripheral that can be used for instruction tr
 
 ARM Cortex-M33 [^m33-mtb] and ARM Cortex-M0+[^m0-mtb] designs may have an MTB integrated (inclusion of the feature is optional). The easiest way to find out if an MCU includes the MTB unit is to search the datasheet for mentions of "MTB".
 
-> The MTB is not present on Cortex-M3s or Cortex-M4s. Most Cortex-M MCUs do implement the Embedded Trace Macrocell (ETM) [^etm]. By default, this trace information is streamed out over pins on the package. However, some MCUs do include an Embedded Trace Buffer (ETB) that allows trace data to be redirected to RAM instead. A full discussion of the ETM & ETB is outside the scope of this article.
+> The MTB is not present on Cortex-M3, Cortex-M4, or Cortex-M7s. However, most Cortex-M MCUs do implement
+> the Embedded Trace Macrocell (ETM) [^etm]. By default, this trace information is streamed out
+> over dedicated pins and you need special trace hardware[^4] to read and process the information. However, some MCUs do include an Embedded Trace Buffer (ETB) that allows trace data to be redirected to RAM instead. A full discussion of the ETM & ETB is outside the scope of this article.
 
 ## How does it work?
 
@@ -35,13 +41,17 @@ One of the things I like the most about the MTB is how incredibly simple it is. 
 
 The first 4 bytes of the packet is where the code was prior to branching (the "source address") and the next 4 bytes is the address which was branched to (the "destination address").
 
-Since thumb instructions are always at least half-word aligned, the bottom bit of the source and destination address stored is used to encode extra information.
+Since thumb instructions are always at least half-word aligned, the bottom bit of each word in the
+packet is used to encode extra information.
 
-Bit 1 in the "source address", referred to as the "A-bit", differentiates the origin of the branch. When the bit is set it means the PC update occurred due to an exception or update over a debugger vs a normal branch flow.
+Bit 1 in the "source address", referred to as the "A-bit", differentiates the origin of the
+branch. When the bit is set it means the PC update occurred due to an exception or update over a
+debugger. When it is not set, it means a normal branch took place.
 
 Bit 1 in the "destination address", referred to as the "S-bit", is set when the packet is the first one captured after a trace has been started. If the MTB has been stopped and started multiple times, this would reveal when there are gaps in the trace information.
 
-In between trace events, we can still recover the exact instructions executed (will just be destination of previous packet to source of next packet!)
+With this information we can still recover every single instruction executed. In between branches
+we know sequential PCs were fetched between the destination of previous packet to source of next packet!
 
 Putting it all together, the format looks like this:
 
@@ -79,9 +89,9 @@ The MCU datasheet can be examined to determine the maximum amount of RAM that ca
 
 ![]({% img_url mtb-m33/mtb-base.png  %})
 
-This register describes where in SRAM MTB trace storage begins. We will use this value later in this article to read MTB data.
+The `MTB_BASE` register describes where in SRAM MTB trace storage begins. We will use this value later in this article to read MTB data.
 
-For the DA14695, we can confirm the location is at `0x2007e000`:
+For the DA14695, we can confirm the location is at `0x2007e000` with gdb:
 
 ```
 (gdb) p/x *(uint32_t*)0xE004300C
@@ -92,7 +102,7 @@ $1 = 0x2007e000
 
 ![]({% img_url mtb-m33/mtb-position.png  %})
 
-This register conveys two pieces of MTB state:
+The `MTB_POSITION` register conveys two pieces of MTB state:
 
 1. The current write "pointer" for trace packet information. This will be where information about the next non-sequential instruction change is written. The actual SRAM address stored to can be computed as `MTB_BASE` + `POINTER`.
 2. Whether the data in the buffer has rolled around. If the storage has been filled and wrapped around, the "wrap" bit will be set. We can use this information to determine where the oldest trace packet is. If the "wrap" bit is set, the oldest record is at the "pointer" offset, otherwise it is at offset 0.
@@ -101,9 +111,10 @@ This register conveys two pieces of MTB state:
 
 ![]({% img_url mtb-m33/mtb-master.png  %})
 
-Among other things, this register is used to configure the amount of RAM to be used for tracing as well as actually enable the peripheral. The two fields you generally need to program are:
+Among other things, the `MTB_MASTER` register is used to configure the amount of RAM to be used for tracing as well as actually enable the peripheral. The two fields you generally need to program are:
 
-- `MASK` - This controls how much space is used for the trace buffer. The size of the circular buffer used will be 2 ^ (MASK + 4) up to the maximum space available. So for the DA14695, valid values will be 0 (2<sup>0 + 4</sup> = 16 bytes) up to 9 (2<sup>9 + 4</sup> = 8192 bytes).
+- `MASK` - This controls how much space is used for the trace buffer. The size of the circular
+  buffer used will be 2 ^ <sup> MASK + 4 </sup> up to the maximum space available. So for the DA14695, valid values will be 0 (2<sup>0 + 4</sup> = 16 bytes) up to 9 (2<sup>9 + 4</sup> = 8192 bytes).
 - `EN` - Setting this bit will turn on MTB tracing!
 
 ## Setup Code
@@ -442,25 +453,39 @@ If we want to view the exact instructions executed we can take the destination a
 For example for the first `D` -> `S` transition we have above:
 
 ```
-(gdb) disassemble 0x20000368,0x2000036e+4
+(gdb) disassemble/s 0x20000368,0x2000036e+4
 Dump of assembler code from 0x20000368 to 0x20000372:
+./main.c:
+173   if (g_trace_example_config == 0) {
    0x20000368 <main+20>:	ldr	r3, [pc, #96]	; (0x200003cc <main+120>)
    0x2000036a <main+22>:	ldr	r3, [r3, #0]
    0x2000036c <main+24>:	cbnz	r3, 0x20000372 <main+30>
+
+174     infinite_loop();
    0x2000036e <main+26>:	bl	0x20000324 <infinite_loop>
+End of assembler dump.
 ```
 
 And for the second we have:
 
 ```
-(gdb) disassemble 0x20000324,0x20000348+4
+(gdb) disassemble/s 0x20000324,0x20000348+4
 Dump of assembler code from 0x20000324 to 0x2000034c:
+./main.c:
+153	void infinite_loop(void) {
    0x20000324 <infinite_loop+0>:	push	{r7}
    0x20000326 <infinite_loop+2>:	sub	sp, #12
    0x20000328 <infinite_loop+4>:	add	r7, sp, #0
+
+154   volatile int i;
+155   while (1) {
+156     i++;
    0x2000032a <infinite_loop+6>:	ldr	r3, [r7, #4]
    0x2000032c <infinite_loop+8>:	adds	r3, #1
    0x2000032e <infinite_loop+10>:	str	r3, [r7, #4]
+
+157
+158     if ((i % 5) == 0) {
    0x20000330 <infinite_loop+12>:	ldr	r1, [r7, #4]
    0x20000332 <infinite_loop+14>:	ldr	r3, [pc, #28]	; (0x20000350 <infinite_loop+44>)
    0x20000334 <infinite_loop+16>:	smull	r2, r3, r3, r1
@@ -475,17 +500,18 @@ Dump of assembler code from 0x20000324 to 0x2000034c:
    0x20000348 <infinite_loop+36>:	bne.n	0x2000032a <infinite_loop+6>
 ```
 
-Neat, so two trace packets (16 bytes of data) tells us the exact last 23 instructions which were executed by the processor! Both ranges examined end with branch instructions as expected. Our decoder appears to be working as expected!
+Neat, so two trace packets (16 bytes of data) tells us the exact last 23 instructions which were
+executed by the processor! Both ranges examined end with branch instructions so our decoder appears to be working as expected!
 
 ### Stack Overflow Debug Example
 
 Let's now go over an example of how to debug a stack overflow using the MTB.
 
-#### Context
+#### Background Context
 
 Most RTOS' implement a simple stack overflow detection scheme.
 
-First, when a new task is created the stack is scrubbed with a known pattern. For example, for FreeRTOS[^3] it looks like
+First, when a new task is created the stack is scrubbed with a known pattern. For example, for FreeRTOS[^3] it looks like:
 
 ```c
     /* Avoid dependency on memset() if it is not required. */
@@ -702,7 +728,9 @@ However, with the MTB output we should be able to see the exact instruction exec
  D: 0x200004e0 - mtb_disable @ ./mtb.c:41
 ```
 
-From the trace we can immediately see what was executing prior to the bad jump to `0xbf00de4c`. In this case it is a suspiciously named function that I instrumented, `bad_asm_function()`:
+From the trace we can immediately see what was executing prior to the bad jump to `0xbf00de4c`. In
+this case it is a suspiciously named function that I instrumented, `bad_asm_function()` which was
+invoked from `prvQueuePongTask()`:
 
 ```c
 // for illustrative purposes, an assembly function that clobbers
@@ -717,13 +745,13 @@ static void bad_asm_function(void) {
 }
 ```
 
-Although contrived, I hope the example conveys the general idea how this type of trace can be useful for root causing this class of bug!
+Although contrived, I hope the example conveys the general idea how the instruction trace can be useful for root causing this class of bug!
 
 ## Postmortem Analysis
 
 So far the examples we have walked through are still only helpful if a debugger is attached to the board so the trace stream can be pulled off. Once the product has shipped and is out in the field these strategies will not help to triage what went wrong on devices.
 
-For production, I would recommend collecting the trace buffer and MTB peripheral block (`0xE0043000`-`0xE0043018`) when an unexpected error or fault takes place. With these two blocks of information, we can remotely recover an exact trace of the instructions that were executing prior to the issue!
+For production, I would recommend collecting the trace buffer and MTB peripheral block (`0xE0043000`-`0xE0043018`) when an unexpected error or fault takes place. With these two pieces of information, we can remotely recover an exact trace of the instructions that were executing prior to the issue!
 
 ## Conclusion
 
@@ -741,7 +769,7 @@ Either way, looking forward to hearing your thoughts in the discussion area belo
 
 I have not come across many discussions of the Micro Trace Buffer online but here are a few I have seen:
 
-- [Apache Mynewt MTB support for DA1469x](https://github.com/apache/mynewt-core/pull/2418)
+- [Apache Mynewt RTOS adds MTB support for DA1469x](https://github.com/apache/mynewt-core/pull/2418)
 - [Debugging ARM Cortex-M0+ Hard Fault with MTB Trace](https://mcuoneclipse.com/2013/01/13/debugging-arm-cortex-m0-hard-fault-with-mtb-trace/)
 
 ## References
@@ -752,3 +780,4 @@ I have not come across many discussions of the Micro Trace Buffer online but her
 [^1]: [DA14695 Development Kit – USB](https://www.dialog-semiconductor.com/products/da14695-development-kit-usb)
 [^2]: [DA1469x Datasheet](https://www.dialog-semiconductor.com/sites/default/files/da1469x_datasheet_3v2.pdf)
 [^3]: [FreeRTOS Kernel Stack Overflow Check](https://github.com/FreeRTOS/FreeRTOS-Kernel/blob/a8a9c3ea3e34c10c6818f654883dac3dbdae12d1/tasks.c#L3052)
+[^4]: Tracing hardware - [Lauterbach's Trace32](https://www.lauterbach.com) & [SEGGER's JTrace](https://www.segger.com/products/debug-probes/j-trace/)
