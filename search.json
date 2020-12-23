@@ -3,6 +3,7 @@ layout: none
 ---
 [
   {% for post in site.posts %}
+  {% unless post.title contains "ve been reading in" %}
     {
       "title"    : "{{ post.title | escape }}",
       "category" : "{{ post.category }}",
@@ -11,5 +12,6 @@ layout: none
       "date"     : "{{ post.date }}",
       "content"  : "{{ post.content | strip_html | strip_newlines | escape | remove: '“' | remove: '”' | remove: '\' | replace: "	", " " }}"
     } {% unless forloop.last %},{% endunless %}
+    {% endunless %}
   {% endfor %}
 ]
