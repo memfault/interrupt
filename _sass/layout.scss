@@ -141,7 +141,8 @@ html, body {
 
   main {
     order: 1;
-    max-width: calc(640px);
+    width: 640px;
+    max-width: 100%;
 
     @media (min-width: 940px) {
       max-width: calc(100% - 300px);
