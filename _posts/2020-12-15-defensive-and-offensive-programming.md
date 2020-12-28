@@ -392,9 +392,9 @@ ultimately halt the system or capture a core dump.
 ```c
 void my_free(void *p) {
   const size_t num_bytes = prv_get_size(p);
-  free(p);
   // Set each word to 0xbdbdbdbd
   memset(p, 0xbd, num_bytes);
+  free(p);
 }
 ```
 
