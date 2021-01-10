@@ -291,9 +291,13 @@ code {
     background-color: darken($background-color, 5%);
     color: $text-color;
   }
-  a:hover {
-    background-color: lighten($main-color, 5%);
-  }
+	a:hover,
+	a:visited,
+	a:focus,
+	a:active {
+		background-color: lighten($main-color, 5%);
+		color: darken($background-color, 20%);
+	}
 }
 .page-item {
   background-color: $main-color;
@@ -462,7 +466,9 @@ footer {
         background-color: $main-color;
         color: $background-color;
         border: 0.2rem solid $main-color;
-        border-radius: 2.2rem;
+				border-radius: 2.2rem;
+				cursor: pointer;
+				outline: none;
       }
     }
   }
