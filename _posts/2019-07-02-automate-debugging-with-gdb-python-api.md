@@ -391,4 +391,6 @@ Next time, we'll talk about how to use third-party Python packages within GDB us
 
 _EDIT: Post written!_ - [Using Python PyPi Packages with GDB]({% post_url 2019-07-23-using-pypi-packages-with-GDB %})
 
-_All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-post/)._ {% include submit-pr.html %}
+_All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-post/)._
+
+{% include submit-pr.html %}
