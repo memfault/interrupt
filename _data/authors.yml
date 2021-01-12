@@ -99,3 +99,8 @@ ael-mess:
     linkedin: https://www.linkedin.com/in/ael-mess/
     blurb: is an embedded software and firmware engineer, passionate about low-level programming.
     image: /img/author/ael-mess.jpg
+erikfogg:
+    name: Erik Fogg
+    blurb: is the Chief Operating Officer at <a href="https://prodperfect.com/">nProdPerfect.</a>, which is an autonomous E2E regression testing solution that leverages data from live user behavior data.
+    linkedin: https://www.linkedin.com/in/erikfogg/
+    image: /img/author/erikfogg.jpeg
