@@ -6,9 +6,9 @@ author: tyler
 image: img/<post-slug>/cover.png # 1200x630
 ---
 
-Release versioning might seem like a boring topic. Honestly, it should be. There should only be a couple of right ways to do versioning, and each project should pick one of the agreed upon methods (SemVer[^semver], CalVer[^calver], etc.)  that makes the most sense to the project. We don't live in this ideal world, and many projects choose to deviate from the standards. I'm not here to say they are wrong, but I'd like to discuss what you might be missing out on!
+Release versioning might seem like a boring topic. Honestly, it should be. There should only be a couple of right ways to do versioning, and each project should pick one of the agreed upon methods (SemVer[^semver], CalVer[^calver], etc.) that makes the most sense to the project. We don't live in this ideal world unfortunately and many projects choose to deviate from versioning standards. I'm not here to say they are wrong, but I'd like to discuss what they might be missing out on.
 
-On top of a standard versioning scheme, it's useful to include extra metadata about a given release, such as the Git revision, [GNU Build ID]({% post_url 2019-05-29-gnu-build-id-for-firmware %}), build timestamp, and other related items. With all of this in place, both machines and developers can quickly hone in on *exactly* which release is running on a given device.
+Along with a typical release version, it is useful to include extra metadata, such as the Git revision, [GNU Build ID]({% post_url 2019-05-29-gnu-build-id-for-firmware %}), build timestamp, and other related items. With all of this in place, both machines and developers can quickly hone in on *exactly* which release is running on a given device, what the source is, where it came from, and how to re-build it if necessary.
 
 <!-- excerpt start -->
 
@@ -21,7 +21,6 @@ This post builds upon many of our previous posts and brings all the relevant inf
 {% include newsletter.html %}
 
 {% include toc.html %}
-
 
 ## Overview
 
@@ -131,23 +130,38 @@ Let's now look at Git revisions, which will help us identify the software revisi
 
 ## Git Revisions
 
-The second piece of metadata that we want to include in our firmware is a Git revision or Git tag, such as `d287bc7311`, `1.1.1-gd287bc7311`, or `1.1.1`, depending on how you like your tags.
+The second piece of metadata that we want to include in our firmware is a Git revision or Git tag, such as `d287bc7311`.
 
-By having the Git revision or tag baked into the firmware, we are able to determine which software the binary is based upon, which would help us when we are trying to triage bugs or build old versions. The git revision is primarily for human consumption and is not meant to be parsed by code or used in any significant way. 
+By having the Git revision baked into the firmware, we are able to determine which software the binary is based upon, which would help us when we are trying to triage bugs by performing a [git bisect]({% post_url 2020-04-21-git-bisect %}) or re-building old firmwares (provided we have [reproducible builds]({% post_url 2019-12-11-reproducible-firmware-builds %})).
 
-You can call `git describe` to acquire the Git revision, commit SHA, most recent tag, and how many commits away from the most recent tag you are. 
+You can call `git describe` to acquire the Git revision SHA with a `+` on the end if the project had a dirty state when called.
 
 ```
-$ git describe --tags --always --dirty="+" --abbrev=10
-1.1.1-3-g8bb5d7f+
+$ git describe --match ForceNone --abbrev=10 --always --dirty="+"
+8bb5d7f162+
 ```
 
-- `1.1.1` - The most recent `tag` in our Git history on our current branch
-- `3` - The number of additional commits on top of our parent tag, `1.1.1`
-- `g[8bb5d7f162]` - The commit SHA, prefixed with `g`. I like to use 10 characters to represent the commit as the default of 7 is usually not enough to remain unique for larger projects.
-- `+` - Denotes that the project directory was "dirty" at the time. This usually means the developer had uncommitted changes when a firmware was built.
+The use of `--match ForceNone` is because I just want the SHA and the dirty signifier and nothing else.
+
+If you'd like to also include a tag and number of commits from the last tag like some projects have, you can use the following command:
+
+```
+# git describe --tags --always --dirty="+" --abbrev=10
+```
 
 Refer to the `git describe` [documentation](https://git-scm.com/docs/git-describe) for more information.
+
+### Adding Git Revision
+
+To add a Git SHA to a firmware, we do the work within our build system or Makefile in our case. 
+
+```Makefile
+GIT_REVISION := \"$(shell git describe --match ForceNone --abbrev=10 --always --dirty="+")\"
+DEFINES += GIT_REVISION=$(GIT_REVISION)
+CFLAGS += $(foreach d,$(DEFINES),-D$(d))
+```
+
+From here, you can create a file which uses the macro `GIT_REVISION` and it will be populated with the output of the shell command.
 
 ### Missing Pieces of the Git Revision
 
@@ -157,39 +171,59 @@ We need yet another piece of build information! Last but not least, let's chat a
 
 ## GNU Build ID
 
-GNU Build ID's serve three purposes:
+[GNU Build ID's]({% post_url 2019-05-29-gnu-build-id-for-firmware %}) are our final missing piece to our versioning story. The build ID is a 160-bit SHA1 string computed over the elf header bits and section contents in the file. Because it's computed over the binary itself, we can be sure that every unique binary will produce a unique build ID. Perfect!
+
+A build ID serves three purposes:
 
 1. To uniquely identify and differentiate a specific firmware version from other ones.
 2. Conversely, to verify that two binaries are in fact the same build.
 3. To match debug symbols to a given binary.
 
+The specifics on how to add a GNU Build ID are laid out in our [previous post]({% post_url 2019-05-29-gnu-build-id-for-firmware#adding-the-gnu-build-id-to-your-builds %}).
 
+If you don't use GCC as your compiler, fret not! We have [a script in the Memfault Firmware SDK repo](https://github.com/memfault/memfault-firmware-sdk/blob/master/scripts/fw_build_id.py) to help out a number of our customers include a unique build identifier for their firmware builds, regardless of compiler, build system, or platform.
 
-- Uniquely identify builds
-- Upload build artifacts based on this ID
-- GDB Symbol Servers are going to make things easier
-
-### Don't use GCC? Not to worry.
-
-https://github.com/memfault/memfault-firmware-sdk/blob/master/scripts/fw_build_id.py
-
+The future looks promising for the use of GNU Build ID's as well. A new symbol server, [debuginfod](https://sourceware.org/elfutils/Debuginfod.html) was recently released, and various tools are integrating it as a way to pull down debug symbols for binaries that include a build ID.
 
 ## Bringing It All Together
 
-### Adding Git Revision to Makefile
+Now that we've discussed each of the three versioning items that I like to include in my firmware projects, we should now discuss how to actually do the deed.
 
-```Makefile
-GIT_REVISION := \"$(shell git describe --tags --always --dirty="+" --abbrev=10)\"
-CFLAGS += -DGIT_REVISION
+### Setting MAJOR.MINOR.PATCH
+
+Ultimately, you will want to set the MAJOR, MINOR, and PATCH numbers in macros. Whether these are defined using a auto-generated header file or defined as a CFLAG using `-D` is up to you. Where these values come from is the more exiting bit.
+
+#### Git Tags & CI
+
+If you have your [continuous integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) system set up to build your firmware, pulling the SemVer from the Git tag is a great way to go. 
+
+I like to configure my CI systems to watch tags that start with `release-*`. That way, I can tag and push releases with a few simple Git commands and a script in CI which parses the SemVer and sets build variables
+
+```
+$ git checkout release-1.0
+$ git tag release-1.0.0
+$ git push origin 1.0.0
 ```
 
-From here, you can create a `.c` file which uses the macro `GIT_REVISION` and it will be populated with the output of the shell command.
+Before CI builds this tag, it will pull out 1.0.0 from the tag name, set a few CFLAGS (`FW_VERSION_MAJOR`, `FW_VERSION_MINOR`, etc.), and build the firmware.
 
-### Build binaries with the versions
+#### Manually Set Versions
 
-Now that we've established the various versions and metadata that we need to use to satisfy our requirements, we can now put 
+Another way I've seen versions get built is by setting a `fw_version.h` header manually. 
 
-François, in his [Device Firmware Update Cookbook]({% post_url 2020-06-23-device-firmware-update-cookbook %}) post, describes how to [include metadata]({% post_url 2020-06-23-device-firmware-update-cookbook#image-metadata %}) in both ELF files and loadable firmware binaries.
+```
+// fw_version.h
+
+#define FW_VERSION_MAJOR 1
+#define FW_VERSION_MINOR 0
+#define FW_VERSION_PATCH 0
+```
+
+A developer would make this change in a commit on its own and push it to a branch for CI to build.
+
+### Baking Versions Into Binary Header
+
+François, in his [Device Firmware Update Cookbook]({% post_url 2020-06-23-device-firmware-update-cookbook %}) post, describes how to [include metadata]({% post_url 2020-06-23-device-firmware-update-cookbook#image-metadata %}) in both ELF files and into a header of loadable firmware binaries.
 
 With the version in the ELF file, we can investigate the metadata within GDB:
 
@@ -240,7 +274,7 @@ Git SHA: 70859a3
 
 ### Detecting Downgrades
 
-One of the most unpleasant and avoidable ways of bricking a device is to allow it to install incompatible versions, such as downgrades. If SemVer is following closely, almost all dangerous downgrade paths could be avoided without much logic or defensive work.
+One of the most unpleasant and avoidable ways of bricking a device is to allow it to install incompatible versions, such as downgrades. If SemVer is followed closely, almost all dangerous downgrade paths could be avoided without much logic or defensive work.
 
 Although using `scanf` isn't really recommended due to code-size bloat, here is a simple example snippet of code to detect firmware downgrades for those that use Semantic Versioning. 
 
@@ -266,6 +300,13 @@ int main(void) {
 
 If you use another versioning scheme, you should still try to detect downgrades, whether that is by using the Git SHA, a timestamp, commit number, or anything else that is roughly stable and sequential.
 
+## Conclusion
+
+Release versioning is one of those things that is only really thought about after the fact. It feels similar to good commit messages. It's only when we are months into a project and realizing that we have code, branches, builds, symbol files, and patches all over the place that we wish we had put in some form of organization before chaos came about. 
+
+By adhering to versioning standards and by including a Git SHA and build ID, many issues can be avoided and your developers can stop wasting time tracking down various builds and symbol files. 
+
+If you have strong thoughts on how firmware releases should be versioned, I'd love to hear them [on the Interrupt Slack](https://interrupt-slack.herokuapp.com/)! 
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
@@ -274,6 +315,11 @@ If you use another versioning scheme, you should still try to detect downgrades,
 <!-- Interrupt Keep END -->
 
 {:.no_toc}
+
+## Further Reading
+
+- [Embedded Artistry - Giving Your Firmware Build a Version](https://embeddedartistry.com/blog/2016/12/21/giving-your-firmware-build-a-version/)
+- [Wolfram Rösler - Build Number Generation With git And cmake](https://gitlab.com/wolframroesler/version)
 
 ## References
 
