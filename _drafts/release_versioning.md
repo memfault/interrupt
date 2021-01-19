@@ -6,14 +6,9 @@ author: tyler
 image: img/<post-slug>/cover.png # 1200x630
 ---
 
-There are good ways to do firmware versioning, and there are bad ways. You want to encode as much information in a version that you can, without breaking many of the conveniences that versions provide us. Versions should be:
+Release versioning might seem like a boring topic. Honestly, it should be. There should only be a couple of right ways to do versioning, and each project should pick one of the agreed upon methods (SemVer[^semver], CalVer[^calver], etc.)  that makes the most sense to the project. We don't live in this ideal world, and many projects choose to deviate from the standards. I'm not here to say they are wrong, but I'd like to discuss what you might be missing out on!
 
-- Sortable
-- Encode compatibility information about upgrades or downgrades
-- Reference a specific "revision" of the software
-- Tell us a bit about how major the changeset was
-
-Many of these are captured in the Semantic Versioning, but this is only one piece of the puzzle.
+On top of a standard versioning scheme, it's useful to include extra metadata about a given release, such as the Git revision, [GNU Build ID]({% post_url 2019-05-29-gnu-build-id-for-firmware %}), build timestamp, and other related items. With all of this in place, both machines and developers can quickly hone in on *exactly* which release is running on a given device.
 
 <!-- excerpt start -->
 
@@ -21,61 +16,74 @@ In this article, we are going to talk through all the various pieces of metadata
 
 <!-- excerpt end -->
 
-This post builds upon many of our previous posts, but brings it all together under one roof and tells a more cohesive story. When code snippets are captured in a previous post, a link will be provided. 
+This post builds upon many of our previous posts and brings all the relevant information together under one post.
 
 {% include newsletter.html %}
 
 {% include toc.html %}
 
+
+## Overview
+
+Versions don't exist just to differentiate one release from another. They serve other purposes! Such purposes include, but are not limited to:
+
+- Providing an ordering to versions (e.g. 1.1 > 1.0)
+- Encode compatibility information, breaking changes, and upgrade/downgrade restrictions
+- Reference a specific "revision" of the software
+- Reference a specific "build" of the software
+- Tell users when *major* changes took place (e.g. Windows 8 → Windows 10)
+
+If a project chooses to use just a Git SHA, or a build timestamp, or a random ASCII name, then many or all of the above benefits that versions typically provide are lost. We can do better. 
+
+Throughout this article, we'll talk about the various pieces that I believe provide a hollistic picture of the software that is packaged into a release and running on a device. First, let's talk about Semantic Versioning.
+
 ## Semantic Versioning
 
-[Semantic Versioning](https://semver.org/), or SemVer for short, is probably the most popular versioning scheme in software today. It was built to solve the versioning story for a single package, but also how a single package interoperates with dependencies. 
+[Semantic Versioning](https://semver.org/), or SemVer for short, is likely the most popular versioning scheme in software today. It was built to solve the versioning story for a single package, but also how a single package interoperates with dependencies. 
 
 SemVer uses a sequence of three digits, MAJOR.MINOR.PATH, and also allows for an optional pre-release tag and build metadata tag. All together, a version looks like:
 
+```
 MAJOR.MINOR.PATCH-[pre-release-tag]+[build-meta-tag]
+```
 
-The major, minor, and patch digits are sorted numerically (1.1.1 > 1.1.0), the pre-release tag is sorted alphanumerically (rc > beta > alpha), and the build-meta-tag is ignored completely when determining sort order or equality (1.1.1+abcd == 1.1.1+efgh).
+The MAJOR, MINOR, and PATCH digits are sorted numerically (1.1.11 > 1.1.10), the pre-release tag is sorted alphanumerically (rc > beta > alpha), and the build-meta-tag is ignored completely when determining sort order or equality (1.1.1+abcd == 1.1.1+efgh). Each should be incremented when the following occurs, according to the spec:
 
-Fortunately, or maybe unfortunately, we shouldn't just make up our own interpretations of what MAJOR, MINOR, and PATCH mean. We should try to stick to their definitions to help our future selves, co-workers, and engineers trying to integrate with your software.
+- MAJOR when you make incompatible API changes
+- MINOR when you add functionality in a backwards compatible manner
+- PATCH when you make backwards compatible bug fixes
 
-Although it might seem pedantic, let's dig into when a release lead might want to increment each field. 
+Although it might seem pedantic, let's dig into when a release lead might want to increment each field when applied to a firmware project.
 
 ### Incrementing MAJOR
 
 Example: 1.0.0 → 2.0.0
 
-SemVer dictates that the MAJOR field should be incremented when "you make incompatible API changes".
-
 For most firmware projects, the MAJOR field might *never* be incremented. If I'm writing firmware for an nRF52, and it is the only MCU in my hardware product, it doesn't have to interact or communicate with many other pieces of software or hardware, so there shouldn't be any incompatible API changes!
 
-There is one ocassion in which I would seriously consider incrementing the MAJOR field, and that is when our firmware becomes **incompatible with itself**. Let me explain. 
+There is one ocassion where I would seriously consider incrementing the MAJOR field, and that is when our firmware becomes **incompatible with a version of itself**. Let me explain. 
 
-Devices perform firmware updates all the time, and your device should be generally be able to update from any firmware version to any other.
+Normal software packages can be updated at any time, with almost no repercussions. If incompatibility arises, just revert the change and continue. However, on firmware devices, the firmware updates itself. If there is an incompatibility, it might require a re-install, a factory reset, or in the worst of cases, the device might be bricked!
 
-If you deploy a version 1.0.0, a version 1.1.0, and a version 1.2.0, your firmware should be able to update from 1.0.0 → 1.1.0 then 1.1.0 → 1.2.0, or it can skip 1.1.0 entirely and jump from 1.0.0 → 1.2.0. This should be handled gracefully! 
+With firmware updates, you also can't expect every device to install every single version (unless that is actually a hard requirement of the update flow). If you deploy a version 1.0.0, a version 1.1.0, and a version 1.2.0, your firmware should be able to update from 1.0.0 → 1.2.0 and skip 1.1.0 entirely. If a user puts your device in their nightstand and pulls it out 6 months later, this is exactly what should happen.
 
-However, keeping that backwards compatibility can weigh down our firmware, especially if need to keep migration code in our firmware and we are already low on code space. This is exactly what happened within our firmware at Pebble, the smartwatch company.
+However, keeping that backwards compatibility can weigh down our firmware, especially if we need to keep migration code in our firmware. Migration code adds complexity, code space, and allowing installs from multiple firmware versions increases our QA test matrix dramatically. 
 
-The Pebble 2.0.0 firmware was released early 2014. We proceeded to release roughly 10 firmware versions between this time and early 2015. Within all of these versions, we were changing *a lot* of stuff. We completely changed our file system (from Contiki's COFFEE[^coffee] to an internally built one), changed persistent data structures that were stored on internal and external flash, and completely re-architected how we stored our BLE bonding information. 
+Let's take the Pebble Smartwatch firmware as an example. The Pebble 2.0.0 firmware was released early 2014. Over the next year, we released versions all the way up to 2.9.1. Within all of these versions, we were changing *a lot* of stuff. We changed our file system (from Contiki's Coffee[^coffee] to an internally built one), re-wrote persistent data structures that were stored on internal and external flash, and completely re-architected how we stored our BLE bonding information. All of these things were critical to the functionality of our firmware, and at no point could we lose any of this data.
 
-Despite all of these changes, we made sure to enable our firmware to update from an old 2.0.0 release, to our latest release, 2.9.0, performing all the migrations that would rewrite the data structures and migrate the filesystem.
+Despite all of these changes, a user could update directly from 2.0.0 to 2.9.1, and the boot-up sequence on the latter firmware would perform all the migrations (that was quite a long boot-up time).
 
-------
-TODO
+When we were looking to revamp our firmware for a new product update, we decided to throw out all of the migration code from the 2 years before and move it into a "migration firmware" which users had to update through. With this, our 3.x set of firmwares had a clean slate with no backwards compatibility requirements! It was a breath of fresh air, and our firmware was thousands of lines of code smaller.
 
+This was a backward-incompatible firmware update, and I believe it warranted the MAJOR increase from 2 to 3.
 
 ### Incrementing MINOR
 
 Example: 1.1.0 → 1.2.0
 
-SemVer dictates that the MINOR field should be incremented "when you add functionality in a backwards compatible manner".
+In the context of firmawre, this is likely what most of your firmware version updates will be, especially if they contain new features and functionality. A MINOR update means that your device is able to upgrade from a version with the same MAJOR to any *newer* version with the same MAJOR. For example, as we discussed in the MAJOR section, any firmware in the 2.x release train should be able to update to any newer 2.x version, such as 2.0.0 → 2.5.0. 
 
-In the context of firmawre, this means that your device is able to upgrade from a version with the same MAJOR to any *newer* version with the same MAJOR. For example, as we discussed in the MAJOR section, any firmware in the 2.x release train should be able to update to any newer 2.x version, such as 2.0.0 → 2.5.0. 
-
-What this doesn't allow is *downgrading* firmware versions, which is going from a firmware version to an older one, such as 2.5 → 2.0. Speaking from experience, this is a nightmare to deal with and you should just disable this behavior from ever happening.
-
-We provide a code snippet later in the article to help prevent against downgrades at the installer level.
+A MINOR update should not allow *downgrading* firmware versions, which is going from a firmware version to an older one, such as 2.5 → 2.0. Speaking from experience, this is a nightmare to deal with, and you should just disable this behavior from ever happening. We provide a [code snippet](#detecting-downgrades) later in the article to help prevent against downgrades at the installer level.
 
 ### Incrementing PATCH
 
@@ -113,37 +121,19 @@ $ python
 True
 ```
 
-### Detecting Downgrades
+### Mising Pieces of Semantic Versioning
 
-One ofthe most unpleasant and avoidable ways of bricking a device is to allow it to install incompatible versions, such as downgrades. If SemVer is following closely, almost all dangerous downgrade paths could be avoided without much logic or defensive work.
+Semantic Versioning provides a plethora of benefits to our firmware and release management workflows, but it doesn't solve all of our requirements. One of our requirements was to be able to be able to reference a specific build of a firmware, which SemVer does not help with.
 
-Although using `scanf` isn't really recommended due to code-size bloat, here is a simple example snippet of code to detect firmware downgrades. 
+If two developers both build a 1.1.1 firmware, we now have two builds of 1.1.1 with no way to tell the difference between the two! They could be based upon two entirely different revisions of software or even built with a different compiler. We could use pre-release tags or build meta tags, but we also don't want to pollute our SemVer string with data that could be better solved by other versions. 
 
-```c
-#include <stdio.h>
-#include <string.h>
-
-int main(void) {
-    char *current_ver = "1.1.0";
-    char *new_ver = "1.0.0";
-
-    int currentMajor, currentMinor, currentPatch;
-    int newMajor, newMinor, newPatch;
-
-    sscanf(current_ver, "%d.%d.%d", &currentMajor, &currentMinor, &currentPatch);
-    sscanf(new_ver, "%d.%d.%d", &newMajor, &newMinor, &newPatch);
-    
-    if (newMajor < currentMajor || newMinor < currentMinor) {
-        // Dowgrade. Do not perform the "update".
-    }
-}
-```
+Let's now look at Git revisions, which will help us identify the software revisions that our firmware is built from.
 
 ## Git Revisions
 
-The second piece of metadata that we want to include in our firmware is the Git revision or Git tag, such as `d287bc7311` or `v1.1.1`. 
+The second piece of metadata that we want to include in our firmware is a Git revision or Git tag, such as `d287bc7311`, `1.1.1-gd287bc7311`, or `1.1.1`, depending on how you like your tags.
 
-This is primarily for human consumption, and is not meant to be parsed by code or used in any significant way. 
+By having the Git revision or tag baked into the firmware, we are able to determine which software the binary is based upon, which would help us when we are trying to triage bugs or build old versions. The git revision is primarily for human consumption and is not meant to be parsed by code or used in any significant way. 
 
 You can call `git describe` to acquire the Git revision, commit SHA, most recent tag, and how many commits away from the most recent tag you are. 
 
@@ -157,18 +147,23 @@ $ git describe --tags --always --dirty="+" --abbrev=10
 - `g[8bb5d7f162]` - The commit SHA, prefixed with `g`. I like to use 10 characters to represent the commit as the default of 7 is usually not enough to remain unique for larger projects.
 - `+` - Denotes that the project directory was "dirty" at the time. This usually means the developer had uncommitted changes when a firmware was built.
 
-### Makefile Changes
+Refer to the `git describe` [documentation](https://git-scm.com/docs/git-describe) for more information.
 
-```Makefile
-GIT_DESCRIBE := \"$(shell $(GIT) rev-parse --short HEAD)\"
-CFLAGS += -DGIT_DESCRIBE
-```
+### Missing Pieces of the Git Revision
 
-### Why it isn't enough uniqueness
+The Git revision, just like the SemVer version, is missing the ability to identify unique builds of the firmware. Two developers could each build the Git revision `d287bc7311` and push binaries to an update server and we'd have no way of knowing they are two different builds, or know how to tie them back to the original source. 
 
-The one issue with Git revisions is that they are not unique versions! If multiple developers are working of hte same base commit and both build binaries, upload them somewhere, they are different!
+We need yet another piece of build information! Last but not least, let's chat about GNU Build ID's.
 
 ## GNU Build ID
+
+GNU Build ID's serve three purposes:
+
+1. To uniquely identify and differentiate a specific firmware version from other ones.
+2. Conversely, to verify that two binaries are in fact the same build.
+3. To match debug symbols to a given binary.
+
+
 
 - Uniquely identify builds
 - Upload build artifacts based on this ID
@@ -179,7 +174,16 @@ The one issue with Git revisions is that they are not unique versions! If multip
 https://github.com/memfault/memfault-firmware-sdk/blob/master/scripts/fw_build_id.py
 
 
-## Putting it all together
+## Bringing It All Together
+
+### Adding Git Revision to Makefile
+
+```Makefile
+GIT_REVISION := \"$(shell git describe --tags --always --dirty="+" --abbrev=10)\"
+CFLAGS += -DGIT_REVISION
+```
+
+From here, you can create a `.c` file which uses the macro `GIT_REVISION` and it will be populated with the output of the shell command.
 
 ### Build binaries with the versions
 
@@ -234,6 +238,34 @@ Version: 1.0.1
 Git SHA: 70859a3
 ```
 
+### Detecting Downgrades
+
+One of the most unpleasant and avoidable ways of bricking a device is to allow it to install incompatible versions, such as downgrades. If SemVer is following closely, almost all dangerous downgrade paths could be avoided without much logic or defensive work.
+
+Although using `scanf` isn't really recommended due to code-size bloat, here is a simple example snippet of code to detect firmware downgrades for those that use Semantic Versioning. 
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    char *current_ver = "1.1.0";
+    char *new_ver = "1.0.0";
+
+    int currentMajor, currentMinor, currentPatch;
+    int newMajor, newMinor, newPatch;
+
+    sscanf(current_ver, "%d.%d.%d", &currentMajor, &currentMinor, &currentPatch);
+    sscanf(new_ver, "%d.%d.%d", &newMajor, &newMinor, &newPatch);
+    
+    if (newMajor < currentMajor || newMinor < currentMinor) {
+        // Dowgrade. Do not perform the "update".
+    }
+}
+```
+
+If you use another versioning scheme, you should still try to detect downgrades, whether that is by using the Git SHA, a timestamp, commit number, or anything else that is roughly stable and sequential.
+
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
@@ -246,5 +278,7 @@ Git SHA: 70859a3
 ## References
 
 <!-- prettier-ignore-start -->
-[^reference_key]: [Post Title](https://example.com)
+[^semver]: [Semantic Versioning 2.0](https://semver.org/)
+[^calver]: [Calendar Versioning](https://calver.org/)
+[^coffee]: [Contiki Coffee filesystem](https://anrg.usc.edu/contiki/index.php/Contiki_Coffee_File_System)
 <!-- prettier-ignore-end -->
