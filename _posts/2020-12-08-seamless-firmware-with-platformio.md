@@ -177,7 +177,7 @@ from my IDE so I can use trusty old Vim.
 
 In this next section, I will walk you through installing the CLI, starting a
 project, adding some libraries, and compiling your work. All code is available
-in the the [Interrupt Github repository](https://github.com/memfault/interrupt),
+in the [Interrupt Github repository](https://github.com/memfault/interrupt),
 under `example/platformio`.
 
 ### Installing the CLI

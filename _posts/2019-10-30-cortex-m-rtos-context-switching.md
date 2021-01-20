@@ -170,7 +170,7 @@ Excerpt from "B5.2.3 MSR"[^2]:
 > to unprivileged execution, software must issue an ISB instruction to ensure instruction fetch
 > correctness.
 
-For context switching, one of the the most important special registers is the `CONTROL`
+For context switching, one of the most important special registers is the `CONTROL`
 register. Bits in the register read-as-zero unless they are implemented. The
 ARMv8-M architecture[^4] has the largest number of optional extensions so the most complete assignment
 set one will see is:
@@ -193,7 +193,7 @@ where
 
 ### Stack Pointers
 
-The Cortex-M architecture implements two stacks known as the _Main Stack_ (tracked in the `msp` register) and the the
+The Cortex-M architecture implements two stacks known as the _Main Stack_ (tracked in the `msp` register) and the
 _Process Stack_ (tracked in the `psp` register). On reset, the **MSP** is always active and its initial value is derived
 from the first word in the vector table. When a stack pointer is "active", its current value will
 be returned when the `sp` register is accessed.
@@ -443,7 +443,7 @@ Resetting target
 Let's start by looking at the code that deals with context switching itself. Once we understand
 that, we will cycle back to how the scheduler itself is started and tasks are created.
 
-The **FreeRTOS** scheduler works by utilizing the the built in **SysTick** and **PendSV** interrupts. The
+The **FreeRTOS** scheduler works by utilizing the built in **SysTick** and **PendSV** interrupts. The
 **SysTick** is configured to fire periodically. Each time it fires, a check is performed to see if a
 context switch is required by calling `xTaskIncrementTick`:
 

@@ -194,7 +194,7 @@ Our linker script concerns itself with two more things:
 By convention, we name those sections as follow:
 
 1. `.text` for code & constants
-2. `.bss` for unintialized data
+2. `.bss` for uninitialized data
 3. `.stack` for our stack
 4. `.data` for initialized data
 
@@ -231,7 +231,7 @@ SYMBOL TABLE:
 no symbols
 ```
 
-No symbols! While the linker is able to make asumptions that will allow it to
+No symbols! While the linker is able to make assumptions that will allow it to
 link in symbols with little information, but it at least needs to know either
 what the entry point should be, or what symbols to put in the text section.
 
@@ -364,7 +364,7 @@ SECTION {
 ```
 
 You'll note that the `.bss` section also includes `*(COMMON)`. This is a
-special input section where the compiler puts global unitialized variables that
+special input section where the compiler puts global uninitialized variables that
 go beyond file scope. `int foo;` goes there, while `static int foo;` does not.
 This allows the linker to merge multiple definitions into one symbol if they
 have the same name.
@@ -383,7 +383,7 @@ Procedure Call Standards
 In order to achieve these goals, we turn to a special variable `.`, also known
 as the "location counter". The location counter tracks the current offset into a
 given memory region. As sections are added, the location counter increments
-accordingly. You can force alignemnt or gaps by setting the location counter
+accordingly. You can force alignment or gaps by setting the location counter
 forward. You may not set it backwards, and the linker will throw an error if you
 try.
 
@@ -433,7 +433,7 @@ two part: <VMA> AT <LMA>. In our case it looks like this:
 } > ram AT > rom  /* "> ram" is the VMA, "> rom" is the LMA */
 ```
 
-Note that instead of appending a section to a memory region, you could also explicity
+Note that instead of appending a section to a memory region, you could also explicitly
 specify an address like so:
 
 ```
