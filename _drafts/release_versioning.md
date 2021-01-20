@@ -1,9 +1,9 @@
 ---
-title: Firmware Versioning
+title: Let Release Versioning Work For You
 description:
-  Firmware versioning with relelase management in mind
+  Include standardized versions and other build metadata such as Git revisions and GNU Build ID's into firmware binaries and debug symbols.
 author: tyler
-image: img/<post-slug>/cover.png # 1200x630
+image: img/release-versioning/cover.png
 ---
 
 Release versioning might seem like a boring topic. Honestly, it should be. There should only be a couple of right ways to do versioning, and each project should pick one of the agreed-upon methods (SemVer[^semver], CalVer[^calver], etc.) that makes the most sense to the project. We don't live in this ideal world unfortunately and many projects choose to deviate from versioning standards. I'm not here to say they are wrong, but I'd like to discuss what they might be missing out on.
@@ -82,7 +82,9 @@ Example: 1.1.0 → 1.2.0
 
 In the context of firmware, this is likely what most of your firmware version updates will be, especially if they contain new features and functionality. A MINOR update means that your device can upgrade from a version with the same MAJOR to any *newer* version with the same MAJOR. For example, as we discussed in the MAJOR section, any firmware in the 2.x release train should be able to update to any newer 2.x version, such as 2.0.0 → 2.5.0. 
 
-A MINOR update should not allow *downgrading* firmware versions, which is going from a firmware version to an older one, such as 2.5 → 2.0. Speaking from experience, this is a nightmare to deal with, and you should just disable this behavior from ever happening. We provide a [code snippet](#detecting-downgrades) later in the article to help prevent against downgrades at the installer level.
+A MINOR update does not need to allow downgrading firmware versions, which is going from a firmware version to an older one, such as 2.5 → 2.0. Speaking from experience, this is a nightmare to deal with, and you should disable this behavior from ever happening, *at least in production*. Allowing downgrades in a limited form on pre-release software will help your developers and QA teams test the upgrade path between two versions more easily.
+
+We provide a [code snippet](#detecting-downgrades) later in the article to help prevent against downgrades at the installer level.
 
 ### Incrementing PATCH
 
@@ -102,7 +104,7 @@ The most common pre-release tags are 'alpha', 'beta', and 'rc', which should sat
 
 - Use 'alpha' when the release branch is first cut from master or another release branch. It's pretty much assumed that 'alpha' builds are unstable and should be treated as broken-by-default.
 - Use 'beta' when the API is stable, there are no longer any breaking changes and features being pushed into the release, and the stabilization phase has begun.
-- Use 'rc' when you think everything is stable and QA should start doing rigorous testing because it might turn out that this build could be "the one".
+- Use 'rc' (release-candidate) when you think everything is stable and QA should start doing rigorous testing because it might turn out that this build could be "the one".
 
 I've seen many developers create out-of-order pre-release tags, so be sure to [read the spec](https://semver.org/#spec-item-11) and test your assumptions. 
 
