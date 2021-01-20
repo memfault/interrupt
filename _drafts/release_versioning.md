@@ -32,7 +32,7 @@ Versions don't exist just to differentiate one release from another. They serve 
 - Reference a specific "build" of the software
 - Tell users when *major* changes took place (e.g. Windows 8 → Windows 10)
 
-If a project chooses to use just a Git SHA, or a build timestamp, or a random ASCII name, then many or all of the above benefits that versions typically provide are lost. We can do better. 
+If a project chooses to use just a Git SHA, or a build timestamp, or a random ASCII name, then many or all of the above benefits that versions typically provide are lost. We can do better! 
 
 Throughout this article, we'll talk about the various pieces that I believe provide a holistic picture of the software that is packaged into a release and running on a device. First, let's talk about Semantic Versioning.
 
@@ -66,7 +66,7 @@ Normal software packages can be updated at any time, with almost no repercussion
 
 With firmware updates, you also can't expect every device to install every single version (unless that is a hard requirement of the update flow). If you deploy version 1.0.0, version 1.1.0, and version 1.2.0, your firmware should be able to update from 1.0.0 → 1.2.0 and skip 1.1.0 entirely. If a user puts your device in their nightstand and pulls it out 6 months later, this is exactly what should happen.
 
-However, keeping that backward compatibility can weigh down our firmware, especially if we need to keep migration code in our firmware. Migration code adds complexity, code space, and allowing installs from multiple firmware versions increases our QA test matrix dramatically. 
+However, keeping that backward compatibility can weigh down our firmware, especially if we need to keep migration code in our firmware. Migration code adds complexity, code space, and increases our QA test matrix dramatically. 
 
 Let's take the Pebble Smartwatch firmware as an example. The Pebble 2.0.0 firmware was released in early 2014. Over the next year, we released versions all the way up to 2.9.1. Within all of these versions, we were changing *a lot* of stuff. We changed our file system (from Contiki's Coffee[^coffee] to an internally built one), re-wrote persistent data structures that were stored on internal and external flash, and completely re-architected how we stored our BLE bonding information. All of these things were critical to the functionality of our firmware, and at no point could we lose any of this data.
 
@@ -122,7 +122,7 @@ True
 
 Semantic Versioning provides a plethora of benefits to our firmware and release management workflows, but it doesn't solve all of our requirements. One of our requirements was to be able to reference a specific build of a firmware, which SemVer does not help with.
 
-If two developers both build a 1.1.1 firmware, we now have two builds of 1.1.1 with no way to tell the difference between the two! They could be based upon two entirely different revisions of software or even built with a different compiler. We could use pre-release tags or build meta tags, but we also don't want to pollute our SemVer string with data that could be better solved by other versions. 
+For example, if two developers locally compile a "1.1.1" firmware, we now have two builds of "1.1.1" with no way to tell the difference between the two! They could be based upon two entirely different revisions of software or even built with a different compiler. We could use pre-release tags or build meta tags, but we also don't want to pollute our SemVer string with data that could be better solved by other versions. 
 
 Let's now look at Git revisions, which will help us identify the software revisions that our firmware is built from.
 
@@ -132,7 +132,7 @@ The second piece of metadata that we want to include in our firmware is a Git re
 
 By having the Git revision baked into the firmware, we can determine which software the binary is based upon, which would help us when we are trying to triage bugs by performing a [git bisect]({% post_url 2020-04-21-git-bisect %}) or rebuilding old firmwares (provided we have [reproducible builds]({% post_url 2019-12-11-reproducible-firmware-builds %})).
 
-You can call `git describe` to acquire the Git revision SHA with a `+` on the end if the project had a dirty state when called.
+You can call `git describe` to acquire the Git revision SHA with a `+` on the end if the project had a dirty state (local modifications) when called.
 
 ```
 $ git describe --match ForceNone --abbrev=10 --always --dirty="+"
@@ -144,7 +144,7 @@ The use of `--match ForceNone` is because I just want the SHA and the dirty sign
 If you'd like to also include a tag and number of commits from the last tag like some projects have, you can use the following command:
 
 ```
-# git describe --tags --always --dirty="+" --abbrev=10
+$ git describe --tags --always --dirty="+" --abbrev=10
 ```
 
 Refer to the `git describe` [documentation](https://git-scm.com/docs/git-describe) for more information.
@@ -199,7 +199,7 @@ I like to configure my CI systems to watch tags that start with `release-*`. Tha
 
 ```
 $ git checkout release-1.0
-$ git tag release-1.0.0
+$ git tag 1.0.0
 $ git push origin 1.0.0
 ```
 
@@ -274,7 +274,7 @@ Git SHA: 70859a3
 
 One of the most unpleasant and avoidable ways of bricking a device is to allow it to install incompatible versions, such as downgrades. If SemVer is followed closely, almost all dangerous downgrade paths could be avoided without much logic or defensive work.
 
-Although using `scanf` isn't really recommended due to code-size bloat, here is a simple example snippet of code to detect firmware downgrades for those that use Semantic Versioning. 
+Although using `sscanf` isn't really recommended due to code-size bloat, here is a simple example snippet of code to detect firmware downgrades for those that use Semantic Versioning. 
 
 ```c
 #include <stdio.h>
@@ -296,7 +296,7 @@ int main(void) {
 }
 ```
 
-If you use another versioning scheme, you should still try to detect downgrades, whether that is by using the Git SHA, a timestamp, commit number, or anything else that is roughly stable and sequential.
+If you use another versioning scheme, you should still try to detect downgrades, whether that is by using, a timestamp, commit number, or anything else that is roughly stable and sequential.
 
 ## Conclusion
 
