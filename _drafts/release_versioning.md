@@ -147,6 +147,7 @@ If you'd like to also include a tag and number of commits from the last tag like
 
 ```
 $ git describe --tags --always --dirty="+" --abbrev=10
+1.2.3-18-gdcf62a8fff
 ```
 
 Refer to the `git describe` [documentation](https://git-scm.com/docs/git-describe) for more information.
@@ -286,7 +287,7 @@ int main(void) {
     char *current_ver = "1.1.0";
     char *new_ver = "1.0.0";
 
-    int currentMajor, currentMinor, currentPatch;
+    int currentMajor = 0, currentMinor = 0, currentPatch = 0;
     int newMajor, newMinor, newPatch;
 
     sscanf(current_ver, "%d.%d.%d", &currentMajor, &currentMinor, &currentPatch);
