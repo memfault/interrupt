@@ -28,8 +28,8 @@ Versions don't exist just to differentiate one release from another. They serve 
 
 - Providing an ordering to versions (e.g. 1.1 > 1.0)
 - Encode compatibility information, breaking changes, and upgrade/downgrade restrictions
-- Reference a specific "revision" of the software
-- Reference a specific "build" of the software
+- Reference a specific revision of the software
+- Reference a specific build of the software
 - Tell users when *major* changes took place (e.g. Windows 8 → Windows 10)
 
 If a project chooses to use just a Git SHA, or a build timestamp, or a random ASCII name, then many or all of the above benefits that versions typically provide are lost. We can do better! 
@@ -52,7 +52,7 @@ The MAJOR, MINOR, and PATCH digits are sorted numerically (1.1.11 > 1.1.10), the
 - MINOR when you add functionality in a backward-compatible manner
 - PATCH when you make backward-compatible bug fixes
 
-Although it might seem pedantic, let's dig into when a release lead might want to increment each field when applied to a firmware project.
+Although it might seem pedantic, let's dig into when a release lead might want to increment each field for a firmware project.
 
 ### Incrementing MAJOR
 
