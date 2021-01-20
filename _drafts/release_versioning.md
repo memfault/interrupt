@@ -1,5 +1,5 @@
 ---
-title: Let Release Versioning Work For You
+title: Proper Release Versioning Goes a Long Way
 description:
   Include standardized versions and other build metadata such as Git revisions and GNU Build ID's into firmware binaries and debug symbols.
 author: tyler
