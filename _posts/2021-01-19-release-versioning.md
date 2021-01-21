@@ -40,7 +40,7 @@ Throughout this article, we'll talk about the various pieces that I believe prov
 
 [Semantic Versioning](https://semver.org/), or SemVer for short, is likely the most popular versioning scheme in software today. It was built to solve the versioning story for a single package, but also how a single package interoperates with dependencies. 
 
-SemVer uses a sequence of three digits, MAJOR.MINOR.PATH, and also allows for an optional pre-release tag and build metadata tag. Altogether, a version looks like:
+SemVer uses a sequence of three digits, MAJOR.MINOR.PATCH, and also allows for an optional pre-release tag and build metadata tag. Altogether, a version looks like:
 
 ```
 MAJOR.MINOR.PATCH-[pre-release-tag]+[build-meta-tag]
