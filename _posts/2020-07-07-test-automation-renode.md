@@ -272,7 +272,7 @@ The following is a Robot Framework test file that calls the `ping` shell command
 and expects that `PONG` is printed.
 
 ```robot
-# test_basic.py
+# test-basic.robot
 
 *** Settings ***
 # Boilerplate
