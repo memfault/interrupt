@@ -357,6 +357,7 @@ To use the utility, all you need to do is update your `.gdbinit` to use PyPi pac
 
 ```shell
 $ git clone git@github.com:bnahill/PyCortexMDebug.git
+$ git checkout 77af54e
 $ cd PyCortexMDebug
 $ python setup.py install
 ```
