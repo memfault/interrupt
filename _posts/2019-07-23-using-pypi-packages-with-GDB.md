@@ -310,6 +310,7 @@ In my local `~/.gdbinit` script, I will place the following code snippet at the
 bottom.
 
 ```python
+python
 # Update GDB's Python paths with the `sys.path` values of the local
 #  Python installation, whether that is brew'ed Python, a virtualenv,
 #  or another system python.
