@@ -301,9 +301,11 @@ Putting it all together we have:
 (machine-0) machine LoadPlatformDescription @platforms/boards/stm32f4_discovery-kit.repl
 (machine-0) sysbus LoadELF @renode-example.elf
 (machine-0) machine LoadPlatformDescription @add-ccm.repl
+(machine-0) showAnalyzer sysbus.uart2
+(machine-0) start
 ```
 
-We now run `start` on our machine, and voila!
+And voila, we now have `hello world!` string in the analyzer!
 
 ![]({% img_url intro-to-renode/renode-hello-world.png %})
 
