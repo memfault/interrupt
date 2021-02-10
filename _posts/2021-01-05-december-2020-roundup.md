@@ -52,5 +52,5 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 
 ## Random
 
-- [Cameras and Lenses](https://ciechanow.ski/cameras-and-lenses/) by Bartosz Ciechanowski<by>
+- [Cameras and Lenses](https://ciechanow.ski/cameras-and-lenses/) by Bartosz Ciechanowski<br>
   An incredible post explaining how cameras and lenses work! (In no way related to firmware, but had to share it.)
