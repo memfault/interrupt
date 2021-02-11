@@ -1,0 +1,199 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="356.18976" height="272.71488" xml:space="preserve" color-interpolation-filters="sRGB" class="st8" version="1.1">  
+ <style type="text/css">
+	<![CDATA[
+		.st1 {fill:none;stroke:#000000;stroke-linecap:butt;stroke-width:1.05}
+		.st2 {fill:none;stroke:none;stroke-linecap:butt;stroke-width:0.75}
+		.st3 {fill:#000000;font-family:Arial,Helvetica,sans-serif;font-size:0.666664em}
+		.st4 {fill:none;stroke:#000000;stroke-linecap:butt;stroke-width:0.328125}
+		.st5 {font-size:1em}
+		.st6 {marker-end:url(#mrkr4-37);marker-start:url(#mrkr4-35);stroke:#000000;stroke-linecap:butt;stroke-width:0.5}
+		.st7 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.21739130434783}
+		.st8 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style> 
+ <defs id="Markers"> 
+  <g id="lend4"> 
+   <path d="M 2 1 L -0 0 L 2 -1 L 2 1 " style="stroke:none" /> 
+  </g> 
+  <marker overflow="visible" id="mrkr4-35" class="st7" orient="auto"> 
+   <use xlink:href="#lend4" transform="scale(4.6) " /> 
+  </marker> 
+  <marker overflow="visible" id="mrkr4-37" class="st7" orient="auto"> 
+   <use xlink:href="#lend4" transform="scale(-4.6,-4.6) " /> 
+  </marker> 
+ </defs> 
+ <g> 
+  <title>Page-1</title>  
+  <g id="shape3-1" transform="translate(42.6902,-178.986)"> 
+   <title>Sheet.3</title> 
+   <rect x="0" y="183.517" width="135.889" height="21.0187" class="st1" /> 
+  </g> 
+  <g id="shape4-3" transform="translate(99.9292,-146.307)"> 
+   <title>Sheet.4</title> 
+   <desc>
+    SVC
+   </desc>   
+   <rect x="0" y="200.828" width="17.7702" height="3.70744" class="st2" /> 
+   <text x="0" y="205.08" class="st3">
+    SVC
+   </text> 
+  </g> 
+  <g id="shape5-6" transform="translate(58.938,-136.948)"> 
+   <title>Sheet.5</title> 
+   <rect x="0" y="183.517" width="103.394" height="21.0187" class="st1" /> 
+  </g> 
+  <g id="shape13-8" transform="translate(193.35,-140.478)"> 
+   <title>Sheet.13</title> 
+   <desc>
+    C Library Code
+   </desc>   
+   <rect x="0" y="191.615" width="59.3961" height="12.9206" class="st2" /> 
+   <text x="0" y="200.48" class="st3">
+    C Library Code
+   </text> 
+  </g> 
+  <g id="shape17-11" transform="translate(66.3233,-10.837)"> 
+   <title>Sheet.17</title> 
+   <rect x="0" y="173.007" width="88.6235" height="31.5285" class="st1" /> 
+  </g> 
+  <g id="shape21-13" transform="translate(30.874,-126.439)"> 
+   <title>Sheet.21</title> 
+   <rect x="0" y="126.767" width="235.94" height="77.7683" class="st4" /> 
+  </g> 
+  <g id="shape22-15" transform="translate(30.874,-0.328125)"> 
+   <title>Sheet.22</title> 
+   <rect x="0" y="109.952" width="235.94" height="94.5837" class="st4" /> 
+  </g> 
+  <g id="shape23-17" transform="translate(66.3233,-52.8744)"> 
+   <title>Sheet.23</title> 
+   <rect x="0" y="173.008" width="88.6235" height="31.5276" class="st1" /> 
+  </g> 
+  <g id="shape27-19" transform="translate(92.378,-66.5318)"> 
+   <title>Sheet.27</title> 
+   <desc>
+    debugger
+   </desc>   
+   <rect x="0" y="200.828" width="37.2664" height="3.70744" class="st2" /> 
+   <text x="0" y="205.08" class="st3">
+    debugger
+   </text> 
+  </g> 
+  <g id="shape32-22" transform="translate(0.75,-156.234)"> 
+   <title>Sheet.32</title> 
+   <desc>
+    Target
+   </desc>   
+   <rect x="0" y="185.088" width="24.1044" height="19.4475" class="st2" /> 
+   <text x="0" y="197.21" class="st3">
+    T
+    <tspan class="st5">
+     arget
+    </tspan>
+   </text> 
+  </g> 
+  <g id="shape33-26" transform="translate(2.80304,-42.3695)"> 
+   <title>Sheet.33</title> 
+   <desc>
+    Host
+   </desc>   
+   <rect x="0" y="192.241" width="23.8028" height="12.2951" class="st2" /> 
+   <text x="0" y="200.79" class="st3">
+    Host
+   </text> 
+  </g> 
+  <g id="shape35-29" transform="translate(312.875,25.5502) rotate(90)"> 
+   <title>Signal 3</title> 
+   <path d="M4.24 204.54 L4.6 204.54 L16.42 204.54" class="st6" /> 
+  </g> 
+  <g id="shape37-38" transform="translate(312.875,67.5876) rotate(90)"> 
+   <title>Signal 3.37</title> 
+   <path d="M4.24 204.54 L4.6 204.54 L47.95 204.54" class="st6" /> 
+  </g> 
+  <g id="shape38-45" transform="translate(312.875,151.661) rotate(90)"> 
+   <title>Signal 3.38</title> 
+   <path d="M4.24 204.54 L4.6 204.54 L5.91 204.54" class="st6" /> 
+  </g> 
+  <g id="shape1-52" transform="translate(57.7869,-157.215)"> 
+   <title>Sheet.1</title> 
+   <desc>
+    printf()
+   </desc>   
+   <rect x="0" y="191.344" width="37.2664" height="13.1923" class="st2" /> 
+   <text x="0" y="200.34" class="st3">
+    printf()
+   </text> 
+  </g> 
+  <g id="shape6-55" transform="translate(101.516,-19.2438)"> 
+   <title>Sheet.6</title> 
+   <desc>
+    hello
+   </desc>   
+   <rect x="0" y="191.344" width="27.1371" height="13.1923" class="st2" /> 
+   <text x="0" y="200.34" class="st3">
+    hello
+   </text> 
+  </g> 
+  <g id="shape7-58" transform="translate(80.4641,-181.745)"> 
+   <title>Sheet.7</title> 
+   <desc>
+    printf(“hello\n”);
+   </desc>   
+   <rect x="0" y="190.363" width="59.5276" height="14.1732" class="st2" /> 
+   <text x="0" y="199.85" class="st3">
+    printf(“hello\n”);
+   </text> 
+  </g> 
+  <g id="shape28-61" transform="translate(193.85,-12.9193)"> 
+   <title>Sheet.28</title> 
+   <desc>
+    Text displayed on host screen
+   </desc>   
+   <rect x="0" y="171.773" width="58.0445" height="32.7632" class="st2" /> 
+   <text x="0" y="185.75" class="st3">
+    Text displayed 
+    <tspan x="0" dy="9.5999616" class="st5">
+     on host screen
+    </tspan>
+   </text> 
+  </g> 
+  <g id="shape8-65" transform="translate(192.498,-178.911)"> 
+   <title>Sheet.8</title> 
+   <desc>
+    Application Code
+   </desc>   
+   <rect x="0" y="183.111" width="65.0654" height="21.4246" class="st2" /> 
+   <text x="0" y="196.22" class="st3">
+    Application Code
+   </text> 
+  </g> 
+  <g id="shape9-68" transform="translate(193.85,-100.167)"> 
+   <title>Sheet.9</title> 
+   <desc>
+    SVC handled by debug agent
+   </desc>   
+   <rect x="0" y="182.485" width="65.0654" height="22.0509" class="st2" /> 
+   <text x="0" y="191.11" class="st3">
+    SVC handled by 
+    <tspan x="0" dy="9.5999616" class="st5">
+     debug agent
+    </tspan>
+   </text> 
+  </g> 
+  <g id="shape10-72" transform="translate(193.85,-52.6043)"> 
+   <title>Sheet.10</title> 
+   <desc>
+    Communication with debugger running on host
+   </desc>   
+   <rect x="0" y="171.773" width="65.0654" height="32.7632" class="st2" /> 
+   <text x="0" y="180.95" class="st3">
+    Communication 
+    <tspan x="0" dy="9.5999616" class="st5">
+     with debugger 
+    </tspan>
+    <tspan x="0" dy="9.5999616" class="st5">
+     running on host
+    </tspan>
+   </text> 
+  </g> 
+ </g> 
+</svg>
