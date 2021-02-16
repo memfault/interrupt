@@ -1,11 +1,11 @@
 ---
 title: "Introduction to ARM Semihosting"
-description: "An introduction to ARM semihosting, folowed by and example with OpenOCD and arm-none-eabi toolchain"
+description: "An introduction to ARM semihosting, folowed by an example with OpenOCD and arm-none-eabi toolchain"
 tag: [cortex-m, semihosting, ARM]
 author: ael-mess
 ---
 
-Firmware developers are generally accustomed to using logger for some execution information. On microcontrollers, this is usually done through a serial interface attached to a terminal on the host.
+Firmware developers are generally accustomed to using logging for some execution information. On microcontrollers, this is usually done through a serial interface attached to a terminal on the host.
 
 But one might need more advanced features from the host 🤨, I was in that case not long ago.
 
@@ -27,17 +27,17 @@ According to ARM documentation[^1], **semihosting** is : .. a mechanism that ena
 
 In other words, an ARM based MCU can run C library functions such as, `int printf(const char *format, ...)`, `int scanf(const char *format, ...)`, or even `FILE *fopen(const char *filename, const char *mode)` on the host computer attached to it.
 
-And by doing so, it can benefinit from the screen, the keybord, or the disk of the host.
+And by doing so, it can benefit from the screen, the keyboard, or the disk of the host.
 
 ![]({% img_url semihosting/semihosting_overview.svg %})
 
 ## How it works
 
-This is done by halting the CPU target by the debuger agent, either by running into a breakpoint instruction (`BKPT 0xAB`  for ARMv6-M or ARMv7-M), or by sending a supervisor call instruction (`SVC 0xAB` or `SVC 0x123456`) depending on the target architecture or processor.
+This is done by halting the CPU target by the debugger agent, either by running into a breakpoint instruction (`BKPT 0xAB`  for ARMv6-M or ARMv7-M), or by sending a supervisor call instruction (`SVC 0xAB` or `SVC 0x123456`) depending on the target architecture or processor.
 
 This indicates to the host that the target is requesting a semihosting operation.
 
-The debuger agent then figures out the operation requested by the target, by reading the content of `r0`, and if necessary, accesses all other function parameters pointed by `r1`.
+The debugger agent then figures out the operation requested by the target, by reading the content of `r0`, and if necessary, accesses all other function parameters pointed by `r1`.
 
 At this point the CPU is still halted, the host will execute the requested operation and return the result in `r0` before allowing the processor to continue running its program.
 
@@ -77,7 +77,7 @@ SYS_SYSTEM      EQU 0x12
 
 ## How to use it
 
-On this example, I run the program on an STM32, and use the `arm-none-eabi` toolchain allong with **openOCD** `gdbserver`. Other tools may be used instead depending on your hardware, for more details on which debug interface to use, It would be wise to read [this article](https://interrupt.memfault.com/blog/a-deep-dive-into-arm-cortex-m-debug-interfaces).
+In this example, I run the program on an STM32, and use the `arm-none-eabi` toolchain along with **openOCD** `gdbserver`. Other tools may be used instead depending on your hardware, for more details on which debug interface to use, It would be wise to read [this article](https://interrupt.memfault.com/blog/a-deep-dive-into-arm-cortex-m-debug-interfaces).
 
 Once you are all set, we can start coding.
 
@@ -129,7 +129,7 @@ arm-none-eabi-gdb -ex "target extended-remote localhost:3333" -ex "monitor reset
 
 If `initialise_monitor_handles` is called before enabling the semihosting in the server, a `HardFault` may occur due to an unexpected debug event.
 
-Once semihosting enabled, you can run your program from `gdb`, and the semihosting operation will be handled by the `gdbserver`.
+Once semihosting is enabled, you can run your program from `gdb`, and the semihosting operation will be handled by the `gdbserver`.
 
 Isn't it great? 😋
 
@@ -137,7 +137,7 @@ Isn't it great? 😋
 
 I hope it was fun reading this post, semihosting is not commonly used in embedded development because it slows down the execution speed, but nevertheless, it can be very handy in some cases.
 
-I look forward to your remarks, tips and comments.
+I look forward to your remarks, tips, and comments.
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
