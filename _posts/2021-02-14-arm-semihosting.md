@@ -25,7 +25,9 @@ According to ARM documentation[^1], **semihosting** is _a mechanism that enables
 
 In other words, an ARM based MCU can run C library functions, such as `printf()`, `scanf`, or even `fopen`, and have these interact directly with the host computer attached to the device. By doing so, it can benefit from the screen, the keyboard, or the disk of the host.
 
-![]({% img_url semihosting/semihosting_overview.svg %})
+<p align="center">
+  <img width="600" src="{% img_url semihosting/semihosting_overview.png %}"/>
+</p>
 
 ## How It Works
 
