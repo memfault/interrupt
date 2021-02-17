@@ -5,41 +5,37 @@ tag: [cortex-m, semihosting, ARM]
 author: ael-mess
 ---
 
-Firmware developers are generally accustomed to using logging for some execution information. On microcontrollers, this is usually done through a serial interface attached to a terminal on the host.
+Firmware developers are generally accustomed to using logging for execution information. On microcontrollers, this is usually done through a serial interface attached to a terminal on the host.
 
-But one might need more advanced features from the host 🤨, I was in that case not long ago.
+But one might need more advanced features from the host! I was in this position not long ago 🤨.
 
-When working on camera firmware, and particularly on the image processing algorithm, I needed constantly to store the captured image on the host to make sure everything was working fine.
+When working on camera firmware, and particularly on the image processing algorithm, I constantly needed to transfer images from the camera to my host machine to make sure everything was working fine. So I started using a very interesting technique that has greatly facilitated not only my development but also the debugging of my embedded software.
 
-So I started using a very interesting technique that has greatly facilitated not only the development but also the debugging of my embedded software.
-
-This capability is known as **semihosting**, and it is one of the many interesting features available on ARM Cortex microcontrollers, it allows an embedded program to take advantage of the capabilities of an attached computer when the debugger is running.
+This capability is known as **semihosting**, and it is one of the many interesting features available on ARM Cortex microcontrollers. It allows an embedded program to take advantage of the capabilities of an attached computer when the debugger is running.
 
 <!-- excerpt start -->
-This post introduces semihosting, and shows how to use it and integrate it in embedded projects.
+This post introduces semihosting and shows how to use it and integrate it intoyour own embedded projects.
 <!-- excerpt end -->
 
 {% include toc.html %}
 
-## What is semihosting
+## What Is Semihosting
 
-According to ARM documentation[^1], **semihosting** is : .. a mechanism that enables code running on an ARM target to communicate and use the Input/Output facilities on a host computer that is running a debugger ..
+According to ARM documentation[^1], **semihosting** is _a mechanism that enables code running on an ARM target to communicate and use the Input/Output facilities on a host computer that is running a debugger_.
 
-In other words, an ARM based MCU can run C library functions such as, `int printf(const char *format, ...)`, `int scanf(const char *format, ...)`, or even `FILE *fopen(const char *filename, const char *mode)` on the host computer attached to it.
-
-And by doing so, it can benefit from the screen, the keyboard, or the disk of the host.
+In other words, an ARM based MCU can run C library functions, such as `printf()`, `scanf`, or even `fopen`, and have these interact directly with the host computer attached to the device. By doing so, it can benefit from the screen, the keyboard, or the disk of the host.
 
 ![]({% img_url semihosting/semihosting_overview.svg %})
 
-## How it works
+## How It Works
 
-This is done by halting the CPU target by the debugger agent, either by running into a breakpoint instruction (`BKPT 0xAB`  for ARMv6-M or ARMv7-M), or by sending a supervisor call instruction (`SVC 0xAB` or `SVC 0x123456`) depending on the target architecture or processor.
+This is done by halting the CPU target by the debugger agent, either by running into a breakpoint instruction (`BKPT 0xAB`  for ARMv6-M or ARMv7-M) or by sending a supervisor call instruction (`SVC 0xAB` or `SVC 0x123456`) depending on the target architecture or processor.
 
 This indicates to the host that the target is requesting a semihosting operation.
 
-The debugger agent then figures out the operation requested by the target, by reading the content of `r0`, and if necessary, accesses all other function parameters pointed by `r1`.
+The debugger agent then figures out the operation requested by the target by reading the content of `r0`, and, if necessary, accesses all other function parameters pointed by `r1`.
 
-At this point the CPU is still halted, the host will execute the requested operation and return the result in `r0` before allowing the processor to continue running its program.
+While the CPU is still halted, the host will execute the requested operation and return the result in `r0` before allowing the processor to continue running its program.
 
 The following is a list of the semihosting operations defined by ARM[^2]:
 
@@ -75,13 +71,13 @@ SYS_ISERROR     EQU 0x08
 SYS_SYSTEM      EQU 0x12
 ```
 
-## How to use it
+## How to Use It
 
-In this example, I run the program on an STM32, and use the `arm-none-eabi` toolchain along with **openOCD** `gdbserver`. Other tools may be used instead depending on your hardware, for more details on which debug interface to use, It would be wise to read [this article](https://interrupt.memfault.com/blog/a-deep-dive-into-arm-cortex-m-debug-interfaces).
+In this example, I run the program on an STM32 and use the `arm-none-eabi` toolchain along with **openOCD** `gdbserver`. Other tools may be used instead depending on your hardware, for more details on which debug interface to use, it would be wise to read [this article]({% post_url 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}).
 
 Once you are all set, we can start coding.
 
-First, to enable semihosting you need to link:
+First, to enable semihosting, you need to link:
 * `libc.a`, the standard C library (*newlib*[^3] for `arm-none-eabi-gcc`),
 * and `librdimon.a`, a part of the *libgloss*[^4] library (for platform-specific code) to your project.
 
@@ -117,17 +113,17 @@ int main(void) {
 }
 ```
 
-If you are using `crt0` initialization function then, `initialise_monitor_handles()` has already been called for you before `main()`.
+If you are using `crt0` initialization function, `initialise_monitor_handles()` has already been called for you before `main()`.
 
 Once you have done this, you can compile and program your microcontroller as usual, however, once the microcontroller flashed it should be halted and not run yet.
 
 In my case, I launch *OpenOCD* `gdbserver` in one terminal, to flash, reset and halt the CPU. And run `gdb` from another terminal to connect to the server, and enable the semihosting in the server side[^6].
 
 ```shell
-arm-none-eabi-gdb -ex "target extended-remote localhost:3333" -ex "monitor reset halt" -ex "monitor arm semihosting enable"
+$ arm-none-eabi-gdb -ex "target extended-remote localhost:3333" -ex "monitor reset halt" -ex "monitor arm semihosting enable"
 ```
 
-If `initialise_monitor_handles` is called before enabling the semihosting in the server, a `HardFault` may occur due to an unexpected debug event.
+> If `initialise_monitor_handles()` is called before enabling the semihosting in the server, a `HardFault` may occur due to an unexpected debug event.
 
 Once semihosting is enabled, you can run your program from `gdb`, and the semihosting operation will be handled by the `gdbserver`.
 
