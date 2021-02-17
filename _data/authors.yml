@@ -92,3 +92,10 @@ amundas:
     linkedin: https://www.linkedin.com/in/amund-askeland-9a2545149/
     blurb: is a hardware and software enthusiast currently working on a PhD in embedded security.
     image: /img/author/amund.png
+ael-mess:
+    name: Amine El Messaoudi
+    email: amine.elmessaoudi@icloud.com
+    github: ael-mess
+    linkedin: https://www.linkedin.com/in/ael-mess/
+    blurb: is an embedded software and firmware engineer, passionate about low-level programming.
+    image: /img/author/ael-mess.jpg
