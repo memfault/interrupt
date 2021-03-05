@@ -148,7 +148,7 @@ ensure you and the entire team have enabled this.
 Below are some times recorded compiling the example project with GCC and
 different thread counts.
 
-![comparison of compiler build times with GCC threads]{% img_url faster-compilation/gcc-threads-build-time-comparison.svg %}
+![comparison of compiler build times with GCC threads]({% img_url faster-compilation/gcc-threads-build-time-comparison.svg %})
 
 With Make, it is as simple as invoking Make with the argument `-jN`, where `N`
 is the number of desired threads to use. If you or your team members
@@ -181,7 +181,7 @@ Some compilers are faster than others. The build times of our example project
 shown below were calculated by taking the average time among 5 builds for each
 setup.
 
-![comparison of compiler build times]{% img_url faster-compilation/all-compilers-build-time-comparison.svg %}
+![comparison of compiler build times]({% img_url faster-compilation/all-compilers-build-time-comparison.svg %})
 
 GCC for macOS, Linux, and Windows performed the best regardless of operating
 system, coming in just under 10 seconds. ARM Compiler 6 with Keil then IAR
@@ -200,7 +200,7 @@ its cache and provide that instead of recompiling the input. It is useful when
 switching branches often and in CI systems where subsequent builds are very
 similar. It's not uncommon to see 10x speedups for large projects.
 
-![comparison of compile build times with ccache]{% img_url faster-compilation/ccache-build-time-comparison.svg %}
+![comparison of compile build times with ccache]({% img_url faster-compilation/ccache-build-time-comparison.svg %})
 
 Some people question whether ccache is safe to use in production due to the risk
 of an accidental cache hit. The ccache homepage
