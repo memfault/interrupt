@@ -592,6 +592,82 @@ arm-none-eabi/bin/ld: removing unused section '.text.vla_stack_usage' in file '<
 arm-none-eabi/bin/ld: removing unused section '.comment' in file '<path_to_file>'
 ```
 
+### -Wpadded
+
+Warn if padding is added to a structure due to alignment requirements:
+
+```c
+#include <stddef.h>
+#include <stdint.h>
+
+// Note: clang will only warn in the below examples if there's an instance of a
+// structure definition with a padding violation
+
+// The below 'struct padded' causes this warning:
+// <source>:8:1: warning: padding struct size to alignment boundary [-Wpadded]
+//     8 | };
+//       | ^
+struct padded {
+  uint16_t a;
+  uint8_t b;
+} padded;
+
+// The below 'struct aligned' causes this warning:
+// <source>:14:14: warning: padding struct to align 'a' [-Wpadded]
+//    14 |     uint16_t a;
+//       |              ^
+struct aligned {
+  uint8_t b;
+  uint16_t a;
+} aligned;
+
+// The same struct, but force packed- no warning is emitted because no padding
+// is added. Note that this can have negative effects on code generated to
+// access struct members; this should really only be used for structures that
+// need to be consistently laid out for external interfaces (eg a SPI flash
+// command data packet)
+struct __attribute__((packed)) packed_aligned {
+  uint8_t b;
+  uint16_t a;
+} packed_aligned;
+
+// This structure is aligned to field widths, and there's some manual padding at
+// the end to fill unused space; since all memory in the structure has a type
+// associated with it, an added benefit is C initializer rules will allow us to
+// safely use eg 'memcmp' when comparing (initialized) instances of the
+// structure. See https://godbolt.org/z/5Wdhdx for an example of how this can
+// fail otherwise!
+struct naturally_aligned {
+  uint32_t a;
+  uint16_t b;
+  uint8_t c;
+  uint8_t _pad[1];
+};
+
+// memcmp(&one, &two, sizeof(one)) == 0
+struct naturally_aligned one = {0}, two = {0};
+
+// Confirm all the fields in 'struct naturally_aligned' are where we think they
+// should be, and the total structure size matches expectation
+_Static_assert(offsetof(struct naturally_aligned, a) == 0, "ok");
+_Static_assert(offsetof(struct naturally_aligned, b) == 4, "ok");
+_Static_assert(offsetof(struct naturally_aligned, c) == 6, "ok");
+_Static_assert(sizeof(struct naturally_aligned) == 8, "ok");
+```
+
+This warning is helpful if you want to optimize the structure definitions in
+your program (could be considered in a last-stakes optimization effort, or if
+you're interested in really polishing those structure definitions). It can be
+quite an exuberant warning in existing codebases.
+
+The [pahole](https://linux.die.net/man/1/pahole) utility can be used on an
+existing elf to scan for padded struct definitions, or if you really wanted to,
+as part of a CI step banning unoptimized structure definitions 😅 though the
+compiler flag should be enough.
+
+I'd be remiss if I left out a reference to this legendary article, ["The Lost
+Art of Structure Packing"](http://www.catb.org/esr/structure-packing/)
+
 ## The Worst
 
 In the following subsections we will explore some of the "worst" flags available for embedded
@@ -800,15 +876,18 @@ main.c:31:1: error: static assertion failed: "d not at offset 16 within struct"
  ^~~~~~~~~~~~~~
 ```
 
-> NOTE: Structure packing is extremely common in embedded devices. The use case is typically when
-> some kind of data is being serialized and sent out over a transport or saved to some kind of
-> persistent storage. This is done to save space and be portable -- compilers may pad the
-> same struct differently. For example, on a 64 bit architecture, a struct is
-> typically padded such that it winds up 8 byte aligned whereas on a 32bit architecture structs are
-> usually padded to be 4 byte aligned. If you are passing data between these two architectures with the same
-> struct definition and things are unpacked, the two structures would not be equivalent! To pack individual
-> structures, you can use the "packed" attribute. It's still a good idea to naturally align the
-> members within a struct when possible for minimal code size usage and performance.
+> NOTE: Structure packing is extremely common in embedded devices. The use case
+> is typically when some kind of data is being serialized and sent out over a
+> transport or saved to some kind of persistent storage. This is done to save
+> space and be portable -- compilers may pad the same struct differently. For
+> example, on a 64 bit architecture, a struct is typically padded such that it
+> winds up 8 byte aligned whereas on a 32bit architecture structs are usually
+> padded to be 4 byte aligned. If you are passing data between these two
+> architectures with the same struct definition and things are unpacked, the two
+> structures would not be equivalent! To pack individual structures, you can use
+> the "packed" attribute. It's still a good idea to naturally align the members
+> within a struct when possible for minimal code size usage and performance; see
+> [above](#-wpadded) for information on struct padding!
 
 ### -ffast-math
 
