@@ -38,7 +38,7 @@ Releasing a buggy product can quickly damage a software company’s reputation o
 Code coverage refers to how much of a codebase is covered by tests. Below is an example output from LCOV[^lcov], a popular tool for testing code coverage.
 
 <p align="center">
-    <img width="600" src="/img/blog/testing-vs-overhead/lcov.png"/>
+    <img width="600" src="{% img_url testing-vs-overhead/lcov.png %}"/>
 </p>
 
 A code coverage report will provide you with information about the number of units of code (and percentage of total units) that have been run by the tests as well as point out exactly which units haven't been tested. This makes it easy to find the branches of code that have not been tested at all.
