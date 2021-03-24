@@ -3,7 +3,7 @@ title: Balancing Test Coverage vs. Overhead
 author: erikfogg
 ---
 
-> This article is written by an external contributor, [Erik Fogg](blog/authors/erikfogg/) of [ProdPerfect](https://prodperfect.com/), along with Tyler Hoffman representing the firmware side of the story. Enjoy!
+> This article is written by an external contributor, [Erik Fogg](authors/erikfogg) of [ProdPerfect](https://prodperfect.com/), along with Tyler Hoffman representing the firmware side of the story. Enjoy!
 
 <!-- excerpt start -->
 
