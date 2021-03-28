@@ -597,3 +597,19 @@ footer {
     }
   }
 }
+/* Post share */
+
+.chevron-icon {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  margin-left: 2px;
+  transition: all 0.15s ease-in-out;
+}
+
+.memfault-info-wrapper {
+  .mf-icon {
+    margin-bottom: 0;
+  }
+}
