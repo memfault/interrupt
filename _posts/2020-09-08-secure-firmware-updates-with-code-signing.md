@@ -21,6 +21,9 @@ what algorithm should be used to implement it. We also detail a full
 implementation built with open source, cross platform libraries.
 <!-- excerpt end -->
 
+> If you'd rather listen to me present this information and see some demos in action, watch
+> [your webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+
 {% include newsletter.html %}
 {% include toc.html %}
 
@@ -733,6 +736,8 @@ As always, we'd love to hear from you. How do you secure your firmware update
 process? Let us know! And if you see anything you'd like to change, don't
 hesitate to submit a pull request or open an issue on
 [Github](https://github.com/memfault/interrupt)
+
+> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
 
 <!-- Interrupt Keep START -->
 
