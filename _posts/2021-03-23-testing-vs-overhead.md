@@ -91,7 +91,7 @@ Testing with hardware-in-the-loop is a necessary evil of device manufacturers, b
 
 In today's silicon shortage, emulators also provide a team with a way to start or continue building firmware without hardware in hand. For example, the Zephyr RTOS[^zephyr] has support for the Cortex-M0 and Cortex-M3 MCU's in QEMU, which should provide a solid platform to start building some applications that run within the Zephyr environment. 
 
-The Memfault team is also a big fan of Renode[^renode] for MCU emulation ([quick start guide]({% post_url 2020-03-23-intro-to-renode %})), and it even has support for the nRF52 and STM32F4. Emulators really shine when they are hooked up to continuous integration systems and tests are run with them in an [automated fashion]({ post_url 2020-07-07-test-automation-renode }).
+The Memfault team is also a big fan of Renode[^renode] for MCU emulation ([quick start guide]({% post_url 2020-03-23-intro-to-renode %})), and it even has support for the nRF52 and STM32F4. Emulators really shine when they are hooked up to continuous integration systems and tests are run with them in an [automated fashion]({% post_url 2020-07-07-test-automation-renode %}).
 
 ### Use Unit Tests Where Possible
 
