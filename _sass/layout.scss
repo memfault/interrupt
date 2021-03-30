@@ -609,10 +609,20 @@ footer {
 }
 
 .memfault-info-wrapper {
+  p {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
   .mf-icon {
     margin-bottom: 0;
     margin-left: 0;
     margin-right: auto;
     max-width: 60%;
+  }
+
+  a .chevron-icon {
+    width: 8px;
+    height: 8px;
   }
 }
