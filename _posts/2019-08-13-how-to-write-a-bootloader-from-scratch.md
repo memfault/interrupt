@@ -27,6 +27,9 @@ bootloader, how to implement one, and cover a few advanced techniques you may
 use to make your bootloader more useful.
 <!-- excerpt end -->
 
+> If you'd rather listen to me present this information and see some demos in action, watch
+> [your webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+
 {% include newsletter.html %}
 
 {% include toc.html %}
@@ -618,5 +621,7 @@ or at [interrupt@memfault.com](mailto:interrupt@memfault.com).
 Next time in the series, we'll talk about bootstrapping the C library!
 
 _EDIT: Post written!_ - [Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
+
+> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
 
 {% include newsletter.html %}

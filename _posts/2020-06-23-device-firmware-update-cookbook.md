@@ -26,6 +26,9 @@ I learned some of these lessons in this post the hard way, and I hope I can spar
 you and your colleagues a few sleepless nights spent debugging firmware update
 problems in the wild!
 
+> If you'd rather listen to me present this information and see some demos in action, watch
+> [your webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+
 {% include newsletter.html %}
 
 {% include toc.html %}
@@ -894,6 +897,8 @@ As always, we'd love to hear from you. Do you have design rules of thumb for
 firmware update that we did not cover? Let us know! And if you see anything
 you'd like to change, don't hesitate to submit a pull request or open an issue
 on [Github](https://github.com/memfault/interrupt)
+
+> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
 
 {% include newsletter.html %}
 
