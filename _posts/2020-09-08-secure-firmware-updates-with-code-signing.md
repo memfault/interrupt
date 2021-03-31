@@ -22,7 +22,7 @@ implementation built with open source, cross platform libraries.
 <!-- excerpt end -->
 
 > If you'd rather listen to me present this information and see some demos in action, watch
-> [your webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+> [this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
 
 {% include newsletter.html %}
 {% include toc.html %}

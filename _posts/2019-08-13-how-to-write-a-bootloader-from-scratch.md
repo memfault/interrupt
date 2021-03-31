@@ -28,7 +28,7 @@ use to make your bootloader more useful.
 <!-- excerpt end -->
 
 > If you'd rather listen to me present this information and see some demos in action, watch
-> [your webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+> [this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
 
 {% include newsletter.html %}
 
