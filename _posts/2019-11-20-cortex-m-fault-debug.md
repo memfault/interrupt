@@ -20,7 +20,7 @@ some faults without rebooting the MCU. We include practical examples, with a ste
 
 <!-- excerpt end -->
 
-> If you'd rather listen to me present this information and see some demos in action, [register for our webinar on April 22, 2021 here.](https://hubs.la/H0KCkl_0).
+> If you'd rather listen to me present this information and see some demos in action, [register for our webinar on April 22, 2021 here.](https://hubs.la/H0KCkl_0)
 
 {% include newsletter.html %}
 

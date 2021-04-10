@@ -22,7 +22,7 @@ porting an RTOS to a platform. We will also walk through a practical example of 
 **FreeRTOS** context switcher, `xPortPendSVHandler`, utilizing `gdb` to strengthen our understanding.
 
 <!-- excerpt end -->
-> If you'd rather listen to me present this information and see some demos in action, [register for our webinar on April 22, 2021 here.](https://hubs.la/H0KCkl_0).
+> If you'd rather listen to me present this information and see some demos in action, [register for our webinar on April 22, 2021 here.](https://hubs.la/H0KCkl_0)
 
 {% include newsletter.html %}
 
