@@ -27,7 +27,7 @@ you and your colleagues a few sleepless nights spent debugging firmware update
 problems in the wild!
 
 > If you'd rather listen to me present this information and see some demos in action, watch
-> [this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+> [this webinar recording](https://hubs.la/H0KPq8M0)
 
 {% include newsletter.html %}
 
@@ -898,7 +898,7 @@ firmware update that we did not cover? Let us know! And if you see anything
 you'd like to change, don't hesitate to submit a pull request or open an issue
 on [Github](https://github.com/memfault/interrupt)
 
-> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/H0KPq8M0)
 
 {% include newsletter.html %}
 
