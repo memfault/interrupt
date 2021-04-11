@@ -22,7 +22,7 @@ implementation built with open source, cross platform libraries.
 <!-- excerpt end -->
 
 > If you'd rather listen to me present this information and see some demos in action, watch
-> [this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+> [this webinar recording](https://hubs.la/H0KPq8M0)
 
 {% include newsletter.html %}
 {% include toc.html %}
@@ -737,7 +737,7 @@ process? Let us know! And if you see anything you'd like to change, don't
 hesitate to submit a pull request or open an issue on
 [Github](https://github.com/memfault/interrupt)
 
-> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar)
+> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/H0KPq8M0)
 
 <!-- Interrupt Keep START -->
 

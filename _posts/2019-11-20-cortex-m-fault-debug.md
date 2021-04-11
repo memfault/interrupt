@@ -20,6 +20,8 @@ some faults without rebooting the MCU. We include practical examples, with a ste
 
 <!-- excerpt end -->
 
+> If you'd rather listen to me present this information and see some demos in action, [register for our webinar on April 22, 2021 here.](https://hubs.la/H0KCkl_0)
+
 {% include newsletter.html %}
 
 {% include toc.html %}
@@ -1075,6 +1077,8 @@ I hope this post gave you a useful overview of how to debug a HardFault on a Cor
 
 Are there tricks you like to use that I didn't mention or other topics about faults you'd like to learn more about?
 Let us know in the discussion area below!
+
+> Interested in learning more about debugging HardFaults? [Register for our webinar on April 22, 2021 here](https://hubs.la/H0KCkl_0).
 
 {% include submit-pr.html %}
 

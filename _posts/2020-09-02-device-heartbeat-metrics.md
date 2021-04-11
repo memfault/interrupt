@@ -42,7 +42,7 @@ product decisions.
 > This post is guaranteed to be the tip of the iceberg in a series of posts about how to do
 > device monitoring properly at scale. With this in mind, this post will be slightly more
 > high-level than a typical “Interrupt” post. And if you'd rather listen to me present this
-> information and see some demos in action, watch [this webinar recording](https://go.memfault.com/monitoring-iot-devices-at-scale-webinar).
+> information and see some demos in action, watch [this webinar recording](https://hubs.la/H0KPqpw0).
 
 
 {% include newsletter.html %}
@@ -1009,7 +1009,7 @@ I'd love to hear about how you think about metrics and embedded systems and what
 you or your organization has built to tackle these problems in the comments.
 
 > Interested in learning more about the benefits of monitoring with metrics?
-> [Watch this webinar recording](https://go.memfault.com/monitoring-iot-devices-at-scale-webinar)
+> [Watch this webinar recording](https://hubs.la/H0KPqpw0)
 
 <!-- Interrupt Keep START -->
 
