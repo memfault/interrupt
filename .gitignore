@@ -4,3 +4,5 @@ _site
 vendor
 example/*/build
 .venv
+.jekyll-cache
+.jekyll-metadata
