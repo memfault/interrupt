@@ -15,6 +15,7 @@ destination: ./_site/blog
 markdown: kramdown
 permalink: /:title
 paginate: 8
+paginate_trail: 2
 paginate_path: /page:num/
 source: .
 excerpt_separator: "<!-- excerpt end -->"
