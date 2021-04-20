@@ -1,0 +1,42 @@
+{% if paginator.total_pages > 1 %}
+<div class="pagination d-none d-lg-block">
+    {% assign page_start = paginator.page | minus: site.paginate_trail %}
+    {% assign page_end = paginator.page | plus: site.paginate_trail %}
+
+    {% if paginator.previous_page == 1 %}
+        <a href="{{ '/' | prepend: site.baseurl | replace: '//', '/' }}" class="page-item" title="Previous page">&laquo;</a>
+    {% elsif paginator.previous_page %}
+        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}" class="page-item" title="Previous page">&laquo;</a>
+    {% else %}
+        <span class="page-item">&laquo;</span>
+    {% endif %}
+
+    {% if paginator.page != 1 and page_start > 1 %}
+        <a href="{{ '/' | prepend: site.baseurl | replace: '//', '/' }}" class="page-item" title="First page">1</a>
+        ...
+    {% endif %}
+
+    {% for page in (page_start..page_end) %}
+        {% if page < 1 or page > paginator.total_pages %}
+            <!-- Do nothing -->
+        {% elsif page == paginator.page %}
+            <span class="page-item">{{ page }}</span>
+        {% elsif page == 1 %}
+            <a href="{{ '/' | prepend: site.baseurl | replace: '//', '/' }}" class="page-item">{{ page }}</a>
+        {% else %}
+            <a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}" class="page-item">{{ page }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if paginator.page != paginator.total_pages and page_end < paginator.total_pages %}
+        ...
+        <a href="{{ site.paginate_path | replace: ':num', paginator.total_pages | prepend: site.baseurl | replace: '//', '/' }}" class="page-item" title="Last page">{{ paginator.total_pages }}</a>
+    {% endif %}
+
+    {% if paginator.next_page %}
+        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}" class="page-item" title="Next page">&raquo;</a>
+    {% else %}
+        <span class="page-item">&raquo;</span>
+    {% endif %}
+</div>
+{% endif %}
