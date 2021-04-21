@@ -3,6 +3,7 @@ title: Advanced GDB Usage
 description: A collection of advanced GDB tips, extensions, and .gdbinit macros to speed up your debugging experience with the GNU debugger.
 author: tyler
 image: /img/advanced-gdb/cover.png
+tags: [python, gdb]
 ---
 
 About 6 years ago, when I was in my first few months at Pebble as a firmware engineer, I decided to take an entire workday to read through the majority of the GDB manual. It was by far one of my best decisions as an early professional engineer. After that day, I felt like I was 10x faster at debugging the Pebble firmware and our suite of unit tests. I even had a new `.gdbinit` script with a few macros and configuration flags to boot, which I continue to amend to this day.
