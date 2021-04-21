@@ -16,8 +16,6 @@ In this short-form post, I want to share how you can go about keeping a central 
 
 <!-- excerpt end -->
 
-The inspiration for the post is Chris's upcoming talk, [Debugging HardFaults on ARM Cortex-M MCUs](https://go.memfault.com/debugging-arm-cortex-m-mcu-webinar), where he will share debugging tips, scripts, and other ideas for how to speed up your analysis of what went wrong when the MCU crashed. With the knowledge from the talk, debugging scripts can be adapted to your unique setup and shared amongst your team.
-
 {% include newsletter.html %}
 
 {% include toc.html %}
