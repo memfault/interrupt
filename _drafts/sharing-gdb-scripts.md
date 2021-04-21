@@ -82,7 +82,7 @@ If you are using vanilla VSCode & GDB or using an extension with VSCode, you sho
       "cwd": "${workspaceFolder}",
       "gdbpath": "/opt/esp/xtensa-esp32-elf/bin/xtensa-esp32-elf-gdb",
       "autorun": [
-        "source path/to/project.gdbinit",
+        "source ${workspaceFolder}/project.gdbinit",
         "other...commands"
       ],
       "preLaunchTask": "openocd"
@@ -105,20 +105,20 @@ If you are using [Cortex-Debug](https://marketplace.visualstudio.com/items?itemN
             "name": "Debug (OpenOCD)",
             "servertype": "openocd",
             "preLaunchCommands": [
-                "source path/to/project.gdbinit",
+                "source ${workspaceFolder}/project.gdbinit",
             ]
         }
     ]
 }
 ```
 
-For [PlatformIO](https://platformio.org/), you can add this hook to your `platform.ini` under the `[env:debug]` section:
+For [PlatformIO](https://platformio.org/), you can add this hook to your `platformio.ini` under the `[env:debug]` section:
 
 ```ini
 platform = ...
 board = ...
 debug_extra_cmds =
-  source path/to/project.gdbinit
+  source ./project.gdbinit
 ```
 
 You can then commit the `launch.json` file to the repo and all team members can load it.
@@ -134,7 +134,7 @@ You should be able to add the custom GDB hooks under *Debug Configuration* -> *G
 Here, you would insert something along the lines of:
 
 ```
-source path/to/project.gdbinit
+source ${project_loc}/project.gdbinit
 ```
 
 When you relaunch the debugger, you should be able to open the GDB window and use the custom commands.
