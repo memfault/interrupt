@@ -24,7 +24,7 @@ and a few examples written in C.
 Note: For the most part, the exception handling mechanism in all Cortex-M processors (ARMv6-M,
 ARMv7-M & ARMv8-M architectures) is the same. I will point out differences that do arise in the relevant sections below.
 
-> If you'd rather listen to me present this information and see some demos in action, [register for our webinar on April 22, 2021 here.](https://hubs.la/H0KCkl_0)
+> If you'd rather listen to me present this information and see some demos in action, [watch this webinar recording.](https://go.memfault.com/debugging-arm-cortex-m-mcu-webinar?utm_campaign=Debugging%20Cortex%20M%20Webinar&utm_source=blog&utm_medium=Interrupt&utm_term=Debug)
 
 {% include toc.html %}
 
@@ -735,7 +735,7 @@ topic but I've always found it hard to find a single place that aggregates the u
 Are there any other topics related to interrupts you'd like us to delve into? (No pun intended :D) Do you leverage any of
 ARMs fancy exception configuration features in your products? Let us know in the discussion area below!
 
-> Interested in learning more about debugging HardFaults? [Register for our webinar on April 22, 2021 here](https://hubs.la/H0KCkl_0).
+> Interested in learning more about debugging HardFaults? [Watch this webinar recording.](https://go.memfault.com/debugging-arm-cortex-m-mcu-webinar?utm_campaign=Debugging%20Cortex%20M%20Webinar&utm_source=blog&utm_medium=Interrupt&utm_term=Debug).
 
 {% include submit-pr.html %}
 

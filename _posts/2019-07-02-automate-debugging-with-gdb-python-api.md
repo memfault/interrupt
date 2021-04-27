@@ -11,6 +11,8 @@ tags: [python, gdb]
 
 <!-- excerpt end -->
 
+> If you'd rather listen to me present this information and see some demos in action, [watch this webinar recording.](https://go.memfault.com/debugging-arm-cortex-m-mcu-webinar?utm_campaign=Debugging%20Cortex%20M%20Webinar&utm_source=blog&utm_medium=Interrupt&utm_term=Debug)
+
 When a system hits a failure state, you will often find yourself looking at similar state to determine how the system got into the failure mode. This may entail inspecting linked lists, heaps, OS primitives such as mutexes or queues, state of peripherals, etc
 
 Perhaps you are guilty of doing things like this to determine how much memory was burned up in a linked list:
@@ -392,5 +394,7 @@ Next time, we'll talk about how to use third-party Python packages within GDB us
 _EDIT: Post written!_ - [Using Python PyPi Packages with GDB]({% post_url 2019-07-23-using-pypi-packages-with-GDB %})
 
 _All the code used in this blog post is available on [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-post/)._
+
+> Interested in learning more about debugging HardFaults? [Watch this webinar recording.](https://go.memfault.com/debugging-arm-cortex-m-mcu-webinar?utm_campaign=Debugging%20Cortex%20M%20Webinar&utm_source=blog&utm_medium=Interrupt&utm_term=Debug).
 
 {% include submit-pr.html %}
