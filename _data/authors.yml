@@ -104,3 +104,9 @@ erikfogg:
     blurb: is the Chief Operating Officer at <a href="https://prodperfect.com/">ProdPerfect</a>, which is an autonomous E2E regression testing solution that leverages data from live user behavior data.
     linkedin: https://www.linkedin.com/in/erikfogg/
     image: /img/author/erikfogg.jpeg
+nickmiller:
+    name: Nick Miller
+    blurb: is a principal embedded software engineer at <a href="https://spindance.com/">SpinDance</a>, an IoT solutions company.
+    linkedin: https://www.linkedin.com/in/nicholas-miller-666a37b7/
+    github: ncmiller
+    image: /img/author/nickmiller.png
