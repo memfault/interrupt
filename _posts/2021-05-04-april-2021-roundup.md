@@ -1,0 +1,77 @@
+---
+title: "What we've been reading in April"
+author: tyler
+tags: [roundup]
+---
+
+<!-- excerpt start -->
+
+Here are the articles, videos, and tools that we've been excited about this
+April.
+
+<!-- excerpt end -->
+
+We hope you enjoy these links, and we look forward to hearing what you've been
+reading in the comments or [on the Interrupt Slack](https://interrupt-slack.herokuapp.com/).
+
+## Articles & Learning
+
+- [Exploiting Undocumented Hardware Blocks in the LPC55S69 - Oxide Computer Company](https://oxide.computer/blog/lpc55/) by Laura Abbott<br>
+  The NXP LPC55S69 (Cortex-M MCU) contains an undocumented hardware block that NXP could use to "patch" ROM code at runtime. It turns out anyone can write to these regions, allowing untrusted code to theoretically modify the boot sequence. Laura from Oxide Computer Company details the CVE filed and all the gory details.
+- [Protection class - I2C communication issues in complex systems - IRNAS](https://www.irnas.eu/protection-class-a-solution-resolving-i2c-communication-issues-in-complex-systems/) by Vid Rajtmajer<br>
+  Handling I2C failures where many devices and peripherals are connected on the same bus is a pain. Vid details a solution that IRNAS has come up with to help alleviate these issues within the firmware. 
+- [LVC21-308 Essential ARM Cortex M Debugging with GDB (24m Video) - Linaro](https://www.youtube.com/watch?v=QQcp8CPjkoY) by Kevin Townsend<br>A GDB overview specifically tailored to Cortex-M devices. It even goes down into recovering stack traces using information from fault registers, something Chris also touched on in [debugging hardfaults webinar](https://go.memfault.com/debugging-arm-cortex-m-mcu-webinar).
+- [Hacking a $200 Under Desk Exercise Bike](https://codaris.github.io/UnderDeskBike/) by Wayne Venables<br>
+  Wayne went above and beyond here reverse-engineering the Bluetooth protocol of an "under-the-desk-bike" and built a Windows application with a UI that allows him to control and monitor the bike itself hands-free! 
+- [How many Devices can you Connect to the I2C Bus? - BlueDot Sensors](https://www.bluedot.space/tutorials/how-many-devices-can-you-connect-on-i2c-bus/)<br>
+- [It’s Time: InfiniTime 1.0](https://www.pine64.org/2021/04/22/its-time-infinitime-1-0/) by Jean-François Milants<br>
+  This is so great. The PineTime watch has been on the Interrupt roundups for a while but never before has it seemed so...real. They've hit 1.0, the watches
+  are sold out on various online stores, and they are cheap and hackable. I can't wait to see where this project goes. I can only hope there will be a PineTime "Round" to replace my Pebble Time Round.
+- [Creating a stopwatch in Pinetime](https://pankajraghav.com/2021/04/03/PINETIME-STOPCLOCK.html) by Pankaj Raghav<br>
+  Pankaj details how to write a simple application on a PineTime using LVGL. It looks like there's no better time to pick one up and hack away.
+- [Matching STM32 hardware CRC with standard CRC-32 – M0AGX](https://m0agx.eu/2021/04/09/matching-stm32-hardware-crc-with-standard-crc-32/) by M0AGX<br>
+  A short and sweet post detailing a C function to mimic the built-in CRC of an STM32.
+- [STM32 stop mode & EXTI wakeup – example without HAL - M0AGX](https://m0agx.eu/2021/04/16/stm32-stop-mode-exti-wakeup-example-without-hal/) by M0AGX<br>
+  M0AGX talks about the why and how to enter deep-sleep mode on an STM32 without using a vendor-provided HAL.
+- [Aaron's Advice to Up-and-Coming Embedded Developers - Embedded Artistry](https://embeddedartistry.com/blog/2021/04/12/aarons-advice-to-up-and-coming-embedded-developers/) by Aaron Fontaine<br>
+  We could all use advice from experienced people in the industry. Aaron shares his this time on Embedded Artistry.
+- [Finding a Buffer Overflow issue using a Map File | Beningo Embedded Group](https://www.beningo.com/finding-a-buffer-overflow-issue-using-a-map-file/) by Jacob Beningo<br>
+  A map file will detail the memory map of an executable, which can then be used to find which piece of memory a pointer is referencing or where a variable lives within memory. Jacob talks about using map files to debug a buffer overflow.
+- [What is an Active Object? - Cove Mountain Software](https://covemountainsoftware.com/2021/04/20/what-is-an-active-object/) by Matthew Eshleman<br>
+  Matthew talks about how using the Active Object paradigm can reduce concurrency bugs by employing a concurrency safe queue and a separate thread processing those events.
+- [Parsing Protobuf at 2+GB/s: How I Learned To Love Tail Calls in C](https://blog.reverberate.org/2021/04/21/musttail-efficient-interpreters.html) by 
+Josh Haberman<br>
+  Josh talks about a new attribute that was recently added to Clang, `__attribute__((musttail))`, which forces a tail call to be emitted by the compiler. What is a tail call? Read on to learn more. 
+- [Modern C and What We Can Learn From It (65m Video) - ACCU 2021](https://www.youtube.com/watch?v=QpAhX-gsHMs) by Luca Sas<br>
+  A presentation full of do's and dont's about C and C++, contrasting how we used to write code in C and how it should be written today using the latest features.
+- [Watch Your Step: Research Into the Concrete Effects of Fault Injection on Processor State via Single-Step Debugging - IOActive Labs](https://labs.ioactive.com/2021/04/watch-your-step-research-into-concrete.html) by Ethan Shackelford<br>
+- [Surprisingly Slow](https://gregoryszorc.com/blog/2021/04/06/surprisingly-slow/) by Gregory Szorc<br>
+  You can tell the author has spent _a ton_ of time debugging slow CI builds and other various performance issues. Here, Gregory talks about the usual suspects that anyone should know about and look into, including Python startup overhead, CMake quirks, Storage I/O performance issues, and more. 
+- [The Agile Embedded Podcast](https://agileembeddedpodcast.com/)<br>
+  A promising new embedded podcast by two devops and embedded consultants, Jeff Gable and Luca Ingianni. They are 10 episodes in and speak about many of the things we write about on Interrupt. 
+- [Running a Linux application on STM32 MCUs - Embedded.com](https://www.embedded.com/running-a-linux-application-on-stm32-mcus/) by Anton Bondarev and Alexander Kalmuk<br>
+  A short article showing that it's possible to run a basic Linux Qt application on [Embox RTOS](https://www.embox.rocks/) on a STM32F769I-Discovery.
+
+## Tools & Projects
+
+- [Features - Electric UI](https://electricui.com/features)<br>
+  A firmware library coupled with a collection of frontend components for a React application that is optimized and tailored to suit hardware devices. The firmware library communicates with the React side over a binary protocol over UART (or other transport). The company and blog also have a few neat articles, one about [hardware testing](https://electricui.com/blog/hardware-testing) and another about using [CLion with an STM32](https://electricui.com/blog/clion-stm32-setup). 
+- [LIEF](https://lief.quarkslab.com/)<br>
+  A library to parse and modify executable files such as ELF, PE, and MachO. 
+- [labgrid-project/labgrid](https://github.com/labgrid-project/labgrid)<br>
+  Python library which helps to abstract away the painful aspects of controlling hardware boards during manual and automated tests. Includes a pytest plugin for running tests remotely through SSH, allows control of power switches, and even integrates with a few OTA libraries and services. Honestly, sounds very cool. If you're thinking of writing your own home-grown automated test system, check this out first!
+
+## Random!
+
+- [Embedded Online Conference](https://www.embeddedonlineconference.com/)<br>
+  The Embedded Online Conference is back for another year! They have a great lineup this year, so be sure not to miss out. Use code MEMFAULT149 to get a discount. If you're a student and $149 is a lot, contact the organizers of the event...they are wonderful people.
+- [Google Online Security Blog: Rust in the Linux kernel](https://security.googleblog.com/2021/04/rust-in-linux-kernel.html)<br>
+  This article talks about Google's work to enable Rust in the Linux kernel, which should hopefully replace some of the more error-prone C code that is there today.
+- [op1hacks/op1repacker: 🗜 Tool for unpacking, modifying and repacking firmware for the OP-1 synth by Teenage Engineering](https://github.com/op1hacks/op1repacker)
+  Because it reminds me of [PebbleBits](https://www.youtube.com/watch?v=T43hbks_Loo), a project that allowed users to create and load custom firmware onto any Pebble watch.
+- [How to make an awesome Python package in 2021](https://antonz.org/python-packaging/)by Anton Zhiyanov<br>
+  The Python ecosystem has changed quite a bit in recent years, especially when it comes to packaging. We now have `setup.py` vs `pyproject.toml`, `pipenv` vs `poetry`, Tox, Black, MyPy, and many more tools. When it comes to releasing packages, there are too many things to learn about. In this post, Anton does a great job at covering the most important bits and requirements so that you can get on with your goal of releasing a PyPi package.
+- [Power consumption of Game Boy flash cartridges - gekkio.fi](https://gekkio.fi/blog/2021/power-consumption-of-game-boy-flash-cartridges/) by Joonas Javanainen<br>
+  A fun post on measuring the power consumption of various Game Boy cartridges, both genuine and knock-off. 
+- [Internal Combustion Engine](https://ciechanow.ski/internal-combustion-engine/) by Bartosz Ciechanowski<br>
+  Another incredible, completely unrelated to firmware, blog post on how combustion engines work complete with interactive visuals.
