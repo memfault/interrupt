@@ -13,8 +13,7 @@ Whether they are trying to cram in another feature, or to make enough space for
 updates](https://sbabic.github.io/swupdate/overview.html#double-copy-with-fall-back)
 more code space is always better.
 
-In this [series of posts]({% tag_url fw-code-size %}) 
-series of posts, we'll explore ways to save code space and ways not to
+In this [series of posts]({% tag_url fw-code-size %}), we'll explore ways to save code space and ways not to
 do it. We will cover compiler options, coding style, logging, as well as
 desperate hacks when all you need is another 24 bytes.
 
