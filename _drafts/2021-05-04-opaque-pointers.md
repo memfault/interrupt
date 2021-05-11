@@ -18,7 +18,7 @@ to model this in C?
 Objects are not a native concept in C, but you can achieve something
 resembling objects by using a design pattern known as the "opaque pointer".
 This post will show you what the pattern is, explain some of the finer
-details, and provide guidance on when you should (and shouldn't) use it.
+details, and provide guidance on when you should and shouldn't use it.
 
 <!-- excerpt end -->
 
@@ -130,7 +130,7 @@ The `*_create` function will perform allocation and initialization of an instanc
 [opaque pointer](https://en.wikipedia.org/wiki/Opaque_pointer)
 to the user, which represents the instance. It's really just a pointer to a struct,
 but the user can't see what's in the struct. The user's calling code will fail to compile
-if it tries to dereference the struct pointer, because the struct is not defined in the header
+if it tries to dereference the struct pointer because the struct is not defined in the header
 (it is only declared).
 
 Likewise, `*_destroy` will clean up
@@ -286,7 +286,7 @@ The implementation is much simpler using dynamic memory.
 ## When Should I Use This Pattern?
 
 Opaque pointers are a good fit if you need multiple instances. They are also
-a good fit for general purpose libraries, like
+a good fit for general-purpose libraries, like
 [cJSON](https://github.com/DaveGamble/cJSON).
 
 If you only ever need one of something (e.g. a state machine),
