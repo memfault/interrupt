@@ -5,11 +5,12 @@ author: nickmiller
 ---
 
 I've written a lot of C++ in my career, but I still prefer to design in
-C for most embedded projects ("why" is the subject of a much longer rant-filled post).
+C for most embedded projects ("why" is the subject of a much longer, rant-filled post).
 I'm not a big proponent of OOP in general,
 but I do think having an "instance" of something which contains stateful data is a generally
-useful thing for embedded software. For example, a ring buffer instance (aka circular FIFO queue),
-of which there might be many in the system. Each instance contains stateful data,
+useful thing for embedded software. For example, you may want to have several
+instances of a ring buffer (aka circular FIFO queue) on your system.
+Each instance contains stateful data,
 like the current position of read and write pointers. What's the best way
 to model this in C?
 
