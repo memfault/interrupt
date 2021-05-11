@@ -191,6 +191,17 @@ changes the way it uses read and write pointers, it will need to visit all the u
 accesses the pointers as well. In effect, the ringbuffer implementation would be spread out across
 multiple files in the system (good luck finding them all!) instead of being isolated to one file.
 
+By defining the struct in `ringbuffer.c`, the data is "private" to that file
+(or more precisely, the
+[translation unit](https://en.wikipedia.org/wiki/Translation_unit_(programming))).
+
+What if you have a large module, spread over many `.c` files, that all need
+access to the struct? In that case, a good option is to define the struct inside of
+a private header file - `ringbuffer_private.h` in the example - which you
+can `#include` in other module files. This keeps the public interface in
+`ringbuffer.h` clean and minimal, and gives internal module files access to the
+private struct data.
+
 ## What If I Don't Want to Dynamically Allocate Memory?
 
 There are some reading this that have their spidey sense tingling when
