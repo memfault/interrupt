@@ -1,4 +1,6 @@
-# Interrupt
+<p align="center">
+  <img width="300" src="https://user-images.githubusercontent.com/1041679/117912668-bf573700-b294-11eb-9e3f-9cb521b750dc.png"/>
+</p>
 
 Interrupt is a community for embedded software makers and professionals alike. 
 
