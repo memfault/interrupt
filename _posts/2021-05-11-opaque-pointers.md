@@ -79,6 +79,7 @@ void ringbuffer_destroy(ringbuffer_t instance);
 
 ```c
 #include "ringbuffer.h"
+#include <stdlib.h>
 
 // Private struct, only accessible from within this file
 struct ringbuffer_instance_t {
@@ -90,7 +91,7 @@ struct ringbuffer_instance_t {
 
 ringbuffer_t ringbuffer_create(uint32_t capacity) {
     ringbuffer_t inst = calloc(1, sizeof(struct ringbuffer_instance_t));
-    inst->data = calloc(inst->capacity, sizeof(uint8_t));
+    inst->data = calloc(capacity, sizeof(uint8_t));
     inst->capacity = capacity;
     inst->wr_pos = 0;
     inst->rd_pos = 0;
