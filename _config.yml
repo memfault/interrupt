@@ -10,13 +10,13 @@ author:
 google_site_verification: 2qyLRd8BiI5o3XnqssLvbzPDJ-2S6ytb9iLoNoz1Z9M
 
 # Build settings
-baseurl: /blog
+baseurl: /
 destination: ./_site/blog
 markdown: kramdown
 permalink: /:title
 paginate: 8
 paginate_trail: 2
-paginate_path: /page:num/
+paginate_path: /blog/page:num/
 source: .
 excerpt_separator: "<!-- excerpt end -->"
 
@@ -50,7 +50,7 @@ category_page: '/categories/'
 
 sass:
     style: compressed
-    
+
 # Options
 custom_nav_footer: true
 reverse: false
