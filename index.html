@@ -101,7 +101,9 @@ layout: default
     <ul id="posts">
         {% assign maxPost = 5 %}
         {% assign counter = 0 %}
-        {% for post in site.posts | sort:"date" | reverse %}
+        {% assign posts = site.posts | sort:"date" | reverse %}
+
+        {% for post in posts %}
             <li class="post">
                 <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
                 <div class="by-line">
