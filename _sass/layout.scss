@@ -647,6 +647,12 @@ footer {
 }
 
 .home-container {
+  padding-top: 40px;
+
+  @media (min-width: 540px) {
+    padding-top: 60px;
+  }
+
   .home-header-2 {
     text-align: center;
     padding-bottom: 10px;
@@ -671,12 +677,13 @@ footer {
   }
 
   #logo {
-    width: 250px;
-    height: 250px;
-    display: none;
+    width: 150px;
+    height: 150px;
+    display: block;
 
     @media (min-width: 540px) {
-      display: block;
+      width: 250px;
+      height: 250px;
     }
   }
 
@@ -704,7 +711,7 @@ footer {
   }
 
   #posts {
-    margin-bottom: 50px;
+    margin-bottom: 10px;
   }
 
   .share-buttons-wrapper {
@@ -713,5 +720,12 @@ footer {
     @media (min-width: 540px) {
       align-items: start;
     }
+  }
+
+  .home-show-more {
+    font-size: 16px;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
   }
 }

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: homepage
 ---
 
 <div class="home-container">
@@ -86,7 +86,7 @@ layout: default
     <p>
         Memfault is the first cloud-based observability platform for connected device debugging, monitoring, and updating, which brings the efficiencies and innovation of software development to hardware processes. Recognizing that any connected device team could benefit from what they were building, François Baldassari, Chris Coleman, and Tyler Hoffman founded Memfault in 2018 with the help of colleagues from Pebble.
         <a href="https://memfault.com/signup">
-            Try memfault
+            Try Memfault
             <svg class="svg-icon slack">
                 <use xlink:href="{% img_url main-icons.svg#arrow-right %}"></use>
             </svg>
@@ -125,4 +125,8 @@ layout: default
         {% endfor %}
 
     </ul>
+    <a href="{{ '/blog' | relative_url }}" class="home-show-more">
+        View all posts
+        <img class="chevron-icon" src="{% img_url chevron-right.svg %}" />
+    </a>
 </div>
