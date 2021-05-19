@@ -49,6 +49,7 @@ analysis-friendly.  <!-- excerpt end -->
 {% include toc.html %}
 
 ## Setting up CodeChecker CodeChecker is a combination of two tools:
+
 1. The command-line `CodeChecker` tool which can be used to start analysis runs
    on your firmware project
 2. The CodeChecker database which collects data from your runs and lets you
@@ -128,10 +129,13 @@ $ source ~/codechecker/venv/bin/activate
 (CodeChecker venv) $ CodeChecker -h
 ```
 
-## Using CodeChecker with your Project ### Setup In this post, we will use
-ChibiOS as our example project. ChibiOS is a popular RTOS with support for a
-wide variety of chips. Most importantly, it is relatively straightforward to
-set up and comes with lots of examples.
+## Using CodeChecker with your Project
+
+### Setup 
+
+In this post, we will use ChibiOS as our example project. ChibiOS is a popular
+RTOS with support for a wide variety of chips. Most importantly, it is
+relatively straightforward to set up and comes with lots of examples.
 
 You can download the latest ChibiOS release from [their
 website](https://osdn.net/projects/chibios/releases), though I simply `clone`-d
@@ -456,6 +460,17 @@ recommended to use comments and asserts as well so you do not lose all that
 state in the event the database is lost or reset.
 
 ## Closing
+
+Thank you for reading! I hope this post convinced you that static analysis is a
+great tool to add to your toolbelt. While false positives can be daunting, they
+can be managed with a few annotations and they should not discourage you from
+finding real errors with CodeChecker.
+
+Next time, I will write about running static analysis in CI and I will
+introduce the CodeChecker database which can be used to track error state.
+
+What do you think of CodeChecker? Do you use another static analysis tool you
+like? Tell us in the comments!
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
