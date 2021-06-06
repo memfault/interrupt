@@ -14,14 +14,20 @@
 			<div id="menu"></div>
 		</a>
 
-    	<!-- Main content -->
-		<div id="container">
+		<!-- Main content -->
+		<div id="split-container-wrapper" class="home-split-container">
+			<div id="split-container">
+				<main>
 
-			<main>
+					{{ content }}
 
-				{{ content }}
-
-			</main>
+				</main>
+				<aside>
+					{% include search.html %}
+					{% include subscribe.html %}
+					{% include share-buttons.html %}
+				</aside>
+			</div>
 
 			<!-- Pagination links -->
 			{% include pagination.html %}

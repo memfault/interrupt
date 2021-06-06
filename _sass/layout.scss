@@ -172,6 +172,15 @@ html, body {
       padding-right: 0;
     }
   }
+
+  &-wrapper {
+    &.home-split-container {
+      aside {
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+  }
 }
 
 
@@ -670,16 +679,14 @@ footer {
 
   #header {
     padding-top: 0;
-
-    @media (min-width: 540px) {
-      padding-top: 24px;
-    }
+    line-height: 3rem;
   }
 
   #logo {
     width: 150px;
     height: 150px;
     display: block;
+    max-height: 66px;
 
     @media (min-width: 540px) {
       width: 250px;
