@@ -1,26 +1,132 @@
 ---
-layout: split-view
+layout: homepage
 ---
 
-<!-- Posts -->
+<div class="home-container">
+    <p>
+        The Interrupt community is made up of engineers, hobbyists, and enthusiasts with a shared passion for hardware development. We help each other solve problems, share best practices, show our latest projects, and more.
+    </p>
 
-<ul id="posts">
+    <p>
+        The Interrupt Community was created and is moderated today by the founders of  <a href="https://memfault.com">Memfault</a>.
+    </p>
 
-    {% for post in paginator.posts %}
+    <ul class="list-of-content">
+        <li>
+            <a href="{{ '/blog' | relative_url }}">
+                <svg class="svg-icon slack">
+                    <use xlink:href="{% img_url main-icons.svg#blog %}"></use>
+                </svg>
+                Blog
+            </a>
+        </li>
+        <li>
+            <a href="{{ '/contributing' | relative_url }}">
+                <svg class="svg-icon slack">
+                    <use xlink:href="{% img_url main-icons.svg#contribute %}"></use>
+                </svg>
+                Contribute
+            </a>
+        </li>
+        <li>
+            <a href="https://community.memfault.com/">
+                <svg class="svg-icon slack">
+                    <use xlink:href="{% img_url main-icons.svg#forum %}"></use>
+                </svg>
+                Forums
+            </a>
+        </li>
+        <li>
+            <a href="https://github.com/memfault/interrupt">
+                <svg class="svg-icon slack">
+                    <use xlink:href="{% img_url social-icons.svg#github %}"></use>
+                </svg>
+                Github
+            </a>
+        </li>
+        <li>
+            <a href="https://www.meetup.com/interrupt-memfault-meetup/">
+                <svg class="svg-icon slack">
+                    <use xlink:href="{% img_url main-icons.svg#meetup %}"></use>
+                </svg>
+                Meetup
+            </a>
+        </li>
+        <li>
+            <a href="https://interrupt-slack.herokuapp.com/">
+                <svg class="svg-icon slack">
+                    <use xlink:href="{% img_url social-icons.svg#slack %}"></use>
+                </svg>
+                Slack
+            </a>
+        </li>
+        <li>
+            <a href="https://go.memfault.com/interrupt-subscribe">
+                <svg class="svg-icon slack">
+                    <use xlink:href="{% img_url main-icons.svg#subscribe %}"></use>
+                </svg>
+                Subscribe
+            </a>
+        </li>
+        <li>
+            <a href="{{ 'feed.xml' | absolute_url }}">
+                <svg class="svg-icon slack">
+                    <use xlink:href="{% img_url social-icons.svg#rss %}"></use>
+                </svg>
+                RSS
+            </a>
+        </li>
+    </ul>
 
-    <li class="post">
-        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-        <div class="by-line">
-            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
-            {% assign author = site.data.authors[post.author] %}
-            {% assign author_key = post.author %}
-            {% if author %}
-            <span>by <a href="{{ '/authors/' | append:author_key | relative_url }}">{{ author.name }}</a></span>
+    <h2 class="home-header-2">
+        <a href="{{ '/blog' | relative_url }}">
+            Latest Blog Posts
+        </a>
+    </h2>
+    <ul id="posts">
+        {% assign maxPost = 5 %}
+        {% assign counter = 0 %}
+        {% assign posts = site.posts | sort:"date" | reverse %}
+
+        {% for post in posts %}
+            <li class="post">
+                <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+                <div class="by-line">
+                    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
+                    {% assign author = site.data.authors[post.author] %}
+                    {% assign author_key = post.author %}
+                    {% if author %}
+                        <span>by <a href="{{ '/authors/' | append:author_key | relative_url }}">{{ author.name }}</a></span>
+                    {% endif %}
+                </div>
+                <p>{{ post.excerpt }}</p>
+            </li>
+
+            {% assign counter = counter | plus: 1 %}
+            {% if counter == maxPost %}
+                {% break %} {% comment %}exit the for loop{% endcomment %}
             {% endif %}
-        </div>
-        <p>{{ post.excerpt }}</p>
-    </li>
 
-    {% endfor %}
+        {% endfor %}
 
-</ul>
+    </ul>
+    <a href="{{ '/blog' | relative_url }}" class="home-show-more">
+        View all posts
+        <img class="chevron-icon" src="{% img_url chevron-right.svg %}" />
+    </a>
+
+    <h2 class="home-header-2">
+        About Memfault
+    </h2>
+    <p>
+        Memfault is the first cloud-based observability platform for connected device debugging, monitoring, and updating, which brings the efficiencies and innovation of software development to hardware processes. Recognizing that any connected device team could benefit from what they were building, François Baldassari, Chris Coleman, and Tyler Hoffman founded Memfault in 2018 with the help of colleagues from Pebble.
+        <a href="https://memfault.com/signup">
+            Try Memfault
+            <svg class="svg-icon slack">
+                <use xlink:href="{% img_url main-icons.svg#arrow-right %}"></use>
+            </svg>
+        </a>
+    </p>
+
+    {% include social-buttons.html %}
+</div>

@@ -1,7 +1,7 @@
 # Redirect to /blog subdirectory
 # https://docs.netlify.com/routing/redirects/redirect-options/#http-status-codes
-/ /blog 301!
+# / /blog 301!
 
 # Custom 404 page
 # https://docs.netlify.com/routing/redirects/redirect-options/#custom-404-page-handling
-/* /blog/404.html 404
+/* /404.html 404
