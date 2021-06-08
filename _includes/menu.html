@@ -1,7 +1,6 @@
 <nav {% if site.reverse == true %}id="nav-left"{% else %}id="nav"{% endif %}>
 	<div id="nav-list">
 		<a href="{{ '/' | relative_url }}">Home</a>
-		<a href="{{ '/blog' | relative_url }}" title="Blog">Blog</a>
 
 		<!-- Nav pages -->
 	  {% for page in site.pages %}
@@ -9,12 +8,12 @@
 	      <a href="{{ page.url | relative_url }}" title="{{ page.title }}">{{ page.title }}</a>
 	    {% endif %}
 	  {% endfor %}
-
+    
     <!-- Nav links -->
 	  {% include link.html %}
 
 	</div>
-
+  
   <!-- Nav footer -->
   {% include nav-footer-custom.html %}
 

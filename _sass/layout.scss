@@ -191,8 +191,8 @@ html, body {
     font-size: 2.5rem;
     line-height: 3rem;
     padding: 0.25rem 0;
-    font-family: 'CircularStd', sans-serif; //Emerald logo font
-    font-weight: 700;
+    font-family: 'Signika', sans-serif; //Emerald logo font
+    font-weight: 600;
   }
   #logo {
   	max-height: 66px;
@@ -394,7 +394,7 @@ footer {
       font-size: 24px;
       color: $dark-grey;
       margin-bottom: 14px;
-      font-family: 'CircularStd', sans-serif;
+      font-family: Helvetica, sans-serif;
     }
   }
 
@@ -414,7 +414,7 @@ footer {
       font-size: 24px;
       color: $dark-grey;
       margin-bottom: 0;
-      font-family: 'CircularStd', sans-serif;
+      font-family: Helvetica, sans-serif;
     }
 
     .hs-input {
@@ -486,7 +486,7 @@ footer {
     color: $dark-grey;
     margin-bottom: 0;
     margin-bottom: 10px;
-    font-family: 'CircularStd', sans-serif;
+    font-family: Helvetica, sans-serif;
   }
 }
 
@@ -500,8 +500,7 @@ footer {
     clear: both;
   }
 
-  > div,
-  > a {
+  > div {
     position: relative;
     text-align: left;
     height: 36px;
@@ -532,8 +531,6 @@ footer {
     &.mail > svg {fill: #7D7D7D; height: 14px;}
     &.instagram > svg {fill: #C73B92;}
     &.reddit > svg {fill: #FF4602;}
-    &.youtube > svg {fill: #FF0000; height: 18px;}
-    &.github > svg {fill: #222222; height: 18px; padding: 6px 5px 5px;}
 
     &.facebook:hover {
       background-color: #3B5998;
@@ -598,22 +595,6 @@ footer {
         fill: $background-color;
       }
     }
-
-    &.youtube:hover {
-      background-color: #FF0000;
-
-      > svg {
-        fill: $background-color;
-      }
-    }
-
-    &.github:hover {
-      background-color: #222222;
-
-      > svg {
-        fill: $background-color;
-      }
-    }
   }
 }
 /* Post share */
@@ -643,87 +624,5 @@ footer {
   a .chevron-icon {
     width: 8px;
     height: 8px;
-  }
-}
-
-.home-container {
-  padding-top: 40px;
-
-  @media (min-width: 540px) {
-    padding-top: 0;
-  }
-
-  .home-header-2 {
-    text-align: center;
-    padding-bottom: 10px;
-    position: relative;
-
-    &::after {
-      display: block;
-      content: '';
-      width: 5rem;
-      height: 1px;
-      margin: 13px auto;
-      background-color: #d5d5d5;
-    }
-  }
-
-  h1.header {
-    padding-top: 0;
-    line-height: 3rem;
-  }
-
-  #logo {
-    width: 150px;
-    height: 150px;
-    display: block;
-    max-height: 66px;
-
-    @media (min-width: 540px) {
-      width: 250px;
-      height: 250px;
-    }
-  }
-
-  .list-of-content {
-    color: #141443;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
-
-    li {
-      flex: 0 0 50%;
-      max-width: 50%;
-      margin: 0;
-      margin-bottom: 10px;
-
-      a {
-        padding: 5px;
-      }
-    }
-  }
-
-  .home-header-2 {
-    margin-top: 30px;
-  }
-
-  #posts {
-    margin-bottom: 10px;
-  }
-
-  .share-buttons-wrapper {
-    align-items: center;
-
-    @media (min-width: 540px) {
-      align-items: start;
-    }
-  }
-
-  .home-show-more {
-    font-size: 16px;
-    margin-bottom: 50px;
-    display: flex;
-    align-items: center;
   }
 }

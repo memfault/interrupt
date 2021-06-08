@@ -8,13 +8,13 @@
 <ul id="results-container"></ul>
 
 <!-- or without installing anything -->
-<script src="{{ '/js/simple-jekyll-search.min.js' | relative_url }}"></script>
+<script src="{{ site.baseurl }}/js/simple-jekyll-search.min.js"></script>
 
 <script>
   window.simpleJekyllSearch = new SimpleJekyllSearch({
     searchInput: document.getElementById('search-input'),
     resultsContainer: document.getElementById('results-container'),
-    json: "{{ '/search.json' | relative_url }}",
+    json: '{{ site.baseurl }}/search.json',
     searchResultTemplate: '<li><a href="{url}?query={query}" title="{title}">{title}</a></li>',
     noResultsText: 'No results found',
     limit: 10,
