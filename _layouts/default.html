@@ -5,37 +5,37 @@
 
 <body>
 	<div id="wrap">
-	  	
-	  	<!-- Navigation -->
+
+		<!-- Navigation -->
 	  	{% include menu.html %}
-    
-    <!-- Icon menu -->
-	  <a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
-	  	<div id="menu"></div>
-	  </a>
 
-      <!-- Header -->
-      {% include header-custom.html %}
+    	<!-- Icon menu -->
+		<a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
+			<div id="menu"></div>
+		</a>
 
-    <!-- Main content -->
-	  <div id="container">
-		  
-		<main>
+    	<!-- Header -->
+      	{% include header-custom.html %}
 
-			{{ content }}
+    	<!-- Main content -->
+	  	<div id="container">
 
-	  </main>
-		
-		  <!-- Pagination links -->
-      {% include pagination.html %}
+			<main>
 
-	  </div>
-	    
+				{{ content }}
+
+	  		</main>
+
+		  	<!-- Pagination links -->
+      		{% include pagination.html %}
+
+		</div>
+
 	    <!-- Footer -->
 	    {% include footer.html %}
 
 	    <!-- Script -->
-      {% include script.html %}
+      	{% include script.html %}
 
 	</div>
 </body>
