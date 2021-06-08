@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+{% include head.html %}
+
+<body>
+	<div id="wrap">
+
+	  	<!-- Navigation -->
+	  	{% include menu.html %}
+
+    	<!-- Icon menu -->
+		<a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
+			<div id="menu"></div>
+		</a>
+
+		<div id="header">
+			<img id='logo' src="{% img_url interrupt-logo.svg %}" alt="Interrupt Logo">
+			<h1 class="header">Welcome to Interrupt!</h1>
+		</div>
+
+		<!-- Main content -->
+		<div id="split-container-wrapper" class="home-split-container">
+			<div id="split-container">
+				<main>
+
+					{{ content }}
+
+				</main>
+				<aside>
+					{% include search.html %}
+					{% include subscribe.html %}
+					{% include share-buttons.html %}
+				</aside>
+			</div>
+
+			<!-- Pagination links -->
+			{% include pagination.html %}
+
+		</div>
+
+	    <!-- Footer -->
+	    {% include footer.html %}
+
+	    <!-- Script -->
+     	{% include script.html %}
+
+	</div>
+</body>
+</html>
