@@ -132,6 +132,7 @@ $(OBJ_FILES): Makefile
 $(MCUBOOT_DIR):
 	mkdir -p $(EXTERNAL_DIR)
 	git clone --recurse-submodules=. https://github.com/mcu-tools/mcuboot.git $(EXTERNAL_DIR)/mcuboot
+	cd $(EXTERNAL_DIR)/mcuboot && git checkout e512181 && git submodule update --recursive
 
 $(SRC_FILES): $(MCUBOOT_DIR)
 
