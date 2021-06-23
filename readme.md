@@ -11,7 +11,7 @@ Interrupt is a community for embedded software makers and professionals alike.
 
 Interrupt welcomes submissions on embedded software topics.
 
-Prior to getting in touch, you should get yourself acquainted with our [Code of Conduct](https://interrupt.memfault.com/blog/code-of-conduct).
+Prior to getting in touch, you should get yourself acquainted with our [Code of Conduct](https://interrupt.memfault.com/code-of-conduct).
 
 To submit your content, either email us at interrupt@memfault.com, or open a pull request!
 
