@@ -144,10 +144,25 @@ We can see that the runtime was linked in:
         libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f22c071c000)
 ```
 
-If we run that program with problematic input, we get an error, and our program
-crashes instead of doing something unexpected!
+If we run that program with problematic input, UBSan prints a warning, and the
+printf was modifed to print a `(null)` value instead of the possibly problematic
+fetch.
 
-![img/ubsan-trap/ubsan-basic.png](/img/ubsan-trap/ubsan-basic.png)
+[![img/ubsan-trap/ubsan-basic.png](/img/ubsan-trap/ubsan-basic.png)](/img/ubsan-trap/ubsan-basic.png)
+
+If it's preferrable to have the program crash instead, use the
+`-fno-sanitize-recover=all` to disable the error recovery functionality and
+immediately crash (exit with non-zero exit code) on errors:
+
+```bash
+❯ gcc -fsanitize=undefined -fno-sanitize-recover=all ubsan-basic.c -o ubsan-basic
+```
+
+[![img/ubsan-trap/ubsan-basic-no-recover.png](/img/ubsan-trap/ubsan-basic-no-recover.png)](/img/ubsan-trap/ubsan-basic-no-recover.png)
+
+See details on sanitize-recover here:
+
+[https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fno-sanitize-recover](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fno-sanitize-recover)
 
 ## `libubsan` library and `-fsanitize-undefined-trap-on-error`
 
@@ -206,14 +221,16 @@ comparison for our test program:
 ## `gdb`
 
 One particularly nice result of using the undefined trap- loading the executable
-from above into gdb and running it with the bad input will halt at the location
-of the undefined trap:
+from above into gdb (after recompiling with `-Og` and `-ggdb3`) and running it
+with the bad input will halt at the location of the undefined trap:
 
 ```bash
-❯ gdb -ex 'r' --args ubsan-basic 2
+❯ gcc -Og -ggdb3 -fsanitize=undefined -fsanitize-undefined-trap-on-error \
+  ubsan-basic.c -o ubsan-basic-trap-on-error
+❯ gdb -ex 'r' --args ubsan-basic-trap-on-error 2
 ```
 
-![undefined behavior trap in GDB](/img/ubsan-trap/ubsan-undefined-instruction-gdb.png)
+[![undefined behavior trap in GDB](/img/ubsan-trap/ubsan-undefined-instruction-gdb.png)](/img/ubsan-trap/ubsan-undefined-instruction-gdb.png)
 
 ## Undefined trap on an embedded platform
 
