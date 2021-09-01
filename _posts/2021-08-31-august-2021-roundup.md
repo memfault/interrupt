@@ -61,3 +61,7 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
   Are you all ready for your shoes to have firmware updates? Because it's happening. First with Nike. Now with Under Armour.
 - [ZeroVer: 0-based Versioning](https://0ver.org/)<br>
   This is too funny but all too real. Some projects have been around for _years_ and will likely never increment to version 1.0.
+- [Remotely debug, monitor, and update Nordic IoT devices with Memfault | Nordic Semiconductor](https://webinars.nordicsemi.com/remotely-debug-monitor-and-update-5)<br>
+  Nordic's MCU devices can now integrate with Memfault out of the box. This webinar covers how to remotely debug, monitor, and ship OTA updates to Nordic-powered devices.
+- [Remote Debugging & Device Observability: How Memfault & Diamond Kinetics worked together to fix firmware bugs | Memfault](https://memfault.com/webinars/remote-debugging-device-observability-how-memfault-diamond-kinetics-worked-together-to-fix-firmware-bugs/)<br>
+  Memfault's François Baldassari and Diamond Kinetic's CTO, Mike Ressler, talk about how Diamond Kinetic improved their monitoring using Memfault.
