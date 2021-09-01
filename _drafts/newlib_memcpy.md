@@ -154,7 +154,7 @@ important to profile when playing with compiler optimizations).
 ## Performance: speed
 
 Let's first take a look at the performance of this implementation by measuring
-the number of cycles it takes to copy a 128-byte data structure. We're going to
+the number of cycles it takes to copy different amounts of data. We're going to
 do our experiment on a Cortex-M4F processor (specific chip was an STM32F407),
 using the Cortex-M CYCCNT register (for more information, and the implementation
 of the cycle-counting functions, see [this post on profiling]({% post_url
