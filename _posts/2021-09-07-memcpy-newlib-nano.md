@@ -180,7 +180,8 @@ of the cycle-counting functions, see [this post on profiling]({% post_url
     // print out the cycles consumed
     printf("len = %lu, cyccnt = %lu, cycles/byte = %0.3f\n", (uint32_t)len, stop - start,
            (float)(stop - start) / (float)len);
-  }```
+  }
+```
 
 The output of this test is:
 
