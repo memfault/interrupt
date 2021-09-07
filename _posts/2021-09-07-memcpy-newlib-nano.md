@@ -178,7 +178,8 @@ of the cycle-counting functions, see [this post on profiling]({% post_url
     uint32_t stop = read_cycle_counter(); // << Stop count
 
     // print out the cycles consumed
-    printf("len = %lu, cyccnt = %lu, cycles/byte = %0.3f\n", (uint32_t)len, stop - start,
+    printf("len = %lu, cyccnt = %lu, cycles/byte = %0.3f\n",
+           (uint32_t)len, stop - start,
            (float)(stop - start) / (float)len);
   }
 ```
@@ -262,8 +263,8 @@ That's 148 bytes (0x94 hex) vs. 28 bytes (0x1c hex), or 120 bytes larger.
 ## `memcpy` calls inserted during compilation
 
 One side effect of replacing `memcpy` in the entire executable is that the C
-compiler will often insert calls to memcpy when performing certain operations.
-For example, performing a struct initialization. See an example here:
+compiler will often insert calls to memcpy when performing certain operations-
+for example, when initializing a struct. See an example here:
 
 [https://godbolt.org/z/ar3rPdv85](https://godbolt.org/z/ar3rPdv85)
 
