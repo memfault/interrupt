@@ -148,7 +148,7 @@ Tabulating this information for a couple common MTU sizes we get:
 
 ## Bluetooth Low Energy Specification Updates Impacting Throughput
 
-Over the years, the Bluetooth SIG has added a number of additions to the Low Energy Specification to help improve the throughput that can be achieved. In this section we explore these settings
+Over the years, the Bluetooth SIG has added a number of additions to the Low Energy Specification to help improve the throughput that can be achieved. In this section we explore these settings.
 
 > CAUTION: Even though some of these features have been around for a while, support within the ecosystem still varies. If you are planning to leverage these features, I'd strongly recommend having away to dynamically enable/disable them in your software stack. While the Bluetooth Specification has a robust set of hardware level BLE "Direct Test"s a device must pass to be certified, there really is no thorough test of the software stack itself. This in part has contributed to very buggy BLE software stacks getting shipped and numerous interoperability issues when different Bluetooth Chips try to talk to one another.
 
@@ -170,7 +170,7 @@ As part of the 5.0 Bluetooth Core Specification revision, a new feature known as
 
 ![]({% img_url ble-throughput/ble-throughput-dple-and-2m-phy.png %})
 
-We can calculate this throughput and see the modification yields almost a _4x_ improvement over the original maximal raw data speed that could be achived with BLE 4.0
+We can calculate this throughput and see the modification yields almost a _4x_ improvement over the original maximal raw data speed that could be achived with BLE 4.0:
 
 `251 bytes / 1400μs = 179.3 kBytes/sec = ~1.434 Mbps`
 
@@ -206,7 +206,7 @@ air, which can be super helpful for debugging classes of bugs related to RF tran
 ### Throughput Optimization Checklist
 
 Ultimately, there are a number of variables that influence the throughput achieved during a BLE
-connection. Furtheremore, there's several parameters that can vary widely depending on the software
+connection. Furthermore, there's several parameters that can vary widely depending on the software
 stack of the bluetooth chip in use and have a significant impact on throughput. In the sections
 below, I'll discuss the common settings to check when trying to analyze and optimize the throughput
 of a connection.
@@ -330,8 +330,8 @@ From the examples above, we know it takes 2500μs to exchange a 251 byte data pa
 
 `(251 bytes * 4 packets) / 11.25 ms = 89kBytes/sec = 0.713Mbps`
 
-If we chose a slightly larger connection interval that is divisible by our transfer duration
-(2500μs) we can fill the connection intercal without any gap where no data is sent. For example, in
+If we chose a slightly larger connection interval that is a multiple of our transfer duration
+(2500μs) we can fill the connection interval without any gap where no data is sent. For example, in
 a 12.5ms window, we can fit 5 packets perfectly. This gives us a ~13% improvement in overall throughput:
 
 `(251 bytes * 5 packets) / 12.5 ms = 100.4kBytes/sec = 0.803Mbps`
