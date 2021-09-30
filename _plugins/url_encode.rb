@@ -5,7 +5,7 @@ require 'uri'
 # Ref: http://tools.ietf.org/html/rfc3986#page-12
 module URLEncoding
   def url_encode(url)
-    return URI.escape(url, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+    return URI::Parser.new().escape(url, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
   end
 end
 

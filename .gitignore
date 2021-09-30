@@ -1,6 +1,10 @@
-.sass-cache
+# From https://github.com/github/gitignore/blob/master/Jekyll.gitignore
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
 .DS_Store
-_site
-vendor
-example/*/build
-.venv
+/vendor
+/example/*/build
+/.venv
