@@ -4,7 +4,7 @@ description: Overview of the CMSIS-Pack distribution and some use cases
 author: noah
 ---
 
-CMSIS-Packs is a package format defined by ARM for vendors to provide various
+CMSIS-Packs are a package format defined by ARM for vendors to provide various
 software artifacts that simplify dealing with target devices.
 
 <!-- excerpt start -->
@@ -59,7 +59,8 @@ courtesy of one of my favorite tools: **PyOCD**
 
 > PyOCD integrates CMSIS-Pack management as a way of accessing flash algorithms
 > for chips not natively supported by the tool. It's a pretty awesome way to
-> provide flashing support to a LOT of chips!
+> provide flashing support to a LOT of chips!<br>
+> To learn more, check out our [Deep Dive into ARM Cortex-M Debug Interfaces]({% post_url 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}).
 
 For example, if I wanted the CMSIS-Pack for an Atmel SAMD21 chip, I can run
 these commands from my terminal:
@@ -183,7 +184,7 @@ I've used before:
 - generating language bindings over the memory-mapped peripherals:
   <https://github.com/rust-embedded/svd2rust>
 
-> Note: always be careful when using these SVD files; they occasionally can
+> Tip: always be careful when using these SVD files; they occasionally can
 > have mistakes in them, which can be really confusing. When in doubt, check the
 > datasheet or reference implementations (eg CMSIS headers) as a separate
 > source.
