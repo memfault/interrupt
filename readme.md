@@ -2,7 +2,7 @@
   <img width="300" src="https://user-images.githubusercontent.com/1041679/117912668-bf573700-b294-11eb-9e3f-9cb521b750dc.png"/>
 </p>
 
-Interrupt is a community for embedded software makers and professionals alike. 
+Interrupt is a community for embedded software makers and professionals alike.
 
 - [Interrupt Slack Channel](https://interrupt-slack.herokuapp.com/)
 - [Interrupt Discourse](https://community.memfault.com/)
@@ -22,11 +22,13 @@ See [Contributing](https://interrupt.memfault.com/contributing) for more informa
 Follow the instructions in the [Jekyll quickstart guide](https://jekyllrb.com/docs/) to install Ruby and Jekyll and bundler.
 
 Clone the repo, install dependencies, and serve:
-```
+
+```bash
 $ git clone https://github.com/memfault/interrupt.git
 $ cd interrupt
+$ pip install -r requirements.txt
 $ bundle install
-$ bundle exec jekyll serve -D
+$ bundle exec jekyll serve --drafts --incremental --livereload
 ```
 
 ## Acknowledgements
