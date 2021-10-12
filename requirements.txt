@@ -1,1 +1,6 @@
 blockdiag
+
+# use a pre-release version of funcparserlib; this works around the use_2to3
+# warning that is emitted on modern pip installs:
+# https://github.com/vlasovskikh/funcparserlib/commit/84f1d35a84f73dd61817f1a32421833118174c28
+funcparserlib==1.0.0a0
