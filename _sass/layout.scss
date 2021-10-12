@@ -727,3 +727,25 @@ footer {
     align-items: center;
   }
 }
+
+.job-post {
+  text-align: center;
+  margin-bottom: 30px;
+  a:link, a:visited, a:hover, a:active {
+    color: white;
+  }
+  font-family: 'CircularStd', sans-serif;
+  
+  
+}
+
+.job-post-btn {
+ padding: 10px; 
+ border: #181c44;
+ border-style: solid;
+ border-radius: 25px;
+ background-color: #181c44;
+ color: white;
+ position: relative; 
+ font-weight: 100;
+}
