@@ -64,34 +64,31 @@ memcpy (void *__restrict dst0,
 ```
 
 The default compilation used by the GNU Arm Embedded Toolchain is with `-O2` as
-the optimization level; we can check this by looking at the source tarball,
-where the build script sets these CFLAGS:
+the optimization level; however, newlib is also built with `-Os` for the "nano"
+variant (both are provided with the pre-built toolchain). We can check this by
+looking at the source tarball, where the build script sets these CFLAGS (see
+`build-toolchain.sh` line 382):
 
 ```plaintext
-    saveenvvar CFLAGS_FOR_TARGET '-g -O2 -ffunction-sections -fdata-sections'
+    saveenvvar CFLAGS_FOR_TARGET '-g -Os -ffunction-sections -fdata-sections'
 ```
 
-When compiling with optimization level `-O1` or higher, the GCC compiler will
-set `#define __OPTIMIZE__ 1` as a built-in define. You can see this by running
-the following command, which dumps the built-in preprocessor definitions to
-stdout:
+When compiling with optimization level `-Os`, the GCC compiler will set `#define
+__OPTIMIZE_SIZE__ 1` as a built-in define. You can see this by running the
+following command, which dumps the built-in preprocessor definitions to stdout:
 
 ```bash
-arm-none-eabi-gcc -O2 -dM -E - < /dev/null
+arm-none-eabi-gcc -Os -dM -E - < /dev/null
 
-# diff between -O0 and -O2
-diff -du1w <(arm-none-eabi-gcc -O0 -dM -E - < /dev/null) <(arm-none-eabi-gcc -O2 -dM -E - < /dev/null)
+# diff between -O2 and -Os
+diff -du1w <(arm-none-eabi-gcc -O2 -dM -E - < /dev/null) <(arm-none-eabi-gcc -Os -dM -E - < /dev/null)
 ```
 
 ```diff
-@@ -62,2 +62,3 @@
- #define __FLT_EVAL_METHOD_TS_18661_3__ 0
-+#define __OPTIMIZE__ 1
- #define __CHAR_UNSIGNED__ 1
-@@ -180,3 +181,2 @@
- #define __FLT_DIG__ 6
--#define __NO_INLINE__ 1
- #define __SFRACT_MIN__ (-0.5HR-0.5HR)
+@@ -317,2 +317,3 @@
+ #define __UINT64_TYPE__ long long unsigned int
++#define __OPTIMIZE_SIZE__ 1
+ #define __LLFRACT_MAX__ 0X7FFFFFFFFFFFFFFFP-63LLR
 ```
 
 This results in the bytewise `memcpy` implementation we saw above!
@@ -107,7 +104,7 @@ This results in the bytewise `memcpy` implementation we saw above!
 > program used structure assignment to initialize a set of 32-bit hardware
 > registers. This was problematic when the compiler inserted a bytewise memcpy,
 > because the registers would be written in 8-bit chunks, putting the hardware
-> in a undefined state!
+> in an undefined state!
 
 If we examine the other implementation (the non-size-optimized version), we can
 see that it attempts to copy 4-byte words at a time, which is the native word
@@ -275,7 +272,7 @@ your profiling results.
 ## Newlib's non-nano implementation
 
 The above version of `memcpy` is the one used when linking with
-`--specs=nano.specs`; the "nano" version of libg, which is intended to optimize
+`--specs=nano.specs`; the "nano" version of libc, which is intended to optimize
 for code space (the nano specs override some libraries with the "nano" variant,
 see
 [here](https://cygwin.com/git/?p=newlib-cygwin.git;a=blob;f=libgloss/arm/elf-nano.specs;h=82594bd03cea8584188f625826deb20a50fee603;hb=HEAD)).
