@@ -16,6 +16,9 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 
 ## Articles & Learning
 
+- [Troubleshooting at Sea - Debugging Remote Arm Cortex-M Devices without Physical Access](https://devsummit.arm.com/en/tech-hub/144) by Alvaro Prieto<br>
+ARM DevSummit is happening Oct 19th - 21st, and one of Memfault's customers, Sofar Ocean, talks about how they debug devices without physical access in the middle of the Pacific Ocean. Low power, bandwidth constrained, and no access for months. 
+
 - [TDD in C with Ceedling and WSL2 | Sticky Bits](https://blog.feabhas.com/2021/10/tdd-in-c-with-ceedling-and-wsl2-performance-issues/) by Niall Cooling<br>
 Niall talks about how having your project in the Windows filesystem but compiling in Window's WSL environment can cause build times to be slow. He suggests a clever "hack" where you push/pull from Windows to WSL and vice versa to help speed things up.
 
