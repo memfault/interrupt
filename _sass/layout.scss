@@ -200,8 +200,8 @@ html, body {
     font-size: 2.5rem;
     line-height: 3rem;
     padding: 0.25rem 0;
-    font-family: 'Signika', sans-serif; //Emerald logo font
-    font-weight: 600;
+    font-family: 'CircularStd', sans-serif; //Emerald logo font
+    font-weight: 700;
   }
   #logo {
   	max-height: 66px;
@@ -403,7 +403,7 @@ footer {
       font-size: 24px;
       color: $dark-grey;
       margin-bottom: 14px;
-      font-family: Helvetica, sans-serif;
+      font-family: 'CircularStd', sans-serif;
     }
   }
 
@@ -423,7 +423,7 @@ footer {
       font-size: 24px;
       color: $dark-grey;
       margin-bottom: 0;
-      font-family: Helvetica, sans-serif;
+      font-family: 'CircularStd', sans-serif;
     }
 
     .hs-input {
@@ -495,7 +495,7 @@ footer {
     color: $dark-grey;
     margin-bottom: 0;
     margin-bottom: 10px;
-    font-family: Helvetica, sans-serif;
+    font-family: 'CircularStd', sans-serif;
   }
 }
 
@@ -659,7 +659,7 @@ footer {
   padding-top: 40px;
 
   @media (min-width: 540px) {
-    padding-top: 60px;
+    padding-top: 0;
   }
 
   .home-header-2 {
@@ -677,7 +677,7 @@ footer {
     }
   }
 
-  #header {
+  h1.header {
     padding-top: 0;
     line-height: 3rem;
   }
@@ -745,4 +745,25 @@ footer {
     cursor: pointer;
     outline: none;
   }
+}
+
+.job-post {
+  text-align: center;
+  margin-bottom: 30px;
+  font-family: 'CircularStd', sans-serif;
+
+  a:link, a:visited, a:hover, a:active {
+    color: white;
+  }
+}
+
+.job-post-btn {
+ padding: 10px;
+ border: #181c44;
+ border-style: solid;
+ border-radius: 25px;
+ background-color: #181c44;
+ color: white;
+ position: relative;
+ font-weight: 100;
 }

@@ -13,7 +13,7 @@ google_site_verification: 2qyLRd8BiI5o3XnqssLvbzPDJ-2S6ytb9iLoNoz1Z9M
 baseurl: /
 destination: ./_site/
 markdown: kramdown
-permalink: /:title
+permalink: /blog/:title
 paginate: 8
 paginate_trail: 2
 paginate_path: /blog/page:num/

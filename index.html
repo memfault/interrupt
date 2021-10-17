@@ -3,14 +3,12 @@ layout: homepage
 ---
 
 <div class="home-container">
-    <img id='logo' src="{% img_url interrupt-logo.svg %}" alt="Interrupt Logo">
-    <h1 id="header">Welcome to Interrupt!</h1>
     <p>
         The Interrupt community is made up of engineers, hobbyists, and enthusiasts with a shared passion for hardware development. We help each other solve problems, share best practices, show our latest projects, and more.
     </p>
 
     <p>
-        The Interrupt Community was created by the founders of <a href="https://memfault.com">Memfault</a> and is still hosted and moderated by them today.
+        The Interrupt Community was created and is moderated today by the founders of  <a href="https://memfault.com">Memfault</a>.
     </p>
 
     <ul class="list-of-content">
@@ -44,6 +42,14 @@ layout: homepage
                     <use xlink:href="{% img_url social-icons.svg#github %}"></use>
                 </svg>
                 Github
+            </a>
+        </li>
+        <li>
+            <a href="{{ '/jobs' | relative_url }}">
+                <svg class="svg-icon slack" viewbox="0 0 9 9">
+                    <use xlink:href="{% img_url main-icons.svg#briefcase %}"></use>
+                </svg>
+                Jobs
             </a>
         </li>
         <li>
@@ -81,7 +87,9 @@ layout: homepage
     </ul>
 
     <h2 class="home-header-2">
-        Latest Interrupt Blog Posts
+        <a href="{{ '/blog' | relative_url }}">
+            Latest Blog Posts
+        </a>
     </h2>
     <ul id="posts">
         {% assign maxPost = 5 %}
