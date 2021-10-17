@@ -172,15 +172,6 @@ html, body {
       padding-right: 0;
     }
   }
-
-  &-wrapper {
-    &.home-split-container {
-      aside {
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-  }
 }
 
 
