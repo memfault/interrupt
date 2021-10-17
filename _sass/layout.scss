@@ -730,9 +730,19 @@ footer {
   }
 
   .home-show-more {
-    font-size: 16px;
     margin-bottom: 50px;
-    display: flex;
+    display: inline-block;
     align-items: center;
+    height: 45px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-size: 20px;
+    font-weight: 400;
+    background-color: rgb(73, 180, 167);
+    color: #FDFDFD;
+    border: 0.2rem solid rgb(73, 180, 167);
+    border-radius: 2.2rem;
+    cursor: pointer;
+    outline: none;
   }
 }
