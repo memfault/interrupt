@@ -721,20 +721,27 @@ footer {
   }
 
   .home-show-more {
-    margin-bottom: 50px;
-    display: inline-block;
+    display: flex;
+    max-width: 200px;
+    width: auto;
     align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    margin-bottom: 50px;
     height: 45px;
-    padding-left: 25px;
-    padding-right: 25px;
+    padding: 0 25px;
     font-size: 20px;
     font-weight: 400;
     background-color: rgb(73, 180, 167);
     color: #FDFDFD;
-    border: 0.2rem solid rgb(73, 180, 167);
-    border-radius: 2.2rem;
+    border: 5px solid rgb(73, 180, 167);
+    border-radius: 35px;
     cursor: pointer;
     outline: none;
+
+    img {
+      margin-left: 5px;
+    }
   }
 }
 
