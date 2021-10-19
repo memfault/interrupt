@@ -721,31 +721,47 @@ footer {
   }
 
   .home-show-more {
-    font-size: 16px;
-    margin-bottom: 50px;
     display: flex;
+    max-width: 200px;
+    width: auto;
     align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    height: 45px;
+    padding: 0 25px;
+    font-size: 20px;
+    font-weight: 400;
+    background-color: rgb(73, 180, 167);
+    color: #FDFDFD;
+    border: 5px solid rgb(73, 180, 167);
+    border-radius: 35px;
+    cursor: pointer;
+    outline: none;
+
+    img {
+      margin-left: 5px;
+    }
   }
 }
 
 .job-post {
   text-align: center;
   margin-bottom: 30px;
+  font-family: 'CircularStd', sans-serif;
+
   a:link, a:visited, a:hover, a:active {
     color: white;
   }
-  font-family: 'CircularStd', sans-serif;
-  
-  
 }
 
 .job-post-btn {
- padding: 10px; 
+ padding: 10px;
  border: #181c44;
  border-style: solid;
  border-radius: 25px;
  background-color: #181c44;
  color: white;
- position: relative; 
+ position: relative;
  font-weight: 100;
 }
