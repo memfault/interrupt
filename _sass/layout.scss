@@ -628,6 +628,14 @@ footer {
 }
 
 .memfault-info-wrapper {
+  > h3 {
+    font-size: 24px;
+    color: $dark-grey;
+    margin-bottom: 0;
+    margin-bottom: 10px;
+    font-family: 'CircularStd', sans-serif;
+  }
+
   p {
     font-size: 14px;
     line-height: 1.4;
@@ -644,6 +652,8 @@ footer {
     width: 8px;
     height: 8px;
   }
+
+
 }
 
 .home-container {

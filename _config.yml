@@ -40,6 +40,12 @@ plugins:
   - jekyll-seo-tag
   - jekyll-diagrams
   - jekyll-target-blank
+  - jekyll-get-json
+
+# Fetch Interrupt Featured Events (on sidebar)
+jekyll_get_json:
+  - data: featured_events
+    json: 'https://interrupt-events.sfo3.digitaloceanspaces.com/featured_events.json'
 
 target-blank:
    noopener: false
