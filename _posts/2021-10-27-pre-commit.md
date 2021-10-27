@@ -148,7 +148,7 @@ when my coworker (thanks Patrick!) pointed me to `pre-commit`:
 
 > <https://pre-commit.com/>
 
-I was immediately impressed. `pre-commit` really stands out in 2 areas:
+I was immediately impressed. `pre-commit` really stands out in these areas:
 
 - super simple setup
 - easy and flexible configuration
