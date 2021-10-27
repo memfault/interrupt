@@ -1,15 +1,19 @@
 ---
-title: Using pre-commit for clean and tidy firmware
-description: How to use pre-commit for linting and styling firmware code
+title: Automatically format and lint code with pre-commit
+description: How to use pre-commit for automated linting, formatting, and styling firmware code by using Python, clang-format, clang-tidy, and prettier
 author: noah
-image: img/<post-slug>/cover.png # 1200x630
+image: img/pre-commit/cover.png
 ---
 
-How to use the `pre-commit` tool to format and lint firmware code!
+I love clean and tidy codebases. I love them even more if I don't have to manually spend hours doing it myself. The problem is not everyone shares the same love and passion for tidy codebases, especially when we're pressed for time trying to get a new firmware build released.
+
+This is where automated formatting and linting tools come in. These tools are generally run in [continuous integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) to make sure that all code committed to the main branch follows the team's agreed-upon format and structure. We can do one better and hook up these tools to run locally on any commit or update to a version-controlled branch by using git hooks.
+
+I'm here to talk about one of my favorite tools that is built upon git hooks, [pre-commit](https://pre-commit.com/), and specifically to detail how you can use it to format and lint firmware code as you program.
 
 <!-- excerpt start -->
 
-This article provides some background and guidelines for using `pre-commit` on
+This article provides some background and guidelines for using `pre-commit` to automatically format and lint
 C-language firmware codebases. We'll cover general guidelines and go over an
 example set of checks that can be helpful when working on firmware code.
 
@@ -147,7 +151,8 @@ when my coworker (thanks Patrick!) pointed me to `pre-commit`:
 I was immediately impressed. `pre-commit` really stands out in 2 areas:
 
 - super simple setup
-- simple and flexible configuration
+- easy and flexible configuration
+- can be installed in a Python virtual environment, which our team was already using
 
 It took about 10 minutes to add `pre-commit` to our repo, and it helped me keep
 my patches clean and tidy!
@@ -378,7 +383,7 @@ repo).
 
 > Extra note: if you do run a whitespace or formatting pass over the entire
 > repository, I recommend setting up a `.git-blame-ignore-revs` file, see here
-> for more information:<br/> > <https://michaelheap.com/git-ignore-rev/>
+> for more information:<br/> <https://michaelheap.com/git-ignore-rev/>
 
 ## Additional hooks
 
@@ -390,7 +395,7 @@ value.
 [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) is a powerful C/C++
 linter that can catch a lot of straightforward errors (ex: forgetting to
 `close()` an open file descriptor). While not as sophisticated as full static
-analysis checkers <TODO cite codechecker article! > it's quite useful.
+analysis checkers, such as [Code Checker]({% post_url 2021-05-19-static-analysis-with-codechecker %}), it's quite useful.
 
 Using it is a little complicated, depending on how your project is set up.
 Generally, you'll need the following steps:
@@ -510,17 +515,21 @@ If you're using Python type annotations, you can have mypy run in `pre-commit`:
 
 ## Continuous Integration (CI)
 
-An article on tooling would hardly be complete without discussing CI 😄
+An article on tooling would hardly be complete without discussing [continuous integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) 😄
 
-Here's a couple of examples `pre-commit` could be used in CI:
+Here's a couple of examples `pre-commit` could be used in CI.
 
-1. `pre-commit run --all-files`
+The following command will lint all configured files.
 
-   > enforce linting on all files
+```
+pre-commit run --all-files
+```
 
-2. `pre-commit run --from-ref $(git merge-base ${TARGET_BRANCH}) --to-ref HEAD`
+That great for a quick cleanup. If you want to only lint the _changes_ to files, such as when running a build in CI, you can set the `${TARGET_BRANCH}` from your CI provider (in GitHub Actions, this would be `${{ github.event.pull_request.base.ref }}`
 
-   > lint only the changed files. you might set the `${TARGET_BRANCH}` from your CI provider (in github actions, this could be `${{ github.event.pull_request.base.ref }}`)
+```
+pre-commit run --from-ref $(git merge-base ${TARGET_BRANCH}) --to-ref HEAD
+```
 
 <!-- Interrupt Keep START -->
 
