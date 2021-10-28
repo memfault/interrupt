@@ -464,8 +464,9 @@ system (`sudo apt install cppcheck` on Ubuntu) - note the `- repo: local` and
 
 ### Dockerfiles
 
-If you're using Docker (eg for reproducible builds \*\* CITATION or CI), this
-provides a lot of nice recommendations for Dockerfiles:
+If you're using Docker (eg for [reproducible builds]({% post_url
+2019-12-11-reproducible-firmware-builds %}) or CI), this provides a lot of nice
+recommendations for Dockerfiles:
 
 ```yaml
 - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
@@ -515,7 +516,8 @@ If you're using Python type annotations, you can have mypy run in `pre-commit`:
 
 ## Continuous Integration (CI)
 
-An article on tooling would hardly be complete without discussing [continuous integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) 😄
+An article on tooling would hardly be complete without discussing [continuous
+integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) 😄
 
 Here's a couple of examples `pre-commit` could be used in CI.
 
@@ -525,7 +527,9 @@ The following command will lint all configured files.
 pre-commit run --all-files
 ```
 
-That great for a quick cleanup. If you want to only lint the _changes_ to files, such as when running a build in CI, you can set the `${TARGET_BRANCH}` from your CI provider (in GitHub Actions, this would be `${{ github.event.pull_request.base.ref }}`
+That great for a quick cleanup. If you want to only lint the _changes_ to files,
+such as when running a build in CI, you can set the `${TARGET_BRANCH}` from your
+CI provider (in GitHub Actions, this would be {% raw %}`${{ github.event.pull_request.base.ref }}`{% endraw %}
 
 ```
 pre-commit run --from-ref $(git merge-base ${TARGET_BRANCH}) --to-ref HEAD
