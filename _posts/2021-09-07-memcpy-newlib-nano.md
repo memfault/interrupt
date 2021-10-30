@@ -206,7 +206,7 @@ do is:
 2. add the file to the sources we're compiling
 3. we have to make a couple of modifications to get the result we want:
    1. add a line `#undef __OPTIMIZE_SIZE__` to the file; we saw GCC will set
-      this flag if we enable `-O1` or higher on our project
+      this flag if we enable `-Os` when compiling
    2. add the following definition (which is present in the newlib build):
 
       ```c
