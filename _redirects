@@ -1,5 +1,9 @@
 /blog/feed.xml /feed.xml
 
+# Stable redirect for subscribing to Interrupt's Event calendar.
+# Here in case we switch to Google Calendar or another provider in the future
+/events-calendar https://airtable.com/shrPIHX3y3gQ0WlRd/iCal?timeZone=America%2FLos_Angeles&userLocale=en
+
 # Custom 404 page
 # https://docs.netlify.com/routing/redirects/redirect-options/#custom-404-page-handling
 /* /404.html 404
