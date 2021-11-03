@@ -22,6 +22,9 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 - [Best practices for debugging Zephyr-based IoT applications - Embedded.com](https://www.embedded.com/best-practices-for-debugging-zephyr-based-iot-applications/) by Luka Mustafa and Chris Coleman<br>
   How to debug Zephyr applications using standard methods and Memfault, written by Luka from [IRNAS](https://www.irnas.eu/).
 
+- [When Updating an Untested Module, Take the Opportunity to Add Tests](https://embeddedartistry.com/blog/2021/10/25/when-updating-an-untested-module-take-the-opportunity-to-add-tests/) by Phillip Johnston<br>
+No one likes to try and update a brittle and untested module in a code base. But when it _needs_ to be updated, this is usually the best time to add unit tests! As a developer who has had to do this plenty of times, if you don't add tests, it will become _your_ module if you update it without adding tests. So do it. Listen to Phillip.
+
 - [The Problem with malloc() - Stratify Labs](https://blog.stratifylabs.co/device/2021-10-28-The-Problem-with-malloc/)<br>
   A nice post describing how a basic heap is implemented and general advice on whether or not using a heap and `malloc()` is a good idea for embedded firmware. At the end of the day, _it depends_.
 
