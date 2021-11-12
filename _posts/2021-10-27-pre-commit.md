@@ -42,7 +42,7 @@ on firmware code.
 
 ## What is formatting/linting?
 
-Imagine you want to transform the follow snippet:
+Imagine you want to transform the following snippet:
 
 ```c
 int  main (   int argc, char  ** argv)
@@ -68,9 +68,9 @@ formatters are:
 - [GNU Indent](https://www.gnu.org/software/indent/)
 - [Astyle](http://astyle.sourceforge.net/)
 
-**Linting** is a general term for various static analysis / style checking
-tools, generally lighter (in terms of setup and computation) compared to full
-static analysis. Typically these tools are designed to detect, for example:
+**Linting** is a general term for various static analysis/style checking tools,
+generally lighter (in terms of setup and computation) compared to full static
+analysis. Typically these tools are designed to detect, for example:
 
 - some simple bug categories (similar to extended compiler warnings)
 - possible stylistic errors ([an
@@ -493,7 +493,7 @@ recommendations for Dockerfiles:
 ### GitHub Actions
 
 If you're using GitHub Actions for CI, these hooks do some validation on the
-config files which can save some churn when testing new actions:
+config files that can save some churn when testing new actions:
 
 ```yaml
 - repo: https://github.com/sirosen/check-jsonschema
@@ -534,21 +534,24 @@ If you're using Python type annotations, you can have mypy run in `pre-commit`:
 An article on tooling would hardly be complete without discussing [continuous
 integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) 😄
 
-Here's a couple of examples `pre-commit` could be used in CI.
+Here's a couple of examples of how `pre-commit` could be used in CI:
 
-The following command will lint all configured files.
+1. The following command will lint all configured files:
 
-```bash
-pre-commit run --all-files
-```
+   ```bash
+   pre-commit run --all-files
+   ```
 
-That's great for a quick cleanup. If you want to only lint the _changes_ to
-files, such as when running a build in CI, you can set the `${TARGET_BRANCH}`
-from your CI provider (in GitHub Actions, this would be {% raw %}`${{ github.event.pull_request.base.ref }}`{% endraw %}
+   It's excellent if you want to keep all files polished in CI.
 
-```bash
-pre-commit run --from-ref $(git merge-base ${TARGET_BRANCH}) --to-ref HEAD
-```
+2. If you want to only lint the _changes_ to files (for example, if you're
+   incrementally linting/formatting files rather than in One Big Commit), you
+   can set the `${TARGET_BRANCH}` from your CI provider (in GitHub Actions, this
+   would be {% raw %}`${{ github.event.pull_request.base.ref }}`{% endraw %}
+
+   ```bash
+   pre-commit run --from-ref $(git merge-base ${TARGET_BRANCH}) --to-ref HEAD
+   ```
 
 <!-- Interrupt Keep START -->
 
