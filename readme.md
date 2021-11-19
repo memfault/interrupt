@@ -19,7 +19,7 @@ See [Contributing](https://interrupt.memfault.com/contributing) for more informa
 
 ## Running
 
-### locally
+### Locally
 
 Follow the instructions in the [Jekyll quickstart guide](https://jekyllrb.com/docs/) to install Ruby and Jekyll and bundler.
 
@@ -33,7 +33,7 @@ $ bundle install
 $ bundle exec jekyll serve --drafts --incremental --livereload
 ```
 
-### with docker
+### Docker
 
 Follow the instructions in the [Install Docker Engine](https://docs.docker.com/engine/install/) according to your operating system.
 
