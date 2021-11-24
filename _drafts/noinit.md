@@ -83,7 +83,7 @@ section                size         addr
 
 Where:
 
-- `.text` contains **read-only** data, such as exectuable code or `const` data
+- `.text` contains **read-only** data, such as executable code or `const` data
 - `.data` contains _statically initialized_ **read-write** data (variables that
   have a non-zero initialization value)
 - `.bss` contains _zero-initialized_ **read-write** data
