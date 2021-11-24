@@ -7,7 +7,7 @@ image: img/noinit/cover.png # 1200x630
 
 Imagine there's an embedded system that needs to persist some state when the
 processor restarts (either intentionally or due to a [catastrophic error]({%
-post_url 2019-11-20-cortex-m-fault-debug %}).
+post_url 2019-11-20-cortex-m-fault-debug %})).
 
 This could be some external hardware information (what's the position of a motor
 or actuator?) or a method to communicate the reset to the user (display some
