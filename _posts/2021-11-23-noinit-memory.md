@@ -131,12 +131,20 @@ specified region, and _will not_ be initialized by our program's startup code!
 To place a symbol into a `.noinit` region, see the following C code examples:
 
 ```c
-// for GCC or Clang or derived toolchains, use the __attribute__
-__attribute__((section(".noinit")) int my_non_initialized_integer;
+// For GCC or Clang or derived toolchains, use the "section" __attribute__ .
+__attribute__((section(".noinit")) volatile int my_non_initialized_integer;
 
 // for IAR EWARM, it varies, but typically:
-__no_init int my_non_initialized_integer @ ".noinit";
+__no_init volatile int my_non_initialized_integer @ ".noinit";
 ```
+
+> Note that it may be necessary to mark the variables as "volatile" (as in the
+> example above) to ensure the compiler doesn't optimize away the "store"
+> instructions! when in doubt, check the generated assembly where the variable
+> is accessed (for example, by running gdb with the .elf, and using the
+> `disassemble /s <function>` command) If your system does require volatile, it
+> might be worth adding a comment explaining why, since it's usually quite rare
+> that volatile is needed.
 
 We can verify that our symbol ended up in the correct location by looking at the
 `.map` file (add `-Wl,-Map=app.map` to the linker flags):
@@ -195,12 +203,13 @@ is powered up. There's two variables located in the `.noinit` section:
 
 ```c
 // Two non-initialized variables, used to demonstrate keeping information
-// through chip reset.
+// through chip reset. Marked 'volatile' to ensure the compiler doesn't optimize
+// away the STR's to these addresses
 #define RESET_MAGIC 0xDEADBEEF
 // magic value used to check if the variables are initialized
-__attribute__((section(".noinit"), used)) uint32_t reset_count_magic;
+__attribute__((section(".noinit"))) volatile uint32_t reset_count_magic;
 // reset counter, incremented on every warm reset
-__attribute__((section(".noinit"), used)) uint32_t reset_count;
+__attribute__((section(".noinit"))) volatile uint32_t reset_count;
 ```
 
 When the chip is initially powered on, the contents of SRAM is unknown. To
@@ -267,7 +276,9 @@ containing the non-initialized variable:
 
 #include <stdint.h>
 
-__attribute__((section(".noinit"), used)) uint32_t mailbox[4];
+// marked 'volatile' to ensure the compiler doesn't optimize away the STR's to
+// these addresses
+__attribute__((section(".noinit"))) volatile uint32_t mailbox[4];
 ```
 
 The bootloader can set values into that variable, and the application can read
@@ -275,18 +286,19 @@ them:
 
 ```c
 // bootloader main.c:
-  extern uint32_t mailbox[4];
+  extern volatile uint32_t mailbox[4];
   mailbox[0] = get_random_number();
   printf("Set random value to mailbox: 0x%08" PRIx32 "\n", mailbox[0]);
 
 // app main.c:
-  extern uint32_t mailbox[4];
+  extern volatile uint32_t mailbox[4];
   printf("mailbox was: 0x%08" PRIx32 "\n", mailbox[0]);
 ```
 
 The application could also set values into the mailbox, then jump to the
 bootloader (eg via reset). This might be used to command the bootloader to
-reflash the application, eg in a "dual-bank" (aka A/B) partition scheme.
+reflash the application, for example in a "dual-bank" (aka A/B) partition
+scheme.
 
 You can see more details in the implementation here:
 
