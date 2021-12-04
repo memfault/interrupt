@@ -150,10 +150,10 @@ We can verify that our symbol ended up in the correct location by looking at the
 `.map` file (add `-Wl,-Map=app.map` to the linker flags):
 
 ```plaintext
-.noinit         0x000000002001b000       0x04
+.noinit         0x000000002001ff00       0x04
  *(*.noinit*)
- .noinit        0x000000002001b000       0x04 build/src/main.o
-                0x000000002001b000                my_non_initialized_integer
+ .noinit        0x000000002001ff00       0x04 build/src/main.o
+                0x000000002001ff00                my_non_initialized_integer
 ```
 
 We can also look at our binary with the `size` binutil and see the new section:
