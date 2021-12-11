@@ -41,8 +41,7 @@ Clone the repo, build and run:
 ```
 $ git clone https://github.com/memfault/interrupt.git
 $ cd interrupt
-$ ./build.sh
-$ ./interrupt-server.sh --run --build
+$ ./interrupt-server.sh
 ```
 
 ## Acknowledgements
