@@ -480,7 +480,7 @@ struct shared_data {
 };
 #pragma pack (pop)
 
-struct shared_data *sd = (struct shared_data *)_shared_data_stat;
+struct shared_data *sd = (struct shared_data *)&_shared_data_start;
 
 uint8_t shared_data_get_boot_count(void) {
   return sd->boot_count;

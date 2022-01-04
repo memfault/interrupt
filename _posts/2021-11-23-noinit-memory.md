@@ -198,6 +198,27 @@ be implemented and used
 
 ### No bootloader, just application
 
+(See [How to write a bootloader from scratch (The Interrupt): Message passing to
+catch reboot
+loops](https://interrupt.memfault.com/blog/how-to-write-a-bootloader-from-scratch#message-passing-to-catch-reboot-loops)
+for another example of this!)
+
+<!--
+Unfortunately, Jekyll's post_url tag can't handle Markdown anchors:
+
+https://jekyllrb.com/docs/liquid/tags/#link
+
+Otherwise we'd do something like this:
+
+{% raw %}
+{% post_url
+  2019-08-13-how-to-write-a-bootloader-from-scratch#message-passing-to-catch-reboot-loops
+  %}
+{% endraw %}
+
+C'est la vie.
+-->
+
 This system just has a single application that immediately starts when the chip
 is powered up. There's two variables located in the `.noinit` section:
 
