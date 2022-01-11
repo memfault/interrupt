@@ -124,7 +124,7 @@ If a target-side log level control is needed, a **trice** tool extension could e
 
 After debugging code in a file, there is [no need to remove or comment out `TRICE` macros](https://github.com/rokath/trice/blob/master/docs/TriceUserGuide.md#TargetsideTriceOn-Off). Write a `#define TRICE_OFF` just before the `#include "trice.h"` line and all `TRICE` macros in this file are ignored completely by the compiler, but not by the **trice** tool. In the case of re-constructing the [**T**rice **ID** **L**ist](https://github.com/rokath/trice/tree/master/til.json), these no code generating macros are regarded.
 
-```C
+```c
 //#define TRICE_OFF // uncomment this line to disable trice code generation in this file
 #include "trice.h"
 ```
