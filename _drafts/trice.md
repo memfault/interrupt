@@ -25,20 +25,16 @@ Embedded engineers need something as easy to use as `printf`, usable within inte
 
 *Trice* is a small, performant software tracer and logger and consists of these parts
 
-- [x] [trice.c](https://github.com/rokath/trice/tree/master/pkg/src/trice.c) containing the [less that 1KB](https://github.com/rokath/trice/tree/master/docs/TriceSpace.md) runtime code using [triceConfig.h](https://github.com/rokath/trice/tree/master/test/MDK-ARM_STM32G071RB/Core/Inc/triceConfig.h) as setup.
-- [x] [trice.h](https://github.com/rokath/trice/tree/master/pkg/src/trice.h) containing a **C** language macro `TRICE`, generating [tiny code](https://github.com/rokath/trice/tree/master/docs/TriceSpeed.md) for getting real-time `printf` comfort at "speed-of-light" for any microcontroller.
-  * [x] Example:
-      ```c
-      float x = 3.14159265/4;
-      TRICE( Id(12345), "info:π/4 is %f with the bit pattern %032b\n",
-          aFloat(x), x );
-      ```
-- [x] PC tool **trice**, executable on all [Go](https://golang.org) platforms:
-  * [ ] Android
-  * [x] Linux
-  * [ ] MacOS
-  * [x] Windows
-  * [ ] Interface options for log collectors are possible.
+- [trice.c](https://github.com/rokath/trice/tree/master/pkg/src/trice.c) contains the [less than 1KB](https://github.com/rokath/trice/tree/master/docs/TriceSpace.md) runtime code, which uses [triceConfig.h](https://github.com/rokath/trice/tree/master/test/MDK-ARM_STM32G071RB/Core/Inc/triceConfig.h) as setup.
+- [trice.h](https://github.com/rokath/trice/tree/master/pkg/src/trice.h) containing a **C** language macro `TRICE`, generating [tiny code](https://github.com/rokath/trice/tree/master/docs/TriceSpeed.md) for getting real-time `printf` comfort at "speed-of-light" for any microcontroller.
+    <br>Example:
+
+    ```c
+    float x = 3.14159265/4;
+    TRICE( Id(12345), "info:π/4 is %f with the bit pattern %032b\n",
+        aFloat(x), x );
+    ```
+- PC tool **trice**, executable on all [Go](https://golang.org) platforms.
 
 ![]({% img_url trice/life0.gif  %})
 
@@ -46,7 +42,7 @@ Embedded engineers need something as easy to use as `printf`, usable within inte
 
 ##  The History of *Trice*
 
-Developing firmware means dealing with interrupts and timing. How do you check if an interrupt occurred? You might increment a counter and display it in a background loop with some printf-like function. What about time measurement? Set a digital output to 1 and 0 and connect a measurement device like an oscilloscope or Salae.
+Developing firmware means dealing with interrupts and timing. How do you check if an interrupt occurred? You might increment a counter and display it in a background loop with some printf-like function. What about time measurement? Set a digital output to 1 and 0 and connect a measurement device like an oscilloscope or [Saleae](https://www.saleae.com/).
 
 I once was developing software for a real-time image processing device, and I had to hunt down what was causing a regression in processing time. A spare analog output with a video interrupt-synced oscilloscope gave me the needed information after I changed the analog output on several points in my algorithm. But this isn't ideal. I just want to deal with my programming tasks and not worry about connecting wires and extra instruments.
 
@@ -77,7 +73,7 @@ During runtime, the PC **trice** tool receives everything that happened in the l
 ---
   ![]({% img_url trice/triceCOBSBlockDiagram.svg  %})
 
-The **trice** tool runs in the background allowing the developer to focus on programming tasks. Once an ID is generated from a string, it keeps the same ID unless it is changed. If for example the format string gets changed into `"msg: %d Celcius\n"`, a new ID is inserted automatically and the reference list gets extended. Obsolete IDs are kept inside the [**T**rice **I**D **L**ist](https://github.com/rokath/trice/tree/master/til.json) (`til.json`) for compatibility with older firmware versions. It could be possible when merging code, an **ID** is used twice for different format strings. In that case, the **ID** inside the reference list wins and the additional source gets patched with a new **ID**. This may be unwanted, but patching is avoidable with proper [ID management](https://github.com/rokath/trice/tree/master/docs/TriceIDManagement.md). The reference list should be kept under source code control.
+The **trice** tool runs in the background allowing the developer to focus on programming tasks. Once an ID is generated from a string, it keeps the same ID unless the *Trice* is changed. If for example the format string gets changed into `"msg: %d Celcius\n"`, a new ID is inserted automatically and the reference list gets extended. Obsolete IDs are kept inside the [**T**rice **I**D **L**ist](https://github.com/rokath/trice/tree/master/til.json) (`til.json`) for compatibility with older firmware versions. It could be possible when merging code, an **ID** is used twice for different format strings. In that case, the **ID** inside the reference list wins and the additional source gets patched with a new **ID**. This may be unwanted, but patching is avoidable with proper [ID management](https://github.com/rokath/trice/tree/master/docs/TriceIDManagement.md). The reference list should be kept under source code control.
 
 ##  *Trice* features
 
@@ -126,7 +122,7 @@ If a target-side log level control is needed, a **trice** tool extension could e
 
 ###  Compile-time Disabling of `TRICE` Macros on File Level 
 
-After debugging code in a file, there is [no need to remove or comment out `TRICE` macros](https://github.com/rokath/trice/tree/master/docs/TriceConfigFile.md#target-side-trice-on-off). Write a `#define TRICE_OFF` just before the `#include "trice.h"` line and all `TRICE` macros in this file are ignored completely by the compiler, but not by the **trice** tool. In the case of re-constructing the [**T**rice **ID** **L**ist](https://github.com/rokath/trice/tree/master/til.json), these no code generating macros are regarded.
+After debugging code in a file, there is [no need to remove or comment out `TRICE` macros](https://github.com/rokath/trice/blob/master/docs/TriceUserGuide.md#TargetsideTriceOn-Off). Write a `#define TRICE_OFF` just before the `#include "trice.h"` line and all `TRICE` macros in this file are ignored completely by the compiler, but not by the **trice** tool. In the case of re-constructing the [**T**rice **ID** **L**ist](https://github.com/rokath/trice/tree/master/til.json), these no code generating macros are regarded.
 
 ```C
 //#define TRICE_OFF // uncomment this line to disable trice code generation in this file
@@ -137,20 +133,13 @@ After debugging code in a file, there is [no need to remove or comment out `TRIC
 
 Enable target timestamps with a variable you want inside [triceConfig.h](https://github.com/rokath/trice/tree/master/test/MDK-ARM_STM32G071RB/Core/Inc/triceConfig.h). This adds a 32-bit value to each *Trice* sequence, which can track the system clock, a millisecond timer, or another event counter. The **trice** tool will automatically recognize and display them in a default mode you can control. If several `TRICE` macros form a single line, the **trice** tool only displays the target timestamp of the first `TRICE` macro.
 
-Embedded devices often lack a real-time clock and in some scenarios can have uptimes of weeks. Therefore the **trice** tool precedes each *Trice* line with a PC timestamp, if not disabled. This is the *Trice* received timestamp on the PC, which can be some milliseconds later than the target's sent timestamp.
+Embedded devices often lack a real-time clock and in some scenarios can have uptimes of weeks. Therefore the **trice** tool precedes each *Trice* line with a PC timestamp, if not disabled. This is the *Trice* received timestamp on the PC, which can be some milliseconds later than the target's event timestamp.
 
 ###  Target Source Code Location 
 
-Some developers like to see the `filename.c` and `line` in front of each log line for quick source location. Enable that inside [triceConfig.h](https://github.com/rokath/trice/tree/master/test/MDK-ARM_STM32G071RB/Core/Inc/triceConfig.h). This adds a 32-bit value to the *Trice* sequence containing a 16-bit file ID and a 16-bit line number. The file ID is generated automatically by inserting `#define TRICE_FILE Id(nnnnn)` in each source.c file containing a `#include "trice.h"` line. 
+Some developers like to see the `filename.c` and `line` in front of each log line for quick source location. Enable this within [triceConfig.h](https://github.com/rokath/trice/tree/master/test/MDK-ARM_STM32G071RB/Core/Inc/triceConfig.h). This adds a 32-bit value to the *Trice* sequence containing a 16-bit file ID and a 16-bit line number. The *Trice* tool will automatically insert `#define TRICE_FILE Id(nnnnn)` with a generated file ID, and that's it!
 
-```C
-#include "trice.h"
-#define TRICE_FILE Id(52023)
-```
-
-Because software is bound to change, it could happen you get obsolete information this way. Therefore the **trice** tool log option `-showID` exists to display the *Trice* ID in front of each log line what gives a more reliable way for event localization in some cases. Also, you can get it for free because no target code is needed for that. 
-
-###   Multiple Target Devices in One Log Stram
+###   Multiple Target Devices in One Log Stream
 
 Several **trice** tool instances can run in parallel or on different PCs. Each **trice** tool instance receives *Trices* from an embedded device. Instead of displaying the log lines, the **trice** tool instances can transmit them over TCP/IP (`trice l -p COMx -ds`) to a **trice** tool instance acting as a display server (`trice ds`). The display server can interleave these log lines in one output. For each embedded device a separate *Trice* line prefix and suffix is definable. This allows comparable time measurements in distributed systems. BTW: The *Trice* message integration could also be done directly with the COBS packets.
 
