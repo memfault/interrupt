@@ -110,3 +110,8 @@ nickmiller:
     linkedin: https://www.linkedin.com/in/nicholas-miller-666a37b7/
     github: ncmiller
     image: /img/author/nickmiller.png
+thomas:
+    name:  Thomas Höhenleitner
+    blurb: has developed hardware devices and moved to embedded software development.
+    github: rokath
+    image: /img/author/thomas.jpg
