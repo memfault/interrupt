@@ -60,6 +60,8 @@ Unlike a scope, where addon decoder packages need to be purchased, protocol anal
 
 The Saleae device itself is, quite literally, a black box. (Well, unless you get a pink one, like I did.) UI and control happens, instead, through a delightful, easy to use GUI. Logic, Saleae's desktop software, makes it a breeze to navigate logic captures, apply protocol analyzers, and find regions of interest. Scrolling, zooming, and measuring time between edges is delightful and simple. Surprisingly, this is still true with a touch screen laptop. It was a joy to use a Saleae with my touchscreen-enabled daily driver from a few jobs ago. A big rewrite of Saleae's firmware and desktop application over the last few years has made the system real-time capable, too!
 
+Salea also has handy scripting utilities baked into the device. [A Socket API with Python and C# bindings](https://support.saleae.com/saleae-api-and-sdk/socket-api) allows you call all sorts of functionality from your favorite proramming environment. The Python wrapper even comes with [handy command line functionality.](https://github.com/saleae/python-saleae-cli)
+
 ### Illogical
 The Saleae is a great tool, but it isn't perfect. It's only tolerant of low voltage IO signals. Anything between 1.2V and 5V, it can handle with no problems. Use it on higher voltage signals, and you're gonna have a bad time. It's also limited to doing relatively low bandwidth digital signals - it caps out at 500MS/s. This is more than adequate for most routine firmware protocols, but for higher speed signals like RGMII, USB3.0, or PCIe, you're going to need a more specialized piece of equipment. 
 
