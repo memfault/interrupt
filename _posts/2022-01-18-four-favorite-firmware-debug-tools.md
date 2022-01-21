@@ -1,8 +1,7 @@
 ---
 title: Four Favorite Firmware Debug Tools
-description: Best practices on embedded logging and tracing and an introduction to the open-source library Trice
+description: Find firmware flaws faster with these top notch tools
 author: nash
-image: /img/trice/cover.png
 ---
 
 As much as I enjoy writing firmware, I am, at heart, a hardware engineer. I love hunting for minutia in chip datasheets. I love fiddling with eval boards, tacking on wires, and reworking nets together. I love flipping through _The Art of Electronics_, finding a new circuit, and piecing through its operation. Which is why, when invited to write for Interrupt, I jumped at the chance to write about a hardware related topic that’s near and dear to my heart: _debug tools_. 
@@ -18,6 +17,8 @@ Firmware is an essential part of every modern electronic system. Try as we might
 ## Fluke Multimeter
 
 A multimeter is an essential piece of embedded debug equipment. No multimeter is quite as well known as the Fluke handheld 100 series of meters. This is partly by design - their iconic yellow and gray look is trademarked. ([For good reason, too!](https://www.sparkfun.com/news/1430)) I particularly love my Fluke 117 handheld meter. It's a handy tool for all sorts of nuts-and-bolts electrical measurements: current, voltage, DC, AC, autoranging, resistance, capacitance, diode IV ratings, beep for continuity, and a whole host of other features that I can't think of unless I go dig the manual out of a drawer. What's not to love? 
+
+![The closest you'll ever get to an "action shot" with a Fluke meter]({% img_url debug-tools/fluke.jpg  %})
 
 ### The Good Parts
 A multimeter is a great way to answer all sorts of table stakes questions about your embedded system - for example:
@@ -39,7 +40,7 @@ Any decent multimeter is capable of this. However, the Fluke models include a we
 * probe clips on the back side of the casing, and a handy soft carrying case
 * features for magnetic hanging loops (which I've never used but look thrillingly cool [if you need to hang your meter from a ferromagnetic rail](https://www.fluke.com/en-us/product/accessories/magnetic-hangers-utility-tools/tpak))
 
-Its stuff like this that really elevates Fluke above a generic DMM from Amazon. 
+It's details like this that really elevates Fluke above a generic DMM from Amazon. 
 
 ### The Limitations
 While extremely versatile, a multimeter can't do everything. They are only designed for measuring relatively static signals. You can only get an accurate voltage reading with a multimeter when the target is at a steady state. A toggling GPIO, for example,  will show a voltage reading on your meter as a function of its duty cycle. This is because most multimeters are built around a type of [integrating data converter](https://en.wikipedia.org/wiki/Integrating_ADC) called a dual-slope ADC. Dual slope ADCs have several key advantages: they are very robust to component tolerances, easy to auto-zero/auto-calibrate, and consume very little power. What they trade off to do this is bandwidth. Dual slope ADCs are not fast. A relatively pedestrian SAR ADC can take a million samples per second. In contrast, a slope-integrating converter generally cannot exceed a hundred samples per second. This slower speed comes with its own advantages, however: better noise performance, and better notch rejection of unwanted frequencies - particularly those at 50 Hz and 60Hz. If your integrating converter itch isn't well scratched yet, Maxim Integrated has [an excellent tech note](https://www.maximintegrated.com/en/design/technical-documents/tutorials/1/1041.html) describing dual slope ADC theory of operation in great detail. 
@@ -66,7 +67,7 @@ Unlike a scope, where addon decoder packages need to be purchased, protocol anal
 
 The Saleae device itself is, quite literally, a black box. (Well, unless you get a pink one, like I did.) UI and control happens, instead, through a delightful, easy to use GUI. Logic, Saleae's desktop software, makes it a breeze to navigate logic captures, apply protocol analyzers, and find regions of interest. Scrolling, zooming, and measuring time between edges is delightful and simple. Surprisingly, this is still true with a touch screen laptop. It was a joy to use a Saleae with my touchscreen-enabled daily driver from a few jobs ago. A big rewrite of Saleae's firmware and desktop application over the last few years has made the system real-time capable, too!
 
-**TODO: add picture/GIF of SPI capture**
+![SPI Capture in Logic 2.0]({% img_url debug-tools/saleae-capture.gif  %})
 
 Saleae also has handy scripting utilities baked into the device. [A Socket API with Python and C# bindings](https://support.saleae.com/saleae-api-and-sdk/socket-api) allows you call all sorts of functionality from your favorite proramming environment. The Python wrapper even comes with [handy command line functionality.](https://github.com/saleae/python-saleae-cli)
 
@@ -80,7 +81,11 @@ Additionally - being a logic analyzer, you need to take care that you're not acc
 * Get rid of the grabber clip if you can. Solder a length of 0.1" header to your target net, and plug the test lead directly to the header.
 * Even better: ask your board designer to drop a set of 0.1" headers onto the board. SMT is preferable, if you have the space. An SMT header causes less interruption of the ground plane, and reduces the chance of causing signal integrity problems due to your debug probe connection. 
 
-**TODO: add picture of Saleae connected to bFunc - annotate steps taken**
+![Saleae Logic Pro 16]({% img_url debug-tools/saleae-connected.png  %})
+
+The picture above shows my Logic Pro 16 attached to the SPI bus of a little open source [signal generator board](https://github.com/Cushychicken/bfunc) I designed in early 2020. It demonstrates the steps you can take to get optimum performance when sampling speedy digital signals with your Saleae.
+
+To me, Saleae is the best of breed in portable logic analyzers. They certainly aren't the only device of their kind, though! The Digilent Analog Discovery 2, Ian Lesnet's Bus Pirate, and Great Scott Gadgets's GreatFET One can all do similar things to the Saleae. These devices also have the advantage of being a lot more affordable than the Logic series, which starts at $479 USD for the Logic 8. 
 
 ## Segger J-Link
 
