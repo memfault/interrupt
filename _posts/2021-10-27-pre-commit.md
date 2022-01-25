@@ -73,8 +73,8 @@ generally lighter (in terms of setup and computation) compared to full static
 analysis. Typically these tools are designed to detect, for example:
 
 - some simple bug categories (similar to extended compiler warnings)
-- possible stylistic errors ([an
-  example](https://clang.llvm.org/extra/clang-tidy/checks/bugprone-suspicious-missing-comma.html))
+- possible stylistic errors
+  ([an example](https://clang.llvm.org/extra/clang-tidy/checks/bugprone-suspicious-missing-comma.html))
 - security-related checks (eg. using `sprintf` instead of `snprintf`)
 
 These types of tools are _very_ common in other software engineering domains
@@ -109,8 +109,8 @@ I think it's generally preferable to have a consistent style throughout a
 codebase- automated styling makes it easy!
 
 Most editors/IDE's will support a way to run styling (eg VSCode has the
-`editor.formatOnSave` option, including supporting formatting [only modified
-lines](https://code.visualstudio.com/updates/v1_49#_only-format-modified-text)).
+`editor.formatOnSave` option, including supporting formatting
+[only modified lines](https://code.visualstudio.com/updates/v1_49#_only-format-modified-text)).
 
 ### 3. 🐛 Catch bugs or typos
 
@@ -151,8 +151,8 @@ pre-commit stage, some examples:
   to customize)
 
 These all do the job, but have some complexities in setup and configuration that
-make them a little difficult to install and use ☹️. The whole point is to _reduce_
-friction, after all!
+make them a little difficult to install and use ☹️. The whole point is to
+_reduce_ friction, after all!
 
 ### The `pre-commit` tool
 
@@ -225,7 +225,7 @@ pre-commit run --all-files
 ```
 
 See `pre-commit --help` for information on running the tool. A useful command is
-`pre-commit autoupdate`, which will update all the checks to the latest tag.
+`pre-commit autoupdate`, which will update all the checks to the latest tag!
 
 Example run:
 
@@ -270,7 +270,7 @@ exclude: "^\
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.1.0
     hooks:
       - id: check-added-large-files # prevents giant files from being committed.
       - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
@@ -284,18 +284,18 @@ repos:
       - id: trailing-whitespace # trims trailing whitespace.
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.4.1
+    rev: v2.5.1
     hooks:
       - id: prettier
         files: \.(js|ts|jsx|tsx|css|less|html|json|markdown|md|yaml|yml)$
 
   - repo: https://github.com/psf/black
-    rev: 21.9b0
+    rev: 21.12b0
     hooks:
       - id: black
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.9.3
+    rev: 5.10.1
     hooks:
       - id: isort
         args: [--profile=black]
@@ -343,8 +343,8 @@ find it does a nice job on Markdown, Javascript, JSON, and YAML files in
 particular.
 
 Installing `prettier` can be a bit of a pain if you don't have `node` etc
-already available; `pre-commit` manages the tool itself here, which is ✨ amazing
-✨!
+already available; `pre-commit` manages the tool itself here, which is ✨
+amazing ✨!
 
 #### Python checks
 
@@ -356,7 +356,7 @@ Another very useful check is `pylint`:
 
 ```yaml
 - repo: https://github.com/PyCQA/pylint
-  rev: v2.11.1
+  rev: v2.12.2
   hooks:
     - id: pylint
 ```
@@ -383,15 +383,32 @@ Language: Cpp
 ...
 ```
 
-Which is just selecting the Google C++ style provided by clang-format.
+That config is just selecting the Google C++ style built in to `clang-format`.
 
 The hook provides its own copy of the `clang-format` binary, which means there's
-no setup outside of `pre-commit`! If you're managing your own `clang-format`
-tools for your repo, you could instead call `clang-format` as a `repo: local` +
-`language: system` hook.
+no required setup outside of `pre-commit`! If you're managing your own
+`clang-format` tools for your repo, you could instead call `clang-format` as a
+`repo: local` + `language: system` hook.
 
-Note that there's also a community-provided `clang-format-diff`, which uses the
-`git-clang-format` tool to only apply formatting to lines modified in the
+To configure `clang-format`, either add a `.clang-format` file to the repo (the
+[default](https://github.com/pre-commit/mirrors-clang-format/blob/ca42fca/.pre-commit-hooks.yaml#L6)),
+or specify command-line options in the hook config (eg `args: ["-style=Google",
+"-i"]`).
+
+Note that `clang-format` has a lot of configuration options. Recommendations for
+how to tune a config is outside the scope of this article, but here's some
+starting guidance:
+
+- documentation: <https://clang.llvm.org/docs/ClangFormatStyleOptions.html>
+- interactive configurator: <https://zed0.co.uk/clang-format-configurator/>
+- generate a stub config with ex:
+  `clang-format --style=Google --dump-config > .clang-format` (this will dump
+  out _all_ the options set by that config. Optionally, the `BasedOnStyle:`
+  option will set all of them to those values.
+
+There's also a community-provided
+[`clang-format-diff`](https://github.com/jlebar/pre-commit-hooks), which uses
+the `git-clang-format` tool to only apply formatting to lines modified in the
 current patch (if you're not ready to run a format pass across your entire
 repo).
 
@@ -437,7 +454,7 @@ To drive steps 2 + 3 from `pre-commit`, here's an example
       pass_filenames: false
 
 - repo: https://github.com/pocc/pre-commit-hooks
-  rev: v1.3.4
+  rev: v1.3.5
   hooks:
     - id: clang-tidy
       args: [-checks=clang-diagnostic-return-type]
@@ -497,7 +514,7 @@ config files that can save some churn when testing new actions:
 
 ```yaml
 - repo: https://github.com/sirosen/check-jsonschema
-  rev: 0.5.1
+  rev: 0.10.0
   hooks:
     - id: check-github-actions
     - id: check-github-workflows
@@ -509,7 +526,7 @@ Some useful and quality-of-life checks for shell scripts:
 
 ```yaml
 - repo: https://github.com/shellcheck-py/shellcheck-py
-  rev: v0.7.2.1
+  rev: v0.8.0.3
   hooks:
     - id: shellcheck
 ```
@@ -520,7 +537,7 @@ If you're using Python type annotations, you can have mypy run in `pre-commit`:
 
 ```yaml
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: "v0.910-1"
+  rev: "v0.931"
   hooks:
     - id: mypy
 ```
@@ -568,5 +585,5 @@ Here's a couple of examples of how `pre-commit` could be used in CI:
 <!-- prettier-ignore-start -->
 
 - [Yelp announcement of
-pre-commit](https://engineeringblog.yelp.com/2014/08/announcing-pre-commit-yelps-multi-language-package-manager-for-pre-commit-hooks.html)
+  pre-commit](https://engineeringblog.yelp.com/2014/08/announcing-pre-commit-yelps-multi-language-package-manager-for-pre-commit-hooks.html)
 <!-- prettier-ignore-end -->
