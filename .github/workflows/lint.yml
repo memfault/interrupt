@@ -1,0 +1,60 @@
+name: Prettier
+
+on:
+  # Only run on pull requests, to avoid surprising commits when pushing to the
+  # main branch
+  pull_request:
+    branches: [master]
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+
+      - id: files
+        uses: Ana06/get-changed-files@v2.1.0
+        with:
+          filter: |
+            *.js
+            *.md
+            *.mdx
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v3.1
+        with:
+          # Only run on files changed from the target commit
+          prettier_options: --write ${{ steps.files.outputs.all }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # For pull requests generated from a fork, we run the prettier linter
+  # but leave it up to the user to fix locally since we would need extra
+  # permissions to be able to push a auto-fix commit to the forked repo
+  prettier-fork:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name != github.repository
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - id: files
+        uses: Ana06/get-changed-files@v2.1.0
+        with:
+          filter: |
+            *.js
+            *.md
+            *.mdx
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v3.1
+        with:
+          prettier_options: --write ${{ steps.files.outputs.all }}
+          dry: true
