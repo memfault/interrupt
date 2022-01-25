@@ -390,10 +390,9 @@ no setup outside of `pre-commit`! If you're managing your own `clang-format`
 tools for your repo, you could instead call `clang-format` as a `repo: local` +
 `language: system` hook.
 
-Note that there's also a community-provided `clang-format-diff`, which uses the
-`git-clang-format` tool to only apply formatting to lines modified in the
-current patch (if you're not ready to run a format pass across your entire
-repo).
+Note that there's also a community-provided `clang-format-diff`, which uses the `git-clang-format`
+tool to only apply formatting to lines modified in the current patch (if you're not ready to run a
+format pass across your entire repo).
 
 > Extra note: if you do run a whitespace or formatting pass over the entire
 > repository, I recommend setting up a `.git-blame-ignore-revs` file, see here
