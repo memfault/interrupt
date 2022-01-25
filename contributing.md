@@ -50,6 +50,19 @@ int foo(void) {
 ```
 {% endhighlight %}
 
+It's also recommended to use [prettier](https://prettier.io/) to format post
+content. You can either run it locally via `npm` or `npx`, or use the only
+formatter:
+
+[https://prettier.io/playground (with markdown + prose-wrap=always options
+set)](https://prettier.io/playground/#N4Igxg9gdgLgprEAuEIA0IIAcYEtoDOyoAhgE5kQDuACuQkSiQDZUkCeRGARmSWAGs4MAMokAtnAAyuKHGQAzFgTg8+g4SKz9ZAc2QwyAV1Ug447nAAmV61JJRdRkrrgAxCGXEkYeR8hASIxgIdBAACxhxZgB1cNx4Am0wOBEGBNwANwT2ALACLhBZFTIYGj5db0VlUwArAgAPET1mOABFIwh4auYVDG0yEoDvMgEraigwrDJZGBjcKxhw5AAOAAZ+yhUYviwAljZOMIBHTvhy7EZAggBaOWtrMLI4U9xn8pcqpCVe0xVxXAGYx-FrtM7yb41DAwEjceaLZZIABM0L4uGYegAwhBxF8zAQAKxhIwqAAqsMYPz6IEyJgAklBbLARGAZjgAIKMkQwditHoqAC+AqAA)
+
+To disable this entirely, add one of the strings to the commit message:
+
+<https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/>
+
+For example, `[ci skip]`.
+
 ## Byline
 
 Please submit your bio & photo in the same pull request as your first post.
