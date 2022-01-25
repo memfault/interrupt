@@ -1,5 +1,5 @@
 ---
-title: Four Favorite Firmware Debug Tools
+title: Nash's Four Favorite Firmware Debug Tools
 description: Find firmware flaws faster with these top notch tools
 author: nash
 ---
