@@ -217,7 +217,7 @@ with your J-Link:
 - GDB server interface
 - Network interfaces, to allow for JTAG access behind an Ethernet switch
 - Factory programmer for speed, verification
-- Raw API to write your own, if one of these
+- Raw API to write your own
 
 One of the areas in which Segger really shines is their documentation. Segger
 distinguishes itself with high quality user manuals and application notes.
