@@ -14,9 +14,9 @@ January.
 We hope you enjoy these links, and we look forward to hearing what you've been
 reading in the comments or [on the Interrupt Slack](https://interrupt-slack.herokuapp.com/).
 
-## RTL Jobs (https://www.rtljobs.com)
+## RTL Jobs
 
-A new job site for people who specialize in FPGA and RTL design created by [Nash Reilly](https://interrupt.memfault.com/authors/nash/). Follow the job site on Twitter at [@RTLjobs](https://twitter.com/RTLjobs).
+[RTL Jobs](https://www.rtljobs.com) is a new job site for people who specialize in FPGA and RTL design created by [Nash Reilly](https://interrupt.memfault.com/authors/nash/). Follow the job site on Twitter at [@RTLjobs](https://twitter.com/RTLjobs).
 
 ## Articles & Learning
 
