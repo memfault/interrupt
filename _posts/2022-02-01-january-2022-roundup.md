@@ -42,7 +42,7 @@ A run through of the embedded controller on a modern laptop (in case the link di
 Huge effort to reduce the include graph for Linux kernel headers (2000+ commits!), has an impressive improvement to build times. - Noah
 
 - [**A Strategy for Reporting Version Information from Bootloaders - Embedded Artistry**](https://embeddedartistry.com/blog/2022/01/20/a-strategy-for-reporting-version-information-from-bootloaders/) by Phillip Johnston<br>
-Outline of a strategy Embedded Artistry uses to access versions in their software. 
+Outline of a strategy Embedded Artistry uses to access versions in their software.
 
 - [**Debugging an Arduino project with GDB on Classic ATtiny and Small ATmega MCUs - CodeProject**](https://www.codeproject.com/Articles/5321801/Debugging-an-Arduino-project-with-GDB-on-classic-A) by Bernhard Nebel<br>
 A tutorial for people who finally want to debug their Arduino projects that run on AVR MCUs using the GNU project debugger GDB. - Colleen
@@ -68,8 +68,8 @@ An interesting look at how LLVM compilation time and generated code performance 
 - [**VolksEEG: Rust Development On Adafruit nRF52840 Feather Express - EmbeddedRelated**](https://www.embeddedrelated.com/showarticle/1437.php) by Steve Branam<br>
 A great play-by-play on getting an nRF52840 set up to develop and debug Rust with all the fixins, such as VSCode, Docker, and serial output. - Tyler
 
-- [**Hacking a VW Golf Power Steering ECU - Part 1**](https://blog.willemmelching.nl/carhacking/2022/01/02/vw-part1/) by Steve Branam<br>
-An in-depth firmware reverse engineering project on the VW power steering ECU to enable self-driving on older VW models. - François 
+- [**Hacking a VW Golf Power Steering ECU - Part 1**](https://blog.willemmelching.nl/carhacking/2022/01/02/vw-part1/) by Willem Melching<br>
+An in-depth firmware reverse engineering project on the VW power steering ECU to enable self-driving on older VW models. - François
 
 - [**Multi-threaded Singleton Access in embedded C++ - Stratify Labs**](https://blog.stratifylabs.dev/device/2022-01-27-Multithread-Singleton-Access-in-embedded-cpp-copy/)<br>
 Using C++, you can automatically and cleanly control access to resources in a multi-threaded environment using singletons. We've all been in those C codebases where mutex unlocks and locks were forgotten at times. - Tyler
@@ -86,7 +86,7 @@ Combustion Inc., a company building a BLE-based multi-point thermometer, open-so
 Interesting tool for analyzing data packets or fragments at a very low level, both interactivity through a GUI or via a command line interface. Supports custom plugins/filters for enhancing decode. - Noah
 
 - [**Aircoookie/WLED: Control WS2812B and many more types of digital RGB LEDs with an ESP8266 or ESP32 over WiFi!**](https://github.com/Aircoookie/WLED)<br>
-Nicely featured LED strip controller using ESP8266/ESP32. I particularly enjoyed this part of the quickstart guide 😀 - Noah.
+Nicely featured LED strip controller using ESP8266/ESP32. I particularly enjoyed this part of the quickstart guide _"If everything worked the first thirty LEDs will light up in bright orange to stimulate courage, friendliness and success!"_ 😀 - Noah.
 
 - [**Ovyl/tabouli: TUI for sending CLI commands to your firmware and devices**](https://github.com/Ovyl/tabouli)<br>
 They made a TUI specifically designed for interfacing with a serial port on an embedded device. It stores command history, runs a suite of test automation commands, and more! Written in Go.
