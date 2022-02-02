@@ -1,5 +1,5 @@
 ---
-title: "What we've been reading in November"
+title: "What we've been reading in November (2019)"
 author: francois
 tags: [roundup]
 ---
