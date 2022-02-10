@@ -42,6 +42,9 @@ By taking defensive and offensive programming to the extreme, you'll be able to
 track down those 1 in 1,000-hour bugs, efficiently root cause them, and keep
 your end-users happy. And, as a bonus, keep your sanity.
 
+> To learn more about offensive and defensive programming best practices and ask 
+> me questions live, register for our [webinar on Febraury 24, 2022](https://hubs.la/Q013SXmN0).
+
 {% include newsletter.html %}
 
 {% include toc.html %}
@@ -576,6 +579,8 @@ you'll be able to root cause issues more quickly than before.
 I'd love to hear about any other strategies that you all take to surface bugs
 that are hidden in your firmware! Come find me in the
 [Interrupt Slack](https://interrupt-slack.herokuapp.com/).
+
+> Interested in learning more offensive and defensive programming best practices? Register for our [webinar on Febraury 24, 2022](https://hubs.la/Q013SXmN0).
 
 <!-- Interrupt Keep START -->
 
