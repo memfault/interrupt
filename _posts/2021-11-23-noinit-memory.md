@@ -132,7 +132,7 @@ To place a symbol into a `.noinit` region, see the following C code examples:
 
 ```c
 // For GCC or Clang or derived toolchains, use the "section" __attribute__ .
-__attribute__((section(".noinit")) volatile int my_non_initialized_integer;
+__attribute__((section(".noinit"))) volatile int my_non_initialized_integer;
 
 // for IAR EWARM, it varies, but typically:
 __no_init volatile int my_non_initialized_integer @ ".noinit";
