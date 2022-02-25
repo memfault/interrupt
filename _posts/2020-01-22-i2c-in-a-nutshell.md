@@ -199,7 +199,7 @@ This can mean one of several things:
 2. A NACK after write data means the slave either did not recognize the command, or
    that it cannot accept any more data
 3. A NACK during read data means the master does not want the slave to send any
-   moe bytes.
+   more bytes.
 
 Below is an example of a full I2C write command, with the ACK bits included. It
 writes `0x9C` to the slave at address `0x66`.
