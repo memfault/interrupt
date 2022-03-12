@@ -23,8 +23,8 @@ language!
 
 ## C Structure Padding
 
-Recently I was reading this [_excellent_
-post](https://thephd.dev/ever-closer-c23-improvements#consistent-warningless-and-intuitive-initialization-with--)
+Recently I was reading this
+[_excellent_ post](https://thephd.dev/ever-closer-c23-improvements#consistent-warningless-and-intuitive-initialization-with--)
 on some of the upcoming features in C23, and it inspired me to do a little
 exploration and documentation around the current state of initialization of
 padding in structures in the C-language.
@@ -141,8 +141,8 @@ correct thing, but you might run into unexpected cases when type aliasing (this
 is undefined behavior anyway, and there be dragons here 🐉!).
 
 **Bitfields** follow similar rules when it comes to packing, with the added
-complexity where the type holding the bitfield is undefined, with this
-somewhat horrifying language in the C11 specification §6.7.2.1/11:
+complexity where the type holding the bitfield is undefined, with this somewhat
+horrifying language in the C11 specification §6.7.2.1/11:
 
 > An implementation may allocate any addressable storage unit large enough to
 > hold a bit-field. If enough space remains, a bit-field that immediately
@@ -153,6 +153,19 @@ somewhat horrifying language in the C11 specification §6.7.2.1/11:
 > (high-order to low-order or low-order to high-order) is
 > implementation-defined. The alignment of the addressable storage unit is
 > unspecified.
+
+As Mitch Johnson over at theinterrupt.slack.com pointed out, there are other
+subtleties to consider with bitfields that can have architecture-specific
+implications:
+
+> ... some architectures (ARM in particular) require compilers to represent
+> volatile bitfield layout and accesses in a well-defined fashion in order to
+> comply with their procedure call standard. This allows use of volatile
+> bitfields to properly represent access to memory-mapped peripherals.
+> https://developer.arm.com/documentation/ihi0042/j/?lang=en This can still be
+> fraught with danger. GCC's had a number of bugs around volatile bitfield
+> usage, and ARM's own clang derivative has had varyingly non-compliant behavior
+> over time: https://developer.arm.com/documentation/ka004594/latest
 
 ## When does this matter?
 
@@ -429,17 +442,38 @@ the data structures in question.
 
 _Note however that packed structs can be safely `memcmp`'d, see below_
 
-Another approach is to avoid structure holes entirely! The `pahole` tool could
-be used to detect any structures with padding bits (for example, as a linter
-pass on the generated binary!), and they can be corrected by either reordering
-structure members to eliminate padding, or adding `uint8_t unused_[n]` fields to
-explicitly address the holes. See also [The Lost Art of Structure
-Packing](http://www.catb.org/esr/structure-packing/) linked previously.
+Another approach is to avoid structure holes entirely!
+
+For example, you can use the `-Wpadded` compiler warning in
+[GCC](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wpadded) and
+[Clang](https://clang.llvm.org/docs/DiagnosticsReference.html#wpadded) to detect
+padding, and with `-Werror` or `-Werror=padded`, you can trigger compilation
+errors if padding is detected. To address the warnings, you can add placeholders
+to fill unused space:
+
+```c
+struct foo {
+  uint32_t i;
+  uint8_t b;
+  uint8_t padding_[3];
+};
+```
+
+(Note that GCC will emit a warning on _declaration_, where Clang will only warn
+when the violating struct is actually used in a definition. Similar, but subtly
+different as usual 🌈).
+
+Alternatively, the `pahole` tool could be used to detect any structures with
+padding bits (for example, as a linter pass on the generated binary), and they
+can be corrected by either reordering structure members to eliminate padding, or
+adding `uint8_t padding_[n]` fields to explicitly address the holes. See also
+[The Lost Art of Structure Packing](http://www.catb.org/esr/structure-packing/)
+linked previously.
 
 It's generally preferable to strive for padding to only be present at end of
 struct.
 
-### Use `memset` to zero-initialized padding bits
+### Use `memset` to zero-initialize padding bits
 
 `memset` reliably sets the entire memory space of an object, including the
 padding bits.
@@ -462,19 +496,20 @@ This will eliminate structure padding, but there can be considerable compute
 overhead (and with code doing unusual type aliasing, you may find yourself in an
 Unaligned Access fault 😓).
 
-On the plus side, the structure fields should have easily predictable offsets
-in memory, for example if it needs to be serialized out.
+On the plus side, the structure fields should have easily predictable offsets in
+memory, for example if it needs to be serialized out.
 
 Additionally, packed structs can be safely `memcmp`'d, since there are no
 "ghost" bits hiding in between explicitly allocated members 👻
 
 ## The Future 🌞
 
-I gave this away [right at the start of the
-article](https://thephd.dev/ever-closer-c23-improvements#consistent-warningless-and-intuitive-initialization-with--),
+I gave this away
+[right at the start of the article](https://thephd.dev/ever-closer-c23-improvements#consistent-warningless-and-intuitive-initialization-with--),
 but somewhat unusually for C, there is change coming on this topic!
 
-The proposed change for C23 is that the `= {}` (functionally equivalent to `= { 0 }` on modern compilers) _will also initialize padding bits to 0_ 😎.
+The proposed change for C23 is that the `= {}` (functionally equivalent to
+`= { 0 }` on modern compilers) _will also initialize padding bits to 0_ 😎.
 
 You can see the gory details in the following links:
 
@@ -498,11 +533,15 @@ backwards-compatibility and just makes things better!
 
 <!-- prettier-ignore-start -->
 
-- <https://web.archive.org/web/20181230041359if_/http://www.open-std.org/jtc1/sc22/wg14/www/abq/c17_updated_proposed_fdis.pdf> C17 specification
-- <https://thephd.dev/ever-closer-c23-improvements> Roundup of some upcoming C23 improvements
+- <https://web.archive.org/web/20181230041359if_/http://www.open-std.org/jtc1/sc22/wg14/www/abq/c17_updated_proposed_fdis.pdf>
+  C17 specification
+- <https://thephd.dev/ever-closer-c23-improvements> Roundup of some upcoming C23
+  improvements
 - <https://linux.die.net/man/1/pahole> The `pahole` tool
 - <http://www.catb.org/esr/structure-packing/> The Lost Art of Structure Packing
 - <https://lwn.net/Articles/417989/> Structure holes and information leaks
-- <https://wiki.sei.cmu.edu/confluence/display/c/DCL39-C.+Avoid+information+leakage+when+passing+a+structure+across+a+trust+boundary> Avoid information leakage when passing a structure across a trust boundary
-- <https://stackoverflow.com/a/37642061> Discussion on zero-initializing C structure padding
+- <https://wiki.sei.cmu.edu/confluence/display/c/DCL39-C.+Avoid+information+leakage+when+passing+a+structure+across+a+trust+boundary>
+  Avoid information leakage when passing a structure across a trust boundary
+- <https://stackoverflow.com/a/37642061> Discussion on zero-initializing C
+structure padding
 <!-- prettier-ignore-end -->
