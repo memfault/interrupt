@@ -165,6 +165,10 @@ dev boards.
 
 ![](/img/debug-adapter-rundown/pico.png){:height="250px"}
 
+The relatively new Raspberry Pi RP2040 chip (and the "Pico" board) can be used
+as a generic SWD debugger. Support has been upstreamed into OpenOCD (though you
+might need to build it from source, it was added in March 2021).
+
 - <https://www.digikey.com/en/maker/projects/raspberry-pi-pico-and-rp2040-cc-part-2-debugging-with-vs-code/470abc7efb07432b82c95f6f67f184c0>
 
 <!-- ## Debug Adapter Software
