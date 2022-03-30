@@ -1,4 +1,5 @@
 /blog/feed.xml /feed.xml
+/blog/code-of-conduct /code-of-conduct
 
 # Stable redirect for subscribing to Interrupt's Event calendar.
 # Here in case we switch to Google Calendar or another provider in the future
