@@ -210,7 +210,7 @@ the file, so using `size` to example the binary will show deceptive information
 You can then strip the debug binary:
 
 ```bash
-❯ strip -o hello.debug.stripped hello.debug.stripped
+❯ strip -o hello.debug.stripped hello.debug
 ```
 
 And in GDB, you can manually load a symbol file:
@@ -461,7 +461,7 @@ when run behaves like the original binary.
 It achieves great compression ratios:
 
 ```bash
-❯ upx --preserve-build-id -o cmake.upx.two bin/cmake
+❯ upx --preserve-build-id -o cmake.upx bin/cmake
 ❯ ls -lh bin/cmake cmake.upx*
 -rwxrwxr-x 1 noah noah 179M Mar  2 14:46 bin/cmake
 -rwxrwxr-x 1 noah noah  42M Mar  2 14:46 cmake.upx
