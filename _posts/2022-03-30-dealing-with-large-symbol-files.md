@@ -198,7 +198,7 @@ It's possible to copy the debug info sections into a separate file using
 ```
 
 Note that the section headers for the non-debug sections are still present in
-the file, so using `size` to example the binary will show deceptive information
+the file, so using `size` to examine the binary will show deceptive information
 (eg, `.text`, `.data`, etc). From the manual:
 
 > Note - the section headers of the stripped sections are preserved, including
