@@ -94,6 +94,8 @@ switching the machines to something only a few customers need.
 What if we turn the tables and come up with the firmware list of chips that we
 then present to the EE? What should we filter the available chips for?
 
+### Peripherals and Software Stack
+
 We should probably start with the available peripherals. If the product needs
 one or more UART, SPI, I2C, CAN, USB, or Ethernet interfaces, then the chip
 should better have them. Be cautious not to filter out too many chips at this
@@ -115,11 +117,13 @@ want to reuse like libraries or (real-time) operation systems need to be checked
 for compatibility. We need to weigh the price difference of the chip against the
 amount of work needed to get the incompatible chip to work.
 
+### Tooling
+
 Another thing is tooling. We can not use a chip if we do not have a compiler to
 generate code for it. We will need some way to flash the chip. (flash = write
 the compiled code into the chip) A development board or simulator for the chip
 will speed up firmware development before the project's PCB is available. A
-Debugger that lets you step through the code and check the values of variables
+debugger that lets you step through the code and check the values of variables
 speeds up the finding of issues. If it can also provide trace information then
 that helps to find the hard-to-find bugs. An IDE with syntax highlighting, that
 allows for debugging and integrates with the version control system, will help
@@ -137,6 +141,8 @@ chip-specific. Heck. Even the ST-provided ST-link debugger can work on Microchip
 (and other) devices if used with OpenOCD! So don’t hesitate to ask your manager
 for the expensive tools even if you could get it done with what you already
 have. Less development time spent is a good argument.
+
+### Community & Popularity
 
 Another plus side for a chip can be if it is part of a bigger chip family. (The
 base for the “standard chip” argument) Don’t value this too high. But in case of
@@ -165,11 +171,11 @@ chip that meets your requirements. Don’t expect them to recommend a competitor
 chip though. It is also a good confirmation if the FAE recommends the same chip
 you selected.
 
+## Final Words
+
 After all these considerations you now have filtered out the chips that won’t
 work for this project. The ones left can be sorted by price and then let the EE
 select the one he likes the most 😉.
-
-## Summary
 
 If you are now asking where you can find the information to all chips to get
 your selection process started, then that is the reason why I started
