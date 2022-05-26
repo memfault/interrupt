@@ -124,7 +124,7 @@ nash:
     image: /img/author/nash.png
 lars:
     name: Lars Pötter
-    blurb: is a freelance embedded software engineer, has worked on 8, 16 and 32 bit architectures and in safety critic projects. Creator of chipselect.org.
+    blurb: is a freelance embedded software engineer, has worked on 8, 16 and 32 bit architectures and in safety critic projects. Creator of chipselect.org. Email me at <a href="mailto:interrupt@ing-poetter.de">interrupt@ing-poetter.de</a>
     email: interrupt@ing-poetter.de
     web: https://www.ing-poetter.de/
     linkedin: https://www.linkedin.com/in/lars-p%C3%B6tter-32b42960

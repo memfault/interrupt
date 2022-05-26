@@ -42,8 +42,8 @@ firmware's responsibility.
 Often the EE will use the parametric search to find the microcontroller to use.
 The parametric search is provided by the big distributors (Digikey, Farnell,
 Mouser to name a few). It allows you to filter all available chips according to
-their features. The EE can filter out all chips with wrong voltage requirements,
-unpractical packages (DIL, SMD, BGA) or chips with improper temperature ranges
+their features. The EE can filter out all chips with the wrong voltage requirements,
+unpractical packages (DIL, SMD, BGA), or improper operating temperature ranges
 that the product needs to endure. These and many other filters are provided. In
 the end, the EE sorts by price and selects the cheapest. Maybe they select a
 handful and let the firmware engineer choose.
@@ -75,7 +75,7 @@ It all depends.
 If you are true to yourself, you probably have to admit that the effort planned
 for “learning a new chip” is a combination of not wanting to learn something new
 and the fear of running into issues with the new chip. There is the risk of
-someone going catastrophically wrong with the new chip, such as a missing
+something going catastrophically wrong with the new chip, such as a missing
 required feature or an unforeseen errata. But if the benefits outweigh the
 risks, we should jump into the adventure.
 
