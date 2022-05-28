@@ -329,3 +329,11 @@ What could be developed more in the future and what pains me so far is:
  - more experience in CI - I think I am on a good track to have automatized test in CI that are flashed to real hardware somewhere in laboratory. That could show limits of the library 
  - `get_arg<int>(` is an example of interface of test library that can result in an error. I don't want to move introduce an change in the API that would make it return error as I can't figure out anything that would not pollute the tests. The idea is that for the errors under category "error in processing of the test and not the test" that can't be handled the library: A. throws exception if possible B. stops at the point and spams the controller with error message. 
 
+## The code
+
+The testing library is part of emlabcpp - my personal library, which purpose is mostly for me to have up-to-date collection of tools for my development. 
+Given that I restrain myself from saying "it should be used by others" as I don't really want to care about backward compability outside of my projects.
+
+The primary example of the testing library is an example file: [emlabcpp/tests/testing](https://github.com/koniarik/emlabcpp/blob/v1.2/tests/testing_test.cpp)
+
+The interface to the library itself is in: [emlabcpp/include/emlabcpp/experimental/testing](https://github.com/koniarik/emlabcpp/tree/v1.2/include/emlabcpp/experimental/testing)
