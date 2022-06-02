@@ -5,6 +5,9 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
 
+/* Forward declarations */
+int _write(int file, char *ptr, int len);
+
 static void clock_setup(void)
 {
     /* Enable GPIOD clock for LED & USARTs. */
