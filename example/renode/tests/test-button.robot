@@ -11,7 +11,7 @@ Should Handle Button Press
     Execute Command         machine LoadPlatformDescription @${PATH}/add-ccm.repl
     Execute Command         sysbus LoadELF @${PATH}/renode-example.elf
 
-    Create Terminal Tester  sysbus.uart2
+    Create Terminal Tester  sysbus.usart2
 
     Start Emulation
 
