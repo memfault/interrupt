@@ -6,12 +6,9 @@ tags: [c++, testing]
 ---
 <!-- excerpt start -->
 
-We have multiple testing libraries focused on C++ applications for GPOS (general-purpose operating system), but there is a lack of testing libraries designed for embedded devices.
+There are too few C/C++ testing libraries designed for embedded devices. The traditional libraries are not designed for constrained resources and rely on host functionality like a filesystem or standard output.
 
-The traditional libraries are not designed for constrained resources and rely on functionality like a filesystem or standard output.
-
-I decided to design a testing library for microcontrollers.
-In this article, I want to show the rationale, design choices, and thoughts on the prototype.
+In this post, I detail why I've decided to design a new testing library for microcontrollers and cover the rationale, design choices, and thoughts on the prototype.
 
 <!-- excerpt end -->
 
@@ -47,79 +44,77 @@ The goal is to be able to test embedded code that is tied to the hardware itself
 
 Based on my experience and opinions, I decided to specify the following requirements:
 
-emlabcpp integration
-   The code is tightly integrated into my personal C++20 library.
+- **emlabcpp Integration**<br>
+   The test library is tightly integrated into my personal C++20 library, [emlapcpp](https://github.com/emlab-fi/emlabcpp).
    That is: it can't be used without the library.
    This eases the development of the testing framework as I reuse functionality from the library, specifically: the protocol library inside emlabcpp.
 
-simplicity
-   The library should be simple and should not try to provide an entire set of functionality that Catch/Google Test offers.
-   That should not be necessary, and I prefer a simpler and more efficient tool.
+- **Simplicity**<br>
+   The library should be simple and should not try to provide the entire set of functionalities that Catch/Google Test offers.
 
-integration into existing testing tools
-   A wide set of tools exist that can work with the test results of Catch/Google Test - for example, GitLab has the integration of test results from these tools.
-   The library should be compatible from this perspective - it should be integrable into existing systems.
+- **Integration into existing testing tools**<br>
+   A wide set of tools exist that can work with the test results of Catch/Google Test. For example, GitLab has the integration of test results from these tools.
+   The library should be compatible with these ingrations.
 
-small footprint
-   The assertion is that the application code itself will take a big percentage of the available memory of the microchip.
-   That implies that the library should have a small memory footprint - so it can coexist with present code.
+- **Small footprint**<br>
+   Since we are running tests on the device, and the application code itself will take a big percentage of the available memory of the microchip, the library needs to have a small footprint.
 
-no dynamic memory, no exception
-   Both are C++ features that we may want to avoid in the firmware.
-   The testing library should not require them for its functionality to allow usage in context when they are not enabled at all.
+- **No dynamic memory. No exceptions.**<br>
+   Both are C++ features that we may want to avoid in the firmware since embedded firmware often does not have dynamic memory.
 
-no platform fixation
-   Ideally, we would prefer this to be reusable between different embedded platforms and situations.
-   That imposes the limit that the library should not be tied to any specific platform.
+- **No platform requirements**<br>
+   The library should not be tied to any specific platform.
 
 
 ## Design
 
+### Library Components
+
 The library itself is implemented as a two-part system:
 
-reactor
-   It is present in the embedded device and controls it.
-   It has a small footprint and limited functionality. It can:
-      - register tests to itself
-      - store bare minimum information about firmware/tests
-      - execute the tests
-      - communicate information/exchange data between itself and the controller
+#### Reactor
 
-controller
-   Controls the testing process and is presented on the device that controls the tests.
-   It is still developed as microcontroller-compatible software (no dynamic memory, no exceptions), but there is a weak assumption that it will be mainly used on a system with GPOS.
-   It can:
-      - communicate with and control the reactor
-      - load test information from the reactor
-      - orchestrate test execution
-      - provide input data for tests
-      - provide data collected from the tests
+The reactor is a module running on the embedded device and controls it to the necessary degree. It has a small footprint and limited functionality.
+
+It can:
+- register tests to itself
+- store bare minimum information about firmware/tests
+- execute the tests
+- communicate information/exchange data between itself and the controller
+
+#### Controller
+
+The controller orchestrates the testing process and is run on the device that controls the tests, typically the host machine. It is still developed as microcontroller-compatible software (no dynamic memory, no exceptions), but there is a weak assumption that it will be mainly used on a system with GPOS (general-purpose operating system).
+
+It can:
+- communicate with and control the reactor
+- load test information from the reactor
+- orchestrate test execution
+- provide input data for tests
+- provide data collected from the tests
+
+### Reactor and Controller Working Together
 
 The separation of the design into two tools imposes restrictions: the tests on the embedded device can't be executed without the controller. 
 But that allows a minimal memory footprint of the testing firmware on the firmware size, as I can move as much of the testing logic as reasonable to the controller side.
-Especially data collection can be done so that everything is stored in the controller.
+In particular, data collection can be done within the controller because it has ample storage.
 
-The communication method between the parts is not defined.
+The communication method between the two parts is not defined.
 Both parts use messages for communication, but it is up to the user to implement how the messages are transferred.
-Each expects to be provided with an interface that implements read/write methods - it's up to the user to design how.
+Each expects to be provided with an interface that implements read/write methods, it's up to the user to design the implementation.
 This makes it platform-independent and gives flexibility for various scenarios.
-But I do silently expect that UART will be mostly used.
-
-The way the controller gets input data and processes the collected data from tests is up to the user.
-The interface for the controller only provides an API for both.
+I do expect that a UART will be mostly used primarily to transfer data.
 
 In the end, the perspective one can use for this is:
 The testing library is just a fancy remote execution library - the controller executes functions registered to the reactor in the firmware and collects results.
 
-## Basic implementation details
+## Basic Implementation Details
 
-Each part is object - `testing_reactor` object and `testing_controller` object.
-Both are designed to take control of their application.
-Both expect to be provided with user-provided objects implementing interfaces `testing_reactor_interface` and `testing_controller_interface`.
-Interfaces are implemented by the user and define how the object interacts with its environment.
+Both the reactor and the controller are C++ objects, `testing_reactor` and `testing_controller` respectively. They also expect to be provided with user-supplied objects that implement the interfaces `testing_reactor_interface` and `testing_controller_interface`.
+The interfaces are implemented by the user and define how the object interacts with its environment.
 
 In the case of the embedded firmware, one creates an instance of the reactor, registers tests into it, and passes control to the reactor.
-This is done in a way that still gives user some control over the main loop::
+This is done in a way that still gives the user some control over the main loop:
 ```cpp
    emlabcpp::testing_basic_reactor rec{"test suite name"};
    my_reactor_interface rif{..};
