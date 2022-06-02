@@ -4,7 +4,6 @@ description: Design of a testing library
 author: veverak
 tags: [c++, testing]
 ---
-
 <!-- excerpt start -->
 
 We have multiple testing libraries focused on C++ applications for GPOS (general-purpose operating system), but there is a lack of testing libraries designed for embedded devices.
@@ -14,7 +13,7 @@ The traditional libraries are not designed for constrained resources and rely on
 I decided to design a testing library for microcontrollers.
 In this article, I want to show the rationale, design choices, and thoughts on the prototype.
 
-<!-- excerpt end --->
+<!-- excerpt end -->
 
 {% include newsletter.html %}
 
