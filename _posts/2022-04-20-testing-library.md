@@ -54,7 +54,7 @@ Based on my experience and opinions, I decided to specify the following requirem
 
 - **Integration into existing testing tools**<br>
    A wide set of tools exist that can work with the test results of Catch/Google Test. For example, GitLab has the integration of test results from these tools.
-   The library should be compatible with these ingrations.
+   The library should be compatible with these integrations.
 
 - **Small footprint**<br>
    Since we are running tests on the device, and the application code itself will take a big percentage of the available memory of the microchip, the library needs to have a small footprint.
@@ -116,17 +116,17 @@ The interfaces are implemented by the user and define how the object interacts w
 In the case of the embedded firmware, one creates an instance of the reactor, registers tests into it, and passes control to the reactor.
 This is done in a way that still gives the user some control over the main loop:
 ```cpp
-   emlabcpp::testing_basic_reactor rec{"test suite name"};
-   my_reactor_interface rif{..};
-   // register tests
+emlabcpp::testing_basic_reactor rec{"test suite name"};
+my_reactor_interface rif{..};
+// register tests
 
-   while(true){
-      rec.tick(rif);
-   }
+while(true){
+   rec.tick(rif);
+}
 ```
 
-The reactor expects that its `tick` method is called repeatedly, and the method contains one iteration of the reactor's control loop.
-It either answers the reactor in the control loop or executes the entire test during one `tick` call - it can block for a while.
+The reactor expects that its `tick` method is called repeatedly and that the method contains one iteration of the reactor's control loop.
+It either answers the reactor in the control loop or executes the entire test during one `tick` call. This means it can block for a while.
 
 The `controller` has similar behavior and interface. With the exception that the `controller_interface` also contains customization points for additional features:
 - methods to provide input data for tests on request
@@ -135,39 +135,39 @@ The `controller` has similar behavior and interface. With the exception that the
 
 It's up to the user to implement the interface for the specific use case or use existing implementations (the library may provide some).
 
-## Dynamic memory
+## Dynamic Memory
 
-Both the `reactor` and the `controller` contains data structure with dynamic size.
+Both the `reactor` and the `controller` contain data structures with dynamic size.
 To avoid dynamic memory, I wanted to use `std::pmr`: the internal containers would use an allocator and expect memory resource as an input argument.
 This implements the behavior: "The central objects expect a memory resource they should use for data allocation."
 
-I think that this fits the use case quite nicely, as both types require dynamic data structures, but in the same way, I want them to be usable without dynamic memory itself - compromise is an interface that can be provided with static buffers.
+I think that this fits the use case quite nicely, as both types require dynamic data structures, but in the same way, I want them to be usable without dynamic memory itself. The compromise is an interface that can be provided with static buffers.
 
-However, `std::pmr` does not feel usable, as the default construction of the allocator uses a default memory instance that exists as a global object. (that can be changed only at runtime)
+However, `std::pmr` does not feel usable, as the default construction of the allocator uses a default memory instance that exists as a global object that can be changed only at runtime.
 The default instance uses new/delete.
 That means that it is easy for code that uses `std::pmr` to include in the firmware the entire stack for dynamic allocation - something that I want to avoid.
 
 I decided to re-implement `std::pmr` in my custom library with a few changes in the API that are more fitting to the embedded library.
-The key one is that memory resource with new/delete operators simply does not exists.
-The user has to instance a memory resource also provided by `emlabcpp` and give it to the object.
+The key change is that memory resource with new/delete operators simply does not exist.
+The user has to instantiate a memory resource also provided by `emlabcpp` and give it to the object.
 
-As a simple alternative, there exists `emlabcpp::testing_basic_reactor,` which inherits from the `reactor` and provides it with a basic memory resource that can be used by it - sane default.
+As a simple alternative, there exists `emlabcpp::testing_basic_reactor,` which inherits from the `reactor` and provides it with a basic memory resource that can be used by it. A sane default.
 
-## Binary protocol
+## Binary Protocol
 
 The binary protocol is intentionally considered an implementation detail, as I want to have the freedom to change it at will.
 
 It is implemented with a C++ protocol library I did previously. The short description is: imagine protocol buffers, but instead of an external tool, it is just a C++ library that gets the definition of protocol via templates.
 
-## Data exchange
+## Data Exchange
 
-The framework provides mechanics to exchange data between controller and reactor.
+The framework provides mechanics to exchange data between the controller and reactor.
 
-Tests can request test data from the controller as a form of input.
-(It's up to the user how the controller gets/provides that data)
+Tests running on the embedded device can request test data from the controller as a form of input.
+However, it's up to the user how the controller gets/provides that data.
 The request is a blocking communication operation - the input is not stored on the side of the reactor.
 
-The test can collect data - reactors have an API to send data to the controller.
+The controller can also collect data from the embedded device, as reactors have an API to send data to the controller.
 The controller stores the data during test execution, and it is passed to the user once the test is done in test_result.
 
 In the case of input, I use a simple key/value mechanism.
@@ -177,10 +177,10 @@ That is, each data point is made of a 'key' that identifies it and its correspon
 
 To give some flexibility, the types are:
 
-key
+- **key**<br>
    can be either string or integer
 
-value
+- **value**<br>
    can be string, integer, bool, unsigned
 
 In each case, the framework can serialize (thanks to the `emlabcpp::protocol` library) and deserialize any types and send them over the communication channel.
@@ -188,10 +188,11 @@ In each case, the framework can serialize (thanks to the `emlabcpp::protocol` li
 As for the strings: These are limited by size to 32 characters, as this way, I can use static buffers for them, and they do not have to be allocated.
 
 
-## Examples of tests
+## Example Test
 
 I tried to prepare a simple interface for the registration of tests, as I believe that tests should be easy to write.
-(Note: Generally, I don't mind some cost of setting up the library, but I think that adding tests should be easy)
+I generally do not mind some cost of setting up the library, but I think that adding tests should be easy. 
+
 To guide the explanation, let's assert we are testing a wending machine:
 
 ```cpp
@@ -218,16 +219,16 @@ That test is identified by the "my simple test" string, used to identify it from
 
 Once the test is executed (the controller tells the reactor to execute it), it is provided with a `testing_record` object that serves as an API between the test and the reactor.
 
-The testing code should use the record to get any data from the controller, collect any data during the test, and mainly: provide information whenever the test failed or succeeded.
+The testing code should use the record to get any data from the controller, collect any data during the test, and primarily, provide information whenever the test failed or succeeded.
 
 In the example, you can see the usage of all the primitives:
- - `rec.get_arg<int>("product_id")` tells the reactor to ask controller for argument with key `product_id` and retreive it as integer type
+ - `rec.get_arg<int>("product_id")` tells the reactor to ask the controller for an argument with key `product_id` and retreive it as integer type
  - `rec.expect( product_id < MAX_PRODUCTS_N )` is a form checking properties in the test - if `false` is passed to the `expect(bool)` method the test is marked as failed.
  - `rec.collect("released: ", product_id )` collects the data `product_id` with key `released: ` and sends it to the controller.
 
-## Building the tests
+## Building the Tests
 
-The user solely handles that. The testing framework just provides an object that expects communication API and can register test - how that is assembled into a firmware is up to the user.
+The user handles this. The testing framework just provides an object that expects communication API and can register test - how that is assembled into a firmware is up to the user.
 
 The idea is that single 'testing firmware' will collect multiple tests registered into one reactor.
 It's up to the user to orchestrate the build process in a sensible way.
@@ -243,7 +244,7 @@ This way, any test firmware is closely similar to the application executable - j
 
 From the controller's perspective, it can be just a simple application that is meant to be executed on GPOS.
 
-## Google Test
+## Google Test Integration
 
 One small win that appeared was that, given the flexibility, it was easy to integrate Google Test and controller.
 The controller can register each test from the reactor as a test in the google test library.
@@ -251,7 +252,7 @@ It can use the Google Test facility on GPOS to provide user-readable output abou
 Systems like GitLab can use this.
 
 This shows that it was easy to provide the necessary facility for the testing firmware to be integrated into modern CI with traditional tools.
-And yet the integration is not tight. Any integration into Google Test is just a set of few functions/classes in emlabcpp that can be ignored by anybody not favoring Google Test.
+And yet the integration is not tight. Any integration into Google Test is just a set of a few functions/classes in emlabcpp that can be ignored by anybody not favoring Google Test.
 
 The test output from the project I used this framework the first time can look like this:
 
@@ -317,7 +318,7 @@ But then it can be implemented in some general way - for example, the `controlle
 ## Experience
 
 It is pretty limited, but I am happy with the prototype.
-I am sure that I will refactor the library in the future, as there are prominent places to be improved but so far it behaves good enough.
+I am sure that I will refactor the library in the future, as there are prominent places to be improved but so far it behaves well enough.
 It gives me a simple way to test and develop various ways to control the smart servomotor I am working on.
 (Note: yes, this is one of the cases of "oh, I need to develop a library so I can do a project"...)
 
@@ -328,7 +329,7 @@ What could be developed more in the future and what pains me so far is:
  - memory resource - uses internal emlabcpp mechanism that is underdeveloped, that definitely would benefit from more work.
  - more experience in CI - I think I am on a good track to having automatized tests in CI that are flashed to real hardware somewhere in the laboratory. That could show the limits of the library.
 
-## The code
+## The Code
 
 The testing library is part of emlabcpp - my personal library, which purpose is for me to have an up-to-date collection of tools for my development. 
 I restrain myself from saying "it should be used by others," as I don't want to care about backward compatibility outside of my projects.
