@@ -1,6 +1,6 @@
 ---
-title: Testing library
-description: Design of a testing library
+title: Building an On-Device Embedded Testing Library
+description: Documents the design, architecture, implementation, and pros and cons of an on-device embedded MCU testing library written in C++ and compatible with Google Test.
 author: veverak
 tags: [c++, testing]
 ---
