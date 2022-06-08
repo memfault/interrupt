@@ -51,4 +51,4 @@ Interrupt is based on the Emerald theme by [Jacopo Rabolini](https://www.jacopor
 
 ----
 
-Interrupt is sponsored and edited by [Memfault](https://memfault.com)
+Interrupt is sponsored and edited by [Memfault](https://memfault.com).
