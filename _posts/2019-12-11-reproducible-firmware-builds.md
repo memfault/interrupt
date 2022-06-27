@@ -264,18 +264,9 @@ $ arm-none-eabi-strings -d dev/interrupt/example/reproducible-build/build/nrf52.
 /private/tmp/dev/interrupt/example/reproducible-build/freertos_kernel/portable/MemMang/heap_1.c
 ```
 
-```bash
-$ arm-none-eabi-strings -d repos/interrupt/example/reproducible-build/build/nrf52.elf -n 10
-/private/tmp/repos/interrupt/example/reproducible-build/freertos_kernel/tasks.c
-/private/tmp/repos/interrupt/example/reproducible-build/freertos_kernel/queue.c
-/private/tmp/repos/interrupt/example/reproducible-build/freertos_kernel/timers.c
-/private/tmp/repos/interrupt/example/reproducible-build/freertos_kernel/portable/GCC/ARM_CM4F/port.c
-/private/tmp/repos/interrupt/example/reproducible-build/freertos_kernel/portable/MemMang/heap_1.c
-```
-
 So we see the entire filename path has made it into the build!
 
-This generally happens when the `__FILE__` macro is used which is a fairly common occurence (e.g. a lot of logging implementations and assert handlers use it). The `__FILE__` macro expands to "path by which the preprocessor opened the file"[^4]. In practice this is the path passed to the compiler when the `.c` file is compiled. You can try it out yourself by running a simple `test.c` file through the preprocessor.
+This generally happens when the `__FILE__` macro is used which is a fairly common occurrence (e.g. a lot of logging implementations and assert handlers use it). The `__FILE__` macro expands to "path by which the preprocessor opened the file"[^4]. In practice this is the path passed to the compiler when the `.c` file is compiled. You can try it out yourself by running a simple `test.c` file through the preprocessor.
 
 ```c
 // contents of test.c file
@@ -327,6 +318,30 @@ freertos_kernel/portable/MemMang/heap_1.c
 ```
 
 Great! We no longer have absolute paths in the binary.
+
+As an alternative, the compiler flag
+[`-ffile-prefix-map=old=new`](https://gcc.gnu.org/onlinedocs/gcc-12.1.0/gcc/Overall-Options.html#index-ffile-prefix-map)
+performs a substitution for path prefix segments:
+
+```bash
+$ arm-none-eabi-gcc -ffile-prefix-map=/private/tmp=. -E /private/tmp/test.c
+[...]
+const char *my_file_name = "./test.c";
+```
+
+> Note: the `-ffile-prefix-map=old=new` was first added in GCC 8.1, although
+> apparently without enough excitement to deserve a mention in the [release
+> notes](https://gcc.gnu.org/gcc-8/changes.html)!<br/><br/>
+> This flag sets all `f*-prefix-map` settings, so it applies to debug info as
+> well as macro (`__FILE__`) substitutions. Note that it does NOT as of yet get
+> forwarded to `as` when invoked from the GCC frontend, so be sure to add
+> `-Wa,--debug-prefix-map=old=new` if that applies (this is [likely a bug in
+> GCC](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93371), as
+> `-fdebug-prefix-map=old=new` correctly forwards the arg to `as`).<br/><br/>
+> Clang also [supports the
+> flag](https://releases.llvm.org/14.0.0/tools/clang/docs/ClangCommandLineReference.html#cmdoption-clang-ffile-prefix-map),
+> as of [Clang
+> 10](https://releases.llvm.org/10.0.0/tools/clang/docs/ReleaseNotes.html#new-compiler-flags).
 
 ### Comparing the Binary
 
@@ -447,7 +462,13 @@ First, compile your binary in two directories. If the binaries match, you are pr
 1. Include a [GNU Build ID]({% post_url 2019-05-29-gnu-build-id-for-firmware %}) in your binary so it's always easy to identify the build in use.
 2. [Enforce that all builds use one version of a compiler](#enforce-compiler-for-build).
 3. Compare ELFs and BINs for differences using the tips discussed in this article. Typical differences arise from including absolute paths, timestamps, or shell information in the final binary.
-4. Utilize [`-fdebug-prefix-map=old=new`](#fdebug-prefix-map) to make sure any debug information emitted does not rely on absolute paths.
+4. Utilize `-ffile-prefix-map=old=new` to normalize macro and debug info paths.
+
+   _If the compiler is older, it may be necessary to instead use
+   [`-fdebug-prefix-map=old=new`](#fdebug-prefix-map) to make sure any debug
+   information emitted does not rely on absolute paths, and use relative paths
+   in the build system or `-fmacro-prefix-map=old=new`_
+
 5. At this point, builds will usually match for an embedded project. If they do not, it's likely non-determinism in one of the build tools being used is causing issues.[^11]
 
 That's it!
