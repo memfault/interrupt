@@ -4,8 +4,8 @@
 
 void gpio_setup(void)
 {
-    /* Setup GPIO pin GPIO12 on GPIO port D for LED. */
-    gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO12);
+	/* Setup GPIO pin GPIO12 on GPIO port D for LED. */
+	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO12);
 
 	/* Setup GPIO pins for USART2 transmit. */
 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2);
