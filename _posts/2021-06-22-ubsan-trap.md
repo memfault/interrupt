@@ -55,7 +55,7 @@ UBSan can catch several types of undefined behavior, for example:
 
 To enable UBSan, add this flag during compilation and linking:
 
-`-fsanitze=undefined`
+`-fsanitize=undefined`
 
 You may notice that enabling this flag increases the size of the compiled
 program. This is due to the runtime checks inserted by the compiler, which also
