@@ -1,0 +1,13 @@
+diff --git a/example/fwup-delta/app.c b/example/fwup-delta/app.c
+index d126b11..b468869 100644
+--- a/example/fwup-delta/app.c
++++ b/example/fwup-delta/app.c
+@@ -40,6 +40,8 @@ int main(void) {
+     };
+     shell_boot(&shell_impl);
+ 
++    printf("This application was patched!\n");
++
+     char c;
+     while (1) {
+         c = usart_getc();

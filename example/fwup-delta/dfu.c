@@ -4,6 +4,7 @@
 
 #include <libopencm3/stm32/f4/flash.h>
 #include <stdio.h>
+#include <string.h>
 
 int dfu_invalidate_image(image_slot_t slot) {
     // We just write 0s over the image header
@@ -28,6 +29,22 @@ int dfu_commit_image(image_slot_t slot, const image_hdr_t *hdr) {
     shared_memory_clear_boot_counter();
 
     return 0;
+}
+
+int dfu_read(image_slot_t slot, void *ptr, long int offset, size_t count) {
+    void *addr = (slot == IMAGE_SLOT_1 ? &__slot1rom_start__ : &__slot2rom_start__);
+    addr += offset;
+    // FIXME this needs slot overflow checks
+    memcpy(ptr, addr, count);
+    return count;
+}
+
+int dfu_write(image_slot_t slot, const void *ptr, long int offset, size_t count) {
+    uint32_t addr = (uint32_t)(slot == IMAGE_SLOT_1 ? &__slot1rom_start__ : &__slot2rom_start__);
+    addr += offset;
+    // FIXME this needs slot overflow checks
+    flash_program(addr, ptr, count);
+    return count;
 }
 
 int dfu_write_data(image_slot_t slot, uint8_t *data, uint32_t len) {

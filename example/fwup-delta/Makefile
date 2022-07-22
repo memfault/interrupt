@@ -1,6 +1,6 @@
 .SECONDARY:
 
-PROJECT = fwup-example
+PROJECT = fwup-delta
 BUILD_DIR = build
 Q ?= @
 
@@ -13,6 +13,7 @@ ECHO=@echo
 CAT=cat
 PYTHON ?= python3
 PK_PEM_PATH ?= ./private.pem
+JDIFF ?= jdiff
 
 
 GIT_SHA := \"$(shell $(GIT) rev-parse --short HEAD)\"
@@ -26,6 +27,7 @@ SRCS_APP = \
 
 SRCS_LOADER = \
   crc32.c \
+  simple_fileio.c \
   dfu.c \
   loader.c \
   loader_shell_commands.c \
@@ -42,8 +44,10 @@ SRCS_SHARED = \
   $(MICROECC_SOURCES) \
   $(CIFRA_SOURCES)
 
-APP_BIN = \
-  $(BUILD_DIR)/app_bin.o
+PATCH_FILE = 0001-add-app-print.patch
+
+PATCH_BIN = \
+  $(BUILD_DIR)/patch_bin.o
 
 SRCS_BOOT += $(SRCS_SHARED)
 SRCS_APP += $(SRCS_SHARED)
@@ -93,9 +97,13 @@ MICROECC_PATH = ./micro-ecc
 MICROECC_SOURCES = $(MICROECC_PATH)/uECC.c
 MICROECC_INCLUDES = $(MICROECC_PATH)
 
+JANPATCH_PATH = ./janpatch
+JANPATCH_INCLUDES = $(JANPATCH_PATH)
+
 INCLUDES += $(OPENCM3_INCLUDES)
 INCLUDES += $(CIFRA_INCLUDES)
 INCLUDES += $(MICROECC_INCLUDES)
+INCLUDES += $(JANPATCH_INCLUDES)
 CFLAGS += $(foreach i,$(INCLUDES),-I$(i))
 CFLAGS += $(foreach d,$(DEFINES),-D$(d))
 LDSCRIPT = stm32f429i-discovery.ld
@@ -104,35 +112,47 @@ LDSCRIPT = stm32f429i-discovery.ld
 all: $(BUILD_DIR)/$(PROJECT).bin
 
 $(BUILD_DIR)/$(PROJECT).bin: $(BUILD_DIR)/$(PROJECT)-boot.bin  $(BUILD_DIR)/$(PROJECT)-loader.bin $(BUILD_DIR)/$(PROJECT)-app.bin
-	$(ECHO) "  CAT		$@"
+	$(ECHO) "  CAT	  $@"
 	$(Q)$(CAT) $^ > $@
 
 $(BUILD_DIR)/$(PROJECT)-boot.bin: $(BUILD_DIR)/$(PROJECT)-boot.elf
-	$(ECHO) "  OBJCOPY	$@"
+	$(ECHO) "  OCPY	  $@"
 	$(Q)$(OCPY) $^ $@ -O binary
 
 $(BUILD_DIR)/$(PROJECT)-%.bin: $(BUILD_DIR)/$(PROJECT)-%.elf $(PK_PEM_PATH)
-	$(ECHO) "  OBJCOPY	$@"
+	$(ECHO) "  OCPY	  $@"
 	$(Q)$(OCPY) $< $@ -O binary
-	$(ECHO) "  PATCH_IMAGE	$@"
+	$(ECHO) "  PATCH	  $@"
 	$(Q)$(PYTHON) patch_image_header.py $@ $(PK_PEM_PATH) > /dev/null
 
 # https://interrupt.memfault.com/blog/gnu-binutils#converting-binaries-into-an-object-o-file
-$(BUILD_DIR)/app_bin.o: $(BUILD_DIR)/$(PROJECT)-app.bin
-	$(Q)$(OCPY) -I binary -O elf32-littlearm -B arm --add-section app_binary=$< $< $@
+$(BUILD_DIR)/patch_bin.o: $(BUILD_DIR)/patch.bin
+	$(Q)$(OCPY) -I binary -O elf32-littlearm -B arm --add-section app_patch=$< $< $@
+
+$(BUILD_DIR)/patch.bin: $(BUILD_DIR)/$(PROJECT)-app.bin $(BUILD_DIR)/$(PROJECT)-app-patched.bin
+	$(ECHO) "  JDIFF	  $@"
+	$(Q)$(JDIFF) $^ $@ &>/dev/null # prints useless warning from emscripten
 
 $(BUILD_DIR)/$(PROJECT)-app.elf: $(SRCS_APP) $(OPENCM3_LIB)
-	$(ECHO) "  LD		$@"
+	$(ECHO) "  LD	  $@"
 	$(Q)$(MKDIR) -p $(BUILD_DIR)
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_APP) $^ -o $@
 
+$(BUILD_DIR)/$(PROJECT)-app-patched.elf: $(SRCS_APP) $(PATCH_FILE) $(OPENCM3_LIB)
+	$(ECHO) "  PATCH	  $@"
+	$(Q)$(GIT) apply $(PATCH_FILE)
+	$(ECHO) "  LD	  $@"
+	$(Q)$(MKDIR) -p $(BUILD_DIR)
+	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_APP) $(SRCS_APP) $(OPENCM3_LIB) -o $@
+	$(Q)$(GIT) apply -R $(PATCH_FILE)
+
 $(BUILD_DIR)/$(PROJECT)-boot.elf: $(SRCS_BOOT) $(OPENCM3_LIB)
-	$(ECHO) "  LD		$@"
+	$(ECHO) "  LD	  $@"
 	$(Q)$(MKDIR) -p $(BUILD_DIR)
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_BOOT) $^ -o $@
 
-$(BUILD_DIR)/$(PROJECT)-loader.elf: $(SRCS_LOADER) $(OPENCM3_LIB) $(APP_BIN)
-	$(ECHO) "  LD		$@"
+$(BUILD_DIR)/$(PROJECT)-loader.elf: $(SRCS_LOADER) $(OPENCM3_LIB) $(PATCH_BIN) | $(JANPATCH_INCLUDES)
+	$(ECHO) "  LD	  $@"
 	$(Q)$(MKDIR) -p $(BUILD_DIR)
 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS_LOADER) $^ -o $@
 
@@ -148,11 +168,16 @@ $(MICROECC_PATH)/%.c:
 	$(ECHO) "microecc not found, cloning it..."
 	$(Q)$(GIT) clone https://github.com/kmackay/micro-ecc 2>1
 
+$(JANPATCH_PATH):
+	$(ECHO) "janpatch not found, cloning it..."
+	$(Q)$(GIT) clone https://github.com/janjongboom/janpatch
+
 $(OPENCM3_LIB): $(OPENCM3_PATH)
-	$(ECHO) "Building libopencm3"
-	$(Q)$(MAKE) -s -C $(OPENCM3_PATH)
+	$(ECHO) "  BUILD	  libopencm3"
+	$(Q)$(MAKE) -s -C $(OPENCM3_PATH) 1>/dev/null
+
 
 .PHONY: clean
 clean:
-	$(ECHO) "  CLEAN		rm -rf $(BUILD_DIR)"
+	$(ECHO) "  CLEAN	  $(BUILD_DIR)"
 	$(Q)rm -rf $(BUILD_DIR)
