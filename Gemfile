@@ -21,3 +21,5 @@ gem "jekyll-target-blank", "~> 2.0"
 gem "webrick", "~> 1.7"
 
 gem "jekyll-get-json", "~> 1.0"
+
+gem "eventmachine", "~> 1.3.dev.1", :git => "https://github.com/eventmachine/eventmachine.git"

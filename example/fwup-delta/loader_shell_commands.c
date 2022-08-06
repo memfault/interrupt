@@ -41,7 +41,9 @@ int cli_command_do_dfu(int argc, char *argv[]) {
         &sfio_fread,
         &sfio_fwrite,
         &sfio_fseek,
+
 	NULL, // ftell not implemented
+        NULL, // progress callback not implemented
     };
 
     JANPATCH_STREAM source = {

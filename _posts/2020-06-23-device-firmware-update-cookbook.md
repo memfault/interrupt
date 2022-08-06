@@ -3,6 +3,7 @@ title: "Device Firmware Update Cookbook"
 description: "A guide on how to build OTA DFU for your projects, as well as some
 common design pattern that are useful for implementing firmware update."
 author: francois
+tags: [firmware-update]
 ---
 
 Implementing OTA (Over The Air) firmware updates is a rite of passage for
