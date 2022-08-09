@@ -1,9 +1,10 @@
 ---
-title: Saving bandwidth with delta OTA updates
+title: Saving bandwidth with delta firmware updates
 description:
-  Post Description (~140 words, used for discoverability and SEO)
+  An introduction to delta device firmware update (Delta DFU) with JanPatch and
+  Jojodiff. This post explains what delta DFU is and walks through an example
+  implementation.
 author: francois
-image: img/<post-slug>/cover.png # 1200x630
 tags: [firmware-update]
 ---
 
