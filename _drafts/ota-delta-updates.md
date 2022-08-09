@@ -118,13 +118,19 @@ compile and upload a number of delta images for your versions in the field.
 One of the key components of a delta update system is a binary diff and patch
 system. There are remarkably few libraries that provide this functionality. The
 excellent BSDiff[^bsdiff], and XDelta[^xdelta] both require too much memory to
-work on most embedded systems. This leaves Jojodiff[^jojodiff], which has been
-helpfully reimplemented by Jan Longboom[^jan] in his JanPatch library[^janpatch] optimized
-for embedded systems.
+work on most embedded systems without modification. This leaves
+Jojodiff[^jojodiff], which has been helpfully reimplemented by Jan
+Longboom[^jan] in his JanPatch library[^janpatch] optimized for embedded
+systems.
 
 While Jojodiff is neither fastest nor most efficient, it requires constant
 space, linear time complexity, and can patch a file in-place. These features
 make it well suited to limited environments such as MCU-based devices.
+
+> Note: we've heard from some teams that they have succesfully modified XDelta
+> and BSDiff to do in-place, fixed memory delta patching. This was more effort
+> than made sense in the context of this blog post, but it may be the right
+> approach for your project. As always, your mileage may vary!
 
 ## Delta Updates Implementation
 
@@ -330,17 +336,19 @@ buffers:
 ```
 #include <janpatch.h>
 
-static unsigned char source_buf[4096];
-static unsigned char target_buf[4096];
-static unsigned char patch_buf[4096];
+#define SECTOR_SIZE 4096
+
+static unsigned char source_buf[SECTOR_SIZE];
+static unsigned char target_buf[SECTOR_SIZE];
+static unsigned char patch_buf[SECTOR_SIZE];
 
 int do_janpatch() {
     janpatch_ctx ctx = {
         // fread/fwrite buffers for every file, minimum size is 1 byte
         // when you run on an embedded system with block size flash, set it to the size of a block for best performance
-        { source_buf, 4096 },
-        { target_buf, 4096 },
-        { patch_buf, 4096 },
+        { source_buf, SECTOR_SIZE },
+        { target_buf, SECTOR_SIZE },
+        { patch_buf, SECTOR_SIZE },
 	...
     };
 }
@@ -591,7 +599,6 @@ hesitate to submit a pull request or open an issue on
 ## References
 
 <!-- prettier-ignore-start -->
-[^reference_key]: [Post Title](https://example.com)
 [^bsdiff]: [BSDiff](https://www.daemonology.net/bsdiff/)
 [^xdelta]: [XDelta](https://sourceforge.net/projects/xdelta/)
 [^jan]: [Jan Jongboom](http://janjongboom.com/) is the co-founder and CTO at Edge Impulse
