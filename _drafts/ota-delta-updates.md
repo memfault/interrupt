@@ -13,7 +13,7 @@ to add new features after launch, fix bugs, or urgently patch a security
 hole, firmware update gives modern teams the flexibility they need to move fast
 and react to a changing environment.
 
-I've written at lenght about firmware update in the past, including on Interrupt
+I've written at length about firmware updates in the past, including on Interrupt
 with a [Firmware Update Cookbook]({% post_url 2020-06-23-device-firmware-update-cookbook %})
 and [a post about code signing](% post_url
 2020-09-08-secure-firmware-update-with-code-signing %}), and even recorded a
@@ -21,19 +21,19 @@ and [a post about code signing](% post_url
 topic](https://memfault.com/webinars/device-firmware-update-best-practices/).
 
 Since then, I've heard from some of you that they've run into roadblocks
-implementing firmware update on bandwidth-limited devices. Indeed devices
+implementing firmware updates on bandwidth-limited devices. Indeed devices
 connected over low bandwidth links like 900MHz wireless or LoRaWAN often
-struggle to download a full firmware image in any reasonable time span.
+struggle to download a full firmware image in any reasonable time.
 
-One solution in this case is to implement _delta updates_, a technique which
+One solution is to implement _delta updates_, a technique that
 allows devices to download only the bits and pieces they need rather than full
 system images.
 
 <!-- excerpt start -->
 
 In this post, we introduce the concept of delta (i.e. partial) firmware updates,
-explain why you may want to implement them in your projects, and go through an
-implementation from top to bottom.
+explain why you may want to implement them in your projects and go through an
+example implementation from top to bottom.
 
 <!-- excerpt end -->
 
@@ -76,7 +76,7 @@ which we'll call PATCH.
 
 The obvious advantage of delta updates is the small size of the resulting image.
 Delta images are often one to two orders of magnitude smaller than full system
-images. The reduction in size has multiple beneficial effects:
+images. The size reduction has multiple beneficial effects:
 
 1. OTA updates become possible over very low bandwidth links (e.g. LoRaWAN).
 2. Updates are much faster over low bandwidth links. For example, a 10MB image
@@ -86,7 +86,7 @@ images. The reduction in size has multiple beneficial effects:
    better customer experience and less risk of power loss mid-update.
 3. The lifetime of flash memory can be extended, as fewer writes are needed to
    install a delta image than a full image.
-4. OTA consumer less power, thanks to the reduced communication and flash
+4. OTA consumes less power, thanks to the reduced communication and flash
    writing required.
 
 However, there is no such thing as a free lunch! Delta updates come with some
@@ -94,24 +94,26 @@ downsides worth considering:
 
 1. More complexity! Your firmware update code now needs to implement the
    patching algorithm, which creates more opportunities for bugs.
-2. Delta updates requires more code space to implement the patching algorithm,
+2. Delta updates require more code space to implement the patching algorithm,
    so if you are constrained already it may not be appropriate for your project.
-3. Managing delta updates creates more complexity on the backend and on the
+3. Managing delta updates creates more complexity on the backend and in the
    release process.
 
 That last point bears elaborating a bit. Unlike all system images, each delta
 image is only compatible with a single original version. In other words, while a
 system image for firmware v1.2.0 can upgrade any prior version to v1.2.0, a
 delta update for "v1.1.0→v1.2.0" can only upgrade devices running v1.1.0 to
-v1.2.0.
+v1.2.0. As you can imagine this creates a serious challenge at the QA stage,
+since the combination of things to test is much larger than with a system image.
 
-This means that your OTA backend needs to be sophisticated enough to present
-delta updates when devices are running compatible versions, and in all other
-cases present a full system update. And each firmware releases requires you to
-compile and upload a number of delta images for your versions in the field.
+This also means that your OTA backend needs to be sophisticated enough to
+present delta updates when devices are running compatible versions, and in all
+other cases present a full system update. And each firmware release requires
+you to compile and upload several delta images for your versions in the
+field.
 
 > Our OTA backend at [Memfault](https://memfault.com) supports delta updates!
-> You can read more about in our
+> You can read more about it in our
 > [documentation](https://docs.memfault.com/docs/platform/ota/#delta-releases).
 
 ### Jojodiff
@@ -124,11 +126,11 @@ Jojodiff[^jojodiff], which has been helpfully reimplemented by Jan
 Longboom[^jan] in his JanPatch library[^janpatch] optimized for embedded
 systems.
 
-While Jojodiff is neither fastest nor most efficient, it requires constant
-space, linear time complexity, and can patch a file in-place. These features
+While Jojodiff is neither the fastest nor the most efficient, it requires constant
+space, linear time complexity, and can patch a file in place. These features
 make it well suited to limited environments such as MCU-based devices.
 
-> Note: we've heard from some teams that they have succesfully modified XDelta
+> Note: we've heard from some teams that they have successfully modified XDelta
 > and BSDiff to do in-place, fixed memory delta patching. This was more effort
 > than made sense in the context of this blog post, but it may be the right
 > approach for your project. As always, your mileage may vary!
@@ -137,9 +139,10 @@ make it well suited to limited environments such as MCU-based devices.
 
 ### Setup
 
-Like we did our previous posts, we use [Renode]({% post_url
-2020-03-23-intro-to-renode %}) to run the examples in this post. The previous
-post contains detailed instructions, but in short:
+Like we did in our previous posts, we use [Renode]({% post_url
+2020-03-23-intro-to-renode %}) to run the examples in this post. We are using a
+virtualized STM32 on which we are running a complete firmware image. The
+previous post contains detailed instructions, but in short:
 
 ```
 # Clone the repository & navigate to the example
@@ -229,7 +232,7 @@ blockdiag {
 
 With the following functionality for each block:
 
-1. Bootloader: a simple program whose sole job is to load the Loader, and fallback
+1. Bootloader: a simple program whose sole job is to load the Loader, and fall back
    to another image if the Loader is invalid.
 2. Loader: a program that can verify our Application image, load it, and update
    it.
@@ -243,10 +246,10 @@ Application or the Bootloader would be mostly untouched.
 ### Building our Delta Update Image
 
 First things first, let's create a new version of our firmware. As an example, I
-adeed a print line that says "This application was patched!" at boot when our
+added a print line that says "This application was patched!" at boot when our
 Application runs.
 
-To make things easy, I create a `.patch` file which I can apply and un-apply
+To make things easy, I create a `.patch` file that I can apply and un-apply
 from my codebase. I can then build my new firmware image with the following
 `make` commands:
 
@@ -276,7 +279,7 @@ Jdiff's syntax is simple:
 $ jdiff <base-image> <new-image> <output-patch-bin>
 ```
 
-Which translates to the following `make` commands:
+This translates to the following `make` commands:
 
 ```
 $(BUILD_DIR)/patch.bin: $(BUILD_DIR)/$(PROJECT)-app.bin $(BUILD_DIR)/$(PROJECT)-app-patched.bin
@@ -284,8 +287,8 @@ $(BUILD_DIR)/patch.bin: $(BUILD_DIR)/$(PROJECT)-app.bin $(BUILD_DIR)/$(PROJECT)-
 ```
 
 The resulting `patch.bin` is 1252 bytes, down from 7908 bytes for the full app
-image. This is only a ~6x reduction in size, but in practice you will see much
-better result on larger and more complex applications.
+image. This is only a ~6x reduction in size but, in practice, you will see much
+better results on larger and more complex applications.
 
 Since we're not concerned with downloading the image from the cloud for the sake
 of this blog post, we just hardcode the patch.bin inside of our Loader image
@@ -355,15 +358,15 @@ int do_janpatch() {
 }
 ```
 
-The next four fields are function pointers which expect File I/O functions. On
+The next four fields are function pointers that expect File I/O functions. On
 POSIX systems you can simply pass `fread`, `fwrite`, and `fseek`, and define
 `JANPATCH_STREAM` as `FILE`. However, we are on a bare metal system and will
 need to implement our own. I'll call this module Simple File I/O or `simple_fileio`.
 
-We need our `simple_fileio` module to be able to read data from our memory
-mapped `bin` file, and both read and write data from/to our firmware slot in
-flash. We'll also need to keep track of seek offsets as we go to comply with the
-POSIX-like API.
+We need our `simple_fileio` module to be able to read data from our
+memory-mapped `bin` file, and both read and write data from/to our firmware slot
+in flash. We'll also need to keep track of seek offsets as we go to comply with
+the POSIX-like API.
 
 First, we'll create a new type to encapsulate all of that state and serve as our
 `JANPATCH_STREAM` type. We'll call it `sfio_stream_t`:
@@ -388,9 +391,9 @@ typedef struct {
 ```
 
 We can then implement `sfio_fread` which reads from RAM or image slot at the
-stored offset and writes it to an output pointer. Note that while POSIX api
-accept a `size` and a `count` (for a total number of bytes read of `size *
-count`, but in practice Janpatch only ever sets a size of `1` so we made the
+stored offset and writes it to an output pointer. Note that while the POSIX API
+accepts a `size` and a `count` (for a total number of bytes read of `size *
+count`, Janpatch only ever sets a size of `1` so we made the
 simplifying assumption that it would always be 1.
 
 ```c
@@ -446,7 +449,7 @@ int sfio_fseek(sfio_stream_t *stream, long int offset, int origin) {
 
 Astute readers may have noticed that we introduced new functions: `dfu_read` and
 `dfu_write`, which we use to write to and read from our image slots. Those
-functions convert slot addresses to physical addresses then use memcpy or flash
+functions convert slot addresses to physical addresses and then use memcpy or flash
 APIs to read/write the data. Here's a simple implementation that does no bounds
 checking;
 
@@ -539,7 +542,7 @@ Connected to localhost.
 Escape character is '^]'.
 Bootloader started
 Booting slot 1
-Shared memory uinitialized, setting magic
+Shared memory initialized, setting magic
 Loader STARTED - version 1.0.0 (01b2209)
 Booting slot 2
 App STARTED - version 1.0.1 (01b2209) - CRC 0x77a58907
