@@ -527,7 +527,7 @@ repo](https://github.com/memfault/interrupt/tree/master/example/fwup-delta).
 
 ### Testing it all in Renode
 
-Once we've built all of our image, we simply need to start renode by running the
+Once we've built all of our image, we simply need to start Renode by running the
 provided `start.sh` or `mono64 Renode.exe renode-config.resc --port 4444
 --disable-xwt`.
 
