@@ -5,7 +5,9 @@ description:
 author: donatien
 ---
 
-I’m Donatien, co-founder of [Blecon](https://blecon.net/), where we provide device connectivity using Bluetooth. In my previous lives working in the IoT division at Arm and my previous start-up, our teams constantly wrestled with debugging firmware bugs on remote devices. To mitigate these issues we would build one-off logging solutions, but we would often end up having to ask a (non-technical) customer to try and connect a debugger to a device (painful for both parties involved) or have to fly someone there to debug the bug onsite (expensive and not environmentally friendly!). I knew we’d face some of these challenges again at Blecon, so I wanted to check out if Memfault could help mitigate or even eliminate them.
+I’m Donatien, co-founder of [Blecon](https://blecon.net/), where we provide device connectivity to the Internet using only Bluetooth. In my previous lives working in the IoT division at Arm and my previous start-up, our teams constantly wrestled with debugging firmware bugs on remote devices. 
+
+To mitigate these issues, we would build one-off logging solutions, but we would often end up having to ask a (non-technical) customer to try and connect a debugger to a device (painful for both parties involved) or fly someone to debug the bug onsite (expensive and not environmentally friendly!). I knew we’d face some of these challenges again at Blecon, so I wanted to check out if Memfault could help mitigate or even eliminate them.
 
 <!-- excerpt start -->
 
@@ -23,7 +25,7 @@ At Blecon, we are enabling SaaS applications to securely integrate IoT devices t
 
 On the embedded side, we’re developing modem firmware that can be integrated into a device in order to easily and securely access a Blecon network. The modem allows a host MCU to send and receive data, handling device identity, registration and connecting securely to a network. 
 
-[![/img/memfault-bluetooth/blecon-architecture.png](/img/memfault-bluetooth/blecon-architecture.png)](/img/memfault-bluetooth/blecon-architecture.png)
+<img width=800px src="{% img_url memfault-bluetooth/blecon-architecture.png %}" />
 
 In developing the modem code we wanted to achieve the following:
 * Iterate fast on the software we’re producing
@@ -42,7 +44,7 @@ In this blog, we’re focusing on point #2.
 
 ## Why we chose Memfault
 
-We evaluated some platforms that could collect and analyze logs and crash dumps for our modem. There are plenty of options in the mobile and cloud spaces, however this is quite new to the world of embedded!
+We evaluated some platforms that could collect and analyze logs and crash dumps for our modem. There are plenty of options in the mobile and cloud spaces, however, this is quite new to the world of embedded!
 
 Among the options we had, Memfault stood out. Something we were impressed with is the product’s focus on the core functionality (device monitoring) and not being too opinionated elsewhere - this matches the Blecon philosophy well. Especially, Memfault looked easy to integrate with any connectivity transport, which really suited us. We had been reading Interrupt for a while too, so it didn’t hurt having seen that the team there knew what they were doing.
 
@@ -51,7 +53,7 @@ Among the options we had, Memfault stood out. Something we were impressed with i
 Our reference modem is based on the nRF52840 SoC from Nordic, and we internally use the nRF5 SDK. This is one of the platforms for which the Memfault SDK provides a port, so hooking up the Memfault SDK in our application simply means:
 * Pulling in the SDK as a Git Submodule
 * Integrating it with our CMake build system
-* Adding and customising the `memfault_platform_*` files
+* Adding and customizing the `memfault_platform_*` files
 * Enabling the GNU Build ID for each build
 * Amending our linker script to dedicate a flash region to Memfault core dumps
 * Calling the Memfault initialization routine (`memfault_platform_boot()`) on startup
@@ -66,21 +68,21 @@ Something else that the SDK needs is a device identifier. As Blecon devices all 
 
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info) {
 
- static char uuid_str[BLECON_UUID_STR_SZ] = "";
- blecon_client_get_uuid(uuid_str);
+    static char uuid_str[BLECON_UUID_STR_SZ] = "";
+    blecon_client_get_uuid(uuid_str);
 
- *info = (sMemfaultDeviceInfo) {
-   // Device ID
-   .device_serial = uuid_str,
+    *info = (sMemfaultDeviceInfo) {
+        // Device ID
+        .device_serial = uuid_str,
 
-   // Firmware name
-   .software_type = FIRMWARE_NAME,
+        // Firmware name
+        .software_type = FIRMWARE_NAME,
 
-   // Firmware version
-   .software_version = FIRMWARE_VERSION,
-  
-   .hardware_version = BOARD_NAME,
- };
+        // Firmware version
+        .software_version = FIRMWARE_VERSION,
+
+        .hardware_version = BOARD_NAME,
+    };
 }
 ```
 
@@ -98,15 +100,15 @@ static void fake_error(void * p_event_data, uint16_t event_size) {
 */
 void bsp_event_handler(bsp_event_t event)
 {
-   switch (event)
-   {
-       case BSP_EVENT_KEY_1:
-           app_sched_event_put(NULL, 0, fake_error);
-           break;
+    switch (event)
+    {
+        case BSP_EVENT_KEY_1:
+            app_sched_event_put(NULL, 0, fake_error);
+            break;
 
-       default:
-           break;
-   }
+        default:
+            break;
+    }
 }
 ```
 
@@ -115,14 +117,14 @@ There is a [GDB Script](https://docs.memfault.com/docs/mcu/test-data-collection-
 ```c
 int main(void)
 {
-  // ...
-  memfault_platform_boot();
+    // ...
+    memfault_platform_boot();
 
-  // Upload here with GDB before softdevice and timers are started
-  memfault_data_export_dump_chunks();
+    // Upload here with GDB before softdevice and timers are started
+    memfault_data_export_dump_chunks();
 
-  scheduler_init();
-  // ...
+    scheduler_init();
+    // ...
 }
 ```
 
@@ -144,10 +146,16 @@ At a high level this means:
 
 We amend our `main()` with the following:
 ```c
+int main(void)
+{
+    ...
+
     // Request connection if we have data to upload
     if(memfault_packetizer_data_available()) {
         blecon_client_request_connection();
     }
+
+    ...
 ```
 
 And handle the various callbacks from the Blecon client:
@@ -183,7 +191,7 @@ static void blecon_on_response(void* ctx) {
 
 static void blecon_on_error(void* ctx) {
     NRF_LOG_INFO("Got error %x", blecon_client_get_error());
-	blecon_client_close_connection(); // Abort
+	  blecon_client_close_connection(); // Abort
 }
 ```
 
@@ -274,13 +282,13 @@ Here is the code on Github: [https://github.com/blecon/blecon-memfault-integrati
 
 We deploy it to Heroku, and configure the Blecon network request handler’s URL and secret within the Blecon console. 
 
-[![/img/memfault-bluetooth/blecon-edit-request-handler.png](/img/memfault-bluetooth/blecon-edit-request-handler.png)](/img/memfault-bluetooth/blecon-edit-request-handler.png)
+<img width=600px src="{% img_url memfault-bluetooth/blecon-edit-request-handler.png %}" />
 
 We then connect our device to the network and can now see the chunks coming into the chunks debug log within Memfault!
 
 Now, when we generate an error on the device we see a proper stack trace in Memfault:
 
-[![/img/memfault-bluetooth/memfault-assert-fake_error.png](/img/memfault-bluetooth/memfault-assert-fake_error.png)](/img/memfault-bluetooth/memfault-assert-fake_error.png)
+<img width=600px src="{% img_url memfault-bluetooth/memfault-assert-fake_error.png %}" />
 
 ## Moving to production
 With this success, we’ve decided to integrate Memfault directly into our modem firmware. 
@@ -293,13 +301,13 @@ We’re also leveraging the other features provided by the platform (Heap alloca
 
 Adding Memfault to our Blecon modem implementation gives us the confidence to iterate fast, knowing that if something goes wrong in the field we will be able to find out what and issue a fix quickly.
 
-Device observability is something that you don’t go back from once you’ve tried it. We remember the pain of dealing with customers facing issues that were hard to reproduce. Is it the hardware? Some specific environmental condition? The specific way the customer is using the device? All of these questions were difficult to answer, and in the extreme cases they would lead to someone being sent to the customer’s site to understand what was going on. They always led to a lot of time being spent that the engineering team would have rather used improving the product.
+Device observability is something that you don’t go back from once you’ve tried it. We remember the pain of dealing with customers facing issues that were hard to reproduce. Is it the hardware? Some specific environmental condition? The specific way the customer is using the device? All of these questions were difficult to answer, and in extreme cases, they would lead to someone being sent to the customer’s site to understand what was going on. They always led to a lot of time being spent that the engineering team would have rather used to improve the product.
 
 As an engineer, along with firmware update capabilities, device observability gives you an amazing toolbox to build great products, fast.
 
 I hope that this blog post gives you some good insight into how Memfault can be integrated with a non-IP transport like Blecon, and the benefits it can bring to your product development flow.
 
-I’m also intrigued by the comments we’ve had that Blecon could be an easy way to enable Memfault for devices that don’t have connectivity. Adding a BLE module in your design won’t hurt your BOM or power consumption much, so could be an easy way to add wireless diagnostics to a product.
+I’m also intrigued by the comments we’ve had that Blecon could be an easy way to enable Memfault for devices that don’t have connectivity. Adding a BLE module to your design won’t hurt your BOM or power consumption much, so could be an easy way to add wireless diagnostics to a product.
 
 _If you are building products and interested in learning more about using Blecon with Memfault, drop us an email at [hello@blecon.net](mailto:hello@blecon.net). We are also currently running an early access program, so if you want to get a modem breakout board to try it yourself, you can apply at [https://www.blecon.net/early-access](https://www.blecon.net/early-access)_
 
