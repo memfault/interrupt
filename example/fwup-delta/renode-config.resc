@@ -1,0 +1,31 @@
+:name: STM32F429 FWUP
+:description: This script runs the fwup example on stm32f429
+
+$name?="STM32F429"
+$bin?=@build/fwup-delta.bin
+
+# Create Machine & Load config
+mach create $name
+machine LoadPlatformDescription @platforms/cpus/stm32f429.repl
+machine LoadPlatformDescription @add-ccm.repl
+
+# Create a terminal window showing the output of UART2
+showAnalyzer sysbus.usart2
+emulation CreateServerSocketTerminal 4445 "externalUART"
+connector Connect sysbus.usart2 externalUART
+
+# Enable GDB
+machine StartGdbServer 3333
+
+macro setup
+"""
+    sysbus LoadBinary $bin 0x8000000
+    sysbus.cpu VectorTableOffset 0x8000000
+"""
+
+macro reset
+"""
+    sysbus.cpu VectorTableOffset 0x8000000
+"""
+
+runMacro $setup

@@ -1,0 +1,5 @@
+.venv
+build
+libopencm3
+cifra
+micro-ecc

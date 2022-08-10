@@ -5,6 +5,7 @@ description:
   In this article we explain why it matters, and how firmware signing can be
   implemented.
 author: francois
+tags: [firmware-update]
 ---
 
 [Previously]({% post_url 2020-06-23-device-firmware-update-cookbook %}), we
