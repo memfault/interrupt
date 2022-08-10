@@ -341,7 +341,7 @@ written at once, so you'll save on erase times.
 On our STM32, flash sectors are 4kB so we'll simply allocate three static 4kB
 buffers:
 
-```
+```c
 #include <janpatch.h>
 
 #define SECTOR_SIZE 4096
@@ -476,21 +476,23 @@ int dfu_write(image_slot_t slot, const void *ptr, long int offset, size_t count)
 We can now fill in our `janpatch_ctx`:
 
 ```c
-    janpatch_ctx ctx = {
-        // fread/fwrite buffers for every file, minimum size is 1 byte
-        // when you run on an embedded system with block size flash, set it to the size of a block for best performance
-        { source_buf, 4096 },
-        { target_buf, 4096 },
-        { patch_buf, 4096 },
+#define SECTOR_SIZE 4096
 
-        // functions which can perform basic IO
-        &sfio_fread,
-        &sfio_fwrite,
-        &sfio_fseek,
+janpatch_ctx ctx = {
+    // fread/fwrite buffers for every file, minimum size is 1 byte
+    // when you run on an embedded system with block size flash, set it to the size of a block for best performance
+    { source_buf, SECTOR_SIE },
+    { target_buf, SECTOR_SIE },
+    { patch_buf, SECTOR_SIE },
 
-	NULL, // ftell not implemented
-        NULL, // progress callback not implemented
-    };
+    // functions which can perform basic IO
+    &sfio_fread,
+    &sfio_fwrite,
+    &sfio_fseek,
+
+    NULL, // ftell not implemented
+    NULL, // progress callback not implemented
+};
 ```
 
 Finally, we need to invoke the `janpatch` method itself. It acccepts three
