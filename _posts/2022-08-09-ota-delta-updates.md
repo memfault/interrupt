@@ -127,7 +127,7 @@ system. There are remarkably few libraries that provide this functionality. The
 excellent BSDiff[^bsdiff], and XDelta[^xdelta] both require too much memory to
 work on most embedded systems without modification. This leaves
 Jojodiff[^jojodiff], which has been helpfully reimplemented by Jan
-Longboom[^jan] in his JanPatch library[^janpatch] optimized for embedded
+Jongboom[^jan] in his JanPatch library[^janpatch] optimized for embedded
 systems.
 
 While Jojodiff is neither the fastest nor the most efficient, it requires constant
