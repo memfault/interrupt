@@ -15,8 +15,8 @@ and react to a changing environment.
 
 I've written at length about firmware updates in the past, including on Interrupt
 with a [Firmware Update Cookbook]({% post_url 2020-06-23-device-firmware-update-cookbook %})
-and [a post about code signing](% post_url
-2020-09-08-secure-firmware-update-with-code-signing %}), and even recorded a
+and [a post about code signing]({% post_url
+2020-09-08-secure-firmware-updates-with-code-signing %}), and even recorded a
 [webinar on the
 topic](https://memfault.com/webinars/device-firmware-update-best-practices/).
 
