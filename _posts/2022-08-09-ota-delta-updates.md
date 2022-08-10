@@ -8,16 +8,16 @@ author: francois
 tags: [firmware-update]
 ---
 
-Firmware update capability has become a must-have for most devices. Whether 
-to add new features after launch, fix bugs, or urgently patch a security
-hole, firmware update gives modern teams the flexibility they need to move fast
-and react to a changing environment.
+Firmware update capability has become a must-have for most devices. Whether to
+add new features after launch, fix bugs, or urgently patch a security hole,
+firmware updates gives modern teams the flexibility they need to move fast and
+react to a changing environment.
 
-I've written at length about firmware updates in the past, including on Interrupt
-with a [Firmware Update Cookbook]({% post_url 2020-06-23-device-firmware-update-cookbook %})
-and [a post about code signing]({% post_url
-2020-09-08-secure-firmware-updates-with-code-signing %}), and even recorded a
-[webinar on the
+I've written at length about firmware updates in the past, including on
+Interrupt with a [Firmware Update Cookbook]({% post_url
+2020-06-23-device-firmware-update-cookbook %}) and [a post about code
+signing]({% post_url 2020-09-08-secure-firmware-updates-with-code-signing %}),
+and even recorded a [webinar on the
 topic](https://memfault.com/webinars/device-firmware-update-best-practices/).
 
 Since then, I've heard from some of you that they've run into roadblocks
@@ -74,6 +74,8 @@ which we'll call PATCH.
 
 ### Pros and Cons of Delta Updates
 
+#### Pros
+
 The obvious advantage of delta updates is the small size of the resulting image.
 Delta images are often one to two orders of magnitude smaller than full system
 images. The size reduction has multiple beneficial effects:
@@ -88,6 +90,8 @@ images. The size reduction has multiple beneficial effects:
    install a delta image than a full image.
 4. OTA consumes less power, thanks to the reduced communication and flash
    writing required.
+
+#### Cons
 
 However, there is no such thing as a free lunch! Delta updates come with some
 downsides worth considering:
@@ -605,6 +609,7 @@ hesitate to submit a pull request or open an issue on
 <!-- prettier-ignore-start -->
 [^bsdiff]: [BSDiff](https://www.daemonology.net/bsdiff/)
 [^xdelta]: [XDelta](https://sourceforge.net/projects/xdelta/)
+[^jojodiff]: [JojoDiff](http://jojodiff.sourceforge.net/)
 [^jan]: [Jan Jongboom](http://janjongboom.com/) is the co-founder and CTO at Edge Impulse
 [^janpatch]: [JanPatch on Github](https://github.com/janjongboom/janpatch)
 [^jdiff]:  [JDiff on Github](https://github.com/janjongboom/jdiff-js)
