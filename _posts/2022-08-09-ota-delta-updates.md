@@ -481,9 +481,9 @@ We can now fill in our `janpatch_ctx`:
 janpatch_ctx ctx = {
     // fread/fwrite buffers for every file, minimum size is 1 byte
     // when you run on an embedded system with block size flash, set it to the size of a block for best performance
-    { source_buf, SECTOR_SIE },
-    { target_buf, SECTOR_SIE },
-    { patch_buf, SECTOR_SIE },
+    { source_buf, SECTOR_SIZE },
+    { target_buf, SECTOR_SIZE },
+    { patch_buf, SECTOR_SIZE },
 
     // functions which can perform basic IO
     &sfio_fread,
