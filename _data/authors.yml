@@ -134,4 +134,11 @@ veverak:
     linkedin: https://www.linkedin.com/in/jan-koniarik-21b9723b/
     twitter: https://twitter.com/SquirrelCZE
     blurb: -- robotics software engineer, keen interest in embedded, teaching assistant at university
-
+donatien:
+    name: Donatien Garnier
+    email: donatien.garnier@blecon.net
+    image: /img/author/donatien.png
+    blurb: is a co-founder of <a href='https://blecon.net/'>Blecon</a>. He was previously tech lead for Arm Mbed OS, and founder of an IoT startup.
+    twitter: donatiengarnier
+    linkedin: https://www.linkedin.com/in/donatiengarnier/
+    github: donatieng
