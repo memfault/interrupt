@@ -1,5 +1,5 @@
 ---
-title: Integrating Memfault with Blecon
+title: Integrating Memfault with Blecon Bluetooth Devices
 description:
   In this post, I’ll go through how we evaluated Memfault at Blecon and talk through what we liked and why we decided to use it, how we integrated it into the nRF5 platform and carried the Memfault data over to the Memfault cloud via Bluetooth.
 author: donatien
