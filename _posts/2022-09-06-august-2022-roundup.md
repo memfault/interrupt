@@ -44,7 +44,7 @@ Interesting journal of some severe heisen-debbugging session using techniques ma
 I like this piece as a discussion point – all too often I see the hype around recent languages that claim to be the successor of C by looking only a singular aspect (memory handling, no surprises, etc). The author also reminded me of the “The Killer Feature” effect that once made me buy a Ruby book 😱 – I have yet to see the equivalent for Rust et al.
 
 - [**kingyoPiyo/Pico-10BASE-T: 10BASE-T from Raspberry Pi Pico**](https://github.com/kingyoPiyo/Pico-10BASE-T)<br>
-Cook hack and a nice README! - Noah
+Cool hack and a nice README! - Noah
 
 - [**Bringing Rust to Space - Setting up a Rust ecosystem for the VA108XX MCU family - robs blog**](https://robamu.github.io/post/rust-ecosystem/) by Robin Mueller<br>
 A developer was trying to get Rust working on satellite-grade Vorago MCU's. It turns out there were no pre-existing libraries for such MCU's (duh) - Tyler.
@@ -56,7 +56,7 @@ Write up about extending the RT685 EVK with a custom daughter card for use as an
 Neat write-up about how wokwi got gdb to run in a web browser. - Noah
 
 - [**Protobuffers Are Wrong :: Reasonably Polymorphic**](https://reasonablypolymorphic.com/blog/protos-are-wrong/) by Sandy Maguires<br>
-Pretty harshly worded but interesting analysis of some failings of Google's Protobuf data format - Noah
+Pretty harshly worded but interesting analysis of some disadvantages of Google's Protobuf data format - Noah
 
 - [**How Golioth uses Hardware-in-the-Loop (HIL) Testing: Part 2 - Golioth**](https://blog.golioth.io/golioth-hil-testing-part2/) by Nick Miller<br>
 Title says it all. A good post written by our friends at Goliath.
