@@ -44,7 +44,7 @@ Interesting journal of some severe heisen-debbugging session using techniques ma
 I like this piece as a discussion point – all too often I see the hype around recent languages that claim to be the successor of C by looking only a singular aspect (memory handling, no surprises, etc). The author also reminded me of the “The Killer Feature” effect that once made me buy a Ruby book 😱 – I have yet to see the equivalent for Rust et al.
 
 - [**kingyoPiyo/Pico-10BASE-T: 10BASE-T from Raspberry Pi Pico**](https://github.com/kingyoPiyo/Pico-10BASE-T)<br>
-Cook hack and a nice README! - Noah
+Cool hack and a nice README! - Noah
 
 - [**Bringing Rust to Space - Setting up a Rust ecosystem for the VA108XX MCU family - robs blog**](https://robamu.github.io/post/rust-ecosystem/) by Robin Mueller<br>
 A developer was trying to get Rust working on satellite-grade Vorago MCU's. It turns out there were no pre-existing libraries for such MCU's (duh) - Tyler.
@@ -62,7 +62,7 @@ Pretty harshly worded but interesting analysis of some failings of Google's Prot
 Title says it all. A good post written by our friends at Goliath.
 
 - [**Don't try this at home: overclocking RP2040 to 1GHz - Raspberry Pi**](https://www.raspberrypi.com/news/dont-try-this-at-home-overclocking-rp2040-to-1ghz/) by Liz Upton<br>
-Wow! Raised the voltage from 1.1V to 3V and kept the temperature at -40°C. 
+Wow! Raised the voltage from 1.1V to 3V and kept the temperature at -40°C.
 
 - [**Using GoogleTest and GoogleMock frameworks for embedded C - CodeProject**](https://www.codeproject.com/articles/1040972/using-googletest-and-googlemock-frameworks-for-emb) by Michael Pan<br>
 Good reference on using the GoogleTest unit testing framework for embedded projects - Francois
@@ -102,7 +102,7 @@ An Interrupt Slack user posted their library to decode fault registers on Arm Co
 Some seriously cool improvements coming in C23 - Francois. Heiko is most excited for the first iterations of `auto` and `constexpr`.
 
 - [**Introducing multitasking to Arduino - Arduino Blog**](https://blog.arduino.cc/2022/08/02/introducing-multitasking-to-arduino/) by Alessandro Ranellucci<br>
-Arduino is getting multitasking! The blog post itself has very little information, but you can find the primary discussion [in a GitHub discussion](https://github.com/arduino/language/discussions/2). 
+Arduino is getting multitasking! The blog post itself has very little information, but you can find the primary discussion [in a GitHub discussion](https://github.com/arduino/language/discussions/2).
 
 - [**Nordic Semiconductor announces its first Wi-Fi chip, the dual-band Wi-Fi 6 nRF7002 - Nordic Semi**](https://www.nordicsemi.com/News/2022/08/Nordic-Semiconductor-announces-its-first-WiFi-chip)<br>
-It's a "companion IC" so you don't write firmware for it, as it's meant to be used directly alongside one of Nordic's other devices to add Wi-Fi connectivity. 
+It's a "companion IC" so you don't write firmware for it, as it's meant to be used directly alongside one of Nordic's other devices to add Wi-Fi connectivity.
