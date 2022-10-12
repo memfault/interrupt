@@ -16,6 +16,12 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 
 ## Articles & Learning
 
+- [**How to Build and Maintain IoT Management Systems for Scale (Memfault Webinar)**](https://www.youtube.com/watch?v=6X62qDaNaNc) by Tyler Hoffman & Chris Coleman<br>
+I had a blast doing a joint webinar with Chris talking about how to build engineering teams and data systems to ensure that firmware teams and hardware companies can build reliable products and infrastructure. Sounds like a mouthful, but honestly, the webinar was Chris telling everyone fun stories from the past, which is always a good time.
+
+- [**How to De-Risk Product Launches with Device Reliability Engineering (Memfault Webinar)**](https://www.youtube.com/watch?v=OFq3aupQp64) by François Baldassari<br>
+I feel I learn a lot from every webinar François gives. In this one, he talks about TDD, Day-0 updates, why and how to build a Hardware Abstraction Layer (HAL), and why you should split up the manufacturing firmware build and normal operating firmware. These are all these he's learned throughout his time at Pebble, Oculus, and Memfault.
+
 - [**Open Source Firmware Conference 2022 (Videos)**](https://www.osfc.io/2022/schedule/)<br>
 The Open Source Firmware Conference 2022 videos have been posted online. Check them out!
 
@@ -61,6 +67,9 @@ A simple C graphics library with 0 dependencies which could easily be adapted to
 A very nice little open source ebook reader that uses a Raspberry Pi Pico. - Noah
 
 ## Announcements & News
+
+- [**Arm's Dev Summit is now online-only and free**](https://www.arm.com/company/events/devsummit)<br>
+I'll be speaking at this year's Arm Dev Summit talking about monitoring millions of devices remotely, and Alvaro Prieto from Sofar Ocean will be talking about debugging devices remotely while they are at sea. I'm sure there are others but these are the ones I know about and can confirm they contain real content for developers.
 
 - [**Announcing Publication of the Draft Ferrocene - The AdaCore Blog**](https://blog.adacore.com/announcing-publication-of-the-draft-ferrocene-language-specification) by Quentin Ochem<br>
 Ferrous Systems and Adacore have released their spec for safety-certified Rust.
