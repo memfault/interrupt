@@ -133,7 +133,7 @@ Now when we start the application, we crash on boot. How strange!
 
 ### Why does only one of the builds crash?!
 
-A full discussion of how to debug the crash is outside the scope of this article but can be found in [this post]({% post_url 2019-11-20-cortex-m-fault-debug %}#debugger-plugins).
+A full discussion of how to debug the crash is outside the scope of this article but can be found in [this post]({% post_url 2019-11-20-cortex-m-hardfault-debug %}#debugger-plugins).
 
 We examine the Configurable Fault Status Register (CFSR) and can see that a UsageFault has taken place:
 

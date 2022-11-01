@@ -576,7 +576,7 @@ watchdog. We'll want the timeout to be a little less than the hardware watchdog 
 example lets use a timeout of 7 seconds. To "feed" this watchdog, we will just restart the timer. If 7 seconds elapses without a feed, the ISR will fire and we know the system is about to watchdog.
 
 We can then treat this interrupt as another "fault handler" and apply the [lessons learned from our post]({% post_url
-2019-11-20-cortex-m-fault-debug %}) about debugging Cortex-M faults to this situation as well!
+2019-11-20-cortex-m-hardfault-debug %}) about debugging Cortex-M faults to this situation as well!
 
 #### Software Watchdog Example C Code
 

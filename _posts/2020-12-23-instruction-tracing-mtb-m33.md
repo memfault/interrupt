@@ -684,7 +684,7 @@ HardFault_Handler () at ./main.c:106
 ```
 
 In this scenario, even if we follow the steps from our previous post on how [to recover the callstack after a HardFault]({% post_url
-2019-11-20-cortex-m-fault-debug %}#registers-prior-to-exception), there isn't a lot of context revealed.
+2019-11-20-cortex-m-hardfault-debug %}#registers-prior-to-exception), there isn't a lot of context revealed.
 
 ```
 p/a *(uint32_t[8] *)$psp

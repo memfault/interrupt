@@ -448,7 +448,7 @@ Program received signal SIGTRAP, Trace/breakpoint trap.
 
 Yikes, we have hit another hardfault. What's interesting here is our stack pointer, `$sp`, ran off the end of RAM, `0x2000.0000`. This suggests a stack overflow took place. It's hard to see what happened because we ran off valid RAM and so not all the register state will be on the stack.
 
-> Note: For a deeper dive into debugging Cortex-M faults in general, check out [our post on the topic]({% post_url 2019-11-20-cortex-m-fault-debug %}).
+> Note: For a deeper dive into debugging Cortex-M faults in general, check out [our post on the topic]({% post_url 2019-11-20-cortex-m-hardfault-debug %}).
 
 Since the overflow is reproducible, let's see if we can intercept before the overflow and get a stack trace.
 We will install a watchpoint near the bottom of the stack:
