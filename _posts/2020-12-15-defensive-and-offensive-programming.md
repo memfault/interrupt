@@ -389,7 +389,7 @@ debug.
 
 One way to help prevent use-after-free bugs is to scrub the entire contents of
 the memory with an invalid address that, when accessed, would cause a
-[HardFault]({% post_url 2019-11-20-cortex-m-fault-debug %}) on our Cortex-M4 and
+[HardFault]({% post_url 2019-11-20-cortex-m-hardfault-debug %}) on our Cortex-M4 and
 ultimately halt the system or capture a core dump.
 
 ```c

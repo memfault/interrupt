@@ -179,7 +179,7 @@ bool debug_monitor_enable(void) {
 ## A minimal DebugMonitor Handler
 
 We can use the same handler we put together in [our post about fault handling]({% post_url
-2019-11-20-cortex-m-fault-debug %}#halting--determining-core-register-state) to dump register state
+2019-11-20-cortex-m-hardfault-debug %}#halting--determining-core-register-state) to dump register state
 about the code which caused the DebugMonitor exception to be invoked:
 
 ```c

@@ -130,7 +130,7 @@ for the same framework as the application they monitor.
 
 For firmware, they would likely install hooks into the
 [assert]({% post_url 2019-11-05-asserts-in-embedded-systems %}),
-[fault]({% post_url 2019-11-20-cortex-m-fault-debug %}), and
+[fault]({% post_url 2019-11-20-cortex-m-hardfault-debug %}), and
 [logging]({% post_url 2020-08-04-firmware-logs-stack-trace %}) handlers.
 
 The beautiful thing about crash reporting tools is they are relatively easy to
