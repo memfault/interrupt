@@ -16,7 +16,7 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 
 ## Articles & Learning
 
-- [The Power of Firmware Metrics - Memfault Webinar](https://go.memfault.com/webinar-power-of-metrics-monitoring-battery-life-connectivity-power-consumption) by Tyler Hoffman<br>
+- [**The Power of Firmware Metrics - Memfault Webinar**](https://go.memfault.com/webinar-power-of-metrics-monitoring-battery-life-connectivity-power-consumption) by Tyler Hoffman<br>
   I'm doing a webinar on the most important metrics to monitor on battery-powered embedded devices. It will extend on my [heartbeat metrics Interrupt post]({% post_url 2020-09-02-device-heartbeat-metrics %}).
 
 - [**Understanding Arm Cortex-M Intel-Hex (ihex) files - Feabhas Sticky Bits**](https://blog.feabhas.com/2022/10/understanding-arm-cortex-m-intel-hex-ihex-files/) by Niall Cooling<br>
