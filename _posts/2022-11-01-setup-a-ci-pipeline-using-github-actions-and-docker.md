@@ -19,19 +19,15 @@ Continuous Integration is a practice of validating the features integrated into 
 
 For that, you will need to perform at least these steps:
 
-• **Git flow** - Rules to handle branches in a git repository.
-
-• **Automatic compliance**  - Check if the project is still compiling before merging a feature.
-
-• **Code quality** - Check if there are vulnerabilities in the code.
+- **Git flow** - Rules to handle branches in a git repository.
+- **Automatic compliance**  - Check if the project is still compiling before merging a feature.
+- **Code quality** - Check if there are vulnerabilities in the code.
 
 So, to complete these steps, we will use the following tools:
 
-• **GitHub Actions** - It kicks off a compilation and static code analysis on the cloud. It allows us to run build scripts on every commit or pull request to make sure everything still works with the new changes inserted. ([https://docs.github.com/en/actions](https://docs.github.com/en/actions))
-
-• **Docker** - The Linux container will compile the project and run static analysis in the code. ([https://www.docker.com/](https://www.docker.com/)) 
-
-• **Cpp Check** - Perform the static analysis of the code and generate a log from it. ([https://cppcheck.sourceforge.io/](https://cppcheck.sourceforge.io/))
+- **GitHub Actions** - It kicks off a compilation and static code analysis on the cloud. It allows us to run build scripts on every commit or pull request to make sure everything still works with the new changes inserted. ([https://docs.github.com/en/actions](https://docs.github.com/en/actions))
+- **Docker** - The Linux container will compile the project and run static analysis in the code. ([https://www.docker.com/](https://www.docker.com/)) 
+- **Cpp Check** - Perform the static analysis of the code and generate a log from it. ([https://cppcheck.sourceforge.io/](https://cppcheck.sourceforge.io/))
 
 # Project creation
 
@@ -81,7 +77,7 @@ If you are running it on Linux, you can go directly to the terminal, but if you 
 make -f empty.Makefile
 ```
 
-You, at this point, can compile the project at your local machine using the terminal.
+Now the project can be built from the terminal, which is necessary for building in CI.
 
 ![Makefiles](/img/setup-a-ci-pipeline-using-github-actions-and-docker/9-compile.png)
 
@@ -107,7 +103,7 @@ Copy the project files to the container:
 docker cp C:\Users\leonardo\SimplicityStudio\v5_workspace\empty 1027ffa9c954:/project
 ```
 
-Compile the project and make a static code analysis:
+Compile the project and run the `cppcheck` static code analysis tool:
 
 ```bash
 cd /project/
