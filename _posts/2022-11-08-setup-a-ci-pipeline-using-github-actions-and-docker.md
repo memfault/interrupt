@@ -35,7 +35,7 @@ So, to complete these steps, we will use the following tools:
 
 ### Board and IDE
 
-To give you an example of how to set up a continuous integration pipeline in a firmware project, I will use the [Silicon Labs Thunderboard Sense Board](https://www.silabs.com/development-tools/thunderboard/thunderboard-sense-two-kit?tab=overview) to run a simple project with [Simplicity Studio IDE](https://www.silabs.com/developers/simplicity-studio) that we will use to build and perform static analysis. Even though tutorial is specific to the Simplicity Studio build system, the general approach should apply to other build systems.
+To give you an example of how to set up a continuous integration pipeline in a firmware project, I will use the [Silicon Labs Thunderboard Sense Board](https://www.silabs.com/development-tools/thunderboard/thunderboard-sense-two-kit?tab=overview) to run a simple project with [Simplicity Studio IDE](https://www.silabs.com/developers/simplicity-studio) that we will use to build and perform static analysis. Even though the tutorial is specific to the Simplicity Studio build system, the general approach should apply to other build systems.
 
 <p align="center">
   <img
