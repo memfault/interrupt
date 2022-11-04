@@ -1,7 +1,7 @@
 ---
-title: Setup a CI pipeline using GitHub Actions and Docker
-description: A step by step guide on how to setup continuous integration for firmware projects with GitHub Actions.
+title: "Pocket article: Continuous Integration with GitHub Actions"
 author: leoribg
+description: A step by step guide on how to setup continuous integration for firmw
 tags: [firmware-ci]
 ---
 
@@ -9,59 +9,45 @@ tags: [firmware-ci]
 
 <!-- excerpt start -->
 
-Continuous Integration (CI) practices are essential to bringing security, quality, and automation to your firmware development team. 
+Using Continuous Integration (CI) practices is essential to bringing security, quality, and automation to your firmware development team and release pipeline. Without CI, firmware builds might become non-[reproducible]({% post_url
+2019-12-11-reproducible-firmware-builds %}), certain build environments or configurations may deteriorate or break, and there will be less confidence in production builds that are shipped from individual developer machines.
 
-In this post, I will show how to set up a Continuous Integration pipeline using modern tools to help your team integrate the features into a mainline firmware project step by step.
+In this post, I will show how to set up a Continuous Integration pipeline using GitHub and Docker to help your team integrate the features into a mainline firmware project.
 
 <!-- excerpt end -->
 
 ## Continuous Integration Tools
 
-Continuous Integration is a practice of validating the features integrated into the main project.
+Continuous Integration is a practice of validating the features integrated into the main project at a regular cadence or with each change to the main repo.
 
 For that, you will need to perform at least these steps:
 
-- **Git flow** - Rules to handle branches in a git repository.
+- **[Git flow](https://nvie.com/posts/a-successful-git-branching-model/)** - Git usage model to handle development and release branches in a Git repository.
 - **Automatic compliance**  - Check if the project is still compiling before merging a feature.
 - **Code quality** - Check if there are vulnerabilities in the code.
 
-So, to complete these steps, we will use the following tools:
+To complete these steps, we will use the following tools:
 
-- **GitHub Actions** - It kicks off a compilation and static code analysis on the cloud. It allows us to run build scripts on every commit or pull request to make sure everything still works with the new changes inserted. ([https://docs.github.com/en/actions](https://docs.github.com/en/actions))
-- **Docker** - The Linux container will compile the project and run static analysis in the code. ([https://www.docker.com/](https://www.docker.com/)) 
-- **Cpp Check** - Perform the static analysis of the code and generate a log from it. ([https://cppcheck.sourceforge.io/](https://cppcheck.sourceforge.io/))
+- **Make** - Firmware development IDE environments and custom build systems are usually subpar. To be able to more easily build the firmware, we'll generate Makefiles and use Make as our build system.
+- **GitHub Actions** - It kicks off a compilation and static code analysis on the cloud. It allows us to run build scripts on every commit or pull request to make sure everything still works with the new changes inserted. ([https://docs.github.com/en/actions](https://docs.github.com/en/actions)).
+- **Docker** - The Linux container will compile the project and run static analysis on the code. ([https://www.docker.com/](https://www.docker.com/)) .
+- **Cpp Check** - Perform the static analysis of the code and generate a log from it. ([https://cppcheck.sourceforge.io/](https://cppcheck.sourceforge.io/)).
 
-## Project creation
+## Creating an Example Project
 
-### Board and IDE
+To give you an example of how to set up a continuous integration pipeline in a firmware project, I will use the [Silicon Labs Thunderboard Sense Board](https://www.silabs.com/development-tools/thunderboard/thunderboard-sense-two-kit?tab=overview) to run a simple project with [Simplicity Studio IDE](https://www.silabs.com/developers/simplicity-studio) that we will use to build and perform static analysis. 
 
-To give you an example of how to set up a continuous integration pipeline in a firmware project, I will use the [Silicon Labs Thunderboard Sense Board](https://www.silabs.com/development-tools/thunderboard/thunderboard-sense-two-kit?tab=overview) to run a simple project with [Simplicity Studio IDE](https://www.silabs.com/developers/simplicity-studio) that we will use to build and perform static analysis. Even though the tutorial is specific to the Simplicity Studio build system, the general approach should apply to other build systems.
+> Even though the tutorial is specific to the Simplicity Studio build system, the general approach should apply to other build systems.
 
-<p align="center">
-  <img
-    width="800"
-    src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/0-thunderboard.png"
-    alt="Thunderboard"
-  />
-</p>
+If you already have a set of Makefiles that you're ready to build, you can skip down to the [next section](#configuring-github-actions).
 
-### Create the project and compile it on the Local Machine
+### Create and Compile Project Locally
 
-If you have the Thunderboard Sense board, you can connect it to the PC and check if the Simplicity Studio detects it.
+Within Simplicity Studio, under My Products, select the blue plus symbol to add a new product.
 
 <p align="center">
   <img
-    width="800"
-    src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/1-board-selection.png"
-    alt="Board Selection"
-  />
-</p>
-
-If you do not have the board, you can add it to my products tab and create the project anyway. It is not impeditive to continue. You can follow the steps in the next images.
-
-<p align="center">
-  <img
-    width="800"
+    width="400"
     src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/2-add-new-board.png"
     alt="Add new board"
   />
@@ -69,7 +55,7 @@ If you do not have the board, you can add it to my products tab and create the p
 
 <p align="center">
   <img
-    width="800"
+    width="600"
     src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/3-add-board.png"
     alt="New board"
   />
@@ -89,7 +75,7 @@ Select the Empty C Project and Finish!
 
 <p align="center">
   <img
-    width="800"
+    width="600"
     src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/5-empty-c.png"
     alt="Empty project"
   />
@@ -99,7 +85,7 @@ To generate the project Makefile, open the empty.slcp file and do the following 
 
 <p align="center">
   <img
-    width="800"
+    width="700"
     src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/6-generators.png"
     alt="Generators"
   />
@@ -109,21 +95,13 @@ Select the GCC Makefile option on Change Project Generators, save, and Force Gen
 
 <p align="center">
   <img
-    width="800"
+    width="700"
     src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/7-gcc-makefile-gen.png"
     alt="Makefile Generator"
   />
 </p>
 
 After that, the empty.Makefile and empty.project.mak files will be created in the project root directory.
-
-<p align="center">
-  <img
-    width="800"
-    src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/8-makefile.png"
-    alt="Makefiles"
-  />
-</p>
 
 Now you can build the project in the terminal since Simplicity Studio installed the toolchain.
 
@@ -133,39 +111,32 @@ If you are running it on Linux, you can go directly to the terminal, but if you 
 make -f empty.Makefile
 ```
 
-Now the project can be built from the terminal, which is necessary for building in CI.
-
-<p align="center">
-  <img
-    width="800"
-    src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/9-compile.png"
-    alt="Makefiles"
-  />
-</p>
+Now the project can be built from the terminal, which is necessary for building within the GitHub Actions CI environment.
 
 ## Test the compilation on a Docker Container
 
 We will use a docker image with Simplicity Studio to build our project on a container. This will allow us to configure GitHub Actions to use the docker image to do the same.
 
-So let's pull the image to our computer:
+Let's start the container using the image that has Simplicity :
 
 ```powershell
-docker pull leoribg/simplicity-studio-5:latest
+docker run -it leoribg/simplicity-studio-5
 ```
 
-Start the container from the image:
+Docker will provide you with a shell. Within the shell prefix, it will provide an identifier of the container, which we will use in the next step.
 
-```powershell
-docker run -t -d leoribg/simplicity-studio-5
+```
+# 1027ffa9c954 is the identifier
+root@1027ffa9c954:/#
 ```
 
-Copy the project files to the container:
+In a separate window in your Windows environment, we'll copy the project files to the container:
 
 ```powershell
 docker cp C:\Users\leonardo\SimplicityStudio\v5_workspace\empty 1027ffa9c954:/project
 ```
 
-Compile the project and make a static code analysis:
+In the original Docker shell terminal window, you can now compile the project and run `cppcheck` to perform static analysis.
 
 ```bash
 cd /project/
@@ -175,23 +146,9 @@ cppcheck . --output-file=cpplog.txt
 
 ### Create the Git Repository
 
-Since the project was created, let's create a git repository. 
+If your project isn't yet version controlled with git and pushed to GitHub, you can follow the [official GitHub instructions](https://docs.github.com/en/get-started/importing-your-projects-to-github/importing-source-code-to-github/adding-locally-hosted-code-to-github) to do so. 
 
-For this tutorial, this is the repository I've used for my project:
-
- ‣
-
-To start and add your project to a git repository, run the following commands on your project directory:
-
-```bash
-git init
-git add .
-git commit -m "first commit"
-git remote add origin git@github.com:"user"/"repository".git
-git push -u origin master
-```
-
-## Configure the GitHub Actions
+## Configuring GitHub Actions
 
 You can start to configure the GitHub Actions for your project by creating the .yml file with your pipeline inside the “.github/workflows” folder. Or, you can create at your repository page by creating the file following a template provided by GitHub. Let's do the second option, that's easier for those who are starting.
 
@@ -199,7 +156,7 @@ So, go to your repository page and click on the “Actions” tab:
 
 <p align="center">
   <img
-    width="800"
+    width="400"
     src="/img/setup-a-ci-pipeline-using-github-actions-and-docker/10-actions.png"
     alt="GitHub Actions"
   />
@@ -277,10 +234,12 @@ You have configured your first CI workflow using GitHub Actions.
 
 I hope this can help you to start using GitHub Actions on your future projects!
 
-[^1]: [Git Flow](https://www.atlassian.com/br/git/tutorials/comparing-workflows/gitflow-workflow)
-[^2]: [GitHub Actions](https://docs.github.com/en/actions)
-[^3]: [Docker](https://www.docker.com/)
-[^4]: [CppCheck](https://cppcheck.sourceforge.io/)
-[^5]: [Silicon Labs Thunderboard Sense Board](https://www.silabs.com/development-tools/thunderboard/thunderboard-sense-two-kit?tab=overview)
-[^6]: [Simplicity Studio IDE](https://www.silabs.com/developers/simplicity-studio)
-[^7]: [Cygwin](https://www.cygwin.com/)
+## References & Links
+
+- [Git Flow](https://www.atlassian.com/br/git/tutorials/comparing-workflows/gitflow-workflow)
+- [GitHub Actions](https://docs.github.com/en/actions)
+- [Docker](https://www.docker.com/)
+- [CppCheck](https://cppcheck.sourceforge.io/)
+- [Silicon Labs Thunderboard Sense Board](https://www.silabs.com/development-tools/thunderboard/thunderboard-sense-two-kit?tab=overview)
+- [Simplicity Studio IDE](https://www.silabs.com/developers/simplicity-studio)
+- [Cygwin](https://www.cygwin.com/)
