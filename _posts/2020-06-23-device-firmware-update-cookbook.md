@@ -747,12 +747,30 @@ typedef struct __attribute__((packed)) {
     uint32_t flags;
 } shared_memory_t;
 
-shared_memory_t shared_memory __attribute__((section(".shared_memory")));
+volatile shared_memory_t shared_memory __attribute__((section(".shared_memory")));
 ```
 
-In the event of power loss, RAM will lose its state. To detect those events we
-use a magic value here as well. On boot, we check the magic number and
-initialize the struct if it isn't what we'd expect.
+In the event of power loss, RAM will be left in an indeterminate state. We'll
+need to detect this and reset the shared memory when it happens. On the STM32,
+the RCC peripheral can tell us whether or not we lost power. When power is
+lost, we'll erase the magic value at the beginning of our struct so that the
+rest of our code knows not to trust the shared memory region. Stick the
+following code somewhere in your early init sequence.
+
+(thank you to interrupt reader dreiss for sending us this code snippet)
+```
+if (RCC->CSR & RCC_CSR_PORRSTF) {
+    // Power loss has occurred.
+    // Clear magic to ensure we initialize shared_memory.
+    shared_memory.magic = 0;
+    __DMB();  // Possibly not necessary. 
+    // Clear reset flags.
+    RCC->CSR |= RCC_CSR_RMVF;
+}
+```
+
+When we inspect our shared memory further down the line, we check the magic
+number and initialize the struct if it isn't what we expect.
 
 ```c
 void shared_memory_init(void) {
