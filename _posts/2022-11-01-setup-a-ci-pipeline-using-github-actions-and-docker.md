@@ -79,8 +79,6 @@ make -f empty.Makefile
 
 Now the project can be built from the terminal, which is necessary for building in CI.
 
-![Makefiles](/img/setup-a-ci-pipeline-using-github-actions-and-docker/9-compile.png)
-
 # Test the compilation on a Docker Container
 
 We will use a docker image with [Simplicity Studio v5](https://www.silabs.com/documents/login/software/SimplicityStudio-5.tgz) and the necessary SDKs installed to build our project on a container. It will allow us to configure GitHub Actions to use the docker image to do the same.
