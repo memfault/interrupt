@@ -445,7 +445,7 @@ _Note however that packed structs can be safely `memcmp`'d, see below_
 Another approach is to avoid structure holes entirely!
 
 For example, you can use the `-Wpadded` compiler warning in
-[GCC](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wpadded) and
+[GCC](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Warning-Options.html#index-Wpadded) and
 [Clang](https://clang.llvm.org/docs/DiagnosticsReference.html#wpadded) to detect
 padding, and with `-Werror` or `-Werror=padded`, you can trigger compilation
 errors if padding is detected. To address the warnings, you can add placeholders
