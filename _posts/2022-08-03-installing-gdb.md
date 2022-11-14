@@ -50,16 +50,16 @@ and cons of each of them.
 I'm going to go through the various ways to install GDB with ARM support, but
 first here's a table summarizing the approaches:
 
-| Strategy                   | Binary or source install? | Pinned to version | Python support        | 3rd party package manager |
-| -------------------------- | ------------------------- | ----------------- | --------------------- | ------------------------- |
-| Binaries from ARM          | 📦binary                  | ✅ yes            | ⚠️ varies per version |                           |
-| xPack GNU Arm Embedded GCC | 📦binary                  | ✅ yes            | ✅ yes                |                           |
-| System package manager     | 📦binary                  | ⚠️ varies         | ⚠️ varies             |                           |
-| Conda                      | 📦binary                  | ✅ yes            | ✅ yes                | ⚠️ yes                    |
-| Docker                     | 📦binary                  | ✅ yes            | ✅ yes                | ⚠️ yes                    |
-| SDK-specific tools         | 📦binary                  | ⚠️ varies         | ✅ (usually yes)      |                           |
-| Build from source          | 📁source                  | ✅ yes            | ✅ (configurable)     |                           |
-| crosstool-NG               | 📁source                  | ✅ yes            | ✅ (configurable)     |                           |
+| Strategy                                                  | Binary or source install? | Pinned to version | Python support        | 3rd party package manager |
+| --------------------------------------------------------- | ------------------------- | ----------------- | --------------------- | ------------------------- |
+| [Binaries from ARM](#binaries-from-arm)                   | 📦binary                  | ✅ yes            | ⚠️ varies per version |                           |
+| [xPack GNU Arm Embedded GCC](#xpack-gnu-arm-embedded-gcc) | 📦binary                  | ✅ yes            | ✅ yes                |                           |
+| [System package manager](#system-package-manager)         | 📦binary                  | ⚠️ varies         | ⚠️ varies             |                           |
+| [Conda](#conda)                                           | 📦binary                  | ✅ yes            | ✅ yes                | ⚠️ yes                    |
+| [Docker](#docker)                                         | 📦binary                  | ✅ yes            | ✅ yes                | ⚠️ yes                    |
+| [SDK-specific tools](#sdk-specific-tools)                 | 📦binary                  | ⚠️ varies         | ✅ (usually yes)      |                           |
+| [Build from source](#build-from-source)                   | 📁source                  | ✅ yes            | ✅ (configurable)     |                           |
+| [crosstool-NG](#crosstool-ng)                             | 📁source                  | ✅ yes            | ✅ (configurable)     |                           |
 
 ## Details on each strategy
 
