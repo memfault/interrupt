@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 That's what **formatting** tools can do. For the C language, some popular
 formatters are:
 
-- [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+- [clang-format](https://releases.llvm.org/15.0.0/tools/clang/docs/ClangFormat.html)
 - [uncrustify](http://uncrustify.sourceforge.net/)
 - [GNU Indent](https://www.gnu.org/software/indent/)
 - [Astyle](http://astyle.sourceforge.net/)
@@ -399,7 +399,7 @@ Note that `clang-format` has a lot of configuration options. Recommendations for
 how to tune a config is outside the scope of this article, but here's some
 starting guidance:
 
-- documentation: <https://clang.llvm.org/docs/ClangFormatStyleOptions.html>
+- documentation: <https://releases.llvm.org/15.0.0/tools/clang/docs/ClangFormatStyleOptions.html>
 - interactive configurator: <https://zed0.co.uk/clang-format-configurator/>
 - generate a stub config with ex:
   `clang-format --style=Google --dump-config > .clang-format` (this will dump

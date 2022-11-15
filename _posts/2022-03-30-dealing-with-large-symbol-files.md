@@ -564,7 +564,7 @@ it to work 😞.
 This is a very interesting feature that Clang provides (alas, it's not present
 in GCC, at least as of GCC 11):
 
-<https://clang.llvm.org/docs/ClangCommandLineReference.html#cmdoption-clang-gembed-source>
+<https://releases.llvm.org/15.0.0/tools/clang/docs/ClangCommandLineReference.html#cmdoption-clang-gembed-source>
 
 Using it goes something like this:
 

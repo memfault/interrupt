@@ -24,13 +24,13 @@ embedded programs!
 Undefined Behavior Sanitizer (UBSan) is part of a set of tools that perform
 runtime checks on C family software. You can read more here:
 
-[https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
+[https://releases.llvm.org/15.0.0/tools/clang/docs/UndefinedBehaviorSanitizer.html](https://releases.llvm.org/15.0.0/tools/clang/docs/UndefinedBehaviorSanitizer.html)
 
 [https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan](https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan)
 
 The other sanitizers in the family include
-[AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html),
-[LeakSanitizer](https://clang.llvm.org/docs/LeakSanitizer.html), and others.
+[AddressSanitizer](https://releases.llvm.org/15.0.0/tools/clang/docs/AddressSanitizer.html),
+[LeakSanitizer](https://releases.llvm.org/15.0.0/tools/clang/docs/LeakSanitizer.html), and others.
 
 >Note: ***AddressSanitizer*** is a very powerful tool for detecting memory
 out-of-bounds errors, and I highly recommend enabling it in your unit tests. It
@@ -253,10 +253,10 @@ is worth a look!
 
 ## References
 
-- [https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
+- [https://releases.llvm.org/15.0.0/tools/clang/docs/UndefinedBehaviorSanitizer.html](https://releases.llvm.org/15.0.0/tools/clang/docs/UndefinedBehaviorSanitizer.html)
 - [https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan](https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan)
-- [https://clang.llvm.org/docs/AddressSanitizer.html](https://clang.llvm.org/docs/AddressSanitizer.html)
-- [https://clang.llvm.org/docs/LeakSanitizer.html](https://clang.llvm.org/docs/LeakSanitizer.html)
+- [https://releases.llvm.org/15.0.0/tools/clang/docs/AddressSanitizer.html](https://releases.llvm.org/15.0.0/tools/clang/docs/AddressSanitizer.html)
+- [https://releases.llvm.org/15.0.0/tools/clang/docs/LeakSanitizer.html](https://releases.llvm.org/15.0.0/tools/clang/docs/LeakSanitizer.html)
 - [https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Instrumentation-Options.html#index-fsanitize-undefined-trap-on-error](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Instrumentation-Options.html#index-fsanitize-undefined-trap-on-error)
 
 <!-- prettier-ignore-start -->
