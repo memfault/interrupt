@@ -142,7 +142,7 @@ Now that we have a better grasp of what an MPU does and how to configure it, let
 
 The examples which follow will walk through building up a collection of MPU region configurations and example crashes but you can also look at the code in it's entirety [here](https://github.com/memfault/interrupt/tree/master/example/armv7-mpu/main.c) which is a drop-in replacement for the blinky `main.c` located at `examples/peripheral/blinky/main.c` in the SDK.
 
-**NOTE** For convenience, the code makes use of a couple GCC extensions, notably some [function attributes](https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#Common-Function-Attributes) and [binary constants](https://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html) but could easily be modified to target other compilers as well.
+**NOTE** For convenience, the code makes use of a couple GCC extensions, notably some [function attributes](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Common-Function-Attributes.html#Common-Function-Attributes) and [binary constants](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Binary-constants.html) but could easily be modified to target other compilers as well.
 
 ### Examine NRF52 MPU Implementation
 

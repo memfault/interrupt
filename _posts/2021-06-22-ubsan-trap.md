@@ -162,7 +162,7 @@ immediately crash (exit with non-zero exit code) on errors:
 
 See details on sanitize-recover here:
 
-[https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fno-sanitize-recover](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fno-sanitize-recover)
+[https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Instrumentation-Options.html#index-fno-sanitize-recover](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Instrumentation-Options.html#index-fno-sanitize-recover)
 
 ## `libubsan` library and `-fsanitize-undefined-trap-on-error`
 
@@ -257,7 +257,7 @@ is worth a look!
 - [https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan](https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan)
 - [https://clang.llvm.org/docs/AddressSanitizer.html](https://clang.llvm.org/docs/AddressSanitizer.html)
 - [https://clang.llvm.org/docs/LeakSanitizer.html](https://clang.llvm.org/docs/LeakSanitizer.html)
-- [https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fsanitize-undefined-trap-on-error](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fsanitize-undefined-trap-on-error)
+- [https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Instrumentation-Options.html#index-fsanitize-undefined-trap-on-error](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Instrumentation-Options.html#index-fsanitize-undefined-trap-on-error)
 
 <!-- prettier-ignore-start -->
 <!-- prettier-ignore-end -->

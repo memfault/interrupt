@@ -90,7 +90,7 @@ Reading symbols from hello...
 🥺
 
 Ok, let's now compile with debug information enabled. Checking the
-[manual for GCC](https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html), we
+[manual for GCC](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Debugging-Options.html), we
 see several different options for debug information. Let's go with the highest
 level, `ggdb3`:
 
@@ -515,7 +515,7 @@ since it's part of the edit-compile-test loop, it could be worth doing.
 GCC and Clang both support an option to split out DWARF info when compiling
 source files into object files:
 
-<https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html#index-gsplit-dwarf>
+<https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Debugging-Options.html#index-gsplit-dwarf>
 
 Here's an example:
 
@@ -654,7 +654,7 @@ tools.
 
 <!-- prettier-ignore-start -->
 
-- <https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html> GCC debugging options
+- <https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Debugging-Options.html> GCC debugging options
 - <https://sourceware.org/binutils/docs-2.38/binutils/objcopy.html#objcopy> objcopy manual
 - <https://sourceware.org/gdb/onlinedocs/gdb/Index-Files.html> GDB index files
 - <https://developers.redhat.com/articles/2022/01/10/gdb-developers-gnu-debugger-tutorial-part-2-all-about-debuginfo>
