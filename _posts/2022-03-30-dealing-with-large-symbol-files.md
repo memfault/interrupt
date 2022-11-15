@@ -31,6 +31,10 @@ int main(int argc, char **argv) {
 }
 ```
 
+> Note: the example C file and a Makefile with the various `obcopy` and `ld`
+> example invocations can be found here:
+> <https://github.com/memfault/interrupt/blob/master/example/large-symbol-files/>
+
 Compile it with `gcc hello.c -o hello`, and let's take a look at the output
 size:
 
@@ -243,7 +247,7 @@ This only works if the position of the files remains consistent.
 > can read more about that here:
 > <https://developers.redhat.com/blog/2019/10/14/introducing-debuginfod-the-elfutils-debuginfo-server>
 
-### Compress Debug Info with `objcopy`
+### Compress Debug Info with `objcopy --compress-debug-sections`
 
 Instead of `strip`ing or splitting out the debug info, it can be compressed
 in-place:
@@ -319,6 +323,17 @@ With larger files it might be more significant, but I haven't tested that.
 
 Note that it's possible to _decompress_ the debug sections with `objcopy` using
 the `--decompress-debug-sections` flag.
+
+### Compress Debug Info when Linking
+
+GNU `ld` and LLVM's `lld` support the `--compress-debug-sections=zlib` option,
+which performs the debug section compression when generating the binary rather
+than after the fact as in `objcopy --compress-debug-sections`:
+
+<https://sourceware.org/binutils/docs-2.39/ld/Options.html#index-_002d_002dcompress_002ddebug_002dsections_003dzlib>
+
+This gives pretty equivalent results as doing it post-build, and is a great
+option to enable if you prefer always-compressed debug info.
 
 ## Compress Debug Info with `dwz`
 
