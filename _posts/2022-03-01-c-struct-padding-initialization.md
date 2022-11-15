@@ -524,7 +524,7 @@ backwards-compatibility and just makes things better!
 GCC 12 has added a new flag, `-ftrivial-auto-var-init=choice` which enables
 zero-initialization of struct padding by the compiler:
 
-<https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#index-ftrivial-auto-var-init>
+<https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Optimize-Options.html#index-ftrivial-auto-var-init>
 
 This flag has been present in Clang for a while, but it seems like it may be
 removed in the future; it requires setting this somewhat amusingly named flag to

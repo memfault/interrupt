@@ -623,7 +623,7 @@ Are the builds for your project reproducible today? Are there other matters on t
 [^3]: [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
 [^4]: [Standard Predefined Macros for GNU GCC](https://gcc.gnu.org/onlinedocs/cpp/Standard-Predefined-Macros.html)
 [^5]: [GNU Makefile Automatic Variables](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
-[^6]: [-fdebug-prefix-map](https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html#index-fdebug-prefix-map)
+[^6]: [-fdebug-prefix-map](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Debugging-Options.html#index-fdebug-prefix-map)
 [^7]: [For a faster grep experience, check out ripgrep](https://github.com/BurntSushi/ripgrep)
 [^8]: [Projects with efforts underway to be Reproducible](https://reproducible-builds.org/who/)
 [^9]: [Debian Project reasons why does a reproducible build matter](https://wiki.debian.org/ReproducibleBuilds/About#Why_do_we_want_reproducible_builds.3F)

@@ -191,6 +191,6 @@ I look forward to your remarks, tips, and comments.
 [^2]: [ARM semihosting operations](https://developer.arm.com/documentation/dui0471/i/semihosting/semihosting-operations?lang=en)
 [^3]: [Newlib](https://www.embedded.com/embedding-with-gnu-newlib/)
 [^4]: [Libgloss gcc](https://sca.uwaterloo.ca/coldfire/gcc-doc/docs/porting_1.html)
-[^5]: [GCC Spec Files](https://gcc.gnu.org/onlinedocs/gcc/Spec-Files.html)
+[^5]: [GCC Spec Files](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Spec-Files.html)
 [^6]: [OpenOCD semihosting commands](http://openocd.org/doc/html/Architecture-and-Core-Commands.html#Architecture-and-Core-Commands)
 <!-- prettier-ignore-end -->

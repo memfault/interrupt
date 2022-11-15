@@ -7,7 +7,7 @@ generated_header.h:
 
 # set this generated header as a prerequisite to main.c; using -MMD etc is
 # insufficient because those are produced after compilation
-# https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-M
+# https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Preprocessor-Options.html#index-M
 main.c: generated_header.h
 
 # Set a random UUID as a compilation option, but permit user overidding

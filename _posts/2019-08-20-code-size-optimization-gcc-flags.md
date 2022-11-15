@@ -383,7 +383,7 @@ hacks one can use to slim down code size further.
 ## Reference & Links
 
 [^1]: [ChibiOS Website](http://chibios.org/dokuwiki/doku.php)
-[^2]: [GCC Optimize Options](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
+[^2]: [GCC Optimize Options](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Optimize-Options.html)
 [^3]: [Inline Expansion](https://en.wikipedia.org/wiki/Inline_expansion)
 [^4]: [Newlib Home](https://sourceware.org/newlib/)
 [^5]: [Newlib on Github](https://github.com/littlekernel/newlib/blob/master/libgloss/arm/elf-nano.specs)

@@ -873,5 +873,5 @@ Let us know in the discussion area below!
 [^4]: [GNU ARM GCC Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
 [^5]: [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
 [^6]: [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
-[^8]: [GCC Atomic Builtins](https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html)
+[^8]: [GCC Atomic Builtins](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/_005f_005fatomic-Builtins.html)
 [^9]: [GDB Python API](https://sourceware.org/gdb/onlinedocs/gdb/Events-In-Python.html#Events-In-Python)
