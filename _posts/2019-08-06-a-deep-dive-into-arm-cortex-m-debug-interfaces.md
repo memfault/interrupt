@@ -344,7 +344,7 @@ Are there other topics you'd like us to cover? Or are there topics in this artic
 ## Useful Reference Links
 
 [^1]: [Coresight V3.0 Reference Manual](http://infocenter.arm.com/help/topic/com.arm.doc.ihi0029e/coresight_v3_0_architecture_specification_IHI0029E.pdf)
-[^2]: [ARM Debug Interface Architecture Specification](https://static.docs.arm.com/ihi0031/d/debug_interface_v5_2_architecture_specification_IHI0031D.pdf)
+[^2]: [ARM Debug Interface Architecture Specification](https://documentation-service.arm.com/static/5f900a61f86e16515cdc0610)
 [^3]: [CMSIS-DAP](https://os.mbed.com/handbook/CMSIS-DAP)
 [^4]: [CMSIS-DAP API Documentation](https://arm-software.github.io/CMSIS_5/DAP/html/index.html)
 [^5]: [DAPLink Github Repo](https://github.com/ARMmbed/DAPLink)
@@ -363,8 +363,8 @@ Are there other topics you'd like us to cover? Or are there topics in this artic
 [^18]: [Saleae logic analyzer](https://www.saleae.com)
 [^19]: [nRF52840-DK schematics](https://www.nordicsemi.com/-/media/Software-and-other-downloads/Dev-Kits/nRF52840-DK/nRF52840-Development-Kit---Hardware-files-1_0_0.zip)
 [^20]: [OpenOCD RTOS Plugin Code](https://github.com/ntfreak/openocd/tree/master/src/rtos)
-[^21]: [SEGGER GDB Server RTOS SDK](https://www.segger.com/downloads/jlink/#gdbserver_rtos)
+[^21]: [SEGGER GDB Server RTOS SDK (login required)](https://www.segger.com/downloads/jlink/GDBServer_RTOSPlugin_SDK.zip)
 [^22]: [pyOCD RTOS Plugin](https://github.com/mbedmicro/pyOCD/tree/master/pyocd/rtos)
-[^23]: [Zephyr Config For RTOS Awareness](https://docs.zephyrproject.org/latest/reference/kconfig/CONFIG_OPENOCD_SUPPORT.html)
+[^23]: [Zephyr Config For RTOS Awareness](https://docs.zephyrproject.org/2.7.0/reference/kconfig/CONFIG_OPENOCD_SUPPORT.html)
 [^24]: [Saleae Logic Analyzer](https://support.saleae.com/faq/technical-faq/what-sample-rate-is-required)
 [^25]: [Another VSCode Plugin for Cortex-M](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug)
