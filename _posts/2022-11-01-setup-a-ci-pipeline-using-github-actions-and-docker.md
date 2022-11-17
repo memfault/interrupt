@@ -85,19 +85,19 @@ We will use a docker image based on Ubuntu 18.04 with [Simplicity Studio v5](htt
 
 So let's pull the image to our computer:
 
-```powershell
+```bash
 docker pull leoribg/simplicity-studio-5:latest
 ```
 
 Start the container from the image:
 
-```powershell
+```bash
 docker run -t -d leoribg/simplicity-studio-5
 ```
 
 Copy the project files to the container:
 
-```powershell
+```bash
 docker cp C:\Users\leonardo\SimplicityStudio\v5_workspace\empty 1027ffa9c954:/project
 ```
 
