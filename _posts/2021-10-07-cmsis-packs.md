@@ -103,7 +103,7 @@ this python one-liner to find out where that is:
 # section on 'HOME DIRECTORY' for why it makes sense for PyOCD to use that!
 
 # search that location for any *.pack files
-❯ find $(python -c 'import cmsis_pack_manager; print(cmsis_pack_manager.Cache(False, False).data_path)') -name '*.pack'
+❯ find "$(python -c 'import cmsis_pack_manager; print(cmsis_pack_manager.Cache(False, False).data_path)')" -name '*.pack'
 /home/noah/.local/share/cmsis-pack-manager/Keil/STM32F4xx_DFP/2.15.0.pack
 /home/noah/.local/share/cmsis-pack-manager/Microchip/SAMD21_DFP/3.5.132.pack
 
