@@ -1,7 +1,6 @@
 ---
 title: "Pocket article: Undefined Behavior Sanitizer Trap on Error"
-description:
-  Using Undefined Behavior Sanitizer on small embedded programs without libubsan
+description: Using Undefined Behavior Sanitizer on small embedded programs without libubsan
 author: noah
 image: img/ubsan-trap/sigill.png
 ---
@@ -24,19 +23,19 @@ embedded programs!
 Undefined Behavior Sanitizer (UBSan) is part of a set of tools that perform
 runtime checks on C family software. You can read more here:
 
-[https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
+[https://releases.llvm.org/15.0.0/tools/clang/docs/UndefinedBehaviorSanitizer.html](https://releases.llvm.org/15.0.0/tools/clang/docs/UndefinedBehaviorSanitizer.html)
 
 [https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan](https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan)
 
 The other sanitizers in the family include
-[AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html),
-[LeakSanitizer](https://clang.llvm.org/docs/LeakSanitizer.html), and others.
+[AddressSanitizer](https://releases.llvm.org/15.0.0/tools/clang/docs/AddressSanitizer.html),
+[LeakSanitizer](https://releases.llvm.org/15.0.0/tools/clang/docs/LeakSanitizer.html), and others.
 
->Note: ***AddressSanitizer*** is a very powerful tool for detecting memory
-out-of-bounds errors, and I highly recommend enabling it in your unit tests. It
-is worthy of a dedicated post so we won't go into too much detail here, other
-than it needs to be carefully integrated with the host platform- it works best
-on Linux (though it is available on some other platforms)
+> Note: **_AddressSanitizer_** is a very powerful tool for detecting memory
+> out-of-bounds errors, and I highly recommend enabling it in your unit tests. It
+> is worthy of a dedicated post so we won't go into too much detail here, other
+> than it needs to be carefully integrated with the host platform- it works best
+> on Linux (though it is available on some other platforms)
 
 UBSan can catch several types of undefined behavior, for example:
 
@@ -120,7 +119,7 @@ This type of bug is very popular over at
 
 #### With UBsan
 
-Building the same program *with* UBSan:
+Building the same program _with_ UBSan:
 
 ```bash
 ❯ gcc -fsanitize=undefined ubsan-basic.c -o ubsan-basic
@@ -244,19 +243,21 @@ if you are headed down that path
 is worth a look!
 
 <!-- Interrupt Keep START -->
+
 {% include newsletter.html %}
 
 {% include submit-pr.html %}
+
 <!-- Interrupt Keep END -->
 
 {:.no_toc}
 
 ## References
 
-- [https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
+- [https://releases.llvm.org/15.0.0/tools/clang/docs/UndefinedBehaviorSanitizer.html](https://releases.llvm.org/15.0.0/tools/clang/docs/UndefinedBehaviorSanitizer.html)
 - [https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan](https://developers.redhat.com/blog/2014/10/16/gcc-undefined-behavior-sanitizer-ubsan)
-- [https://clang.llvm.org/docs/AddressSanitizer.html](https://clang.llvm.org/docs/AddressSanitizer.html)
-- [https://clang.llvm.org/docs/LeakSanitizer.html](https://clang.llvm.org/docs/LeakSanitizer.html)
+- [https://releases.llvm.org/15.0.0/tools/clang/docs/AddressSanitizer.html](https://releases.llvm.org/15.0.0/tools/clang/docs/AddressSanitizer.html)
+- [https://releases.llvm.org/15.0.0/tools/clang/docs/LeakSanitizer.html](https://releases.llvm.org/15.0.0/tools/clang/docs/LeakSanitizer.html)
 - [https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Instrumentation-Options.html#index-fsanitize-undefined-trap-on-error](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Instrumentation-Options.html#index-fsanitize-undefined-trap-on-error)
 
 <!-- prettier-ignore-start -->

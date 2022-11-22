@@ -446,7 +446,7 @@ Another approach is to avoid structure holes entirely!
 
 For example, you can use the `-Wpadded` compiler warning in
 [GCC](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wpadded) and
-[Clang](https://clang.llvm.org/docs/DiagnosticsReference.html#wpadded) to detect
+[Clang](https://releases.llvm.org/15.0.0/tools/clang/docs/DiagnosticsReference.html#wpadded) to detect
 padding, and with `-Werror` or `-Werror=padded`, you can trigger compilation
 errors if padding is detected. To address the warnings, you can add placeholders
 to fill unused space:
