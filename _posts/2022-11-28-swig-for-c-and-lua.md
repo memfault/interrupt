@@ -16,9 +16,9 @@ Integrating Lua and C codebases requires adding a lot of boilerplate code. Lua m
 
 ## What is SWIG?
 
-[SWIG](https://www.swig.org/) is a tool that generates a binding layer between C/C++ and higher-level programming languages. The promise of SWIG is simple: write an interface file that annotates C/C++ headers with custom SWIG markers, and generate bindings to a given language, so that you can expose whatever functionality you want from C/C++ and use it in that language.
+[SWIG](https://www.swig.org/) is a tool that generates a binding layer between C/C++ and higher-level programming languages. The promise of SWIG is simple: write an interface file that annotates C/C++ headers with custom SWIG markers, and generates bindings to a given language, so that you can expose whatever functionality you want from C/C++ and use it in that language.
 
-Let's explore generating bindings between application written in C targeted for embedded hardware and Lua.
+Let's explore generating bindings between applications written in C targeted for embedded hardware and Lua.
 
 ## Setting up
 
@@ -123,7 +123,7 @@ extern int32_t multiply(int32_t x, int32_t y);
 %}
 ```
 
-We declared `multiply` as `extern` introducing a linkage dependency. Now we’ll run SWIG and let it work it’s magic:
+We declared `multiply` as `extern` introducing a linkage dependency. Now we’ll run SWIG and let it work its magic:
 
 ```
 /app # cd example1
@@ -211,7 +211,7 @@ And lastly, our Lua script. From this script, we want to call `multiply` from C 
 print("[Lua] Result of multiply -2 * 5 = " .. bindings.multiply(-2, 5))
 ```
 
-We can also add a check if `bindings` module is indeed loaded in Lua by adding an `assert`:
+We can also add a check if the `bindings` module is indeed loaded in Lua by adding an `assert`:
 
 ```lua
 assert(type(bindings) == 'table', "Binding module not loaded")
@@ -272,7 +272,7 @@ And a SWIG interface that will include the above C header:
 
 Now if we look into the generated C file from SWIG, we’ll see setters and getters for each of the fields of the structure, as well as a constructor and destructor for the struct.
 
-Assuming we’d not only like to receive a structure passed from C in Lua, but also modify it, we’ll write a Lua script that will drive our C implementation:
+Assuming we’d not only like to receive a structure passed from C in Lua but also modify it, we’ll write a Lua script that will drive our C implementation:
 
 ```lua
 function processStruct(struct)
@@ -315,9 +315,9 @@ void callProcessStruct(lua_State *L, my_struct_t *my_struct)
 }
 ```
 
-Here, in `callProcessStruct` we first grab Lua’s `processStruct` function on top of stack. Then, we get type info for our C structure using `SWIG_TypeQuery` , followed by pushing the pointer on the stack with `SWIG_NewPointerObj`. That call creates a userdata on Lua’s stack containing our C structure. Finally, we call our Lua function.
+Here, in `callProcessStruct` we first grab Lua’s `processStruct` function on top of the stack. Then, we get type info for our C structure using `SWIG_TypeQuery` , followed by pushing the pointer on the stack with `SWIG_NewPointerObj`. That call creates a userdata on Lua’s stack containing our C structure. Finally, we call our Lua function.
 
-The rest of the application is just setting up the C structure with initial values, and printing the structure after call to Lua:
+The rest of the application is just setting up the C structure with initial values, and printing the structure after the call to Lua:
 
 ```c
 my_struct_t my_struct;
@@ -354,7 +354,7 @@ Here’s the output:
 [C] Finished
 ```
 
-It worked! Lua was able to modify our enum, integer, string and boolean. To get a peek under the hood, let’s use a well-known Lua [inspect](https://github.com/kikito/inspect.lua) library, which gives us information about objects.
+It worked! Lua was able to modify our enum, integer, string, and boolean. To get a peek under the hood, let’s use a well-known Lua [inspect](https://github.com/kikito/inspect.lua) library, which gives us information about objects.
 
 After importing the library with `require`, we add two lines to `processStruct`:
 
@@ -384,7 +384,7 @@ And get the following print (truncated):
 ...
 ```
 
-You can see from Lua point of view, the object is Lua’s [userdata](https://www.lua.org/pil/28.1.html), which means it’s raw memory. Normally userdata is managed by Lua meaning it will be garbage collected. However, SWIG gives us flexibility here with its `SWIG_NewPointerObj` API. The last argument to that function specified the owner of the object, and since we decided to own the object the garbage collector won’t affect it.
+You can see from Lua's point of view, the object is Lua’s [userdata](https://www.lua.org/pil/28.1.html), which means it’s raw memory. Normally userdata is managed by Lua meaning it will be garbage collected. However, SWIG gives us flexibility here with its `SWIG_NewPointerObj` API. The last argument to that function specified the owner of the object, and since we decided to own the object the garbage collector won’t affect it.
 
 The interesting bit is our struct’s metatable. As you can see from the print, the metatable contains function pointers including getters and setters. This is the main part SWIG took care of for us.
 
