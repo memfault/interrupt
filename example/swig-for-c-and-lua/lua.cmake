@@ -1,0 +1,38 @@
+set(LUA_INCLUDES
+    /tools/lua-5.4.4/src/
+)
+
+set(LUA_SOURCES
+    /tools/lua-5.4.4/src/lapi.c
+    /tools/lua-5.4.4/src/lauxlib.c
+    /tools/lua-5.4.4/src/lbaselib.c
+    /tools/lua-5.4.4/src/lcode.c
+    /tools/lua-5.4.4/src/lcorolib.c
+    /tools/lua-5.4.4/src/lctype.c
+    /tools/lua-5.4.4/src/ldblib.c
+    /tools/lua-5.4.4/src/ldebug.c
+    /tools/lua-5.4.4/src/ldo.c
+    /tools/lua-5.4.4/src/ldump.c
+    /tools/lua-5.4.4/src/lfunc.c
+    /tools/lua-5.4.4/src/lgc.c
+    /tools/lua-5.4.4/src/linit.c
+    /tools/lua-5.4.4/src/liolib.c
+    /tools/lua-5.4.4/src/llex.c
+    /tools/lua-5.4.4/src/lmathlib.c
+    /tools/lua-5.4.4/src/lmem.c
+    /tools/lua-5.4.4/src/loadlib.c
+    /tools/lua-5.4.4/src/lobject.c
+    /tools/lua-5.4.4/src/lopcodes.c
+    /tools/lua-5.4.4/src/loslib.c
+    /tools/lua-5.4.4/src/lparser.c
+    /tools/lua-5.4.4/src/lstate.c
+    /tools/lua-5.4.4/src/lstring.c
+    /tools/lua-5.4.4/src/lstrlib.c
+    /tools/lua-5.4.4/src/ltable.c
+    /tools/lua-5.4.4/src/ltablib.c
+    /tools/lua-5.4.4/src/ltm.c
+    /tools/lua-5.4.4/src/lundump.c
+    /tools/lua-5.4.4/src/lutf8lib.c
+    /tools/lua-5.4.4/src/lvm.c
+    /tools/lua-5.4.4/src/lzio.c
+)
