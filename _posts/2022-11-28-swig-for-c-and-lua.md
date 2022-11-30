@@ -6,7 +6,7 @@ author: stawiski
 
 <!-- excerpt start -->
 
-Integrating Lua and C codebases requires adding a lot of boilerplate code. Lua must understand C data structures and functions in its own way to handle them and vice versa. That’s a lot of wrapper code integrating the two languages together that must be written and then maintained as the application evolves. In this article, we will explore SWIG's promise of automating this code generation.
+Integrating Lua and C codebases requires adding a lot of boilerplate code. Lua must understand C data structures and functions in its own way to handle them and vice versa. The end result is writing a lot of wrapper code integrating the two languages together that then must be maintained as the application evolves. In this article, we will explore SWIG's promise of automating this code generation.
 
 <!-- excerpt end -->
 
