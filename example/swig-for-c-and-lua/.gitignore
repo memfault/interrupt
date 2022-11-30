@@ -1,0 +1,3 @@
+build/
+swig.c
+swig_runtime.h

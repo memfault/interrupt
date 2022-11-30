@@ -142,3 +142,9 @@ donatien:
     twitter: donatiengarnier
     linkedin: https://www.linkedin.com/in/donatiengarnier/
     github: donatieng
+stawiski:
+    name: Mikolaj Stawiski
+    blurb: is a passionate embedded software engineer coming from awesome electronics and hardware worlds, and now moving up the stack into software development.
+    linkedin: https://www.linkedin.com/in/mstawiski/
+    github: stawiski
+    image: /img/author/stawiski.png
