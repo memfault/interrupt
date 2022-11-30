@@ -6,7 +6,7 @@ author: stawiski
 
 <!-- excerpt start -->
 
-Integrating Lua and C codebases requires adding a lot of boilerplate code. Lua must understand C data structures and functions in its own way to handle them and vice versa. That’s a lot of wrapper code integrating two languages together that must be written and then maintained as the application evolves. In this article, we will explore SWIG's promise of automating this code generation.
+Integrating Lua and C codebases requires adding a lot of boilerplate code. Lua must understand C data structures and functions in its own way to handle them and vice versa. That’s a lot of wrapper code integrating the two languages together that must be written and then maintained as the application evolves. In this article, we will explore SWIG's promise of automating this code generation.
 
 <!-- excerpt end -->
 
@@ -21,6 +21,8 @@ Integrating Lua and C codebases requires adding a lot of boilerplate code. Lua m
 Let's explore generating bindings between applications written in C targeted for embedded hardware and Lua.
 
 ## Setting up
+
+> To follow along, I've provided all example code on [GitHub in the Interrupt repo under `example/swig-for-c-and-lua`](https://github.com/memfault/interrupt/tree/master/example/swig-for-c-and-lua).
 
 We’ll start by writing a Dockerfile that will host our desktop environment including Lua, SWIG, CMake, and GCC. Let’s build on top of `alpine:3.16` image for a smaller size.
 
@@ -63,7 +65,7 @@ RUN luac -v
 RUN swig -version
 ```
 
-Here is the whole resulting Dockerfile for reference:
+Here is the whole resulting Dockerfile for reference ([link](https://github.com/memfault/interrupt/tree/master/example/swig-for-c-and-lua/Dockerfile)):
 
 ```dockerfile
 FROM alpine:3.16
@@ -97,21 +99,34 @@ RUN swig -version
 ENTRYPOINT ["/bin/sh"]
 ```
 
+To build and run this container, we can run the following command in our shell:
+
+```shell
+# Host machine
+$ docker build -t swig . && docker run -v $PWD:/app -it swig
+
+... # Build output
+
+# Docker container shell starts!
+/app # ls
+Dockerfile   example1     ...
+```
+
 Now, using this Docker image we can parse Lua scripts, compile Lua to bytecode, generate bindings with SWIG, and compile C/C++ programs using CMake!
+
+To make things as easy for you to replicate what I'm doing in this post, I've created shell scripts for each example, such as `example1.sh`, that can be run from your host machine with Docker installed.
 
 ## First binding between C and Lua
 
-Time to get our hands dirty with SWIG. Let’s get something simple running.
+Time to get our hands dirty with SWIG. Let’s get something simple running. For reference this is `example1`.
 
-Imagine we have a function that multiplies two fixed-size integers in C with this signature:
+Imagine that we have a function that we want to use from Lua that multiplies two fixed-size integers in C with this signature:
 
 ```c
 int32_t multiply(int32_t x, int32_t y);
 ```
 
-and we’d like to use it from Lua.
-
-Let’s write a SWIG interface file and annotate the above function for SWIG:
+Let’s write a SWIG interface file, `bindings.i` and annotate the above function for SWIG:
 
 ```
 %module bindings
@@ -161,7 +176,7 @@ static int _wrap_multiply(lua_State* L) {
 
 It’s a neat wrapper for our `multiply` C function! This module contains a library that we need to load into our Lua instance to be able to access this functionality. Since we named our module `bindings`, we’ll need to call `luaopen_bindings` .
 
-Now let’s shift focus to our C code. What we need to do:
+Now let’s shift focus to our C code. Here are the rough steps that we need to take to be able to call the `multiply` function from within Lua:
 
 - Define our `multiply` function that Lua will call
 - Create a new Lua instance
@@ -205,7 +220,7 @@ int main(void)
 }
 ```
 
-And lastly, our Lua script. From this script, we want to call `multiply` from C world. To do that we will use a `bindings` library that we generated and loaded, which exposes `multiply` as `bindings.multiply`. The call will be as simple as:
+Let's now write our Lua script. From this script, we want to call `multiply` from C world. To do that we will use a `bindings` library that we generated and loaded, which exposes `multiply` as `bindings.multiply`. The call will be as simple as:
 
 ```lua
 print("[Lua] Result of multiply -2 * 5 = " .. bindings.multiply(-2, 5))
@@ -231,11 +246,13 @@ Time to compile and run our first binding. Remember to do that from a directory 
 [C] Finished
 ```
 
-Our first binding between Lua and C worked! Time to try something more complicated.
+Our first binding between Lua and C worked! However, this is a trivial hello-world type of example.
+
+Time to try something more complicated.
 
 ## Passing a custom C struct to Lua
 
-We have called a simple C function from Lua, but what about passing struct data? As our application evolves we’ll most likely add custom types and complicated data structures - the source of the massive amount of wrapper code that exists in many repositories that use Lua from C host program.
+We have called a simple C function from Lua, but what about passing struct data? As our application evolves, we’ll most likely add custom types and complicated data structures - the source of the massive amount of wrapper code that exists in many repositories that use Lua from C host program. For reference this is `example2`.
 
 Let’s start with defining our data types in C header `types.h`:
 
@@ -258,7 +275,7 @@ typedef struct
 } my_struct_t;
 ```
 
-And a SWIG interface that will include the above C header:
+And a SWIG interface, `bindings.i`, that will include the above C header:
 
 ```
 %module bindings
@@ -270,7 +287,7 @@ And a SWIG interface that will include the above C header:
 %include "types.h"
 ```
 
-Now if we look into the generated C file from SWIG, we’ll see setters and getters for each of the fields of the structure, as well as a constructor and destructor for the struct.
+If we look into the generated C file from SWIG, we’ll see setters and getters for each of the fields of the structure, as well as a constructor and destructor for the struct.
 
 Assuming we’d not only like to receive a structure passed from C in Lua but also modify it, we’ll write a Lua script that will drive our C implementation:
 
@@ -295,7 +312,7 @@ We introduced `processStruct` function, which we will call from C and pass a C s
 To call this Lua function from C we need to write a piece of C code using APIs from SWIG runtime header. First, we will generate the runtime header:
 
 ```
-swig -lua -external-runtime swig_runtime.h
+/app/example2 # swig -lua -external-runtime swig_runtime.h
 ```
 
 Then write a C function to call Lua’s `processStruct` function:
@@ -479,6 +496,8 @@ To sum up, there’s no doubt SWIG is a useful tool that aids with code generati
 
 ## References
 
+<!-- prettier-ignore-start -->
+
 - <https://www.lua.org/manual/5.4/>
 - <https://www.swig.org/Doc4.1/SWIGDocumentation.html>
 - <https://github.com/swig/swig>
@@ -487,5 +506,4 @@ To sum up, there’s no doubt SWIG is a useful tool that aids with code generati
 - <https://stackoverflow.com/questions/4329643/what-is-userdata-and-lightuserdata-in-lua>
 - <https://code.activestate.com/lists/python-dev/109281>
 
-<!-- prettier-ignore-start -->
 <!-- prettier-ignore-end -->
