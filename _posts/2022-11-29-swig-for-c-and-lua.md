@@ -4,7 +4,7 @@ description: Trying out SWIG to automate generation of binding layer between Lua
 author: stawiski
 ---
 
-Lua is one of the many great interpreters that can be run on embedded devices. It's fast, uses little memory, is written in ANSI C, and is known by plenty of developers. These are a few of the many reasons why the team at Panic chose to include a [Lua interpreter on their Playdate device](https://play.date/dev/) and allow games to be written in it. You can think of Lua as an alternative to the MicroPython (Python) or JerryScript (Javascript) interpreters. However, there's a problem. Many of the libraries today for embedded devices are written in C, not Lua!
+Lua is one of the many great interpreters that can be run on embedded devices. It's fast, uses little memory, is written in ANSI C, and is known by plenty of developers. For these reasons, many great teams are choosing to include a Lua interpreter in their embedded project (e.g. Panic with [their Playdate device](https://play.date/dev/)). You can think of Lua as an alternative to the MicroPython (Python) or JerryScript (Javascript) interpreters. However, there's a problem. Many of the libraries today for embedded devices are written in C, not Lua!
 
 There are ways to make Lua and C work together and share data structures, but it requires a lot of boilerplate and complex code. The result is writing a lot of wrapper code integrating the two languages together that then must be maintained as the application evolves. 
 
