@@ -4,9 +4,15 @@ description: Trying out SWIG to automate generation of binding layer between Lua
 author: stawiski
 ---
 
+Lua is one of the many great interpreters that can be run on embedded devices. It's fast, uses little memory, is written in ANSI C, and is known by plenty of developers. These are a few of the many reasons why the team at Panic chose to include a [Lua interpreter on their Playdate device](https://play.date/dev/) and allow games to be written in it. You can think of Lua as an alternative to the MicroPython (Python) or JerryScript (Javascript) interpreters. However, there's a problem. Many of the libraries today for embedded devices are written in C, not Lua!
+
+There are ways to make Lua and C work together and share data structures, but it requires a lot of boilerplate and complex code. The result is writing a lot of wrapper code integrating the two languages together that then must be maintained as the application evolves. 
+
+Thankfully, there is a project which helps automate the generation of this boilerplate code called SWIG. 
+
 <!-- excerpt start -->
 
-Integrating Lua and C codebases requires adding a lot of boilerplate code. Lua must understand C data structures and functions in its own way to handle them and vice versa. The end result is writing a lot of wrapper code integrating the two languages together that then must be maintained as the application evolves. In this article, we will explore SWIG's promise of automating this code generation.
+This article covers how to write a C program that launches a Lua interpreter and then how to use SWIG to generate the necessary wrapper code to allow Lua scripts to access the functions and data inside of the C runtime. 
 
 <!-- excerpt end -->
 
