@@ -12,8 +12,8 @@ Express](https://www.adafruit.com/product/3505), I ran into a few issues and sca
 the next poor soul wrestling with these systems.
 <!-- excerpt end -->
 
-Note: I'm a MacOS user, but the procedure below will work fine on Linux /
-Windows with some adjustments.
+~~Note: I'm a MacOS user, but the procedure below will work fine on Linux /
+Windows with some adjustments.~~
 
 ## Setting up the IBDAP programmer
 
@@ -81,7 +81,7 @@ complicated.
 First, it's best to check that you're able to talk to the board over the debug
 interface. Use a [SWD Ribbon cable](https://www.adafruit.com/product/1675) to
 connect the IBDAP dongle to your board (you want to use the TGT_DBG port on the
-dongle). OpenOCD already has config files for CMSIS-DAP and the ATSAMD family, 
+dongle). OpenOCD already has config files for CMSIS-DAP and the ATSAMD family,
 so you just need to source them and run openocd:
 
 ```terminal
