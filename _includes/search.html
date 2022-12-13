@@ -1,23 +1,44 @@
 <!-- HTML elements for search -->
+
+<!-- This is installed from the https://github.com/slashdotdash/jekyll-lunr-js-search Gem -->
+<script src="/js/search.min.js" type="text/javascript" charset="utf-8"></script>
+
 <form id="search-form">
   <label for="search-input">
     <h3>Search</h3>
   </label>
-  <input type="text" id="search-input" placeholder="Search posts..">
+  <input type="text" id="search-input" name="q" placeholder="Search posts...">
 </form>
 <ul id="results-container"></ul>
 
-<!-- or without installing anything -->
-<script src="{{ '/js/simple-jekyll-search.min.js' | relative_url }}"></script>
+<section id="search-results" style="display: none;"> </section>
 
-<script>
-  window.simpleJekyllSearch = new SimpleJekyllSearch({
-    searchInput: document.getElementById('search-input'),
-    resultsContainer: document.getElementById('results-container'),
-    json: "{{ '/search.json' | relative_url }}",
-    searchResultTemplate: '<li><a href="{url}?query={query}" title="{title}">{title}</a></li>',
-    noResultsText: 'No results found',
-    limit: 10,
-    fuzzy: false
-  })
+{% raw %}
+<script id="search-results-template" type="text/mustache">
+  {{#entries}}
+    <article>
+      <h4>
+        {{#date}}<small><time datetime="{{pubdate}}" pubdate>{{displaydate}}</time></small>{{/date}}
+        <a href="{{url}}">{{title}}</a>
+      </h4>
+      {{#is_post}}
+      <ul>
+        {{#tags}}<li>{{.}} </li>{{/tags}}
+      </ul>
+      {{/is_post}}
+    </article>
+  {{/entries}}
+</script>
+{% endraw %}
+
+<script type="text/javascript">
+  $(function() {
+    $('#search-input').lunrSearch({
+      indexUrl  : '/js/index.json',           // url for the .json file containing search index data
+      results   : '#search-results',          // selector for containing search results element
+      template  : '#search-results-template', // selector for Mustache.js template
+      titleMsg  : '<h1>Search results<h1>',   // message attached in front of results (can be empty)
+      emptyMsg  : '<p>Nothing found.</p>'     // shown message if search returns no results
+    });
+  });
 </script>
