@@ -1,3 +1,13 @@
+GIT
+  remote: https://github.com/memfault/jekyll-lunr-js-search.git
+  revision: c872e3403dd8b885ef513910e4fd03ece7444da8
+  ref: c872e3403dd8b885ef513910e4fd03ece7444da8
+  specs:
+    jekyll-lunr-js-search (3.3.0)
+      execjs (~> 2.7)
+      json (~> 2.0)
+      nokogiri (~> 1.7)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -10,6 +20,7 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     eventmachine (1.2.7)
+    execjs (2.8.1)
     ffi (1.15.4)
     forwardable-extended (2.6.0)
     http_parser.rb (0.6.0)
@@ -37,10 +48,6 @@ GEM
     jekyll-get-json (1.0.0)
       deep_merge (~> 1.2)
       jekyll (>= 3.0)
-    jekyll-lunr-js-search (3.3.0)
-      json (~> 2.0)
-      nokogiri (~> 1.7)
-      therubyracer (~> 0.12)
     jekyll-paginate (1.1.0)
     jekyll-sass-converter (2.1.0)
       sassc (> 2.0.1, < 3.0)
@@ -56,7 +63,6 @@ GEM
       rexml
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
-    libv8 (3.16.14.19)
     liquid (4.0.3)
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -73,7 +79,6 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    ref (2.0.0)
     rexml (3.2.5)
     rouge (3.26.1)
     safe_yaml (1.0.5)
@@ -81,9 +86,6 @@ GEM
       ffi (~> 1.9)
     terminal-table (2.0.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
-    therubyracer (0.12.3)
-      libv8 (~> 3.16.14.15)
-      ref
     unicode-display_width (1.8.0)
     webrick (1.7.0)
 
@@ -95,7 +97,7 @@ DEPENDENCIES
   jekyll-diagrams
   jekyll-feed (~> 0.15.1)
   jekyll-get-json (~> 1.0)
-  jekyll-lunr-js-search
+  jekyll-lunr-js-search!
   jekyll-paginate (~> 1.1)
   jekyll-seo-tag (~> 2.7.1)
   jekyll-target-blank (~> 2.0)
