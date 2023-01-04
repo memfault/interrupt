@@ -145,7 +145,7 @@ The c-cpp.yml file starts like this, we will modify it.
 ```yaml
 name: C/C++ CI
 
-on: #These are the trigger that will run our jobs
+on: #These are the triggers that will run our jobs
   push:
     branches: [ "master" ]
   pull_request:
