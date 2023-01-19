@@ -148,3 +148,9 @@ stawiski:
     linkedin: https://www.linkedin.com/in/mstawiski/
     github: stawiski
     image: /img/author/stawiski.png
+mab:
+    name: Mohammed Billoo
+    blurb: is an embedded Linux consultant with over 14 years of experience in embedded software across a multitude of domains, including Defense, Space, and Commercial. He is an avid blogger and contributor to the open-source community.
+    linkedin: https://www.linkedin.com/in/mab-embedded/
+    github: mabembedded
+    image: /img/author/mab.jpeg
