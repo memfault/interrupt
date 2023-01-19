@@ -4,13 +4,15 @@ description: Nothing yet
 author: mab
 ---
 
-As IoT devices become ubiquitous, it is crucial to ensure that critical tasks in using IoT devices are straightforward. These include device deployment and management, remote monitoring, and over-the-air (OTA) software updates. [Memfault](https://memfault.com/) is a service that streamlines these tasks in a device-agnostic manner. 
+IoT devices have become ubiquitous. Given the number of new devices being deployed all over the world and far from the desks of developers, it is imperative to have a solid set of tools to manage them without being directly connected to them via JTAG, USB, or SSH. The necessary tasks in the IoT device lifecycle include device deployment and management, remote monitoring, and over-the-air (OTA) software updates. [Memfault](https://memfault.com/) is a service that streamlines many of these critical tasks in a device-agnostic manner. Memfault supports devices built upon a variety of MCUs and RTOSs, Android (AOSP), and embedded Linux, the last one being the focus of this article.
 
 <!-- excerpt start -->
 
 In this blog post, I will demonstrate how to integrate Memfault’s offering on a Raspberry Pi 3B+ running embedded Linux.
 
 <!-- excerpt end -->
+
+If you would like to get started yourself integrating Memfault into your embedded Linux device, you can get started via their [embedded Linux documentation page](https://mflt.io/linux-getting-started).
 
 {% include newsletter.html %}
 
