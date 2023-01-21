@@ -1,5 +1,5 @@
 ---
-title: "Integrating Memfualt into an Embedded Linux Project" 
+title: "Integrating Memfault into an Embedded Linux Project" 
 description: An introduction to a Memfault embedded Linux integration for device deployment and management, over-the-air (OTA) software updates, and remote monitoring and debugging
 author: mab
 ---
