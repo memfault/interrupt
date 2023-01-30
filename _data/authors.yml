@@ -122,3 +122,35 @@ nash:
     twitter: cushyChicken
     linkedin: https://www.linkedin.com/in/nash-reilly-55284a33/
     image: /img/author/nash.png
+lars:
+    name: Lars Pötter
+    blurb: is a freelance embedded software engineer, has worked on 8, 16 and 32 bit architectures and in safety critic projects. Creator of chipselect.org. Email me at <a href="mailto:interrupt@ing-poetter.de">interrupt@ing-poetter.de</a>
+    email: interrupt@ing-poetter.de
+    web: https://www.ing-poetter.de/
+    linkedin: https://www.linkedin.com/in/lars-p%C3%B6tter-32b42960
+veverak:
+    name: Jan Koniarik
+    github: koniarik
+    linkedin: https://www.linkedin.com/in/jan-koniarik-21b9723b/
+    twitter: https://twitter.com/SquirrelCZE
+    blurb: -- robotics software engineer, keen interest in embedded, teaching assistant at university
+donatien:
+    name: Donatien Garnier
+    email: donatien.garnier@blecon.net
+    image: /img/author/donatien.png
+    blurb: is a co-founder of <a href='https://blecon.net/'>Blecon</a>. He was previously tech lead for Arm Mbed OS, and founder of an IoT startup.
+    twitter: donatiengarnier
+    linkedin: https://www.linkedin.com/in/donatiengarnier/
+    github: donatieng
+stawiski:
+    name: Mikolaj Stawiski
+    blurb: is a passionate embedded software engineer coming from awesome electronics and hardware worlds, and now moving up the stack into software development.
+    linkedin: https://www.linkedin.com/in/mstawiski/
+    github: stawiski
+    image: /img/author/stawiski.png
+mab:
+    name: Mohammed Billoo
+    blurb: is an embedded Linux consultant with over 14 years of experience in embedded software across a multitude of domains, including Defense, Space, and Commercial. He is an avid blogger and contributor to the open-source community.
+    linkedin: https://www.linkedin.com/in/mab-embedded/
+    github: mabembedded
+    image: /img/author/mab.jpeg

@@ -225,7 +225,7 @@ OPT = -Og -g3
 CFLAGS += $(OPT)
 ```
 
-We changed the compiler's optimization level to "-Og", which optimizes the debugging experience. According to GDB's [documentation for Optimization](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html):
+We changed the compiler's optimization level to "-Og", which optimizes the debugging experience. According to GDB's [documentation for Optimization](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Optimize-Options.html):
 
 >
 Turning on optimization flags makes the compiler attempt to improve the performance and/or code size at the expense of compilation time and possibly the ability to debug the program.
@@ -501,7 +501,7 @@ We hope this post served as a good starting point for using GDB, or a refresher 
 
 Some ideas for future GDB-related posts include:
 
-- GDB scripting and automation  
+- GDB scripting and automation
   _EDIT: Post written!_ - [Automate Debugging with GDB Python API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %})
 - Debugging nRF5x SoftDevice-based applications
 

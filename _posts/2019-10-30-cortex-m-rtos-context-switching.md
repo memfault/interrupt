@@ -985,6 +985,6 @@ covered on the topic. Let me know in the discussion area below!
 [^12]: [FreeRTOS Heap documentation](https://www.freertos.org/a00111.html)
 [^13]: [FreeRTOSConfig.h documentation](https://www.freertos.org/a00110.html)
 [^14]: [ISB after mrs](https://www.freertos.org/FreeRTOS_Support_Forum_Archive/March_2017/freertos_ISB_isntructions_on_Cortex-M4_port_6fc12825j.html)
-[^15]: [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
+[^15]: [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Extended-Asm.html)
 [^16]: [Discussion about DSB in FreeRTOS port](https://www.freertos.org/FreeRTOS_Support_Forum_Archive/May_2017/freertos_Use_of_barriers_when_setting_BASEPRI_on_Cortex_M7_8a85181fj.html)
 [^17]: [See "Visibility of changes in execution priority resulting from executing an MSR instruction"](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf)

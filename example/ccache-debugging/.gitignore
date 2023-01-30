@@ -1,0 +1,6 @@
+/main
+generated_header.h
+*.o
+*.ccache-log
+*.ccache-input-[cdp]
+*.ccache-input-text

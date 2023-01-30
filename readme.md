@@ -30,15 +30,16 @@ $ git clone https://github.com/memfault/interrupt.git
 $ cd interrupt
 $ pip install -r requirements.txt
 $ bundle install
-$ bundle exec jekyll serve --drafts --incremental --livereload
+$ bundle exec jekyll serve --drafts --incremental --livereload --open-url
 ```
 
 ### Docker
 
 Follow the instructions in the [Install Docker Engine](https://docs.docker.com/engine/install/) according to your operating system.
 
-Clone the repo, build and run:
-```
+Clone the repo, run in docker:
+
+```bash
 $ git clone https://github.com/memfault/interrupt.git
 $ cd interrupt
 $ ./interrupt-server.sh
@@ -48,7 +49,6 @@ $ ./interrupt-server.sh
 
 Interrupt is based on the Emerald theme by [Jacopo Rabolini](https://www.jacoporabolini.com/). Emerald is available on [Github](https://github.com/KingFelix/emerald).
 
+---
 
-----
-
-Interrupt is sponsored and edited by [Memfault](https://memfault.com)
+Interrupt is sponsored and edited by [Memfault](https://memfault.com).

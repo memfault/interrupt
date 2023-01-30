@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 That's what **formatting** tools can do. For the C language, some popular
 formatters are:
 
-- [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+- [clang-format](https://releases.llvm.org/15.0.0/tools/clang/docs/ClangFormat.html)
 - [uncrustify](http://uncrustify.sourceforge.net/)
 - [GNU Indent](https://www.gnu.org/software/indent/)
 - [Astyle](http://astyle.sourceforge.net/)
@@ -74,7 +74,7 @@ analysis. Typically these tools are designed to detect, for example:
 
 - some simple bug categories (similar to extended compiler warnings)
 - possible stylistic errors
-  ([an example](https://clang.llvm.org/extra/clang-tidy/checks/bugprone-suspicious-missing-comma.html))
+  ([an example](https://releases.llvm.org/15.0.0/tools/clang/tools/extra/docs/clang-tidy/checks/bugprone/suspicious-missing-comma.html))
 - security-related checks (eg. using `sprintf` instead of `snprintf`)
 
 These types of tools are _very_ common in other software engineering domains
@@ -399,7 +399,7 @@ Note that `clang-format` has a lot of configuration options. Recommendations for
 how to tune a config is outside the scope of this article, but here's some
 starting guidance:
 
-- documentation: <https://clang.llvm.org/docs/ClangFormatStyleOptions.html>
+- documentation: <https://releases.llvm.org/15.0.0/tools/clang/docs/ClangFormatStyleOptions.html>
 - interactive configurator: <https://zed0.co.uk/clang-format-configurator/>
 - generate a stub config with ex:
   `clang-format --style=Google --dump-config > .clang-format` (this will dump

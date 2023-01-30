@@ -747,7 +747,7 @@ $ binutils/objdump  --visualize-jumps=color
    --disassemble=test_enum_to_str_v2 nrf52_example/build/nrf52.elf
 ```
 
-![](img/best-of-binutils/visualize-jumps-binutils.png)
+![]({% img_url best-of-binutils/visualize-jumps-binutils.png %})
 
 ### strip
 

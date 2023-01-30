@@ -636,7 +636,7 @@ _All the code used in this blog post is available on
 [^9]: [GNU ARM Embedded Toolchain 8-2019-q3](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
 [^10]: [stm32cube-gcc](https://github.com/stv0g/stm32cube-gcc)
 [^11]: [Forward Declarations Blog Post](https://gieseanw.wordpress.com/2018/02/25/the-joys-of-forward-declarations-results-from-the-real-world/)
-[^12]: [GCC - Using Precompiled Headers](https://gcc.gnu.org/onlinedocs/gcc/Precompiled-Headers.html)
+[^12]: [GCC - Using Precompiled Headers](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Precompiled-Headers.html)
 [^13]: [Make - Parallel Output](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html)
 [^14]: [Portability of #pragma once](https://en.wikipedia.org/wiki/Pragma_once#Portability)
 [^15]: [Recursive Make](https://www.gnu.org/software/make/manual/html_node/Recursion.html)

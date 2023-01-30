@@ -626,7 +626,7 @@ flash write cycles and speeding up the average time it takes to "set" flash brea
 One adverse side-effect of this approach is if you pull the power to your board and don't terminate
 things gracefully, a breakpoint instruction could get stuck on your device until you reflash the
 board. When no debugger is enabled, executing a breakpoint instruction will
-[escalate to a HardFault]({% post_url 2019-11-20-cortex-m-fault-debug %}#hardfault-status-register-hfsr---0xe000ed2c), so this could leave your firmware in a state where it would crash loop!
+[escalate to a HardFault]({% post_url 2019-11-20-cortex-m-hardfault-debug %}#hardfault-status-register-hfsr---0xe000ed2c), so this could leave your firmware in a state where it would crash loop!
 
 We can try this ourselves:
 

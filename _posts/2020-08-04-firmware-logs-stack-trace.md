@@ -276,7 +276,7 @@ I look forward to your comments and tips in the comments.
 ## 🔗 References
 
 <!-- prettier-ignore-start -->
-[^debug_fault]: [Debug faults on Cortex-M](https://interrupt.memfault.com/blog/cortex-m-fault-debug)
+[^debug_fault]: [Debug faults on Cortex-M](https://interrupt.memfault.com/blog/cortex-m-hardfault-debug)
 [^adamgreen]: [Adam Green's Github page](https://github.com/adamgreen)
 [^crashcatcher]: [CrashCatcher repository](https://github.com/adamgreen/CrashCatcher)
 [^crashdebug]: [CrashDebug repository](https://github.com/adamgreen/CrashDebug)

@@ -446,7 +446,7 @@ Another approach is to avoid structure holes entirely!
 
 For example, you can use the `-Wpadded` compiler warning in
 [GCC](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wpadded) and
-[Clang](https://clang.llvm.org/docs/DiagnosticsReference.html#wpadded) to detect
+[Clang](https://releases.llvm.org/15.0.0/tools/clang/docs/DiagnosticsReference.html#wpadded) to detect
 padding, and with `-Werror` or `-Werror=padded`, you can trigger compilation
 errors if padding is detected. To address the warnings, you can add placeholders
 to fill unused space:
@@ -518,6 +518,28 @@ You can see the gory details in the following links:
 
 This seems like a nice update to the standard that doesn't appear to impact
 backwards-compatibility and just makes things better!
+
+## Update 2022-05-19
+
+GCC 12 has added a new flag, `-ftrivial-auto-var-init=choice` which enables
+zero-initialization of struct padding by the compiler:
+
+<https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Optimize-Options.html#index-ftrivial-auto-var-init>
+
+This flag has been present in Clang for a while, but it seems like it may be
+removed in the future; it requires setting this somewhat amusingly named flag to
+use:
+
+```plaintext
+-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang
+```
+
+The flag is documented
+[here](https://releases.llvm.org/14.0.0/tools/clang/docs/ClangCommandLineReference.html#cmdoption-clang-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang).
+
+This flag definitely incurs runtime penalties, so it might make sense to enable
+it when compiling some sensitive subset of your application (eg a security
+library). Definitely an interesting compiler feature!
 
 <!-- Interrupt Keep START -->
 
