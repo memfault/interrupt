@@ -2,39 +2,45 @@
 ---
 title: Embedded Coroutines
 description: Yet another blog about coroutines, this time in embedded
-author: nash
+author: Veverak
+tags: [c++, coroutines]
 ---
+
+<!-- excerpt start -->
 
 In the last year, it seems to me that there was quite a high activity about coroutines in C++.
 That is, we got plenty of blogposts/videos on the topic of coroutines that are officialy available since C++20.
 
 This is another such a blogpost, but this time focused more on embedded environment.
-And I will try to simplify the part about explanation of what coroutine is (there is plenty of good blogposts about that), and focus more on relevant properties for embedded and provide my input about possible abstractions we can build with coroutines that might be interesting for embedded.
+I will try to simplify the part about explanation of what coroutine is (there is plenty of good blogposts about that), and focus more on relevant properties for embedded and provide my input about possible abstractions we can build with coroutines that might be interesting for embedded.
 (Given that there is high chance of few new blog posts appearing as this article was written, it might loose some originality at certain moment)
 
+<!-- excerpt end -->
+
 The text is structured into two sections:
- - basic intro to coroutines
+ - basic introduction to coroutines
  - embedded-related specifics
 
 ## Introduction
 
 Coroutines are not something new to programming world, we are talking about a feature that exists for a longterm in various languages.
-(Lua had them since like 2003, Python has them, C has various libraries that bring in coroutines)
+(Lua had them since like 2003, Python mentions them since 2005 , C has various libraries that bring in coroutines)
 
-C++ got language support for the coroutines in version C++20, but that is only a low level language support.
-The standard does not yet define any usefull constructs with coroutines, and direct usage is troublesome.
+C++ got low level language support for the coroutines in version C++20.
+The standard does not yet define any usefull constructs with coroutines, which makes usage more troublesome.
 
-### Basis
+### Basics
 
 We all should be aware af what `function` is. It is a segment of code that can be executed.
-When we `call` a function, the code of the function is executed and at certain point the `function` will finish its execution and flow returns to the place from which function was valled.
+When we `call` a function, the code of the function is executed and at certain point the `function` will finish its execution and flow returns to the place from which function was called.
 
 For the sake of this blogpost, we will define coroutines as following:
 
-Coroutine is a segment of code that can be executed. When we call a coroutine, the code of the coroutine is executed.
+Coroutine is a segment of code that can be executed.
+When we call a coroutine, the process will start execution of coorutines code.
 The coroutine might suspend itself and return control to it's parent.
 When suspended, the coroutine can be resumed again to continue execution of the code.
-Eventually, he coroutine will finish it's execution and can't be resumed again.
+Eventually, the coroutine will finish it's execution and can't be resumed again.
 
 That is, `coroutine` is just `function` that can interrupt itself and be resumed by the caller.
 
@@ -43,7 +49,7 @@ That is, `coroutine` is just `function` that can interrupt itself and be resumed
 The simplest coroutine might look like this:
 
 ```cpp
-coroutine_type fun(int i)
+coroutine_type coro(int i)
 {
     int j = i*3;
     std::cout << i << std::endl;
@@ -54,44 +60,42 @@ coroutine_type fun(int i)
 }
 ```
 
-`fun` is a coroutine that interrupts itself on the `co_await` calls and can be resumed to continue the execution.
-The exact interface of how that happens depends on the coroutine, but in simple cases, we can assume something like this:
+`coro` is a coroutine that interrupts itself on the `co_await` calls and can be resumed to continue the execution.
+The exact interface of how that works depends on the `coroutine_type`, but in simple cases, we can assume something like this:
 
 ```cpp
 
-coroutine_type ct = fun(2); 
+coroutine_type ct = coro(2); 
 // `2` is printed now
 ct.step();
 // `4  was printed now
 ct.step();
-// `5` was printed now
+// `6` was printed now
 
 ```
 
-In normal use cases, the coroutine causes allocation, as all variables that existis between the suspension of the coroutine and it's resume (`j`) have to be stored somewhere.
+In normal use cases, the call of coroutine causes allocation, as all variables that existis between the suspension of the coroutine and it's resume (`j`) have to be stored somewhere.
 To do that the coroutines allocates memory for it's `coroutine frame` which contains all necessary information for it:
  - `promise_type` (explained later)
- - arguments of the coroutine (their copy)
+ - copy arguments of the coroutine
  - compiler defined holder of all variables of coroutine that survives between the suspension points
 (Note: The dynamic memory can be avoided, will be explained later)
 
 The `coroutine_type` is the type of the coroutine, and usually represents `handle` that points to the allocated frame. (By owning the `std::coroutine_handle<promise_type>` which is a handle given by compiler for the frame)
-To allow data exchange between the coroutine, the coroutine frame contains instance of `promise_type`, that is accessible from the `coroutine_type` and from the coroutine itself.
+To allow data exchange between the coroutine, the coroutine frame contains instance of `promise_type`, that is accessible from the `coroutine_type` and from the code of the coroutine itself.
 (Compiler will select `coroutine_type::promise_type` as the promise, this type can be alias, nested structure, or some other valid type)
 
 `awaiter` is an entity that is used for the suspension process. It is a type that should be passed to the `co_await` call and that is used by the compiler to handle the suspension.
-When the coroutine is suspended by the `co_await`, as a last step, the compiler will call `void awaiter::await_suspend(std::coroutine_handle<promise_type>)` which gets access to the promise via `coroutine_handle` and after that the coroutine is suspended.
-Once the parent of the coroutine resumes it, the `U awaiter::await_resume()` of the awaiter used for suspension is called.
+When the coroutine is suspended by the `co_await`, the compiler will call `void awaiter::await_suspend(std::coroutine_handle<promise_type>)` which gets access to the promise via `coroutine_handle` and after that the coroutine is suspended.
+Once the parent of the coroutine resumes it, the `U awaiter::await_resume()` of the awaiter used is called.
 The `U` returned by this method is return value of the `co_await` statement.
 
 The purpose of the `awaiter` is to serve as customization point that makes it possible to extract data from coroutine (awaiter can get data in it's constructor and pass those to the promise) and also give data to the coroutine by extracting it from promise_type in the await_resume method
 
 In this context, it is good idea to point out few properties of the mechanism:
- - Suspended coroutine can be destroyed. This destructiong is safe: all destructors of promise_type, arguments, stored variables... are destroyed properly
+ - Suspended coroutine can be destroyed. This destructiong is safe: all destructors of promise_type, arguments, stored variables... are called properly
  - The `coroutine_type` does not need to have `step` semantics, the `coroutine_type` has access to `std::coroutine_handle<promise_type>` which provides the interface to resume the coroutine. The `coroutine_handle` might as well be implemented in a way that one method keeps resuming the coroutine until it finishes.
  - Coroutines can be nested. One can combine `coroutine_type` to be also valid `awaiter`, this gives possibility to have recursive coroutines, in which one `step` of the top coroutine does one step of the inner coroutine.
-
-** TODO: add pictures, lots of them)
 
 ### Some coroutines
 
@@ -113,7 +117,7 @@ generator<int> sequence()
 }
 ```
 
-Here, `co_yield` is just another expression in coroutine API, you can imagine it as statement with different semantics than `co_await`: `co_await` should wait for awaiter, `co_yield` throws to parent a value.
+Here, `co_yield` is just another expression in coroutine API, you can imagine it as statement with different semantics than `co_await`: `co_await` should wait for awaiter, `co_yield` throws a value to the parent.
 Implementation wise, `co_yield x` causes call of `promise.yield_value(x)` which constructs awaiter which is awaited.
 
 Generators can have same API as containers, which gives as abillity to create this nice infinite loop:
@@ -123,7 +127,7 @@ for(int i : sequence()){
     std::cout << i << std::endl;
 }
 ```
-(The idea usually is to either build generators that are not inifnite, or to eventually stop using the infinite ones)
+(The idea usually is to either build generators that are not infinite, or to eventually stop using the infinite ones)
 
 Another concept of coroutines that can be interesting are: `io coroutines`
 That is, we can use coroutine to represent process that requires IO operations that are processed during the suspenions.
@@ -152,11 +156,11 @@ It is good to resumarize some properties of this coroutine:
 
 ### More
 
-This was fast and simple explanation of coroutines, the purpose of this article is not to give detailed explanation of croutines I can suggest blogpost such as this one: https://www.scs.stanford.edu/~dm/blog/c++-coroutines.html
+This was fast and simple explanation of coroutines, the purpose of this article is not to give detailed explanation. I can suggest blogpost such as this one: https://www.scs.stanford.edu/~dm/blog/c++-coroutines.html
 
 ## Embedded coroutines
 
-Let's get back to embedded and try to talk about how are coroutines for embedded development.
+Let's get back to embedded and try to talk about how are coroutines relevant for embedded development.
 That is, what are possible problems with coroutines in embedded, why are they relevant, and some suggestions about ways we can use them.
 
 ### Relevance
@@ -164,18 +168,17 @@ That is, what are possible problems with coroutines in embedded, why are they re
 Common task for emebedded is to do a plenty of IO communication via peripherals and in the meantime to take care about multiple process in pararel on single-core system.
 
 That is, we have to handle:
- - complex computations (Kalman filter with matrix computations)
+ - complex computations (Matrix computations)
  - IO (send/receive data over UART/I2C/...)
  - longterm processes (PID regulator regulating temperature of the room)
 
-To handle all those processes at single point in time, we have two major approaches today:
- 1) implement them as iterative process and schedule them
+To handle all those processes at single point in time, we have two major approaches:
+ 1) implement it as an iterative process and schedule it
  2) use threads for the processes
 
 Let's take communication over UART as an example:
  1) iterative process means usage of structure to store the state of the communication, and providing a function that based on the current state advances the state. (Commonly with usage of enum representing actual status)
- 2) implement the communication in a thread which my release it's time if it waits for some operation
-
+ 2) implement the communication in a thread which might release it's time if it waits for some operation
 
 Approach 1) has multiple potential issues, it might take a lot of code to implement complex exchange of data in this way (a lot of state variables) and the approach is problematic, as there is a chance that one of the steps might take longer than expected and we can't prevent that.
 
@@ -188,7 +191,7 @@ However, coroutines still suffer to the issue that one step of computation might
 
 What is interesting, is that coroutines have good potential to have more effecient context switches than threads, which was shown in this article: https://www.researchgate.net/publication/339221041_C20_Coroutines_on_Microcontrollers_-What_We_Learned 
 
-Note that in the article does not compare corutines in a lot of situations, but it still shows something.
+Note that in the article does not compare corutines in a variety of situations, but it still shows something.
 
 ### Problems
 
@@ -202,7 +205,8 @@ This is not favorable in embedded in many cases, but there are ways to avoid tha
 Coroutines have `allocator` support, we can provide coroutine an allocator that can be used to get memory for the coroutine and hence avoid the dyn. allocation. (Approach that I can suggest)
 This is done by implementing custom `operator new` and `operator delete` on the `promise_type` which allocates the `entire frame`.
 
-Alternative is to rely on `halo` optimization, if the coroutine is implemented correctly and the parent function executes entire coroutine in its context. The compiler can optimize away the dynamic allocation and just store the frame on the stack of the coroutines parent.
+Alternative is to rely on `halo` optimization (Heap Allocation Elision Optimization), if the coroutine is implemented correctly and the parent function executes entire coroutine in its context.
+The compiler can optimize away the dynamic allocation and just store the frame on the stack of the coroutines parent.
 This can be be enforced by deleting appropiate `operator new` and `operator delete` overloads of the `promise_type`, but it seems clumsy to me.
 
 And to kinda ruin the pretty thing here, there is one catch. As of now, the compiler can't tell you how much memory the coroutine needs, as it is known only during the link time - the size of the coroutine frame can't be compiler constant. (TODO: link to the source for this)
@@ -237,7 +241,7 @@ By it's nature, all varibales in the coroutine that survive suspension points fo
 And yet that state is kinda problematic for us, as other parts of the code can't access it while it is suspended. 
 (For inspection/logging/data recording...)
 
-In this scenario, I am afraid that it might tike while until our debug tools are smart enough to give as easy live with coroutines in the system. Mostly: what if something wents wrong in the coroutine? how do you inspect the state the coroutine is in?
+In this scenario, I am afraid that it might take while until our debug tools are smart enough to give as easy live with coroutines in the system. Mostly: what if something wents wrong in the coroutine? how do you inspect the state the coroutine is in?
 
 ### Suggestions
 
@@ -257,7 +261,7 @@ That is, we can use coroutines as an abstraction to interact with peripherals th
 To describe this, I will use a personal experience with `i2c_coroutine`. 
 We can design it as follows:
 
-When `i2c_coroutine` is used as the type of the coroutine, the developer can interact with the `i2c` peripheral by `suspending` the coroutine with an `awaiter` that initiates operation on the coroutine, the coroutine is resumed once that operation finishes.
+When `i2c_coroutine` is used as the type of the coroutine, the developer can interact with the `i2c` peripheral by `suspending` the coroutine with an `awaiter` that initiates operation on the `i2c` peripheral, the coroutine is resumed once that operation finishes.
 That is, we use the suspension point to allow interaction with the peripheral.
 
 For example:
@@ -273,11 +277,11 @@ i2c_coroutine interact_with_device(uint8_t addr)
 }
 ```
 
-This has the benefit that while the `i2c operation` is processed by the peripheral, the main loop can be busy something else and the execution is not stuck in the `interact_with_device` with busy waiting.
+This has the benefit that while the `i2c operation` is processed by the peripheral, the main loop can be busy doing something else, and the execution is not stuck in the `interact_with_device` with busy waiting.
 And we do not have to pay for that by having complexity (manual state machine doing the interaction) or having threads (which bring in other problems).
 
 Given the bus nature of `i2c`, it is also quite easy to achieve sharing of the `i2c bus` with multiple `device drivers` for various devices on the bus itself.
-We can just implement `i2c_coroutine round_robin_run(std::span<i2c_coroutine> coros)` coroutine that uses round roubin to share the access to the peripheral between multiple devices.
+We can just implement `i2c_coroutine round_robin_run(std::span<i2c_coroutine> coros)` coroutine that uses round roubin to share the access to the peripheral between multiple coroutines (devices).
 
 This can obviously transfer to any interaction with our peripherals, we can model that interaction as a suspension of the coroutine, and let the suspension process initiate the operation with peripheral, or simply give us request for some operation.
 
@@ -298,11 +302,10 @@ I believe there are two variations to how exactly this might be implemented (and
 
  However, I've found out that direct interaction has one strong benefit.
  It is much easier to point the peripheral back to the `awaiter`, this way the peripheral might interact with the awaiter during the suspension - much stronger API.
-TODO: check that I can actually do that - that it is legal
 
 #### Computing coroutines
 
-One of the biggest advantages of threads over manual implementation of operation as steps is that some computations are painfull to be split into reasonable steps, let's take matrix multiplication as an example:
+One of the biggest advantages of threads over manual decomposition is that some computations are painfull to be split into reasonable steps, let's take matrix multiplication as an example:
 
 ```cpp
 void multiply_matrix(const matrix_t& A, const matrix_t& B, matrix_t& result){
