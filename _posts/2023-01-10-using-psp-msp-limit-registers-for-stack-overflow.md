@@ -253,7 +253,7 @@ After pressing the button, We should see the UsageFault_HandlerC get called in o
 
 ## Closing
 
-The PSPLIM and the MSPLIM registers are great new features from ARM and a much-needed addition to the architecture.  We hope you found this helpful and can implement this in your application.  Implementing these features should prevent many development headaches and safeguard your application in the field!
+The PSPLIM and the MSPLIM registers are great new features from ARM and a much-needed addition to the architecture.  We hope you found this helpful, and will be inspired to make use of it in your application.  Implementing these features should prevent many development headaches and safeguard your application in the field!
 
 ## References
 
