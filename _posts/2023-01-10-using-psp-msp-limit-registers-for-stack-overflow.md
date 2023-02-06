@@ -31,7 +31,7 @@ ARM has included this in its ARMv8 specification, so any processors before this 
 
 The best part about this new feature is how easy it is to use and how it takes the guesswork out of debugging stack overflows.  
 
-We need to set the PSPLIM, and the MSPLIM registers to the boundary of the stack.  If the MSP == MSPLIM register or the PSP == PSPLIM register, a UsageFault is created.  The UsageFault Status Register [^m33-usfr] contains a sticky bit in position four to indicate that a stack overflow occurred.  
+We need to set the PSPLIM, and the MSPLIM registers to the boundary of the stack.  If the MSP == MSPLIM register or the PSP == PSPLIM register, a UsageFault is generate.  The UsageFault Status Register [^m33-usfr] contains a sticky bit in position four to indicate that a stack overflow occurred.  
 
 Having hardware protection for the PSP and MSP allows flexibility within an OS.  For example, we can protect the MSP during exceptions and interrupts.  We can also switch out the PSPLIM value on a context switch to safeguard each task's stack.  If you need a refresher on context switching, check a previous post [here](2019-10-30-cortex-m-rtos-context-switching.md).
 
