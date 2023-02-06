@@ -13,7 +13,7 @@ With the maturity of the ARM architecture, wouldn't it be better to have a 'fool
 
 We will explore using the MSP Limit and the PSP Limit Registers on the ARM Cortex-M33 architecture to detect stack overflows.
 
-We will walk through the implementation of the Renesas DA1469x and look at practical examples of detecting stack overflows.
+We will walk through an implementation on the Renesas DA1469x and look at practical examples of detecting stack overflows.
 
 <!-- excerpt end -->
 
