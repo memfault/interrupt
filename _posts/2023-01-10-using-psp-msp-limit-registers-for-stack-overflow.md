@@ -193,7 +193,7 @@ Since the USFR does not indicate if the psp or the msp caused the fault, I decid
 * 1 - MSP Overflow
 * 2 - PSP Overflow (Task Overflow)
 
-In this function, we are checking the msp and the psp registers against the limit registers.  If the msp matches the msplim register, we restore the msplim to __StackLimit (Removing the padding we placed initially) and then call our application fault handler.
+In this function, we are checking the MSP and the PSP registers against the limit registers.  If the MSP matches the MSPLIM register, we restore the MSPLIM to `__StackLimit` (Removing the padding we placed initially) and then call our application fault handler.
 
 ### Testing our Implementation
 
