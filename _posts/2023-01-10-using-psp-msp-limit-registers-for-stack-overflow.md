@@ -28,6 +28,7 @@ The ARM Cortex-M33 introduced two new stack limit registers, PSPLIM and MSPLIM [
 ARM has included this in its ARMv8 specification, so any processors before this will not have support.
 
 ## How does it work?
+
 The best part about this new feature is how easy it is to use and how it takes the guesswork out of debugging stack overflows.  
 
 We need to set the PSPLIM, and the MSPLIM registers to the boundary of the stack.  If the MSP == MSPLIM register or the PSP == PSPLIM register, a UsageFault is created.  The UsageFault Status Register [^m33-usfr] contains a sticky bit in position four to indicate that a stack overflow occurred.  
