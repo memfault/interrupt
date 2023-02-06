@@ -6,27 +6,27 @@ var icon = normal !== null ? normal : reverse;
 
 // Toggle the "menu-open" % "menu-opn-left" classes
 function toggle() {
-	  var navRight = document.getElementById("nav");
-	  var navLeft = document.getElementById("nav-left");
-	  var nav = navRight !== null ? navRight : navLeft;
+	var navRight = document.getElementById("nav");
+	var navLeft = document.getElementById("nav-left");
+	var nav = navRight !== null ? navRight : navLeft;
 
-	  var button = document.getElementById("menu");
-	  var site = document.getElementById("wrap");
+	var button = document.getElementById("menu");
+	var site = document.getElementById("wrap");
 
-	  if (nav.className == "menu-open" || nav.className == "menu-open-left") {
+	if (nav.className == "menu-open" || nav.className == "menu-open-left") {
 	  	  nav.className = "";
 	  	  button.className = "";
 	  	  site.className = "";
-	  } else if (reverse !== null) {
+	} else if (reverse !== null) {
 	  	  nav.className += "menu-open-left";
 	  	  button.className += "btn-close";
 	  	  site.className += "fixed";
-	  } else {
+	} else {
 	  	  nav.className += "menu-open";
 	  	  button.className += "btn-close";
 	  	  site.className += "fixed";
-	    }
 	}
+}
 
 // Ensures backward compatibility with IE old versions
 function menuClick() {
@@ -56,6 +56,23 @@ function darkModeSetup() {
     })
 }
 
+// Ensures backward compatibility with IE old versions
+function searchScroll() {
+	const scrollBox = document.getElementById('search-results');
+	const SCROLLED_CLASSNAME = 'scrolled-down';
+
+	if (document.addEventListener && scrollBox) {
+		scrollBox.addEventListener('scroll', () => {
+			if (scrollBox.scrollTop > 50)  {
+				scrollBox.classList.add(SCROLLED_CLASSNAME);
+			} else {
+				scrollBox.classList.remove(SCROLLED_CLASSNAME);
+			}
+		});
+	}
+}
+
 // TODO dark mode
 // darkModeSetup();
 menuClick();
+searchScroll();
