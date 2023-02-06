@@ -35,7 +35,7 @@ We need to set the PSPLIM, and the MSPLIM registers to the boundary of the stack
 
 Having hardware protection for the PSP and MSP allows flexibility within an OS.  For example, we can protect the MSP during exceptions and interrupts.  We can also switch out the PSPLIM value on a context switch to safeguard each task's stack.  If you need a refresher on context switching, check a previous post [here](2019-10-30-cortex-m-rtos-context-switching.md).
 
-If no RTOS is present, we can still monitor the msp, as this will protect your whole application.
+If no RTOS is present, we can still monitor the MSP, as this will protect your whole application.
 
 ## Implementing the Limit Registers
 
