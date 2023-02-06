@@ -7,7 +7,7 @@ author: jonkurtz
 
 Stack overflows have notoriously plagued the development processes.  They often can go undetected and can present themselves in obscure ways.  We have implemented software mechanisms to protect against them, but these have limitations and still don't protect against all conditions.  
 
-With the maturity of the ARM architecture, wouldn't it be better to have a 'fool-proof' mechanism for detecting overflows?
+With the maturity of the ARM architecture, wouldn't it be better to have a fool-proof mechanism for detecting overflows?
 
 <!-- excerpt start -->
 
