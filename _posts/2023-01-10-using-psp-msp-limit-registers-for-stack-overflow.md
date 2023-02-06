@@ -197,7 +197,7 @@ In this function, we are checking the MSP and the PSP registers against the limi
 
 ### Testing our Implementation
 
-We need a small piece of code to test the implementation.  In this case, there is a macro for causing an overflow for the MSP or the PSP:
+We need a small piece of code to test the implementation.  In our example, there is a macro provided for causing an overflow for the MSP or the PSP:
 
 ```c
 #define TOGGLE_MSP_OVERFLOW (0)     //0 Creates an application overflow in FreeRTOS task, 1 creates it on the MSP
