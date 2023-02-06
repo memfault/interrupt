@@ -2,7 +2,7 @@
 title: "Stack Overflows:  A thing of the past"
 description: "A step-by-step guide on configuring and leveraging the ARMv8 MSP and PSP limit registers to protect against stack overflows on the Renesas DA1469x. "
 tag: [cortex-m]
-author: Jon Kurtz
+author: jonkurtz
 ---
 
 Stack overflows have notoriously plagued the development processes.  They often can go undetected and can present themselves in obscure ways.  We have implemented software mechanisms to protect against them, but these have limitations and still don't protect against all conditions.  
