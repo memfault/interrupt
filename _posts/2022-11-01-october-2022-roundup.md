@@ -1,5 +1,5 @@
 ---
-title: "What we've been reading in October"
+title: "What we've been reading in October (2022)"
 author: tyler
 tags: [roundup]
 ---
