@@ -326,7 +326,7 @@ In this example, prvTestOverFlowTask will not yield, so FreeRTOS does not catch 
 
 Compilers have started enabling SSP (Stack Smashing Protection) libraries.  The library options will allow the compiler to use canaries within function calls.  We're going to look at GCC's implementation[^5] specifically.  GCC provides the following compiler flags:
 
-* **-fstack-protector**:  This includes functions that call alloca and functions with buffers larger than or equal to 8 bytes.  The guards are initialized when a function is entered and then checked when the function exits.
+* **-fstack-protector**:  This includes functions that call **alloca** and functions with buffers larger than or equal to 8 bytes.  The guards are initialized when a function is entered and then checked when the function exits.
 
 * **-fstack-protector-strong** - Like -fstack-protector but includes additional functions to be protected — those that have local array definitions, or have references to local frame addresses.
 
