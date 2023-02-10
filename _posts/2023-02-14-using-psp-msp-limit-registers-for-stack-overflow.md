@@ -435,7 +435,13 @@ Before return, we can see the function checking the canary at the end of the sta
 0x0000cd0c <+68>:   bl  0xcdb0 <__stack_chk_fail>
 ```
 
-Running the rest of the example should confirm the call of __stack_chk_fail
+Running the rest of the example should confirm the call of __stack_chk_fail.
+
+## Practical implementations for GCC stack Canaries
+
+Implementing the ssp library does provide additional overhead in execution time and code space.  A function will add 7 additional instructions to make use of this feature. The developer should weigh these factors when choosing which setting to use in GCC.
+
+My preference would be to develop and test with a stricter setting and more coverage and move to a more relaxed setting when getting closer to production.  For example, you could start your development process with -fstack-protector-all, and later relax this to -fstack-protector-strong or -fstack-protector as the code matures. 
 
 ## Closing
 
