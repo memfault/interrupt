@@ -1,6 +1,6 @@
 ---
-title: "A Guide to Using ARM Stack Limit Registers"
-jay
+title: "Stack Overflows:  A thing of the past"
+description: "A step-by-step guide on configuring and leveraging the ARMv8 MSP and PSP limit registers to protect against stack overflows on the Renesas DA1469x. "
 tag: [cortex-m]
 author: jonkurtz
 ---
@@ -12,7 +12,8 @@ With the maturity of the ARM architecture, wouldn't it be better to have a fool-
 <!-- excerpt start -->
 
 We will explore using the MSP Limit and the PSP Limit Registers on the ARM Cortex-M33 architecture to detect stack overflows.
-We will walk through an implementation on the Renesas DA1469x and look at practical examples of detecting stack overflows.  Additionally, we will look at supplementary options for scenarios that the MSPLIM and PSPLIM features fall short.
+
+We will walk through an implementation on the Renesas DA1469x and look at practical examples of detecting stack overflows.
 
 <!-- excerpt end -->
 
@@ -23,13 +24,14 @@ We will walk through an implementation on the Renesas DA1469x and look at practi
 ## Basic Terminology
 
 The ARM Cortex-M33 introduced two new stack limit registers, PSPLIM and MSPLIM [^m33-psplim_msplim].
+
 ARM has included this in its ARMv8 specification, so any processors before this will not have support.
 
 ## How does it work?
 
 The best part about this new feature is how easy it is to use and how it takes the guesswork out of debugging stack overflows.  
 
-We need to set the PSPLIM, and the MSPLIM registers to the boundary of the stack.  If the MSP == MSPLIM register or the PSP == PSPLIM register, a UsageFault is generated.  The UsageFault Status Register [^m33-usfr] contains a sticky bit in position four to indicate that a stack overflow occurred.  
+We need to set the PSPLIM, and the MSPLIM registers to the boundary of the stack.  If the MSP == MSPLIM register or the PSP == PSPLIM register, a UsageFault is generate.  The UsageFault Status Register [^m33-usfr] contains a sticky bit in position four to indicate that a stack overflow occurred.  
 
 Having hardware protection for the PSP and MSP allows flexibility within an OS.  For example, we can protect the MSP during exceptions and interrupts.  We can also switch out the PSPLIM value on a context switch to safeguard each task's stack.  If you need a refresher on context switching, check a previous post [here](2019-10-30-cortex-m-rtos-context-switching.md).
 
@@ -324,7 +326,7 @@ In this example, prvTestOverFlowTask will not yield, so FreeRTOS does not catch 
 
 Compilers have started enabling SSP (Stack Smashing Protection) libraries.  The library options will allow the compiler to use canaries within function calls.  We're going to look at GCC's implementation[^5] specifically.  GCC provides the following compiler flags:
 
-* **-fstack-protector**:  This includes functions that call **alloca** and functions with buffers larger than or equal to 8 bytes.  The guards are initialized when a function is entered and then checked when the function exits.
+* **-fstack-protector**:  This includes functions that call *alloca* and functions with buffers larger than or equal to 8 bytes.  The guards are initialized when a function is entered and then checked when the function exits.
 
 * **-fstack-protector-strong** - Like -fstack-protector but includes additional functions to be protected — those that have local array definitions, or have references to local frame addresses.
 
@@ -434,13 +436,7 @@ Before return, we can see the function checking the canary at the end of the sta
 0x0000cd0c <+68>:   bl  0xcdb0 <__stack_chk_fail>
 ```
 
-Running the rest of the example should confirm the call of __stack_chk_fail.
-
-## Practical implementations for GCC stack Canaries
-
-Implementing the ssp library does provide additional overhead in execution time and code space.  A function will add 7 additional instructions to make use of this feature. The developer should weigh these factors when choosing which setting to use in GCC.
-
-My preference would be to develop and test with a stricter setting and more coverage and move to a more relaxed setting when getting closer to production.  For example, you could start your development process with -fstack-protector-all, and later relax this to -fstack-protector-strong or -fstack-protector as the code matures. 
+Running the rest of the example should confirm the call of __stack_chk_fail
 
 ## Closing
 
