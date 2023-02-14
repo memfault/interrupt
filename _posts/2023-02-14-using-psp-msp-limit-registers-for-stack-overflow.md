@@ -1,6 +1,6 @@
 ---
 title: "A Guide to Using ARM Stack Limit Registers"
-jay
+description: "A step-by-step guide on configuring and leveraging the ARMv8 MSP and PSP limit registers to protect against stack overflows on the Renesas DA1469x. "
 tag: [cortex-m]
 author: jonkurtz
 ---
