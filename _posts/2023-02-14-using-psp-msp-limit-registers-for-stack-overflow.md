@@ -104,7 +104,7 @@ In tasks.c we create the following above vTaskSwitchContext:
 ```c
 void vTaskSwitchStackGuard(void)
 {
-        volatile uint32_t end_of_stack_val = =(uint32_t)pxCurrentTCB->pxStack;
+    volatile uint32_t end_of_stack_val = (uint32_t)pxCurrentTCB->pxStack;
      __set_PSPLIM( end_of_stack_val);
 }
 ```
