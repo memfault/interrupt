@@ -117,7 +117,7 @@ thomas:
     image: /img/author/thomas.jpg
 nash:
     name:  Nash Reilly
-    blurb: works as an independent EE consultant and runs <a href="https://www.rtljobs.com/?ref=memfault_bio">RTLjobs.com</a>, a job site for FPGA and RTL designers. He has previously written firmware for Sonos, Root.ai, and AppHarvest. 
+    blurb: works as an independent EE consultant and runs <a href="https://www.rtljobs.com/?ref=memfault_bio">RTLjobs.com</a>, a job site for FPGA and RTL designers. He has previously written firmware for Sonos, Root.ai, and AppHarvest.
     github: cushychicken
     twitter: cushyChicken
     linkedin: https://www.linkedin.com/in/nash-reilly-55284a33/
@@ -154,3 +154,9 @@ mab:
     linkedin: https://www.linkedin.com/in/mab-embedded/
     github: mabembedded
     image: /img/author/mab.jpeg
+jonkurtz:
+    name: Jon Kurtz
+    email: jon.kurtz.uf@renesas.com
+    image: /img/author/jonkurtz.jpg
+    linkedin: https://www.linkedin.com/in/jonathankurtz1
+    blurb: is an FAE Connectivity manager at Renesas.
