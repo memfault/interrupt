@@ -153,7 +153,6 @@ __RETAINED_CODE void UsageFault_HandlerC(uint8_t stack_pointer_mask)
 ```
 
 Next, let's add our UsageFault_Handler into the exceptions_handler.S:
-the
 ```c
 #if (dg_configCODE_LOCATION == NON_VOLATILE_IS_FLASH)
             .section text_retained
