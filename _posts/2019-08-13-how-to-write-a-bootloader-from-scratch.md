@@ -208,7 +208,7 @@ We wrap those two into a `start_app` function which accepts our `pc` and `sp` as
 arguments, and get our minimal bootloader:
 
 ```c
-/* app.c */
+/* bootloader.c */
 #include <inttypes.h>
 #include "memory_map.h"
 
