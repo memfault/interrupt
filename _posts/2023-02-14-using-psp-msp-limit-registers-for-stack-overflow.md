@@ -456,7 +456,7 @@ __attribute__((optimize("O0"))) static uint8_t stack_buffer_test(uint16_t iters)
 This function has a fixed buffer to pass a value larger than the local buffer.
 Let's add a stack_buffer_test(17) to our task and look at the assembly.
 
-```gdb
+```
 (gdb) disassemble stack_buffer_test
 Dump of assembler code for function stack_buffer_test:
    0x0000ccc8 <+0>: push    {r7, lr}
@@ -502,7 +502,7 @@ Dump of assembler code for function stack_buffer_test:
 
 Here we can see the compiler loading the canary at the end of the stack frame:
 
-```gdb
+```
    0x0000ccd2 <+10>:    ldr r3, [pc, #68]   ; (0xcd18 <stack_buffer_test+80>)
    0x0000ccd4 <+12>:    ldr r3, [r3, #0]
    0x0000ccd6 <+14>:    str r3, [r7, #28]
