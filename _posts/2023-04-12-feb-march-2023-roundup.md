@@ -21,10 +21,10 @@ Team Memfault would be thrilled to host you at Workbar Boston downtown for food,
 
 ## Articles & Learning
 
-- [**Interrupt Panel Discussion - OTA Updates & Fleet Management at Scale**](https://www.youtube.com/watch?v=KsIbRKoTh-Q)<br>
+- [**Interrupt Panel Discussion - OTA Updates & Fleet Management at Scale**](https://go.memfault.com/ota-updates-fleet-management-at-scale)<br>
 David Shoemaker (Tesla), Phillip Johnston (Embedded Artistry), Eric (Memfault), Noah (Memfault) all talk about how each of them think about peforming OTA for hardware devices. Need a podcast of sorts to listen to while writing your new OTA code? This is the one.
 
-- [**Utilizing Memfault to Debug Your Embedded Devices**](https://www.youtube.com/watch?v=9AR6hcbI3Mg)<br>
+- [**Utilizing Memfault to Debug Your Embedded Devices**](https://go.memfault.com/utilizing-memfault-debug-your-embedded-devices)<br>
 Eric and Noah from Memfault cover how to use Memfault to debug firmware, both while it's connected to your local computer using JTAG and remotely using Memfault.
 
 - [**Embedded Online Conference 2023 on April 24-28th**](https://embeddedonlineconference.com/index.php)<br>
