@@ -1,5 +1,5 @@
 ---
-title: "What we've been reading in February * March"
+title: "What we've been reading in February & March"
 author: tyler
 tags: [roundup]
 ---
