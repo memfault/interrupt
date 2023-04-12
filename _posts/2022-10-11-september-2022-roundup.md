@@ -16,10 +16,10 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 
 ## Articles & Learning
 
-- [**How to Build and Maintain IoT Management Systems for Scale (Memfault Webinar)**](https://www.youtube.com/watch?v=6X62qDaNaNc) by Tyler Hoffman & Chris Coleman<br>
+- [**How to Build and Maintain IoT Management Systems for Scale (Memfault Webinar)**](https://go.memfault.com/how-to-build-and-maintain-iot-management-systems-for-scale) by Tyler Hoffman & Chris Coleman<br>
 I had a blast doing a joint webinar with Chris talking about how to build engineering teams and data systems to ensure that firmware teams and hardware companies can build reliable products and infrastructure. Sounds like a mouthful, but honestly, the webinar was Chris telling everyone fun stories from the past, which is always a good time.
 
-- [**How to De-Risk Product Launches with Device Reliability Engineering (Memfault Webinar)**](https://www.youtube.com/watch?v=OFq3aupQp64) by François Baldassari<br>
+- [**How to De-Risk Product Launches with Device Reliability Engineering (Memfault Webinar)**](https://go.memfault.com/how-de-risk-product-launches-device-reliability-engineering) by François Baldassari<br>
 I feel I learn a lot from every webinar François gives. In this one, he talks about TDD, Day-0 updates, why and how to build a Hardware Abstraction Layer (HAL), and why you should split up the manufacturing firmware build and normal operating firmware. These are all these he's learned throughout his time at Pebble, Oculus, and Memfault.
 
 - [**Open Source Firmware Conference 2022 (Videos)**](https://www.osfc.io/2022/schedule/)<br>
