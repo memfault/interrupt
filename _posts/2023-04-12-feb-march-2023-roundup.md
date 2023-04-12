@@ -16,7 +16,7 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 
 ## Events
 
-[Boston Embedded Systems Happy Hour by Memfault](https://www.meetup.com/boston-firmware-embedded-systems-meetup/events/292686106/)<br>
+- [**Boston Embedded Systems Happy Hour by Memfault**](https://www.meetup.com/boston-firmware-embedded-systems-meetup/events/292686106/)<br>
 Team Memfault would be thrilled to host you at Workbar Boston downtown for food, beer, and to talk firmware! Much of the team from our Boston office will be in attendance, as well as many of our friends in firmware we've made over the years. More information on [Meetup](https://www.meetup.com/boston-firmware-embedded-systems-meetup/events/292686106/).
 
 If you are looking for a firmware meetup in the San Francisco Bay Area or New York, hold tight. We are working on it!
@@ -26,7 +26,7 @@ If you are looking for a firmware meetup in the San Francisco Bay Area or New Yo
 - [**Interrupt Panel Discussion - OTA Updates & Fleet Management at Scale**](https://www.youtube.com/watch?v=KsIbRKoTh-Q)<br>
 David Shoemaker (Tesla), Phillip Johnston (Embedded Artistry), Eric (Memfault), Noah (Memfault) all talk about how each of them think about peforming OTA for hardware devices. Need a podcast of sorts to listen to while writing your new OTA code? This is the one.
 
-[**Utilizing Memfault to Debug Your Embedded Devices**](https://www.youtube.com/watch?v=9AR6hcbI3Mg)<br>
+- [**Utilizing Memfault to Debug Your Embedded Devices**](https://www.youtube.com/watch?v=9AR6hcbI3Mg)<br>
 Eric and Noah from Memfault cover how to use Memfault to debug firmware, both while it's connected to your local computer using JTAG and remotely using Memfault.
 
 - [**Embedded Online Conference 2023 on April 24-28th**](https://embeddedonlineconference.com/index.php)<br>
