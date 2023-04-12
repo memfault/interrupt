@@ -16,6 +16,12 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 
 ## Articles & Learning
 
+- [**Interrupt Panel Discussion - OTA Updates & Fleet Management at Scale**](https://www.youtube.com/watch?v=KsIbRKoTh-Q)<br>
+David Shoemaker (Tesla), Phillip Johnston (Embedded Artistry), Eric (Memfault), Noah (Memfault) all talk about how each of them think about peforming OTA for hardware devices. Need a podcast of sorts to listen to while writing your new OTA code? This is the one.
+
+- [**Embedded Online Conference 2023 on April 24-28th**](https://embeddedonlineconference.com/index.php)<br>
+This wonderful yearly conference is just around the corner. Use `MEMFAULT2023` to get $100 off registration fees. 
+
 - [**The cheapest flash microcontroller you can buy is actually an Arm Cortex-M0+ - Jay Carlson**](https://jaycarlson.net/2023/02/04/the-cheapest-flash-microcontroller-you-can-buy-is-actually-an-arm-cortex-m0/)<br>
 Jay Carlson is at it again with his latest post, showing that a Cortex-M0+ might be the best chip when you need to be cheap.  
 
