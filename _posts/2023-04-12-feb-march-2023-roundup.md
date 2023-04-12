@@ -17,9 +17,7 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 ## Events
 
 - [**Boston Embedded Systems Happy Hour by Memfault**](https://www.meetup.com/boston-firmware-embedded-systems-meetup/events/292686106/)<br>
-Team Memfault would be thrilled to host you at Workbar Boston downtown for food, beer, and to talk firmware! Much of the team from our Boston office will be in attendance, as well as many of our friends in firmware we've made over the years. More information on [Meetup](https://www.meetup.com/boston-firmware-embedded-systems-meetup/events/292686106/).
-
-If you are looking for a firmware meetup in the San Francisco Bay Area or New York, hold tight. We are working on it!
+Team Memfault would be thrilled to host you at Workbar Boston downtown for food, beer, and to talk firmware! Much of the team from our Boston office will be in attendance, as well as many of our friends in firmware we've made over the years. More information on [Meetup](https://www.meetup.com/boston-firmware-embedded-systems-meetup/events/292686106/). If you are looking for a firmware meetup in the San Francisco Bay Area or New York, hold tight. We are working on it!
 
 ## Articles & Learning
 
