@@ -34,7 +34,7 @@ Rust on ESP32 is continuing to chug along. This post covers a 2022 Q4 recap and 
 A beautifully documented project implementing a retrofitted RFID door lock, including mechanical + electrical + Rust firmware. Very polished final result! - Noah.
 
 - [**Improving the Beginner’s PID (Arduino)**](http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-introduction/)<br>
-A nice article about doing work that went into the Arduino PID library - Noah.
+A nice article about some work that went into the Arduino PID library - Noah.
 
 - [**Introduction to meson build system - twdev.blog**](https://twdev.blog/2022/09/meson/)<br>
 A tutorial on using the Meson build system for a C/C++ project - Noah.
@@ -42,10 +42,10 @@ A tutorial on using the Meson build system for a C/C++ project - Noah.
 - [**Commercially available RISC-V silicon - Muxup**](https://muxup.com/2023q1/commercially-available-risc-v-silicon)<br>
 List of commercially available RISC-V chips. Exciting to see adoption grow, with new and established vendors! (Plug: Memfault recently expanded our architecture support to include RISC-V on the ESP32-C3) - Noah.
 
-- [**nodecum/zig-zephyr: Case study of interweaving zephyr and zig**](https://github.com/nodecum/zig-zephyr)<br>
-A new attempt to integrate Zig with Zephyr in various ways. Currently state is very experimental, but interesting work on converting the device tree into Zig!
+- [**Case study of interweaving zephyr and zig**](https://github.com/nodecum/zig-zephyr)<br>
+A new attempt to integrate Zig with Zephyr in various ways. The current state is very experimental, but interesting work on converting the device tree into Zig!
 
-- [**Capacitor Quick Reference Guide - Passives / Capacitors - Electronic Component and Engineering Solution Forum - TechForum │ Digi-Key**](https://forum.digikey.com/t/capacitor-quick-reference-guide/12843)<br>
+- [**Capacitor Quick Reference Guide from Digi-Key - Passives / Capacitors**](https://forum.digikey.com/t/capacitor-quick-reference-guide/12843)<br>
 Quick reference guide for capacitors - Noah
 
 
@@ -75,7 +75,7 @@ A microcontroller-based Lisp computer with very low power consumption. Nice hard
 Nice combination of software components for a PDP11/40 emulator running on an RP2040
 
 - [**Wren6991/OpenDAP**](https://github.com/Wren6991/OpenDAP)<br>
-This is cool- an ARM DAP implementation designed to interface RISC-V cores. Enables using SWD probes with a RISC-V implementation. A work-in-progress, but very neat! - Noah.
+This is cool- an Arm DAP implementation designed to interface RISC-V cores. Enables using SWD probes with a RISC-V implementation. A work-in-progress, but very neat! - Noah.
 
 - [**mborgerson/gdbstub: Simple, single-file, dependency-free GDB stub that can be easily dropped in to your project.**](https://github.com/mborgerson/gdbstub)<br>
 An example single-file embeddable gdbstub, enables adding built-in gdb target support to an application
