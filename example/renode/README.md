@@ -1,7 +1,12 @@
-# Docker build container
+# Renode example
+
+https://interrupt.memfault.com/blog/intro-to-renode
 
 
-## Build renode minimal example
+## Docker build container
+
+
+### Build renode minimal example
 
 Create a minimal docker image that contains everything to build
 the binary. The binary is build during the creation of the image.
@@ -9,7 +14,7 @@ the binary. The binary is build during the creation of the image.
 > docker build --progress=plain -t renode .
 
 
-## Get example to host
+### Get example to host
 
 Start the container with
 > docker run --mount src="$(pwd)",target=/mnt,type=bind -it renode /bin/bash

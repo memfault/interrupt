@@ -16,7 +16,7 @@ RUN useradd --create-home -d /home/tiny --shell /bin/bash --password tiny tiny
 USER tiny
 WORKDIR /home/tiny
 
-COPY --chown=tiny:tiny renode ./renode
+COPY --chown=tiny:tiny . ./renode
 
 WORKDIR /home/tiny/renode
 RUN make
