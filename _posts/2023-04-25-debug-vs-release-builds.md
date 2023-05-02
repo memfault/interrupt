@@ -114,6 +114,11 @@ Anecdotally, I've personally never encountered a roadblock due to compiler
 optimization in step-debugging. In the worst case, I need to peek at a few
 assembly instructions to see what's going on, but that's very rare.
 
+I've also used the compiler `#pramga GCC optimize ("O0")` or
+`__attribute__((optimize("O0")))` to disable optimizations temporarily while
+debugging a particular chunk of code or a single file, instead of disabling it
+across an entire build.
+
 There's a HUGE downside to having different optimization levels for debug vs.
 release builds: we end up with a **different** executable:
 
@@ -203,6 +208,17 @@ global `DEBUG` flag, and less likely to leak to other places:
 #define LOG_LEVEL kLogLevel_Debug
 #endif
 ```
+
+A crucial thing to be mindful of is turning off watchdogs in your debug version.
+Instead, it's strongly advised to insert `__asm("bkpt");` into the watchdog
+handler. This will enable you to promptly debug any instances where a watchdog
+is triggered during debugging.
+
+Depending on the particular device, it may be necessary to add some GDB hooks
+for halt + continue to temporarily disable/reset a watchdog peripheral, so it
+doesn't trigger when single-stepping. Some chips (like STM32's) even have a
+feature that pauses a watchdog for you when the chip is debugger halted, which
+is great!
 
 ## Summary
 
