@@ -3,8 +3,10 @@ FROM ruby:3.0-slim-buster
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    git \
     python3 \
-    python3-pip
+    python3-pip \
+    nodejs
 
 # explicit and recent version of pip avoids needing to build wheel deps
 RUN pip3 install pip==22.3.1
