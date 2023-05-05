@@ -1,7 +1,7 @@
 [build]
   command = "jekyll build && cp _redirects _site/"
   publish = "_site"
-
+  environment = { GENERATE_SEARCH_INDEX = "true" }
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
