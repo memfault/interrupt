@@ -27,6 +27,13 @@ confidence. In particular:
 - It should be resilient so it can still update devices even when they are in a
   non-nominal state.
 
+> 📺 **Watch the webinar**
+>
+> This topic is also the subject of a
+> [Memfault webinar](https://hubs.la/Q01M97730). Join me on May 18th (9AM PT |
+> 12PM ET | 6PM CET) to learn how to implement a secure and reliable OTA update
+> system for Linux embedded devices.
+
 {% include toc.html %}
 
 As you will see, many components collaborate to update your embedded Linux
