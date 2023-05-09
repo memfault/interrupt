@@ -6,9 +6,13 @@ tags: [linux, ota, swupdate]
 
 <!-- excerpt start -->
 
-A core belief of Memfault is that we can ship faster when we have efficient
-tools to detect, debug and fix issues in the field. Fixing issues on your
-computer is not enough: the fix must reach the end users!
+A core belief of Memfault is that we can ship faster when we have good
+infrastructure in place. An essential piece of this infrastructure is tools to
+send firmware updates over the air. It enables the team to ship more often and
+spend more time building features.
+
+In this article, we look specifically at what is required to ship over-the-air
+firmware updates for Linux systems.
 
 <!-- excerpt end -->
 
@@ -17,11 +21,13 @@ confidence. In particular:
 
 - It should be predictable: systems should be identical (ideally, exact
   byte-level copies) regardless of whether they are a fresh install or have been
-  updated 10 times in their lifespan;
+  updated 10 times in their lifespan.
 - It should be reliable: interruptions of network or power should not risk
-  damaging the device,
+  damaging the device.
 - It should be resilient so it can still update devices even when they are in a
-  non-nominal state
+  non-nominal state.
+
+{% include toc.html %}
 
 As you will see, many components collaborate to update your embedded Linux
 systems. Our goal in this blog post is to walk you through a complete update
@@ -32,7 +38,7 @@ For today’s discussion, we will focus on a system built with Yocto, booting on
 an A/B partition scheme, with [U-Boot](https://u-boot.readthedocs.io/en/latest/)
 as the bootloader and [SWUpdate](https://sbabic.github.io/swupdate/index.html)
 as the updater. This is an extremely common setup, completely open-source (free
-as beer and speech), and the one we use in Memfault Linux SDK examples. But the
+as beer and speech), and the one we use in Memfault Linux SDK examples. The
 concepts shown here will apply to a lot of other OTA strategies as well and it’s
 important to point out that Memfault for Linux is not limited to this setup.
 
@@ -58,7 +64,7 @@ important to point out that Memfault for Linux is not limited to this setup.
 > With Yocto and the A/B partition scheme, we can build very predictable
 > systems. Firmware engineers love determinism.
 
-## Big Picture
+## The Big Picture
 
 Let’s start with a general overview of the update process.
 
@@ -83,6 +89,8 @@ Let’s start with a general overview of the update process.
 Now that we understand the different steps, let’s see how this is implemented in
 practice.
 
+## Diving into the details
+
 > 🪛🔬 **Tag Along!**
 >
 > We encourage you to follow along on an emulator or a real device. The
@@ -96,24 +104,25 @@ practice.
 > started in an emulator, or the Raspberry Pi Quickstart guide to do the same
 > thing with real hardware.
 
-## Building the update
+### Building the update
 
 The first step to distributing an update over the air is to build and package
 it. Your build system should be fully automated (CI) and configured to always
 provide, for each revision of your source code, both a complete image to flash
 on a new device and an update package.
 
-The update package role is to take a device running any previous version of the
-firmware to the new version. With our A/B partitioning scheme, this is easily
-achieved by shipping a new system image as the update.
+The update package is the input we provide to the updater. It contains enough
+information to update a device running an older version of the firmware to the
+new version. With our A/B partitioning scheme, this is easily achieved by
+shipping a new system image as the update.
 
 > 📦 Delta updates are also possible with swupdate but we will not discuss them
-> today. Refer to
+> in this article. Refer to
 > [Delta Update with SWUpdate](https://sbabic.github.io/swupdate/delta-update.html)
 > for more information.
 
-A SWUpdate update package is just a `cpio` archive in which the first file is an
-update descriptor. The `meta-swupdate` layer for Yocto provides the
+A SWUpdate update package is just a [`cpio`][cpio] archive in which the first
+file is an update descriptor. The `meta-swupdate` layer for Yocto provides the
 `swupdate-image` class to do this easily and the
 [Memfault example includes a `swupdate-image` target](https://github.com/memfault/memfault-linux-sdk/blob/1.4.0-kirkstone/meta-memfault-example/recipes-core/images/swupdate-image.bb).
 
@@ -142,13 +151,15 @@ $ cpio -vt < tmp/deploy/images/qemuarm64/swupdate-image-qemuarm64.swu
 > showing commands and output typed directly on the target device, we will use
 > the `#` prompt.
 
-## Distributing updates
+[cpio]: https://en.wikipedia.org/wiki/Cpio
+
+### Distributing updates
 
 To distribute this new update over the air we will need to make it available to
 our fleet of devices. This typically requires two steps:
 
 1. Upload the update file to a CDN so it can be downloaded quickly by a large
-   number of devices at a reasonable cost ;
+   number of devices at a reasonable cost.
 2. Indicate that the update is available and provide the link to it on an
    “update server” endpoint that our devices will contact.
 
@@ -167,7 +178,7 @@ our fleet of devices. This typically requires two steps:
 >   with the new build before too many devices have been updated
 > - Serve different versions of the update for different hardware revisions
 
-## Fetching an update
+### Fetching an update
 
 In the SWUpdate world, we use a
 [daemon mode called Suricatta](https://sbabic.github.io/swupdate/suricatta.html)
@@ -216,7 +227,7 @@ root@qemuarm64:~# journalctl -u swupdate -f
 
 As shown here, it regularly calls the server to see if an update is available.
 
-## Installing updates
+### Installing updates
 
 When the update becomes available, `swupdate` will download it and write it
 directly to the inactive system partition. Writing the update directly in place
@@ -329,7 +340,7 @@ globals :
 };
 ```
 
-## Bootloader
+### Bootloader
 
 The bootloader is the crucial piece of software that runs first when your device
 starts. It plays an essential role in our support for OTA updates because it
@@ -391,13 +402,15 @@ Second, note that the boot script helps with three essential components:
 - It tells the kernel which system partition to mount as root:
   `root=/dev/mmcblk0p${rootpart}` ;
 - Finally, it loads the device tree and passes it to the kernel (with the
-  `fdt addr ${fdt_addr}` command). This is highly specific to the Raspberry Pi
-  so we will refer the interested reader
+  `fdt addr ${fdt_addr}` command). The device-tree is usually
+  [appended after the kernel](https://people.kernel.org/linusw/how-the-arm32-linux-kernel-decompresses#decompression-of-the-zimage).
+  This little trick is highly specific to the Raspberry Pi and allows
+  dynamically loading device tree fragments (we will refer the interested reader
   [to this article](https://dius.com.au/2015/08/19/raspberry-pi-u-boot/) for
-  more details. Again, this is something that is specific to your board and
+  more details). Again, this is something that is specific to your board and
   should be received with your board support package.
 
-## Notifying the server that the update has been received
+### Notifying the server that the update has been received
 
 Our device reboots with the new kernel and the new filesystem. The final step of
 our update cycle is to notify the update server that the update has been
@@ -442,5 +455,4 @@ world of embedded Linux devices!
 
 # Further Reading
 
-- The excellent swupdate manual
-  [https://sbabic.github.io/swupdate/swupdate.html](https://sbabic.github.io/swupdate/swupdate.html)
+- [The excellent swupdate manual](https://sbabic.github.io/swupdate/swupdate.html)
