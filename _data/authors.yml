@@ -160,3 +160,8 @@ jonkurtz:
     image: /img/author/jonkurtz.jpg
     linkedin: https://www.linkedin.com/in/jonathankurtz1
     blurb: is an FAE Connectivity manager at Renesas.
+tsarlandie:
+    name: Thomas Sarlandie
+    github: sarfata
+    image: /img/author/tsarlandie.jpg
+    blurb: is the Linux Tech Lead at Memfault.

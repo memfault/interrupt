@@ -37,6 +37,18 @@
       margin-bottom: 0;
     }
   }
+
+  blockquote {
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    p, ul, ol {
+      padding: 0.1rem;
+      font-style: normal;
+    }
+    pre {
+      font-style: normal;
+    }
+  }
 }
 
 div.author {
