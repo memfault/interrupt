@@ -1,7 +1,8 @@
 [build]
   command = "jekyll build && cp _redirects _site/"
   publish = "_site"
-  environment = { GENERATE_SEARCH_INDEX = "true" }
+  # this enables lunr.js search index generation
+  environment = { JEKYLL_ENV = "production" }
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
