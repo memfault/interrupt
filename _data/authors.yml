@@ -171,3 +171,8 @@ caglayan:
     email: caglayandokme@gmail.com
     linkedin: https://www.linkedin.com/in/caglayandokme/
     github: CaglayanDokme
+blaise:
+    name: Blaise Lengrand
+    github: blaizard
+    image: /img/author/blaise.jpg
+    blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
