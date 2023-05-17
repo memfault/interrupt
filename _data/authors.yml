@@ -165,3 +165,9 @@ tsarlandie:
     github: sarfata
     image: /img/author/tsarlandie.jpg
     blurb: is the Linux Tech Lead at Memfault.
+caglayan:
+    name: Çağlayan Dökme
+    blurb: is a young embedded software engineer who believes in the power of knowledge sharing.
+    email: caglayandokme@gmail.com
+    linkedin: https://www.linkedin.com/in/caglayandokme/
+    github: CaglayanDokme

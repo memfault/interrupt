@@ -1,7 +1,7 @@
 ---
 title: "C++17’s Useful Features for Embedded Systems"
-description: TODO
-author: TODO
+description: "In this article, you will find some features of C++17 that can also be helpful in the embedded world."
+author: caglayan
 ---
 
 Recently, our team at Meteksan Defense is upgrading its development environment to use newer versions of many tools and programming languages. One of the more difficult transitions has been the upgrade of our C++11 code base to C++17 for our embedded applications.
@@ -14,7 +14,7 @@ In this article, I will be showing some features of C++17 that can also be helpf
 
 Note that the migration from C++11 to C++17 covers C++14 also, hence I will touch upon some aspects of it as well.
 
-The full list of features can be found [on AnthonyCalandra's GitHub page](https://github.com/AnthonyCalandra/modern-cpp-features#c17-language-features). I will be referencing it frequently.
+The full list of features can be found [on Anthony Calandra's GitHub page](https://github.com/AnthonyCalandra/modern-cpp-features#c17-language-features). I will be referencing it frequently.
 
 {% include newsletter.html %}
 
@@ -23,12 +23,12 @@ The full list of features can be found [on AnthonyCalandra's GitHub page](https:
 ## Notable Changes in C++14
 C++14 had smaller upgrades compared to the ones we saw when migrating to C++11 from C++03. Hence, there are only a few features in C++14 that you can use in an embedded system.
 
-### Binary Literals 
+### Binary Literals
 
-If you are frequently dealing with the bitwise operations and modifying registers, you will love these literals. Some compilers had extensions that support such literals, but now they have a place in the actual standard.
+If you are frequently dealing with bitwise operations and modifying registers, you will love these literals. Some compilers had extensions that support such literals, but now they have a place in the actual standard.
 
 ```cpp
-uint8_t a = 0b110;        // == 6 
+uint8_t a = 0b110;        // == 6
 uint8_t b = 0b1111'1111;  // == 255
 ```
 
@@ -78,13 +78,13 @@ I’m pretty sure you forgot to check the return value of your functions at leas
     return is_success; // true for success, false for failure
 }
 
-do_something(); /* warning: ignoring return value of function declared with attribute 'nodiscard' */
+do_something(); /* warning: ignoring the return value of function declared with attribute 'nodiscard' */
 ```
 
 #### [[maybe_unused]]
 
 Are you tired of casting the unused variables to void to suppress the warnings? Then, try this attribute to get rid of that irritating warnings.
-    
+
 ```cpp
 void my_callback(std::string msg, [[maybe_unused]] bool error) {
     // Don't care if `msg` is an error message, just log it.
@@ -93,12 +93,12 @@ void my_callback(std::string msg, [[maybe_unused]] bool error) {
 ```
 
 ### Power of Compile-Time
-The power of checking things at compile-time fascinates me the most in C++. With the C++17, this ability is further enhanced with some new features. Checking things without even deploying the code is quite beneficial when you think of the cumbersome debugging process in many embedded systems. Even transferring the executables to the target and preparing the environment for the execution and testing can be harsh and time consuming. With compile-time programming, some parts of that tiring procedures can be eliminated.
+The power of checking things at compile-time fascinates me the most in C++. With C++17, this ability is further enhanced with some new features. Checking things without even deploying the code is quite beneficial when you think of the cumbersome debugging process in many embedded systems. Even transferring the executables to the target and preparing the environment for the execution and testing can be harsh and time-consuming. With compile-time programming, some parts of that tiring procedures can be eliminated.
 
-#### Static Assertion without a message 
+#### Static Assertion without a message
 
 You might think that we already had the `static_assert(..)` to check things at compile time. This time, the assertion mechanism works without providing an error message. This way, your code will look more clear.
-  
+
 ```cpp
 static_assert(false);
 ```
@@ -126,7 +126,7 @@ int main() noexcept {
 }
 ```
 
-Prior to C++17, the above code would have needed to be two different functions for the string and integer inputs like below.
+Before C++17, the above code would have needed to be two different functions for the string and integer inputs like below.
 
 ```cpp
 int length(const int& value) noexcept {
@@ -140,7 +140,7 @@ std::size_t length(const std::string& value) noexcept {
 #### constexpr lambda
 
 If you also like using lambda expressions in your code, you will love this feature. Lambdas can also be invoked at compile-time by declaring them as constexpr.
-  
+
 ```cpp
 auto identity = [](int n) constexpr { return n; };
 
@@ -165,9 +165,9 @@ int sum(const int& arg, Args... args) {
 This code wouldn’t compile if we didn’t implement the terminator that doesn’t take any inputs. Thanks to the fold expressions, you don’t have to implement a terminator anymore and your code will look way better than the old one. See below.
 
 ```cpp
-template<typename ...Args> 
-int sum(Args&&... args) { 
-    return (args + ...); 
+template<typename ...Args>
+int sum(Args&&... args) {
+    return (args + ...);
 }
 ```
 
@@ -186,8 +186,8 @@ namespace A {
 }
 
 // C++17
-namespace A::B::C { 
-    int i; 
+namespace A::B::C {
+    int i;
 }
 ```
 
@@ -196,22 +196,22 @@ namespace A::B::C {
 Wouldn’t it be more powerful if all conditional statements have the initialization section like the `for` statement has? With C++17, we now have the initialization part in conditional statements also.
 
 This is one of the most powerful features I’ve seen so far since the variables that you create before entering a sequence of if-else statements or a switch-case will no more crowd in your local variable set.
-    
+
 ```cpp
 if (int i = 4; i % 2 == 0) {
     cout << i << " is even number" << endl;
 }
 
 switch (int i = rand() % 100; i) {
-    default: 
-        cout << "i = " << i << endl; 
+    default:
+        cout << "i = " << i << endl;
         break;
 }
 ```
 
 #### Inline Variables
 
-Prior to C++17, we had to instantiate the in-class static variables in the source file. With the inline variables, you can merge the declaration and the initial assignment inside the class definition as below.
+Before C++17, we had to instantiate the in-class static variables in the source file. With the inline variables, you can merge the declaration and the initial assignment inside the class definition as below.
 
 ```cpp
 struct BabaMrb {
@@ -254,7 +254,7 @@ With the shared mutex, many readers can read an object on demand without locking
 
 
 This new library feature helps you to determine the L1 cache line size during compilation. With this feature, you will be able to align your structures, buffers, etc. according to the L1 cache line size.
-For me, this would be helpful when I was implementing a low-level, bare-metal DMA driver for an ARM Cortex-A9 core with C++11 where I had to manage the coherency between the cache and main-memory manually. If you would like to know further, please take a look at [this post](https://stackoverflow.com/questions/68949450/invalidating-a-specific-area-of-data-cache-without-flushing-its-content) of mine.
+For me, this would be helpful when I was implementing a low-level, bare-metal DMA driver for an ARM Cortex-A9 core with C++11 where I had to manage the coherency between the cache and main memory manually. If you would like to know further, please take a look at [this post](https://stackoverflow.com/questions/68949450/invalidating-a-specific-area-of-data-cache-without-flushing-its-content) of mine.
 
 Although this feature is quite powerful, it isn’t implemented in any versions of GCC until version 12, so it is highly possible that your current compiler doesn’t even support it. Check out the code below to have a better understanding. You may need this feature one day.
 
@@ -276,7 +276,7 @@ struct alignas(hardware_constructive_interference_size) OneCacheLiner { // occup
 ## Conclusion
 As opposed to C++14, C++17 came with many new features. Some of those features are beneficial in the world of embedded systems and some of them are not. I inspected the ones that I liked the most by directly utilizing them in my current designs.
 
-The computation power range of embedded devices varies considerably between different products. Some of the features that I chose might not be appropriate in your firmware due to several reasons such as CPU performance, lack of compiler support, verification necessity, etc. Migration to C++17 might cost you a severe amount of time and effort. It’s better to know whether you really require the migration or not.
+The computation power range of embedded devices varies considerably between different products. Some of the features that I chose might not be appropriate in your firmware due to several reasons such as CPU performance, lack of compiler support, verification necessity, etc. Migration to C++17 might cost you a severe amount of time and effort. It’s better to know whether you require the migration or not.
 
 
 <!-- Interrupt Keep START -->
