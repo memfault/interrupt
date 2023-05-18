@@ -29,10 +29,8 @@ confidence. In particular:
 
 > 📺 **Watch the webinar**
 >
-> This topic is also the subject of a
-> [Memfault webinar](https://hubs.la/Q01M97730). Join me on May 18th (9AM PT |
-> 12PM ET | 6PM CET) to learn how to implement a secure and reliable OTA update
-> system for Linux embedded devices.
+> This topic was also the subject of a
+> [Memfault webinar: OTA for embedded Linux Devices](https://hubs.la/Q01M97730).
 
 {% include toc.html %}
 
