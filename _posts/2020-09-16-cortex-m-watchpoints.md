@@ -870,7 +870,7 @@ void dwt_install_watchpoint(
   sDwtCompCfg *config = &DWT->COMP_CONFIG[comp_id];
   config->COMP = comp;
   config->MASK = mask;
-  // set list since this will enable the comparator
+  // set last since this will enable the comparator
   config->FUNCTION = func;
 }
 ```
