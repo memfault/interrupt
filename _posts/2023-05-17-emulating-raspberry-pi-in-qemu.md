@@ -4,15 +4,15 @@ description: Emulating a Raspberry Pi computer on your desktop in Docker using Q
 author: stawiski
 ---
 
-The Raspberry Pi, a compact single-board computer, is widely used from DIY projects to industrial applications. These devices ship with a customised Linux distribution that differs from standard Linux, adding a layer of complexity for developers trying to troubleshoot application problems and dependencies.
+The Raspberry Pi, a compact single-board computer, is widely used for DIY projects to industrial applications. These devices ship with a customized Linux distribution that differs from standard Linux, adding a layer of complexity for developers trying to troubleshoot application problems and dependencies.
 
-With many available versions and flavours of Raspberry-compatible Linux, it's challenging to debug issues related to dependencies of each Linux version, and reflashing the Raspberry SD card each time with a different image is time consuming. Emulating a Raspberry Pi with a tool such as QEMU could offer a solution to some of these challenges. While emulation is severly limited, and most hardware interactions will probably lead to application crashing, it is enough to debug dependency issues accross Raspberry Linux versions.
+With many available versions and flavors of Raspberry-compatible Linux, it's challenging to debug issues related to dependencies of each Linux version, and reflashing the Raspberry SD card each time with a different image is time-consuming. Emulating a Raspberry Pi with a tool such as QEMU could offer a solution to some of these challenges. While emulation is severely limited, and most hardware interactions will probably lead to application crashing, it is enough to debug dependency issues across Raspberry Linux versions.
 
 This article will delve into the challenges and opportunities of emulating a Raspberry Pi using QEMU. If you don't care about the details, you can jump straight to the [Docker image](#Dockerfile) section to get it running.
 
 <!-- excerpt start -->
 
-This article dives into QEMU, a popular open-source emulator, and how to use it to emulate a Raspberry Pi on your desktop. At the end of the article we will put the whole environment in Docker, so you will be able to emulate a Raspberry Pi by just using a Docker container.
+This article dives into QEMU, a popular open-source emulator, and how to use it to emulate a Raspberry Pi on your desktop. At the end of the article, we will put the whole environment in Docker, so you will be able to emulate a Raspberry Pi by just using a Docker container.
 
 <!-- excerpt end -->
 
@@ -35,7 +35,7 @@ If you want to skip to the working Docker image just go to [Docker image](#Docke
 
 ## Getting the Raspberry Pi image
 
-You can find all available Raspberry Pi images on [https://www.raspberrypi.com/software/operating-systems/](https://www.raspberrypi.com/software/operating-systems/). Today we will be using the lastest 64-bit image as of the time of writing, which is [Raspberry Pi OS with desktop released on May 3rd 2023](https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64.img.xz).
+You can find all available Raspberry Pi images on [https://www.raspberrypi.com/software/operating-systems/](https://www.raspberrypi.com/software/operating-systems/). Today we will be using the latest 64-bit image as of the time of writing, which is [Raspberry Pi OS with desktop released on May 3rd 2023](https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64.img.xz).
 
 Let's get that image first and unpack it:
 ```bash
@@ -99,7 +99,7 @@ $ cp /mnt/image/kernel8.img ~
 
 ## Setting up SSH
 
-While we have the image mounted, let's sort out SSH connection as well. Raspberry changed it's default password policy so we can no longer use the well known `pi:raspberry` combination to login. We'll need to create new password first and put it in `userconf` file in the boot partition. `userconf` expects a username and a hashed password. Storing passwords in plaintext is considered a bad practice, so we'll use `openssl` to generate a secure hashed version of our new password.
+While we have the image mounted, let's sort out the SSH connection as well. Raspberry changed its default password policy so we can no longer use the well-known `pi:raspberry` combination to log in. We'll need to create a new password first and put it in `userconf` file in the boot partition. `userconf` expects a username and a hashed password. Storing passwords in plaintext is considered a bad practice, so we'll use `openssl` to generate a secure hashed version of our new password.
 
 Now, let's recreate the password `raspberry` using `openssl`:
 ```bash
@@ -109,7 +109,7 @@ Verifying - Password:
 $6$rBoByrWRKMY1EHFy$ho.LISnfm83CLBWBE/yqJ6Lq1TinRlxw/ImMTPcvvMuUfhQYcMmFnpFXUPowjy2br1NA0IACwF9JKugSNuHoe0
 ```
 
-Openssh asks the user to type in the password twice, so I just typed `raspberry`. We got the hash, which we can now put in the image alonside with the username `pi`:
+Openssh asks the user to type in the password twice, so I just typed `raspberry`. We got the hash, which we can now put in the image alongside with the username `pi`:
 ```bash
 $ echo 'pi:$6$rBoByrWRKMY1EHFy$ho.LISnfm83CLBWBE/yqJ6Lq1TinRlxw/ImMTPcvvMuUfhQYcMmFnpFXUPowjy2br1NA0IACwF9JKugSNuHoe0' | sudo tee /mnt/image/userconf
 ```
@@ -142,7 +142,7 @@ Putting all of these together, we get the following command:
 qemu-system-aarch64 -machine raspi3b -cpu cortex-a72 -nographic -dtb bcm2710-rpi-3-b-plus.dtb -m 1G -smp 4 -kernel kernel8.img -sd 2023-05-03-raspios-bullseye-arm64.img -append "rw earlyprintk loglevel=8 console=ttyAMA0,115200 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootdelay=1" -device usb-net,netdev=net0 -netdev user,id=net0,hostfwd=tcp::2222-:22
 ```
 
-After a couple of seconds you should see the output from the kernel bootup. Eventually you will see the login prompt:
+After a couple of seconds, you should see the output from the kernel bootup. Eventually, you will see the login prompt:
 ```bash
          Starting Light Display Manager...
 [  OK  ] Started OpenBSD Secure Shell server.
@@ -183,19 +183,19 @@ It works! This wasn't too bad, but it's still a couple of steps to follow. Let's
 
 ## Putting it all in Docker
 
-Now, let's put this in a Docker image, so emulating our Raspberry Pi will be as simple as pulling an image and calling `docker run`. We'll need to automate couple of tricky things:
-1. resize the image to next power of 2 size
-1. mount the image to extract kernel and device tree from the image
+Now, let's put this in a Docker image, so emulating our Raspberry Pi will be as simple as pulling an image and calling `docker run`. We'll need to automate a couple of tricky things:
+1. resize the image to the next power of 2 size
+1. mount the image to extract the kernel and device tree from the image
 1. enable SSH and set the password
 
 ### Resizing the image
 
-To resize the image we need to know current image size, which is easy:
+To resize the image we need to know the current image size, which is easy:
 ```Dockerfile
 RUN CURRENT_SIZE=$(stat -c%s "2023-05-03-raspios-bullseye-arm64.img")
 ```
 
-To find next power of two we can use this little python script:
+To find the next power of two we can use this little Python script:
 ```python
 import math
 print(2**(math.ceil(math.log(CURRENT_SIZE, 2))))
@@ -213,7 +213,7 @@ Which will neatly resize any image to the next power of two size.
 
 ### Mounting the image
 
-To mount the image in Dockerfile, we won't be able to use standard `mount`. Instead we'll use mtools. We'll also need to figure out offset of the partition, as we don't want to hardcode it to `4194304`. We can do this by using `fdisk` and `awk`:
+To mount the image in Dockerfile, we won't be able to use standard `mount`. Instead, we'll use mtools. We'll also need to figure out the offset of the partition, as we don't want to hardcode it to `4194304`. We can do this by using `fdisk` and `awk`:
 ```Dockerfile
 RUN OFFSET=$(fdisk -lu 2023-05-03-raspios-bullseye-arm64.img | awk '/^Sector size/ {sector_size=$4} /FAT32 \(LBA\)/ {print $2 * sector_size}')
 ```
@@ -261,7 +261,7 @@ ssh -p 2222 pi@localhost
 
 ## Conclusion
 
-We Dockerized latest Raspberry Pi 64-bit OS and exposed it's SSH port. This is a great starting point for any Raspberry Pi development, as it allows you to run it on any machine that supports Docker. You can use this to run your CI/CD pipelines, provided you don't need any hardware access or are willing to emulate the hardware as well.
+We Dockerized the latest Raspberry Pi 64-bit OS and exposed its SSH port. This is a great starting point for any Raspberry Pi development, as it allows you to run it on any machine that supports Docker. You can use this to run your CI/CD pipelines, provided you don't need any hardware access or are willing to emulate the hardware as well.
 
 As for myself, I used this to figure out Linux package dependencies for a particular Raspberry Pi OS version, and it wasn't much longer than installing the OS on a real Raspberry Pi. However, having put it in Docker, I can reuse this setup to quickly emulate any other Raspberry Pi OS version.
 
