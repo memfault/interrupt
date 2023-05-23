@@ -8,7 +8,7 @@ The Raspberry Pi, a compact single-board computer, is widely used from DIY proje
 
 With many available versions and flavours of Raspberry-compatible Linux, it's challenging to debug issues related to dependencies of each Linux version, and reflashing the Raspberry SD card each time with a different image is time consuming. Emulating a Raspberry Pi with a tool such as QEMU could offer a solution to some of these challenges. While emulation is severly limited, and most hardware interactions will probably lead to application crashing, it is enough to debug dependency issues accross Raspberry Linux versions.
 
-This article will delve into the challenges and opportunities of emulating a Raspberry Pi using QEMU. If you don't care about the details, you can jump straight to the [Docker image](#putting-it-all-in-docker) section to get started.
+This article will delve into the challenges and opportunities of emulating a Raspberry Pi using QEMU. If you don't care about the details, you can jump straight to the [Docker image](#Dockerfile) section to get it running.
 
 <!-- excerpt start -->
 
@@ -26,7 +26,12 @@ This article dives into QEMU, a popular open-source emulator, and how to use it 
 
 ## Environment setup
 
-Since I'm on a Mac, and the purpose is to get a working Docker image, I started on Ubuntu 20.04 Virtual Machine in Parallels. You could also just use a base Ubuntu image in Docker, but you will have to be weary because we will be mounting images, which requires a loopback device.
+Since I'm on a Mac, and the purpose is to get a working Docker image, I set up an Ubuntu 20.04 Virtual Machine in Parallels. If you want to follow along, I recommend you to do the same and get onto a fresh Ubuntu 20.04 with QEMU installed which is as simple as
+```bash
+apt-get install -y qemu-system-aarch64
+```
+
+If you want to skip to the working Docker image just go to [Docker image](#Dockerfile) section and make sure you have Docker installed on your system (if not go to [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)).
 
 ## Getting the Raspberry Pi image
 
@@ -94,7 +99,9 @@ $ cp /mnt/image/kernel8.img ~
 
 ## Setting up SSH
 
-While we have the image mounted, let's sort out SSH as well. Raspberry changed it's default password policy so we no longer can use `pi:raspberry` to log in. We'll need to create new password first. Let's recreate password `rapsberry` using `openssl`:
+While we have the image mounted, let's sort out SSH connection as well. Raspberry changed it's default password policy so we can no longer use the well known `pi:raspberry` combination to login. We'll need to create new password first and put it in `userconf` file in the boot partition. `userconf` expects a username and a hashed password. Storing passwords in plaintext is considered a bad practice, so we'll use `openssl` to generate a secure hashed version of our new password.
+
+Now, let's recreate the password `raspberry` using `openssl`:
 ```bash
 $ openssl passwd -6
 Password: 
@@ -235,62 +242,7 @@ That's it!
 
 ## Dockerfile
 
-Here's the full Dockerfile, based on Ubuntu 20.04:
-```Dockerfile
-FROM ubuntu:20.04@sha256:ca5534a51dd04bbcebe9b23ba05f389466cf0c190f1f8f182d7eea92a9671d00
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update -y
-RUN apt-get install -y qemu-system-aarch64 fdisk wget mtools xz-utils
-
-WORKDIR /qemu
-
-# Download the image
-RUN wget https://downloads.raspberrypi.org/raspios_arm64/images/raspios_arm64-2023-05-03/2023-05-03-raspios-bullseye-arm64.img.xz
-ENV IMAGE_FILE=2023-05-03-raspios-bullseye-arm64.img
-
-# Uncompress the image
-RUN xz -d ${IMAGE_FILE}.xz
-
-# Resize the image to next power of two
-RUN CURRENT_SIZE=$(stat -c%s "${IMAGE_FILE}") && \
-    NEXT_POWER_OF_TWO=$(python3 -c "import math; \
-                                    print(2**(math.ceil(math.log(${CURRENT_SIZE}, 2))))") && \
-    qemu-img resize "${IMAGE_FILE}" "${NEXT_POWER_OF_TWO}"
-
-# Extract files from the image
-# First, find the offset and size of the FAT32 partition
-RUN OFFSET=$(fdisk -lu ${IMAGE_FILE} | awk '/^Sector size/ {sector_size=$4} /FAT32 \(LBA\)/ {print $2 * sector_size}') && \
-    # Check that the offset is not empty
-    if [ -z "$OFFSET" ]; then \
-        echo "Error: FAT32 not found in disk image" && \
-        exit 1; \
-    fi && \
-    # Setup mtools config to extract files from the partition
-    echo "drive x: file=\"${IMAGE_FILE}\" offset=${OFFSET}" > ~/.mtoolsrc
-
-# Copy out the kernel and device tree
-RUN mcopy x:/bcm2710-rpi-3-b-plus.dtb . && \
-    mcopy x:/kernel8.img .
-
-# Set up SSH
-# RPI changed default password policy, there is no longer default password
-RUN mkdir -p /tmp && \
-    # First create ssh file to enable ssh
-    touch /tmp/ssh && \
-    # Then create userconf file to set default password (raspberry)
-    echo 'pi:$6$rBoByrWRKMY1EHFy$ho.LISnfm83CLBWBE/yqJ6Lq1TinRlxw/ImMTPcvvMuUfhQYcMmFnpFXUPowjy2br1NA0IACwF9JKugSNuHoe0' | tee /tmp/userconf
-
-# Copy the files onto the image
-RUN mcopy /tmp/ssh x:/ && \
-    mcopy /tmp/userconf x:/
-
-EXPOSE 2222
-
-# Start qemu with SSH port forwarding
-ENTRYPOINT qemu-system-aarch64 -machine raspi3b -cpu cortex-a72 -nographic -dtb bcm2710-rpi-3-b-plus.dtb -m 1G -smp 4 -kernel kernel8.img -sd ${IMAGE_FILE} -append "rw earlyprintk loglevel=8 console=ttyAMA0,115200 dwc_otg.lpm_enable=0 root=/dev/mmcblk0p2 rootdelay=1" -device usb-net,netdev=net0 -netdev user,id=net0,hostfwd=tcp::2222-:22
-```
+Here's the full Dockerfile, based on Ubuntu 20.04: [link](https://github.com/memfault/interrupt/tree/master/example/emulating-raspberry-pi-in-qemu/Dockerfile)
 
 If you don't want to build this, feel free to pull my image from Docker Hub:
 ```bash
@@ -331,6 +283,8 @@ Hope this helps!
 
 - <https://github.com/qemu/qemu>
 - <https://github.com/raspberrypi/firmware>
+- <https://docs.docker.com/engine/reference/builder/>
+- <https://www.gnu.org/software/mtools/manual/mtools.html>
 - <https://raspberrypi.stackexchange.com/questions/138548/unable-to-login-in-qemu-raspberry-pi-3b>
 - <https://stackoverflow.com/questions/61562014/qemu-kernel-for-raspberry-pi-3-with-networking-and-virtio-support>
 - <https://raspberrypi.stackexchange.com/questions/117234/how-to-emulate-raspberry-pi-in-qemu>
