@@ -1,5 +1,5 @@
 ---
-title: "Bazel for embedded"
+title: "Bazel Build System for Embedded Projects"
 author: blaise
 tags: [bazel, build system, embedded]
 ---
@@ -10,7 +10,7 @@ Selecting a build system is an essential decision when creating a project. Chang
 
 <!-- excerpt end -->
 
-# Bazel for embedded
+# Bazel Build System for Embedded Projects
 
 {% include toc.html %}
 
@@ -33,6 +33,63 @@ A workspace is a collection of `packages` that are defined by a `BUILD` file. Th
 When Bazel is invoked, it will operate in 3 distinct phases, it will first load all `BUILD` files, then analyze all the rules and their dependencies to create an `action graph` and finally execute all the actions until the final outputs are produced.
 
 The behavior and configuration of Bazel can be changed through command line arguments (also called flags). A file named `.bazelrc` can be used at the root of the workspace to collect all flags that should be added when invoking Bazel.
+
+## Using Bazel
+
+Bazel is used as a command line tool. It has many commands and flags so I will not go through all, but here is a short overview of the most important ones.
+
+Building a target is done as follows:
+```bash
+bazel build //<package>:<target>
+```
+Where `<package>` is the path of the package to be built and `<target>` specifies one or more targets. For example `bazel build //my_dir:hello`, will build the target named `hello`, within the directory `my_dir`, or `bazel build //my_dir/...` will build all targets within the directory `my_dir`. Various declinations of this syntax make it less verbose, for example, the leading `//` can be omitted, and if the target name is the same as the package name, it can also be omited.
+
+Similarly, all tests targets can be tested with:
+```bash
+bazel test //my_dir/...
+```
+A test target is a Bazel rule that implements a `test` executable. Such rules are commonly named such as `cc_test`, `py_test`, etc.
+
+An executable target can run with:
+```bash
+bazel run //my_dir:hello
+```
+An executable target is any Bazel rule that can be executed, so it also includes test targets. Executables that are not test targets are commonly named such as `cc_binary`, `py_binary`, etc.
+
+Note that running `bazel test` or `bazel run` will also run `bazel build` if the target was not built or if any of the input files of the target have been altered.
+
+Flags can also be used to change the behavior of a command. These flags can be passed as command line arguments, such as `bazel test //:my_target --runs_per_test=10` to execute a specific test 10 times, or `bazel build /:my_trarget --platforms=//platforms:esp32` to cross-compile a target for esp32.
+
+These flags can be combined and can add up to a very verbose command line which makes it difficult to remember, type or even share. That is where the `.bazelrc` file comes in handy. Here is an example of a `.bazelrc` file:
+
+```bash
+# All options comming from this file will be announced on the terminal.
+common --announce_rc
+
+# If the file `.bazelrc.local`, exists it will be imported.
+try-import .bazelrc.local
+
+# Add timestamps to message.
+common --show_timestamps
+
+# If a command fails, print out the full command line.
+build --verbose_failures
+
+# Print the full error of the test that fails.
+test --test_output=errors
+
+# Configuration for "stress".
+test:stress --runs_per_test=10
+test:stress --notest_keep_going
+```
+
+Each flag are preceded by a command, which corresponds to the Bazel command to which it applies, or some may have specific meaning such as `common`, which applies to all Bazel commands, or `try-import`, which tries to import a file if it exists.
+
+In addition, commands can be grouped into configs. This is represented here with `test:stress`. It means that when the user executes `bazel test --config=stress //:my_target`, the flags `--runs_per_test=10` and `--notest_keep_going` will be added to the command line.
+
+In a mature project, this file can be very large, hence it is always a good practice to add at the beginning `common --announce_rc` to ensure that all the added commands are also announced on the standard output when the command is executed.
+
+Now that we know the basis of what Bazel is and how to use it, let's deep dive into the subject.
 
 ## Platforms
 
@@ -387,3 +444,14 @@ Bazel is a powerful and effective build tool for embedded systems, owing to its 
 However, Bazel has also a steep learning curve, which may pose a challenge for beginners. The effort put into mastering its main concepts is worthwhile, as it offers numerous advantages over traditional build systems such as Makefile and CMake.
 
 By leveraging Bazel's capabilities, developers can achieve faster build times, better reproducibility, and higher levels of code optimization, ultimately leading to more efficient and reliable embedded systems. Therefore, it is worth investing the time and resources necessary to gain a deep understanding of Bazel and incorporate it into your development workflow.
+
+## References
+
+Here is a list of useful links for further reading.
+
+- [Bazel official documentation](https://bazel.build/docs)
+- [Bazel CLI](https://bazel.build/reference/command-line-reference): CLI reference for Bazel.
+- [Bazel Central Registry](https://registry.bazel.build/): Bazel modules ready to be used.
+- [Bazel examples on various topics](https://github.com/bazelbuild/examples)
+- [A collection of Bazel Arm Cortex-M toolchains](https://github.com/bazelembedded/bazel-embedded)
+- [A curated list of Bazel rules, tooling and resources](https://awesomebazel.com/)
