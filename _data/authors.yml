@@ -179,3 +179,9 @@ ericj:
     linkedin: https://www.linkedin.com/in/ejohnso49
     image: /img/author/ejohnso49.png
     blurb: is a Firmware Solutions Engineer at Memfault. Eric previously worked on embedded software teams at Walgreens Health and Athos
+blaise:
+    name: Blaise Lengrand
+    github: blaizard
+    image: /img/author/blaise.jpg
+    linkedin: https://www.linkedin.com/in/blaiselengrand
+    blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
