@@ -23,15 +23,13 @@ I"m Markus, software engineer @ [Tridonic](https://tridonic.com), where we are w
 
 matter <https://csa-iot.org/all-solutions/matter/> is an interoperability standard for the IoT from the [connectivity standards alliance (csa)](https://csa-iot.org) previously known as the zigbeeAlliance. The matter standard is implemented in the open-source reference implementation in the [GitHub project-chip repository](https://github.com/project-chip/connectedhomeip/). matter currently uses UDP on top of IP(v6) and can run on top of different lower layers: Ethernet, WiFi, Thread/802.15.4. [Thread](https://www.threadgroup.org/) is a low-power IPv6 connectivity standard. Its reference implementation is available in the [openThread Github repository](https://github.com/openthread/openthread). The matter SDK as well as the openThread SDK are also available bundled in the [Nordic Connect SDK](https://developer.nordicsemi.com/nRF_Connect_SDK/).
 
-The Tridonic products are based on Thread/802.15.4. Thus I'll focus on UDP, IPv6, and Thread in the following.
-
 <!--
-Thus I did a few changes, changing sockaddr_in to _in6 and so on. Tied your UDP MCU SDK sample code into the matter / nRF example. And modified the UDP relay for v6.
 
-Right now; I’ve hard-coded the UDP relays address, but on my list to change that to either a specific multicast address, a Thread SRP service’s address, or simply the Thread BR. Possibly, this could be done together with the Nordic matter/Thread guys.
+TODO: more on matter and Thread.....
 
-However, that would still need the relay on the customer premise, where we do not have control of the BR / network. Unless a memfault relay service would be included in Thread BRs or whether there would be an official Memfault UDP server. Right now, MemfaultForMatter would only help in our development builds in our test network.
 -->
+
+The Tridonic products are based on Thread/802.15.4. Thus I'll focus on UDP, IPv6, and Thread in the following.
 
 ## Methods to connect a matter/Thread device to Memfault
 
@@ -62,12 +60,6 @@ CONFIG_HTTP_CLIENT=y
 
 Since this is not enabled by default for our matter / Thread firmware right now, we'll skip this option.
 
-<!--
-TODO: check whether TCP can be already enabled in nRFConnect/OpenThread (Available? Codesize?).
-
-<https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.9.2-dev1/nrf/samples/nrf9160/https_client/README.html>
--->
-
 #### Via TCP via IPv6
 
 Using IPv6 is at least for now not an option, since is not yet supported directly by Memfault <https://support.memfault.com/hc/en-us/articles/7568953852317-Does-Memfault-support-receiving-data-via-IPv6->.
@@ -89,12 +81,6 @@ However, since TCP is not enabled by default in our firmware, we"ll focus on the
 ### Via UDP
 
 Memfault does not support the delivery via UDP directly, but you can use a UDP relay as described in <https://docs.memfault.com/docs/mcu/nrf-connect-sdk-guide/#sending-data-to-memfault-over-udp>.
-
-<!-- 
-adapted from 
-
-<https://github.com/memfault/memfault-nRF9160-relay/blob/284c94dc94e9e940b48e1412b48b3f6c3b0ba773/firmware/src/main.c#L104-L126>
--->
 
 #### Via public UDP relay via IPv6
 
@@ -142,21 +128,6 @@ This could be tested on the device:
 > udp send <HostAddress> 20001 hello
 ```
 
-<!--
-#### Via Thread netdata
-
-TODO: include?
-
-<https://github.com/openthread/openthread/tree/main/src/cli#service-add-enterprisenumber-servicedata-serverdata>
-
-```shell
-> service add 44970 112233 aabbcc
-Done
-> netdata register
-Done
-```
--->
-
 #### Via multicast
 
 We have not been using and implementing any of the options from above but instead decided to send the memfault reports to a dedicated IPv6 multicast address. The UDP relay is listening on IPv6 and joins that multicast group.
@@ -171,24 +142,7 @@ On the device shell, this could be tested with:
 
 This approach is described in more detail in the following sections.
 
-<!--
-
-## Run through
-
-The complete code can be found in the Github repo <https://github.com/markus-becker-tridonic-com/matter-thread-memfault>.
-
-Acquire your memfault project key from the <https://app.memfault.com/> as described in the [Memfault Docs](https://docs.memfault.com/docs/mcu/nrf-connect-sdk-guide#integration-steps) and set it in `prj.conf`:
-
-```kconfig
-CONFIG_MEMFAULT_NCS_PROJECT_KEY="FILLIN"
-```
--->
-
 ## Getting to a working matter/Memfault solution
-
-<!--
-Since matter is based on UDP and IPv6 and Memfault usually requires HTTP/TCP/IPv4 to deliver crash reports, we'll need to find a way to plumb matter and Memfault together.
--->
 
 Memfault offers a [UDP relay sample](https://github.com/memfault/memfault-nRF9160-relay/tree/main/server). We'll use this relay and adapt it.
 
@@ -200,7 +154,7 @@ Nordic provides a [matter light_bulb sample](https://developer.nordicsemi.com/nR
 
 Following [Memfault's MCU nRF Connect SDK Guide](https://docs.memfault.com/docs/mcu/nrf-connect-sdk-guide/), we'll take the example code and combine it with the matter light_bulb sample.
 
-The final code can be found in <https://github.com/markus-becker-tridonic-com/matter-thread-memfault>.
+The final code can be found in <https://github.com/markus-becker-tridonic-com/matter-thread-memfault> and <https://github.com/memfault/interrupt/tree/master/example/matter-thread>.
 
 #### Add Memfault to the matter sample
 
@@ -320,20 +274,6 @@ Connect to the UART shell on the DK with e.g. putty and issue e.g. `mflt test ha
 ```
 
 Observe the transmission of the UDP packets to the UDP relay. Observe the UDP relay forwarding the information to the memfault cloud. And then see the chunks arriving in the [Memfault cloud | Chunks Debug](https://mflt.io/chunks-debug).
-
-<!--
-## Future topics
-
-* [x] MEMFAULT_NCS_DEVICE_ID_RUNTIME / memfault_ncs_device_id_set()
-  * [x] check functionality
-  * [ ] increase/limit size of the device ID
-* [ ] include dedicated matter/Thread metrics
-* [ ] track matter commissioning problems via memfault via BLE
-* [ ] derive certain memfault configs from matter/mcuboot configs or factory data, e.g.
-  * [ ] MEMFAULT_NCS_HW_VERSION
-  * [ ] MEMFAULT_NCS_FW_TYPE
-  * [ ] MEMFAULT_FW_VERSION / MEMFAULT_NCS_FW_VERSION_STATIC / MEMFAULT_NCS_FW_VERSION_AUTO
--->
 
 ## Conclusion
 
