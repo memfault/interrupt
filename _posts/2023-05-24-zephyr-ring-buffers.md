@@ -117,12 +117,11 @@ handler calls `ring_buf_put_finish` to signal completion.
 If the ring buffer is full (i.e. the `put_claim` returns 0), the driver drops
 the current batch of data received because we cannot block to wait for new data
 in this interrupt. Resolving this issue may require increasing the ring buffer
-size to account for pressure on the ring buffer. Problems like these can be hard
-to trace the specific instance when the buffer fills completely. One way to
-determine the proper size is to add an assertion when the `put_claim` fails to
-reserve any data. Asserting in this manner is a technique of offensive
-programming[^3], as this modification proactively looks for an issue and fails
-purposefully.
+size to account for pressure on the ring buffer. It is difficult to trace the
+specific instance when the buffer completely filled. One way to determine the
+proper size is to add an assertion when the `put_claim` fails to reserve any
+data. Asserting in this manner is a technique of offensive programming[^3], as
+this modification proactively looks for an issue and fails purposefully.
 
 The main driver work is done within the context of a dedicated driver workqueue.
 The workqueue operates as a dedicated cooperative thread that sleeps until new
@@ -159,7 +158,7 @@ interrupt handler receives UART data, the handler does not immediately know how
 much to write into the ring buffer. The claim-based function allows the handler
 to use the buffer directly, minimizing copying operations. However, the driver
 function, `eswifi_uart_get_resp`, must copy the data for later processing. There
-is a bit of an asymmetry by design here. The interrupt handler does do any
+is a bit of an asymmetry by design here. The interrupt handler does not do any
 processing on the data. It simply hands the data off to the workqueue and moves
 on to the next read. The workqueue, on the other hand, does need to keep this
 data around to complete processing the response! The utility of the ring buffer
