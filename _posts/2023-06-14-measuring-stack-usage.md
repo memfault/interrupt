@@ -104,7 +104,7 @@ int foo_2(int c) {
 int foo(int a, int b) {
   int array[10];
   array[1] = a;
-  array[9] = b;
+  array[9] = foo_2(b);
 
   return array[1] * array[9];
 }
