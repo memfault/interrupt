@@ -147,8 +147,8 @@ reference, but they can require a bit of fiddling to get working correctly.
   [here](https://github.com/ttsiodras/checkStackUsage/commit/b08032335baa06b479a20927ebb151261a7b03db))
 
 Honorable mention to the [`puncover`](https://github.com/HBehrens/puncover/)
-tool (disclaimer, I help maintain the tool), which can help
-visualize the data in the `.su` files for a whole program:
+tool (disclaimer, I help maintain the tool), which can help visualize the data
+in the `.su` files for a whole program:
 
 ![](/img/stacks/su-puncover.png)
 
@@ -198,16 +198,16 @@ uintptr_t stack_high_watermark(uintptr_t stack_top, size_t stack_size) {
 }
 ```
 
-Use this strategy after the system executes core functionality to collect a reasonably
-accurate measurement of the maximum stack usage.
-usage.
+Use this strategy after the system executes core functionality to collect a
+reasonably accurate measurement of the maximum stack usage. usage.
 
 _Note: since this approach relies on values being written to the stack, if a
 buffer is allocated on the stack but only partially used, the full buffer size
-will not be counted as used. Any memory still containing the fill pattern will be counted as unused_
+will not be counted as used. Any memory still containing the fill pattern will
+be counted as unused_
 
-Another application of this technique is to use it to measure stack consumption of
-a particular function call, with the following procedure:
+Another application of this technique is to use it to measure stack consumption
+of a particular function call, with the following procedure:
 
 1. Just before the function call, re-apply the stack fill pattern across the
    unused portion of the stack
