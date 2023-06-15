@@ -239,7 +239,7 @@ while True:
     sp = int(gdb.parse_and_eval("$sp"))
     if sp < sp_min:
         sp_min = sp
-    # the full implementation exits this loop when hitting a breakpoint
+    # exit this loop when a breakpoint is hit
     if hit_breakpoint():
       break
 print("Min SP: 0x{:08x}".format(sp_min))
@@ -274,8 +274,7 @@ with open("stack_usage.log", "w") as f:
         if sp < sp_min:
             sp_min = sp
         # check if we've reached a breakpoint
-        if hit_breakpoint:
-            print("Hit breakpoint at 0x{:08x}".format(pc))
+        if hit_breakpoint():
             break
     f.write(f"{current_function}|{current_function_max_su}\n")
 ```
@@ -294,10 +293,10 @@ Flame graphs and other visualizations could also be built off the data generated
 from this GDB script!
 
 The full script can be found here:
-[single-step-sp-dump.py](https://github.com/noahp/minimal-c-cortex-m/blob/7a89d3e6cd997858f9fa1eac3c8a7bacd92381f8/single-step-sp-dump.py)
+[single-step-sp-dump.py](https://github.com/noahp/minimal-c-cortex-m/blob/c2c594e373ae44fed468f9368db7afbe5814ec65/single-step-sp-dump.py)
 
-And the extended version can be found
-[here](https://github.com/noahp/minimal-c-cortex-m/commit/7a23e6d30e7a2ab63f436cdde8a404e222c8b16a).
+And the extended version and instructions for testing it on QEMU can be found
+[here](https://github.com/noahp/minimal-c-cortex-m/commit/1bef414fdcea28f6ffc35dbe9ed54db024050a2c).
 
 <!-- Interrupt Keep START -->
 
