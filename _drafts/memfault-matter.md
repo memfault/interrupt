@@ -150,7 +150,7 @@ Additionally, we'll change the default Memfault MCU SDK (respectively Nordic's i
 
 ### Firmware
 
-Nordic provides a [matter light_bulb sample](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/samples/matter/light_bulb/README.html) as part of their SDK which we'll use as a base for this investigation and compile it according to the provided instructions.
+Nordic provides a [matter light bulb sample](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/samples/matter/light_bulb/README.html) as part of their SDK which we'll use as a base for this investigation and compile it according to the provided instructions.
 
 Following [Memfault's MCU nRF Connect SDK Guide](https://docs.memfault.com/docs/mcu/nrf-connect-sdk-guide/), we'll take the example code and combine it with the matter light bulb sample.
 
