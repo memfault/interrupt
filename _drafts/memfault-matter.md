@@ -248,13 +248,13 @@ UDPServerSocket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_JOIN_GROUP, mreq)
 print(f"Listening on interface {INTERFACE} port {LOCAL_PORT}")
 ```
 
-### Build the light_bulb sample
+### Build the light bulb sample
 
-You can build the light_bulb sample according to [Nordic's documentation](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.3.0/nrf/samples/matter/light_bulb/README.html).
+You can build the light bulb sample according to [Nordic's documentation](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.3.0/nrf/samples/matter/light_bulb/README.html).
 
 ## Run Border Router and Commission Matter device
 
-Set up a border router and commission the Matter light_bulb according to the [Nordic Matter documentation](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/protocols/matter/index.html).
+Set up a border router and commission the Matter light bulb according to the [Nordic Matter documentation](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/protocols/matter/index.html).
 
 ## Run the UDP relay
 
