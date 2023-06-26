@@ -11,7 +11,7 @@ image: img/<post-slug>/cover.png # 1200x630
 
 <!-- excerpt start -->
 
-I"m Markus, software engineer @ [Tridonic](https://tridonic.com), where we are working on [Internet-connected wireless lighting solutions](http://www.tridonic.com/matter) based on the [matter standard](https://csa-iot.org/all-solutions/matter/). To be able to monitor the reliability of those devices we've been using Memfault and tied it into matter/Thread and its UDP/IPv6 stack based on the Nordic Connect SDK. In the following, I'll show you the modifications we've done to enable Memfault in an IPv6 solution.
+I'm Markus, software engineer @ [Tridonic](https://tridonic.com), where we are working on [Internet-connected wireless lighting solutions](http://www.tridonic.com/matter) based on the [matter standard](https://csa-iot.org/all-solutions/matter/). To be able to monitor the reliability of those devices we've been using Memfault and tied it into matter/Thread and its UDP/IPv6 stack based on the Nordic Connect SDK. In the following, I'll show you the modifications we've done to enable Memfault in an IPv6 solution.
 
 <!-- excerpt end -->
 
