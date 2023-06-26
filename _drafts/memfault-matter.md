@@ -29,7 +29,7 @@ TODO: more on matter and Thread.....
 
 -->
 
-The Tridonic products are based on Thread/802.15.4. Thus I'll focus on UDP, IPv6, and Thread in the following.
+The Tridonic products are based on Thread/802.15.4. Thus I'll focus on UDP, IPv6, and Thread in the article.
 
 ## Methods to connect a matter/Thread device to Memfault
 
