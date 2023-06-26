@@ -33,7 +33,7 @@ The Tridonic products are based on Thread/802.15.4. Thus I'll focus on UDP, IPv6
 
 ## Methods to connect a matter/Thread device to Memfault
 
-There"s a lot of flexibility that comes with IP and thus multiple options to send data to Memfault.
+There is a lot of flexibility that comes with IP. This gives us multiple options to send data to Memfault.
 
 1. Directly via HTTP & TCP
     1. via IPv6
