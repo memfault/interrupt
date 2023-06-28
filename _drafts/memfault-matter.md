@@ -23,13 +23,9 @@ I'm Markus, software engineer @ [Tridonic](https://tridonic.com), where we are w
 
 [Matter](https://csa-iot.org/all-solutions/matter/) is an interoperability standard for IoT devices from the [connectivity standards alliance (csa)](https://csa-iot.org) previously known as the Zigbee Alliance. The Matter standard is implemented in the open-source reference implementation in the [GitHub project-chip repository](https://github.com/project-chip/connectedhomeip/). Matter currently uses UDP on top of IP(v6) and can run on top of different lower layers: Ethernet, WiFi, Thread/802.15.4. [Thread](https://www.threadgroup.org/) is a low-power IPv6 connectivity standard. Its reference implementation is available in the [openThread Github repository](https://github.com/openthread/openthread). The Matter SDK as well as the openThread SDK are also available bundled in the [Nordic Connect SDK](https://developer.nordicsemi.com/nRF_Connect_SDK/).
 
-<!--
+At Tridonic, we see Matter as the force unifying the Smart Home and eventually the professional lighting space as well, thus consolidating the wireless options and giving new opportunities to use the consolidated wireless eco-system for the benefit of the users. Thread has been chosen for the suitability to support low-power sensor devices and due to its nature for handling multicast efficiently to a multitude of wireless devices.
 
-TODO: more on Matter and Thread.....
-
--->
-
-The Tridonic products are based on Thread/802.15.4. Thus I'll focus on UDP, IPv6, and Thread in the article.
+The Tridonic products are therefore based on matter/Thread/802.15.4. Thus I'll focus on UDP, IPv6, and Thread in the article.
 
 ## Methods to connect a Matter/Thread device to Memfault
 
