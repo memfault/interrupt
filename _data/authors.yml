@@ -185,3 +185,8 @@ blaise:
     image: /img/author/blaise.jpg
     linkedin: https://www.linkedin.com/in/blaiselengrand
     blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
+ramanf:
+    name: Raman Filipau
+    github: romanf-dev
+    linkedin: https://www.linkedin.com/in/romanf-engineer/
+    blurb: -- firmware engineer. Previously worked on industrial automation and OS/RTOS design research.

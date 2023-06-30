@@ -96,7 +96,10 @@ Normally, the actor model does not require explicit synchronization like semapho
 
 Note that the interrupt vector is assigned to priority level, not to an actor, so the total number of actors is unlimited:
 
-![](/img/hw_actors/vectors.jpg)
+![](/img/hw_actors/vectors.png)
+
+
+Arbitrary interrupt vector are mapped to runqueues. Each runqueue contains actors with the same priority. It is user responsibility to set proper priorities for vectors to reflect its actual preemption priority (i.e. runqueue 0 has lowest priority, so the vector corresponding to runqueue 0 should have lowest priority among other vectors).
 
 It is obvious that the number of possible priorities is limited to the number of interrupt vectors and available hardware preemption priorities. Modern controllers have about a thousand vectors with only a few of them actually used in each application, so it seems that there should be no vector shortage. If it is the case, then possibly your application is so complex that full-featured RTOS would be a better option.
 
