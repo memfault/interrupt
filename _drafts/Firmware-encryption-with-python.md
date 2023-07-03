@@ -100,10 +100,10 @@ Now we know that we need a key stream to begin encrypting the first data, and th
 
 Before moving on to implementation, let’s review some important points:
 
-1. CTR mode requires a key (AES_KEYRx (KEY)) and a Nonce initialization vector (AES_IVRx).
+1. CTR mode requires a key `(AES_KEYRx (KEY))` and a Nonce initialization vector `(AES_IVRx)`.
 2. We can encrypt plaintext data (AES_DINR (plaintext P1)) in blocks of various sizes, for example, 4 bytes at a time.
 3. Each time we encrypt a plaintext block, the counter block increases by one unit.
-4. The counter block (AES_IVRx) is the concatenation of a fixed Nonce block, set during initialization, and a 32-bit counter variable.
+4. The counter block `(AES_IVRx)` is the concatenation of a fixed Nonce block, set during initialization, and a 32-bit counter variable.
 
 By understanding these key points, we can proceed with the implementation of CTR mode encryption.
 
@@ -296,7 +296,7 @@ non-multiple of 16 bytes, in which case a plaintext padding is required.
 
 ### Setup AES hardware accelerator
 
-Now that we know the necessary parameters we can load the configuration in the `CR` register in addition to initializing the key `(AES_KEYRx (KEY))` and initialization vector in the corresponding   `(AES_IVRx)` registers:
+Now that we know the necessary parameters we can load the configuration in the `CR` register in addition to initializing the key `(AES_KEYRx (KEY))` and initialization vector in the corresponding `(AES_IVRx)` registers:
 
 ```c
 void aes_setup( void ) {
