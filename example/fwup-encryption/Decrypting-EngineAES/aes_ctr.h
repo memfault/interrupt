@@ -1,0 +1,16 @@
+#pragma once
+
+#include <stdint.h>
+#include <stddef.h>
+#include "stm32l4s5xx.h"
+
+static const uint8_t pKeyAES[16] __attribute__ ((aligned (4))) = {
+                            0x58,0x3b,0xf4,0x90,0x1f,0x62,0x35,0x10,0xa1,0x40,
+                            0x8e,0x8b,0xe7,0xbd,0x6f,0x5a};
+
+static const uint8_t NonceAES[16] __attribute__ ((aligned (4))) = {
+                            0xf8,0x24,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+                            0x00,0x00,0x00,0x00,0x00};
+
+void aes_setup( void );
+void aes_decryption( uint8_t *Input_CipherFirmware, uint16_t buf_size, uint8_t *Out_PlainFirmware );
