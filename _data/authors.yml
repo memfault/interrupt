@@ -185,3 +185,9 @@ blaise:
     image: /img/author/blaise.jpg
     linkedin: https://www.linkedin.com/in/blaiselengrand
     blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
+Guille:
+    name: Guillermo Garcia
+    web: https://embedded-dbl.com/
+    blurb: is an embedded software engineer who likes IoT projects.
+    linkedin: https://www.linkedin.com/in/guillermo-garcia-ch%C3%A1vez-1126951ab/
+    github: GuillerGC
