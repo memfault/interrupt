@@ -3,6 +3,7 @@ title: Seamless firmware development with PlatformIO
 description:
     An overview of PlatformIO, as well as a getting started example on STM32.
 author: francois
+tags: [build-system, toolchain]
 ---
 
 A few weeks ago, [I wrote about MCU SDKs]({% post_url
@@ -92,10 +93,10 @@ command you want to run:
 ```
   # List platforms
   $ pio platform search
-  
+
   # List frameworks
   $ pio platform frameworks
-  
+
   # List boards
   $ pio boards
 ```

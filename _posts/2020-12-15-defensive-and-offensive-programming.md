@@ -5,6 +5,7 @@ description:
   use of asserts, timeouts, and watchdogs.
 author: tyler
 image: img/defensive-and-offensive-programming/cover.png
+tags: [best-practices]
 ---
 
 One of the worst things about embedded development (especially in C) is
@@ -42,7 +43,7 @@ By taking defensive and offensive programming to the extreme, you'll be able to
 track down those 1 in 1,000-hour bugs, efficiently root cause them, and keep
 your end-users happy. And, as a bonus, keep your sanity.
 
-> To learn more about offensive and defensive programming best practices and ask 
+> To learn more about offensive and defensive programming best practices and ask
 > me questions live, register for our [webinar on Febraury 24, 2022](https://hubs.la/Q013SXmN0).
 
 {% include newsletter.html %}

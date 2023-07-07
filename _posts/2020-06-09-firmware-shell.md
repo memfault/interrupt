@@ -5,6 +5,7 @@ description:
   giving the developer the ability to automate tasks, inspections, and testing.
 author: tyler
 image: /img/firmware-shell/shell.png
+tags: [best-practices, mcu]
 ---
 
 The most common and simplest interface to a computer and operating system is a

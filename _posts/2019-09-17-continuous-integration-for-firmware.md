@@ -2,7 +2,7 @@
 title: Building Better Firmware with Continuous Integration
 description: A step by step guide on how to use continuous integration for firmware projects with CircleCI.
 author: francois
-tags: [better-firmware]
+tags: [better-firmware, best-practices]
 ---
 
 Larger firmware projects sometimes have tens, even hundreds of engineers working
@@ -151,7 +151,7 @@ Creating build/ch.list
 Done
 ```
 
-> Note: `7za` is the command line utility for 7zip, which is available for all platforms.  
+> Note: `7za` is the command line utility for 7zip, which is available for all platforms.
 
 We need administrative access to the project on Github to setup CI on it, so
 you’ll want to fork the ChibiOS repository under your profile or organization.
@@ -357,7 +357,7 @@ This is easily done with a **Step**.
 
 > Note: once your build system stabilizes, you’ll likely want to set up your own
 > docker images with your compiler pre-installed so you do not have to incur the
-> cost of download + installation on every build. For now, this is good enough.  
+> cost of download + installation on every build. For now, this is good enough.
 
 Next, we run the compilation steps we’ve previously tested locally.
 

@@ -2,6 +2,7 @@
 title: "Programming the ATSAMD21 with IBDAP"
 description: "How to flash the Atmel SAM D21 using the IBDAP programmer"
 author: francois
+tags: [cortex-m]
 ---
 
 <!-- excerpt start -->
@@ -81,7 +82,7 @@ complicated.
 First, it's best to check that you're able to talk to the board over the debug
 interface. Use a [SWD Ribbon cable](https://www.adafruit.com/product/1675) to
 connect the IBDAP dongle to your board (you want to use the TGT_DBG port on the
-dongle). OpenOCD already has config files for CMSIS-DAP and the ATSAMD family, 
+dongle). OpenOCD already has config files for CMSIS-DAP and the ATSAMD family,
 so you just need to source them and run openocd:
 
 ```terminal

@@ -2,6 +2,7 @@
 title: "GNU Build IDs for Firmware"
 description: "An overview of firmware versions and how to enable and use GNU Build IDs to uniquely identify a firmware build or binary"
 author: francois
+tags: [best-practices]
 ---
 
 <!-- excerpt start -->
@@ -67,9 +68,9 @@ In the case of the GNU build ID:
 
 ## Adding the GNU build ID to your builds
 
-**Note**: all of our example are based on the 
+**Note**: all of our example are based on the
 [minimal](https://github.com/memfault/zero-to-main/tree/master/minimal) program from our Zero to main()
-series. 
+series.
 
 In GCC, you can enable build IDs with the `-Wl,--build-id` which passes the
 `--build-id` flag to the linker. You can then read it back by dumping the notes
@@ -119,7 +120,7 @@ This is typically accomplished with objcopy:
 $ arm-none-eabi-objcopy firmware.elf firmware.bin -O binary
 ```
 
-This takes every elf section earmarked to be loaded and places them at 
+This takes every elf section earmarked to be loaded and places them at
 the correct offset in the bin file. In the process, most debug sections are stripped out.
 
 Dumping the elf sections of the resulting `minimal.elf` gives us:
@@ -161,7 +162,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
 ```
 
-As you can see, the `.text`, `.bss`, `.data`, `.stack` sections each have the 
+As you can see, the `.text`, `.bss`, `.data`, `.stack` sections each have the
 `LOAD` attribute, all others (including our `.note.gnu.build-id`) do not and will be
 discarded.
 

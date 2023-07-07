@@ -3,6 +3,7 @@ title: "gdbundle - GDB and LLDB's Missing Plugin Manager"
 description: "Introducing gdbundle, a minimalist plugin manager for GDB and LLDB, which enables developers to easily GDB and LLDB extensions, packages, and Python scripts from PyPi"
 author: tyler
 image: /img/gdbundle-plugin-manager/gdbundle.png
+tags: [gdb, python, debugging]
 ---
 
 I started with embedded development at Pebble, the smart watch maker, where we

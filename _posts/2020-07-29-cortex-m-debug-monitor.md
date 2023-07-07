@@ -3,7 +3,7 @@ title: "Step-through debugging with no debugger on Cortex-M"
 description: "An exploration of how to debug running devices by taking advantage of debug monitor
 mode on ARM Cortex-M MCUs"
 image: /img/debugmon/debug-via-shell.png
-tag: [cortex-m]
+tag: [cortex-m, arm, mcu, debugging, gdb]
 author: chris
 ---
 

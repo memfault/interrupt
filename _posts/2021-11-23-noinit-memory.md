@@ -3,6 +3,7 @@ title: "Pocket article: How to implement and use `.noinit` RAM"
 description: Explanation of a non-initialized memory section for an embedded program, how it impacts application and bootloader, and some sample implementations.
 author: noah
 image: img/noinit/cover.png # 1200x630
+tags: [toolchain, build-system]
 ---
 
 Imagine there's an embedded system that needs to persist some state when the

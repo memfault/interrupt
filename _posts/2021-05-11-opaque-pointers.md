@@ -2,6 +2,7 @@
 title: "Practical Design Patterns: Opaque Pointers and Objects in C"
 description: "An overview of the opaque pointer pattern in C. How to create objects in C."
 author: nickmiller
+tags: [c]
 ---
 
 I've written a lot of C++ in my career, but I still prefer to design in

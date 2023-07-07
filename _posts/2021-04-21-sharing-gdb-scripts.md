@@ -4,15 +4,16 @@ description:
   How to share and load GDB gdbinit files automatically in firmware projects.
 author: tyler
 image: img/sharing-gdb-scripts/cover.png
+tags: [gdb, debugging]
 ---
 
 One of my favorite ways to debug is to let GDB and a set of previously written Python scripts do all the work for me. These scripts could parse the heap and data structures, investigate fault registers, and paint an accurate picture of a system at the time of a crash.
 
-Did I know how to assemble and make sense of all this knowledge myself using the debugger and a raw GDB prompt? Maybe 5-10%. What made this possible was a common set of GDB scripts that the team of firmware engineers improved constantly, and the project automatically loaded them into GDB when we launched the debugger. It was wonderful. 
+Did I know how to assemble and make sense of all this knowledge myself using the debugger and a raw GDB prompt? Maybe 5-10%. What made this possible was a common set of GDB scripts that the team of firmware engineers improved constantly, and the project automatically loaded them into GDB when we launched the debugger. It was wonderful.
 
 <!-- excerpt start -->
 
-In this short-form post, I want to share how you can go about keeping a central `gdbinit` file that you can commit into your project's repo and automatically source it in the popular editor and IDE environments that firmware engineers find themselves in today. 
+In this short-form post, I want to share how you can go about keeping a central `gdbinit` file that you can commit into your project's repo and automatically source it in the popular editor and IDE environments that firmware engineers find themselves in today.
 
 <!-- excerpt end -->
 
@@ -143,13 +144,13 @@ If you save the Eclipse project and commit it to source control, all other team 
 
 I feel for you. You are likely using a vendor SDK + IDE, stucking without a debugger, or maybe happily using Segger Ozone, which has its own [scripting interface](https://www.segger.com/downloads/jlink/UM08025#%5B%7B%22num%22%3A868%2C%22gen%22%3A0%7D%2C%7B%22name%22%3A%22XYZ%22%7D%2C70.866%2C622.397%2Cnull%5D).
 
-In any case, there is a very good chance that GDB is used under the hood. You can get creative and figure out how best to pass startup commands to GDB, or maybe use sym-links to a directory on your local machine with a project setup script. 
+In any case, there is a very good chance that GDB is used under the hood. You can get creative and figure out how best to pass startup commands to GDB, or maybe use sym-links to a directory on your local machine with a project setup script.
 
 You can dig more into how GDB loads various `gdbinit` scripts on startup [in the manual](https://sourceware.org/gdb/current/onlinedocs/gdb/Startup.html#Startup).
 
 ## Conclusion
 
-Firmware developers spend the majority of their time debugging. We need to invest in our debugging skills, improve our personal tool-chest of debugging tricks, and then share the knowledge and scripts with everyone we work with to enable them to become better developers. Most of us went to university for 4 years to learn programming but rarely feel like we can take a day or two to read up on the GDB manual or write a script. 
+Firmware developers spend the majority of their time debugging. We need to invest in our debugging skills, improve our personal tool-chest of debugging tricks, and then share the knowledge and scripts with everyone we work with to enable them to become better developers. Most of us went to university for 4 years to learn programming but rarely feel like we can take a day or two to read up on the GDB manual or write a script.
 
 Take a day to improve your team's debugging story. If you need to, take the day and don't tell the boss. They'll thank you for it later. Mine did.
 

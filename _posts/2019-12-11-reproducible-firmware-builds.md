@@ -3,6 +3,7 @@ title: "Reproducible Firmware Builds"
 description: "A discussion about reproducible builds, why they matter and steps you can take to make your firmware build reproducible"
 author: chris
 image: /img/reproducible-build/reproducible-build.img
+tags: [best-practices, build-system]
 ---
 
 If you have ever worked on a large scale embedded project before, you've probably run into situations where the build system or binary behaves differently depending on where it was compiled. For example, maybe the binary completely fails to compile on one computer and on another it compiles but crashes on boot!

@@ -3,6 +3,7 @@ title: Measuring Stack Usage the Hard Way
 description: Various techniques for measuring stack usage for embedded systems.
 author: noah
 image: # img/<post-slug>/cover.png # 1200x630
+tags: [rtos, stack, freertos, zephyr]
 ---
 
 <!-- A little bit of background of why the reader should read this post. -->

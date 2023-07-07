@@ -1,7 +1,7 @@
 ---
 title: "Bazel Build System for Embedded Projects"
 author: blaise
-tags: [bazel, build system, embedded]
+tags: [bazel, build-system]
 ---
 
 <!-- excerpt start -->
@@ -358,7 +358,7 @@ The only difference is that now the toolchain rule takes as `exec_compatible_wit
 
 #### Update the sandbox strategy
 
-The last step is to tell Bazel to prioritize Docker sandboxing over the default strategy. That way, Bazel will check if the execution platform selected is compatible with the Docker strategy and use it, if not, the default sandboxing will be used. 
+The last step is to tell Bazel to prioritize Docker sandboxing over the default strategy. That way, Bazel will check if the execution platform selected is compatible with the Docker strategy and use it, if not, the default sandboxing will be used.
 
 This is done by adding these 2 lines in the `.bazelrc` file:
 
@@ -415,7 +415,7 @@ cc_library(
 The `select` built-in can be used for anything, such as compilation options, defines, dependencies, source files, etc. It lets you deal with variance at build time.
 Conditions can also be associative with the use of `selects.with_or` and `selects.config_setting_group` to achieve OR and AND boolean operations.
 
-## Target 
+## Target
 
 Finally, when building all targets in the repository with a specific target platform, the incompatible ones will be skipped.
 

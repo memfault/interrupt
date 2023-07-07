@@ -5,6 +5,7 @@ description:
 up iteration time, and automate firmware testing."
 author: francois
 image: /img/intro-to-renode/renode-highlight-img.png
+tags: [mcu, cortex-m, testing]
 ---
 
 In this new era of work-from-home, firmware engineers may not have all the
