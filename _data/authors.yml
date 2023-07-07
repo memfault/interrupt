@@ -185,3 +185,9 @@ blaise:
     image: /img/author/blaise.jpg
     linkedin: https://www.linkedin.com/in/blaiselengrand
     blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
+lampacher:
+    name: Martin Lampacher
+    image: /img/author/lampacher.jpg
+    linkedin: https://www.linkedin.com/in/martin-lampacher-4b532984
+    blurb: is a Freelance Embedded Engineer based in the Italian Alps.
+    github: lmapii
