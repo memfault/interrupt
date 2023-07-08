@@ -728,22 +728,38 @@ footer {
     }
   }
 
+  // Defaults to 4 columns
   .list-of-content {
     color: #141443;
     margin: 0;
     display: flex;
     flex-wrap: wrap;
     list-style: none;
+    flex-direction: row;
 
     li {
-      flex: 0 0 50%;
-      max-width: 50%;
+      flex: 0 0 25%;
       margin: 0;
-      margin-bottom: 10px;
 
       a {
         padding: 5px;
       }
+    }
+  }
+
+  // Double column for screens smaller than 800px
+  @media (max-width: 800px) {
+    .list-of-content {
+      li {
+        flex: 0 0 50%;
+      }
+    }
+  }
+
+  // Make single column for screens smaller than 400px
+  @media (max-width: 400px) {
+    .list-of-content {
+      flex-direction: column;
     }
   }
 
