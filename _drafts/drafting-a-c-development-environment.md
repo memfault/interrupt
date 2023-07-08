@@ -18,12 +18,14 @@ Throughout this article, we'll set up a complete, containerized development envi
 
 - We'll create a _Docker_ image that we can use as a development container with [vscode](https://code.visualstudio.com/)
 - Based on a minimal _Dummy_ library, we'll set up the tools to build the library within the container.
-- We'll set up the static code analyzer [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) to check our code for common mistakes.
+- We'll set up the static code analyzer [`clang-tidy`](https://clang.llvm.org/extra/clang-tidy/) to check our code for common mistakes.
 - [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html) will help us to keep our code base nicely formatted and tidy.
 - We'll set up the [Unity](https://www.throwtheswitch.org/unity), executed on host via [Ceedling](https://www.throwtheswitch.org/ceedling) to test our dummy function.
-- And finally, we'll set up a GitHub pipeline to execute, build, and test our project using the same _Docker_ image that we're using locally.
+- And finally, we'll set up a GitHub workflow to execute, build, and test our project using the same _Docker_ image that we're using locally.
 
 > **Disclaimer:** There are endless possibilities to set up environments and this is just one of them. Please be lenient in case some of my solutions are not ideal or could be solved differently.
+
+Throughout this article, I'll make use of the [Docker](https://www.docker.com/) command line interface. It is, however, out of the scope to discuss the basic concepts or the _Docker_ command line parameters. In case you don't understand why certain parameters are needed, I'd kindly ask you to refer to the online documentation.
 
 The impatient reader can just skip ahead and open the [example project on GitHub](https://github.com/lmapii/cproject). If you're happy to be walked through the steps, however, I'd be happy to guide you through the entire setup.
 
@@ -84,11 +86,11 @@ RUN apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 ```
 
-> Note: I'll try to only show parts of the _Dockerfile_ and will omit sections that are not relevant to the article. Please check the [_Dockerfile_](https://github.com/lmapii/cproject/blob/main/builder.Dockerfile) in the demo repository.
+> **Note:** Throughout this article, I'll only show relevant parts of the _Dockerfile_ and may omit some sections that you'll find in the [_Dockerfile_ in the demo repository](https://github.com/lmapii/cproject/blob/main/builder.Dockerfile).
 
-All this does specify a base image and install some packages that we'll in further steps. I won't go into detail about each and every package: When creating your own image you'll soon notice if something is missing and you can just extend this list. The important parts are the following:
+This _Dockerifle_ specifies a base image and installs some packages that we'll use in future steps. I won't go into detail about each and every package: When creating your own image you'll soon notice if something is missing and you can just extend this list of packages. What is important is the following:
 
-- For your base image, I highly recommend using a specific version. The `apt` packages vary wildly between versions, so choosing a tag buys you a bit more time until your _Dockerfiles_ fail, e.g., since the `apt` package list changed.
+- For the base image, I highly recommend using a specific _tag_. The `apt` packages vary wildly between base images, so choosing a tag buys you a bit more time until your _Dockerfiles_ fail, e.g., when the `apt` registry changes.
 - For development images, I tend to use a specific **platform**. This is important in later steps, where specific tools might not exist for the CPU architecture of your machine, e.g., if you're using an Apple ARM-based computer.
 
 If you're not using [vscode](https://code.visualstudio.com/) you could also specify a different base image, e.g., `base_img=debian:${base_tag}`. In this article we're spinning up a development environment with `vscode` and we'll therefore stick to an image that is supported by its [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers).
@@ -99,11 +101,11 @@ The image is built with the following command, which might take a little time to
 $ docker build -f builder.Dockerfile -t cproject-builder:latest .
 ```
 
-> Running this command again will be much faster since all steps within a _Dockerfile_ are cached! Only if, e.g., you add new packages to the list, the whole step will be re-executed.
+> **Note:** Running this command again will execute much faster since all steps within a _Dockerfile_ are cached! Only if, e.g., you add new packages to the list, the whole step will be re-executed.
 
 ### A shortcut for verbose command line invocations
 
-Docker commands are quite verbose, and they only tend to become even longer, which is why I typically park my most used commands in a [`makefile`](https://github.com/lmapii/cproject/blob/main/makefile). Assuming you have `make` installed, you could do the following to make your life a little easier. Your future self will thank you for not having to remember all commands:
+Docker commands are quite verbose, and they only tend to become even longer, which is why I typically park my most used commands in a [`makefile`](https://github.com/lmapii/cproject/blob/main/makefile) in the project root. Assuming you have `make` installed, you could do the following to make your life a little easier. Your future self will thank you for not having to remember all commands:
 
 ```makefile
 project_name=cproject
@@ -117,19 +119,20 @@ Now, all you need to do is the following to rebuild your image:
 $ make builder-build
 ```
 
-> A maybe more elegant solution than `makefiles` is [Invoke](http://www.pyinvoke.org/) as presented in a [previous article]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}). Since I'm a dinosaur, however, and for the sake of simplicity, I'll stick to `makefiles` in this article.
+> **Note:** A more elegant solution than `makefiles` is [Invoke](http://www.pyinvoke.org/), presented in a [previous article]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}). Since I'm a dinosaur, however, and for the sake of simplicity, I'll stick to `makefiles` in this article.
 
 Let's spin up a container from our image and take it for a test drive:
 
 
 ```bash
 $ docker run --rm -it --platform linux/amd64 cproject-builder:latest /bin/bash
-
+$
 $ gcc --version
 gcc (Debian 10.2.1-6) 10.2.1 20210110
 Copyright (C) 2020 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+$
 $ cmake --version
 cmake version 3.18.4
 
@@ -137,15 +140,15 @@ CMake suite maintained and supported by Kitware (kitware.com/cmake).
 $ exit
 ```
 
-When using `apt`, the version of the tools that have been installed depends on the base image and therefore on the package registry. If you want to install specific versions, you can do this by executing custom `RUN` commands, we'll see this later.
+When using `apt`, the version of the tools that have been installed depends on the base image and therefore on the package registry. If you want to install specific versions, you can do this by executing custom `RUN` commands as we'll see later.
 
 
 
 ## Visual Studio Code Dev Containers
 
-The downside of not having all tools installed locally is that those tools can not be leveraged by your IDE of choice. E.g., when using `vscode` you won't be able to use any formatters or code completion if you don't have those tools installed.
+The downside of **not** having all tools installed locally is that those tools can not be leveraged by your IDE of choice. E.g., when using `vscode` you won't be able to properly set up intellisense or any other helpers if you don't have any compiler installed.
 
-`vscode` allows you to run an instance of the editor within a so-called _development container_. This is also the reason why we chose the `mcr.microsoft.com/vscode/devcontainers/base` image as the base image. Have a look at the [tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial) for the exact steps or in case anything fails whilst following along this article. For now, I assume that you have `vscode` and the [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) extension installed.
+`vscode` allows you to run an instance of the editor within a so-called _development container_. This is also the reason why we chose the `mcr.microsoft.com/vscode/devcontainers/base` image as the base image: We can connect `vscode` within our builder container and therefore have all the tools available! Have a look at the [tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial) for the exact steps or in case anything fails whilst following along this article. For now, I assume that you have `vscode` and the [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) extension installed.
 
 By creating the [`.devcontainer/devcontainer.json`](https://github.com/lmapii/cproject/blob/main/.devcontainer/devcontainer.json) file, we can tell `vscode` to use our newly built image for its development container, and we'll install some extensions in the container along the way:
 
@@ -170,7 +173,11 @@ By creating the [`.devcontainer/devcontainer.json`](https://github.com/lmapii/cp
 
 If you now reload your window or reopen `vscode` (using the `cproject` folder as the root folder!) `vscode` should now ask you if it should use the detected development container.
 
+![]({% img_url c-dev-environment/vscode-reload.png %})
 
+It'll take a while for `vscode` to set up your container and install the extensions, but in the end you should have `vscode` connected to your Linux container, with all previous tools installed.
+
+![]({% img_url c-dev-environment/vscode-remote.png %})
 
 ## A skeleton subsystem
 
@@ -186,7 +193,7 @@ $ tree --charset=utf-8 --dirsfirst
 │   └── dummy.c
 ├── CMakeLists.txt
 ├── builder.Dockerfile
-└── makefile
+└── makefile <- this is just our makefile containing the docker commands
 ```
 
 ```c
@@ -197,7 +204,7 @@ uint8_t dummy_random(void)
 }
 ```
 
-I'll spare you the details, the `CMakeLists.txt` simply defines a library named "Dummy" and adds the corresponding files to the library. Have a look at the [example project on GitHub](https://github.com/lmapii/cproject) and its [`CMakeLists.txt`](https://github.com/lmapii/cproject/blob/main/CMakeLists.txt) file. The important part is: This already builds within our development container and `vscode`:
+I'll spare you the details, the `CMakeLists.txt` simply defines a library named "Dummy" and adds the corresponding files to the library. Have a look at the [example project on GitHub](https://github.com/lmapii/cproject) and its [`CMakeLists.txt`](https://github.com/lmapii/cproject/blob/main/CMakeLists.txt) file. What's important is: This already builds within our development container and `vscode`! Open the integrated terminal in your remote instance and execute `cmake` as follows.
 
 ```bash
 $ cmake -B build
@@ -221,16 +228,16 @@ Scanning dependencies of target Dummy
 
 ## Building outside of `vscode` and mounting volumes
 
-Not everyone is a friend of `vscode`. All the magic happening behind the scenes in an IDE is not everyone's favorite flavor and it is always good to know how to handle things without an IDE, so I'd like to provide an alternative setup that will also be important once we deal with the IDE, where we simply have to step out of the comforts of an IDE.
+Not everyone is a friend of `vscode`. All the magic happening behind the scenes in an IDE is not everyone's favorite flavor and it is always good to know how to handle things without an IDE, so I'd like to provide an alternative setup that will also be important once we deal with the GitHub workflow, where we simply have to step out of the comforts of an IDE.
 
-One such magic step that `vscode` does for you - and that we'll now need to do ourselves - is managing the files within the root container. We'll use a volume such that all files are available within the container, and such that all modifications that happen in the container are also visible outside of it. So we'll need to update our _Dockerfile_:
+One such magic step that `vscode` does for you - and that we'll now need to do ourselves - is managing the files within the root container. We'll use a [volume](https://docs.docker.com/storage/volumes) to make all files available within the container. At the same time this makes all modifications that happen _inside_ the container are also visible _outside_ of it. We update our _Dockerfile_ with the following commands:
 
 ```dockerfile
 VOLUME ["/builder/mnt"]
 WORKDIR /builder/mnt
 ```
 
-And don't forget to rebuild the image, otherwise, the changes will not be available!
+This defines a volume that we can later use to mount our project directory when executing `docker run`, and the `workdir` instruction tells _Docker_ to make this the default path for all future steps. Don't forget to rebuild the image, otherwise, the changes will not be available!
 
 ```bash
 $ make builder-build
@@ -238,9 +245,9 @@ $ make builder-build
 
 ### A note on Docker volumes
 
-As mentioned in the introduction, _Docker_ does not behave the same way on all platforms. Only on Linux or when using Windows containers on Windows, containers run "natively" and thus without major penalties. If you're running a Linux container on macOS or Windows, in simple words they basically execute within a VM (it is a bit more complicated than that).
+As mentioned in the introduction, _Docker_ does not behave the same way on all platforms. Only on Linux or when using Windows containers on Windows, containers run "natively" and thus without major penalties. If you're running a Linux container on macOS or Windows - in very simple words - they execute within a VM (though admittedly it is a bit more complicated than that).
 
-The key takeaway is the following: Since the container is executed in a VM, the I/O performance is significantly lower than when a container is run natively. For compiled languages or for any process that creates a lot of files, this impact can be significant since the overhead can be up to 100x of what you're experiencing natively. This can lead to longer build or generation times.
+The key takeaway is the following: Since the container is executed in a VM, the I/O performance is significantly worse compared to a container that is run natively. For compiled languages or for any process that creates a lot of files, this impact can be significant since the overhead can be up to 100x of what you're experiencing natively. This can lead to longer build or generation times.
 
 Thankfully, _Docker_ has provided a good solution for macOS with the `VirtioFS` file-sharing implementation. All you need to do is enable it in your _Docker_ configuration:
 
@@ -250,7 +257,7 @@ For Windows, at the time of writing, I don't know of a similar solution so you m
 
 ### Running the development container manually
 
-Now we can run the following command to spin up the container with our mounted project:
+Now we can run the following command to spin up the container with our project folder mounted as a volume:
 
 ```bash
 $ docker run \
@@ -263,7 +270,7 @@ $ docker run \
     /bin/bash
 ```
 
-And - just like in our development container - we're able to build the project. In case you've previously built the project in the development container, the `rm -rf build` is required since the `cmake` caches won't match.
+The current directory "`.`" is now available within the container as `/builder/mnt`. And - just like in our development container - we're able to build the project:
 
 ```bash
 $ rm -rf build
@@ -284,7 +291,7 @@ Scanning dependencies of target Dummy
 [100%] Built target Dummy
 ```
 
-Since the command to spin up the container is rather verbose, I tend to also use a `make` target in my `makefile` for that, such that all I need to type is `make builder-run`:
+Since the command to spin up the container is rather verbose, I also tend to also use a `make` target in my `makefile` for that, such that all I need to type is `make builder-run`:
 
 ```makefile
 builder-run :
@@ -302,11 +309,11 @@ builder-run :
 
 ## Installing `clang` tools for formatting and static code analysis
 
-The flexibility of C and C++ comes with plenty of massive footguns so, personally, I try to add at least a minimal static analysis to my project. This helps to catch the most obvious mistakes and gives some extra confidence in the codebase. There are plenty of tools out there, but my personal preference so far is [clang-tidy](https://clang.llvm.org/extra/clang-tidy/).
+The flexibility of C and C++ comes with plenty of massive footguns so, personally, I try to add at least a minimal static code analysis to my project. This helps to catch the most obvious mistakes and gives some extra confidence in the codebase. There are plenty of tools out there, but my personal preference so far is [`clang-tidy`](https://clang.llvm.org/extra/clang-tidy/).
 
 Also, when collaborating on a codebase, a formatter is always a nice thing to have, and since we're installing `clang-tidy` anyhow, we might as well go ahead and install [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html).
 
-The two configuration files `.clang-format` and `.clang-tidy` are placed into the root directory of the project such that any IDE picks them up automatically. I won't go into detail about the options of the two tools and will just assume that the reader follows the previous links for more details or copies the files from the [example project on GitHub](https://github.com/lmapii/cproject). So this is what we have now:
+The two configuration files [`.clang-format`](https://github.com/lmapii/cproject/blob/main/.clang-format) and [`.clang-tidy`](https://github.com/lmapii/cproject/blob/main/.clang-tidy) are placed into the root directory of the project such that any IDE picks them up automatically. I won't go into detail about the options of the two tools and will just assume that the reader follows the previous links for more details or copies the files from the [example project on GitHub](https://github.com/lmapii/cproject). So this is what we have now:
 
 ```bash
 $ tree --charset=utf-8 --dirsfirst -a -I build -I .git -L 1
@@ -321,9 +328,9 @@ $ tree --charset=utf-8 --dirsfirst -a -I build -I .git -L 1
 └── makefile
 ```
 
-### Installing the correct versions of the builder image
+### Installing specific in the builder image
 
-Here's a catch with `clang-tidy` and `clang-format`: The configuration files must match the tool version, so it is important to install compatible versions for your configuration files. Since we have a container, maintaining different versions is easy! The installation, however, can be tricky. Why? Running `apt-get` to install the tools does not always work since the package registries typically contain ancient tool versions. One way around this is to install them manually in our _Dockerfile_:
+Here's a catch with `clang-tidy` and `clang-format`: The configuration files must match the tool version, they are not necessarily backward compatible. It is therefore important to install compatible versions for your configuration files. Since we have a container we'll always be using the correct version! The installation, however, can be tricky. Why? Running `apt-get` to install the tools does not always work since the package registries typically contain ancient tool versions. One way around this is to install them manually in our _Dockerfile_:
 
 ```dockerfile
 ARG base_tag=bullseye
@@ -348,7 +355,7 @@ RUN ln -s /usr/bin/clang-format-${llvm_version} /usr/local/bin/clang-format
 RUN ln -s /usr/bin/clang-tidy-${llvm_version} /usr/local/bin/clang-tidy
 ```
 
-This is one of the steps in a _Dockerfile_ that I've previously mentioned which can break quite easily in case you're trying to rebuild an image in a couple of years. In case you're happy with the packages provided for your base images, you can also simply install the packages that are provided with the image. Now both `clang-format` and `clang-tidy` are available in the image:
+This is one of the steps in a _Dockerfile_ that I've previously mentioned which can break quite easily in case you're trying to rebuild an image in a couple of years. In case you're happy with the packages provided for your base images, you can also simply install the packages that are provided with the `apt` registry. Now both `clang-format` and `clang-tidy` are available in the image:
 
 ```bash
 $ make builder-build
@@ -356,6 +363,7 @@ $ make builder-run
 
 $ clang-format --version
 Debian clang-format version 16.0.6 (++20230704084212+7cbf1a259152-1~exp1~20230704204302.101)
+
 $ clang-tidy --version
 Debian LLVM version 16.0.6
   Optimized build.
@@ -384,13 +392,13 @@ Now you have `clang-tidy` and `clang-format` available within your development c
 
 I've hidden a little detail here: `clang-tidy` operates on the `compile_commands.json` file that can be created when using `cmake` as a build system. I've enabled this option within the [`CMakeLists.txt`](https://github.com/lmapii/cproject/blob/main/CMakeLists.txt) file. At the same time, we're allowing the `cmake` extension for `vscode` to configure the project when opening and therefore have all the fancy buttons and actions available to build the project in case you don't like the command line. Personally, I still fall back to the command line. But then, I'm a dinosaur.
 
-Now, if you open the `dummy.c` file in your editor it will automatically format it according to the rules in your `.clang-format` file. But what if you don't use that?s
+Now, if you open the `dummy.c` file in your editor it will automatically format it according to the rules in your `.clang-format` file whenever you save the file. But what if someone in your team doesn't use `vscode` or forgot to enable the format-on-save feature?
 
 ### Wrapping `clang-format` and `clang-tidy` calls
 
-This little section is a shameless self-promotion of two wrapper scripts for `clang-format` and `clang-tidy` that I am maintaining: [run-clang-tidy](https://github.com/lmapii/run-clang-tidy) and [run-clang-format](https://github.com/lmapii/run-clang-format). Both tools are command line tools written in [Rust](https://www.rust-lang.org/) that simplify and parallelize the execution of `clang-format` and `clang-tidy` from the command line.
+This section is a little self-promotion of two wrapper scripts for `clang-format` and `clang-tidy` that I am maintaining: [run-clang-tidy](https://github.com/lmapii/run-clang-tidy) and [run-clang-format](https://github.com/lmapii/run-clang-format). Both tools are command line tools written in [Rust](https://www.rust-lang.org/) that simplify and parallelize the execution of `clang-format` and `clang-tidy` from the command line.
 
-Installing the tools _should_ have been easy via the [Rust package manager `cargo`](https://github.com/rust-lang/cargo), however, at the time of writing, I could not install any binaries via the `cargo` `apt` package, and installing the tools from scratch within the docker image simply took too much time, so I decided to download the released, architecture-specific version instead:
+Installing the tools within your container _should_ be easy via the [Rust package manager `cargo`](https://github.com/rust-lang/cargo), however, at the time of writing, I could not install any binaries inside a container via the `cargo` `apt` package, and installing the tools from scratch within the container simply took too much time, so I decided to download the released, architecture-specific version instead:
 
 ```dockerfile
 RUN mkdir -p /usr/local/run-clang-format
@@ -410,7 +418,7 @@ RUN run-clang-format --version
 
 These wrapper scripts allow to define the execution of `clang-format` and `clang-tidy` based on `.json` input files. Within these files, it is possible to efficiently filter all files, e.g., third-party software for which the format-on-save would be more cumbersome than helpful. Since we'll be adding unit tests later, we can prepare the configurations already:
 
-For formatting, we simply need to provide the paths and the filters:
+For formatting, we simply need to provide the paths to the source files and filters for files that we want to exclude from formatting or from the glob expansion:
 
 ```json
 {
@@ -466,9 +474,9 @@ $ run-clang-tidy clang-tidy.json
 
 ## Adding unit tests
 
-We're already able to build our library, analyze it and have a formatter in place. One more thing that we should do, however, is add a unit test framework.
+We're already able to build our library, analyze it and have a formatter in place. One more thing that we need in our development environment is a unit test framework.
 
-For this article, I've chosen the [Unity](https://www.throwtheswitch.org/unity) test framework, executed on the host via [Ceedling](https://www.throwtheswitch.org/ceedling). I'm using this framework since it is quite easy to extend the tests to also include tests that are executed on the actual target hardware in case you're developing an embedded system.
+For this article, I've chosen the [Unity](https://www.throwtheswitch.org/unity) test framework, executed on the host via [Ceedling](https://www.throwtheswitch.org/ceedling). I'm using this framework since it is quite easy to extend the integration to also execute tests on an actual target hardware in case you're developing an embedded system.
 
 ### Installing `Unity` and `Ceedling` in the builder image
 
@@ -498,7 +506,6 @@ In the [`project.yml`](https://github.com/lmapii/cproject/blob/main/tests/unitte
 $ tree --charset=utf-8 --dirsfirst -- tests
 tests
 └── unittest
-    ├── generated
     ├── support
     │   └── unity_config.h
     ├── test
@@ -548,7 +555,7 @@ IGNORED: 0
 
 ### Bonus: Coverage reports
 
-The previously mentioned [article on Embedded Artistry](https://embeddedartistry.com/blog/2019/2/25/unit-testing-and-reporting-on-a-build-server-using-ceedling-and-unity/) also shows how to configure coverage reports. This is already set up in the [`project.yml` of the GitHub example project](https://github.com/lmapii/cproject/blob/main/tests/unittest/project.yml), and since we included `gcovr` in the `apt` packages of our image already, we are good to run our unit tests with coverage:
+The previously mentioned [article on Embedded Artistry](https://embeddedartistry.com/blog/2019/2/25/unit-testing-and-reporting-on-a-build-server-using-ceedling-and-unity/) also shows how to configure coverage reports. This is already set up in the [`project.yml` of the GitHub example project](https://github.com/lmapii/cproject/blob/main/tests/unittest/project.yml), and since we included `gcovr` in the `apt` packages of our image, we are good to run our unit tests with coverage:
 
 ```bash
 $ ceedling gcov:all
@@ -579,7 +586,7 @@ dummy.c No branches
 dummy.c No calls
 ```
 
-Since the utility is set up in the [`project.yml`](https://github.com/lmapii/cproject/blob/main/tests/unittest/project.yml), we can also generate a `gcovr` HTML report with the following command:
+The [`project.yml`](https://github.com/lmapii/cproject/blob/main/tests/unittest/project.yml) also sets up a utility for generating coverage reports. In this demo project we can generate a `gcovr` HTML report with the following command:
 
 ```bash
 $ ceedling utils:gcov
@@ -592,13 +599,15 @@ You'll now find the HTML report in `tests/unittest/build/artifacts/gcov/GcovCove
 
 
 
-## Getting started with CI/CD on GitHub
+## Getting started with GitHub workflows
 
-Continuously testing and checking your code is important. Pipelines are now available on all major platforms such as [GitHub](https://github.com/), [GitLab](https://about.gitlab.com/), or [Bitbucket](https://bitbucket.org/), in this article we'll now set up a [GitHub action](https://github.com/features/actions) which periodically builds our image and tests our code.
+We got quite far already, and this setup is way beyond the "works on my machine" type of environment: All of your contributors can build a development container and execute all steps to build or test your project. But there is one more thing that we should do to keep the project stable even if we're not actively working on it: Setting up a pipeline that periodically ensures that the environment still works.
 
-There's yet another catch though: Ensuring that your Docker images build and using those Docker images in your pipeline can sometimes be a bit tedious. At the time of writing, GitHub has support for so-called [container actions](https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action) which allows executing in pipeline steps within a Docker container. These steps, however, assume that the image exists on some registry, e.g., [dockerhub](https://hub.docker.com/), and is not built within the action itself.
+Continuously testing and checking your code is important. Pipelines are now available on all major platforms such as [GitHub](https://github.com/), [GitLab](https://about.gitlab.com/), or [Bitbucket](https://bitbucket.org/). In this article we'll set up a [GitHub action](https://github.com/features/actions) which periodically builds our image and tests our code.
 
-Since nowadays [dockerhub](https://hub.docker.com/) is no longer entirely free to use, we will still try to execute all steps within a Docker image that is built as part of the pipeline. This makes the pipeline steps less elegant and very verbose, but I'll choose this approach over having to use multiple actions and a registry.
+There's yet another catch though: Ensuring that your Docker images build and using those Docker images in your pipeline can sometimes be a bit tedious. At the time of writing, GitHub has support for so-called [container actions](https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action) which allows executing in pipeline steps using a Docker container. These steps, however, assume that the image exists on some registry, e.g., [dockerhub](https://hub.docker.com/), and is not built within the action itself.
+
+Since nowadays [dockerhub](https://hub.docker.com/) is no longer entirely free to use, we will still try to execute all steps within a Docker image that is built as part of the pipeline. This makes the pipeline steps less elegant and very verbose, but I'll choose this approach over having to use multiple actions or a container registry.
 
 ### Adding a GitHub action
 
@@ -616,7 +625,7 @@ jobs:
   # empty
 ```
 
-With the above configuration, the action is executed [at 01:00 on every Sunday](https://crontab.guru/#0_1_*_*_0) and on every push to the `main` branch.
+With the above configuration, the jobs in this action are executed [at 01:00 on every Sunday](https://crontab.guru/#0_1_*_*_0) and on every push to the `main` branch.
 
 ### Building an image in a GitHub action
 
@@ -634,9 +643,12 @@ jobs:
           context: .
           file: builder.Dockerfile
           tags: cproject-builder:latest
+  build-and-test:
+    needs: docker-build
+    # TODO: needs cproject-builder:latest
 ```
 
-The problem is, that all jobs are isolated and that data _including Docker images_ must be shared explicitly between jobs. Without sharing, `cproject-builder:latest` is not available in the next job.
+The problem is that all jobs are isolated and that data _including Docker images_ must be shared explicitly between jobs. Without sharing, `cproject-builder:latest` is not available in the next job `build-and-test`.
 
 ### Using caches to share images between jobs
 
@@ -648,6 +660,7 @@ The [proposed solution by Docker](https://docs.docker.com/build/ci/github-action
 
 My favorite solution for this problem is using [cache dependencies](https://github.com/actions/cache). Similar to the proposed solution by Docker, we build the image and store it in a file, which is then accessible using a _cache_. Another benefit of this approach is, that for subsequent actions and if the _Dockerfile_ did not change, the image is not rebuilt!
 
+{% raw %}
 ```yml
 jobs:
   docker-build:
@@ -675,6 +688,7 @@ jobs:
           tags: cproject-builder:latest
           outputs: type=docker,dest=/tmp/docker/${{ runner.os }}-builder-image.tar
 ```
+{% endraw %}
 
 At the time of writing caches do **not** count towards the storage limit of your GitHub account. The only downside that I've encountered, is that caches are not shared between actions of different branches and that you'll need to manage your caches in case you have too many branches using images.
 
@@ -682,6 +696,7 @@ At the time of writing caches do **not** count towards the storage limit of your
 
 In the next job, we load the builder image and execute our actions. As mentioned before, the image is not available yet and therefore we cannot use the much more elegant GitHub actions for containers. It does, however, do its job and does so efficiently since restoring a cache takes much less time than downloading an artifact:
 
+{% raw %}
 ```yml
 jobs:
   docker-build:
@@ -715,6 +730,7 @@ jobs:
             cproject-builder:latest \
             /bin/bash -c "rm -rf build; cmake -B build; cmake --build build"
 ```
+{% endraw %}
 
 This job needs the previous `docker-build` to pass, then restores the docker image from the cache and builds the project within the image using `cmake`. Here the downside of this approach is visible: We always need to use the entire `docker run` command to execute our steps.
 
@@ -722,6 +738,7 @@ This job needs the previous `docker-build` to pass, then restores the docker ima
 
 We can now run the same commands that we used previously to run the unit tests with coverage and generate our coverage report. In addition, we can store this coverage report as an artifact in our pipeline such that we can download it after any successful run.
 
+{% raw %}
 ```yml
 jobs:
   docker-build:
@@ -758,6 +775,7 @@ jobs:
           path: ${{ env.ASSET }}
           retention-days: 3
 ```
+{% endraw %}
 
 Never forget to specify a retention period for your artifacts, since otherwise, it is very easy to hit the storage limit of your GitHub plan.
 
@@ -767,7 +785,9 @@ If you've managed to bear with me until this point, thank you for reading! Our j
 
 ![]({% img_url c-dev-environment/github-action.png %})
 
-As mentioned throughout the article the [example project is available on GitHub](https://github.com/lmapii/cproject), feel free to point out my mistakes or add some improvements to the project!
+But are we really ever done? A development environment grows with the project, and so will your base image. Even at this point it grew fairly large, and if that is a problem for you or your contributors, you should look into some of the [strategies to reduce your image size](https://www.docker.com/blog/reduce-your-image-size-with-the-dive-in-docker-extension/). Another strategy is to split images based on their usage, e.g., use a different image for building and another one for testing. This can greatly reduce your image size and allows you to use already stripped down base images. This discussion, however, is far beyond the scope of this article.
+
+As mentioned throughout the article, the [example project is available on GitHub](https://github.com/lmapii/cproject). Feel free to point out my mistakes or add some improvements to the project yourself!
 
 You have now all the skills to set up a containerized C/C++ project with a CI on GitHub. With this at hand, it should be easy to add a specific compiler to your _Dockerfile_ or to clean up all the mistakes that I did when setting up the CI.
 
