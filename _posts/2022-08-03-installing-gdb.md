@@ -3,6 +3,7 @@ title: "Tools we use: installing GDB for ARM"
 description: Demonstrate a few methods of installing gdb for ARM
 author: noah
 image: img/installing-gdb/cover.png # 1200x630
+tags: [arm, gdb]
 ---
 
 <!-- excerpt start -->

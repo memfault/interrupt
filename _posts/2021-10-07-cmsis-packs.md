@@ -2,6 +2,7 @@
 title: "Peeking inside CMSIS-Packs"
 description: Overview of the CMSIS-Pack distribution and some use cases
 author: noah
+tags: [toolchain, arm]
 ---
 
 CMSIS-Packs are a package format defined by ARM for vendors to provide various

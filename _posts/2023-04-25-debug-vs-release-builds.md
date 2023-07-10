@@ -4,6 +4,7 @@ title: "Pocket article: Debug vs. Release Builds Considered Harmful"
 description: "Why having separate Debug/Release builds should be avoided"
 author: noah
 image:
+tags: [better-firmware, toolchain, build-system]
 ---
 
 <!-- excerpt start -->

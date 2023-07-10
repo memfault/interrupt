@@ -4,7 +4,7 @@ description:
   "Tracking code size for embedded software projects can prevent surprises,
   maintain productivity, and give insight to developers looking to retroactively
   reduce a firmware binary size."
-tag: [fw-code-size]
+tags: [fw-code-size]
 author: tyler
 image: /img/code-size-deltas/terminal-printout.png
 ---

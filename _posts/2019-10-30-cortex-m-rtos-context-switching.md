@@ -3,7 +3,7 @@ title: "ARM Cortex-M RTOS Context Switching"
 description: "A deep dive into how the ARM Cortex-M architecture makes multi-tasking with an RTOS
 possible with a step-by-step walk through of the FreeRTOS implementation as an example"
 author: chris
-tag: [cortex-m]
+tags: [cortex-m, arm, rtos, mcu]
 image: /img/context-switching/pendsv-debug-gdb.png
 ---
 

@@ -3,6 +3,7 @@ title: "Pocket article: Undefined Behavior Sanitizer Trap on Error"
 description: Using Undefined Behavior Sanitizer on small embedded programs without libubsan
 author: noah
 image: img/ubsan-trap/sigill.png
+tags: [toolchain, gdb]
 ---
 
 <!-- excerpt start -->

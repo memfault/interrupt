@@ -2,7 +2,7 @@
 title: "Tools for Firmware Code Size Optimization"
 description: "Overview of useful tools such as GNU size, nm, and puncover to help reduce code size usage of an ARM firmware binary"
 author: francois
-tags: [fw-code-size]
+tags: [fw-code-size, toolchain]
 ---
 
 <!-- excerpt start -->
@@ -63,7 +63,7 @@ index a07cc82b..f49e73e2 100644
 --- a/with-libc/samd21g18a_flash.ld
 +++ b/with-libc/samd21g18a_flash.ld
 @@ -3,7 +3,7 @@ OUTPUT_ARCH(arm)
- 
+
  MEMORY
  {
 -  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00040000

@@ -5,7 +5,7 @@ description:
   Jojodiff. This post explains what delta DFU is and walks through an example
   implementation.
 author: francois
-tags: [firmware-update]
+tags: [firmware-update, ota]
 ---
 
 Firmware update capability has become a must-have for most devices. Whether to
@@ -402,7 +402,7 @@ simplifying assumption that it would always be 1.
 
 ```c
 size_t sfio_fread(void *ptr, size_t size, size_t count, sfio_stream_t *stream) {
-    assert(size == 1); 
+    assert(size == 1);
     if (stream->offset + count > stream->size) {
         count = stream->size - stream->offset;
     }
@@ -421,7 +421,7 @@ to our RAM or image slot, as follows:
 
 ```c
 size_t sfio_fwrite(const void *ptr, size_t size, size_t count, sfio_stream_t *stream) {
-    assert(size == 1); 
+    assert(size == 1);
     if (stream->offset + count > stream->size) {
         count = stream->size - stream->offset;
     }
@@ -445,7 +445,7 @@ int sfio_fseek(sfio_stream_t *stream, long int offset, int origin) {
     if (offset > stream->size) {
         return -1;
     } else {
-        stream->offset = offset; 
+        stream->offset = offset;
     }
     return 0;
 }

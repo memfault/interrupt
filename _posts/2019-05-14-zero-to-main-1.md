@@ -1,7 +1,7 @@
 ---
 title: "From Zero to main(): Bare metal C"
 author: francois
-tags: [zero-to-main]
+tags: [zero-to-main, cortex-m, bare-metal]
 ---
 Working on embedded software, one quickly develops a quasi-religious respect for
 the axioms of embedded C programming:
@@ -321,8 +321,8 @@ All the code used in this blog post is available on
 
 More complex programs often require a more complicated `Reset_Handler`. For
 example:
-1. Relocatable code must be copied over  
-2. If our program relies on libc, we must initialize it  
+1. Relocatable code must be copied over
+2. If our program relies on libc, we must initialize it
   _EDIT: Post written!_ - [From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
 3. More complex memory layouts can add a few copy / zero loops
 

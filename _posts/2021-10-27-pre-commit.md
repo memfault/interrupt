@@ -5,6 +5,7 @@ description:
   code by using Python, clang-format, clang-tidy, and prettier
 author: noah
 image: img/pre-commit/cover.png
+tags: [git, toolchain, better-firmware]
 ---
 
 I love clean and tidy codebases. I love them even more if I don't have to

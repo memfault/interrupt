@@ -4,6 +4,7 @@ description:
   Include standardized versions and other build metadata such as Git revisions and GNU Build ID's into firmware binaries and debug symbols.
 author: tyler
 image: img/release-versioning/cover.png
+tags: [git, best-practices]
 ---
 
 Release versioning might seem like a boring topic. Honestly, it should be. There should only be a couple of right ways to do versioning, and each project should pick one of the agreed-upon methods (SemVer[^semver], CalVer[^calver], etc.) that makes the most sense to the project. We don't live in this ideal world unfortunately and many projects choose to deviate from versioning standards. I'm not here to say they are wrong, but I'd like to discuss what they might be missing out on.
@@ -32,13 +33,13 @@ Versions don't exist just to differentiate one release from another. They serve 
 - Reference a specific build of the software
 - Tell users when *major* changes took place (e.g. Windows 8 → Windows 10)
 
-If a project chooses to use just a Git SHA, or a build timestamp, or a random ASCII name, then many or all of the above benefits that versions typically provide are lost. We can do better! 
+If a project chooses to use just a Git SHA, or a build timestamp, or a random ASCII name, then many or all of the above benefits that versions typically provide are lost. We can do better!
 
 Throughout this article, we'll talk about the various pieces that I believe provide a holistic picture of the software that is packaged into a release and running on a device. First, let's talk about Semantic Versioning.
 
 ## Semantic Versioning
 
-[Semantic Versioning](https://semver.org/), or SemVer for short, is likely the most popular versioning scheme in software today. It was built to solve the versioning story for a single package, but also how a single package interoperates with dependencies. 
+[Semantic Versioning](https://semver.org/), or SemVer for short, is likely the most popular versioning scheme in software today. It was built to solve the versioning story for a single package, but also how a single package interoperates with dependencies.
 
 SemVer uses a sequence of three digits, MAJOR.MINOR.PATCH, and also allows for an optional pre-release tag and build metadata tag. Altogether, a version looks like:
 
@@ -60,13 +61,13 @@ Example: 1.0.0 → 2.0.0
 
 For most firmware projects, the MAJOR field might *never* be incremented. If I'm writing firmware for an nRF52, and it is the only MCU in my hardware product, it doesn't have to interact or communicate with many other pieces of software or hardware, so there shouldn't be any incompatible API changes!
 
-There is one occassion where I would seriously consider incrementing the MAJOR field, and that is when our firmware becomes **incompatible with a version of itself**. Let me explain. 
+There is one occassion where I would seriously consider incrementing the MAJOR field, and that is when our firmware becomes **incompatible with a version of itself**. Let me explain.
 
 Normal software packages can be updated at any time, with almost no repercussions. If incompatibility arises, just revert the change and continue. However, on firmware devices, the firmware updates itself. If there is an incompatibility, it might require a re-install, a factory reset, or in the worst of cases, the device might be bricked!
 
 With firmware updates, you also can't expect every device to install every single version (unless that is a hard requirement of the update flow). If you deploy version 1.0.0, version 1.1.0, and version 1.2.0, your firmware should be able to update from 1.0.0 → 1.2.0 and skip 1.1.0 entirely. If a user puts your device in their nightstand and pulls it out 6 months later, this is exactly what should happen.
 
-However, keeping that backward compatibility can weigh down our firmware, especially if we need to keep migration code in our firmware. Migration code adds complexity, code space, and increases our QA test matrix dramatically. 
+However, keeping that backward compatibility can weigh down our firmware, especially if we need to keep migration code in our firmware. Migration code adds complexity, code space, and increases our QA test matrix dramatically.
 
 Let's take the Pebble Smartwatch firmware as an example. The Pebble 2.0.0 firmware was released in early 2014. Over the next year, we released versions all the way up to 2.9.1. Within all of these versions, we were changing *a lot* of stuff. We changed our file system (from Contiki's Coffee[^coffee] to an internally built one), re-wrote persistent data structures that were stored on internal and external flash, and completely re-architected how we stored our BLE bonding information. All of these things were critical to the functionality of our firmware, and at no point could we lose any of this data.
 
@@ -80,7 +81,7 @@ This was a backward-incompatible firmware update, and I believe it warranted the
 
 Example: 1.1.0 → 1.2.0
 
-In the context of firmware, this is likely what most of your firmware version updates will be, especially if they contain new features and functionality. A MINOR update means that your device can upgrade from a version with the same MAJOR to any *newer* version with the same MAJOR. For example, as we discussed in the MAJOR section, any firmware in the 2.x release train should be able to update to any newer 2.x version, such as 2.0.0 → 2.5.0. 
+In the context of firmware, this is likely what most of your firmware version updates will be, especially if they contain new features and functionality. A MINOR update means that your device can upgrade from a version with the same MAJOR to any *newer* version with the same MAJOR. For example, as we discussed in the MAJOR section, any firmware in the 2.x release train should be able to update to any newer 2.x version, such as 2.0.0 → 2.5.0.
 
 A MINOR update does not need to allow downgrading firmware versions, which is going from a firmware version to an older one, such as 2.5 → 2.0. Speaking from experience, this is a nightmare to deal with, and you should disable this behavior from ever happening, *at least in production*. Allowing downgrades in a limited form on pre-release software will help your developers and QA teams test the upgrade path between two versions more easily.
 
@@ -90,9 +91,9 @@ We provide a [code snippet](#detecting-downgrades) later in the article to help 
 
 Example: 1.1.0 → 1.1.1
 
-On past firmware projects that I've worked on, PATCH updates are usually hot-fixes, which are quickly tested and released after a critical bug is discovered upon releasing a prior firmware update. Each patch-fix might fix one or two bugs, and the amount of time needed to test and verify that the firmware works can be minimized. 
+On past firmware projects that I've worked on, PATCH updates are usually hot-fixes, which are quickly tested and released after a critical bug is discovered upon releasing a prior firmware update. Each patch-fix might fix one or two bugs, and the amount of time needed to test and verify that the firmware works can be minimized.
 
-Ideally, nothing that should prevent a downgrade from occurring should be placed in a patch upgrade. This means no persistent data structure changes, no migration paths, and no changes in how the device communicates with external devices or services. 
+Ideally, nothing that should prevent a downgrade from occurring should be placed in a patch upgrade. This means no persistent data structure changes, no migration paths, and no changes in how the device communicates with external devices or services.
 
 Since there are minimal to no breaking changes, these firmware updates can be upgraded and downgraded to without harm.
 
@@ -100,13 +101,13 @@ Since there are minimal to no breaking changes, these firmware updates can be up
 
 The pre-release tag is any series of dot separated identifiers consisting of ASCII letters and numbers.
 
-The most common pre-release tags are 'alpha', 'beta', and 'rc', which should satisfy most of your versioning requirements. 
+The most common pre-release tags are 'alpha', 'beta', and 'rc', which should satisfy most of your versioning requirements.
 
 - Use 'alpha' when the release branch is first cut from master or another release branch. It's pretty much assumed that 'alpha' builds are unstable and should be treated as broken-by-default.
 - Use 'beta' when the API is stable, there are no longer any breaking changes and features being pushed into the release, and the stabilization phase has begun.
 - Use 'rc' (release-candidate) when you think everything is stable and QA should start doing rigorous testing because it might turn out that this build could be "the one".
 
-I've seen many developers create out-of-order pre-release tags, so be sure to [read the spec](https://semver.org/#spec-item-11) and test your assumptions. 
+I've seen many developers create out-of-order pre-release tags, so be sure to [read the spec](https://semver.org/#spec-item-11) and test your assumptions.
 
 ### Scripting and Testing SemVer
 
@@ -124,7 +125,7 @@ True
 
 Semantic Versioning provides a plethora of benefits to our firmware and release management workflows, but it doesn't solve all of our requirements. One of our requirements was to be able to reference a specific build of a firmware, which SemVer does not help with.
 
-For example, if two developers locally compile a "1.1.1" firmware, we now have two builds of "1.1.1" with no way to tell the difference between the two! They could be based upon two entirely different revisions of software or even built with a different compiler. We could use pre-release tags or build meta tags, but we also don't want to pollute our SemVer string with data that could be better solved by other versions. 
+For example, if two developers locally compile a "1.1.1" firmware, we now have two builds of "1.1.1" with no way to tell the difference between the two! They could be based upon two entirely different revisions of software or even built with a different compiler. We could use pre-release tags or build meta tags, but we also don't want to pollute our SemVer string with data that could be better solved by other versions.
 
 Let's now look at Git revisions, which will help us identify the software revisions that our firmware is built from.
 
@@ -154,7 +155,7 @@ Refer to the `git describe` [documentation](https://git-scm.com/docs/git-describ
 
 ### Adding Git Revision
 
-To add a Git SHA to a firmware, we do the work within our build system or Makefile in our case. 
+To add a Git SHA to a firmware, we do the work within our build system or Makefile in our case.
 
 ```Makefile
 GIT_REVISION := \"$(shell git describe --match ForceNone --abbrev=10 --always --dirty="+")\"
@@ -166,7 +167,7 @@ From here, you can create a file that uses the macro `GIT_REVISION` and it will 
 
 ### Missing Pieces of the Git Revision
 
-The Git revision, just like the SemVer version, is missing the ability to identify unique builds of the firmware. Two developers could each build the Git revision `d287bc7311` and push binaries to an update server and we'd have no way of knowing they are two different builds or know how to tie them back to the source. 
+The Git revision, just like the SemVer version, is missing the ability to identify unique builds of the firmware. Two developers could each build the Git revision `d287bc7311` and push binaries to an update server and we'd have no way of knowing they are two different builds or know how to tie them back to the source.
 
 We need yet another piece of build information! Last but not least, let's chat about GNU Build ID's.
 
@@ -196,7 +197,7 @@ Ultimately, you will want to set the MAJOR, MINOR, and PATCH numbers in macros. 
 
 #### Git Tags & CI
 
-If you have your [continuous integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) system set up to build your firmware, pulling the SemVer from the Git tag is a great way to go. 
+If you have your [continuous integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) system set up to build your firmware, pulling the SemVer from the Git tag is a great way to go.
 
 I like to configure my CI systems to watch tags that start with `release-*`. That way, I can tag and push releases with a few simple Git commands and a script in CI which parses the SemVer and sets build variables
 
@@ -210,7 +211,7 @@ Before CI builds this tag, it will pull out 1.0.0 from the tag name, set a few C
 
 #### Manually Set Versions
 
-Another way I've seen versions get built is by setting a `fw_version.h` header manually. 
+Another way I've seen versions get built is by setting a `fw_version.h` header manually.
 
 ```
 // fw_version.h
@@ -277,7 +278,7 @@ Git SHA: 70859a3
 
 One of the most unpleasant and avoidable ways of bricking a device is to allow it to install incompatible versions, such as downgrades. If SemVer is followed closely, almost all dangerous downgrade paths could be avoided without much logic or defensive work.
 
-Although using `sscanf` isn't really recommended due to code-size bloat, here is a simple example snippet of code to detect firmware downgrades for those that use Semantic Versioning. 
+Although using `sscanf` isn't really recommended due to code-size bloat, here is a simple example snippet of code to detect firmware downgrades for those that use Semantic Versioning.
 
 ```c
 #include <stdio.h>
@@ -292,7 +293,7 @@ int main(void) {
 
     sscanf(current_ver, "%d.%d.%d", &currentMajor, &currentMinor, &currentPatch);
     sscanf(new_ver, "%d.%d.%d", &newMajor, &newMinor, &newPatch);
-    
+
     if (newMajor < currentMajor || newMinor < currentMinor) {
         // Dowgrade. Do not perform the "update".
     }
@@ -305,9 +306,9 @@ If you use another versioning scheme, you should still try to detect downgrades,
 
 Release versioning is one of those things that is only really thought about after the fact, and to me, feels similar to using better commit messages. It's only when I'm months into a project that I realize that I have code, branches, builds, symbol files, and patches all over the place with no organization.
 
-By adhering to versioning standards and by including a Git SHA and build ID, many issues can be avoided and your developers can stop wasting time tracking down various builds and symbol files. 
+By adhering to versioning standards and by including a Git SHA and build ID, many issues can be avoided and your developers can stop wasting time tracking down various builds and symbol files.
 
-If you have strong thoughts on how firmware releases should be versioned, I'd love to hear them [on the Interrupt Slack](https://interrupt-slack.herokuapp.com/)! 
+If you have strong thoughts on how firmware releases should be versioned, I'd love to hear them [on the Interrupt Slack](https://interrupt-slack.herokuapp.com/)!
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}

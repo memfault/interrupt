@@ -3,6 +3,7 @@ title: "Hunting Bugs with Git Bisect"
 description: "An introduction to using git bisect against a set of changes as a bug-hunting tool, followed by some deeper techniques to speed up the process of tracking down when unintended behavior is introduced"
 author: shiva
 image: /img/git-bisect/git-bisect.png
+tags: [debugging, git]
 ---
 
 It’s one of those nights- your project has been moving along at breakneck
