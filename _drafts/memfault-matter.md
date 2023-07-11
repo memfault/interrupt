@@ -72,7 +72,7 @@ Using the Zephyr shell you could check this option:
 > tcp send hello
 ```
 
-However, since TCP is not enabled by default in our firmware, we"ll focus on the UDP options.
+Since TCP is not enabled by default in our firmware,  we'll focus on the UDP options.
 
 ### Via UDP
 
