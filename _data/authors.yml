@@ -185,3 +185,6 @@ blaise:
     image: /img/author/blaise.jpg
     linkedin: https://www.linkedin.com/in/blaiselengrand
     blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
+dangross:
+    name: Dan Gross
+    blurb: Description
