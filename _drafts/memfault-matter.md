@@ -80,7 +80,7 @@ Memfault does not support the delivery via UDP directly, but you can use a UDP r
 
 #### Via public UDP relay via IPv6
 
-If the UDP relay would be reachable via IPv6 one could use
+If the UDP relay is reachable via IPv6 use the following commands:
 
 ```shell
 > dns resolve memfaultudprelay.example.com
