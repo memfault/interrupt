@@ -23,7 +23,7 @@ I'm Markus, software engineer @ [Tridonic](https://tridonic.com), where we are w
 
 [Matter](https://csa-iot.org/all-solutions/matter/) is an interoperability standard for IoT devices from the [connectivity standards alliance (csa)](https://csa-iot.org) previously known as the Zigbee Alliance. The Matter standard is implemented in the open-source reference implementation in the [GitHub project-chip repository](https://github.com/project-chip/connectedhomeip/). Matter currently uses UDP on top of IP(v6) and can run on top of different lower layers: Ethernet, WiFi, Thread/802.15.4. [Thread](https://www.threadgroup.org/) is a low-power IPv6 connectivity standard. Its reference implementation is available in the [openThread Github repository](https://github.com/openthread/openthread). The Matter SDK as well as the openThread SDK are also available bundled in the [Nordic Connect SDK](https://developer.nordicsemi.com/nRF_Connect_SDK/).
 
-At Tridonic, we see Matter as the force unifying the Smart Home and eventually the professional lighting space as well, thus consolidating the wireless options and giving new opportunities to use the consolidated wireless eco-system for the benefit of the users. Thread has been chosen for the suitability to support low-power sensor devices and due to its nature for handling multicast efficiently to a multitude of wireless devices.
+At Tridonic, we view Matter as the unifying force in both the Smart Home industry and the professional lighting space. It consolidates wireless options and provides new opportunities to utilize the consolidated wireless ecosystem for the benefit of users. Thread has been chosen for its suitability in supporting low-power sensor devices and its efficient handling of multicast to numerous wireless devices.
 
 The Tridonic products are therefore based on matter/Thread/802.15.4. Thus I'll focus on UDP, IPv6, and Thread in the article.
 
@@ -72,7 +72,7 @@ Using the Zephyr shell you could check this option:
 > tcp send hello
 ```
 
-However, since TCP is not enabled by default in our firmware, we"ll focus on the UDP options.
+Since TCP is not enabled by default in our firmware,  we'll focus on the UDP options.
 
 ### Via UDP
 
@@ -80,7 +80,7 @@ Memfault does not support the delivery via UDP directly, but you can use a UDP r
 
 #### Via public UDP relay via IPv6
 
-If the UDP relay would be reachable via IPv6 one could use
+If the UDP relay is reachable via IPv6 use the following commands:
 
 ```shell
 > dns resolve memfaultudprelay.example.com
