@@ -49,7 +49,7 @@ TCP is currently an option for non-Thread Matter devices. TCP is being discussed
 
 This could be enabled with
 
-```kconfig
+```
 CONFIG=OPENTHREAD_CONFIG_TCP_ENABLE=y
 CONFIG_HTTP_CLIENT=y
 ```
