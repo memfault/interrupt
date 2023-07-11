@@ -5,7 +5,7 @@ description:
   and firmware, using popular frameworks such as CppUTest, CppUMock, fff, and
   CMock.
 author: tyler
-tags: [better-firmware, unit-testing]
+tags: [better-firmware, unit-testing, unit-testing, c, c++]
 image: /img/unit-testing-mocking/cover.png
 ---
 

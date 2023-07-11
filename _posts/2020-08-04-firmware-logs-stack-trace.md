@@ -3,6 +3,7 @@ title: Parsing Logs Messages for Instant Crash Analysis
 description: A stack trace for embedded software. Get all the information you need to debug firmware crashes right into your logs, in a few easy steps.
 image: /img/logs-stack-trace/colorful_stack_unbundling.gif
 author: cyril
+tags: [logging, stack]
 toc: true
 ---
 

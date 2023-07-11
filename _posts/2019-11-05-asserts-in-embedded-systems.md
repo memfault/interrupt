@@ -6,6 +6,7 @@ description:
   minimal code and RAM overhead."
 author: tyler
 image: /img/debugging-asserts/assert.png
+tags: [debugging, better-firmware]
 ---
 
 The use of asserts is one of the best ways to find bugs, unintended behavior,
@@ -27,7 +28,7 @@ device, all while keeping the code size usage to a minimum.
 
 <!-- excerpt end -->
 
-> **Why you shouldn't compile asserts out in production builds**  
+> **Why you shouldn't compile asserts out in production builds**
 > Many of the popular embedded platforms have options to
 > [compile](https://github.com/aws/amazon-freertos/blob/master/vendors/nordic/nRF5_SDK_15.2.0/components/libraries/util/nrf_assert.h#L78-L115)
 > [out](https://github.com/espressif/esp-idf/blob/master/components/esp_common/include/esp_err.h#L104-L124)

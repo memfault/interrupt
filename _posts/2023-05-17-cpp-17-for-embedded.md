@@ -2,6 +2,7 @@
 title: "C++17’s Useful Features for Embedded Systems"
 description: "In this article, you will find some features of C++17 that can also be helpful in the embedded world."
 author: caglayan
+tags: [c++]
 ---
 
 Recently, our team at Meteksan Defense is upgrading its development environment to use newer versions of many tools and programming languages. One of the more difficult transitions has been the upgrade of our C++11 code base to C++17 for our embedded applications.

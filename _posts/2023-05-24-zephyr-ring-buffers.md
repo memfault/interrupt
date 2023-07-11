@@ -2,6 +2,7 @@
 title: "Zephyr Deep Dive: Ring Buffers"
 description: "Overview of Zephyr ring buffers covering how they work and when to use them in your design"
 author: ericj
+tags: [zephyr, rtos]
 ---
 
 Zephyr includes many built-in features like stacks for networking and BLE, Flash

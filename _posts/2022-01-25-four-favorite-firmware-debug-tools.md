@@ -2,6 +2,7 @@
 title: Nash's Four Favorite Firmware Debug Tools
 description: Find firmware flaws faster with these top notch tools
 author: nash
+tags: [debugging, gdb]
 ---
 
 As much as I enjoy writing firmware, I am, at heart, a hardware engineer. I love

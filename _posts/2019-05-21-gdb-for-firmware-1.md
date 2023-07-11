@@ -2,7 +2,7 @@
 title: "Debugging Firmware with GDB"
 description: "How to set up, flash, and debug firmware on a Nordic nRF52 using GDB, a Segger J-Link, and the GNU ARM Embedded Toolchain."
 author: mafaneh
-tags: [gdb]
+tags: [gdb, debugging]
 ---
 
 <!-- excerpt start -->

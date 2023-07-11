@@ -4,7 +4,7 @@ description:
   "Strategies for improving up C/C++ compile times for embedded software
   projects using ccache, preprocessor optimizations, parallel execution, and
   other techniques."
-tag: [better-firmware]
+tag: [better-firmware, c, c++]
 author: tyler
 image: /img/faster-compilation/faster-builds-ccache-comparison.png
 ---

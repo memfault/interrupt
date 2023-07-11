@@ -4,6 +4,7 @@ description:
   Choosing the best microcontroller is an important decision given the chip
   shortage and engineering effort involved.
 author: lars
+tags: [mcu]
 ---
 
 <!-- excerpt start -->
