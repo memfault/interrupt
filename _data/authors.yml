@@ -187,4 +187,6 @@ blaise:
     blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
 dangross:
     name: Dan Gross
-    blurb: Description
+    blurb: is passionate about reducing friction for developers. As a developer, Dan has worked on cloud and embedded systems for Sun, HP, Oracle, Samsung, and AWS.
+    image: /img/author/dangross.jpg
+    linkedin: https://www.linkedin.com/in/grossdan/
