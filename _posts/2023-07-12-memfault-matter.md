@@ -213,7 +213,7 @@ In `prj.conf` several changes have been made:
 * Several options have been set to make the Matter build smaller so that Memfault could be added.
 * The Memfault config options have been added.
   * `CONFIG_UDP_SERVER_ADDRESS_STATIC` is set to the IPv6 multicast address `ff05::f417` (NOTE: shortened hex-speak of memFAuLT).
-  * Change `CONFIG_MEMFAULT_NCS_PROJECT_KEY` with a key you can get from [Memfault Cloud | Settings | General | Project Key](https://mflt.io/project-key).
+  * Change `CONFIG_MEMFAULT_NCS_PROJECT_KEY` with a key you can get from [Memfault Cloud - Settings - General - Project Key](https://mflt.io/project-key).
 
 ### Memfault UDP relay
 
@@ -269,7 +269,7 @@ Connect to the UART shell on the DK with e.g. putty and issue e.g. `mflt test ha
 > mflt test hardfault
 ```
 
-Observe the transmission of the UDP packets to the UDP relay. Observe the UDP relay forwarding the information to the Memfault cloud. And then see the chunks arriving in the [Memfault cloud | Chunks Debug](https://mflt.io/chunks-debug).
+Observe the transmission of the UDP packets to the UDP relay. Observe the UDP relay forwarding the information to the Memfault cloud. And then see the chunks arriving in the [Memfault cloud - Chunks Debug](https://mflt.io/chunks-debug).
 
 ## Conclusion
 
