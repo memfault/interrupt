@@ -191,3 +191,9 @@ mabe:
     linkedin: https://www.linkedin.com/in/mabcomnets/
     github: markus-becker-tridonic-com
     image: /img/author/mabe.jpg
+blake:
+    name: Blake Hildebrand
+    blurb: is an embedded software engineer at Memfault. Blake previously worked on embedded software teams at Garmin and Amazon Robotics.
+    linkedin: https://www.linkedin.com/in/blake-a-hildebrand/
+    github: bahildebrand
+    image: /img/author/blake.jpg
