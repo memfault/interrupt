@@ -413,7 +413,7 @@ an interrupt source and allows us to wait for the button to be pressed without
 having to poll the GPIO.
 
 ```rust
-if LED_BLINK_ACTIVE.load(Ordering::SeqCst) {
+if LED_BLINK_ACTIVE.load(Ordering::Relaxed) {
     led.toggle();
 }
 ```
