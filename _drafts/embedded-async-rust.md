@@ -37,6 +37,19 @@ programming on microcontrollers.
 
 {% include toc.html %}
 
+## What is Asynchronous Programming?
+
+Asynchronous programming is a type of concurrent programming where the
+execution of a task can be paused if it does not have work to do. This is
+especially useful for tasks that are waiting for some external event to occur,
+such as a network packet arriving, or a button being pressed. In a synchronous
+system, the task would have to wait for the event to occur before it could
+continue execution. In an asynchronous system, the task can be paused, and
+another task can be executed until the event occurs. This allows for more
+efficient use of resources, as the thread this task is running on can be used
+for other tasks while it is waiting. Additionally all resources for the thread,
+such as the stack, an be used by other tasks while it is waiting.
+
 ## How Does Async Rust Work?
 
 Similar to other languages Rust provides async/await syntax to make writing
@@ -72,7 +85,7 @@ The `await` keyword is what calls `poll` on the future, and returns the
 result of the future.
 
 Now that we have a good idea of how async functions generate futures, let's look
-dep into how futures work.
+in depth into how futures work.
 
 ### Rust Futures
 
@@ -111,19 +124,24 @@ or a message over a SPI bus.
 
 To advance the state of our future we could call `poll` repeatedly until we
 get a `Ready` status, but that seems rather inefficient. If our `Future` is
-dependent on an external I/O event, we could call `poll` in a loop keeping our
-processor awake and wasting precious power. This observation brings us to the
+dependent on an external I/O event, looping over calls to `poll` keeps our
+processor awake and wastes precious power. This observation brings us to the
 only argument passed into the `poll` function, the future
 [`Context`](https://docs.rs/futures/latest/futures/task/struct.Context.html).
 The `Context` only has one role, to provide access to the `Future`'s
 [`Waker`](https://docs.rs/futures/latest/futures/task/struct.Waker.html).
 
 The `Waker` gives us an elegant solution to calling our `poll` implementation in
-a loop. When a future is not ready to complete, it can save off the `Waker` and
-inform the executor when a task is ready to be polled again. Now we can plot
-out the lifetime of a future like so:
+a loop. When a future is not ready to complete, the asynchronous action can save
+off the `Waker` and use it to inform the executor that there is more work to be
+done on the future. An example of this would be an interrupt on a GPIO wired to
+a button. We'll go over this exact example later in the article!
 
-![]({% img_url embedded-rust-async/future-lifetime.png %})
+Now that we understand how futures work, we can plot out the lifetime of one
+like so:
+
+<!-- ![]({% img_url embedded-rust-async/future-lifetime.png %}) -->
+![]({% img_url embedded-rust-async/future-lifetime.excalidraw.svg %})
 
 The last part of the poll function we haven't covered is a fairly spicy bit.
 The `self` reference here is a little strange. Let's take a deeper look:
@@ -177,7 +195,7 @@ of a task at any time it sees fit. Generally, there is a concept of priority,
 and the OS kernel will favor higher priority threads when determining which
 threads to run while attempting to allow all tasks to run.
 
-![]({% img_url embedded-rust-async/preemptive.png %})
+![]({% img_url embedded-rust-async/preemptive.excalidraw.svg %})
 
 If you're looking for a deeper dive into RTOS context switching, check out our
 post on
@@ -187,24 +205,24 @@ Additionally, check out this great article doing a
 
 #### Cooperative Scheduling
 
-Cooperative scheduling is quite different. there is no priority, and tasks are
-run first come first serve whenever they have work to do. It is the
+Cooperative scheduling is quite different. There is no priority, and tasks are
+run until they return (yield) control back to the caller. It is the
 responsibility of the task to be a good neighbor, and not run for too long.
 Compare the preemptive scheduling diagram above with the cooperative scheduling
 diagram below. Notice how the tasks can run to completion before
 switching to the next task.
 
-![]({% img_url embedded-rust-async/cooperative.png %})
+![]({% img_url embedded-rust-async/cooperative.excalidraw.svg %})
 
 On its own, this cooperative scheduling doesn't seem to provide much value. Why
 would we want to move the cognitive load of ensuring all tasks run from the
 OS scheduler to the writer of the tasks? Doesn't this also start to resemble a
 super loop? I thought we moved to an RTOS to get away from having to worry about
-these things?!
-
-If you had all of these thoughts while reading about cooperative scheduling,
-you're on the right track. If we combine cooperative scheduling with our new
-understanding of Rust futures, we have a powerful new tool! An async executor!
+these things?! If we combine cooperative scheduling with our understanding of
+Rust futures, we start to see the value. Whenever a future yields, the next
+future can be polled. This means that we can run multiple futures on a single
+thread! That means concurrent execution without the overhead of context
+switches, or a separate stack for each task!
 
 ## Embassy
 
@@ -293,9 +311,9 @@ interacting with the GPIO that our LED is connected to PH7[^4].
 spawner.spawn(blinky(led)).unwrap();
 ```
 
-The final bit of our `main` function is to spawn our `blinky` task. This lets
-adds the task to the executor's task queue, and allows it to be polled when it
-has work to do.
+The final bit of our `main` function is to spawn our `blinky` task. This adds
+the task to the executor's task queue, and allows it to be polled when it has
+work to do.
 
 ```rust
 #[embassy_executor::task]
@@ -362,7 +380,7 @@ async fn blinky(mut led: Output<'static, PH7>) -> ! {
     let mut ticker = Ticker::every(Duration::from_millis(LED_PERIOD_MS));
     loop {
         ticker.next().await;
-        if LED_BLINK_ACTIVE.load(Ordering::SeqCst) {
+        if LED_BLINK_ACTIVE.load(Ordering::Relaxed) {
             led.toggle();
         }
     }
@@ -403,7 +421,8 @@ if LED_BLINK_ACTIVE.load(Ordering::SeqCst) {
 
 Next, we have a small change in our `blinky` task. We've added a check to see if
 the LED should be blinking. If it should, we toggle the LED. If not, we do
-nothing. This is a simple way to pause the blinking of the LED when the button
+nothing. This is a simple way to pause the blinking of the LED when we press the
+button.
 
 ```rust
 #[embassy_executor::task]
@@ -448,7 +467,7 @@ this is the pin we initially assigned to the `EXTI` interrupt. In our case this
 on. One other note is that the `pin`s here are GPIO pins and not the Rust
 future `Pin` type we discussed earlier.
 
-It likes like the core of this function is in another castle! Let's take a look
+It looks like the core of this function is in another castle! Let's take a look
 at the
 [`ExtiInputFuture`](https://github.com/embassy-rs/embassy/blob/c7ec45a004750f590c1d9ea4a721972efe133b8e/embassy-stm32/src/exti.rs#L202)
 struct, and see if we can learn anything interesting.
@@ -606,13 +625,13 @@ plays in managing and driving futures to completion. The question remains,
 why would we go through all this trouble? What benefit do we gain over a
 traditional preemptive RTOS or a bare-metal super loop? The answer is I/O!
 
-One of the biggest benefits of async Rust is smaller code size. A traditional
-RTOS will require a stack for each task. Rust futures only need to keep track
-of variables that are used across await points. This means that the memory
-needed for an async task can be much smaller than a traditional RTOS task, as
-small 10s of bytes for less complex tasks! This means we can spin up more tasks
-that have smaller discrete jobs, instead of overloading single tasks with
-multiple responsibilities.
+One of the biggest benefits of async Rust is a much smaller RAM footprint. A
+traditional RTOS will require a stack for each task. Rust futures only need to
+keep track of variables that are used across await points. This means that the
+memory needed for an async task can be much smaller than a traditional RTOS
+task, as small as 10s of bytes for less complex tasks! This means we can spin up
+more tasks that have smaller discrete jobs, instead of overloading single tasks
+with multiple responsibilities.
 
 Another benefit is the lack of context switching between tasks. Since we're
 operating in a cooperative scheduling environment, we don't need to save and
@@ -633,10 +652,14 @@ expect when looking because of the way futures are polled and scheduled.
 
 Another downside is the lack of priorities introduced by the cooperative
 scheduler. To its credit, Embassy has a pretty cool solution to this problem.
-Using the priorities assigned to interrupts, multiple executors can be run in
-said interrupts[^6]. This allows for a form of priority-based scheduling, but
-it's a decent amount of added complexity compared to a traditional preemptive
-RTOS.
+Using the priorities assigned to interrupts, an executor is run in each of these
+interrupts[^6]. This allows for a form of priority-based scheduling, but it's a
+decent amount of added complexity compared to a traditional preemptive RTOS.
+
+Additionally the ability to spawn more tasks than you would with a traditional
+RTOS can be a double-edged sword. While it's great to be able to spin up more
+tasks, it can be easy to go overboard and create too many tasks. This can lead
+to an overloaded task queue, with tasks spending more time waiting to be polled.
 
 ## Final Thoughts
 

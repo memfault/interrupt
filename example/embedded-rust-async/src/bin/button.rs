@@ -32,7 +32,7 @@ async fn blinky(mut led: Output<'static, PH7>) -> ! {
     let mut ticker = Ticker::every(Duration::from_millis(LED_PERIOD_MS));
     loop {
         ticker.next().await;
-        if LED_BLINK_ACTIVE.load(Ordering::SeqCst) {
+        if LED_BLINK_ACTIVE.load(Ordering::Relaxed) {
             led.toggle();
         }
     }
