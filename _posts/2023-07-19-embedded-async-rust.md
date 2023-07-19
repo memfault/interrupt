@@ -282,7 +282,7 @@ article.
 
 Secondly, it creates a new
 [`Executor`](https://docs.rs/embassy-executor/latest/embassy_executor/struct.Executor.html)
-for us. In our configuration, this executor  is expected to have a `\`static`
+for us. In our configuration, this executor  is expected to have a `'static`
 lifetime, meaning that it's expected to live for the entire lifetime of the
 program. This makes sense, as we need our executor to live at least as long as
 all of our tasks.
@@ -291,8 +291,9 @@ Lastly, it spawns a task that will run our `main` function and passes a copy
 of the internal
 [`Spawner`](https://docs.rs/embassy-executor/latest/embassy_executor/struct.Spawner.html)
 handle for our executor. This handle allows us to spawn new tasks and send them
-over to our executor. The [`Spawner`] implements [`Copy`], so it can cheaply be
-passed around to different tasks to allow them to spawn new tasks.
+over to our executor. The `Spawner` implements
+[`Copy`](https://doc.rust-lang.org/core/marker/trait.Copy.html), so it can be
+cheaply passed around to different tasks to allow them to spawn new tasks.
 
 ```rust
 let p = embassy_stm32::init(Default::default());
