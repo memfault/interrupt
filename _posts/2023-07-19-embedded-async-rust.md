@@ -619,11 +619,6 @@ polled when it gets its next turn.
 
 ## Benefits of Async Rust on Embedded Systems
 
-We now understand how Rust futures work under the hood, and the role an executor
-plays in managing and driving futures to completion. The question remains,
-why would we go through all this trouble? What benefit do we gain over a
-traditional preemptive RTOS or a bare-metal super loop? The answer is I/O!
-
 One of the biggest benefits of async Rust is a much smaller RAM footprint. A
 traditional RTOS will require a stack for each task. Rust futures only need to
 keep track of variables that are used across await points. This means that the
