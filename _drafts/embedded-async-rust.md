@@ -140,8 +140,7 @@ a button. We'll go over this exact example later in the article!
 Now that we understand how futures work, we can plot out the lifetime of one
 like so:
 
-<!-- ![]({% img_url embedded-rust-async/future-lifetime.png %}) -->
-![]({% img_url embedded-rust-async/future-lifetime.excalidraw.svg %})
+![]({% img_url embedded-rust-async/future-lifetime.excalidraw.png %})
 
 The last part of the poll function we haven't covered is a fairly spicy bit.
 The `self` reference here is a little strange. Let's take a deeper look:
@@ -195,7 +194,7 @@ of a task at any time it sees fit. Generally, there is a concept of priority,
 and the OS kernel will favor higher priority threads when determining which
 threads to run while attempting to allow all tasks to run.
 
-![]({% img_url embedded-rust-async/preemptive.excalidraw.svg %})
+![]({% img_url embedded-rust-async/preemptive.excalidraw.png %})
 
 If you're looking for a deeper dive into RTOS context switching, check out our
 post on
@@ -212,7 +211,7 @@ Compare the preemptive scheduling diagram above with the cooperative scheduling
 diagram below. Notice how the tasks can run to completion before
 switching to the next task.
 
-![]({% img_url embedded-rust-async/cooperative.excalidraw.svg %})
+![]({% img_url embedded-rust-async/cooperative.excalidraw.png %})
 
 On its own, this cooperative scheduling doesn't seem to provide much value. Why
 would we want to move the cognitive load of ensuring all tasks run from the
