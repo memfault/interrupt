@@ -47,8 +47,8 @@ system, the task would have to wait for the event to occur before it could
 continue execution. In an asynchronous system, the task can be paused, and
 another task can be executed until the event occurs. This allows for more
 efficient use of resources, as the thread this task is running on can be used
-for other tasks while it is waiting. Additionally all resources for the thread,
-such as the stack, an be used by other tasks while it is waiting.
+for other tasks while it is waiting. Additionally, all resources for the thread,
+such as the stack, can be used by other tasks while it is waiting.
 
 ## How Does Async Rust Work?
 
@@ -134,7 +134,7 @@ The `Context` only has one role, to provide access to the `Future`'s
 The `Waker` gives us an elegant solution to calling our `poll` implementation in
 a loop. When a future is not ready to complete, the asynchronous action can save
 off the `Waker` and use it to inform the executor that there is more work to be
-done on the future. An example of this would be an interrupt on a GPIO wired to
+done in the future. An example of this would be an interrupt on a GPIO wired to
 a button. We'll go over this exact example later in the article!
 
 Now that we understand how futures work, we can plot out the lifetime of one
@@ -191,7 +191,7 @@ We're all familiar with Preemptive scheduling. This is the type of scheduling
 used in most RTOS, as well as the most prominent operating systems like Linux,
 Windows, and MacOS. At a high level preemptive schedulers can stop the execution
 of a task at any time it sees fit. Generally, there is a concept of priority,
-and the OS kernel will favor higher priority threads when determining which
+and the OS kernel will favor higher-priority threads when determining which
 threads to run while attempting to allow all tasks to run.
 
 ![]({% img_url embedded-rust-async/preemptive.excalidraw.png %})
@@ -221,7 +221,7 @@ these things?! If we combine cooperative scheduling with our understanding of
 Rust futures, we start to see the value. Whenever a future yields, the next
 future can be polled. This means that we can run multiple futures on a single
 thread! That means concurrent execution without the overhead of context
-switches, or a separate stack for each task!
+switches or a separate stack for each task!
 
 ## Embassy
 
@@ -312,7 +312,7 @@ spawner.spawn(blinky(led)).unwrap();
 ```
 
 The final bit of our `main` function is to spawn our `blinky` task. This adds
-the task to the executor's task queue, and allows it to be polled when it has
+the task to the executor's task queue and allows it to be polled when it has
 work to do.
 
 ```rust
@@ -399,7 +399,7 @@ async fn buttony(mut button: ExtiInput<'static, PC13>) {
 The first thing you'll notice is that we've added a new static variable,
 `LED_BLINK_ACTIVE`. It is an
 [`AtomicBool`](https://doc.rust-lang.org/core/sync/atomic/struct.AtomicBool.html)
-which allows us to safely share it between tasks. We'll use this variable to
+that allows us to safely share it between tasks. We'll use this variable to
 track whether or not the LED should be blinking.
 
 ```rust
@@ -651,7 +651,7 @@ Using the priorities assigned to interrupts, an executor is run in each of these
 interrupts[^6]. This allows for a form of priority-based scheduling, but it's a
 decent amount of added complexity compared to a traditional preemptive RTOS.
 
-Additionally the ability to spawn more tasks than you would with a traditional
+Additionally, the ability to spawn more tasks than you would with a traditional
 RTOS can be a double-edged sword. While it's great to be able to spin up more
 tasks, it can be easy to go overboard and create too many tasks. This can lead
 to an overloaded task queue, with tasks spending more time waiting to be polled.
@@ -659,7 +659,7 @@ to an overloaded task queue, with tasks spending more time waiting to be polled.
 ## Final Thoughts
 
 Async Rust is a powerful tool for embedded systems. It allows us to write
-concurrent code that is easy to reason about, and has a small memory footprint.
+concurrent code that is easy to reason about and has a small memory footprint.
 It's not without its downsides, but the benefits far outweigh the costs in my
 opinion. I hope this article has helped you understand how async Rust works
 under the hood, and how it can be used to write concurrent code on embedded
