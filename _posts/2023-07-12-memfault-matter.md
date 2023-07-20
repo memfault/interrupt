@@ -6,7 +6,6 @@ description:
   environment - the changes required to the Memfault SDK, the required set-up
   and ideas for future integration of Memfault with Thread.
 author: mabe
-image: img/<post-slug>/cover.png # 1200x630
 ---
 
 <!-- excerpt start -->
