@@ -7,11 +7,12 @@ image:
 
 <!-- A little bit of background of why the reader should read this post. -->
 
-These days when embedded RTOS-es are huge and bloated, often a simple lightweight framework is needed for embedded devices. Since ARM is the most popular embedded CPU (I mean both microcontrollers like Cortex-M and 'big ARMs') and almost every ARM processor contains internal hardware scheduler, I think it would be interesting to implement a compact framework utilizing these features. As far as I know, the most popular approach to RTOS-less event-driven systems is super-loop consuming events that are produced by interrupts. This article discusses an alternative approach which seems to be more efficient. It has minimal overhead compared to RTOS but also brings some benefits to event-driven systems because of scalability and absence of busy waiting.
+Many embedded RTOS now have at least a few thousands lines of code, so a simple lightweight framework is often needed for embedded devices. Since ARM is the most popular embedded CPU and almost every ARM processor has a hardware scheduler, I think it would be interesting to make a compact framework utilizing these features. As far as I know, the most popular approach to RTOS-less event-driven systems is super-loop consuming events that are produced by interrupts. This article discusses an alternative approach which seems to be more efficient. It has less overhead than RTOS and also brings some benefits to event-driven systems.
 
 <!-- excerpt start -->
 
-This article is intended to describe the alternative approach somewhere in between RTOS and bare-metal no-OS systems.
+One of the main benefits of a RTOS is task decomposition to independent concurrent threads. Typically, it enhances the system maintainability, reduces its complexity and facilitates subsequent development. But this is not totally free, RTOS kernel takes up a portion of system resources and introduces new issues because of its complexity. Also, bugs related to concurrency and synchronization are known to be the hardest things to fix. Loop-based solutions are cumbersome and have a bad reputation because they don't respond quickly.
+This is why concepts where interrupts are used as the main 'execution engine' are so popular. Interrupts have low overhead but they allow for preemptive design. In their latest MCU designs, ARM even made handlers, that can be written in C. But, writing application logic in interrupt handlers makes it hard to break tasks down, as it might be in the RTOS case. So, our goal is to describe an alternative approach that reuses hardware properties of the interrupt controller to allow both task decomposition and overall framework simplicity.
 
 <!-- excerpt end -->
 
@@ -20,112 +21,134 @@ This article is intended to describe the alternative approach somewhere in betwe
 {% include toc.html %}
 
 
-## Hardware scheduler
+## The hardware scheduler
 
 
-Do you remember how the 'usual' RTOS scheduler works? It maintains a set of executable entities with some user-defined priority. These entities may activate each other either directly or indirectly. The scheduler takes responsibility that the most prioritized entity will 'run' and activation of other entities will trigger 'rescheduling' and possibly preemption of the currently active one.
+Do you remember how the 'usual' RTOS scheduler works? First, it keeps a set of threads with some user-defined priority. Second, threads may activate each other, either directly or indirectly. Third, the scheduler is responsible for ensuring that  the most prioritized thread will be active and activation of other threads will trigger 'rescheduling' and possibly preemption of the currently active one.
 
-If you look at the programmer's model of interrupt controllers like NVIC or GIC, you notice that these devices do exactly that. For example, in the NVIC case, the device contains a special register called STIR (Software Trigger Interrupt Register). Writing a vector number to that register causes corresponding interrupt to be activated exactly the same way as hardware does. Since the user may also adjust interrupt preemption priority, interrupt controller itself may be treated as implementation of the so-called [actor model](https://en.wikipedia.org/wiki/Actor_model) in **hardware**. When you trigger an interrupt its priority management (i.e. delaying when interrupt with greater priority is active) and activation is also performed by hardware. So, necessary ingredients for the hardware-implemented actor model are:
-
-- Ability to trigger interrupts with different vectors programmatically
-- Independently adjustable priority for each vector
-
-The approach is to use this model and map priorities to interrupt vectors with user-defined priority. Note that this model contains no threads and runs at a single shared stack. It is inherently asynchronous and even applicable to multiprocessor systems since (in the case of GIC) you may trigger interrupts on other CPUs too.
+If you look at the programmer's model of interrupt controllers like [NVIC](https://developer.arm.com/documentation/ddi0337/e/Nested-Vectored-Interrupt-Controller?lang=en) or GIC, you will notice that these devices do exactly that. For example, in the NVIC case, the device contains a set of registers describing the state of interrupt vectors, their priorities and so on. Also, it has a special register called STIR (Software Trigger Interrupt Register). Writing a vector number to that register causes the corresponding interrupt to be activated in the same way as hardware does. Since the user can also change the priority of interrupts, the interrupt controller itself may be treated as a simple scheduler or an implementation of the so-called [actor model](https://en.wikipedia.org/wiki/Actor_model) in **hardware**. The idea is to implement an actor-based framework and utilize the interrupt controller as a form of hardware scheduler.
 
 
 ## The concept
 
 
-Since the actor model itself is a very complex topic for a single pocket article, instead of talking about abstractions, I mostly focus on their representation in the MCU environment.
+Since the actor model itself is a very complex topic for a single pocket article, instead of talking about abstractions, I will focus on their representations in the MCU environment.
+The classic actor model describes an actor as a message handler, similar to an interrupt handler. When handling messages, the actor may:
 
-In the classic actor model, an actor is just a message handler similar to interrupt handlers. Unlike threads, it has no dedicated stack and its purpose is to react to messages arriving into its internal mailbox.
-
-During message handling, the actor may:
 - create new actors
 - send messages to other actors
 - read/write its local state
 
-Despite the actor and its mailbox are tightly coupled in this model, I think it is less practical than relying on separate queues. The latter case is more flexible since an actor may choose which queue to poll depending on the message that is being processed.
+Actors use messages and queues to communicate, so, there are only three types of software objects: queues, actors and messages.
 
-Since there are no threads, the main() purpose is just an initialization. It ends with an infinite loop waiting for interrupts. Note that after initialization completes, there are no other  executable entities except interrupt handlers.
+Despite the actor and its mailbox being tightly coupled in classic models, I think it is less practical than relying on separate queues. The latter case is more flexible, an actor may choose which queue to poll depending on the message being processed. Here, it is assumed that the actor may only have one message, and it has to poll some queue every time it finishes handling the current message.
 
-Interrupts are split into two classes: interrupts producing messages and interrupts consuming messages. Also, there are only three types of software objects: queues, actors and messages.
+All available interrupt vectors are divided into two classes: those that produce messages and those that consume messages. It is expected that interrupts designated to peripheral devices will post messages to queues that in turn have subscribed actors. 
 
-It is expected that interrupts designated to peripheral devices will post messages to queues which in turn have subscribed actors, so, pseudocode for the interrupt handler may be written as:
+Let's implement simplest 'blinky' application with one actor who handles messages from systick interrupt and controls onboard LED. The full source of the example for STM32 Bluepill board may be found [here](/example/hw-actors/main.c). The messages have to be sent from systick interrupt to the actor controlling the LED. Therefore, message payload is the next LED state:
 
+        ```c
+        struct example_msg_t {
+            struct message_t header;    /* Any message must have the header */
+            unsigned int led_state;     /* Payload */
+        };
+        ```
 
-        device_interrupt_handler() {
-            message = alloc_message(pool)
-            ... read device registers and set message payload ...
-            push_to_queue(queue, message)
+The systick interrupt handler may be written as follows:
+
+        ```c
+        void SysTick_Handler(void) {
+            static unsigned int led_state = 0;
+            led_state ^= 1;
+            struct example_msg_t* const msg = message_alloc(&g_pool);   /* Allocate new message */
+
+            if (msg) {
+                msg->led_state = led_state;                             /* Set message payload */
+                queue_push(&g_queue, &msg->header);                     /* Send to the queue */
+            }
         }
+        ```
 
+Interrupt handlers that are dedicated to actors contain only a call to the function, examining a list of active actors with priority corresponding to that vector:
 
-Interrupt handlers that are dedicated to actors contain just a call to function, examining a list of active actors with priority corresponding to that vector:
-
-
-        actor_interrupt_handler() {
-            schedule_actors(VECTOR_ID)
+        ```c
+        void USB_LP_CAN1_RX0_IRQHandler(void) {     /* Unused vector that is reused for actor execution */
+            context_schedule(EXAMPLE_VECTOR);
         }
+        ```
 
+At startup, each actor subscribes to a queue. Once the message arrives in that queue the actor is activated. Actor activation means that it gets a pointer to the message and its state is changed to 'ready', so the scheduler can choose it on the next scheduling call. As each actor is permitted to subscribe to only one queue, the subscription may be implemented as a return value, wherein the actor is required to provide a valid pointer to the queue to which it wishes to subscribe. The values returned by an actor may change over time but they must always be a valid queue. 
 
-On initialization phase, each actor subscribes to some queue. Once message arrives to that queue the actor is activated. Since each actor may be subscribed to exactly one queue, subscription may be implemented as return value: the actor should return a valid pointer to the queue it wants to be subscribed to. Return values may change during an actor’s lifetime but must always be a valid queue. This is because of the absence of internal queue: when an actor has not been subscribed to a queue, it will have no chance to run again. So, pseudocode for an actor is shown below:
+        ```c
+        static struct queue_t* actor(struct actor_t* self, struct message_t* m) {
+            const struct example_msg_t* const msg = (struct example_msg_t*) m;
 
+            if (msg->led_state == 0)            /* Set LED according to message payload */
+                GPIOC->BSRR = GPIO_BSRR_BR13;   /* LED off */
+            else
+                GPIOC->BSRR = GPIO_BSRR_BS13;   /* LED on */
 
-        actor(self, message) {
-            ... message handling ...
-            free(message)
-            return queue_to_be_subscribed_to
+            message_free(m);                    /* Return the message to the pool */
+            return &g_queue;
         }
+        ```
 
+Queues can have both messages and actors. If someone writes a message in an empty queue, it will stay there until someone asks for it. If an actor tries to get a message from an empty queue it will be saved as a subscriber and later when a message comes in it goes into the actor's mailbox. It is therefore possible for a queue to contain either messages or actors, but never both. It is noteworthy that the queue is merely a head of linked list, lacking internal buffers thereby preventing any possibility of queue overflow.
 
-Queues may contain both messages and actors. If someone posts a message in an empty queue, it will save that message until some actor will try to poll. On the other hand, if an actor tries to get a message from an empty queue it will be saved as a subscriber and later when a message arrives the actor will be activated. Therefore, a queue at any moment of time may contain either messages or actors, but never both. Note that queue is just a head of linked list, it has no internal buffers, so queue overflow cannot happen.
-
-For simplicity, messages are fixed-sized. Message allocator is just a pool of fixed-sized memory chunks. For latency-critical systems, it may be even implemented as lock-free. When the message pointer arrives to an actor, it is assumed that message type is known to its recipient since it knows what queue it polls.
+For simplicity, messages are fixed-sized. Message allocator is just a pool of fixed-sized memory chunks. When a message pointer gets to an actor, it is assumed that the message type is known to the actor because it kwnos what queue it polls.
+The system is also inherently asynchronous and even applicable to multiprocessor systems since (in the case of GIC) you may trigger interrupts on other CPUs too.
 
 
 ## How it works
 
 
-As in the case of a thread scheduler, there is some global context containing runqueues, or ready-to-run lists. Each runqueue is mapped to some interrupt vector (unused by devices in that given application). Priorities of such vectors are adjusted to reflect runqueue priority.
+Let's look at the concept above in more detail. MCUs have a lot of interrupt vectors, but only a few are used in each application. Usually unused interrupt vectors are disabled and mapped to panics or infinite loops. The aim of this approach is to reuse vectors unused by devices in that given application and map actor priorities to these vectors. In other words, actors with priority N are associated with interrupt vector X which is adjusted to have priority N. Therefore, when actors activate each other (indirectly, via message passing using queues) they trigger interrupt vectors associated with the target actor's priority. All the work related to preemption, delaying, etc. is done in hardware and we shouldn't even be concerned about it (this also means that we don't have to write any code). It is up to the user which exact interrupt vector is mapped to each runqueue. Users are responsible for setting appropriate priorities for vectors in order to reflect their actual preemption priority (for example, runqueue 0 has the lowest priority, so the vector corresponding to runqueue 0 should have the lowest priority among all the other vectors). Simplified pseudocode for push may be written as:
 
-When some event (hardware interrupt) occurs, it allocates and posts a message to some queue, this causes activation of the subscribed actor, moving the message into its incoming mailbox, moving actor to the list of ready ones and also triggering interrupt vector corresponding to actor's priority. After leaving the interrupt handler CPU hardware automatically transfers control to the activated vector, its handler then calls framework's function 'schedule', which eventually calls the corresponding actor.
-During this process, the system remains fully preemptable and asynchronous: other interrupt handlers may post messages to other queues, if corresponding actors are delayed then messages just will be accumulated in queues. When some actor or interrupt activates another high-priority actor, then preemption occurs immediately, so this system has good response times and less jitter than loop-based solutions.
+        push(queue, msg) {
+            if no waiting actors
+                enqueue msg
+            else 
+                dequeue waiting actor from queue
+                save msg pointer into actor object
+                request interrupt associated with the actor
+        }
 
-Normally, the actor model does not require explicit synchronization like semaphores and mutexes because there are no mutable shared state. However, there may be shared resources, such as devices. In such a case mutual exclusion may be represented as multiple actors posting their requests to a single queue and one actor associated with that queue who will do all the work sequentially. Nevertheless, in practice, it is often desirable to block preemption. This may be done using hardware features for temporarily raising a running handler’s priority to some ceiling. Ability to block certain interrupt priorities without disabling interrupts completely also helps with response times since high-priority actors may never be blocked.
+If an actor has been activated, it causes corresponding interrupt vector to be triggered. As with a thread scheduler, there is a global context that contains runqueues, or ready-to-run lists. Each such runqueue is assigned an interrupt vector. So, schedule function may be implemented as follows:
 
-Note that the interrupt vector is assigned to priority level, not to an actor, so the total number of actors is unlimited:
+        context_schedule(this_vector) {
+            until runqueue associated with this_vector is nonempty
+                dequeue next actor
+                call actor's function with saved message
+        }
+
+As actors and interrupts, which are utilized by devices and produce messages, constitute the sole executable entities in this design, it implies that there are no threads present in this system. Since there are no threads, main() is just an initialization. The second important point is that actors are essentially run-to-completion routines. It means that they only need a stack frame when they are running, so actors can use a common stack.
+
+When a hardware interrupt occurs, it allocates and posts a message to a queue. This causes the subscribed actor to be activated, the message to be moved into its incoming mailbox, the actor to be moved to the list of ready ones and also the interrupt vector that corresponds to the actor's priority to be triggered. After the interrupt handler is finished, CPU hardware automatically transfers control to the activated vector. Its handler then calls a function called 'schedule', which eventually calls the corresponding actor.
+
+The system remains fully preemptable and asynchronous during this process: other interrupt handlers may post messages to other queues, if the actors are delayed then messages will be accumulated in queues. When an actor or interrupt triggers another high-priority actor, preemption is initiated immediately.
+
+It is important to emphasize that the interrupt vector is assigned to a priority level, not an actor, so the total number of actors is unlimited:
 
 ![](/img/hw_actors/vectors.png)
 
+It's clear that the number of possible priorities is limited to the number of interrupt vectors and available hardware preemption priorities. Modern controllers have about a thousand vectors, but only a few of them are actually used in each application. Therefore, it seems that there should be no vector shortage. If that's the case, then maybe your application is so complicated that a full-featured RTOS would be a better choice.
 
-Arbitrary interrupt vector are mapped to runqueues. Each runqueue contains actors with the same priority. It is user responsibility to set proper priorities for vectors to reflect its actual preemption priority (i.e. runqueue 0 has lowest priority, so the vector corresponding to runqueue 0 should have lowest priority among other vectors).
-
-It is obvious that the number of possible priorities is limited to the number of interrupt vectors and available hardware preemption priorities. Modern controllers have about a thousand vectors with only a few of them actually used in each application, so it seems that there should be no vector shortage. If it is the case, then possibly your application is so complex that full-featured RTOS would be a better option.
-
-Another limitation is vectors available for software triggering. For some controllers like NVIC, any vector may be triggered by both software and hardware, while other devices like GIC contain several vector classes and only one of them is available for software. In GIC, this is just 16 SGIs (software generated interrupts). Note that this limitation does matter only for preemption. If you have 16 vectors with different priorities, it means you have at most 16 actor nesting levels.
-
-
-## Implementation
-
-
-The concept described above may be [implemented](https://github.com/romanf-dev/magnesium) in less than 250 lines of C code. Please note that the framework is just an example, and it is not a production ready project yet. It is extremely lightweight compared to RTOS but supports preemption too. Also, its advantage compared to numerous ‘actor model implementations’ from Akka to Erlang is the fact that in the MCU world it is actually hardware-implemented. In the case of fully software implementation, the framework would have to deal with interrupt frames, its patching to emulate preemption, calls for rescheduling on interrupt return, examining bitmaps to find the most prioritized nonempty runqueue, and so on. With hardware implementation, you get all of this functionality for free along with bonuses like tail-chaining, depending on MCU. Drawbacks of hardware implementation is lack of flexibility: there is only one scheduling algorithm, fixed number of priorities, fixed number of available vectors, etc. Any other variant is not possible as it might be in software scheduler implementation.
-
-It is also interesting that the actor model has a direct correspondence with [Petri nets](https://en.wikipedia.org/wiki/Petri_net). If you rename queues to places, actors to transitions and messages to tokens, then any program may be seen as some kind of runnable Petri net. These nets may be analyzed mathematically and some of its properties may be formally proven, such as reachability of some state.
+The aforementioned concept can be implemented in approximately 200 lines of C code. In the case of software implementation, the framework would have to deal with interrupt frames, their patching to emulate preemption, calls for rescheduling on interrupt return, examining bitmaps to find the most prioritized runqueue, etc. With hardware-assisted implementation you can get all of this functionlaity for free.
 
 
 ## Pros & cons
 
 
-Actor model has been around since 1973. It is well suited for event-driven systems and implementation of patterns like the chain of responsibility. In the context of embedded systems, it may help with modularity, testability, power efficiency, and configurability.
+Interrupts are often used as a simple 'execution engine' in RTOS-less embedded systems. While it is better than loop-based solutions because of preemption, it may lead in worse latencies when complex processing is done in handlers directly. Many devices use interrupts for a variety of reasons, for example, communication devices use them to signal transmission completion, new data receiving, errors and so on. When the data is processed in handlers, it may block responses to other events, which  may be undesirable. Especially when communication protocol has timing constraints, like USB, where the host pings devices periodically. So it's a good idea to split interrupt handlers into several parts and keep interrupt code as short as possible to be able to respond to other incoming events. This approach may be a way to achieve such a split. Furthermore, it may also help with the processing of events from multiple sources and the utilization of multiple CPUs. Also, actors may be put in another environment, like a host computer, for testing purposes.
 
-It is a common approach to use interrupt handlers as simple 'execution engine' in RTOS-less embedded systems. While it is better than loop-based solutions because of preemption, it may result in worse latencies in case when complex processing is performed in handlers directly. Many devices use interrupts by number of reasons, communication devices for example use them to signal transmission completion, new data receiving, errors and so on. When incoming data is processed in handlers, it blocks responses to other events, and this may be undesirable. Especially in case when communication protocol has timing constraints like USB where host periodically pings devices. So it is a good idea to split interrupt handlers to several independent parts and keep interrupt code as short as possible to be able to react to incoming events appropriately. Described approach may be considered as a way to do such split. Also, it simplifies timing and its use for timed events, and may help with processing events from multiple sources as well as utilization of multiple CPUs.
+But the article wouldn't be complete without discussing the drawbacks. The most significant disadvantage of the model is its requirement to redefine the task in terms of actors and messages (publish-subscribe model), which may be difficult. Just think about how to implement timeouts or waiting for a response before further message processing. Since the actor model relies on message allocations, it is less deterministic then fixed-memory solutions, like threads and semaphores. When message pools are exhausted, it is uncertain how the handler should proceed. In other words, design patterns for the actor model are less known and may be more complex than their threading-based counterparts are.
 
-Communicating actors may be easily put into another environment, like a host computer, for testing purposes. They do not need busy waiting, as in RTOS-less cases when the main program waits for data from interrupt handlers using ring buffers. This helps with both testability and power efficiency. Compared with threads, actors are less vulnerable to issues like unbounded priority inversion (but these issues are still possible!) and allow for better formal reasoning.
 
-However, the article would be incomplete without discussion about drawbacks. The most painful thing is the fact that actors may be deadlocked much easier than threads: any mistake in queue selection and the system will probably hang. Another disadvantage of the model is its requirement to redefine the task in terms of actors and messages, which may be not so easy. For example, just think about how to implement timeouts or waiting for a response before further message processing. Since the actor model relies on message allocations, it is less deterministic compared to fixed-memory solutions, like threads and semaphores. When message pools are exhausted, it is unclear how the handler should deal with it. In other words, design patterns for the actor model are less known and may be more complex than their threading-based counterparts are.
+## Final thoughts
 
-In general, the actor model is a bad choice when you need some kind of global consensus or transactions (i.e., rollback of previous work when some actor at the end of the chain fails). So, while not all systems are suitable for the actor model, it may be a good choice for some and hardware implementation of parts of the model in widely available MCUs makes it yet more attractive.
+
+Actor model has been around since 1973. In embedded systems, it may help with modularity, testability, power efficiency, and configurability. The utilization of hardware-implemented scheduling allows to further simplify source code while also speeding up scheduling operations. If your application uses few interrupt vectors and your implementation of interrupt controller allows you to use others, it may be a good decision to reuse these vectors for your own needs. Keep in mind, however, that this is largely dependent on the implementation. For example, NVIC spec is fixed but number of available priorities and vectors may vary from one vendor to another. So, while not all systems are suitable for the actor model, it may be a good choice for some and hardware implementation of parts of the model in widely available MCUs makes it even more attractive.
+
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
@@ -135,14 +158,12 @@ In general, the actor model is a bad choice when you need some kind of global co
 
 {:.no_toc}
 
-## References
+## Further reading
 
 - The actor model in 10 minutes:
   <https://www.brianstorti.com/the-actor-model>
 - Actor Model Explained:
   <https://finematics.com/actor-model-explained>
-- Wikipedia:
-  <https://en.wikipedia.org/wiki/Actor_model>
 - NVIC operation:
   <https://developer.arm.com/documentation/ddi0403/d/System-Level-Architecture/System-Address-Map/Nested-Vectored-Interrupt-Controller--NVIC/NVIC-operation>
 - Using Preemption in Event Driven Systems with a Single Stack:
