@@ -1,11 +1,10 @@
 /** 
-  * @file  magnesium.h
-  * @brief Interrupt-based preemptive multitasking.
+  * @file  hw_actors.h
   * License: Public domain. The code is provided as is without any warranty.
   */
 
-#ifndef _MAGNESIUM_H_
-#define _MAGNESIUM_H_
+#ifndef _HW_ACTORS_H_
+#define _HW_ACTORS_H_
 
 #include <stddef.h>
 #include <stdbool.h>
