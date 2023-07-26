@@ -4,9 +4,9 @@ description: Monitoring & predicting the battery life of millions of embedded de
 author: tyler
 ---
 
-I’ve been a firmware engineer at two wearable companies in the past, Pebble and Fitbit, and there was always one class of customer support tickets and user complaints that never went away: issues around battery life. It was a constant whack-a-mole game because it seemed like every new firmware version introduced a battery regression.
+I’ve been a firmware engineer at two wearable companies in the past, Pebble and Fitbit, and there was always one class of customer support tickets and user complaints that never went away: issues around battery life. It was a constant game of whack-a-mole with every new firmware version introducing a battery regression.
 
-Battery life is essential for many products we use in our daily lives: our phone, car, vacuum, watch, headphones, ring, mouse keyboard, and more are all becoming battery-operated devices. Although some of us individuals might want to keep these things plugged in, an overwhelming number of customers are demanding wireless and battery-operated devices, so hardware companies are selling them.
+Battery life is essential for many products we use in our daily lives: our phone, car, vacuum, watch, headphones, ring, mouse keyboard, and more are all becoming battery-operated devices. Although some of us might want to keep these things plugged in, an overwhelming number of customers are demanding wireless and battery-operated devices, so hardware companies are selling them.
 
 The ideal situation is that for every new hardware release, each new firmware update, and for 99% of customers, there are no surprises around battery life.
 
@@ -26,7 +26,7 @@ Users of IoT devices expect them to be set-it-and-forget-it devices. Once connec
 
 It’s also important that the battery behaves in ways the customer expects. It was one thing for the Pebble watch to linearly drop from 100% to 0% over 6 days. It was an entirely different issue if the watch reported 90% for 3 days then dropped to 10% and died on the 4th day.
 
-Users expect that batteries do not lie to them and that they are always reliable. As hardware people, we know this isn’t the case. Batteries are hard, and it's our job to make them seem reliable.
+Users expect batteries to be reliable and not lie to them, but as engineers who work with hardware often, we know this isn’t the case. Batteries are hard, and it's our job to make them seem reliable.
 
 ## But batteries are _hard_
 
@@ -64,7 +64,7 @@ Second, for each battery voltage reading we reported and used in calculations, w
 
 ### Not all batteries are equal
 
-There will be both good and bad batches of batteries purchased from a vendor. Some might also be super-hero batteries and be exceptional, and others might barely hit the threshold of the minimum Ah ratings. That's just how it is, especially when projects are counting cents on their BOM.
+There will be both good and bad batches of batteries purchased from a vendor. Some might also be exceptional super-hero batteries, and others might barely hit the threshold of the minimum Ah ratings. That's just how it is, especially when projects are counting cents on their BOM.
 
 Also, as you likely already know, batteries age over time and lose capacity with the number of cycles they go through. At Pebble, we took this into account by slowly updating the battery curve over time for different revisions of the hardware and then year over year to make sure that we tried our best to account for battery aging.
 
@@ -190,7 +190,7 @@ Here, we try to measure any peripheral that might consume significant amounts of
 
 ## Battery metrics for a single device
 
-The most important use case of metrics is being able to debug individual device issues that come up, either internally or via customer support. I see most companies start with logs to diagnose customer issues, but using metrics is where the real value comes in, as you can see more data at a glance and collect a lot more data, especially if the bandwidth limitations are strict (satellite connections, LTE, etc.)
+The most important use case of metrics is being able to debug individual device issues that come up, either internally or via customer support. I see most companies start with logs to diagnose customer issues, but using metrics is where the real value comes in. You can see visualize and collect much more dadta, especially if the bandwidth limitations are strict (satellite connections, LTE, etc.)
 
 For measuring battery life, the most important metric to capture is, of course, the SoC of the device. As stated above, this is typically sent first as a voltage reading, and eventually as a percentage once a battery curve is adopted. With both of these plotted alongside other metrics, you can quickly and easily see what metrics contribute to battery drain.
 
@@ -202,13 +202,13 @@ For instance, in the example above, our battery SoC % (blue line) is dropping ra
 
 Knowing this, we can start digging into the other existing metrics, or adding more metrics! We should start capturing metrics for each module that writes to the flash, or maybe track which tasks are running while the high CPU utilization is taking place. You can of course track _too many metrics_ within a single firmware, but that number is honestly really high. With each metric only taking up 4-8 bytes per measurement per hour, I’ve worked on firmware that captures between 50-200 metrics.
 
-As mentioned throughout the article, some projects will only record the voltage and send that as a metric. This works relatively well when digging into a single, especially if the period of the battery only lasts a few weeks and the metrics can be viewed over the entire time. But it is much more advantageous to record a percentage if possible, so try to build that battery curve!
+As mentioned throughout the article, some projects will only record the voltage and send that as a metric. This works relatively well when digging into a single device, especially if the period of the battery only lasts a few weeks and the metrics can be viewed over the entire time. It is much more advantageous to record a percentage if possible, so try to build that battery curve!
 
 ## Battery Life Metrics for an entire fleet
 
 Trying to solve all battery problems on a per-device basis will only get you so far. No engineer has time to look at every device’s metrics every day to understand if battery life is getting better or worse over time, or whether a new firmware version introduced a regression or improvement, which is why we need to aggregate these battery metrics across an entire fleet of devices.
 
-At the fleet level with a million devices, one of the most difficult questions to answer is how long is their average battery life. It can be made easier as long as you follow the do's and don'ts outlined in the rest of the article and take some inspiration from my previous company’s learnings.
+At the fleet level with a million devices, average battery life can be very difficult to determine. It can be made easier as long as you follow the do's and don'ts outlined in the rest of the article and take some inspiration from my previous company’s learnings.
 
 ### Don’t: Record the state of charge directly
 
