@@ -12,7 +12,7 @@ The ideal situation is that for every new hardware release, each new firmware up
 
 <!-- excerpt start -->
 
-In this post, I’ll cover how to start thinking about collecting metrics that contribute to battery life, how to dig into this data for individual devices, and finally how to aggregate all metrics from devices in the field to accurately predict the battery life of devices in the field for a given firmware release. All of these abilities will help projects optimize battery life and combat issues quickly when they arise.
+In this post, I’ll cover how to start thinking about collecting metrics that contribute to battery life, how to dig into this data for individual devices, and finally how to aggregate all metrics from devices in the field to accurately predict the battery life of devices in the field for a given firmware release. All of these abilities will help projects optimize battery life and combat issues quickly when they arise, whether you have ten or a million devices in the field.
 
 <!-- excerpt end -->
 
@@ -107,7 +107,11 @@ If you happen to be lucky enough to be able to use a fuel gauge and happen to be
 
 This is most commonly what companies have, as it’s very simple to get from the battery system and doesn’t consume any extra power. The problem with only tracking the voltage is that it’s not easily human-understandable, does not increase or drop linearly, and will change under operating conditions, as mentioned above.
 
-We need something a little better if possible.
+<p align="center">
+  <img width="400" src="{% img_url monitoring-battery-life/battery-curve.png %}" alt="battery-curve" />
+</p>
+
+We need something better if possible.
 
 #### State of charge with voltage and battery curve
 
