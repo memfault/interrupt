@@ -2,6 +2,7 @@
 title: Understanding Battery Performance of IoT Devices
 description: Monitoring & predicting the battery life of millions of embedded devices in production is made possible through the use of state of charge delta metrics and aggregations.
 author: tyler
+tags: [best-practices, battery-life, monitoring]
 ---
 
 I’ve been a firmware engineer at two wearable companies in the past, Pebble and Fitbit, and there was always one class of customer support tickets and user complaints that never went away: issues around battery life. It was a constant game of whack-a-mole with every new firmware version introducing a battery regression.
@@ -60,7 +61,7 @@ It’s ideal to measure the voltage during known or expected amounts of current 
 
 For our Pebble watches, we did two things. First, we tried to optimize when we sampled the battery voltage to make sure that there was no massive current draw at the time of the reading. The biggest current draws were during LCD backlight usage, vibe motor events, and intense CPU and graphics computations (such as Heiko Behrens’s Intrinsic Gravelty demo[^heiko_demo]).
 
-Second, for each battery voltage reading we reported and used in calculations, we sampled the voltage many times in a short period and took the average of the samples. This helped filter out any noise from high power draws and low voltage readings that might have skewed our readings. In our case, the vibe motor and backlight display were the two that would really message up our voltage readings.
+Second, for each battery voltage reading, we reported and used in calculations, we sampled the voltage many times in a short period and took the average of the samples. This helped filter out any noise from high power draws and low voltage readings that might have skewed our readings. In our case, the vibe motor and backlight display were the two that would really message up our voltage readings.
 
 ### Not all batteries are equal
 
@@ -95,7 +96,7 @@ One of the most common and simplest ways to measure the current capacity within 
 
 #### Coulomb Counting with Fuel Gauges
 
-At Pebble, we had a fuel gauge on one of the watches. A fuel gauge is a nifty hardware component that can indicate the battery’s SoC and health. It can understand the battery’s current capacity in two ways: measuring the voltage from the battery and learning the patterns over time, and also Coulomb counting, which measures how much current passes in and out of the battery over time.
+At Pebble, we had a fuel gauge on one of the watches. A fuel gauge is a nifty hardware component that can indicate the battery’s SoC and health. It can understand the battery’s current capacity in two ways: measuring the voltage from the battery and Coulomb counting, which measures how much current passes in and out of the battery over time.
 
 For devices with large batteries, such as phones, e-mobility, cars, etc., fuel gauges are probably the way to go. They are reliable, and you can hand off the difficult task of measuring the current battery’s capacity to a device that was built to measure it.
 
@@ -117,15 +118,15 @@ We need something better if possible.
 
 One thing that can be done to help convert voltage to a percentage is to come up with a battery curve. A battery curve is simple: it's a map between a battery's voltage and the relative percentage that likely pertains to that voltage. Products also usually have both a charge and a discharge curve.
 
-A battery curve is what companies will have after they have some form of understanding of their battery properties and have spent some time. It is more easily understood by customer support teams and engineers that aren’t directly involved with the battery subsystem. That isn’t to say that it
+A battery curve is what companies will have after they have a good understanding of their battery's properties and enough data to generate a curve. It is more easily understood by customer support teams and engineers that aren’t directly involved with the battery subsystem.
 
 A nice tool that I came across this year at Embedded World was Qoitech[^qoitech], which builds a product to help users build charge and discharge curves[^qoitech_curves] under different environments. I believe their product is well worth the money if it can help companies translate a cryptic voltage reading to a percentage that everyone can understand.
 
 ## Brief Primer on Metrics
 
-Before continuing to the following sections about capturing and aggregating metrics around battery life, let’s briefly discuss what a metric is, since I continue to come across firmware engineers who haven’t thought about them all that much.
+Before delving into the subsequent sections concerning capturing and aggregating metrics around battery life, let's take a moment to briefly discuss what a metric is. It's essential because I've encountered firmware engineers who haven't given them much consideration.
 
-A **metric** is a measurement captured at runtime, and combining large numbers of metrics and calculating statistics is called an **aggregation**.
+A **metric** is a measurement captured at runtime, and the process of combining large numbers of metrics and calculating statistics is known as **aggregation**.
 
 You can capture metrics about almost anything in your system. Common things that I like to measure in firmware are task runtimes, count of connectivity errors and time connected, peripheral utilization for power estimation, and more. Once all of these metrics are flowing out of a device and into a data warehouse, you can uncover trends in them!
 
@@ -187,10 +188,12 @@ Here, we try to measure any peripheral that might consume significant amounts of
 - time running power-hungry blocks of code
 - boot time
 - number of logs written
+- time spent blocked on mutexes or queues
+- number of context switches to detect thrashing
 
 ## Battery metrics for a single device
 
-The most important use case of metrics is being able to debug individual device issues that come up, either internally or via customer support. I see most companies start with logs to diagnose customer issues, but using metrics is where the real value comes in. You can see visualize and collect much more dadta, especially if the bandwidth limitations are strict (satellite connections, LTE, etc.)
+The most important use case of metrics is being able to debug individual device issues that come up, either internally or via customer support. I see most companies start with logs to diagnose customer issues, but using metrics is where the real value comes in. You can see visualize and collect much more data, especially if the bandwidth limitations are strict (satellite connections, LTE, etc.)
 
 For measuring battery life, the most important metric to capture is, of course, the SoC of the device. As stated above, this is typically sent first as a voltage reading, and eventually as a percentage once a battery curve is adopted. With both of these plotted alongside other metrics, you can quickly and easily see what metrics contribute to battery drain.
 
@@ -404,11 +407,11 @@ Do note that _both_ SoC and SoC delta should be reported. The first is useful fo
 
 ### Do: Drop heartbeats with a battery charge event
 
-Notice in the above example that there were times when the SoC increased. That is because a charger was connected during that interval. We also ignored them when computing the average battery drain. This was essential because we only want to add up the intervals in which the device was operating normally and on battery power.
+Notice in the table in the previous section, there were times when some devices had their SoC % increase (noted in bold). That is because a charger was connected during that interval. We also ignored them when computing the average battery drain. This was essential because we only want to add up the intervals in which the device was operating normally and on battery power.
 
 Instead of ignoring these on the server, I would highly suggest dropping the metric and not sending it at all, or somehow marking any SoC delta metric with a note that a charger was connected. This will enable the SQL wizard to easily ignore those events in the final calculations.
 
-The thing to note is that dropping a few data points here and there ultimately does not matter much. When thousands of devices are reporting data in every hour, a few dropped hours here and there do not meaningfully change the averages.
+The thing to note is that dropping a few data points here and there ultimately does not matter much. When thousands of devices are reporting data every hour, a few dropped hours here and there do not meaningfully change the averages.
 
 A more advanced code snippet that ignores battery charger events can be found in [Memfault's documentation](https://docs.memfault.com/docs/best-practices/metrics-for-battery-life/#memfault-c-instrumentation).
 
