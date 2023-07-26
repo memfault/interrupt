@@ -1099,6 +1099,6 @@ Let us know in the discussion area below!
 [^11]: [See "5.3.6.8 Reset behavior"](https://infocenter.nordicsemi.com/pdf/nRF52840_PS_v1.0.pdf)
 [^12]: [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
 [^13]: [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
-[^14]: [The Tower of Terror: A Bug Mystery](https://eng.fitbit.com/the-tower-of-terror-a-bug-mystery/)
+[^14]: [The Tower of Terror: A Bug Mystery](https://medium.com/fitbit-tech-blog/the-tower-of-terror-a-bug-mystery-c57f51981eff)
 [^15]: [See "B1.5.5 Reset behavior" & "B1.4.2 The special-purpose program status registers, xPSR"](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf)
 [^16]: [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
