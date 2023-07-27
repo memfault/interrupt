@@ -427,7 +427,11 @@ When sending metrics, be sure to attach a firmware version to each one of them (
   <img width="700" src="{% img_url monitoring-battery-life/battery-compare-software-versions.png %}" alt="Comparing battery life between software versions" />
 </p>
 
-One of the most stressful times at a hardware company is a firmware update rollout because it could be the update that bricks thousands of devices or causes a massive battery life regression. Hopefully, with the use of metrics and some internal testing, the stressful times can be minimized.
+One of the most stressful times at a hardware company is a firmware update rollout because it could be the update that bricks thousands of devices or causes a massive battery life regression. To mitigate the risk, collect data at all stages of the release and constantly look at the data. Even with a few thousand samples, you should be able to make data driven decisions and minimize the stressful deployments. 
+
+<p align="center">
+  <img width="700" src="{% img_url monitoring-battery-life/deployment-stages.png %}" alt="Comparing battery life between software versions" />
+</p>
 
 ## Best Practices
 
