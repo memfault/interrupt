@@ -157,7 +157,7 @@ But we aren't here to talk about Bluetooth disconnections, let's talk about powe
 
 Here's a semi-exhaustive list of items that I've tracked in the past that would help paint a picture for me and my colleagues about what was consuming battery life.
 
-### Connectivitiy & networking
+### Connectivity & networking
 
 This would cover any sort of wireless radio, such as Wi-Fi, LoRa, Bluetooth, ZigBee, LTE, etc.
 
