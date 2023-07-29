@@ -355,7 +355,7 @@ RUN ln -s /usr/bin/clang-format-${llvm_version} /usr/local/bin/clang-format
 RUN ln -s /usr/bin/clang-tidy-${llvm_version} /usr/local/bin/clang-tidy
 ```
 
-This is one of the steps in a _Dockerfile_ that I've previously mentioned which can break quite easily in case you're trying to rebuild an image in a couple of years. In case you're happy with the packages provided for your base images, you can also simply install the packages that are provided with the `apt` registry. Now both `clang-format` and `clang-tidy` are available in the image:
+This is one of the steps in a _Dockerfile_ that I've previously mentioned which can break quite easily when you're trying to rebuild an image in a couple of years. In case you're happy with the packages provided for your base images, you can also simply install the packages that are provided with the `apt` registry. Now both `clang-format` and `clang-tidy` are available in the image:
 
 ```bash
 $ make builder-build
