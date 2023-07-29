@@ -46,7 +46,7 @@ Don't get me wrong, _Docker_ is far from being perfect and I experienced plenty 
 - _Dockerfiles_ are not stable. A _Dockerfile_ that built just fine yesterday might fail to build today. There are simply too many external dependencies.
 - _Docker_ is not really platform-independent. Especially if you're running a container on other CPU architectures, e.g., Apple ARM, you'll notice that some things don't run. We'll see this later.
 - Some _Docker_ features are only supported in Linux or in dedicated Windows containers. E.g., mounting a USB device into a Docker container is not supported on all platforms; a limitation known [since 2016](https://github.com/docker/for-mac/issues/900).
-- _Docker_ is big and thus - just like all the big companies out there - some praised as solutions may be deprecated. I personally experienced this with [docker-machine](https://github.com/docker/roadmap/issues/245). It is always best not to bet 100% on one technology and you always need to be prepared to switch.
+- _Docker_ - just like all the big companies out there - can suddenly deprecate even major features of their tools. I personally experienced this with [docker-machine](https://github.com/docker/roadmap/issues/245). It is always best not to bet 100% on one technology and you always need to be prepared to switch.
 
 With all this in mind, _Docker_ images are an elegant solution for development environments, especially if you have the chance to spin up your own registry. This sounds harder than it is since solutions already exist, e.g., [Google Cloud](https://cloud.google.com), [JFrog Artifactory](https://jfrog.com/artifactory/), and other providers.
 
@@ -148,9 +148,9 @@ When using `apt`, the version of the tools that have been installed depends on t
 
 The downside of **not** having all tools installed locally is that those tools can not be leveraged by your IDE of choice. E.g., when using `vscode` you won't be able to properly set up intellisense or any other helpers if you don't have any compiler installed.
 
-`vscode` allows you to run an instance of the editor within a so-called _development container_. This is also the reason why we chose the `mcr.microsoft.com/vscode/devcontainers/base` image as the base image: We can connect `vscode` within our builder container and therefore have all the tools available! Have a look at the [tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial) for the exact steps or in case anything fails whilst following along this article. For now, I assume that you have `vscode` and the [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) extension installed.
+`vscode` allows you to run an instance of the editor within a so-called _development container_. This is also the reason why we chose the `mcr.microsoft.com/vscode/devcontainers/base` image as the base image: We can connect `vscode` within our builder container and therefore have all the tools installed in our _Docker_ image available! Notice, however, that this `vscode` instance does **not** match your local `vscode` installation. This `vscode` instance is created from scratch and works very similar to remote instances: E.g., you need to explicitly install all the extensions and provide all the settings that you have already set up in your local instance. Have a look at the [tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial) for the exact steps or in case anything fails whilst following along this article. For now, I assume that you have `vscode` and the [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) extension installed.
 
-By creating the [`.devcontainer/devcontainer.json`](https://github.com/lmapii/cproject/blob/main/.devcontainer/devcontainer.json) file, we can tell `vscode` to use our newly built image for its development container, and we'll install some extensions in the container along the way:
+By creating the [`.devcontainer/devcontainer.json`](https://github.com/lmapii/cproject/blob/main/.devcontainer/devcontainer.json) file, we can tell `vscode` to use our newly built image for its development container. We're also installing three extensions within this `vscode` instance by using the `customizations.extensions` field in the `devcontainer.json` configuration file:
 
 ```json
 {
@@ -398,7 +398,7 @@ Now, if you open the `dummy.c` file in your editor it will automatically format 
 
 This section is a little self-promotion of two wrapper scripts for `clang-format` and `clang-tidy` that I am maintaining: [run-clang-tidy](https://github.com/lmapii/run-clang-tidy) and [run-clang-format](https://github.com/lmapii/run-clang-format). Both tools are command line tools written in [Rust](https://www.rust-lang.org/) that simplify and parallelize the execution of `clang-format` and `clang-tidy` from the command line.
 
-Installing the tools within your container _should_ be easy via the [Rust package manager `cargo`](https://github.com/rust-lang/cargo), however, at the time of writing, I could not install any binaries inside a container via the `cargo` `apt` package, and installing the tools from scratch within the container simply took too much time, so I decided to download the released, architecture-specific version instead:
+In our `builder.dockerfile` we'll now install the released, architecture-specific versions from the _GitHub_ repositories of [run-clang-tidy](https://github.com/lmapii/run-clang-tidy) and [run-clang-format](https://github.com/lmapii/run-clang-format).
 
 ```dockerfile
 RUN mkdir -p /usr/local/run-clang-format
@@ -416,7 +416,19 @@ ENV PATH /usr/local/run-clang-tidy:$PATH
 RUN run-clang-format --version
 ```
 
-These wrapper scripts allow to define the execution of `clang-format` and `clang-tidy` based on `.json` input files. Within these files, it is possible to efficiently filter all files, e.g., third-party software for which the format-on-save would be more cumbersome than helpful. Since we'll be adding unit tests later, we can prepare the configurations already:
+Instead of just downloading the pre-built binaries, it is also possible to use the below steps to install _Rust_ and its [package manager `cargo`](https://github.com/rust-lang/cargo) using the [Rust toolchain installer `rustup`](https://rustup.rs/), and then install the two tools by running `cargo install`:
+
+```dockerfile
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain stable -y
+ENV PATH=/root/.cargo/bin:$PATH
+
+RUN cargo install run-clang-format
+RUN cargo install run-clang-tidy
+```
+
+While this approach is less verbose, it significantly increases the image size and image build time: First of all, this installs the full Rust toolchain, which in my tests increased the image size by almost _1 GB_, and second the `cargo install` commands actually compile both tools and all of its dependencies from scratch, which - on my machine - took almost 4 minutes for each. When creating such builder images, it is therefore always important to find the right fit for your need: If you won't be developing using _Rust_ you might be better off _not_ installing it in your builder. This way, you keep build times and the image size as low as possible - no matter how awesome [Rust](https://www.rust-lang.org/) is.
+
+But let's keep on working on our development environment. Why do we need [run-clang-tidy](https://github.com/lmapii/run-clang-tidy) and [run-clang-format](https://github.com/lmapii/run-clang-format)? These wrapper scripts allow to define the execution of `clang-format` and `clang-tidy` based on `.json` input files. Within these files, it is possible to efficiently filter all files, e.g., third-party software for which the format-on-save would be more cumbersome than helpful. Since we'll be adding unit tests later, we can prepare the configurations already:
 
 For formatting, we simply need to provide the paths to the source files and filters for files that we want to exclude from formatting or from the glob expansion:
 
@@ -785,7 +797,13 @@ If you've managed to bear with me until this point, thank you for reading! Our j
 
 ![]({% img_url c-dev-environment/github-action.png %})
 
-But are we really ever done? A development environment grows with the project, and so will your base image. Even at this point it grew fairly large, and if that is a problem for you or your contributors, you should look into some of the [strategies to reduce your image size](https://www.docker.com/blog/reduce-your-image-size-with-the-dive-in-docker-extension/). Another strategy is to split images based on their usage, e.g., use a different image for building and another one for testing. This can greatly reduce your image size and allows you to use already stripped down base images. This discussion, however, is far beyond the scope of this article.
+But are we really ever done? A development environment grows with the project, and so will your base image. Even at this point it grew fairly large, and if that is a problem for you or your contributors, you should look into some of the [strategies to reduce your image size](https://www.docker.com/blog/reduce-your-image-size-with-the-dive-in-docker-extension/). Another strategy is to split images based on their usage, e.g., use a different image for building and another one for testing. This can greatly reduce your image size and allows you to use already stripped down base images.
+
+One last thing that is worth mentioning, is that with [Docker Desktop](https://www.docker.com/products/docker-desktop/) you can now comfortably inspect your image for vulnerabilities, and also check the size impact of each step in your Dockerfile and even its base image:
+
+![]({% img_url c-dev-environment/docker-inspect.png %})
+
+This is a great starting point in case you want to reduce the image size or update packages. E.g., you could uninstall unused packages using `apt remove` as a last step in your _Dockerfile_, or install a more recent version of `ruby` using the [Ruby Version Manager](https://rvm.io/) instead of relying on the outdated version that comes with `apt`. This discussion, however, is far beyond the scope of this article.
 
 As mentioned throughout the article, the [example project is available on GitHub](https://github.com/lmapii/cproject). Feel free to point out my mistakes or add some improvements to the project yourself!
 
