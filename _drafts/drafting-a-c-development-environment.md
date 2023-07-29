@@ -601,7 +601,7 @@ You'll now find the HTML report in `tests/unittest/build/artifacts/gcov/GcovCove
 
 ## Getting started with GitHub workflows
 
-We got quite far already, and this setup is way beyond the "works on my machine" type of environment: All of your contributors can build a development container and execute all steps to build or test your project. But there is one more thing that we should do to keep the project stable even if we're not actively working on it: Setting up a pipeline that periodically ensures that the environment still works.
+We've gotten quite far already, and this setup is way beyond the "works on my machine" type of environment. All of your contributors can now build a development container and execute all steps to build or test your project. There is one more thing that we should do to keep the project stable even if we're not actively working on it: setting up a pipeline that periodically ensures that the environment still works.
 
 Continuously testing and checking your code is important. Pipelines are now available on all major platforms such as [GitHub](https://github.com/), [GitLab](https://about.gitlab.com/), or [Bitbucket](https://bitbucket.org/). In this article we'll set up a [GitHub action](https://github.com/features/actions) which periodically builds our image and tests our code.
 
