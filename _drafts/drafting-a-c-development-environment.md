@@ -247,7 +247,7 @@ $ make builder-build
 
 As mentioned in the introduction, _Docker_ does not behave the same way on all platforms. Only on Linux or when using Windows containers on Windows, containers run "natively" and thus without major penalties. If you're running a Linux container on macOS or Windows - in very simple words - they execute within a VM (though admittedly it is a bit more complicated than that).
 
-The key takeaway is the following: Since the container is executed in a VM, the I/O performance is significantly worse compared to a container that is run natively. For compiled languages or for any process that creates a lot of files, this impact can be significant since the overhead can be up to 100x of what you're experiencing natively. This can lead to longer build or generation times.
+The key takeaway is that since the container is executed in a VM, the I/O performance is significantly worse compared to a container that is run natively. For compiled languages or for any process that creates a lot of files, this impact can be significant since the overhead can be up to 100x of what you're experiencing natively. This can lead to longer build or generation times.
 
 Thankfully, _Docker_ has provided a good solution for macOS with the `VirtioFS` file-sharing implementation. All you need to do is enable it in your _Docker_ configuration:
 
