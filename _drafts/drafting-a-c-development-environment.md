@@ -126,17 +126,17 @@ Let's spin up a container from our image and take it for a test drive:
 
 ```bash
 $ docker run --rm -it --platform linux/amd64 cproject-builder:latest /bin/bash
-$
+
 $ gcc --version
 gcc (Debian 10.2.1-6) 10.2.1 20210110
 Copyright (C) 2020 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-$
+
 $ cmake --version
 cmake version 3.18.4
-
 CMake suite maintained and supported by Kitware (kitware.com/cmake).
+
 $ exit
 ```
 
@@ -274,6 +274,7 @@ The current directory "`.`" is now available within the container as `/builder/m
 
 ```bash
 $ rm -rf build
+
 $ cmake -B build
 -- The C compiler identification is GNU 10.2.1
 -- Detecting C compiler ABI info
@@ -284,7 +285,8 @@ $ cmake -B build
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /builder/mnt/build
-$ cmake --build buildcmake --build build
+
+$ cmake --build build
 Scanning dependencies of target Dummy
 [ 50%] Building C object CMakeFiles/Dummy.dir/src/dummy.c.o
 [100%] Linking C static library libDummy.a
@@ -405,6 +407,7 @@ RUN mkdir -p /usr/local/run-clang-format
 RUN wget -O clang-utils.tgz "https://github.com/lmapii/run-clang-format/releases/download/v1.4.10/run-clang-format-v1.4.10-i686-unknown-linux-gnu.tar.gz" && \
     tar -C /usr/local/run-clang-format -xzf clang-utils.tgz --strip-components 1 && \
     rm clang-utils.tgz
+
 ENV PATH /usr/local/run-clang-format:$PATH
 RUN run-clang-format --version
 
@@ -412,6 +415,7 @@ RUN mkdir -p /usr/local/run-clang-tidy
 RUN wget -O clang-utils.tgz "https://github.com/lmapii/run-clang-tidy/releases/download/v0.2.1/run-clang-tidy-v0.2.1-i686-unknown-linux-gnu.tar.gz" && \
     tar -C /usr/local/run-clang-tidy -xzf clang-utils.tgz --strip-components 1 && \
     rm clang-utils.tgz
+
 ENV PATH /usr/local/run-clang-tidy:$PATH
 RUN run-clang-format --version
 ```
@@ -468,7 +472,6 @@ $ run-clang-format clang-format.json
      Finished in 0 seconds
 
 $ run-clang-tidy clang-tidy.json
-
  [ 1/6 ] No tidy file specified, assuming .clang-tidy exists in the project tree
  [ 2/6 ] Using build root /workspaces/cproject/build
  [ 3/6 ] Found 1 files for the provided path patterns
