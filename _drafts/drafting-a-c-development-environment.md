@@ -35,7 +35,7 @@ The impatient reader can just skip ahead and open the [example project on GitHub
 
 ## Containers for development
 
-Working with embedded systems or C/C++ in general sometimes requires installing lots of specialized tools or compilers. If you are working on different projects at the same time, you'll easily end up with conflicting versions. Therefore, whenever feasible, I tend to run everything within a [Docker](https://www.docker.com/) _container_.
+Working with embedded systems or C/C++ sometimes requires installing lots of specialized tools or compilers. If you are working on different projects at the same time, you'll easily end up with conflicting versions. Therefore, whenever feasible, I tend to run everything within a [Docker](https://www.docker.com/) _container_.
 
 Another benefit is that you can also use your _Dockerfiles_ as recipes in case you need to install tools locally. The real benefit, however, is that it makes it easy for anyone to join a project by using either a prebuilt image or by attempting to build the image locally. Also, your CI can use the same environment as you do!
 
