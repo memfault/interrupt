@@ -47,6 +47,7 @@ Don't get me wrong, _Docker_ is far from being perfect and I experienced plenty 
 - _Docker_ is not really platform-independent. Especially if you're running a container on other CPU architectures, e.g., Apple ARM, you'll notice that some things don't run. We'll see this later.
 - Some _Docker_ features are only supported in Linux or in dedicated Windows containers. E.g., mounting a USB device into a Docker container is not supported on all platforms; a limitation known [since 2016](https://github.com/docker/for-mac/issues/900).
 - _Docker_ - just like all the big companies out there - can suddenly deprecate even major features of their tools. I personally experienced this with [docker-machine](https://github.com/docker/roadmap/issues/245). It is always best not to bet 100% on one technology and you always need to be prepared to switch.
+- _Docker_ is no longer entirely free to use. At the time of writing, _Docker_ was still free to use for personal use and for small businesses, but please make sure to check their latest [license agreement](https://docs.docker.com/subscription/desktop-license/).
 
 With all this in mind, _Docker_ images are an elegant solution for development environments, especially if you have the chance to spin up your own registry. This sounds harder than it is since solutions already exist, e.g., [Google Cloud](https://cloud.google.com), [JFrog Artifactory](https://jfrog.com/artifactory/), and other providers.
 
