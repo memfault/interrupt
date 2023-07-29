@@ -50,7 +50,7 @@ Don't get me wrong, _Docker_ is far from being perfect and I experienced plenty 
 
 With all this in mind, _Docker_ images are an elegant solution for development environments, especially if you have the chance to spin up your own registry. This sounds harder than it is since solutions already exist, e.g., [Google Cloud](https://cloud.google.com), [JFrog Artifactory](https://jfrog.com/artifactory/), and other providers.
 
-I could personally experience the huge upside of this with my first dockerized environment: By pulling the images from a registry of a project that was parked for over four years, I had the development environment back up and running in under 10 minutes.
+I have personally experienced the huge upside of this with my first dockerized environment. By pulling the images from a registry of a project that was parked for over four years, I had the development environment back up and running in under 10 minutes.
 
 ### Let's do this!
 
