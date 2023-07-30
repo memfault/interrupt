@@ -1,7 +1,8 @@
 ---
-title: "Integrating Memfault into an Embedded Linux Project" 
+title: "Integrating Memfault into an Embedded Linux Project"
 description: An introduction to a Memfault embedded Linux integration for device deployment and management, over-the-air (OTA) software updates, and remote monitoring and debugging
 author: mab
+tags: [linux, memfault]
 ---
 
 IoT devices have become ubiquitous. Given the number of new devices being deployed all over the world and far from the desks of developers, it is imperative to have a solid set of tools to manage them without being directly connected to them via JTAG, USB, or SSH. The necessary tasks in the IoT device lifecycle include device deployment and management, remote monitoring, and over-the-air (OTA) software updates. [Memfault](https://memfault.com/) is a service that streamlines many of these critical tasks in a device-agnostic manner. Memfault supports devices built upon a variety of MCUs and RTOSs, Android (AOSP), and embedded Linux, the last one being the focus of this article.
@@ -59,9 +60,9 @@ The Yocto Project/OpenEmbedded uses different **layers** that implement various 
 
 The `default` element at the top instructs repo about default parameters in case they are not specified. In this case, the `sync-j` attribute instructs repo to try to use eight threads when downloading the repositories. The `revision` attribute of the default element instructs repo to use the `dunfell` branch if none is specified for a specific project.
 
-The `remote` element lists a particular remote repository, with the `name` attribute serving as a nickname to be used by the `project` element; the `fetch` element is the base URL of the repository. 
+The `remote` element lists a particular remote repository, with the `name` attribute serving as a nickname to be used by the `project` element; the `fetch` element is the base URL of the repository.
 
-Each `project` element corresponds to each layer in our specific implementation of The Yocto Project/OpenEmbedded. The `name` attribute is appended to the end of the `fetch` URL for the URL of the entire repository (i.e., the complete URL will be remote fetch + the project name). The `path` attribute will define the repository's location. The `remote` attribute is used to reference back to a particular remote URL. 
+Each `project` element corresponds to each layer in our specific implementation of The Yocto Project/OpenEmbedded. The `name` attribute is appended to the end of the `fetch` URL for the URL of the entire repository (i.e., the complete URL will be remote fetch + the project name). The `path` attribute will define the repository's location. The `remote` attribute is used to reference back to a particular remote URL.
 
 Finally, we also see a `linkfile` element, which allows us to create symbolic links. We will see why this is useful later.
 
@@ -72,7 +73,7 @@ $> repo init -u https://github.com/mabembedded/memfault-repo.git -b main
 $> repo sync
 ```
 
-The first command instructs repo to fetch the manifest file from the repository specified by the `-u` switch and branch specified by the `-b` switch. The second command instructs repo to begin fetching all of the repositories specified in the manifest file, placing them in the appropriate locations, and executing any further instructions indicated in the manifest file (such as creating a symbolic link). 
+The first command instructs repo to fetch the manifest file from the repository specified by the `-u` switch and branch specified by the `-b` switch. The second command instructs repo to begin fetching all of the repositories specified in the manifest file, placing them in the appropriate locations, and executing any further instructions indicated in the manifest file (such as creating a symbolic link).
 
 After running the above commands, our directory structure should match the following:
 
@@ -120,7 +121,7 @@ ENABLE_UART = "1"
 KERNEL_IMAGETYPE = "uImage"
 ```
 
-The first line specifies the `MACHINE` type, which describes the hardware that the BSP will support. The complement of `MACHINE` is `DISTRO`, which describes specific software customizations of a BSP. For example, in the following lines, particular features are added to the `DISTRO`. In this case, `sysvinit` is replaced with `systemd`. 
+The first line specifies the `MACHINE` type, which describes the hardware that the BSP will support. The complement of `MACHINE` is `DISTRO`, which describes specific software customizations of a BSP. For example, in the following lines, particular features are added to the `DISTRO`. In this case, `sysvinit` is replaced with `systemd`.
 
 A few lines below, we need to instruct The Yocto Project/OpenEmbedded to allow commercial licenses used by recipes provided by Memfault’s layer. While this step is called out in Memfault’s documentation, the above implementation is slightly different since we are using the LTS branch (`dunfell`) of The Yocto Project/OpenEmbedded and corresponding layers.
 
@@ -150,7 +151,7 @@ setenv bootargs "${bootargs} root=/dev/mmcblk0p${rpipart}"
 @@KERNEL_BOOTCMD@@ ${kernel_addr_r} - ${fdt_addr}
 ```
 
-The above lines determine whether the `rpipart` environment variable is set. If so, u-boot uses that partition to boot into Linux. If that environment variable is not set, then u-boot defaults to partition `2` on the SD card (referred to by `mmcblk0`). 
+The above lines determine whether the `rpipart` environment variable is set. If so, u-boot uses that partition to boot into Linux. If that environment variable is not set, then u-boot defaults to partition `2` on the SD card (referred to by `mmcblk0`).
 
 The next directory in our layer is called `recipes-core`, which has the following contents:
 
@@ -179,7 +180,7 @@ IMAGE_INSTALL += "\
 "
 ```
 
-  
+
 This recipe provides the following instructions to bitbake:
 - Include an SSH server (specifically using OpenSSH) via the `IMAGE_FEATURES` option
 - Create a final image using the WIC format via the `IMAGE_FSTYPES` option

@@ -3,7 +3,7 @@ title: "Device Firmware Update Cookbook"
 description: "A guide on how to build OTA DFU for your projects, as well as some
 common design pattern that are useful for implementing firmware update."
 author: francois
-tags: [firmware-update]
+tags: [firmware-update, ota]
 ---
 
 Implementing OTA (Over The Air) firmware updates is a rite of passage for
@@ -763,7 +763,7 @@ if (RCC->CSR & RCC_CSR_PORRSTF) {
     // Power loss has occurred.
     // Clear magic to ensure we initialize shared_memory.
     shared_memory.magic = 0;
-    __DMB();  // Possibly not necessary. 
+    __DMB();  // Possibly not necessary.
     // Clear reset flags.
     RCC->CSR |= RCC_CSR_RMVF;
 }

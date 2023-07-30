@@ -14,6 +14,7 @@ title: Firmware Static Analysis with CodeChecker
 description:
   A step-by-step guide on how to use CodeChecker to run static analysis on your firmware
 author: francois
+tags: [c, c++, toolchain]
 ---
 
 The pitfalls of C programming are well known: undefined behavior abounds,
@@ -31,7 +32,7 @@ execution to trace through code paths and find potential problems.
 Many of you will be familiar with proprietary tools like Coverity or Klocwork
 for static analysis. Or perhaps you had to run Fortify to fulfill a requirement
 from your employer’s security team. However, an open source alternative has
-emerged recently: CodeChecker. 
+emerged recently: CodeChecker.
 
 Codechecker[^codechecker_gh] is built on top of the excellent clang static
 analyzer, an open source tool with support for cross-translation-unit analysis
@@ -66,11 +67,11 @@ We’ll first install the command-line tool, and run it on our project.
 ### Linux CLI Installation
 
 `CodeChecker` is currently available on Linux and MacOSX.  Windows is not
-officially supported, though your mileage may vary. 
+officially supported, though your mileage may vary.
 
 > Note: on Mac, CodeChecker requires disabling SIP, as it uses a
 > man-in-the-middle approach to instrumenting your build. It does not currently
-> work on M1 chips.  
+> work on M1 chips.
 
 On Linux, here are some simple instructions from the CodeChecker
 documentation[^codechecker_howto]:
@@ -106,7 +107,7 @@ cd ..
 ```
 
 > Note: CodeChecker depends on Node 12.x, which is why you cannot simply
-> install the latest node package from default repositories.  
+> install the latest node package from default repositories.
 
 You should now be able to run `CodeChecker` from the command line:
 
@@ -131,7 +132,7 @@ $ source ~/codechecker/venv/bin/activate
 
 ## Using CodeChecker with your Project
 
-### Setup 
+### Setup
 
 In this post, we will use ChibiOS as our example project. ChibiOS is a popular
 RTOS with support for a wide variety of chips. Most importantly, it is
@@ -229,7 +230,7 @@ which can be configured in a number of way. I will cover two of them:
 Putting those together, we get:
 
 ```
-CodeChecker analyze ./compilation.json --output ./reports --enable sensitive --ctu 
+CodeChecker analyze ./compilation.json --output ./reports --enable sensitive --ctu
 ```
 
 You might want to go grab yourself a coffee while this run, it can be pretty
@@ -245,7 +246,7 @@ will analyze that file only and update the data in `reports`.
 ### Inspecting the results
 
 Our reports are not yet human readable. To make sense of them, we finally use
-the `parse` command. 
+the `parse` command.
 
 ```
 CodeChecker parse ./reports --print-steps
@@ -399,7 +400,7 @@ detailed views such as this one:
 
 The first time you run CodeChecker, you will get a good number of false
 positives. Most of the time this will be due to a code path which cannot
-actually happen in your program but is plausible to the analyzer. 
+actually happen in your program but is plausible to the analyzer.
 
 There are two ways to deal with false positives: adding `assert` calls to your
 code, and annotating the offending code paths with CodeChecker specific
@@ -410,7 +411,7 @@ comments.
 First, you should try adding `assert` calls to your code. Most projects have an
 `assert` function which can be used to crash the program if an assumption is
 violated (i.e. something that should never happen, happens). ChibiOS has such a
-function, which it calls  `osalDbgAssert`. 
+function, which it calls  `osalDbgAssert`.
 
 By adding assertions to your code, you tell the static analyzer that those code
 paths are invalid and it will not exercise them. For example, if you have:

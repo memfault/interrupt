@@ -1,6 +1,7 @@
 ---
 title: "Get the most out of the linker map file"
 author: cyril
+tags: [toolchain]
 ---
 
 <!-- excerpt start -->
@@ -37,7 +38,7 @@ As an example for a simple program, you would link the compilation units using t
 # Compile/assemble source files without linking
 $ gcc -c sourcefile1.c sourcefile2.c
 # Link together following the linker script specs and outputs map file with the link results
-$ ld -Map output.map -T linker_script.ld -N -o output.elf sourcefile1.o sourcefile2.o   
+$ ld -Map output.map -T linker_script.ld -N -o output.elf sourcefile1.o sourcefile2.o
 ```
 
 Most compilers have an option to enable the same kind of file, `--map` for the ARM compiler for example.
@@ -127,7 +128,7 @@ int main(void)
 }
 ```
 
-After compilation, the whole program goes from 1840 bytes to 2396 bytes. 
+After compilation, the whole program goes from 1840 bytes to 2396 bytes.
 
 ```
        text	   data	    bss	    dec	    hex	filename
@@ -152,7 +153,7 @@ Here are my first lines:
 
 ```
     Archive member included to satisfy reference by file (symbol)
-    
+
     /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-exit.o)
                                   /usr/local/Cellar/arm-none-eabi-gcc/8-2018-q4-major/gcc/bin/../lib/gcc/arm-none-eabi/8.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/crt0.o (exit)
 ```
@@ -164,7 +165,7 @@ The format is:
     			The compilation unit referencing the archive (symbol called)
 ```
 
-It means that a `crt0` file is calling the `exit` function from `exit.o` included in `libc_nano.a`. 
+It means that a `crt0` file is calling the `exit` function from `exit.o` included in `libc_nano.a`.
 
 The reason is not in the scope of this article, but there are indeed standard libraries that are provided by your toolchain (here the GNU toolchain). Those are available to provide standard functions such as `atoi`. In that example, I specified to the linker to use the `nano.specs` file. That's why standard functions all come from `libc_nano.a`. You can read more about this on [lb9mg.no](https://lb9mg.no/2018/08/14/reducing-firmware-size-by-removing-libc/).
 
@@ -187,7 +188,7 @@ The most straightforward pieces of information in the map file are the actual me
 
 ```
     Memory Configuration
-    
+
     Name             Origin             Length             Attributes
     FLASH            0x0000000000001000 0x00000000000ff000 xr
     RAM              0x0000000020000008 0x000000000003fff8 xrw
@@ -200,7 +201,7 @@ Following the memory configuration is the **Linker script and memory map**. That
 
 ```
     Linker script and memory map
-    
+
     .text           0x0000000000001000      0x8c8
      ***(.isr_vector)**
      .isr_vector    0x0000000000001000      0x200 _build/nrf52840_xxaa/**gcc_startup_nrf52840.S.o**
@@ -213,9 +214,9 @@ Following the memory configuration is the **Linker script and memory map**. That
      .text          0x00000000000012b4       0x3c _build/nrf52840_xxaa/gcc_startup_nrf52840.S.o
                     0x00000000000012b4                Reset_Handler
                     0x00000000000012dc                NMI_Handler
-    
+
     [...]
-    
+
      .text.**bsp_board_led_invert**
                     0x00000000000012f0       **0x34** _build/nrf52840_xxaa/**boards.c.o**
                     0x00000000000012f0                bsp_board_led_invert
@@ -230,7 +231,7 @@ My constant string `_delay_ms_str` is obviously included in the program as it is
     	              0x00000000000017b8        0x4 _build/nrf52840_xxaa/main.c.o
 ```
 
-I also noticed that the inclusion of `_ctype_` added 0x101 bytes of read-only data in the `text` area 😯. 
+I also noticed that the inclusion of `_ctype_` added 0x101 bytes of read-only data in the `text` area 😯.
 
 ```
     .rodata._ctype_
@@ -260,7 +261,7 @@ When it comes to `strtol_r`, it is actually more complex than only converting ch
 #define _S  010
 #define _P  020   // Ponctuation
 #define _C  040   // Control characters
-#define _X  0100  // Hexadecimal 
+#define _X  0100  // Hexadecimal
 #define _B  0200
 
 // ASCII table types
@@ -328,7 +329,7 @@ Functions and variables that are compiled to be included into the program aren't
 
 ### Common symbols
 
-That section does not appear in our map file but it deserves its own paragraph. 
+That section does not appear in our map file but it deserves its own paragraph.
 
 Common symbols are non-constant global variables that can be used everywhere in your code. You might know that using global variables is usually not a good practice as they make the code harder to maintain. Indeed, the scope is global and each extern module can modify the value of any global variable, which must be taken into account when accessed. Isolation of variables into a module, using the `static` keyword, is often better to make sure the module creating the variable is entirely responsible of its state.
 

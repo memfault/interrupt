@@ -3,7 +3,7 @@ title: "From Zero to main(): How to Write a Bootloader from Scratch"
 description: "An in-depth tutorial on how to write a bootloader from scratch for
 ARM cortex-m series microcontrollers."
 author: francois
-tags: [zero-to-main]
+tags: [zero-to-main, bootloader, arm, cortex-m]
 ---
 
 This is the third post in our [Zero to main() series]({% tag_url zero-to-main %}),

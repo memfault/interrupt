@@ -3,7 +3,7 @@ title: "A Practical guide to ARM Cortex-M Exception Handling"
 description: "Step-by-step walkthrough of ARM Cortex-M Exception handlers & how to configure ARM
 System Fault Handlers and the Nested Vector Interrupt Controller (NVIC) with examples in C"
 image: /img/armv-m-exceptions/nvic-config-example3.png
-tag: [cortex-m]
+tag: [cortex-m, arm, mcu]
 author: chris
 ---
 

@@ -3,6 +3,7 @@ title: "How to Build Drivers for Zephyr"
 description: "A guide on how to build custom drivers for hardware on the Zephyr RTOS using the Device Driver Model."
 image: /img/building-drivers-on-zephyr/cover.png
 author: jaredwolff
+tags: [zephyr, rtos]
 ---
 
 If you've heard the news about the nRF9160 then you know it's a game-changer. ARM Cortex M33 + LTE Cat-M + NB-IoT and GPS all included under one System in Package. Drool-worthy, right?

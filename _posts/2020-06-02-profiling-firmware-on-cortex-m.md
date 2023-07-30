@@ -4,6 +4,7 @@ description: "An exploration of profiling techniques on Cortex-M
 microcontrollers, ranging from sampling profilers, ITM, and function timing via
 the cycle counter."
 author: francois
+tags: [cortex-m, mcu, arm]
 ---
 
 Although microcontrollers in 2020 sometimes come with GHz clock frequencies and

@@ -2,7 +2,7 @@
 title: "Better Firmware with LLVM/Clang"
 description: "An overview of how to compile an ARM Cortex-M based project with LLVM/Clang and an exploration of the neat features available in the toolchain such as static analysis to identify memory leaks and deadlocks"
 image: /img/llvm/example_llvm_malloc_analysis.png
-tag: [cortex-m]
+tags: [cortex-m, better-firmware, toolchain, mcu]
 author: chris
 ---
 

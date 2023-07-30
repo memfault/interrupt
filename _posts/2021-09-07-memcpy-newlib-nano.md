@@ -3,6 +3,7 @@ title: "Profiling newlib-nano's memcpy"
 description:
   Quick look at performance of the memcpy implementation in newlib-nano
 author: noah
+tags: [toolchain, mcu, better-firmware]
 ---
 
 [Newlib](http://www.sourceware.org/newlib/) is a very popular libc targeting

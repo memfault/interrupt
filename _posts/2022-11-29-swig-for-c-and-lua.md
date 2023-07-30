@@ -2,17 +2,18 @@
 title: "Using SWIG to generate bindings between C and Lua"
 description: Trying out SWIG to automate generation of binding layer between Lua and C worlds
 author: stawiski
+tags: [c]
 ---
 
 Lua is one of the many great interpreters that can be run on embedded devices. It's fast, uses little memory, is written in ANSI C, and is known by plenty of developers. For these reasons, many great teams are choosing to include a Lua interpreter in their embedded project (e.g. Panic with [their Playdate device](https://play.date/dev/)). You can think of Lua as an alternative to the MicroPython (Python) or JerryScript (Javascript) interpreters. However, there's a problem. Many of the libraries today for embedded devices are written in C, not Lua!
 
-There are ways to make Lua and C work together and share data structures, but it requires a lot of boilerplate and complex code. The result is writing a lot of wrapper code integrating the two languages together that then must be maintained as the application evolves. 
+There are ways to make Lua and C work together and share data structures, but it requires a lot of boilerplate and complex code. The result is writing a lot of wrapper code integrating the two languages together that then must be maintained as the application evolves.
 
-Thankfully, there is a project which helps automate the generation of this boilerplate code called SWIG. 
+Thankfully, there is a project which helps automate the generation of this boilerplate code called SWIG.
 
 <!-- excerpt start -->
 
-This article covers how to write a C program that launches a Lua interpreter and then how to use SWIG to generate the necessary wrapper code to allow Lua scripts to access the functions and data inside of the C runtime. 
+This article covers how to write a C program that launches a Lua interpreter and then how to use SWIG to generate the necessary wrapper code to allow Lua scripts to access the functions and data inside of the C runtime.
 
 <!-- excerpt end -->
 
@@ -148,7 +149,7 @@ We declared `multiply` as `extern` introducing a linkage dependency. Now we’ll
 
 ```
 /app # cd example1
-/app/example1 # swig -lua -o swig.c bindings.i 
+/app/example1 # swig -lua -o swig.c bindings.i
 ```
 
 SWIG generated a huge C file we called `swig.c`, which consists of all the boilerplate code. Looking into it for `multiply` we can find this auto-generated code:
@@ -164,7 +165,7 @@ static int _wrap_multiply(lua_State* L) {
   int32_t arg1 ;
   int32_t arg2 ;
   int32_t result;
-  
+
   SWIG_check_num_args("multiply",2,2)
   if(!lua_isnumber(L,1)) SWIG_fail_arg("multiply",1,"int32_t");
   if(!lua_isnumber(L,2)) SWIG_fail_arg("multiply",2,"int32_t");
@@ -173,7 +174,7 @@ static int _wrap_multiply(lua_State* L) {
   result = (int32_t)multiply(arg1,arg2);
   lua_pushnumber(L, (lua_Number) result); SWIG_arg++;
   return SWIG_arg;
-  
+
   fail: SWIGUNUSED;
   lua_error(L);
   return 0;
@@ -357,7 +358,7 @@ printf("[C] Printing my_struct\r\n");
 printf("\tmy_struct.level = %d\r\n", my_struct.level);
 printf("\tmy_struct.priority = %d\r\n", my_struct.priority);
 printf("\tmy_struct.message = %s\r\n", my_struct.message);
-printf("\tmy_struct.isReady = %s\r\n", my_struct.isReady ? "true" : "false"); 
+printf("\tmy_struct.isReady = %s\r\n", my_struct.isReady ? "true" : "false");
 ```
 
 Here’s the output:
@@ -451,7 +452,7 @@ Our array `priorities` is userdata and it doesn’t have an assigned metatable. 
 And it is a common problem, even SWIG documentation states:
 
 > Arrays present a challenge for SWIG, because like pointers SWIG does not know whether these are input or output values, nor does SWIG have any indication of how large an array should be.
-> 
+>
 
 To address this problem we can write a typemap in our SWIG interface file, which will include our custom code to push the array onto Lua stack:
 

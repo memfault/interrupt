@@ -2,7 +2,7 @@
 title: "Faster Debugging with Watchpoints"
 description: "A step by step guide on how to use watchpoints for faster debugging and a deep dive into how watchpoints are implemented in ARM Cortex-M MCUs"
 image: /img/watchpoint/cortex-m-watchpoint-gdb.png
-tag: [cortex-m]
+tag: [cortex-m, arm, mcu, debugging, gdb]
 author: chris
 ---
 

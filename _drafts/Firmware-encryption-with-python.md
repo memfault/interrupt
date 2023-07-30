@@ -10,11 +10,10 @@
 #
 # It will now show up in the front page when running Jekyll locally.
 
-title: "Firmware encryption with python"
+title: "Firmware Encryption with Python"
 description:
   Firmware encryption is an option to increase security in over the air OTA updates in this post we will see how to implement firmware encryption and decryption.
 author: Guille
-image:
 ---
 
 Connected devices require a secure point-to-point channel to ensure that there is no possibility of exposing important data for the integrity of an embedded system. This is especially true when we talk about over-the-air (OTA) software updates, where the new firmware has a long way to go before reaching its destination and being installed by our bootloader.
@@ -33,7 +32,7 @@ Encryption of information is a process of encoding information, specifically app
 
 When performing firmware updates with security in mind, it is important to consider the authenticity and confidentiality of our firmware. Encrypting the firmware is a way to enhance the confidentiality of our update system. Let’s see when it is advisable to implement firmware encryption.
 
-### Why encryption our firmware
+### Why encrypt our firmware
 
 When performing updates via OTA, it is crucial to consider that our firmware is exposed to various methods of firmware extraction, such as:
 
@@ -49,21 +48,39 @@ Indeed, protecting firmware is important, but it’s essential to analyze certai
 
 Firmware encryption is necessary when:
 
-![](/img/fwup-encryption/Architecture1.jpg)
-
 1. The messages sent from the server to the device are not encrypted.
 2. The bootloader has secure storage to protect the encryption key.
 3. The bootloader installs the new firmware in an external flash memory.
 4. The bootloader extracts the firmware from the external flash memory to install it in the internal application flash memory.
 
+![](/img/fwup-encryption/Architecture1.jpg)
+
+Points to consider when firmware encryption is necessary:
+
+|        | Explanation                                                                                      | Firmware Encryption | 
+| ------ | ------------------------------------------------------------------------------------------------ | ------------------- | 
+| 1 3    | The firmware image is exposed from the server to the device and from external flash              | ✅                  |
+| 3 4    | The firmware image can be extracted from external flash                                          | ✅                  |
+| 2 3    | The firmware can be extracted from external flash we can store decryption keys in secure storage | ✅                  |
+| 2 4    | The firmware can be extracted from external flash we can store decryption keys in secure storage | ✅                  |
+
 Firmware encryption is not necessary when:
+
+1. The communication link between the server and the device is already encrypted, for example, using TLS (Transport Layer Security). You can authenticate client and device connections with X.509 certificates.
+2. The bootloader performs authenticity and integrity validation on the firmware image using code signing, CRC validation, and a metadata header.
+3. The Loader can be used to update and install new firmware images or update the bootloader in case changes to the validation process in firmware images are required.
+4. The firmware image boots only if it is validated for authenticity and integrity when installed and at each boot.
 
 ![](/img/fwup-encryption/Architecture2.jpg)
 
-1. The communication link between the server and the device is already encrypted, for example, by using TLS (Transport Layer Security).
-2. The bootloader loads the Loader, which is responsible for installing the new firmware.
-3. The Loader installs the new firmware in a designated slot in the internal flash memory of the device and verifies the firmware image using code signing to detect any modifications.
-4. The new firmware is installed in the application slot.
+Points to consider when firmware encryption is not necessary:
+
+|        | Explanation                                                                                      | Firmware Encryption | 
+| ------ | ------------------------------------------------------------------------------------------------ | ------------------- | 
+| 1 2    | From the server to the device the data is encrypted thanks to the protocol used                  | ❌                  |
+| 2 3    | Validation mechanisms can detect changes in firmware integrity                                   | ❌                  |
+| 2 4    | Integrity validation mechanisms can detect firmware changes and reject that firmware image       | ❌                  |
+| 1 3    | Encrypted data from server to device and also having a code signature is a good combination      | ❌                  |
 
 In this case, if the communication link is already secured, and the bootloader and Loader ensure the integrity of the firmware through code signing, the need for additional firmware encryption may be reduced. However, it’s essential to thoroughly assess the security requirements of your specific system and consider factors such as the sensitivity of the firmware and potential attack vectors to make an informed decision regarding firmware encryption.
 
@@ -73,10 +90,10 @@ Certainly, if you have the option to use a recommended bootloader like MCUBoot t
 
 AES (Advanced Encryption Standard) is a symmetric key cryptographic algorithm, meaning the same key is used for both encryption and decryption of the message. The algorithm offers various modes such as CBC (Cipher Block Chaining), ECB (Electronic Codebook), CTR (Counter), CCM (Counter with CBC-MAC), each with different characteristics. In this publication, we will focus on the CTR mode for several reasons:
 
-1. Security: CTR mode is considered one of the most secure AES modes.
+1. Security: CTR mode is considered one of the most secure AES modes[^ctr_mode].
 2. Popularity: It is widely used because it allows encrypting/decrypting any block without the need to know any other block. This mode is employed in MCUBoot.
 3. Availability: Most AES encryption engines within MCUs can work with this mode.
-4. Small footprint: CTR mode does not impose a heavy resource burden on MCUs or cryptographic libraries.
+4. Small footprint: CTR mode does not impose a heavy resource burden on MCUs or cryptographic libraries[^footprint].
 
 While the mathematics behind the AES-CTR algorithm are beyond the scope of this publication, let’s discuss the key points to understand the encryption process.
 
@@ -98,18 +115,22 @@ Since CTR mode operates on a per-byte basis, it offers more flexibility and effi
 
 Now we know that we need a key stream to begin encrypting the first data, and then a new key stream will be generated in the form of a counter for each subsequent encryption operation until all the plaintext is encrypted.
 
+We can see that we need a couple of inputs:
+* (AES_KEYRx (KEY)) : For the purpose of encryption and decryption, we will refer to the value as the `Key` value.
+* (AES_IVRx) : In CTR mode, the initialization vector is also referred to as the counter, which we will identify as the `Nonce`.
+
 Before moving on to implementation, let’s review some important points:
 
-1. CTR mode requires a key `(AES_KEYRx (KEY))` and a Nonce initialization vector `(AES_IVRx)`.
+1. CTR mode requires a `Key` and a initialization vector `Nonce`.
 2. We can encrypt plaintext data (AES_DINR (plaintext P1)) in blocks of various sizes, for example, 4 bytes at a time.
 3. Each time we encrypt a plaintext block, the counter block increases by one unit.
-4. The counter block `(AES_IVRx)` is the concatenation of a fixed Nonce block, set during initialization, and a 32-bit counter variable.
+4. The counter block `Nonce` is the concatenation of a fixed Nonce block, set during initialization, and a 32-bit counter variable.
 
 By understanding these key points, we can proceed with the implementation of CTR mode encryption.
 
 ## Firmware Encryption Implementation
 
-To begin with the implementation, let’s use the PyCryptodome cryptographic library to create a Python script that takes our firmware file and generates a new encrypted output file. First, let’s install the PyCryptodome library in Python. You can install it by running the following command:
+To begin with the implementation, let’s use the PyCryptodome[^pycryptodome] cryptographic library to create a Python script that takes our firmware file and generates a new encrypted output file. First, let’s install the PyCryptodome library in Python. You can install it by running the following command:
 ```
 $ pip install pycryptodome
 ```
@@ -138,11 +159,11 @@ Let’s use the generated keys to start encrypting data. The first step is to co
 
 #### Counter Block
 
-According to the PyCryptodome documentation, we can create a counter block by concatenating values before (prefix) and after (suffix) the counter variable:
+According to the PyCryptodome documentation[^pycryptodome], we can create a counter block by concatenating values before (prefix) and after (suffix) the counter variable:
 
 ![](/img/fwup-encryption/Coun_block_1.png)
 
-Let’s use our key and Nonce value (AES_IVRx) to create the counter block using the `Counter.new()` method. The method requires several parameters:
+Let’s use our `key` and `Nonce` value to create the counter block using the `Counter.new()` method. The method requires several parameters:
 
 1. The desired counter length in bits.
 2. The initial value of the counter.
@@ -151,7 +172,7 @@ Let’s use our key and Nonce value (AES_IVRx) to create the counter block using
 > counter length: 112 bit / 8 = 14 bytes
 > counter block length: 14 bytes + Nonce 2 bytes = 16 bytes = 128 bit
 
-Since we want a counter length of 112 bits and our Nonce is 2 bytes, the counter block length should be 16 bytes (128 bits) to match the AES-128 bit encryption. We want the counter variable to start at 0, so we’ll set initial_value=0. We’ll also specify little_endian=False for big-endian data alignment to align with the counter in the AES processor on the MCU:
+Since we want a counter length of 112 bits and our Nonce is 2 bytes, the counter block length should be 16 bytes (128 bits) to match the AES-128 bit encryption. We want the counter variable to start at 0, so we’ll set initial_value=0. We’ll also specify `little_endian=False` for big-endian data alignment to align with the counter in the AES processor on the MCU:
 
 ```python
 import binascii
@@ -173,15 +194,15 @@ The result should look something like this:
 
 ![](/img/fwup-encryption/Coun_block_2.png)
 
-That’s a valid point. The size of the Nonce (PREFIX) affects the available space for the counter variable. If we have a larger Nonce value, it means less space will be available for the counter variable. For example, if we generate a 4-byte Nonce, the remaining 12 bytes will be allocated for the counter.
+The size of the `Nonce` (PREFIX) impacts the amount of space available for the counter variable. A larger `Nonce` value means less space is available for the counter. For instance, if a 4-byte Nonce is generated, the remaining 12 bytes will be used for the counter.
 
 It’s important to consider the size of the counter variable because if a significant amount of data is encrypted and the counter variable size is not sufficiently large, it may overflow. The library will raise an `OverflowError` exception as soon as the counter wraps back to its original value.
 
-To address this, one approach is to leave the Nonce value empty, allowing the counter variable to have more space. This allows us to encrypt a larger number of data blocks. Since the Nonce value and the counter block share the same space, it needs to be aligned to 16 bytes.
+To address this, one approach is to leave the `Nonce` value empty, allowing the counter variable to have more space. This allows us to encrypt a larger number of data blocks. Since the Nonce value and the counter block share the same space, it needs to be aligned to 16 bytes.
 
 #### Encrypt script
 
-To encrypt a firmware file using the defined key `(AES_KEYRx)` and initialization vector `(AES_IVRx)`, you can create a script that performs encryption on a firmware file in the .bin format. The manipulation of the firmware binary file can be done using a class that reads the file in blocks of 4 bytes:
+To encrypt a firmware file using the defined `Key` and initialization vector `Nonce`, you can create a script that performs encryption on a firmware file in the .bin format. The manipulation of the firmware binary file can be done using a class that reads the file in blocks of 4 bytes:
 
 ```python
 class BinaryFile:
@@ -256,7 +277,7 @@ main()
 ```
 ## Firmware Decryption Implementation
 
-Our update system managed to receive the encrypted firmware now it all depends on our MCU we have to decrypt the firmware and install it in a section of flash memory where it can be executed by our bootloader. In this post we are going to use the AES Hardware Accelerator to perform firmware decryption. All the code for this post is written for the [B-L4S5I-IOT01A](https://www.st.com/en/evaluation-tools/b-l4s5i-iot01a.html#) Dev kit with STM32L4S5 MCU by ST Micro.
+We have successfully received the encrypted firmware through our update system. Now, the responsibility lies with our MCU to decrypt the firmware and install it in a flash memory section where the bootloader can execute it. In this particular post, we will be utilizing the AES hardware accelerator present in ST Micro's STM32L4S5 MCU to carry out the firmware decryption process. All code mentioned in this post is specifically written for the development kit B-L4S5I-IOT01A[^BL4S5I].
 
 ### Define encryption keys
 
@@ -296,7 +317,7 @@ non-multiple of 16 bytes, in which case a plaintext padding is required.
 
 ### Setup AES hardware accelerator
 
-Now that we know the necessary parameters we can load the configuration in the `CR` register in addition to initializing the key `(AES_KEYRx (KEY))` and initialization vector in the corresponding `(AES_IVRx)` registers:
+After obtaining the required parameters, we can proceed to load the configuration into the `CR` register. Additionally, we need to initialize the `key` and initialization vector in their respective `Nonce` registers. The reference manual[^STM32L4S5] provides information about the configuration parameters, which can be accessed in section 34.7.1 of the AES control register (AES_CR).
 
 ```c
 void aes_setup( void ) {
@@ -338,7 +359,7 @@ void aes_setup( void ) {
 
 ### Decrypt data
 
-If the configuration is done correctly we can begin to decrypt blocks of 16 bytes of data for this we write the data in the DINR input register to obtain the plain text we read the `DOUTR` output register:
+Once the configuration is set up properly, we can start decrypting blocks of 16 bytes of data. To achieve this, we input the data into the `DINR` register and obtain the plain text by reading the `DOUTR` register. For more information, please refer to section 34.7.3 (AES data input register - AES_DINR) and section 34.7.4 (AES data output register - AES_DOUTR) of the reference manual[^STM32L4S5].
 
 ```c
 void aes_decryption( uint8_t *Input_CipherFirmware, uint16_t buf_size, uint8_t *Out_PlainFirmware ) {
@@ -384,10 +405,9 @@ The bootloader checks if something exists in slot 1 where the encrypted firmware
 The full example is available on Github at
 [interrupt@fwup-encryption](https://github.com/memfault/interrupt/tree/master/example/fwup-encryption).
 
-[B-L4S5I-IOT01A](https://www.st.com/en/evaluation-tools/b-l4s5i-iot01a.html#) Dev kit with STM32L4S5.
-
 The following tools to compile the firmware:
 
+* B-L4S5I-IOT01A[^BL4S5I]
 * GNU Make 3.81 as the build system
 * arm-none-eabi-gcc version 10.3.1 20210824 (release) as compiler
 * python 3.9.11
@@ -618,6 +638,19 @@ void image_start(void) {
     p_jump_app();
 }
 ```
+
+### Key Storage
+
+The security of a device's firmware encryption process depends on the security of the key storage mechanism. In the case presented in this post, the decryption keys are stored within the bootloader firmware, which poses a potential security risk. To ensure maximum security in a production environment, it's advisable to include a secure element in the hardware design.
+A secure element is an isolated execution environment that offers hardware-based security for sensitive code and data.
+
+Hence we need to store and protect the key on the device. Below are some protection mechanisms:
+
+* Encrypt the key using a SoC mechanism
+* Store the key in a external crypto or security chip as ATECC608B[^ATECC608B] which provides secure storage
+* Use a external Trusted Platform Module (TPM) chip
+* Enable flash memory read protection mechanisms on the MCU
+
 ## Closing
 
 In conclusion, while encrypting the firmware image is a step towards enhancing security, it is not sufficient on its own. When deploying OTA updates, it is crucial to consider a combination of authenticity and confidentiality measures. Implementing firmware encryption requires additional effort, but it is more effective when paired with firmware image signing and robust flash memory protection on the MCU.
@@ -635,9 +668,11 @@ Furthermore, proper key management is essential. Storing encryption keys in a se
 ## References
 
 <!-- prettier-ignore-start -->
-
-- <https://pycryptodome.readthedocs.io/en/latest/src/cipher/classic.html#ctr-mode>
-- <https://www.st.com/en/microcontrollers-microprocessors/stm32l4s5vi.html#documentation>
-
+[^ctr_mode]: [Security CTR](https://cryptobook.nakov.com/symmetric-key-ciphers/cipher-block-modes#ctr-counter-block-mode)
+[^footprint]: [wolfCrypt AES](https://www.wolfssl.com/products/wolfcrypt-2/)
+[^pycryptodome]: [Pycryptodome CTR](https://pycryptodome.readthedocs.io/en/latest/src/cipher/classic.html#ctr-mode)
+[^STM32L4S5]: [RM0432 Reference Manuals](https://www.st.com/en/microcontrollers-microprocessors/stm32l4s5vi.html#)
+[^BL4S5I]: [Devkit BL4S5IIOT01A](https://www.st.com/en/evaluation-tools/b-l4s5i-iot01a.html)
+[^ATECC608B]: [Secure Element ATECC608B](https://www.microchip.com/en-us/product/atecc608b)
 <!-- prettier-ignore-end -->
 
