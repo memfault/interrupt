@@ -57,7 +57,7 @@ Firmware encryption is necessary when:
 
 Points to consider when firmware encryption is necessary:
 
-|        | Explanation                                                                                      | Firmware Encryption | 
+| Points | Explanation                                                                                      | Firmware Encryption | 
 | ------ | ------------------------------------------------------------------------------------------------ | ------------------- | 
 | 1 3    | The firmware image is exposed from the server to the device and from external flash              | ✅                  |
 | 3 4    | The firmware image can be extracted from external flash                                          | ✅                  |
@@ -75,7 +75,7 @@ Firmware encryption is not necessary when:
 
 Points to consider when firmware encryption is not necessary:
 
-|        | Explanation                                                                                      | Firmware Encryption | 
+| Points | Explanation                                                                                      | Firmware Encryption | 
 | ------ | ------------------------------------------------------------------------------------------------ | ------------------- | 
 | 1 2    | From the server to the device the data is encrypted thanks to the protocol used                  | ❌                  |
 | 2 3    | Validation mechanisms can detect changes in firmware integrity                                   | ❌                  |
@@ -84,14 +84,14 @@ Points to consider when firmware encryption is not necessary:
 
 In this case, if the communication link is already secured, and the bootloader and Loader ensure the integrity of the firmware through code signing, the need for additional firmware encryption may be reduced. However, it’s essential to thoroughly assess the security requirements of your specific system and consider factors such as the sensitivity of the firmware and potential attack vectors to make an informed decision regarding firmware encryption.
 
-Certainly, if you have the option to use a recommended bootloader like MCUBoot that supports firmware image encryption, it is highly advisable to utilize it. However, if you need to implement a custom bootloader, this publication aims to serve as a starting point for implementing firmware image encryption.
+Certainly, if you have the option to use a recommended bootloader like MCUBoot[^mcuboot_1] that supports firmware image encryption, it is highly advisable to utilize it. However, if you need to implement a custom bootloader, this publication aims to serve as a starting point for implementing firmware image encryption.
 
 ### AES
 
 AES (Advanced Encryption Standard) is a symmetric key cryptographic algorithm, meaning the same key is used for both encryption and decryption of the message. The algorithm offers various modes such as CBC (Cipher Block Chaining), ECB (Electronic Codebook), CTR (Counter), CCM (Counter with CBC-MAC), each with different characteristics. In this publication, we will focus on the CTR mode for several reasons:
 
 1. Security: CTR mode is considered one of the most secure AES modes[^ctr_mode].
-2. Popularity: It is widely used because it allows encrypting/decrypting any block without the need to know any other block. This mode is employed in MCUBoot.
+2. Popularity: It is widely used because it allows encrypting/decrypting any block without the need to know any other block. This mode is employed in MCUBoot[^mcuboot_2].
 3. Availability: Most AES encryption engines within MCUs can work with this mode.
 4. Small footprint: CTR mode does not impose a heavy resource burden on MCUs or cryptographic libraries[^footprint].
 
@@ -674,5 +674,7 @@ Furthermore, proper key management is essential. Storing encryption keys in a se
 [^STM32L4S5]: [RM0432 Reference Manuals](https://www.st.com/en/microcontrollers-microprocessors/stm32l4s5vi.html#)
 [^BL4S5I]: [Devkit BL4S5IIOT01A](https://www.st.com/en/evaluation-tools/b-l4s5i-iot01a.html)
 [^ATECC608B]: [Secure Element ATECC608B](https://www.microchip.com/en-us/product/atecc608b)
+[^mcuboot_1]: [MCUBoot ](https://github.com/mcu-tools/mcuboot/tree/main)
+[^mcuboot_2]: [MCUBoot Encrypted images](https://github.com/mcu-tools/mcuboot/blob/main/docs/encrypted_images.md#design)
 <!-- prettier-ignore-end -->
 
