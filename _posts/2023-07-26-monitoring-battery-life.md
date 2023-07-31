@@ -61,7 +61,7 @@ It’s ideal to measure the voltage during known or expected amounts of current 
 
 For our Pebble watches, we did two things. First, we tried to optimize when we sampled the battery voltage to make sure that there was no massive current draw at the time of the reading. The biggest current draws were during LCD backlight usage, vibe motor events, and intense CPU and graphics computations (such as Heiko Behrens’s Intrinsic Gravelty demo[^heiko_demo]).
 
-Second, for each battery voltage reading, we reported and used in calculations, we sampled the voltage many times in a short period and took the average of the samples. This helped filter out any noise from high power draws and low voltage readings that might have skewed our readings. In our case, the vibe motor and backlight display were the two that would really message up our voltage readings.
+Second, for each battery voltage reading, we reported and used in calculations, we sampled the voltage many times in a short period and took the average of the samples. This helped filter out any noise from high power draws and low voltage readings that might have skewed our readings. In our case, the vibe motor and backlight display were the two that would really mess up our voltage readings.
 
 ### Not all batteries are equal
 
