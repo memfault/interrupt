@@ -79,8 +79,8 @@ Learn the basics of Bluetooth Low Energy in a single weekend from the experts at
 
 
 ## Announcements & News
-- [**Bluetooth Low Energy - nordicsemi.com**](https://www.nordicsemi.com/Products/Bluetooth-Low-Energy)<br>
-Nordic's nRF52 series and nRF53 series are now certified for BLE v5.4 with the latest version of nRF Connect SDK v2.4.0. 
+- [**Nordic nRF52 Series and nRF53 Series now have a fully qualified stack for Bluetooth v5.4**](https://www.linkedin.com/posts/nordic-semiconductor_bluetoothlowenergy-activity-7081939797803433984-01-a/)<br>
+The nRF52 series and nRF53 series are now certified for BLE v5.4 with the latest version of nRF Connect SDK v2.4.0. Read more about Nordic's BLE products [here](https://www.nordicsemi.com/Products/Bluetooth-Low-Energy). 
 
 - [**Zephyr Project Developer Summit @ EOSS 2023 - YouTube**](https://www.youtube.com/playlist?list=PLbzoR-pLrL6rQLZttVSF_DwzncObtwyM3)<br>
 All Zephyr Project Developer Summit talks from this year's Embedded Open Source Summit (EOSS) are now on YouTube.
