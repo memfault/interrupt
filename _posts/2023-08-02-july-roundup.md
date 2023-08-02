@@ -40,13 +40,13 @@ Team Memfault welcomes you to join us at the next Boston Firmware Meetup on Wedn
 
 
 ## Articles & Learning
-- [**floatzone_sec23.pdf**](https://download.vusec.net/papers/floatzone_sec23.pdf)<br>
+- [**FloatZone: Accelerating Memory Error Detection using the Floating Point Unit**](https://download.vusec.net/papers/floatzone_sec23.pdf)<br>
 Use floating point exceptions to speed up runtime memory error checking. - Noah
 
 - [**Teardown of the TM4313 GPS Disciplined Oscillator | Electronics etc…**](https://tomverbeure.github.io/2023/07/09/TM4313-GPSDO-Teardown.html)<br>
 Originally found on Hacker News, teardown of a GPS-corrected oscillator. - Noah
 
-- [**Optimizing Firmware: Shipping IoT Devices on Time - DZone**](https://dzone.com/articles/optimizing-firmware-the-key-to-shipping-iot-device).<br>
+- [**Optimizing Firmware: Shipping IoT Devices on Time - DZone**](https://dzone.com/articles/optimizing-firmware-the-key-to-shipping-iot-device)<br>
 A review of key milestones to pay attention to when using a New Product Introduction (NPI) timeline and four suggestions on how to decouple your hardware and software to save time and ensure deadlines are met.
 
 - [**NULL pointer protection with ARM Cortex-M MPU - Miro Samek**](https://www.embeddedrelated.com/showarticle/1546.php)<br>
