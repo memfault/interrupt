@@ -1,16 +1,5 @@
 ---
-# This is a template for Interrupt posts. Use previous, more recent posts from the _posts/
-# directory for more inspiration and patterns.
-#
-# When submitting a post for publishing, submit a PR with the post in the _drafts/ directory
-# and it will be moved to _posts/ on the date of publish.
-#
-# e.g.
-# $ cp _drafts/_template.md _drafts/my_post.md
-#
-# It will now show up in the front page when running Jekyll locally.
-
-title: "Firmware Encryption with Python"
+title: "Encrypting Firmware Updates With Python"
 description:
   Firmware encryption is an option to increase security in over the air OTA updates in this post we will see how to implement firmware encryption and decryption.
 author: Guille
