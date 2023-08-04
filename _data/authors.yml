@@ -197,12 +197,6 @@ blake:
     linkedin: https://www.linkedin.com/in/blake-a-hildebrand/
     github: bahildebrand
     image: /img/author/blake.jpg
-lampacher:
-    name: Martin Lampacher
-    image: /img/author/lampacher.jpg
-    linkedin: https://www.linkedin.com/in/martin-lampacher-4b532984
-    blurb: is a Freelance Embedded Engineer based in the Italian Alps.
-    github: lmapii
 Guille:
     name: Guillermo Garcia
     web: https://embedded-dbl.com/
