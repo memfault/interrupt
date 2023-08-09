@@ -1,6 +1,6 @@
 ---
-title: "Drafting a C development environment"
-description: Drafting a C development environment using CMake, Docker, Unity, and GitHub Actions.
+title: "A Modern C Development Environment"
+description: Spinning up a C development environment using CMake, Docker, Unity, and GitHub Actions.
 author: lampacher
 tags: [toolchain, c]
 ---
