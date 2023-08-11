@@ -1,0 +1,28 @@
+name: Detect Renamed Posts
+
+on:
+
+  pull_request:
+    branches: [master]
+    paths:
+      - '_posts/**'
+
+jobs:
+  detect_renamed_post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          # this enables doing git diff HEAD^ for the squashed PR commit
+          fetch-depth: 2
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Run Renaming Script
+        run: |
+          node .github/workflows/detect-renamed-posts.js
