@@ -1,3 +1,5 @@
+Sitemap: http://interrupt.memfault.com/sitemap.xml
+
 User-agent: *
 
 Allow: /*

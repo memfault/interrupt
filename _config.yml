@@ -41,6 +41,7 @@ plugins:
   - jekyll-diagrams
   - jekyll-target-blank
   - jekyll-get-json
+  - jekyll-sitemap
 
 # Fetch Interrupt Featured Events (on sidebar)
 jekyll_get_json:
