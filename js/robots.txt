@@ -1,2 +1,21 @@
 User-agent: *
-Disallow: /
+
+Allow: /*
+Allow: /sitemap.xml
+Allow: /feed.xml
+Allow: /assets/
+
+Disallow: /_layouts/
+Disallow: /_posts/
+Disallow: /_drafts/
+Disallow: /_data/
+Disallow: /_config.yml
+Disallow: /Gemfile
+Disallow: /Gemfile.lock
+Disallow: /node_modules/
+Disallow: /sass/
+Disallow: /vendor/
+Disallow: /_site/
+Disallow: /tags/
+Disallow: /categories/
+Disallow: /search/
