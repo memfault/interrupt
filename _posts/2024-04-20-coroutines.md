@@ -8,7 +8,7 @@ tags: [c++, coroutines]
 
 <!-- excerpt start -->
 
-In the last year, it seems to me that there was quite a high activity about coroutines in C++.
+In the last few years, it seems to me that there was quite a high activity about coroutines in C++.
 That is, we got plenty of blog posts/videos on the topic of coroutines that are officially available since C++20.
 
 
@@ -84,7 +84,7 @@ To do that the coroutine allocates memory for its `coroutine frame` which contai
 
 The `coroutine_type` is the type of the coroutine, and usually represents the `handle` that points to the allocated frame. (By owning the `std::coroutine_handle<promise_type>` which is a handle given by the compiler for the frame)
 To allow data exchange between the coroutine, the coroutine frame contains an instance of `promise_type`, that is accessible from the `coroutine_type` and from the code of the coroutine itself.
-(Compiler will select `coroutine_type::promise_type` as the promise, this type can be an alias, nested structure, or some other valid type)
+(Compiler will select `std::coroutine_traits<coroutine_type>::promise_type` as the promise, this type can be an alias, nested structure, or some other valid type)
 
 `awaiter` is an entity that is used for the suspension process. It is a type that should be passed to the `co_await` call and that is used by the compiler to handle the suspension.
 When the coroutine is suspended by the `co_await`, the compiler will call `void awaiter::await_suspend(std::coroutine_handle<promise_type>)` which gets access to the promise via `coroutine_handle` and after that, the coroutine is suspended.
@@ -97,6 +97,8 @@ In this context, it is a good idea to point out a few properties of the mechanis
  - Suspended coroutine can be destroyed. This destruction is safe: all destructors of promise_type, arguments, and stored variables... are called properly
  - The `coroutine_type` does not need to have `step` semantics, the `coroutine_type` has access to `std::coroutine_handle<promise_type>` which provides the interface to resume the coroutine. The `coroutine_handle` might as well be implemented in a way that one method keeps resuming the coroutine until it finishes.
  - Coroutines can be nested. One can combine `coroutine_type` to be also valid `awaiter`, this gives a possibility to have recursive coroutines, in which one `step` of the top coroutine does one step of the inner coroutine.
+
+More detailed description and a good source of truth is cppreference: https://en.cppreference.com/w/cpp/language/coroutines
 
 ### Some coroutines
 
@@ -186,7 +188,7 @@ Approach 1) has multiple potential issues, it might take a lot of code to implem
 Approach 2) has another set of issues. Each thread requires its own stack space (which might not scale), and we got all the problems of parallelism - exchanging data between can suffer various potential concurrency issues.
 
 From this perspective, coroutines are a third way of approaching these processes, which is not better than 1) or 2), but also not worse.
-Coroutines bring in a new (and not yet finetuned) mechanism that makes it possible to write an exchange of data over UART in a way that does not require as complex code as 1), does not suffer so many concurrency issues as 2) (and does not need its own stack, just frame).
+Coroutines bring in a new (and not yet finetuned) mechanism that makes it possible to write an exchange of data over UART in a way that does not require as complex code as 1), does not suffer so many concurrency issues as 2) (and does not need its own stack, just frame). Note that with coroutines you still have to deal with concurrent access to resources, but in more preditacble way.
 
 However, coroutines still suffer from the issue that one step of computation might take longer than expected, and we can assume that any errors in coroutines might be harder to inspect.
 
@@ -205,10 +207,12 @@ This is not favourable in embedded in many cases, but there are ways to avoid th
 
 Coroutines have `allocator` support, we can provide the coroutine with an allocator that can be used to get memory for the coroutine and hence avoid the dynamic allocation. (Approach that I can suggest)
 This is done by implementing custom `operator new` and `operator delete` on the `promise_type` which allocates the `entire frame`.
+Note that you can reuse any allocator implementation for this, or any general implementation that give you a chance to get and release a memory.
 
 An alternative is to rely on `halo` optimization (Heap Allocation Elision Optimization) if the coroutine is implemented correctly and the parent function executes the entire coroutine in its context.
 The compiler can optimize away the dynamic allocation and just store the frame on the stack of the coroutine's parent.
-This can be enforced by deleting appropriate `operator new` and `operator delete` overloads of the `promise_type`, but it seems clumsy to me.
+This can be enforced by deleting appropriate `operator new` and `operator delete` overloads of the `promise_type`.
+The issue with this approach is that you can't control the `halo` optimization, the compiler either decides to do it or does not do it, if it does not happen it might be tricky to find out why and force the compiler to cooperate.
 
 And to kinda ruin the pretty thing here, there is one catch. As of now, the compiler can't tell you how much memory the coroutine needs, as it is known only during the link time - the size of the coroutine frame can't be compiler constant. (TODO: link to the source for this)
 This means that you effectively can't prepare static buffers for the coroutines.
@@ -283,7 +287,31 @@ This has the benefit that while the `i2c operation` is processed by the peripher
 And we do not have to pay for that by having complexity (manual state machine doing the interaction) or having threads (which bring in other problems).
 
 Given the bus nature of `i2c`, it is also quite easy to achieve sharing of the `i2c bus` with multiple `device drivers` for various devices on the bus itself.
-We can just implement the `i2c_coroutine round_robin_run(std::span<i2c_coroutine> coros)` coroutine that uses round robin to share access to the peripheral between multiple coroutines (devices).
+We can just implement the `i2c_coroutine round_robin_run(std::span<i2c_coroutine> coros)` coroutine that uses round robin to share access to the peripheral between multiple coroutines (devices). Example of RRR:
+
+```cpp
+// returns true if all coroutines finished
+bool are_all_done(std::span<i2c_coroutine>);
+
+i2c_coroutine round_robin_run(std::span<i2c_coroutine> coros)
+{
+    std::size_t i = 0;
+    while(true){
+        i2c_coroutine& coro = coros[i];
+        i = (i+1)%coros.size();
+
+        if(coro.done()){
+            if(i == 0 && are_all_done(coros)){
+                co_return;
+            }
+            continue;
+        }
+
+        co_await coro.tick();
+    }
+}
+
+```
 
 This can transfer to any interaction with our peripherals, we can model that interaction as a suspension of the coroutine, and let the suspension process initiate the operation with the peripheral, or simply give us a request for some operation.
 
