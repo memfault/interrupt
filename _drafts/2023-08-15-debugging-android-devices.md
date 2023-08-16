@@ -3,6 +3,7 @@ title: Debugging Android Devices
 description:
   Exploring the tools and data available to embedded Android developers to fix issues with their AOSP based devices.
 author: chayes
+tags: [android, debugging]
 ---
 
 All hardware devices experience bugs and need debugging. Android devices in specific are exceptionally complex with several hundred gigabytes of source code, dozens of components, and wide range of uses. 
@@ -13,7 +14,9 @@ In this article we will explore the different facilities and tools available to 
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+> 📺 **Join the webinar**
+>
+> Join me tomorrow, August 17th for an interactive webinar on [How to Debug Android Devices in Production](https://hubs.la/Q01YJZXG0).
 
 {% include toc.html %}
 
