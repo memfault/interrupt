@@ -1,11 +1,11 @@
 ---
 title: Debugging Android Devices
 description:
-  What should I include here... <CHRIS COME BACK AND FIX THIS!!>
+  Exploring the tools and data available to embedded Android developers to fix issues with their AOSP based devices.
 author: chayes
 ---
 
-All hardware devices in the field experience bugs and need debugging. Android devices in specific are exceptionally complex with several hundred gigabytes of source code, dozens of components, and wide range of uses. 
+All hardware devices experience bugs and need debugging. Android devices in specific are exceptionally complex with several hundred gigabytes of source code, dozens of components, and wide range of uses. 
 
 <!-- excerpt start -->
 
@@ -23,19 +23,15 @@ The first place any debugging starts is usually looking through logs. Android ha
 
 ### Logcat
 
-Logcat logs are pretty straight forward, most android app devs know about logcat There are circular buffers for main, system, crash, radio, and event logs for binaries running within the Android runtime. This can be system services, applications, and native binaries. The CLI allows you to filter on specific packages and control the verbosity on a per package basis.
+Logcat logs are the bread and butter of debugging android devices. There are circular buffers for main, system, crash, radio, and event logs for binaries running within the Android runtime. Each of these buffers are written to corresponding files in `/dev/log/`. Log messages can be sent from system services, applications, and native binaries. The logcat CLI tool allows you to filter on specific packages and control the verbosity on a per package basis.
 
 ### Kernel Logs
 
-/proc/kmesg can be read to get the kernel level logs. This is where you will find kernel boot logs and driver logs. You can also use the dmesg binary on the system to get nice colored output and access to a several other useful options.
+`/proc/kmesg` can be read to get the kernel level logs. These logs are crucial for diagnosing and troubleshooting various system issues, including hardware failures, software bugs, and performance problems. Kernel logs provide insights into the inner workings of the operating system and its interaction with hardware devices. If you are integrating a new device and writing a driver for it, you'll find any logging the driver outputs in the kernel logs. You can also use the dmesg binary on the system to get colored output and access to a several other useful options.
 
 ### LNAV
 
-[lnav (The Logfile Navigator)](https://lnav.org/) is one of the most useful utilities I've ever found for reading Android logs. It’s a generic, but feature rich log navigator on the CLI which supports multi-log interpolation. This means you can combine both the kernel and logcat logs into a single log viewer and understanding what’s happening at both layers of the system. When working at Square, I worked on a product which was two discrete Android devices talking to each other over USB. I wrote a script to add a device identifier to each set of logs after the time stamp and was able to combine all 4 sets of log files into one view, thus debugging the entire product as a whole.
-
-It also supports things like syntax highlighting, custom regex highlighting, and pretty printing of structured data such as json.
-
-Out of the box, lnav doesn’t support Android’s logcat format but a json scheme for logcat can be found [here](https://github.com/phoenixuprising/lnav-android-scheme). 
+[lnav (The Logfile Navigator)](https://lnav.org/) is one of the most useful utilities I've ever found for reading Android logs, though out of the box, lnav doesn’t support Android’s logcat format but a json scheme for logcat can be found [here](https://github.com/phoenixuprising/lnav-android-scheme). It’s a generic, but feature rich log navigator on the CLI which supports multi-log interpolation. This means you can combine both the kernel and logcat logs into a single log viewer and understanding what’s happening at both layers of the system. When working at Square, I worked on a product which was two discrete Android devices talking to each other over USB. I wrote a script to add a device identifier to each set of logs after the time stamp and was able to combine all 4 sets of log files into one view, thus debugging the entire product as a whole. It also supports things like syntax highlighting, custom regex highlighting, and pretty printing of structured data such as json.
 
 ## Crash Files & Types
 
@@ -43,7 +39,7 @@ Along with the two types of logs, there are also a handful of crash files and ty
 
 ### Tombstones
 
-When a dynamically linked executable starts, several signal handlers are registered that, in the event of a crash, cause a basic crash dump to be written to logcat and a more detailed tombstone file to be written to /data/tombstones/. The tombstones files contain a wealth of information about the crash including:
+When a dynamically linked executable starts, several signal handlers are registered that, in the event of a crash, cause a basic crash dump to be written to logcat and a more detailed tombstone file to be written to `/data/tombstones/` and are sent to DropBoxManager. The tombstones files contain a wealth of information about the crash including:
   - GNU Build Fingerprint
   - ABI
   - Name of the crashing process
@@ -105,7 +101,7 @@ Stack Trace:
 
 ### Kernel Panics
 
-A Kernel Panic is a critical and unrecoverable error that occurs within the Linux kernel, the core component of the Linux operating system. When a kernel panic happens, the kernel detects a situation where it cannot safely continue executing, and as a result, it halts all operations to prevent further damage or data corruption to the running device. It's a last-resort safety mechanism to prevent the system from continuing to execute in an unpredictable or unstable state. Kernel panics will be found in the kmsg buffer and will also be written to the Android DropBox for analysis once the system comes back up. 
+A Kernel Panic is a critical and unrecoverable error that occurs within the Linux kernel, the core component of the Linux operating system. When a kernel panic happens, the kernel detects a situation where it cannot safely continue executing, and as a result, it halts all operations to prevent further damage or data corruption to the running device. It's a last-resort safety mechanism to prevent the system from continuing to execute in an unpredictable or unstable state. Kernel panics will be found in the kmsg buffer and will also be written to the Android DropBoxManager for analysis once the system comes back up. 
 
 ### Kernel Oops
 
@@ -194,7 +190,7 @@ We then will have a truncated kmsg log that will indicate what the system was do
 [ 1462.492479] Rebooting in 5 seconds..
 ```
 
-Finally, we have the actual crash itself. Detailed information about the process that crashed is provided such as the name of the binary, what CPU it was running on, the call trace, and register values. This can all be incredibly helpful in understand what is happening in the kernel at the time of the panic. You'll notice here as well that call trace has memory offsets for each of the function calls. With the use of `addr2line`, you are able to get the filename and line numbers associated with those offsets.
+Finally, we have the actual crash itself. Detailed information about the process that crashed is provided such as the name of the binary, what CPU it was running on, the call trace, and register values. This can all be incredibly helpful in understand what is happening in the kernel at the time of the panic. You'll notice here as well that call trace has memory offsets for each of the function calls. With the use of `addr2line` ([man page](https://man7.org/linux/man-pages/man1/addr2line.1.html)), you are able to get the filename and line numbers associated with those offsets.
 
 ### Application Not Responding (ANRs)
 
@@ -233,19 +229,17 @@ You can find more details here in the [official documentation](https://source.an
 
 Due to the complexity of Android based devices, Google ships several tools to help diagnose what is happening on them.
 
-### Android Debug Bridge (ADB) 
-
-This allows you to connect to your device over usb or the network, and run commands, pull logs, install apps, reboot the device, and push/pull files. This really is a feature rich tool which supports several other commands and options but those are the most commonly used.
-
 ### Bug Reports
 
 Bug Reports are huge dumps of data from the device that collects information from all the services running on the device and creates a snapshot of the device at the time it was triggered. These are very resource intensive and often times will cause the device to appear frozen so you don’t normally want to do this frequently to a customer’s device.
 
-Android's official documentation has dozens of short explanations on exploring different types of data contained within a Bug Report.
+Android's official documentation has dozens of short explanations on exploring different types of data contained within a [Bug Report](https://source.android.com/docs/core/tests/debug/read-bug-reports).
 
-### DropboxManager
+There are two ways to generate a Bug Report. First option is to use Android Debug Bridge (which is discussed later in this article) to connect to the device and request one. `adb bugreport bugreport.zip`, this command will generate a bug report in the form of a ZIP archive and write it to the host machine. The second way is via the "Developer options" in the settings of your Android device. You will find and an option called "Take bug report" which will generate one locally on the device, it is then up to the user of the device to upload the Bug Report somewhere for developers to read over.
 
-DropboxManager is for app specific crash logs. As mentioned above, this is where java exceptions, tombstones, kernel panics, etc can be found as individual files as opposed to having to try and pull them out of logcat. 
+### DropBoxManager
+
+DropBoxManager is for app specific crash logs. As mentioned above, this is where java exceptions, tombstones, kernel panics, etc can be found as individual files as opposed to having to try and pull them out of logcat. [Android provides API's](https://developer.android.com/reference/android/os/DropBoxManager) to both write and retrieve the files sent to the DropBoxManager.
 
 ### Batterystats and Battery Historian
 
@@ -260,6 +254,12 @@ While it is an older video, theres a great [YouTube video](https://www.youtube.c
 Perfetto is an open-source performance tracing and visualization tool primarily designed for analyzing and improving the performance of software systems, especially on the Android platform. It was initially developed by Google and is now maintained as a collaborative project by the Perfetto community.
 
 The primary goal of Perfetto is to provide deep insights into the performance characteristics of software applications, operating systems, and hardware. It achieves this by collecting and visualizing various performance-related data, such as CPU utilization, memory usage, disk activity, network activity, and more. This data helps developers and system administrators identify performance bottlenecks, track down issues, and optimize their software for better efficiency and responsiveness.
+
+### Android Debug Bridge (ADB) 
+
+ADB is one of the most important tools available to both embedded AOSP developers and app developers alike. It allows you to connect to your device over usb or the network, run commands, pull logs, install apps, reboot the device, and push/pull files.
+
+[Official Documentation](https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/master/docs/user/adb.1.md) goes into great depth of all of the capabilities of the tool and how to use it.
 
 ## Conclusion
 
