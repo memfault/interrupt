@@ -14,9 +14,9 @@ In this article we will explore the different facilities and tools available to 
 
 <!-- excerpt end -->
 
-> 📺 **Join the webinar**
+> 📺 **Watch the Webinar Recording**
 >
-> Join me tomorrow, August 17th for an interactive webinar on [How to Debug Android Devices in Production](https://hubs.la/Q01YJZXG0).
+> This topic was also the subject of a Memfault webinar on [How to Debug Android Devices in Production](https://hubs.la/Q01YJZXG0).
 
 {% include toc.html %}
 
