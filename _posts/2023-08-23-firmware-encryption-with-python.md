@@ -17,7 +17,7 @@ In this publication, we will explore a simple method to encrypt the firmware usi
 
 ## Firmware Encryption Explained
 
-Encryption of information is a process of encoding information, specifically applied to firmware, which involves converting the original firmware image **plaintext** into an alternative form **ciphertext**. Authorized parties who possess the encryption key can decrypt the ciphertext back into plaintext and access the original information.
+Encryption is a process of encoding information, specifically applied to firmware, which involves converting the original firmware image **plaintext** into an alternative form **ciphertext**. Authorized parties who possess the encryption key can decrypt the ciphertext back into plaintext and access the original information.
 
 When performing firmware updates with security in mind, it is important to consider the authenticity and confidentiality of our firmware. Encrypting the firmware is a way to enhance the confidentiality of our update system. Let’s see when it is advisable to implement firmware encryption.
 
@@ -403,7 +403,7 @@ The bootloader checks if something exists in slot 1 where the encrypted firmware
 The full example is available on GitHub at
 [interrupt@fwup-encryption](https://github.com/memfault/interrupt/tree/master/example/fwup-encryption).
 
-The following tools to compile the firmware:
+The following tools to compile and flash the firmware:
 
 * B-L4S5I-IOT01A[^BL4S5I]
 * GNU Make 3.81 as the build system
@@ -439,7 +439,7 @@ Generated build/boot.elf
 $
 ```
 
-In the `Encrypting-PythonAES` directory there is the Python Script to encrypt the firmware, after compiling in the build directory we have the application firmware called `app.bin`, we will start the python Script from make so that the encryption of our image is performed:
+In the `Encrypting-PythonAES` directory there is the Python Script to encrypt the firmware, after compiling in the build directory we have the application firmware called `app.bin`, we will start the python script from make so that the encryption of our image is performed:
 
 ```shell
 $ make encryption
@@ -519,7 +519,7 @@ Cortex-M4 identified.
 J-Link>
 ```
 
-Consequently we have the J-Link debugger ready, so we first program the encrypted firmware:
+Now that the J-Link server is running we can flash the firmware:
 
 ```shell
 J-Link>loadFile C:\fwup-encryption\build\Cipherapp.bin,0x08001000
