@@ -196,7 +196,7 @@ blake:
     blurb: is an embedded software engineer at Memfault. Blake previously worked on embedded software teams at Garmin and Amazon Robotics.
     linkedin: https://www.linkedin.com/in/blake-a-hildebrand/
     github: bahildebrand
-    image: /img/author/blake.jpg    
+    image: /img/author/blake.jpg
 lampacher:
     name: Martin Lampacher
     image: /img/author/lampacher.jpg
@@ -208,7 +208,7 @@ chayes:
     blurb: is an Android Solutions Engineer at Memfault. Chris previously worked at Square as an Embedded Android Engineer.
     linkedin: https://www.linkedin.com/in/chrishayes6/
     github: phoenixuprising
-Guille:
+guille:
     name: Guillermo Garcia
     web: https://embedded-dbl.com/
     blurb: is an embedded software engineer who likes IoT projects.
