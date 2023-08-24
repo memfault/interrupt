@@ -1,8 +1,8 @@
 ---
-title: "Encrypting Firmware Updates With Python"
+title: "Securing Firmware Updates With AES Encryption"
 description:
   Firmware encryption is an option to increase security in over the air (OTA) updates. In this post, we will see how to implement firmware encryption and decryption.
-author: Guille
+author: guille
 ---
 
 Connected devices require a secure point-to-point channel to ensure that there is no possibility of exposing important data for the integrity of an embedded system. This is especially true when we talk about over-the-air (OTA) software updates, where the new firmware has a long way to go before reaching its destination and being installed by our bootloader.
