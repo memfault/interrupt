@@ -203,3 +203,14 @@ lampacher:
     linkedin: https://www.linkedin.com/in/martin-lampacher-4b532984
     blurb: is a Freelance Embedded Engineer based in the Italian Alps.
     github: lmapii
+chayes:
+    name: Chris Hayes
+    blurb: is an Android Solutions Engineer at Memfault. Chris previously worked at Square as an Embedded Android Engineer.
+    linkedin: https://www.linkedin.com/in/chrishayes6/
+    github: phoenixuprising
+guille:
+    name: Guillermo Garcia
+    web: https://embedded-dbl.com/
+    blurb: is an embedded software engineer who likes IoT projects.
+    linkedin: https://www.linkedin.com/in/guillermo-garcia-ch%C3%A1vez-1126951ab/
+    github: GuillerGC
