@@ -110,7 +110,6 @@ function checkAndDisplayBanner() {
 
 // Closes the banner and save the cookie
 function closeBanner() {
-	console.log('closeBanner')
     const banner = document.querySelector('.banner-notifications');
     if (!banner) return;
 
