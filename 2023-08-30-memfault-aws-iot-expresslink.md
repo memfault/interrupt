@@ -1,5 +1,5 @@
 ---
-title: Integrating Memfault and an STM32G0 Using AWS IoT ExpressLink
+title: Memfault Via AWS IoT ExpressLink
 description: In the dynamic realm of embedded systems, the right combination of hardware and software components can transform the development process and empower engineers to build robust and efficient solutions. This article explores a streamlined device-to-cloud embedded design utilizing the STM32G0 Nucleo board from STMicroelectronics, an AWS IoT ExpressLink module from Espressif, AWS IoT Core for secure MQTT communication, and Memfault for remote debugging. We will delve into the seamless integration of these technologies and highlight the benefits they offer in the context of IoT applications.
 author: dangross
 ---
@@ -29,9 +29,11 @@ reporting, and real-time error monitoring.
 {% include newsletter.html %}
 
 {% include toc.html %}
+
 ## System Design
-First, let's take a look at the high-level architecture
-this article will cover with the primary components identified along
+
+First, let's take a look at the high-level architecture.
+This article will cover the primary components identified along
 with how they fit together. The device side is primarily hardware, but
 will also include your custom firmware as well as any specific device
 configuration. The cloud side leverages AWS services as a bridge to
@@ -58,6 +60,7 @@ is a perfect interface to plug in the
 [AWS IoT ExpressLink development kit from Espressif](https://www.espressif.com/en/solutions/device-connectivity/esp-aws-iot-expresslink).
 
 ## What is AWS IoT ExpressLink?
+
 Before we dive into the specifics of the aforementioned connectivity module
 available from Espressif, let's cover some basic information about AWS
 IoT ExpressLink. AWS IoT ExpressLink is a hardware and software solution
@@ -75,6 +78,7 @@ these AWS partners: Espressif, Infineon, Realtek, Telit Cinterion, and
 u-blox.
 
 ## Setting up the Hardware
+
 In this article, we are using the Espressif dev kit with Wi-Fi connectivity.
 You can follow the links above to discover various procurement options.
 Configuration of the dev kit is straightforward by following the steps in
@@ -100,6 +104,7 @@ processing as well.
 ![]({% img_url stm32g0-aws-iot/aws_iot_screenshot.png %})
 
 ## Enter Memfault
+
 To ensure the reliability and stability of IoT applications, effective
 debugging and error monitoring are crucial. Memfault comes to the rescue
 with its comprehensive set of tools for remote debugging, crash
@@ -124,6 +129,7 @@ aiding in quicker issue resolution and enhancing the overall stability
 of IoT applications.
 
 ## Forwarding Messages
+
 However, how does the MQTT broker forward the data
 to the Memfault API? This is where the
 [Rules Engine](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html)
@@ -143,6 +149,7 @@ Another example of this configuration and setup can be found
 from Nordic Semiconductor as an asset tracking use case.
 
 ## Memfault Dashboard
+
 At this point, we have covered all the components of the architecture
 in the diagram at the beginning of the article. You should have a complete
 picture of how the hardware, software, connectivity, and services all
@@ -154,6 +161,7 @@ development and production to gain insights into the device's behavior.
 ![]({% img_url stm32g0-aws-iot/memfault_screenshot.png %})
 
 ## Wrapping Up
+
 By harnessing the combined power of the STM32G0 Nucleo board, AWS IoT
 ExpressLink, and Memfault, developers can unlock new frontiers in IoT
 application development. This integration empowers engineers to
