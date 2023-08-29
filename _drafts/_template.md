@@ -14,7 +14,6 @@ title: Post Title
 description:
   Post Description (~140 words, used for discoverability and SEO)
 author: tyler
-image: img/<post-slug>/cover.png # 1200x630
 ---
 
 A little bit of background of why the reader should read this post.
