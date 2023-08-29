@@ -1,7 +1,8 @@
 name: Detect Ruby Version Mismatch
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    branches: [master]
     paths:
       - 'readme.md'
       - '.ruby-version'
