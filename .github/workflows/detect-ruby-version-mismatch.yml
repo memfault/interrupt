@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Get version of Ruby
+      - name: Verify Ruby version in readme.md matches .ruby-version
         run: |
           RUBY_VERSION=$(cat .ruby-version)
           grep -- "- Ruby $RUBY_VERSION" readme.md
