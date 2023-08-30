@@ -1,5 +1,5 @@
 ---
-title: Memfault Via AWS IoT ExpressLink
+title: Integrating Memfault With AWS IoT Core and ExpressLink
 description: In the dynamic realm of embedded systems, the right combination of hardware and software components can transform the development process and empower engineers to build robust and efficient solutions. This article explores a streamlined device-to-cloud embedded design utilizing the STM32G0 Nucleo board from STMicroelectronics, an AWS IoT ExpressLink module from Espressif, AWS IoT Core for secure MQTT communication, and Memfault for remote debugging. We will delve into the seamless integration of these technologies and highlight the benefits they offer in the context of IoT applications.
 author: dangross
 ---
