@@ -1,6 +1,6 @@
 ---
 title: The hardware-implemented actor model inside modern MCUs
-description: Description of how interrupt controllers may be used as schedulers
+description: Description of how interrupt controllers may be used as simple schedulers
 author: ramanf
 image:
 ---
@@ -26,7 +26,7 @@ This is why concepts where interrupts are used as the main 'execution engine' ar
 
 Do you remember how the 'usual' RTOS scheduler works? First, it keeps a set of threads with some user-defined priority. Second, threads may activate each other, either directly or indirectly. Third, the scheduler is responsible for ensuring that  the most prioritized thread will be active and activation of other threads will trigger 'rescheduling' and possibly preemption of the currently active one.
 
-If you look at the programmer's model of interrupt controllers like [NVIC](https://developer.arm.com/documentation/ddi0337/e/Nested-Vectored-Interrupt-Controller?lang=en) or GIC, you will notice that these devices do exactly that. For example, in the NVIC case, the device contains a set of registers describing the state of interrupt vectors, their priorities and so on. Also, it has a special register called STIR (Software Trigger Interrupt Register). Writing a vector number to that register causes the corresponding interrupt to be activated in the same way as hardware does. Since the user can also change the priority of interrupts, the interrupt controller itself may be treated as a simple scheduler or an implementation of the so-called [actor model](https://en.wikipedia.org/wiki/Actor_model) in **hardware**. The idea is to implement an actor-based framework and utilize the interrupt controller as a form of hardware scheduler.
+If you look at the programmer's model of interrupt controllers like [NVIC](https://developer.arm.com/documentation/ddi0337/e/Nested-Vectored-Interrupt-Controller?lang=en) or GIC, you will notice that these devices do exactly that. For example, in the NVIC case, the device contains a set of registers describing the state of interrupt vectors, their priorities and so on. Also, it has a special register called STIR (Software Trigger Interrupt Register). Writing a vector number to that register causes the corresponding interrupt to be activated in the same way as hardware does. Since the user can also change the priority of interrupts, the interrupt controller itself may be treated as a simple scheduler or an implementation of the so-called [actor model](https://en.wikipedia.org/wiki/Actor_model) in **hardware**.
 
 
 ## The concept
@@ -37,9 +37,9 @@ The classic actor model describes an actor as a message handler, similar to an i
 
 - create new actors
 - send messages to other actors
-- read/write its local state
+- read/write its own local state
 
-Actors use messages and queues to communicate, so, there are only three types of software objects: queues, actors and messages.
+Actors use messages and queues to communicate. Since interrupt controller has no such functionality, it should be implemented in software. So, there are only three types of software objects: queues, actors and messages.
 
 Despite the actor and its mailbox being tightly coupled in classic models, I think it is less practical than relying on separate queues. The latter case is more flexible, an actor may choose which queue to poll depending on the message being processed. Here, it is assumed that the actor may only have one message, and it has to poll some queue every time it finishes handling the current message.
 
@@ -141,7 +141,7 @@ The aforementioned concept can be implemented in approximately 200 lines of C co
 
 Interrupts are often used as a simple 'execution engine' in RTOS-less embedded systems. While it is better than loop-based solutions because of preemption, it may lead in worse latencies when complex processing is done in handlers directly. Many devices use interrupts for a variety of reasons, for example, communication devices use them to signal transmission completion, new data receiving, errors and so on. When the data is processed in handlers, it may block responses to other events, which  may be undesirable. Especially when communication protocol has timing constraints, like USB, where the host pings devices periodically. So it's a good idea to split interrupt handlers into several parts and keep interrupt code as short as possible to be able to respond to other incoming events. This approach may be a way to achieve such a split. Furthermore, it may also help with the processing of events from multiple sources and the utilization of multiple CPUs. Also, actors may be put in another environment, like a host computer, for testing purposes.
 
-But the article wouldn't be complete without discussing the drawbacks. The most significant disadvantage of the model is its requirement to redefine the task in terms of actors and messages (publish-subscribe model), which may be difficult. Just think about how to implement timeouts or waiting for a response before further message processing. Since the actor model relies on message allocations, it is less deterministic then fixed-memory solutions, like threads and semaphores. When message pools are exhausted, it is uncertain how the handler should proceed. In other words, design patterns for the actor model are less known and may be more complex than their threading-based counterparts are.
+The most significant disadvantage of the model is its requirement to redefine the task in terms of actors and messages (publish-subscribe model), which may be difficult. Just think about how to implement timeouts or waiting for a response before further message processing. Since the actor model relies on message allocations, it is less deterministic than fixed-memory solutions, like threads and semaphores. When message pools are exhausted, it is uncertain how the handler should proceed. In other words, design patterns for the actor model are less known and may be more complex than their threading-based counterparts are. Nevertheless, this may be fixed sometime by utilizing 'async/await' features of modern languages like Rust and C++20. With async functions actor's code may be expressed in a more natural, sequential manner without the need to create state machines manually.
 
 
 ## Final thoughts
@@ -168,4 +168,6 @@ Actor model has been around since 1973. In embedded systems, it may help with mo
   <https://developer.arm.com/documentation/ddi0403/d/System-Level-Architecture/System-Address-Map/Nested-Vectored-Interrupt-Controller--NVIC/NVIC-operation>
 - Using Preemption in Event Driven Systems with a Single Stack:
   <https://www-docs.b-tu.de/fg-betriebssysteme/public/publication/2008/walther-usingpreemption.pdf>
+- Embassy async framework
+  <https://embassy.dev>
 
