@@ -69,7 +69,7 @@ with very little coding and very few dependencies. This comes in the
 form of a hardware module with software built in that can connect to AWS
 IoT Core securely with pre-provisioned keys and certificates. The
 interface to the module is a serial UART and implements a small
-[AT command set](https://www.espressif.com/en/solutions/device-connectivity/esp-aws-iot-expresslink).
+[AT command set](https://docs.aws.amazon.com/iot-expresslink/latest/programmersguide/elpg.html).
 In this way, the module acts like a "cloud modem." To date,
 several AWS IoT ExpressLink
 [modules](https://devices.amazonaws.com/search?page=1&sv=iotxplnk)
