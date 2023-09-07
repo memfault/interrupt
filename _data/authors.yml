@@ -214,3 +214,10 @@ guille:
     blurb: is an embedded software engineer who likes IoT projects.
     linkedin: https://www.linkedin.com/in/guillermo-garcia-ch%C3%A1vez-1126951ab/
     github: GuillerGC
+evgeny:
+    name: Evgeny Chormonov
+    web: https://ser-mk.github.io/
+    blurb: is a hardware and software engineer
+    linkedin: https://linkedin.com/in/echormonov
+    github: ser-mk
+    image: /img/author/evgeny.png
