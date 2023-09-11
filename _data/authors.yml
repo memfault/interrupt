@@ -221,3 +221,9 @@ evgeny:
     linkedin: https://linkedin.com/in/echormonov
     github: ser-mk
     image: /img/author/evgeny.png
+dangross:
+    name: Dan Gross
+    blurb: is passionate about reducing friction for developers. As a developer, Dan has worked on cloud and embedded systems for Sun, HP, Oracle, Samsung, and AWS.
+    image: /img/author/dangross.jpg
+    linkedin: https://www.linkedin.com/in/grossdan/
+

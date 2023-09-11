@@ -21,15 +21,43 @@ See [Contributing](https://interrupt.memfault.com/contributing) for more informa
 
 ### Locally
 
-Follow the instructions in the [Jekyll quickstart guide](https://jekyllrb.com/docs/) to install Ruby and Jekyll and bundler.
+You'll need:
+- Python 3.8 or later
+- Ruby 2.7.7
 
-Clone the repo, install dependencies, and serve:
+#### Install Dependencies
+
+Clone the repo and install Python dependencies:
 
 ```bash
 $ git clone https://github.com/memfault/interrupt.git
 $ cd interrupt
+# Setup a virtual environment to avoid cluttering your system
+$ python3 -m venv .venv
+# Activate the environment
+$ source .venv/bin/activate
 $ pip install -r requirements.txt
+```
+
+The virtual environment can be deactivated with `deactivate`.
+
+We highly recommend setting up a version manager for Ruby, such as
+`rbenv`. Follow the instructions [here](https://github.com/rbenv/rbenv) to set it
+up for your operating system and install the right version of Ruby.
+
+Install Ruby dependencies:
+
+```bash
+# Check that your Ruby version is correct
+$ ruby -v
 $ bundle install
+```
+
+#### Launch
+
+Serve with the following command, which will also open up the site in your browser:
+
+```bash
 $ bundle exec jekyll serve --drafts --livereload --open-url
 ```
 
