@@ -3,6 +3,7 @@ title: "Pocket article: Debugging ccache misses"
 description: Fixing cache misses when using the ccache compiler cache
 author: noah
 image: /img/ccache-debugging/ccache.png
+tags: [c, c++, build-system]
 ---
 
 <!-- excerpt start -->

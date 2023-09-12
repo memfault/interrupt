@@ -4,7 +4,7 @@ description: "A walk through of how hardware and software breakpoints work, how 
 using GDB Remote Serial Protocol, and how to configure hardware breakpoints using the ARM Cortex-M
 Flash Patch and Breakpoint Unit"
 image: /img/breakpoint/fpb-hardware-breakpoint.png
-tag: [cortex-m]
+tags: [cortex-m, arm, mcu, debugging, gdb]
 author: chris
 ---
 

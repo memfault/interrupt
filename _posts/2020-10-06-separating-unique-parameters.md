@@ -2,6 +2,7 @@
 title: Separating Unique Parameters from Firmware Binaries
 description: Post covering how to provision unique parameters, such as serial numbers or public and private encryption keys, onto firmware-based devices.
 author: amundas
+tags: [toolchain, build-system]
 ---
 
 When writing firmware for embedded systems, the firmware is usually meant to run
@@ -35,7 +36,7 @@ Before we get started let's write down our requirements and describe our setup.
 
 ### Requirements
 
-Our goal is simple: 
+Our goal is simple:
 1. We want a general method to separately load firmware and unique parameters.
    onto devices
 2. We want to keep the number of programming steps to a minimum and rely on
@@ -49,7 +50,7 @@ This blog post was written using a SAMR35-based LoRaWAN node.
 
 LoRaWAN relies on a few device parameters that have to be unique:
 1. the DevEUI (unique device ID)
-2. the AppEUI (unique application ID) 
+2. the AppEUI (unique application ID)
 3. the AppKey (encryption key used during activation)
 
  The LoRa nodes for this example are connected to [The Things
@@ -177,7 +178,7 @@ robust since it would not depend on some external service which may not be
 reachable from the factory floor.
 
 To keep things organized, we will store all of our generated artifacts in folders
-based on the node name and keep track of which are used and which are free. The 
+based on the node name and keep track of which are used and which are free. The
 free parameters are stored in `keys/free/<node_name>` and used parameters
 in `keys/used/<node_name>`.
 
@@ -257,7 +258,7 @@ the "used" folder.
 The Make target generates a J-Link Commander script that loads the
 firmware and the keys of a specified device, then the target executes the
 script, and moves the keys to the "used" folder if this is the first time they
-have been used. 
+have been used.
 
 The Makefile I used can be found below.
 

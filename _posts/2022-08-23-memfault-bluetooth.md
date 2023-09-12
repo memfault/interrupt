@@ -3,9 +3,10 @@ title: Integrating Memfault with Blecon Bluetooth Devices
 description:
   In this post, I’ll go through how we evaluated Memfault at Blecon and talk through what we liked and why we decided to use it, how we integrated it into the nRF5 platform and carried the Memfault data over to the Memfault cloud via Bluetooth.
 author: donatien
+tags: [ble, memfault, connectivity, observability]
 ---
 
-I’m Donatien, co-founder of [Blecon](https://blecon.net/), where we provide device connectivity to the Internet using only Bluetooth. In my previous lives working in the IoT division at Arm and my previous start-up, our teams constantly wrestled with debugging firmware bugs on remote devices. 
+I’m Donatien, co-founder of [Blecon](https://blecon.net/), where we provide device connectivity to the Internet using only Bluetooth. In my previous lives working in the IoT division at Arm and my previous start-up, our teams constantly wrestled with debugging firmware bugs on remote devices.
 
 To mitigate these issues, we would build one-off logging solutions, but we would often end up having to ask a (non-technical) customer to try and connect a debugger to a device (painful for both parties involved) or fly someone to debug the bug onsite (expensive and not environmentally friendly!). I knew we’d face some of these challenges again at Blecon, so I wanted to check out if Memfault could help mitigate or even eliminate them.
 
@@ -21,9 +22,9 @@ In this post, I’ll go through how we evaluated Memfault at Blecon and talk thr
 
 ##  Background
 
-At Blecon, we are enabling SaaS applications to securely integrate IoT devices thanks to Bluetooth Low Energy. Our technology is available to both device builders and web developers. We use smartphones as roaming network access points to avoid the need to deploy new infrastructure on-site. For more background on what we are up to, see [https://blecon.net](https://blecon.net). 
+At Blecon, we are enabling SaaS applications to securely integrate IoT devices thanks to Bluetooth Low Energy. Our technology is available to both device builders and web developers. We use smartphones as roaming network access points to avoid the need to deploy new infrastructure on-site. For more background on what we are up to, see [https://blecon.net](https://blecon.net).
 
-On the embedded side, we’re developing modem firmware that can be integrated into a device in order to easily and securely access a Blecon network. The modem allows a host MCU to send and receive data, handling device identity, registration and connecting securely to a network. 
+On the embedded side, we’re developing modem firmware that can be integrated into a device in order to easily and securely access a Blecon network. The modem allows a host MCU to send and receive data, handling device identity, registration and connecting securely to a network.
 
 <img width=800px src="{% img_url memfault-bluetooth/blecon-architecture.png %}" />
 
@@ -280,7 +281,7 @@ function sendToMemfault(device_id, payload) {
 
 Here is the code on Github: [https://github.com/blecon/blecon-memfault-integration](https://github.com/blecon/blecon-memfault-integration)
 
-We deploy it to Heroku, and configure the Blecon network request handler’s URL and secret within the Blecon console. 
+We deploy it to Heroku, and configure the Blecon network request handler’s URL and secret within the Blecon console.
 
 <img width=600px src="{% img_url memfault-bluetooth/blecon-edit-request-handler.png %}" />
 
@@ -291,7 +292,7 @@ Now, when we generate an error on the device we see a proper stack trace in Memf
 <img width=600px src="{% img_url memfault-bluetooth/memfault-assert-fake_error.png %}" />
 
 ## Moving to production
-With this success, we’ve decided to integrate Memfault directly into our modem firmware. 
+With this success, we’ve decided to integrate Memfault directly into our modem firmware.
 
 As the request/response mechanism above is something we expose to the host MCU the modem is connected to, we’re using the following strategy: every time the modem connects, it first serves requests made by the host MCU application. Once this is done (or on timeout), any pending Memfault chunk is sent to the infrastructure, using an internal channel. These chunks are then forwarded to the Memfault Chunk API by our network service. As all data is authenticated and encrypted between the modem and cloud, the Memfault chunks are sent securely and we can guarantee that the chunks came from a specified device.
 

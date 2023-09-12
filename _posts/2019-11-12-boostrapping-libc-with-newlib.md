@@ -5,7 +5,7 @@ description:
 systems. In this post, we learn more about Newlib and how to use it in a
 project."
 author: francois
-tags: [zero-to-main]
+tags: [zero-to-main, toolchain, cortex-m, arm]
 image: /img/zero-to-main/newlib.png
 ---
 

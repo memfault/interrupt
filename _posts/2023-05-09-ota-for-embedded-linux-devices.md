@@ -1,7 +1,7 @@
 ---
 title: "OTA for Embedded Linux Devices: A practical introduction"
 author: tsarlandie
-tags: [linux, ota, swupdate]
+tags: [linux, ota, swupdate, memfault]
 ---
 
 <!-- excerpt start -->

@@ -4,6 +4,7 @@ description: "An exploration of the best and worst GCC (and Clang) compiler opti
 embedded development with practical examples of why the flags are good or bad"
 image: /img/compiler-flags/example-warnings.png
 author: chris
+tags: [c, c++, toolchain]
 ---
 
 Compilers have hundreds of flags and configuration settings which can be toggled to control

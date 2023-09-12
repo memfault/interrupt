@@ -1,7 +1,7 @@
 ---
 title: "Introduction to ARM Semihosting"
 description: "An introduction to ARM semihosting, followed by an example with OpenOCD and arm-none-eabi toolchain"
-tag: [cortex-m, semihosting, ARM]
+tag: [cortex-m, semihosting, arm]
 author: ael-mess
 ---
 

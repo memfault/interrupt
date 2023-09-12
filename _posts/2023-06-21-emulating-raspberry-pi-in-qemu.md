@@ -2,6 +2,7 @@
 title: "Emulating a Raspberry Pi in QEMU"
 description: Emulating a Raspberry Pi computer on your desktop in Docker using QEMU - an open source emulator
 author: stawiski
+tags: [raspberry-pi, qemu, linux, emulator]
 ---
 
 The Raspberry Pi, a compact single-board computer, is widely used for DIY projects to industrial applications. These devices ship with a customized Linux distribution that differs from standard Linux, adding a layer of complexity for developers trying to troubleshoot application problems and dependencies.
@@ -46,7 +47,7 @@ xz -d 2023-05-03-raspios-bullseye-arm64.img.xz
 
 Now, let's inspect the image:
 ```bash
-$ fdisk -l ./2023-05-03-raspios-bullseye-arm64.img 
+$ fdisk -l ./2023-05-03-raspios-bullseye-arm64.img
 Disk ./2023-05-03-raspios-bullseye-arm64.img: 4.11 GiB, 4412407808 bytes, 8617984 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -104,8 +105,8 @@ While we have the image mounted, let's sort out the SSH connection as well. Rasp
 Now, let's recreate the password `raspberry` using `openssl`:
 ```bash
 $ openssl passwd -6
-Password: 
-Verifying - Password: 
+Password:
+Verifying - Password:
 $6$rBoByrWRKMY1EHFy$ho.LISnfm83CLBWBE/yqJ6Lq1TinRlxw/ImMTPcvvMuUfhQYcMmFnpFXUPowjy2br1NA0IACwF9JKugSNuHoe0
 ```
 
@@ -151,7 +152,7 @@ After a couple of seconds, you should see the output from the kernel bootup. Eve
 
 Debian GNU/Linux 11 raspberrypi ttyAMA0
 
-raspberrypi login: 
+raspberrypi login:
 ```
 
 In a separate shell, you should be able to SSH to the emulated Raspberry now:
@@ -162,7 +163,7 @@ ED25519 key fingerprint is SHA256:Rjgd9NJvyQKYIisy7gPwcDop2hrk8BXC9IajVNqWVvE.
 This key is not known by any other names
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 Warning: Permanently added '[localhost]:2222' (ED25519) to the list of known hosts.
-pi@localhost's password: 
+pi@localhost's password:
 Linux raspberrypi 6.1.21-v8+ #1642 SMP PREEMPT Mon Apr  3 17:24:16 BST 2023 aarch64
 
 The programs included with the Debian GNU/Linux system are free software;
@@ -176,7 +177,7 @@ Last login: Wed May 17 12:17:55 2023
 SSH is enabled and the default password for the 'pi' user has not been changed.
 This is a security risk - please login as the 'pi' user and type 'passwd' to set a new password.
 
-pi@raspberrypi:~ $ 
+pi@raspberrypi:~ $
 ```
 
 It works! This wasn't too bad, but it's still a couple of steps to follow. Let's see if we can put this in a Docker container.

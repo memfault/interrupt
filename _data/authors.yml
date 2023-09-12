@@ -185,6 +185,40 @@ blaise:
     image: /img/author/blaise.jpg
     linkedin: https://www.linkedin.com/in/blaiselengrand
     blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
+mabe:
+    name: Markus Becker
+    blurb: is a Software Engineer for IoT and wireless topics, currently focussing on professional lighting equipment.
+    linkedin: https://www.linkedin.com/in/mabcomnets/
+    github: markus-becker-tridonic-com
+    image: /img/author/mabe.jpg
+blake:
+    name: Blake Hildebrand
+    blurb: is an embedded software engineer at Memfault. Blake previously worked on embedded software teams at Garmin and Amazon Robotics.
+    linkedin: https://www.linkedin.com/in/blake-a-hildebrand/
+    github: bahildebrand
+    image: /img/author/blake.jpg
+lampacher:
+    name: Martin Lampacher
+    image: /img/author/lampacher.jpg
+    linkedin: https://www.linkedin.com/in/martin-lampacher-4b532984
+    blurb: is a Freelance Embedded Engineer based in the Italian Alps.
+    github: lmapii
+chayes:
+    name: Chris Hayes
+    blurb: is an Android Solutions Engineer at Memfault. Chris previously worked at Square as an Embedded Android Engineer.
+    linkedin: https://www.linkedin.com/in/chrishayes6/
+    github: phoenixuprising
+guille:
+    name: Guillermo Garcia
+    web: https://embedded-dbl.com/
+    blurb: is an embedded software engineer who likes IoT projects.
+    linkedin: https://www.linkedin.com/in/guillermo-garcia-ch%C3%A1vez-1126951ab/
+    github: GuillerGC
+dangross:
+    name: Dan Gross
+    blurb: is passionate about reducing friction for developers. As a developer, Dan has worked on cloud and embedded systems for Sun, HP, Oracle, Samsung, and AWS.
+    image: /img/author/dangross.jpg
+    linkedin: https://www.linkedin.com/in/grossdan/
 ramanf:
     name: Raman Filipau
     github: romanf-dev

@@ -1,0 +1,4 @@
+Sitemap: https://interrupt.memfault.com/sitemap.xml
+
+User-agent: *
+Allow: /

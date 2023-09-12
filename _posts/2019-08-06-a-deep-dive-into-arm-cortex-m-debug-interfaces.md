@@ -1,7 +1,7 @@
 ---
 title: "A Deep Dive into ARM Cortex-M Debug Interfaces"
 description: "A walk through of the ARM Debugger Stack from the Coresight DAP to Debug Probes to GDB Server. Followed by a logic analyzer trace of a end to end SWD transaction"
-tag: [cortex-m]
+tag: [cortex-m, arm, debugging]
 author: chris
 ---
 

@@ -2,7 +2,7 @@
 title: "From Zero to main(): Bare metal Rust"
 description: "Bringing an embedded Rust application from zero to main"
 author: james
-tags: [zero-to-main]
+tags: [zero-to-main, rust, bare-metal]
 ---
 
 For the past thirty years or so, the choice of languages for embedded systems developers has been relatively slim. Languages like C++ and Ada have found a home in some niche areas, such as telecommunications and safety critical fields, while higher level languages like Lua, Python, and JavaScript have found a home for scripting and prototyping.

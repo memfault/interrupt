@@ -4,6 +4,7 @@ description:
   A detailed comparison of ARM Cortex-M Microcontroller SDKs and BSPs, from best
   to worst.
 author: francois
+tags: [mcu]
 ---
 
 In 2020, an MCU is much more than a hunk of silicon. Indeed, it comes with a
@@ -81,7 +82,7 @@ in my view the best chip SDK out there.
 * Cross-platform ✅
 * Supports armcc/Keil, IAR, and Makefiles ✅
 * Lots of bundled examples ✅
-* Single zip, no install needed ✅ 
+* Single zip, no install needed ✅
 
 The nRF5 SDK does everything right. No registration, no install, no online
 configurator. It even is distributed under a BSD license!
@@ -107,7 +108,7 @@ like solid microcontrollers with a broad range of peripherals (including USB).
 * Cross-platform ✅
 * Supports armcc/Keil, IAR, and Makefiles ✅
 * Lots of bundled examples ✅
-* Single zip, no install needed ✅ 
+* Single zip, no install needed ✅
 
 Like Nordic, Texas Instruments gets a lot right: single-zip download, multi-IDE
 support (including Makefiles), and lots of examples. I knocked off a point for
@@ -252,7 +253,7 @@ detection).
     @@ -22,7 +22,7 @@ else
                     MK_DIR = mkdir -p
             endif
-    
+
     +       ifeq ($(shell uname | cut -d _ -f 1), Darwin)
     -       ifeq ($(shell uname | cut -d _ -f 1), DARWIN)
                     MK_DIR = mkdir -p
@@ -283,7 +284,7 @@ generate Makefiles.
 * Single zip, no install needed ❌
 
 Simplicity studio is huge (~1GB), slow, and complicated. Like all Eclipse-based
-IDEs, it generates poor Makefiles with hardcoded paths everywhere. 
+IDEs, it generates poor Makefiles with hardcoded paths everywhere.
 
 #### Step by step hello world example
 
@@ -316,7 +317,7 @@ investigation ended. I did give them a few points for offering IAR and Keil.
 #### Why the rating
 
 * Cross-platform ❌
-* Supports armcc/Keil, IAR, and Makefiles ❌ 
+* Supports armcc/Keil, IAR, and Makefiles ❌
 * Lots of bundled examples ✅
 * Single zip, no install needed ❌
 

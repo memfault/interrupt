@@ -5,6 +5,7 @@ description:
   GitHub Actions CI system.
 author: tyler
 image: img/test-automation-renode/cover.png
+tags: [testing]
 ---
 
 Automated firmware testing on real embedded hardware is what every hardware

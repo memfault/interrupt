@@ -3,7 +3,7 @@ title: "MCUboot Walkthrough and Porting Guide"
 description: "A guided tour of the MCUboot feature set and how to port it to a Cortex-M
 application"
 image: /img/mcuboot/mcuboot.png
-tag: [cortex-m]
+tag: [cortex-m, bootloader]
 author: chris
 ---
 

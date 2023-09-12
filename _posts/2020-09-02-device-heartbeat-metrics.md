@@ -5,7 +5,7 @@ description:
   alternative to log processing, helps hardware and IoT companies derisk
   firmware updates and alerts them to issues quickly.
 author: tyler
-tags: monitoring
+tags: [monitoring, logging]
 image: /img/device-heartbeat-metrics/heartbeats-cover.png
 ---
 
