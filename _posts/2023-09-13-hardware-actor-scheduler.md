@@ -134,7 +134,7 @@ It is important to emphasize that the interrupt vector is assigned to a priority
 
 ![](/img/hw_actors/vectors.png)
 
-It's clear that the number of possible priorities is limited to the number of interrupt vectors and available hardware preemption priorities. Modern controllers have about a thousand vectors, but only a few are used in each application. Therefore, there should be no vector shortage. If that's the case, your application may be so complicated that a full-featured RTOS would be a better choice.
+It's clear that the number of possible priorities is limited to the number of interrupt vectors and available hardware preemption priorities. Cortex-M microcontrollers can have up to 240 interrupt vectors, but only a few are used in each application. Therefore, there should be no vector shortage. If that's the case, your application may be so complicated that a full-featured RTOS would be a better choice.
 
 The aforementioned concept can be implemented in approximately 200 lines of C code. In the case of software implementation, the framework would have to deal with interrupt frames, their patching to emulate preemption, calls for rescheduling on interrupt return, examining bitmaps to find the most prioritized runqueue, etc. With hardware-assisted implementation, you can get all of this functionality for free.
 
