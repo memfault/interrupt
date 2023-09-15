@@ -45,7 +45,7 @@ Despite the actor and its mailbox being tightly coupled in classic models, it is
 
 All available interrupt vectors are divided into two classes: those producing and consuming messages. Interrupts designated to peripheral devices are expected to post messages to queues that, in turn, have subscribed actors.
 
-Let's implement the simplest 'blinky' application with one actor who handles messages from systick interrupt and controls onboard LED. The whole source of the example for the STM32 Bluepill board may be found [here](/example/hw-actors/main.c). The messages must be sent from systick interrupt to the actor controlling the LED. Therefore, the message payload is the next LED state:
+Let's implement the simplest 'blinky' application with one actor who handles messages from systick interrupt and controls onboard LED. The whole source of the example for the STM32 Bluepill board may be found [here](https://github.com/memfault/interrupt/blob/master/example/hw-actors). The messages must be sent from systick interrupt to the actor controlling the LED. Therefore, the message payload is the next LED state:
 
 ```c
 struct example_msg_t {
