@@ -214,3 +214,13 @@ guille:
     blurb: is an embedded software engineer who likes IoT projects.
     linkedin: https://www.linkedin.com/in/guillermo-garcia-ch%C3%A1vez-1126951ab/
     github: GuillerGC
+dangross:
+    name: Dan Gross
+    blurb: is passionate about reducing friction for developers. As a developer, Dan has worked on cloud and embedded systems for Sun, HP, Oracle, Samsung, and AWS.
+    image: /img/author/dangross.jpg
+    linkedin: https://www.linkedin.com/in/grossdan/
+ramanf:
+    name: Raman Filipau
+    github: romanf-dev
+    linkedin: https://www.linkedin.com/in/romanf-engineer/
+    blurb: -- firmware engineer. Previously worked on industrial automation and OS/RTOS design research.
