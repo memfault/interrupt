@@ -1,6 +1,6 @@
 # Notification Banner
 Instrumenting Sentry:
-    background: '#faaf4e'
-    textcolor: '#000'
+    background: '#141845'
+    textcolor: '#fff'
     title: Instrumenting Sentry
     description: '<i>Upcoming Panel: Best Practices for Safeguarding Your Connected Devices - Thursday, August 17, 2023 \| 9AM PT \| 12PM ET \| 6PM CET.</i>   <a href="https://hubs.la/Q01_vdqb0">RSVP Now.</a>'
