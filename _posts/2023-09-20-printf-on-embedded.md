@@ -90,7 +90,7 @@ linking:
 
 ```log
 arm-none-eabi/lib/thumb/v7e-m/nofp/libg_nano.a(libc_a-writer.o): in function `_write_r':
-/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/reent/writer.c:49: warning: _write is not implemented and will always fail
+newlib/libc/reent/writer.c:49: warning: _write is not implemented and will always fail
 ```
 
 See a thorough explanation here[^0].
