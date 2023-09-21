@@ -198,6 +198,10 @@ function could return `NULL`, and libc calls using the reentrancy structure
 _should_ return with no effect, but in practice this may not always be handled
 in newlib.
 
+Note that the same trap can be set up (applying to `printf` only though) by
+adding a similar snippet to `_write()` (or using linker `--wrap` to inject the
+check), without requiring rebuilding newlib 🥹.
+
 #### Disable interrupts
 
 This approach requires that every lower-priority thread enclose any
