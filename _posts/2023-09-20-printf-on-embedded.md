@@ -457,8 +457,11 @@ Cons:
   on debug probe and host
 - doesn't work when debugger is disconnected (target will be stuck on `bkpt`
   instruction; either a forever hang or a crash depending on cortex-m
-  architecture set)
-- newlib implementation is relatively code-heavy (8k or bigger!)
+  architecture set). this can worked around by handling the `DebugMon` exception
+  on-chip, or by checking the DHCSR register[^1] `C_DEBUGEN` bit, to detect if a
+  debugger is connected.
+- the newlib implementation (`--specs=rdimon.specs`) consumes about 1.5-2kB of
+  flash
 
 ### Serial Wire Output (SWO)
 
@@ -584,5 +587,6 @@ either in the comments here or in the Interrupt community Slack!
 ## Footnotes
 
 [^0]: [Howto: Porting newlib, A Simple Guide 😅](https://www.embecosm.com/appnotes/ean9/ean9-howto-newlib-1.0.html#id2719973)
+[^1]: [ARMv7-M Architecture Reference Manual, Section C1.6.2](https://developer.arm.com/documentation/ddi0403/ed/)
 
 <!-- prettier-ignore-end -->
