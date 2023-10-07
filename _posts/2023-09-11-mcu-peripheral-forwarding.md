@@ -30,7 +30,6 @@ Imagine a scenario where you could use peripheral addresses in your PC programs 
 
 In my research, I have experimented with this implementation and documented my findings in a [**paper on medium.com**](https://medium.com/@echormonov/high-level-programming-of-mcu-periphery-from-a-host-pc-without-using-firmware-and-processor-intro-4f7dc0636b21) . 
 
-![dbi arch](/img/chip-peripheral-forwarding/dbi.png)
 
 To achieve this runtime interruption, specialized [Dynamic Binary Instrumentation](https://en.wikipedia.org/wiki/Instrumentation_%28computer_programming%29) (DBI) toolkits come into play. These toolkits provide the necessary functionality to monitor and modify the execution of binary code in real-time. However, it is important to note that not all DBI toolkits are capable of interrupting memory operations. While there are various DBI toolkits available, only one option stands out for this particular task: Intel's [PinTool](https://www.intel.com/content/www/us/en/developer/articles/tool/pin-a-dynamic-binary-instrumentation-tool.html). Unlike other DBI tools, PinTool offers the capability to interrupt memory operations, making it a suitable choice for this approach.
 
@@ -217,8 +216,6 @@ In the functions inserted by the ADIN plugin, you would need to perform address 
 
 I have implemented the necessary functions for address [checking](https://github.com/remotemcu/remcu/blob/master/src/addressintercept.cpp#L176) and [executing operations](https://github.com/remotemcu/remcu/blob/master/src/addressintercept.cpp#L185) on the MCU within a separate repository called [REMCU](https://github.com/remotemcu/remcu). REMCU provides the functionality to handle peripheral register operations by utilizing an OpenOCD and GDB client. This client enables communication with the debugger to execute peripheral register operations on the MCU chip. The OpenOCD and GDB client implementation allows you to interact with the MCU using the debugger, providing a convenient way to send commands and data to the peripheral registers.
 
-![debugger and MCU board](/img/chip-peripheral-forwarding/debugger.png)
-
 Furthermore, REMCU is designed to be extensible and adaptable to 
 different communication protocols. You can implement your own client 
 using protocols such as UART, CAN bus, or any other suitable 
@@ -239,8 +236,6 @@ struct ClientBase {
 I note establishing a connection with the MCU through the debugger protocol provides a robust and dependable solution. This connection is not affected by issues such as the chip clock signal or chip reset, ensuring consistent communication between the PC and the MCU.
 
 The REMCU also offers helpful [build scripts](https://github.com/remotemcu/remcu/tree/master/cmake) that automate the process of building the MCU's SDK into a separate shared library(*.so, *.dll, *.dylib) for various platforms, including embedded Linux (such as Raspberry Pi).
-
-![Raspberry and MCU](/img/chip-peripheral-forwarding/raspberry.png)
 
 These build scripts simplify the setup and configuration process and streamline the integration of the MCU's SDK with the necessary instrumentation, making it easier to incorporate the modified SDK into your project. By running these build scripts, you can automatically generate a shared library that contains the instrumented code and the implementation of the handler functions.
 
