@@ -11,12 +11,12 @@
 # It will now show up in the front page when running Jekyll locally.
 
 title: Visualizing embedded data made easy
-description:
-  Debugging common issues with STMViewer software 
+description: 
+	"A brief introduction to STMViewer software usecases in debugging embedded targets"
 author: Peter
 ---
 
-If you've ever wanted to plot some data acquired on your embedded target this article is for you. It presents some common usecases for visualizing data in real time using STMViewer software. Put an end to manual, time consuming and error-prone ways of collecting and displyaing data to speed up your debugging process. 
+If you've ever wanted to plot data acquired on your embedded target, this article is for you. It explores common use cases for real-time data visualization using STMViewer. Say goodbye to manual, time-consuming, and error-prone data collection and display methods to speed up your debugging process
 
 <!-- excerpt start -->
 
@@ -26,60 +26,63 @@ If you've ever wanted to plot some data acquired on your embedded target this ar
 
 {% include toc.html %}
 
-## What exactly can it visulize ?
+## What exactly can it visulize?
 
 STMViewer consists of two modules which serve a slightly different purpose: 
 
 1. Variable Viewer - a module that reads variables' values directly from RAM using ST-Link SWD (only SWDIO, SWCLK and GND conenction is needed). It is asynchornous, which means it samples the memory with the time period set on the PC. It is completelty non-intrusive, and is able to log many variables at once. There are some trade-offs though. The first one is that logged variables' addresses have to be constant, meaning they have to be globals. Moreover with more aggressive optimization some of the variables may get optimized and fail to be logged.
 
-2. Trace Viewer - a module that reads and parses SWO (Serial Wire Viewer) data using ST-Link (SWDIO, SWCLK, SWO and GND connection needed). It is synchornous, meaning it only visualizes the datapoint with the rate they are produced on the target. A datapoint can be either a special single byte flag that is used to create digital plots, or any value that fits in up to 4 bytes in case of "analog" plots. It has a minimal performance cost - a single register write per plot point, since the serialization and timestamping is handled by the ITM peripheral. It can be used to profile parts of the codebase, or to visualize signals that are too fast for the asynchornous Variable Viewer. The main limitation is the ST-Link maximum allowed baudrate on SWO pin, and the fact that the ITM peripheral is supported on only Cortex M3/M4/M7/M33 cores. 
+2. Trace Viewer - a module that reads and parses SWO (Serial Wire Viewer) data using an ST-Link. To use it, you need to connect SWDIO, SWCLK, SWO, and GND. This tool operates synchronously, meaning it visualizes data points at the rate they are produced on the target. A data point can be either a special single-byte flag used to create digital plots or any value that fits within up to 4 bytes, as in the case of 'analog' plots. It incurs minimal performance overhead, involving just a single register write per plot point, as serialization and timestamping are handled by the ITM peripheral. Trace Viewer can be employed for profiling specific parts of the codebase or visualizing signals that are too fast for the asynchronous Variable Viewer. Its main limitations are the maximum allowed SWO pin baudrate of the ST-Link and the fact that the ITM peripheral is supported only on Cortex M3/M4/M7/M33 cores. 
 
 
 ## I'm already using STMStudio/CubeMonitor, why create a new tool?
 
-Let's start with the most commonly asked question - why bother creating a tool that already exists and is provided by the ST? There are at least two reasons: 
-1. STMStudio is deprecated. It was a very useful tool, however some annoying bugs made it really hard to work with. Moreover, it does not support mangled C++ names and is only available for Windows. 
-2. CubeMonitor is just too much overhead for debugging purposes. The software is intended for creating dashboards, and in my opinion during debugging nobody really cares about some cool-looking gauges and indicators. Maniupulating the plots data is simply inconvenient and writing values to logged variables is even harder. Not to mention you can get some deployment errors when you connect the nodeRED puzzles the wrong way. 
-3. Last but not least - none of the available hobby-level software tools contain a trace data visualizer. Im my opinion this is the most interesting STMViewer's module that allows to visualize variables in a synchronous way, profile functions or interrupts literally in minutes. 
+Let's begin with the most commonly asked question: Why bother creating a tool when existing options are provided by ST? There are several reasons:
+
+1. STMStudio is deprecated, and while it was a useful tool, it became challenging to work with due to persistent bugs. It also lacks support for mangled C++ names and is exclusively available for Windows.
+
+2. CubeMonitor, on the other hand, is often considered too much overhead for debugging purposes. It's primarily designed for creating dashboards, and during debugging, the focus tends to be on functionality rather than aesthetics. Manipulating plot data and writing values to logged variables can be inconvenient. Furthermore, setting up a basic logger configuration can require some time to become familiar with NodeRED's setup.
+
+3. Last but not least, none of the available hobby-level software tools include a trace data visualizer. In my opinion, STMViewer's trace data visualizer is the most intriguing module, enabling users to visualize variables synchronously and profile functions or interrupts within minutes.
 
 ## Variable Viewer
 
 <!-- TODO GIF ? -->
 
-As mentioned earlier Variable Viewer is an asynchronous module that samples predefined RAM addresses' values on your target. It can be especially useful when you want to visualize multiple, relatively slow signals (maximum sampling rate is around 1kHz). The RAM addresses are read from project's *.elf file that is parsed using GDB. For a quick start please refer to: [Variable Viewer](https://github.com/klonyyy/STMViewer#variable-viewer-1)
+As mentioned earlier, Variable Viewer is an asynchronous module that samples values from predefined RAM addresses on your target. It can be particularly useful when you want to visualize multiple, relatively slow signals (with a maximum sampling rate of around 1 kHz). The RAM addresses are read from the project's *.elf file, which is parsed using GDB. This is essentially the same approach used by STMStudio and CubeMonitor. 
 
+For a quick start please refer to: [Variable Viewer](https://github.com/klonyyy/STMViewer#variable-viewer-1)
 
 ### PID controller
 Let's see it in action on a step response of a classic servo cascaded PID:
 
 <!-- TODO PICTURE PID -->
+![](/img/stmviewer/position_PID.png)
 
-What we see are two cascaded controllers - position and velocity PID. The position PID is trying to follow the target and it generates velocity targets for the lower level controller, which in turn generates torque setpoints. When the responses are plotted out it's easy to notice the overshoots in the velocity PID response. Moreover we can clearly see when velocity target limit is triggered. You can easily measure the most important parameters of the response with built-in markers, or export a CSV for a more thorough analysis. 
-
-
+What we observe are two cascaded controllers: a position PID and a velocity PID. The position PID attempts to follow the target and generates velocity targets for the lower-level controller, which, in turn, generates torque setpoints. When the responses are plotted, it's easy to notice the overshoots in the velocity PID response, which helps in fine-tuning the gains. Moreover, we can clearly see when the velocity target limit is being triggered. You can easily measure the most important parameters of the response using the built-in markers or export a CSV for more comprehensive analysis. 
 
 ## Trace Viewer 
 
 <!-- TODO GIF ? -->
 
-Trace Viewer is a synchronous module used to visualize SWO trace data. This means we can visualize fast actions without worrying  some data might be lost between sampling points. It does not require any configuration on the target since it is all done by the STMViewer using SWD. The only thing we have to do is to write data to the ITM->PORT[x] registers to send it. For example:
+Trace Viewer is a synchronous module used to visualize SWO trace data. This means we can visualize fast actions without worrying some data might be lost between sampling points. It does not require any configuration on the target since it is all done by the STMViewer using SWD. The only thing we have to do is to write data to the ITM->PORT[x] registers to send it. For example:
 
 ```c
 ITM->PORT[0].u8 = 0xaa; //enter tag 0xaa - plot state high
 foo();
 ITM->PORT[0].u8 = 0xbb; //exit tag 0xbb - plot state low
 ```
-can be used to profile a foo() function. Simple, isn't it? Of course you can wrap it up in a macro, but I wanted to keep is as simple as possible. No includes are needed since ITM is defined in CMSIS headers.
+can be used to profile a foo() function. Simple, isn't it? Of course you can wrap the register writes in a macro, but I wanted to keep it as simple as possible. No extra includes are needed since ITM is defined in CMSIS headers.
 
 On the other hand this: 
 
 ```c
 float a = sin(10.0f * i);          // some super fast signal to trace
-ITM->PORT[x].u32 = *(uint32_t*)&a; // type-punn to desired size: sizeof(float) = sizeof(uint32_t)
+ITM->PORT[0].u32 = *(uint32_t*)&a; // type-punn to desired size: sizeof(float) = sizeof(uint32_t)
 ```
 can be used to visualize a float value.
 
-Each register write generates two frames on the SWO pin - a data frame and a relative timestamp frame. The data frame is simply holding the channel value, size and the data, whereas the timestamp frame holds the time from last frame expressed in clock cycles. The fact that these frames can have a variable length, especially the timestamp one, makes it very effective in terms of utilizing the available SWO bandwidth. 
+Each register write generates two frames on the SWO pin: a data frame and a relative timestamp frame. The data frame simply holds the channel value, size, and the data, while the timestamp frame holds the time elapsed since the last frame, expressed in clock cycles. The variable length of these frames, especially the timestamp frame, makes it very effective in terms of utilizing the available SWO bandwidth. More information on the SWO trace protocol can be found in the Armv7-M Reference Manual[^0].
 
 For a complete quick start please refer to: [Trace Viewer](https://github.com/klonyyy/STMViewer#trace-viewer-1)
 
@@ -110,29 +113,38 @@ Let's check how much time it takes to copy a buffer using a well-known memcopy f
 Besides the memcpy profiling we are also logging the current size on channel 1. As can be seen there is also a small blocking delay to make the plot more readable. Here are the results: 
 
 <!-- TODO PICTURE MEMCPY -->
+![](/img/stmviewer/memcpy.png)
 
-It seems that copying a single byte takes around 270ns, whereas copying 577 bytes takes approximately 25.35us @ 160Mhz. This was fast! 
+After logging, you can use the markers to determine the time difference between points. It appears that copying a single byte takes about 270 ns, whereas copying 577 bytes takes approximately 25.35 us at 160 MHz.
 
 ### Profiling multiple interrupts
 
-This example is going to be a bit simmilar to the previous one, except we will use many channels and try to see lower priority interrupts being preempted by a higher priority ones
+This example is going to be a bit similar to the previous one, except we will use multiple channels and try to observe lower-priority interrupts being preempted by higher-priority ones.
 
-I prepared three timers and set their interrupts priorities to: 0 (highest logical priority) for TIM7, 1 for TIM17 and 2 (lowest) for TIM6. I've put some dummy instructions in each interrupt to simulate some work being done.
+I've configured three timers and set their interrupt priorities as follows: 0 (highest logical priority) for TIM7, 1 for TIM17, and 2 (lowest) for TIM6. I've included some dummy instructions in each interrupt to simulate some work being done.
 
 <!-- TODO PICTURE INTERRUPTS -->
+![](/img/stmviewer/interrupts.png)
 
-We can clearly see how the highest priority execution stops all other interrupts, and only after it finishes the other interrupts are resumed. What is really important in such experiments is that the marker register writes used in Trace Viewer are atomic so a higher interrupt cannot fire in between a datapoint generation.
-
+We can clearly observe how the highest priority execution halts all other interrupts, and only after it completes do the other interrupts resume. What's particularly significant in such experiments is that the marker register writes used in Trace Viewer are atomic, preventing a higher-priority interrupt from occurring between data point generation. This also makes it a valuable tool for visualizing FreeRTOS threads
 
 ### Fast ADC signal
 
-Have you ever tried to visualize a fast ADC signal from an embedded target? Some time ago I had to check a step response of a low level current controller of a motor which had a timestep of 25us. I considered using DAC and an oscilloscope, or recording and replaying the data after the event. Both methods are time consuming and torublesome. Let's see how TraceViewer can handle this task - we will command a voltage step on an inductor and read back the current.
+Have you ever tried to visualize a fast ADC signal from an embedded target? Some time ago, I had to check the step response of a low-level current controller for a motor. The current was sampled every 25 microseconds, which made it quite a fast signal. I considered using a DAC and an oscilloscope or recording and replaying the data after the event, and eventually went for the latter. Unfortunately, both methods were time-consuming and troublesome. 
+
+Let's see how TraceViewer can handle this task. We will record the current response of an inductor when a voltage step is applied to it
 
 <!-- TODO PICTURE INDUCTOR -->
+![](/img/stmviewer/inductance_step.png)
 
-Now, knowing the test voltage, calculating resistance and measuring rise time we can easily determine the inductane!
+Now, knowing the test voltage, calculating resistance and measuring rise time we can easily determine the inductance!
 
 
+## Conclusion
+
+I hope you'll find the visual representation of data more appealing after reading this article. Please note that the tool currently only supports the STM32 family. However, if you'd like to join and collaborate on adding support for other microcontrollers and devices, I'd be very happy to do so.
+
+That's all I have for you today regarding data visualization. I hope you enjoyed it, and if you want to give it a try, check out the releases page on STMViewer's GitHub: https://github.com/klonyyy/STMViewer
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
@@ -145,5 +157,5 @@ Now, knowing the test voltage, calculating resistance and measuring rise time we
 ## References
 
 <!-- prettier-ignore-start -->
-[^reference_key]: [Post Title](https://example.com)
+[^0]: [ARMv7-M Architecture Reference Manual, Section D1](https://developer.arm.com/documentation/ddi0403/ed/)
 <!-- prettier-ignore-end -->
