@@ -70,7 +70,13 @@ This technique, known as [Compile-Time Instrumentation](https://developers.redha
 
 When working with microcontroller peripherals, it's common to rely on specialized software development kits (SDKs) provided by chip vendors or third-party providers. In the context of optimizing code for peripheral operations, it becomes advantageous to selectively instrument the code within the MCU’s SDK.
 
-![various SDKs](/img/chip-peripheral-forwarding/sdks.png)
+For instance, among the Open Source SDKs I've instrumented, we have notable examples like:
+ * [STM32 Standard Peripheral Libraries](https://www.st.com/en/embedded-software/stm32-standard-peripheral-libraries.html)
+ * [Nordicsemi nRF5 SDK](https://www.nordicsemi.com/Products/Development-software/nrf5-sdk)
+ * [Infineon XMC Peripheral Library](https://documentation.help/XMC/)
+ * [Silabs Gecko SDK](https://www.silabs.com/developers/gecko-software-development-kit)
+ * [Atmel ASF3 SDK](https://www.microchip.com/en-us/tools-resources/develop/libraries/advanced-software-framework)
+
 
 By focusing on the code segments responsible for interacting with peripherals, we can introduce optimizations and eliminate unnecessary checks to enhance performance and efficiency.
 
