@@ -237,7 +237,7 @@ I note establishing a connection with the MCU through the debugger protocol prov
 
 The REMCU also offers helpful [build scripts](https://github.com/remotemcu/remcu/tree/master/cmake) that automate the process of building the MCU's SDK into a separate shared library(*.so, *.dll, *.dylib) for various platforms, including embedded Linux (such as Raspberry Pi).
 
-These build scripts simplify the setup and configuration process and streamline the integration of the MCU's SDK with the necessary instrumentation, making it easier to incorporate the modified SDK into your project. By running these build scripts, you can automatically generate a shared library that contains the instrumented code and the implementation of the handler functions.
+These build scripts simplify the setup and configuration process and streamline the integration of the MCU's SDK with the necessary instrumentation, making it easier to incorporate the modified SDK into your project. By running these build scripts, you can automatically generate a shared library that contains the instrumented code and the implementation of the handler functions using an NRF SDK example as a reference.
 
 Preparing the SDK for your specific MCU and the corresponding build process will be covered in detail in [the article](https://ser-mk.github.io/remcu/tutorial-preparing-nrf51-sdk/). The article will provide step-by-step instructions and guidelines on how to prepare the SDK and build the necessary shared library with the instrumentation and REMCU handler functions.
 
