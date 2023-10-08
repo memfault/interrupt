@@ -16,9 +16,9 @@ description:
 author: piotrw
 ---
 
-If you've ever wanted to plot data acquired on your embedded target, this article is for you. It explores common use cases for real-time data visualization using STMViewer. Say goodbye to manual, time-consuming, and error-prone data collection and display methods to speed up your debugging process.
-
 <!-- excerpt start -->
+
+If you've ever wanted to plot data acquired on your embedded target, this article is for you. It explores common use cases for real-time data visualization using STMViewer. Say goodbye to manual, time-consuming, and error-prone data collection and display methods to speed up your debugging process.
 
 <!-- excerpt end -->
 
@@ -35,7 +35,7 @@ STMViewer consists of two modules which serve a slightly different purpose:
 2. Trace Viewer - a module that reads and parses SWO (Serial Wire Viewer) data using an ST-Link. To use it, you need to connect SWDIO, SWCLK, SWO, and GND. This tool operates synchronously, meaning it visualizes data points at the rate they are produced on the target. A data point can be either a special single-byte flag used to create digital plots or any value that fits within up to 4 bytes, as in the case of 'analog' plots. It incurs minimal performance overhead, involving just a single register write per plot point, as serialization and timestamping are handled by the ITM peripheral. Trace Viewer can be employed for profiling specific parts of the codebase or visualizing signals that are too fast for the asynchronous Variable Viewer. Its main limitations are the maximum allowed SWO pin baudrate of the ST-Link and the fact that the ITM peripheral is supported only on Cortex M3/M4/M7/M33 cores. 
 
 
-## I'm already using STMStudio/CubeMonitor, why to create a new tool?
+## I'm already using STMStudio/CubeMonitor, why create a new tool?
 
 Let's begin with the most commonly asked question: Why bother creating a tool when existing options are provided by ST? There are several reasons:
 
