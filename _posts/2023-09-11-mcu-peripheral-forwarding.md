@@ -298,8 +298,9 @@ This approach emerges as a versatile technology, simplifying the expansion of pe
 To witness this technology in action, one need look no further than the [**REMCU examples repository**](https://github.com/remotemcu/remcu_examples). Here, a diverse array of practical examples is offered, specifically crafted for various MCUs.
 
 
-
-![https://github.com/remotemcu/remcu_examples/raw/master/stm32f4_discovery/accell_graph/img/mems_demo.gif](https://github.com/remotemcu/remcu_examples/raw/master/stm32f4_discovery/accell_graph/img/mems_demo.gif)
+*In the GIF demonstration below, we offer a vivid glimpse into the capabilities of the QT example application. This software serves the purpose of charting gyroscope data along three distinct axes, providing visual insight into the device's orientation and motion. The gyroscope sensor,  mounted on the STM32F3 Discovery board, communicates via the I2C protocol. In this application, the I2C port of the STM32F3 microcontroller serves as a direct conduit to the PC environment. This connection is established effortlessly through the utilization of the STM32 Standard Peripheral Library, instrumented  REMCU. Without  firmware development and communication protocol with the board.
+More detail in [Plotter of Gyroscope example](https://github.com/remotemcu/remcu_examples/tree/master/stm32f3_discovery/gyro_graph)*
+![REMCU MEMS STM32 Example](https://github.com/remotemcu/remcu_examples/raw/master/stm32f4_discovery/accell_graph/img/mems_demo.gif)
  
 These examples, combined with accompanying [video tutorials](https://remotemcu.com/tutorials), offer hands-on insights into effectively integrating REMCU into your own projects.
 
