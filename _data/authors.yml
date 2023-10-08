@@ -224,3 +224,10 @@ ramanf:
     github: romanf-dev
     linkedin: https://www.linkedin.com/in/romanf-engineer/
     blurb: -- firmware engineer. Previously worked on industrial automation and OS/RTOS design research.
+piotrw:
+    name: Piotr Wasilewski
+    image: /img/author/piotrw.jpg
+    github: klonyyy
+    linkedin: https://www.linkedin.com/in/piotrek-wasilewski-9b63b198/
+    blurb: -- embedded software engineer specializing in motor control applications
+    web: https://pwwprojects.blogspot.com   

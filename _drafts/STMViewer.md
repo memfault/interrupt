@@ -13,7 +13,7 @@
 title: Visualizing embedded data made easy
 description: 
     "A brief introduction to STMViewer software use cases in debugging embedded targets"
-author: Peter
+author: piotrw
 ---
 
 If you've ever wanted to plot data acquired on your embedded target, this article is for you. It explores common use cases for real-time data visualization using STMViewer. Say goodbye to manual, time-consuming, and error-prone data collection and display methods to speed up your debugging process.
