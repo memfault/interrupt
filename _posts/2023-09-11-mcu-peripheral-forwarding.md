@@ -24,20 +24,70 @@ There are two way to do it.
 
 ## 1st Way. Dynamic Binary Instrumentation 
 
-Imagine a scenario where you could use peripheral addresses in your PC programs just as you do in your MCU's firmware, where all address operations like store and load are dynamically hooked . This approach involves checking the operation address and, if it corresponds to peripherals, executing it on the target MCU using a debugger.
 
-![MCU Dynamic Binary Instrumentation ](/img/chip-peripheral-forwarding/intro.png)
+### Challenge
 
-In my research, I have experimented with this implementation and documented my findings in a [**paper on medium.com**](https://medium.com/@echormonov/high-level-programming-of-mcu-periphery-from-a-host-pc-without-using-firmware-and-processor-intro-4f7dc0636b21) . 
+Consider a scenario where we attempt to execute firmware code designed for the STM32F103 microcontroller directly on a PC. Take, for instance, the following simple program snippet:
+
+```c
+#include <stdio.h>
+
+// ==========================================
+// from stm32f10x.h header file
+typedef struct
+{
+  int CRL;
+  int CRH;
+  int IDR;
+  int ODR;
+  int BSRR;
+  int BRR;
+  int LCKR;
+} GPIO_TypeDef;
+
+//peripheral GPIO address
+#define GPIOC ((GPIO_TypeDef*)0x40011000)
+// ==========================================
 
 
-To achieve this runtime interruption, specialized [Dynamic Binary Instrumentation](https://en.wikipedia.org/wiki/Instrumentation_%28computer_programming%29) (DBI) toolkits come into play. These toolkits provide the necessary functionality to monitor and modify the execution of binary code in real-time. However, it is important to note that not all DBI toolkits are capable of interrupting memory operations. While there are various DBI toolkits available, only one option stands out for this particular task: Intel's [PinTool](https://www.intel.com/content/www/us/en/developer/articles/tool/pin-a-dynamic-binary-instrumentation-tool.html). Unlike other DBI tools, PinTool offers the capability to interrupt memory operations, making it a suitable choice for this approach.
+int main() {
+    // read the state of PC0 pin
+    int pin_PC0_value = GPIOC->IDR & 0x1;
+    // write the value to console
+    printf("PC0 value: %d\n", pin_PC0_value);
 
-![PinTool](/img/chip-peripheral-forwarding/pin.png)
+    return 0;
+}
+```
 
-In my [proof of concept](https://medium.com/@echormonov/high-level-programming-of-mcu-periphery-from-a-host-pc-without-using-firmware-and-processor-intro-4f7dc0636b21) implementation, I have written a [custom plugin](https://github.com/ser-mk/AddressIntercept) for Intel PinTool. This plugin serves as a powerful tool to check all memory operations performed by the PC program. By analyzing the memory addresses accessed during runtime, the PinTool plugin can effectively identify operations that correspond to the microcontroller's peripheral registers. Once identified, the plugin takes the necessary steps to initiate the execution of the peripheral operation on the MCU.
+While this code might build successfully on our PC, executing it directly fails. The reason being, the PC application can't access the memory address 0x40011000 directly, as it's specific to the STM32F103 microcontroller's GPIOC peripheral.
 
-![c lang to asm](/img/chip-peripheral-forwarding/c-asm.png)
+The challenge at hand is to enable the program to remain valid and successfully retrieve the state from a real STM32F103 chip without altering the existing codebase.
+Fortunately, the PC platform offers powerfull Dynamic Binary Instrumentation (DBI) tools, empowering developers to dynamically intercept and modify memory operations during runtime.
+In the context of peripheral operations, these DBI tools become instrumental. When a memory operation targeting the peripheral address occurs, these tools can intercept the operation.
+
+```c
+int pin_PC0_value = GPIOC->IDR & 0x1;
+```
+
+During this interception, the program can be instructed to load a value directly from the GPIOC peripheral register of the STM32F103 chip. With the aid of a debugger, for example, we can acquire the valid value from the physical hardware and seamlessly return it to the executing operation.
+
+
+![Intercept operation](/img/chip-peripheral-forwarding/intercept.png)
+
+
+### Pintool
+
+However, it is important to note that not all DBI toolkits are capable of interrupting memory operations. While there are various DBI toolkits available, only one option stands out for this particular task: Intel's [PinTool](https://www.intel.com/content/www/us/en/developer/articles/tool/pin-a-dynamic-binary-instrumentation-tool.html). Unlike other DBI tools, PinTool offers the capability to interrupt memory operations, making it a suitable choice for this approach.
+
+In the pursuit of this approach, I have developed a [proof of concept](https://github.com/ser-mk/AddressIntercept-example-UART-DMA) using PinTool. This uses a [custom plugin](https://github.com/ser-mk/AddressIntercept), designed  for Intel PinTool.
+[The plugin](https://github.com/ser-mk/AddressIntercept) is engineered to dynamically intercept all memory operations executed by the instrumented PC program. Given that the X86 processor predominantly utilizes the 'mov' instruction for memory-related tasks, the plugin intercepts every 'mov' instruction during runtime.
+
+![C Asm intercepted code](/img/chip-peripheral-forwarding/c-asm.png)
+
+It then examines the runtime arguments of these instructions, specifically focusing on address arguments, comparing them against the addresses of the microcontroller’s peripheral registers. Once identified, the plugin takes the necessary steps to initiate the execution of the peripheral operation on the MCU.
+
+![Loading by address](/img/chip-peripheral-forwarding/loading.png)
 
 To achieve this seamless execution, the PinTool plugin establishes communication with the debugger using either the [OpenOCD server](https://openocd.org/) or the [GDB server](https://en.wikipedia.org/wiki/Gdbserver). Both of these servers offer robust APIs that enable developers to execute memory operations on the target device.
 
