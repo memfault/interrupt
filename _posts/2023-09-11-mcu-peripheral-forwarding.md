@@ -11,7 +11,7 @@ Embedded systems development often involves utilizing various microcontroller pe
 
 In this article, we'll explore the concept of mapping MCU’s(Chip) peripherals to your personal or embedded computer as if these peripherals were a part of the computer.
 
-There are two way to do it.
+There are two ways to do it.
 
 <!-- excerpt end -->
 
@@ -63,7 +63,7 @@ int main() {
 While this code might build successfully on our PC, executing it directly fails. The reason being, the PC application can't access the memory address 0x40011000 directly, as it's specific to the STM32F103 microcontroller's GPIOC peripheral.
 
 The challenge at hand is to enable the program to remain valid and successfully retrieve the state from a real STM32F103 chip without altering the existing codebase.
-Fortunately, the PC platform offers powerfull Dynamic Binary Instrumentation (DBI) tools, empowering developers to dynamically intercept and modify memory operations during runtime.
+Fortunately, the PC platform offers powerful Dynamic Binary Instrumentation (DBI) tools, empowering developers to dynamically intercept and modify memory operations during runtime.
 In the context of peripheral operations, these DBI tools become instrumental. When a memory operation targeting the peripheral address occurs, these tools can intercept the operation.
 
 ```c
@@ -81,11 +81,11 @@ During this interception, the program can be instructed to load a value directly
 However, it is important to note that not all DBI toolkits are capable of interrupting memory operations. While there are various DBI toolkits available, only one option stands out for this particular task: Intel's [PinTool](https://www.intel.com/content/www/us/en/developer/articles/tool/pin-a-dynamic-binary-instrumentation-tool.html). Unlike other DBI tools, PinTool offers the capability to interrupt memory operations, making it a suitable choice for this approach.
 
 In the pursuit of this approach, I have developed a [proof of concept](https://github.com/ser-mk/AddressIntercept-example-UART-DMA) using PinTool. This uses a [custom plugin](https://github.com/ser-mk/AddressIntercept), designed  for Intel PinTool.
-[The plugin](https://github.com/ser-mk/AddressIntercept) is engineered to dynamically intercept all memory operations executed by the instrumented PC program. Given that the X86 processor predominantly utilizes the 'mov' instruction for memory-related tasks, the plugin intercepts every 'mov' instruction during runtime.
+[The plugin](https://github.com/ser-mk/AddressIntercept) is engineered to dynamically intercept all memory operations executed by the instrumented PC program. Given that the X86 processor predominantly utilizes the `mov` instruction for memory-related tasks, the plugin intercepts every `mov` instruction during runtime.
 
 ![C Asm intercepted code](/img/chip-peripheral-forwarding/c-asm.png)
 
-It then examines the runtime arguments of these instructions, specifically focusing on address arguments, comparing them against the addresses of the microcontroller’s peripheral registers. Once identified, the plugin takes the necessary steps to initiate the execution of the peripheral operation on the MCU.
+It then examines the runtime arguments of these instructions, specifically focusing on address arguments, and comparing them against the addresses of the microcontroller’s peripheral registers. Once identified, the plugin takes the necessary steps to initiate the execution of the peripheral operation on the MCU.
 
 ![Loading by address](/img/chip-peripheral-forwarding/loading.png)
 
@@ -139,7 +139,7 @@ Compile-time instrumentation is commonly used in debugging and optimization, and
 
 With some modifications to the code of AddressSanitizer (ASan), we can adapt it to serve as an interceptor for peripheral operations. We would need to modify the ASan code to:
 
-1. Instead of inserting the calls before each memory operation, we would need to modify the ASan code to include calls to our custom library routine in place of memory operations. This routine will handle the interception and validation of peripheral accesses. For example:
+1. Instead of inserting the calls before each memory operation, we would need to modify the ASan code to include calls in our custom library routine in place of memory operations. This routine will handle the interception and validation of peripheral accesses. For example:
     
     
     ```cpp
@@ -165,7 +165,7 @@ With some modifications to the code of AddressSanitizer (ASan), we can adapt it 
 
 To address the challenge of distinguishing between local memory operations and peripheral operations, a possible solution is to perform runtime checks for all instrumentation operations, except in cases where we can definitively determine whether it is a local memory operation or a peripheral operation.
 
-The LLVM framework provides [APIs](https://github.com/remotemcu/adin-llvm-pass/blob/master/src/AddressIntercept.cpp#L141) that allow we to check whether an operation involves local variables or global variables. By leveraging these APIs, we can determine if an operation is likely a local memory operation or not.
+The LLVM framework provides [APIs](https://github.com/remotemcu/adin-llvm-pass/blob/master/src/AddressIntercept.cpp#L141) that allow us to check whether an operation involves local variables or global variables. By leveraging these APIs, we can determine if an operation is likely a local memory operation or not.
 
 ```cpp
 int g = 0;
@@ -177,7 +177,7 @@ void foo(){
 } 
 ```
 
-Using the LLVM API, we can determine the code above do not require instrumentation. By analyzing the code, LLVM can identify memory operations that correspond to local PC pointers and exclude them from the instrumentation process.
+Using the LLVM API, we can determine the code above does not require instrumentation. By analyzing the code, LLVM can identify memory operations that correspond to local PC pointers and exclude them from the instrumentation process.
 
 However, for cases where the distinction is unclear, you would need to check every memory address against a set of peripheral address intervals. For example, in the case of the STM32L0 chip, the peripheral registers are located within specific address intervals, such as 0x40000000 - 0x40008000, 0x40010000 - 0x40018000, 0x4002 0000 - 0x4002 63FF and 0x5000 0000 - 0x5000 1FFF. By comparing the accessed address with these intervals, you can determine if it corresponds to a peripheral address. 
 
@@ -243,7 +243,7 @@ define dso_local void @f() #0 {
 }
 ```
 
-To obtain detailed instructions on building and using the **AddressInterceptor** (ADIN) plugin, it is recommended to refer to the documentation provided in the [ADIN LLVM fork repository](https://github.com/remotemcu/adin-llvm#usage) .
+To obtain detailed instructions on building and using the **AddressInterceptor** (ADIN) plugin, it is recommended to refer to the documentation provided in the [ADIN LLVM fork repository](https://github.com/remotemcu/adin-llvm#usage).
 
 Once you have modified the LLVM IR code using the ADIN plugin and obtained the transformed IR code from the MCU’s SDK, you can proceed to compile the IR code into object files.
 
@@ -342,19 +342,19 @@ Now, You can execute any SDK driver functions…
 ## Conclusion
 
 In conclusion, we've explored the fundamentals of Chip Peripheral Forwarding technology, laying down the basis for its understanding and implementation.
-This approach emerges as a versatile technology, simplifying the expansion of peripherals for both PC and embedded systems like Raspberry Pi. Moreover, it significantly bolsters hardware equipment testing, harnessing the capabilities of PC program tools such as high-level languages like Python and interactive shells like Jupyter notebook and it eliminates the need for firmware and communication protocol development.
+This approach emerges as a versatile technology, simplifying the expansion of peripherals for both PC and embedded systems like Raspberry Pi. Moreover, it significantly bolsters hardware equipment testing, harnessing the capabilities of PC program tools such as high-level languages like Python and interactive shells like Jupyter Notebook and it eliminates the need for firmware and communication protocol development.
 
 
-To witness this technology in action, one need look no further than the [**REMCU examples repository**](https://github.com/remotemcu/remcu_examples). Here, a diverse array of practical examples is offered, specifically crafted for various MCUs.
+To witness this technology in action, one need to look no further than the [**REMCU examples repository**](https://github.com/remotemcu/remcu_examples). Here, a diverse array of practical examples is offered, specifically crafted for various MCUs.
 
 
-*In the GIF demonstration below, we offer a vivid glimpse into the capabilities of the QT example application. This software serves the purpose of charting gyroscope data along three distinct axes, providing visual insight into the device's orientation and motion. The gyroscope sensor,  mounted on the STM32F3 Discovery board, communicates via the I2C protocol. In this application, the I2C port of the STM32F3 microcontroller serves as a direct conduit to the PC environment. This connection is established effortlessly through the utilization of the STM32 Standard Peripheral Library, instrumented  REMCU. Without  firmware development and communication protocol with the board.
-More detail in [Plotter of Gyroscope example](https://github.com/remotemcu/remcu_examples/tree/master/stm32f3_discovery/gyro_graph)*
+*In the GIF demonstration below, we offer a vivid glimpse into the capabilities of the QT example application. This software serves the purpose of charting gyroscope data along three distinct axes, providing visual insight into the device's orientation and motion. The gyroscope sensor, mounted on the STM32F3 Discovery board, communicates via the I2C protocol. In this application, the I2C port of the STM32F3 microcontroller serves as a direct conduit to the PC environment. This connection is established effortlessly through the utilization of the STM32 Standard Peripheral Library, instrumented REMCU. Without firmware development and communication protocol with the board.
+More detail in the [Plotter of Gyroscope example](https://github.com/remotemcu/remcu_examples/tree/master/stm32f3_discovery/gyro_graph)*.
 ![REMCU MEMS STM32 Example](https://github.com/remotemcu/remcu_examples/raw/master/stm32f4_discovery/accell_graph/img/mems_demo.gif)
  
 These examples, combined with accompanying [video tutorials](https://remotemcu.com/tutorials), offer hands-on insights into effectively integrating REMCU into your own projects.
 
-In the [chapter](https://ser-mk.github.io/remcu/tutorial-preparing-nrf51-sdk/), we will lead you through the procedure of preparing drivers for the nRF51422 MCU. This tutorial is crafted to offer you a systematic, step-by-step approach to forge instrumented code grounded in the drivers of MCU Software Development Kit. The prime objective of this guide is to empower you to fabricate your very own REMCU shared/dynamic library, meticulously tailored to your distinct MCU and its SDK.
+In the [article](https://ser-mk.github.io/remcu/tutorial-preparing-nrf51-sdk/), we will lead you through the procedure of preparing drivers for the nRF51422 MCU. This tutorial is crafted to offer you a systematic, step-by-step approach to forging instrumented code grounded in the drivers of MCU Software Development Kit. The prime objective of this guide is to empower you to fabricate your very own REMCU shared/dynamic library, meticulously tailored to your distinct MCU and its SDK.
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
