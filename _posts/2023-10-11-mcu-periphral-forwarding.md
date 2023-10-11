@@ -187,7 +187,7 @@ If the checking address falls within one of the defined peripheral address inter
 
 ### AddressInterceptor LLVM Transform pass
 
-I have developed an [LLVM Transform pass](https://llvm.org/docs/WritingAnLLVMPass.html#introduction-what-is-a-pass)(plugin) called [AddressInterceptor](https://github.com/remotemcu/adin-llvm-pass) (ADIN) to address the challenge of distinguishing between local and global variables and peripheral addresses during instrumentation. ADIN checks local and global variables to determine whether an operation involves them. If an operation does not, ADIN proceeds to instrument the subsequent routines:
+I have developed an [LLVM Transform pass](https://llvm.org/docs/WritingAnLLVMPass.html#introduction-what-is-a-pass) (plugin) called AddressInterceptor (ADIN) to address the challenge of distinguishing between PC application addresses and peripheral addresses during instrumentation. ADIN checks all memory operations, assessing whether each operation involves global or local variables of the application. If an operation does not involve these types, ADIN proceeds to instrument the subsequent routines:
 
 ```cpp
 extern "C" void __adin_store_(llvm_pass_addr pointer, llvm_value_type value, llvm_pass_arg TypeSizeArg, llvm_pass_arg AlignmentArg)
