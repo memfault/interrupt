@@ -4,7 +4,7 @@
 /blog/cortex-m-fault-debug /blog/cortex-m-hardfault-debug
 /blog/swig-for-c-and-lua-copy /blog/swig-for-c-and-lua
 /blog/drafting-a-c-dev-environment /blog/a-modern-c-dev-env
-/blog/2023-10-11-mcu-periphral-forwarding.md /blog/2023-10-11-mcu-peripheral-forwarding.md
+/blog/mcu-periphral-forwarding.md /blog/mcu-peripheral-forwarding.md
 
 # Stable redirect for subscribing to Interrupt's Event calendar.
 # Here in case we switch to Google Calendar or another provider in the future
