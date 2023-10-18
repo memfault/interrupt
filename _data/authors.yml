@@ -224,3 +224,10 @@ ramanf:
     github: romanf-dev
     linkedin: https://www.linkedin.com/in/romanf-engineer/
     blurb: -- firmware engineer. Previously worked on industrial automation and OS/RTOS design research.
+evgeny:
+    name: Evgeny Chormonov
+    web: https://ser-mk.github.io/
+    blurb: is a hardware and software engineer
+    linkedin: https://linkedin.com/in/echormonov
+    github: ser-mk
+    image: /img/author/evgeny.png

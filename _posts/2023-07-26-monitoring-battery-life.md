@@ -17,6 +17,11 @@ In this post, I’ll cover how to start thinking about collecting metrics that c
 
 <!-- excerpt end -->
 
+> 📺 **Watch the Webinar Recording**
+>
+> Do you tend to favor video content over written materials? This topic was also the subject of a [Memfault Webinar: An Empowering Endeavor - Predicting and Improving Device Battery Life](https://hubs.la/Q023ppsY0).
+
+
 {% include newsletter.html %}
 
 {% include toc.html %}
@@ -480,6 +485,10 @@ Firmware updates are a blessing that can also be a curse. With the right tools a
 All of us at Memfault have thought about how to monitor battery life quite extensively, and we've built a product that we would have loved to use at our previous employers. Memfault can work on a wide variety of embedded systems and across all types of network topologies, whether they are home-grown or standardized like Wi-Fi or Bluetooth.
 
 To learn more about how you might instrument battery life with Memfault, which is quite similar to this post, check out the Memfault Documentation page, [Tracking Battery Life with Memfault](https://docs.memfault.com/docs/best-practices/metrics-for-battery-life/).
+
+> **Try the Sandbox**
+>
+> Want to get hands-on with Memfault? With the Sandbox, you can interact freely with a bunch of real data, or if you prefer, follow one of our guided product tours. No need to integrate any Memfault SDK - [test the platform on your own immediately](https://hubs.la/Q025ldvt0).
 
 ## Conclusion
 
