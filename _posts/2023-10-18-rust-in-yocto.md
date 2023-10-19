@@ -64,7 +64,7 @@ In practice, in the official open-embedded Rust support:
 
 A potential workaround for those not content with these versions is to override built-in rust support with the `meta-rust` layer.
 
-An intriguing development post the official Rust endorsement in open-oe was Randy MacLeod's [PR submission](https://github.com/meta-rust/meta-rust/pull/364) to meta-rust, proposing the deprecation of this layer in favor of the newly integrated support. Interestingly, this PR has yet to be merged, leaving a layer of ambiguity regarding the delineation between "official" and recommended. The continued existence of meta-rust undeniably offers some benefits, such as extending an updated Rust environment to older Yocto versions.
+An intriguing development post the official Rust endorsement in open-embedded was Randy MacLeod's [PR submission](https://github.com/meta-rust/meta-rust/pull/364) to meta-rust, proposing the deprecation of this layer in favor of the newly integrated support. Interestingly, this PR has yet to be merged, leaving a layer of ambiguity regarding the delineation between "official" and recommended. The continued existence of meta-rust undeniably offers some benefits, such as extending an updated Rust environment to older Yocto versions.
 
 The progress on meta-rust was further discussed in a [November 2022 presentation](https://www.youtube.com/watch?v=7uCzL2ZwRMU), which highlighted the maintainers' current focus on enhancing testing, reproducibility, and minimizing build times.
 
@@ -125,7 +125,10 @@ Embedding this recipe within an existing layer and initiating `bitbake hellorust
 
 ## meta-rust-bin
 
-[`meta-rust-bin`](https://github.com/rust-embedded/meta-rust-bin/tree/master), a project of the rust-embedded group, emerges as a sought-after alternative for packaging Rust programs within Yocto. As an OpenEmbedded/Yocto layer, it uses official pre-built rust toolchains.
+[`meta-rust-bin`](https://github.com/rust-embedded/meta-rust-bin/tree/master), a project of the rust-embedded group, emerges as a sought-after alternative for packaging Rust programs within Yocto. Its main differentiators are:
+
+1. It uses pre-built binaries of `rust`, `cargo` and `libstd-rs`
+2. It uses `cargo` and the `Cargo.lock` file to pin the dependencies and download them.
 
 Among its other merits are its frequent updates aligning with the latest Rust versions and its support for older Yocto versions, ranging [from dunfell to langdale](https://github.com/rust-embedded/meta-rust-bin/blob/ef9a765b0785ed9e964691ac1a5a302dd0a0ea62/conf/layer.conf#L13-L20).
 
@@ -155,33 +158,33 @@ S = "${WORKDIR}/git"
 LIC_FILES_CHKSUM = "file://LICENSE-MIT;md5=935a9b2a57ae70704d8125b9c0e39059"
 ```
 
-A notable advantage of this approach is the noticeable reduction in build time. Preliminary evaluations on a medium-sized AWS instance suggest a time-saving of approximately 15 minutes compared to `meta-rust`.
+A notable advantage of this approach is the noticeable reduction in build time. Preliminary evaluations on a medium-sized AWS instance suggest a time-saving in the order of 15 minutes compared to `meta-rust`.
 
-## Conclusion
+## TLDR
 
 After a comprehensive exploration, we identified three primary avenues to incorporate `rust` into a Yocto project:
 
-1. **The Original `meta-rust/meta-rust` Layer**: This method is as a beacon for compatibility with older Yocto releases and furnishes a Rust compiler for all Yocto versions. Nonetheless, it bears its own set of challenges:
+1. **The Original `meta-rust` Layer**: This method is as a beacon for compatibility with older Yocto releases and furnishes a Rust compiler for all Yocto versions. Nonetheless, it bears its own set of challenges:
     - It mandates the inclusion of an additional layer to your project.
     - The process of rebuilding the Rust compiler from source can considerably slow down the build.
     - Utilizing `cargo bitbake` is essential for recipe preparation, and the list of dependencies needs to be maintained when the `Cargo.lock` dependencies change.
 
-2. **The `openembedded` Rust Class**: Functioning as the official Rust endorsement for Yocto, it's seamlessly integrated into open-embedded. However, certain limitations might overshadow its benefits:
+2. **The Open-Embedded `cargo` and `rust` classes**: Functioning as the official Rust endorsement for Yocto, it's seamlessly integrated into open-embedded. However, certain limitations might overshadow its benefits:
     - Rust versions are anchored to specific Yocto releases, which might render them outdated for some projects.
     - Reconstructing the Rust compiler from its source can be a time-consuming affair.
-    - Maintaining the recipe becomes inevitable, especially with the necessity to enumerate the complete list of dependencies.
+    - Maintaining the recipe is tedious with the necessity to enumerate the complete list of dependencies.
 
-3. **The `meta-rust-bin/meta-rust` Recipe**: This alternative champions using pre-constructed binaries of Rust, Cargo, and libstd. And the recipes are more concise, eliminating the need to itemize all dependencies. Nevertheless, it has its nuances:
+3. **The `meta-rust-bin` layer**: This alternative champions using pre-constructed binaries of Rust, Cargo, and libstd. And the recipes are more concise, eliminating the need to itemize all dependencies. Nevertheless, it has its nuances:
     - It introduces an additional layer to your project.
     - Its recipe blueprint diverges from the `meta-rust` recipes.
 
-At Memfault, our inclination leans towards the `meta-rust-bin`. Its compatibility with a broader range of Yocto versions, and its efficiency in reducing build time, strikes a chord with us. That said, drafting a recipe for `meta-rust` isn't a complex undertaking, especially with the assistance of `cargo bitbake`. We keep one at our disposal, catering to clients who favor `meta-rust`.
+At Memfault, our inclination leans towards `meta-rust-bin`. Its compatibility with a broader range of Yocto versions, and its efficiency in reducing build time, strikes a chord with us. That said, drafting a recipe compatible with the official Rust support **and** `meta-rust` isn't a complex undertaking with the assistance of `cargo bitbake`. We keep one at our disposal, catering to clients who favor `meta-rust`.
 
 ## Another Important Consideration: Binaries Size
 
 When delving into Rust for embedded systems, certain facets remain untouched in our discussion but merit attention in future deliberations.
 
-- **The Rust Standard Library**: A conspicuous drawback in the methods discussed is the static linking of the Rust standard library into each binary file. This addition can augment the file by several hundred kilobytes. An ingenious workaround might be the construction of `libstd-rs` as a dynamic library, allowing all the rust binaries within the system to share it. This factor will gain prominence as Rust binaries become an integral part of your system image. None of the solutions presented today support this, but they all mention it as a future improvement. Our tactic involves symlinking (filesystem links) our three binaries (`memfaultd`, `memfaultctl`, and `memfault-core-handler`) to a singular binary. This unique binary alters its function based on the name used in the invocation, a strategy we fondly refer to as the `busybox` approach.
+- **The Rust Standard Library**: A conspicuous drawback in the methods discussed is the static linking of the Rust standard library into each binary file. This addition augments the file by several hundred kilobytes. An ingenious workaround might be the construction of `libstd-rs` as a dynamic library, allowing all the rust binaries within the system to share it. This factor will gain prominence as Rust binaries become an integral part of your system image. None of the solutions presented today support this, but they all mention it as a future improvement. Our tactic involves symlinking (filesystem links) our three binaries (`memfaultd`, `memfaultctl`, and `memfault-core-handler`) to a singular binary. This unique binary alters its function based on the name used in the invocation, a strategy we fondly refer to as the `busybox` approach.
 
 - **Minimizing Binaries Size**: Optimizing the size of binaries is crucial, an excellent topic for a future post. For now, we will leave those seeking guidance with [this article](https://github.com/johnthagen/min-sized-rust) that offers invaluable insights.
 
