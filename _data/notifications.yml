@@ -3,7 +3,4 @@ Sandbox Demo:
     background: '#141845'
     textcolor: '#fff'
     title: Sandbox Demo
-    description: |
-    <b>Sandbox Demo</b>
-    <br/><i>Explore Memfault firsthand with real data, guided product tours, and no SDK integration needed!</i>
-    <a href="https://demo.memfault.com/demo/start">Try the Sandbox -></a>
+    description: '<b>Sandbox Demo</b><br/><i>Explore Memfault firsthand with real data, guided product tours, and no SDK integration needed!</i>   <a href="https://demo.memfault.com/demo/start">Try the Sandbox -></a>'
