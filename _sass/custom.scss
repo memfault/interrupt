@@ -145,23 +145,10 @@ figcaption {
   font-size: 12px;
 }
 
+
 :root {
   --notificationBackground: #faaf4e;
-  --notificationColor: #fff;
-}
-
-#nav-menu {
-  top: 35px;
-  margin-top: 35px;
-  width: 30px;
-  position: sticky;
-  margin-left: auto;
-}
-
-.menu-open ~ #nav-menu {
-  margin-top: 0;
-  top: 35px;
-  position: fixed;
+  --notificationColor: white;
 }
 
 .banner-notifications {
@@ -173,10 +160,11 @@ figcaption {
 .banner-notification {
   position: relative;
   margin: 0;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
   background-color: var(--notificationBackground);
   color: var(--notificationColor);
-  padding: 10px 50px 10px 20px;
+  padding: 20px 50px 20px 20px;
+  border-radius: 5px;
 
   p {
     margin: 0;
@@ -202,7 +190,7 @@ figcaption {
   border-radius: 50%;
   position: absolute;
   right: 10px;
-  top: 15px;
+  top: 10px;
   border: none;
   padding: 0;
   box-shadow: none;

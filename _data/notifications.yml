@@ -1,6 +1,6 @@
 # Notification Banner
-Instrumenting Sentry:
+Sandbox Demo:
     background: '#141845'
     textcolor: '#fff'
-    title: Instrumenting Sentry
-    description: '<i>Upcoming Panel: Best Practices for Safeguarding Your Connected Devices - Thursday, August 17, 2023 \| 9AM PT \| 12PM ET \| 6PM CET.</i>   <a href="https://hubs.la/Q01_vdqb0">RSVP Now.</a>'
+    title: Sandbox Demo
+    description: '<B>Sandbox Demo</b></br><i>Explore Memfault firsthand with real data, guided product tours, and no SDK integration needed!</i>   <a href="https://demo.memfault.com/demo/start">Try the Sandbox -></a>'

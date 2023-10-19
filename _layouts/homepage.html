@@ -9,9 +9,6 @@
 	  	<!-- Navigation -->
 	  	{% include menu.html %}
 
-		<!-- Top banner -->
-		{% include notification-banner.html %}
-
     	<!-- Icon menu -->
 		<a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
 			<div id="menu"></div>
@@ -34,6 +31,7 @@
 				<aside>
 					{% include search.html %}
 					{% include subscribe.html %}
+					{% include notification-banner.html %}
 					{% include share-buttons.html %}
 				</aside>
 			</div>
