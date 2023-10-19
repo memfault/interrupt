@@ -70,7 +70,7 @@ The progress on meta-rust was further discussed in a [November 2022 presentation
 
 ## Packaging a Rust Program with the cargo Class
 
-Regardless of whether one opts for the official Rust support or relies on `meta-rust/meta-rust`, the packaging steps for a Rust program remain consistent. (Obviously, if you're using a Yocto version without built-in Rust support or want a newer Rust version, you'd need to clone the `meta-rust/meta-rust` layer and include it in your `conf/bblayers.conf` file.)
+Regardless of whether one opts for the official Rust support or relies on `meta-rust`, the packaging steps for a Rust program remain consistent. (Obviously, if you're using a Yocto version without built-in Rust support or want a newer Rust version, you'd need to clone the `meta-rust` layer and include it in your `conf/bblayers.conf` file.)
 
 Consider the creation of a rudimentary Rust project with an added dependency:
 
@@ -128,11 +128,11 @@ Embedding this recipe within an existing layer and initiating `bitbake hellorust
 [`meta-rust-bin`](https://github.com/rust-embedded/meta-rust-bin/tree/master), a project of the rust-embedded group, emerges as a sought-after alternative for packaging Rust programs within Yocto. Its main differentiators are:
 
 1. It uses pre-built binaries of `rust`, `cargo` and `libstd-rs`
-2. It uses `cargo` and the `Cargo.lock` file to pin the dependencies and download them.
+2. It uses the `Cargo.lock` file to pin the dependencies and `cargo` to download them.
 
 Among its other merits are its frequent updates aligning with the latest Rust versions and its support for older Yocto versions, ranging [from dunfell to langdale](https://github.com/rust-embedded/meta-rust-bin/blob/ef9a765b0785ed9e964691ac1a5a302dd0a0ea62/conf/layer.conf#L13-L20).
 
-Previously, `meta-rust-bin` presented a `cargo` class, rendering it incompatible with `meta-rust`. The recommendation was to use a `BBMASK` statement to "hide" the built-in `cargo` and `rust` classes. Fortunately, this stumbling block was recently addressed with [the class name undergoing a change to `cargo_bin`](https://github.com/rust-embedded/meta-rust-bin/pull/136), enabling seamless usage of both the official Rust support and meta-rust-bin within the same Yocto project.
+Previously, `meta-rust-bin` presented a `cargo` class, rendering it incompatible with `meta-rust` or recent version of Yocto. The recommendation was to use a `BBMASK` statement to "hide" the built-in `cargo` and `rust` classes. Fortunately, this stumbling block was recently addressed with [the class name undergoing a change to `cargo_bin`](https://github.com/rust-embedded/meta-rust-bin/pull/136), enabling seamless usage of both the official Rust support and meta-rust-bin within the same Yocto project.
 
 Unlike `meta-rust`, `meta-rust-bin` does not require pinning all the dependencies in the recipe. However, this poses a challenge since dependencies cannot be downloaded prior to the build's commencement, mandating network access for cargo during the build. Such an approach, [not permitted by default since kirkstone](https://docs.yoctoproject.org/migration-guides/release-notes-4.0.html#new-features-enhancements-in-4-0), necessitates special network-access permission in the recipe with: `do_compile[network] = "1"`.
 
@@ -164,7 +164,7 @@ A notable advantage of this approach is the noticeable reduction in build time. 
 
 After a comprehensive exploration, we identified three primary avenues to incorporate `rust` into a Yocto project:
 
-1. **The Original `meta-rust` Layer**: This method is as a beacon for compatibility with older Yocto releases and furnishes a Rust compiler for all Yocto versions. Nonetheless, it bears its own set of challenges:
+1. **The Original `meta-rust` layer**: This method is as a beacon for compatibility with older Yocto releases and furnishes a Rust compiler for many Yocto versions. Nonetheless, it bears its own set of challenges:
     - It mandates the inclusion of an additional layer to your project.
     - The process of rebuilding the Rust compiler from source can considerably slow down the build.
     - Utilizing `cargo bitbake` is essential for recipe preparation, and the list of dependencies needs to be maintained when the `Cargo.lock` dependencies change.
