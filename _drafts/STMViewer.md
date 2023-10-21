@@ -10,7 +10,7 @@
 #
 # It will now show up in the front page when running Jekyll locally.
 
-title: Visualizing embedded data made easy
+title: Visualizing Realtime Data With STMViewer
 description: 
     "A brief introduction to STMViewer software use cases in debugging embedded targets"
 author: piotrw
@@ -54,7 +54,7 @@ As mentioned earlier, Variable Viewer is an asynchronous module that samples val
 For a quick start please refer to: [Variable Viewer](https://github.com/klonyyy/STMViewer#variable-viewer-1)
 
 ### PID controller
-Let's see it in action on a step response of a classic cascaded PID from a servo drive:
+Let's see Variable Viewer in action on a step response of a classic cascaded PID from a servo drive:
 
 <!-- TODO PICTURE PID -->
 ![](/img/stmviewer/position_PID.png)
@@ -77,7 +77,7 @@ can be used to profile a foo() function. Simple, isn't it? Of course, you can wr
 On the other hand this: 
 
 ```c
-float a = sin(10.0f * i);          // some super fast signal to trace
+float a = sin(10.0f * i);          // some high speed signal to trace
 ITM->PORT[0].u32 = *(uint32_t*)&a; // type-punn to desired size: sizeof(float) = sizeof(uint32_t)
 ```
 can be used to visualize a float value.
@@ -128,11 +128,11 @@ I've configured three timers and set their interrupt priorities as follows: 0 (h
 
 We can observe how the highest priority execution halts all other interrupts, and only after it completes do the other interrupts resume. What's particularly significant in such experiments is that the marker register writes used in Trace Viewer are atomic, preventing a higher-priority interrupt from occurring between data point generation. This also makes it a valuable tool for visualizing FreeRTOS threads. 
 
-### Fast ADC signal
+### High frequency ADC signal
 
-Have you ever tried to visualize a fast ADC signal from an embedded target? Some time ago, I had to check the step response of a low-level current controller for a motor. The current was sampled every 25 microseconds, which made it quite a fast signal. I considered using a DAC and an oscilloscope or recording and replaying the data after the event and eventually went for the latter. Unfortunately, both methods were time-consuming and troublesome. 
+Have you ever tried to visualize a high frequency ADC signal from an embedded target? Some time ago, I had to check the step response of a low-level current controller for a motor. The current was sampled every 25 microseconds, which made it quite a challenge to visualize. I considered using a DAC and an oscilloscope or recording and replaying the data after the event and eventually went for the latter. Unfortunately, both methods were time-consuming and troublesome. 
 
-Let's see how TraceViewer can handle this task. We will record the current response of an inductor when a voltage step is applied to it
+Let's see how TraceViewer can handle this task. We will record the current response of an inductor when a voltage step is applied to it:
 
 <!-- TODO PICTURE INDUCTOR -->
 ![](/img/stmviewer/inductance_step.png)
@@ -144,7 +144,7 @@ Now, knowing the test voltage, calculating resistance, and measuring rise time w
 
 I hope you'll find the visual representation of data more appealing after reading this article. Please note that the tool currently only supports the STM32 family. However, if you'd like to join and collaborate on adding support for other microcontrollers and devices, I'd be very happy to do so.
 
-That's all I have for you today regarding data visualization. I hope you enjoyed it, and if you want to give it a try, check out the releases page on STMViewer's GitHub: https://github.com/klonyyy/STMViewer
+That's all I have for you today regarding data visualization. I hope you enjoyed it, and if you want to give it a try, check out the releases page on [STMViewer's GitHub](https://github.com/klonyyy/STMViewer).
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
