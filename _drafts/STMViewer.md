@@ -26,24 +26,30 @@ If you've ever wanted to plot data acquired on your embedded target, this articl
 
 {% include toc.html %}
 
+## Why
+
+Visualizing process data in the debugging stage of firmware development offers several advantages - consider a scenario where an embedded controller is responsible for monitoring a physical quantity with a sensor. Plotting the data allows us to validate the accuracy of the recorded measurements and identify any sporadic outliers that may occur. By observing data trends over time, other issues can be detected such as excessive noise or deviations in readings, especially those occurring under specific conditions. Visualizing can lead to a much better understanding of a complex control system's behavior as all variables and their interactions can be easily monitored. Apart from that, representing certain software actions' durations and sequences in the form of a digital plot (aka logic analyzer view) can be beneficial when profiling hot code paths or validating the order of asynchronous events.  
+
 ## What exactly can it visualize?
 
 STMViewer consists of two modules which serve a slightly different purpose: 
 
-1. Variable Viewer - a module that reads variables' values directly from RAM using ST-Link SWD (only SWDIO, SWCLK, and GND connection is needed). It is asynchronous, which means it samples the memory with the time period set on the PC. It is completely non-intrusive and can log many variables at once. There are some trade-offs though. The first one is that logged variables' addresses have to be constant, meaning they have to be globals. Moreover, with more aggressive optimization some of the variables may get optimized and fail to be logged.
+### Variable Viewer
+Variable Viewer is a module that reads variables' values directly from RAM using ST-Link SWD (only SWDIO, SWCLK, and GND connection is needed). It is asynchronous, which means it samples the memory with the time period set on the PC. It is completely non-intrusive and can log many variables at once. Writing is supported as well. There are some trade-offs though. The first one is that logged variables' addresses have to be constant, meaning they have to be globals. Moreover, with more aggressive optimization some of the variables may get optimized and fail to be logged.
 
-2. Trace Viewer - a module that reads and parses SWO (Serial Wire Viewer) data using an ST-Link. To use it, you need to connect SWDIO, SWCLK, SWO, and GND. This tool operates synchronously, meaning it visualizes data points at the rate they are produced on the target. A data point can be either a special single-byte flag used to create digital plots or any value that fits within up to 4 bytes, as in the case of 'analog' plots. It incurs minimal performance overhead, involving just a single register write per plot point, as serialization and timestamping are handled by the ITM peripheral. Trace Viewer can be employed for profiling specific parts of the codebase or visualizing signals that are too fast for the asynchronous Variable Viewer. Its main limitations are the maximum allowed SWO pin baudrate of the ST-Link and the fact that the ITM peripheral is supported only on Cortex M3/M4/M7/M33 cores. 
+### Trace Viewer 
+Trace Viewer is a module that reads and parses SWO (Serial Wire Viewer) data using an ST-Link. To use it, you need to connect SWDIO, SWCLK, SWO, and GND. This tool operates synchronously, meaning it visualizes data points at the rate they are produced on the target. A data point can be either a special single-byte flag used to create digital plots or any value that fits within up to 4 bytes, as in the case of 'analog' plots. It incurs minimal performance overhead, involving just a single register write per plot point, as serialization and timestamping are handled by the ITM peripheral. Trace Viewer can be employed for profiling specific parts of the codebase or visualizing signals that are too fast for the asynchronous Variable Viewer. Its main limitations are the maximum allowed SWO pin baudrate of the ST-Link and the fact that the ITM peripheral is supported only on Cortex M3/M4/M7/M33 cores. 
 
 
 ## I'm already using STMStudio/CubeMonitor, why create a new tool?
 
 Let's begin with the most commonly asked question: Why bother creating a tool when existing options are provided by ST? There are several reasons:
 
-1. STMStudio is deprecated, and while it was a useful tool, it became challenging to work with due to persistent bugs. It also lacks support for mangled C++ names and is exclusively available for Windows.
+STMStudio is deprecated, and while it was a useful tool, it became challenging to work with due to persistent bugs. It also lacks support for mangled C++ names and is exclusively available for Windows.
 
-2. CubeMonitor, on the other hand, is often considered too much overhead for debugging purposes. It's primarily designed for creating dashboards, and during debugging, the focus tends to be on functionality rather than aesthetics. Manipulating plot data and writing values to logged variables can be inconvenient. Furthermore, setting up a basic logger configuration can require some time to become familiar with NodeRED's setup.
+CubeMonitor, on the other hand, is often considered too much overhead for debugging purposes. It's primarily designed for creating dashboards, and during debugging, the focus tends to be on functionality rather than aesthetics. Manipulating plot data and writing values to logged variables can be inconvenient. Furthermore, setting up a basic logger configuration can require some time to become familiar with NodeRED's setup.
 
-3. Last but not least, none of the available hobby-level software tools include a trace data visualizer. In my opinion, STMViewer's trace data visualizer is the most intriguing module, enabling users to visualize variables synchronously and profile functions or interrupts within minutes.
+Last but not least, none of the available hobby-level software tools include a trace data visualizer. In my opinion, STMViewer's trace data visualizer is the most intriguing module, enabling users to visualize variables synchronously and profile functions or interrupts within minutes.
 
 ## Variable Viewer
 
