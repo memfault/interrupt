@@ -53,7 +53,7 @@ Last but not least, none of the available hobby-level software tools include a t
 
 ## Variable Viewer
 
-<!-- TODO GIF ? -->
+![](/img/stmviewer/varViewer.gif)
 
 As mentioned earlier, Variable Viewer is an asynchronous module that samples values from predefined RAM addresses on your target. It can be particularly useful when you want to visualize multiple, relatively slow signals (with a maximum sampling rate of around 1 kHz). The RAM addresses are read from the project's *.elf file, which is parsed using GDB. This is essentially the same approach used by STMStudio and CubeMonitor. 
 
@@ -62,14 +62,13 @@ For a quick start please refer to: [Variable Viewer](https://github.com/klonyyy/
 ### PID controller
 Let's see Variable Viewer in action on a step response of a classic cascaded PID from a servo drive:
 
-<!-- TODO PICTURE PID -->
 ![](/img/stmviewer/position_PID.png)
 
 What we observe are two cascaded controllers: a position PID and a velocity PID. The position PID attempts to follow the target and generates velocity targets for the lower-level controller, which, in turn, generates torque setpoints. When the responses are plotted, it's easy to notice the overshoots in the velocity PID response, which helps in fine-tuning the gains. Moreover, we can see when the velocity target limit is being triggered. You can easily measure the most important parameters of the response using the built-in markers or export a CSV for a more comprehensive analysis. 
 
 ## Trace Viewer 
 
-<!-- TODO GIF ? -->
+![](/img/stmviewer/traceViewer.gif)
 
 Trace Viewer is a synchronous module used to visualize SWO trace data. This means we can visualize fast actions without worrying some data might be lost between sampling points. It does not require any configuration on the target since it is all done by the STMViewer using SWD. The only thing we have to do is to write data to the ITM->PORT[x] registers to send it. For example:
 
@@ -118,7 +117,6 @@ Let's check how much time it takes to copy a buffer using a well-known memcpy fu
 
 Besides the memcpy profiling, we are also logging the current size on channel 1. As can be seen, there is also a small blocking delay to make the plot more readable. Here are the results: 
 
-<!-- TODO PICTURE MEMCPY -->
 ![](/img/stmviewer/memcpy.png)
 
 After logging, you can use the markers to determine the time difference between points. It appears that copying a single byte takes about 270 ns, whereas copying 577 bytes takes approximately 25.35 us at 160 MHz.
@@ -129,7 +127,6 @@ This example is going to be a bit similar to the previous one, except we will us
 
 I've configured three timers and set their interrupt priorities as follows: 0 (highest logical priority) for TIM7, 1 for TIM17, and 2 (lowest) for TIM6. I've included some dummy instructions in each interrupt to simulate some work being done.
 
-<!-- TODO PICTURE INTERRUPTS -->
 ![](/img/stmviewer/interrupts.png)
 
 We can observe how the highest priority execution halts all other interrupts, and only after it completes do the other interrupts resume. What's particularly significant in such experiments is that the marker register writes used in Trace Viewer are atomic, preventing a higher-priority interrupt from occurring between data point generation. This also makes it a valuable tool for visualizing FreeRTOS threads. 
@@ -140,7 +137,6 @@ Have you ever tried to visualize a high frequency ADC signal from an embedded ta
 
 Let's see how TraceViewer can handle this task. We will record the current response of an inductor when a voltage step is applied to it:
 
-<!-- TODO PICTURE INDUCTOR -->
 ![](/img/stmviewer/inductance_step.png)
 
 Now, knowing the test voltage, calculating resistance, and measuring rise time we can easily determine the inductance. No DAC setup or manually collecting the samples was needed!
