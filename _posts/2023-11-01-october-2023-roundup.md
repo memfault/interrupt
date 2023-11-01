@@ -28,9 +28,6 @@ Nice tips for annotating C function buffer parameters. - Noah
 - [**Post Series: ELF Format and Runtime Internals + Heap Exploitation and GlibC Internals**](https://blog.k3170makan.com/p/series.html)<br>
 This blog has a nice series on the internals of ELF files. The author does a nice job of highlighting the raw hex and outlining what each byte belongs too. There’s also some cool applications to reverse engineering and exploits. - Eric
 
-- [**Linkable Loadable Extensions (LLEXT) — Zephyr Project Documentation**](https://docs.zephyrproject.org/latest/services/llext/index.html)<br>
-Pretty sweet new feature just landed in Zephyr - runtime loadable code. Details [here](https://docs.zephyrproject.org/latest/services/llext/index.html) and [sample shell](https://docs.zephyrproject.org/latest/samples/subsys/llext/shell_loader/README.html), recommended by Interrupt community member Jonathan Beri of [Golioth](https://golioth.io/).
-
 - [**OneVariable : interrupts is threads**](https://onevariable.com/blog/interrupts-is-threads/)<br>
 Post on how embedded rust models interrupts as threads (and how that translates into thread-safety guarantees at compile time). Worth a read even if you don't use Rust, as the core concepts are the same in C/C++. Written by Interrupt community member [James Munns](https://jamesmunns.com/blog/). 
 
@@ -50,12 +47,15 @@ Gain insight into Devicetree overlays and their utilization within Zephyr with t
 Confused about state machines? Check out this comprehensive article from the folks over at [Quantum Leaps](https://www.state-machine.com/). If you prefer to watch instead of read, you're in luck: view the [corresponding video](https://youtu.be/E2Im7jLDDG4).
 
 - [**Leveraging Your Toolchain to Improve Security - Embedded Artistry**](https://embeddedartistry.com/blog/2023/09/20/leveraging-your-toolchain-to-improve-security/)<br>
-Our friends over at [Embedded Artistry](https://embeddedartistry.com/) released a helpful guide for incorporating security early on leveraging your toolchain.
+Our friends over at [Embedded Artistry](https://embeddedartistry.com/) released a helpful guide for incorporating security early on in the development process by leveraging your toolchain.
 
 
 ## Projects & Tools
 - [**USB-C cable tester - C2C caberQU**](https://caberqu.com/home/20-42-c2c-caberqu-746052578813.html#/26-case-without_case)<br>
 Neat board for testing USB C-C cables! - Noah
+
+- [**Linkable Loadable Extensions (LLEXT) — Zephyr Project Documentation**](https://docs.zephyrproject.org/latest/services/llext/index.html)<br>
+Pretty sweet new feature just landed in Zephyr - runtime loadable code. Details [here](https://docs.zephyrproject.org/latest/services/llext/index.html) and [sample shell](https://docs.zephyrproject.org/latest/samples/subsys/llext/shell_loader/README.html), recommended by Interrupt community member Jonathan Beri of [Golioth](https://golioth.io/).
 
 
 ## News & Announcements
@@ -66,11 +66,11 @@ Zephyr 3.5.0 is now generally available! This [Zephyr Tech Talk #004](https://ww
 
 ## Upcoming Events
 
-- [**2023 IoT Online Conference**](https://www.iotonlineconference.com/)<br>
-The IoT Online Conference is back from November 14-16 and will feature talks from Memfault's Gillian Minnehan on GDB Deep Dive and Tyler Hoffman on Objectively Measuring the Reliability of IoT Devices. If you register now using our promo code, you will save 50% on registration fees! Use promo code: **MEMFAULTIOT** to drop your registration fee from $190 to $95. [Register here.](https://www.iotonlineconference.com/register.php)
+- [**2023 IoT Online Conference (November 14-16)**](https://www.iotonlineconference.com/)<br>
+The IoT Online Conference is back from November 14-16 and will feature talks from Memfault's Gillian Minnehan on GDB Deep Dive and Tyler Hoffman on Objectively Measuring the Reliability of IoT Devices. If you register now using our promo code, you will save 50% on registration fees! Use promo code: **MEMFAULTIOT** to drop the price from $190 to $95. [Register here.](https://www.iotonlineconference.com/register.php)
 
-- [**Memfault Webinar - NXP + Memfault + Golioth: Bringing Observability and Device Management to IoT Devices**](https://hubs.la/Q026Gsz30)<br>
-Join us on Thursday, November 16th with [NXP](https://www.nxp.com/) and [Golioth](https://golioth.io/) for a joint webinar, as we dive into the future of IoT device management and observability. Can't make it? Register [here](https://hubs.la/Q026Gsz30) to get the record emailed to you afterward. 
+- [**Memfault Webinar - NXP + Memfault + Golioth: Bringing Observability and Device Management to IoT Devices (November 16)**](https://hubs.la/Q026Gsz30)<br>
+Join us on Thursday, November 16th with [NXP](https://www.nxp.com/) and [Golioth](https://golioth.io/) for a joint webinar, as we dive into the future of IoT device management and observability. Can't make it? Register [here](https://hubs.la/Q026Gsz30) to get the recording emailed to you afterward. 
 
 - [**Berlin Firmware Meetup by Memfault (November 15)**](https://go.memfault.com/berlin-firmware-meetup-q42023)<br>
 Team Memfault is hosting another Berlin Firmware Meetup on Thursday, September 14th at [MotionLab.Berlin](https://motionlab.berlin/). Join us for a fun evening of building connections with other like-minded engineers and exploring the latest trends in embedded systems. Sign up [here](https://go.memfault.com/berlin-firmware-meetup-q42023) for your free ticket.
@@ -79,7 +79,7 @@ Team Memfault is hosting another Berlin Firmware Meetup on Thursday, September 1
 Team Memfault would be thrilled to host you on Thursday, November 16th for food, beer, and to talk firmware! Come hang out with team members from the Boston office and make new connections with local embedded engineers. Get your free ticket [here](https://go.memfault.com/boston-firmware-meetup-q42023).
 
 - [**San Diego Firmware Meetup by Memfault (November 29)**](https://go.memfault.com/sandiego-firmware-meetup-q42023)<br>
-On Wednesday, November 29th Team Memfault is hosting the next San Diego Firmware Meetup which will include technical talks, demos, and networking over food & drinks! Whether you’re a seasoned engineer or just starting out in the field, come connect with like-minded individuals. Register for your [free ticket](https://go.memfault.com/sandiego-firmware-meetup-q42023).
+Join Team Memfault on Wednesday, November 29th at the San Diego Firmware Meetup, which will include technical talks, demos, and networking over food & drinks! Whether you’re a seasoned engineer or just starting out in the field, come connect with like-minded individuals. Register for your [free ticket](https://go.memfault.com/sandiego-firmware-meetup-q42023).
 
 - [**Connectivity Standards Alliance Members Meeting | Geneva, Switzerland (November 13-16)**](https://csa-iot.org/event/alliance-member-meeting-geneva-switzerland/)<br>
-Are you a member of the Connectivity Standards Alliance? We'll be at the Members Meeting in Geneva with a tabletop exhibition that you can swing by for an interactive demo and neat swag - [come say hi](https://csa-iot.org/event/alliance-member-meeting-geneva-switzerland/))!
+Are you a member of the Connectivity Standards Alliance? We'll be at the Members Meeting in Geneva from November 13-16 with a tabletop exhibition that you can swing by for an interactive demo and neat swag - [come say hi](https://csa-iot.org/event/alliance-member-meeting-geneva-switzerland/))!
