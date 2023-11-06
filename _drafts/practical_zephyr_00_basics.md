@@ -14,13 +14,15 @@ So why another article series, and what's different in this one?
 
 When I first started looking into Zephyr the learning curve felt quite overwhelming. Even as an embedded developer with a decent amount of experience, understanding the key concepts and tools like _Kconfig_ or _devicetree_ for creating even a simple application, had me chasing down the rabbit hole, following link after link after link, night after night - and it was exhausting. The existing article series would only brush on core concepts like _Kconfig_ and _devicetree_ and would leave me with more questions than answers; I still didn't understand those tools since I had no previous experience with them.
 
+What I'm trying to achieve with this article series is the following:
+
 <!-- excerpt start -->
 
-What I'm trying to achieve with this article series is the following: If you're working a full-time job and would still like to get started with Zephyr, but don't have the energy to set up your own environment, to dive deeper into the docs, this article series will guide you through __Zephyr's fundamental concepts__. Of course, you'll learn most if you follow along with programming, but all code, including snippets of generated code and build logs, are included in the articles of this series, so even just reading should give you a good idea about how Zephyr works.
-
-After this series, you should understand all of Zephyr's fundamental concepts. The learning curve flattens, and you'll be able to really get started without getting lost in Zephyr's documentation.
+If you're working a full-time job and would still like to get started with Zephyr, but don't have the energy to set up your own environment, to dive deeper into the docs, this article series will guide you through __Zephyr's fundamental concepts__. Of course, you'll learn most if you follow along with programming, but all code, including snippets of generated code and build logs, are included in the articles of this series, so even just reading should give you a good idea about how Zephyr works.
 
 <!-- excerpt end -->
+
+After this series, you should understand all of Zephyr's fundamental concepts. The learning curve flattens, and you'll be able to really get started without getting lost in Zephyr's documentation.
 
 > **Note:** This series is **not** for you if you're not interested in details and how things work, but rather just want to _use_ Zephyr. We'll be going through _generated code and configuration files_! Also, if you're experienced with Linux and have already seen how _Kconfig_ and _devicetree_ work, you might find the articles of this series too detailed.
 
@@ -256,7 +258,7 @@ For now, simply keep in mind that we'll be using this configuration file to tell
 
 #### Sources
 
-Aside from our build and configuration file, we've created a still empty [`src/main.c`](./src/main.c) file. The convention is to place all sources in this `src` folder, but as your application grows you might need a more complex setup. For now, that'll do.
+Aside from our build and configuration file, we've created a still empty [`src/main.c`](https://github.com/lmapii/practical-zephyr/blob/main/00_basics/src/main.c) file. The convention is to place all sources in this `src` folder, but as your application grows you might need a more complex setup. For now, that'll do.
 
 
 
