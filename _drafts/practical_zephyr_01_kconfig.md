@@ -924,7 +924,7 @@ The following are great resources when it comes to Zephyr and are worth a read _
 - Zephyr's official docs also contain a great collection of [Kconfig tips and best practices](https://docs.zephyrproject.org/latest/build/kconfig/tips.html#kconfig-tips-and-best-practices), including  [what not to turn into Kconfig options](https://docs.zephyrproject.org/latest/build/kconfig/tips.html#what-not-to-turn-into-kconfig-options) in case you're thinking about creating your own symbols.
 - If you want to see `Kconfig` in action in a device driver, I can highly recommend watching the [Tutorial: Mastering Zephyr Driver Development](https://www.youtube.com/watch?v=o-f2qCd2AXo) by Gerard Marull Paretas from the Zephyr Development Summit 2022.
 - The Linux Kernel documentation contains a great section about the [Kconfig Language](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html).
-- In case you haven't done it yet, the [nRF Connect SDK Fundamentals][nrf-connect-sdk-fundamentals] course in Nordic's [DevAcademy][nordicsemi-dev-academy] also covers _Kconfig_.
+- In case you haven't done it yet, the [nRF Connect SDK Fundamentals](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/) course in Nordic's [DevAcademy][nordicsemi-academy] also covers _Kconfig_.
 - [Golioth](https://golioth.io/) also has a large number of [blog posts about Zephyr](https://blog.golioth.io/category/zephyr/), make sure to check them out!
 
 Just like in the previous article, I can always warmly recommend browsing through the videos from the _Zephyr Development Summit_, e.g., the playlists from the [2022](https://www.youtube.com/watch?v=o-f2qCd2AXo&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe) and [2023](https://www.youtube.com/watch?v=PY64voxdhAU&list=PLzRQULb6-ipERkFrHaBh8tuSnK923ZUjY) Developers Summits.
@@ -942,10 +942,11 @@ Finally, have a look at the files in the [accompanying GitHub repository](https:
 [zephyr-ds-2022-driver-dev]: https://www.youtube.com/watch?v=o-f2qCd2AXo
 
 [nordicsemi]: https://www.nordicsemi.com/
-[nordicsemi-academy]: https://academy.nordicsemi.com/
+[nordicsemi-dev-academy]: https://academy.nordicsemi.com/
 [nordicsemi-academy-kconfig]: https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/lessons/lesson-3-elements-of-an-nrf-connect-sdk-application/topic/configuration/
 [nordicsemi-nrf52840-dk]: https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk
 
+[nrf-connect-sdk-fundamentals]: https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/
 [nrf-vscode-kconfig]: https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig
 [nrf-connect-sdk]: https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk
 [nrf-connect-vscode]: https://nrfconnect.github.io/vscode-nrf-connect/
