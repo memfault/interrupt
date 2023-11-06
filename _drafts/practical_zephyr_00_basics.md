@@ -4,7 +4,7 @@ description: Article series "Practical Zephyr", first part about west, cmake and
 author: lampacher
 ---
 
-This article kicks off a new article series about _Zephyr's fundamental concepts_, essentially its [build and configuration systems](https://docs.zephyrproject.org/latest/build/index.html) `west`, _Kconfig_ and _devicetree_.
+This article kicks off a new article series about _Zephyr's fundamental concepts_, essentially its [build and configuration systems](https://docs.zephyrproject.org/latest/build/index.html) _West_, _Kconfig_ and _devicetree_.
 
 **Yet another Zephyr series?**
 
@@ -12,7 +12,7 @@ This article kicks off a new article series about _Zephyr's fundamental concepts
 
 So why another article series, and what's different in this one?
 
-When I first started looking into Zephyr the learning curve felt quite overwhelming. Even as an embedded developer with a decent amount of experience, understanding the key concepts and tools like `Kconfig` or `devicetree` for creating even a simple application, had me chasing down the rabbit hole, following link after link after link, night after night - and it was exhausting. The existing article series would only brush on core concepts like `Kconfig` and `devicetree` and would leave me with more questions than answers; I still didn't understand those tools since I had no previous experience with them.
+When I first started looking into Zephyr the learning curve felt quite overwhelming. Even as an embedded developer with a decent amount of experience, understanding the key concepts and tools like _Kconfig_ or _devicetree_ for creating even a simple application, had me chasing down the rabbit hole, following link after link after link, night after night - and it was exhausting. The existing article series would only brush on core concepts like _Kconfig_ and _devicetree_ and would leave me with more questions than answers; I still didn't understand those tools since I had no previous experience with them.
 
 <!-- excerpt start -->
 
@@ -34,7 +34,7 @@ As mentioned, this series covers "_Zephyr's fundamental concepts_", so what is i
 
 __Basics__
 
-First, we walk through the very basics of installing Zephyr and creating a minimal, skeleton application. We'll see how we can compile, flash, and debug an application, and how Zephyr's `west` tool fits into all of this.
+First, we walk through the very basics of installing Zephyr and creating a minimal, skeleton application. We'll see how we can compile, flash, and debug an application, and how Zephyr's _West_ tool fits into all of this.
 
 __Kconfig__
 
@@ -50,7 +50,7 @@ After understanding the _devicetree_ syntax and basics, we'll now use so-called 
 
 __Workspaces__
 
-Throughout this article series, for the sake of simplicity, we'll use so-called _freestanding_ applications: Such applications require Zephyr to be installed elsewhere and do not include its sources. For professional applications, Zephyr's `west` tool supports so-called _workspaces_: In workspaces, _all_ sources, their location, and their versions are specified in a _manifest_ file. `west` uses this manifest to populate the workspace, eliminating references to files outside of the workspace. We'll see how we can create a _minimal_ workspace application using `west`.
+Throughout this article series, for the sake of simplicity, we'll use so-called _freestanding_ applications: Such applications require Zephyr to be installed elsewhere and do not include its sources. For professional applications, Zephyr's _West_ tool supports so-called _workspaces_: In workspaces, _all_ sources, their location, and their versions are specified in a _manifest_ file. _West_ uses this manifest to populate the workspace, eliminating references to files outside of the workspace. We'll see how we can create a _minimal_ workspace application using _West_.
 
 This is where the journey **ends**. After this series, you should find it easy - or at least easier - to explore, understand, and apply advanced concepts such as:
 
@@ -74,7 +74,7 @@ The practical examples in this series use [Nordic's](https://www.nordicsemi.com/
 
 Whenever relevant, we'll use [Visual Studio Code](https://code.visualstudio.com/) as the editor of choice. However, **using `vscode` is of course entirely optional** and not required at all. Only in certain sections, e.g., debugging, we'll show how using `vscode` and some plugins can make your life easier - and we won't cover any other editor.
 
-We won't assume any type of operating system, but - for the sake of simplicity - we'll be exclusively using Linux shell commands. Windows users should have a "`bash`-compatible" environment - or `WSL` - installed. We won't jump through the hoops of creating Windows-compatible shell scripts, batch files, or other atrocities.
+We won't assume any type of operating system, but - for the sake of simplicity - we'll be exclusively using Linux shell commands. Windows users should have a "`bash`-compatible" environment - or _WSL_ - installed. We won't jump through the hoops of creating Windows-compatible shell scripts, batch files, or other atrocities.
 
 
 
@@ -108,7 +108,7 @@ After installing the toolchain manager you can install different versions of the
 
 ![]({% img_url practical-zephyr/nrf-toolchain-mgr.png %})
 
-However, when trying to use any of Zephyr's tools in your normal command line, you should notice that the commands cannot be located yet. E.g., this is the output of my `zsh` terminal when trying to execute [Zephyr's meta-tool `west`](https://docs.zephyrproject.org/latest/develop/west/index.html) (we'll see the tool later):
+However, when trying to use any of Zephyr's tools in your normal command line, you should notice that the commands cannot be located yet. E.g., this is the output of my `zsh` terminal when trying to execute [Zephyr's meta-tool _West_](https://docs.zephyrproject.org/latest/develop/west/index.html) (we'll see the tool later):
 
 ```zsh
 $ west --version
@@ -175,7 +175,7 @@ done
 
 > **Note:** Depending on whether or not you want to replace _all_ binaries - including `git` - with Nordic's installation, _append_ or _prepend_ to `PATH`. In the above example, we _append_ and thus use local installations over the installation provided by the toolchain installer, if available.
 
-After sourcing this script, you should now have, e.g., [Zephyr's meta-tool `west`](https://docs.zephyrproject.org/latest/develop/west/index.html) and [CMake](https://cmake.org/) in your path:
+After sourcing this script, you should now have, e.g., [Zephyr's meta-tool _West_](https://docs.zephyrproject.org/latest/develop/west/index.html) and [CMake](https://cmake.org/) in your path:
 
 ```bash
 $ source setup.sh
@@ -216,12 +216,12 @@ Now that we have a working installation, we can start with the important parts o
 Zephyr supports different [application types](https://docs.zephyrproject.org/latest/develop/application/index.html#application-types), differentiated essentially depending on the location of your application in relation to Zephyr:
 
 - [Freestanding applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-freestanding-app) exist independent of Zephyr's location, meaning Zephyr is not part of the application's repository or file tree. The relation with Zephyr is only established in the build process, when using `find_package` to locate Zephyr, typically based on the `ZEPHYR_BASE` environment variable.
-- [Workspace applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app) use a [`west` workspace](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#west-workspaces): For such applications, `west` is used to initialize your workspace, e.g., based on a `west.yml` manifest file. The manifest file is used by `west` to create complex workspaces: For each external dependency that is used in your project, the location and revision are specified in the manifest file. West then uses this manifest to populate your workspace. Kind of like a very, very powerful version of [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+- [Workspace applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app) use a [_West_ workspace](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#west-workspaces): For such applications, _West_ is used to initialize your workspace, e.g., based on a `west.yml` manifest file. The manifest file is used by _West_ to create complex workspaces: For each external dependency that is used in your project, the location and revision are specified in the manifest file. West then uses this manifest to populate your workspace. Kind of like a very, very powerful version of [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 - [Zephyr repository applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-repo-app) live within the Zephyr repository itself, e.g., demo applications that are maintained with Zephyr. You could add applications in a fork of the Zephyr repository, but this is not very common.
 
 The most common and easiest approach is to **start** with a freestanding application: You'll only need a couple of files to get started. As with the nRF Connect SDK, Zephyr is located in a known installation directory that is configured via the environment.
 
-In more advanced projects you typically want to have all dependencies in your workspace and will therefore switch to a workspace application type: External dependencies will be cloned directly into your project by `west` to avoid dependencies to local installations. We'll get to that at the end of this article series.
+In more advanced projects you typically want to have all dependencies in your workspace and will therefore switch to a workspace application type: External dependencies will be cloned directly into your project by _West_ to avoid dependencies to local installations. We'll get to that at the end of this article series.
 
 For now, we'll rely entirely on the [freestanding application type](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-freestanding-app).
 
@@ -238,15 +238,15 @@ $ tree --charset=utf-8 --dirsfirst
 └── prj.conf
 ```
 
-One thing that you should notice immediately, is that we're using a [CMakeLists.txt](CMakeLists.txt). This is due to the fact that Zephyr's build system is based on [CMake](https://cmake.org/). You've read that right: While Zephyr provides its own meta-tool `west`, underneath there is yet another meta build system _CMake_ that will in turn, e.g., use `make` or `ninja`.
+One thing that you should notice immediately, is that we're using a [CMakeLists.txt](CMakeLists.txt). This is due to the fact that Zephyr's build system is based on [CMake](https://cmake.org/). You've read that right: While Zephyr provides its own meta-tool _West_, underneath there is yet another meta build system _CMake_ that will in turn, e.g., use `make` or `ninja`.
 
-> **Note:** You can find the application skeleton in the [`00_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/00_basics).
+> **Note:** You can find the complete application skeleton, including some additional comments, in the [`00_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/00_basics).
 
 #### West vs. CMake
 
 [West](https://docs.zephyrproject.org/latest/develop/west/index.html) is Zephyr's "Swiss army knife tool": It is mainly used for managing multiple repositories but also provides [Zephyr extension commands](https://docs.zephyrproject.org/latest/develop/west/zephyr-cmds.html) for building, flashing, and debugging applications. [CMake](https://cmake.org/), on the other hand, is used exclusively for building your application.
 
-Since we want to learn how things work underneath, for the following steps we'll be using _CMake_ first, and switch back to `west` after exploring the build process.
+Since we want to learn how things work underneath, for the following steps we'll be using _CMake_ first, and switch back to _West_ after exploring the build process.
 
 #### Kconfig
 
@@ -256,7 +256,7 @@ For now, simply keep in mind that we'll be using this configuration file to tell
 
 #### Sources
 
-Aside from our build and configuration file, we've created a still empty [src/main.c](./src/main.c) file. The convention is to place all sources in this `src` folder, but as your application grows you might need a more complex setup. For now, that'll do.
+Aside from our build and configuration file, we've created a still empty [`src/main.c`](./src/main.c) file. The convention is to place all sources in this `src` folder, but as your application grows you might need a more complex setup. For now, that'll do.
 
 
 
@@ -295,13 +295,13 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 - `cmake_minimum_required` just indicates the allowed CMake versions. Zephyr has its own requirements and maintains its minimal required CMake version in `zephyr/cmake/modules/zephyr_default.cmake`.
 - The `set` function writes the board that we're building our application for to the variable `BOARD`. This step is optional and can actually be specified during the build step as a parameter. `nrf52840dk_nrf52840` is Zephyr's name for the [nRF52840 development kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk).
-- Then we go ahead and load `Zephyr` using the `find_package` function. In our [setup script][#creating-a-setup-script] we've exported the `ZEPHYR_BASE` environment variable, which is now passed as a hint to the `find_package` function to locate the correct Zephyr installation.
+- Then we go ahead and load Zephyr using the `find_package` function. In our [setup script][#creating-a-setup-script] we've exported the `ZEPHYR_BASE` environment variable, which is now passed as a hint to the `find_package` function to locate the correct Zephyr installation.
 
 > **Note:** There are several ways to use the Zephyr CMake package, each of which is described in detail in [Zephyr's CMake package documentation](https://docs.zephyrproject.org/latest/build/zephyr_cmake_package.html). You can also have a look at the [Zephyr CMake package source code](https://docs.zephyrproject.org/latest/build/zephyr_cmake_package.html#zephyr-cmake-package-source-code) for details.
 
 As mentioned, setting the `BOARD` variable is optional and usually not done. The value for the `BOARD` can be chosen in different ways, e.g., using an environment variable, or passed as a parameter during the build. The Zephyr build system determines the final value for `BOARD` in a pre-defined order; refer to the [documentation for the application CMakeLists.txt](https://docs.zephyrproject.org/latest/develop/application/index.html#application-cmakelists-txt) for details.
 
-> **Note**: Zephyr's goal is to support multiple boards and multiple MCUs. Once we switch to using `west` for building, it makes sense to pass the board as a parameter and _not_ specify it in `CMakeLists.txt`. In case you're having trouble remembering the exact board name, you can always dump the list of supported boards using the command `west boards`.
+> **Note**: Zephyr's goal is to support multiple boards and multiple MCUs. Once we switch to using _West_ for building, it makes sense to pass the board as a parameter and _not_ specify it in `CMakeLists.txt`. In case you're having trouble remembering the exact board name, you can always dump the list of supported boards using the command `west boards`.
 
 Now that Zephyr is available, we can go ahead and add the application:
 
@@ -342,7 +342,7 @@ endmacro()
 
 ### Building the application
 
-With the [CMakeLists.txt](CMakeLists.txt) in place we can go ahead and build the application. There are several ways to do this and if you're familiar with CMake, the below commands are no surprise. What we want to show, however, is the slight differences between using CMake or `west` when building your application. Let's first use CMake:
+With the [CMakeLists.txt](CMakeLists.txt) in place we can go ahead and build the application. There are several ways to do this and if you're familiar with CMake, the below commands are no surprise. What we want to show, however, is the slight differences between using CMake or _West_ when building your application. Let's first use CMake:
 
 #### Building with CMake
 
@@ -360,7 +360,7 @@ With this, the `../build` folder contains the application built for the `BOARD` 
 $ cmake -B ../build -DBOARD=nrf52dk_nrf52832
 ```
 
-Let's try to build the application using `west`:
+Let's try to build the application using _West_:
 
 ```bash
 $ rm -rf ../build
@@ -370,16 +370,16 @@ Note: to silence the above message, run 'west config build.board_warn false'
 <truncated output>
 ```
 
-> **Note:** The default build directory of `west` is a `build` folder within the same directory. If run without `-d ../build`, `west` will create a `build` folder in the current directory for the build.
+> **Note:** The default build directory of _West_ is a `build` folder within the same directory. If run without `-d ../build`, _West_ will create a `build` folder in the current directory for the build.
 
-The build seems to succeed, but there's a warning indicating that no board has been specified. How is that possible? `west` itself typically still expects a "board configuration" or the `--board` parameter. The reason for this is simple: `west` is much more than just a wrapper for CMake and therefore doesn't parse the provided `CMakeLists.txt` file - where we specified the `BOARD`. It just warns you that you may have forgotten to specify the `board` but still proceeds to call CMake.
+The build seems to succeed, but there's a warning indicating that no board has been specified. How is that possible? _West_ itself typically still expects a "board configuration" or the `--board` parameter. The reason for this is simple: _West_ is much more than just a wrapper for CMake and therefore doesn't parse the provided `CMakeLists.txt` file - where we specified the `BOARD`. It just warns you that you may have forgotten to specify the `board` but still proceeds to call CMake.
 
 Before looking yet another step deeper into West, comment or **delete** the `set(BOARD ...)` instruction in your `CMakeLists.txt` file.
 
 
 #### Building with West
 
-As mentioned, `west` needs an indication of which board is being used by your project. Just like plain CMake, this could be done by specifying the `BOARD` as an environment variable, or by passing the board to `west build`:
+As mentioned, _West_ needs an indication of which board is being used by your project. Just like plain CMake, this could be done by specifying the `BOARD` as an environment variable, or by passing the board to `west build`:
 
 ```bash
 # pass the board as argument
@@ -389,11 +389,11 @@ $ export BOARD=nrf52840dk_nrf52840
 $ west build -d ../build
 ```
 
-Underneath, `west` sets up the build directory and then simply invokes CMake. Thus, everything build-related is still plain old CMake. The above builds run without warning.
+Underneath, _West_ sets up the build directory and then simply invokes CMake. Thus, everything build-related is still plain old CMake. The above builds run without warning.
 
-> **Note:** The `build` command is actually a so-called [`west` extension command](https://docs.zephyrproject.org/latest/develop/west/zephyr-cmds.html) and is not built into `west` by default. You could thus, e.g., use `west` without Zephyr as a repository manager in a different context. Zephyr provides extension commands such as [`build`, `flash`, and `debug`](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html) in its own `west` extension such that applications can be built, flashed, and debugged in the same way, independent of, e.g., the debugger or programmer that is used. If you're interested in how Zephyr's extensions work, have a look at `zephyr/scripts/west-commands.yml` and the corresponding `west` extension scripts.
+> **Note:** The `build` command is actually a so-called [_West_ extension command](https://docs.zephyrproject.org/latest/develop/west/zephyr-cmds.html) and is not built into _West_ by default. You could thus, e.g., use _West_ without Zephyr as a repository manager in a different context. Zephyr provides extension commands such as [`build`, `flash`, and `debug`](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html) in its own _West_ extension such that applications can be built, flashed, and debugged in the same way, independent of, e.g., the debugger or programmer that is used. If you're interested in how Zephyr's extensions work, have a look at `zephyr/scripts/west-commands.yml` and the corresponding _West_ extension scripts.
 
-Once the build folder has been created using any of the above commands, it is no longer necessary to pass the board to `west`:
+Once the build folder has been created using any of the above commands, it is no longer necessary to pass the board to _West_:
 
 ```bash
 # in case the build directory exists already ...
@@ -425,7 +425,7 @@ build.board=nrf52840dk_nrf52840
 # e.g., using `west config -d build.board`
 ```
 
-> **Note:** The `west` configuration options can also be used to define arguments for CMake. This can be useful when debugging or when defining your own CMake caches, refer to the [documentation](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#permanent-cmake-arguments) for details.
+> **Note:** The _West_ configuration options can also be used to define arguments for CMake. This can be useful when debugging or when defining your own CMake caches, refer to the [documentation](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#permanent-cmake-arguments) for details.
 
 Now we can run `west build` in our current terminal without specifying a board.
 
@@ -433,7 +433,7 @@ Now we can run `west build` in our current terminal without specifying a board.
 $ west build -d ../build
 ```
 
-Notice that CMake does not pick up `west`'s configuration options, and therefore executing `cmake -B ../build` would fail. One last parameter for `west build` that is worth mentioning is `--pristine`: Just like the `--pristine` option for `CMake`, instead of deleting the `build` folder, you can also use the `--pristine` to generate a new build:
+Notice that CMake does not pick up _West_'s configuration options, and therefore executing `cmake -B ../build` would fail. One last parameter for `west build` that is worth mentioning is `--pristine`: Just like the `--pristine` option for `CMake`, instead of deleting the `build` folder, you can also use the `--pristine` to generate a new build:
 
 ```bash
 $ west build -d ../build --pristine
@@ -478,7 +478,7 @@ And that's it about IDE integrations! Ok, almost, we'll still see them every now
 
 ## Flashing and debugging
 
-Having built our first freestanding application, let's have a brief look at how we can flash and debug it on our target. We can do both using the `flash` and `debug` [extension commands](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html) provided by Zephyr for `west`. With the development kit plugged in, all we need to do is run `west flash` to program the MCU (the parameter `-d` is necessary to select the correct build directory in case it isn't located in the executing folder):
+Having built our first freestanding application, let's have a brief look at how we can flash and debug it on our target. We can do both using the `flash` and `debug` [extension commands](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html) provided by Zephyr for _West_. With the development kit plugged in, all we need to do is run `west flash` to program the MCU (the parameter `-d` is necessary to select the correct build directory in case it isn't located in the executing folder):
 
 ```bash
 west flash -d ../build
@@ -495,11 +495,11 @@ Applying pin reset.
 -- runners.nrfjprog: Board with serial number 123456789 flashed successfully.
 ```
 
-> **Note:** In case you haven't followed the [installation](#installation) in this article but instead used your own setup, this step might not succeed: As you can see, `west` uses Nordic's [nRF Command Line Tool](https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools) `nrfjprog` to program the development kit. In case this tool isn't available, the execution will fail. In general, flashing and debugging is always very target specific and you'll need to ensure that the correct tools are installed.
+> **Note:** In case you haven't followed the [installation](#installation) in this article but instead used your own setup, this step might not succeed: As you can see, _West_ uses Nordic's [nRF Command Line Tool](https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools) `nrfjprog` to program the development kit. In case this tool isn't available, the execution will fail. In general, flashing and debugging is always very target specific and you'll need to ensure that the correct tools are installed.
 
-Wait, so how does Zephyr know which USB device to flash and _how_ to do this? `west` uses so-called [flash and debug **runners**](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#flash-and-debug-runners). In the above output, you can see that it selects Nordic's `nrfjprog` [command line tool](https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools) as _runner_, which is in turn able to identify whether or not a board is connected to your computer. In case only a single matching board is present, it automatically programs that board.
+Wait, so how does Zephyr know which USB device to flash and _how_ to do this? _West_ uses so-called [flash and debug **runners**](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#flash-and-debug-runners). In the above output, you can see that it selects Nordic's `nrfjprog` [command line tool](https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools) as _runner_, which is in turn able to identify whether or not a board is connected to your computer. In case only a single matching board is present, it automatically programs that board.
 
-The `west` extension command `debug` works in a similar fashion:
+The _West_ extension command `debug` works in a similar fashion:
 
 ```bash
 $ west debug -d ../build
@@ -516,7 +516,7 @@ SEGGER J-Link GDB Server V7.66a Command Line Version
 (gdb)
 ```
 
-Here, `west` selected the J-Link runner since the development kit comes with a J-Link debugger. We end up with a `gdb` console which we can use to debug our application:
+Here, _West_ selected the J-Link runner since the development kit comes with a J-Link debugger. We end up with a `gdb` console which we can use to debug our application:
 
 ```bash
 (gdb) break main
@@ -581,9 +581,9 @@ Another great resource about `vscode` with Zephyr is [Jonathan Beri's presentati
 
 In this article, we installed Zephyr and its tools using Nordic's [toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager), and with it have a base environment that we'll use in this series. Since your preference for development environments and installation for sure greatly varies, finding the matching solution will always be your own task. With the contents of the `setup.sh` script that we created in this article, you should have a good idea about what's involved when creating your own setup.
 
-> **Note:** You can find an example application skeleton in the [`00_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/00_basics).
+> **Note:** The example application skeleton created throughout this article is available in the [`00_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/00_basics).
 
-We then had a quick look at Zephyr's application types and created a skeleton _freestanding_ application, which we've compiled using CMake directly, and via Zephyr's meta-tool `west`. We've seen how we can parameterize our build to pick a certain _board_ and concluded, that it might be beneficial to use `west` over plain CMake - but you can always pick your preference.
+We then had a quick look at Zephyr's application types and created a skeleton _freestanding_ application, which we've compiled using CMake directly, and via Zephyr's meta-tool _West_. We've seen how we can parameterize our build to pick a certain _board_ and concluded, that it might be beneficial to use _West_ over plain CMake - but you can always pick your preference.
 
 We then brushed over the extension commands `flash` and `debug` that allow us to program the application to our board and to debug it using `gdb`. Finally, we've had a quick look at a possible `vscode` debugging integration.
 
