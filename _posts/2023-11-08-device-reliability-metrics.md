@@ -26,7 +26,7 @@ With the article contents put into action, you will be able to confidently ship 
 
 When I started my career as a firmware engineer in 2014, I had one job: do what I was told by my manager and product leads. This meant fixing some bugs that have existed for a while, adding unit tests where they were needed, and slowly improving or rewriting old subsystems of the Pebble firmware. Life was easy, and all I had to do in my day job was write code that worked and get it into the subsequent firmware releases.
 
-As I grew as an engineer, I wanted to learn more and was asked to investigate, what happened **after** shipping the firmware to our customers. Was the filesystem performance change I made  improving our display’s frames-per-second? Did average uptime dramatically improve after fixing the bug that topped our crash leaderboard? How did the battery life of the devices change after fixing the CPU sleep bug? These were all questions I started having, and I wanted to know the answers! 
+As I grew as an engineer, I wanted to learn more and was asked to investigate, what happened **after** shipping the firmware to our customers. Was the filesystem performance change I made improving our display’s frames-per-second? Did average uptime dramatically improve after fixing the bug that topped our crash leaderboard? How did the battery life of the devices change after fixing the CPU sleep bug? These were all questions I started having, and I wanted to know the answers! 
 
 Thankfully, we firmware engineers were able to easily add and access device diagnostic data and could write SQL queries to answer our questions. I’ve always found that some of the best firmware engineers I know are also proficient in SQL and they spend a large chunk of time building and looking at dashboards!
 
@@ -46,7 +46,7 @@ The metric that was the easiest to improve upon was the average time between cra
 
 ## Crashiness Metrics
 
-In an ideal world, the firmware on a device never crashes. For most modern firmware that is operating on even the most basic MCUs, this isn’t realistic, especially since we keep writing in C, which lacks the robust compile-time checks and memory safety features. The best we have is [offensive programming pratices]({% post_url 2020-12-15-defensive-and-offensive-programming %}) and liberal usage of [asserts]({% post_url 2019-11-05-asserts-in-embedded-systems %}).
+In an ideal world, the firmware on a device never crashes. For most modern firmware that is operating on even the most basic MCUs, this isn’t realistic, especially since we keep writing in C, which lacks robust compile-time checks and memory safety features. The best we have is [offensive programming pratices]({% post_url 2020-12-15-defensive-and-offensive-programming %}) and liberal usage of [asserts]({% post_url 2019-11-05-asserts-in-embedded-systems %}).
 
 With this acknowledged, we need a way to measure how often our devices crash in the field. Sounds simple! I only wish it was. To compare the different types of metrics we can collect on the device and compute in a data warehouse, we’ll come up with a few criteria. 
 
@@ -59,7 +59,7 @@ We want to collect a crashiness metric that:
 
 Getting metrics from the device can be relatively simple, but if you are looking for a place to start, I recommend reading a previous post on [heartbeat metrics]({% post_url 2020-09-02-device-heartbeat-metrics %}).
 
-Before we dig into each possible metric to collect from the device and how to aggregate it, here’s  a summary table of all the ones I’ll talk about today, and their strengths and weaknesses.
+Before we dig into each possible metric to collect from the device and how to aggregate it, here’s a summary table of all the ones I’ll talk about today, and their strengths and weaknesses.
 
 | Metric Criteria | Uptime | Mean Time Between Failure | Crash-Free Sessions | Crash-Free Hours | Crash-Free Devices |
 | --- | --- | --- | --- | --- | --- |
@@ -129,7 +129,7 @@ MTBF is almost the same as the uptime metric above, but this isn’t obvious at 
   <img width="400" src="{% img_url device-reliability-metrics/mtbf-formula.png %}" alt="Formula for how to calculate MTBF" />
 </p>
 
-MTBF and the uptime calculation above break down when devices crash frequently. If Device A crashes once a week, but Device B crashes 100 times an hour due to a hardware problem, the MTBF becomes heavily skewed by a single crashing device. If we have a few thousand devices in the field, just a handful of outlier devices can bring down the average if we don’t make adjustments to how this metric is calculated. I’ve never tried it myself, but maybe **median** time between failure works better at times. 
+MTBF and the uptime calculation above break down when devices crash frequently. If Device A crashes once a week, but Device B crashes 100 times an hour due to a hardware problem, the MTBF becomes heavily skewed by a single crashing device. If we have a few thousand devices in the field, just a handful of outlier devices can bring down the average if we don’t make adjustments to how this metric is calculated. I’ve never tried it myself, but maybe **median** time between failures works better at times. 
 
 Below is an example of 3 devices sending their crash rate and operating time metrics, and we calculate the MTBF. Notice how Device B crashes 3 times with an operating time and brings down the average. Also, notice that MTBF has a greater value than our average uptime above since Device A didn’t crash. 
 
