@@ -1,6 +1,6 @@
 ---
-title: Measuring Device & Software Reliability
-description: TODO
+title: Counting Crashes to Improve Device Reliability
+description: Undertand IoT device reliability using metrics such as mean time between failure, crash free hours, crash free devices, and crash free sessions.
 author: tyler
 tags: [monitoring, better-firmware]
 ---
