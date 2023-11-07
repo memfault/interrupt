@@ -1,0 +1,8 @@
+<ul class="banner-notifications">
+  {% for notification in site.data.notifications %}
+    <li class="banner-notification" style="--notificationBackground: {{ notification[1].background }}; --notificationColor: {{ notification[1].textcolor }};">
+      <div style="text-align: center;">{{ notification[1].description | markdownify }}</div>
+      <button class="banner-notification-close js-banner-notification-close"></button>
+    </li>
+  {% endfor %}
+</ul>

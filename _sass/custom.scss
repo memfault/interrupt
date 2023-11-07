@@ -144,3 +144,93 @@ figcaption {
   text-align: center;
   font-size: 12px;
 }
+
+:root {
+  --notificationBackground: #faaf4e;
+  --notificationColor: #fff;
+}
+
+#nav-menu {
+  top: 35px;
+  margin-top: 35px;
+  width: 30px;
+  position: sticky;
+  margin-left: auto;
+}
+
+.menu-open ~ #nav-menu {
+  margin-top: 0;
+  top: 35px;
+  position: fixed;
+}
+
+.banner-notifications {
+  margin: 0;
+  list-style: none;
+  display: none;
+}
+
+.banner-notification {
+  position: relative;
+  margin: 0;
+  margin-bottom: 10px;
+  background-color: var(--notificationBackground);
+  color: var(--notificationColor);
+  padding: 10px 50px 10px 20px;
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+}
+
+.banner-notification-close {
+  background-color: color-mix(in srgb, var(--notificationBackground),#000 30%);
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  position: absolute;
+  right: 10px;
+  top: 15px;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  transform: rotate(-45deg);
+  cursor: pointer;
+
+  &::after,
+  &::before {
+    content: '';
+    width: 10px;
+    height: 1px;
+    background-color: var(--notificationColor);
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transition: all 0.1s linear;
+    transform: translateX(-50%) translateY(-50%) rotate(-90deg);
+  }
+
+  &:hover {
+    &::after,
+    &::before {
+      width: 12px;
+    }
+  }
+
+  &::before {
+    transform: translateX(-50%) translateY(-50%) ;
+  }
+}

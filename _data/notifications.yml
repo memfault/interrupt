@@ -1,0 +1,6 @@
+# Notification Banner
+Instrumenting Sentry:
+    background: '#141845'
+    textcolor: '#fff'
+    title: Instrumenting Sentry
+    description: '<i>Excited to introduce Memfault’s new sandbox demo!</i><a href="https://demo.memfault.com/demo/start"> Try it out for yourself</a>'
