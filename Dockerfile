@@ -15,6 +15,7 @@ WORKDIR /memfault/interrupt
 
 COPY Gemfile .
 COPY Gemfile.lock .
+RUN bundle config force_ruby_platform true
 RUN bundle install
 
 COPY requirements.txt .
