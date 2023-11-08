@@ -1143,7 +1143,7 @@ We also see that we don't have to provide all values of an `array` within a sing
 The following is the generated output for the two nodes `/node_with_props` and `/node_with_equivalent_arrays`:
 
 `/build/zephyr/zephyr.dts`
-```
+```dts
 / {
   node_with_props {
     existent-boolean;
