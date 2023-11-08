@@ -1,0 +1,7 @@
+# Notification Banner example
+Instrumenting Sentry:
+    background: '#141845'
+    textcolor: '#fff'
+    title: Instrumenting Sentry
+    description: Instrumenting 1 Sentry for your backend project? Join us July 11th, at 10 AM PT for the Backend Error Monitoring 101 livestream. <a href="https://go.memfault.com/how-to-debug-android-devices-production">Register now.</a>
+
