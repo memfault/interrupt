@@ -36,7 +36,7 @@ Thankfully, we firmware engineers could add and access device diagnostic data ea
 The three core metrics that we cared about at Pebble were the following:
 
 - Average time between firmware crashes
-- Average battery life
+- [Average battery life]({% post_url 2023-07-26-monitoring-battery-life %})
 - Percentage of time the watch was connected via Bluetooth to the phone (we’d often have connectivity regressions!)
 
 The easiest metric to improve upon was the average time between crashes since we had a pretty slick diagnostics system akin to Memfault’s product offering. Internally, at Memfault, we’ve been calling the various metrics related to crashes “Crashiness,” so without further ado, let’s dig into some Crashiness metrics.
