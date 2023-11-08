@@ -3,6 +3,7 @@ title: Counting Crashes to Improve Device Reliability
 description: Understand IoT device reliability using metrics such as mean time between failure, crash-free hours, crash-free devices, and crash-free sessions.
 author: tyler
 tags: [monitoring, better-firmware]
+image: /img/device-reliability-metrics/device-reliability-crash-metrics.png
 ---
 
 The first step to making reliable IoT devices is understanding that they are inherently unreliable. They will never work 100% of the time. This is partially because we firmware engineers will never write perfect code. Even if we did, our devices need to operate through various networks and gateways, such as cellular modems, mobile phone Bluetooth applications, Wi-Fi routers, cloud backends, and more, and each of these may introduce unreliability. The devices may work with today’s Wi-Fi routers and mobile phones, but whether they function with tomorrow’s is a mystery.
