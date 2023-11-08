@@ -46,7 +46,7 @@ The easiest metric to improve upon was the average time between crashes since we
 
 ## Crashiness Metrics
 
-In an ideal world, the firmware on a device never crashes. This is only realistic for some modern firmware operating on even the most basic MCUs, especially since we keep writing in C, which lacks robust compile-time checks and memory safety features. The best we have is [offensive programming pratices]({% post_url 2020-12-15-defensive-and-offensive-programming %}) and liberal usage of [asserts]({% post_url 2019-11-05-asserts-in-embedded-systems %}).
+In an ideal world, the firmware on a device never crashes. This is only realistic for some modern firmware operating on even the most basic MCUs, especially since we keep writing in C, which lacks robust compile-time checks and memory safety features. The best we have is [offensive programming practices]({% post_url 2020-12-15-defensive-and-offensive-programming %}) and liberal usage of [asserts]({% post_url 2019-11-05-asserts-in-embedded-systems %}).
 
 With this acknowledged, we need a way to measure how often our devices crash in the field. Sounds simple! I only wish it was. To compare the different metrics we can collect on the device and compute in a data warehouse, we’ll develop a few criteria.
 
