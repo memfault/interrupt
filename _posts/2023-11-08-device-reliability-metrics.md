@@ -235,28 +235,28 @@ static uint32_t crash_free_hours = 0
 static uint32_t operational_seconds = 0
 
 void metrics_on_second__callback(void) {
-	time_without_crash++;
+  time_without_crash++;
   if (time_without_crash >= 3600) {
-		crashfree_hours++
-		time_without_crash = 0
+    crashfree_hours++
+    time_without_crash = 0
   }
 }
 
 void metrics_on_crash__callback(void) {
-	time_without_crash = 0;
+  time_without_crash = 0;
 }
 
 void metrics_on_shutdown__callback(void) {
   // Since it's not a crash, we'll save
   // the value for the next boot
-	persisted_time_without_crash = time_without_crash;
+  persisted_time_without_crash = time_without_crash;
 }
 
 void metrics_on_heartbeat__callback(void) {
-	heartbeat.operational_hours = floor(operational_seconds / 3600);
-	operational_seconds = operational_seconds % 3600;
+  heartbeat.operational_hours = floor(operational_seconds / 3600);
+  operational_seconds = operational_seconds % 3600;
   heartbeat.crash_free_hours = crash_free_hours;
-	crash_free_hours = 0;
+  crash_free_hours = 0;
 
   // serialize and send metrics
 })
