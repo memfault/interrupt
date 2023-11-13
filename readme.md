@@ -19,6 +19,20 @@ See [Contributing](https://interrupt.memfault.com/contributing) for more informa
 
 ## Running
 
+### Docker (Recommended)
+
+Follow the instructions in the [Install Docker Engine](https://docs.docker.com/engine/install/) according to your operating system.
+
+Clone the repo, run in docker:
+
+```bash
+$ git clone https://github.com/memfault/interrupt.git
+$ cd interrupt
+$ ./interrupt-server.sh
+```
+
+You can now access the server at [http://0.0.0.0:4000](http://0.0.0.0:4000)
+
 ### Locally
 
 You'll need:
@@ -59,18 +73,6 @@ Serve with the following command, which will also open up the site in your brows
 
 ```bash
 $ bundle exec jekyll serve --drafts --livereload --open-url
-```
-
-### Docker
-
-Follow the instructions in the [Install Docker Engine](https://docs.docker.com/engine/install/) according to your operating system.
-
-Clone the repo, run in docker:
-
-```bash
-$ git clone https://github.com/memfault/interrupt.git
-$ cd interrupt
-$ ./interrupt-server.sh
 ```
 
 ## Acknowledgements
