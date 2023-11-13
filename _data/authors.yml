@@ -231,3 +231,10 @@ evgeny:
     linkedin: https://linkedin.com/in/echormonov
     github: ser-mk
     image: /img/author/evgeny.png
+piotrw:
+    name: Piotr Wasilewski
+    image: /img/author/piotrw.jpg
+    github: klonyyy
+    linkedin: https://www.linkedin.com/in/piotrek-wasilewski-9b63b198/
+    blurb: -- embedded software engineer specializing in motor control applications
+    web: https://pwwprojects.blogspot.com
