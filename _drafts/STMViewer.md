@@ -1,6 +1,6 @@
 ---
 
-title: Visualizing Realtime Data With STMViewer
+title: Visualizing Real-time Data With STMViewer
 description:
     "A brief introduction to STMViewer software use cases in debugging embedded targets"
 author: piotrw
@@ -47,7 +47,7 @@ Last but not least, none of the available hobby-level software tools include a t
 
 As mentioned earlier, Variable Viewer is an asynchronous module that samples values from predefined RAM addresses on your target. It can be particularly useful when visualizing multiple, relatively slow signals (with a maximum sampling rate of around 1 kHz). The RAM addresses are read from the project's *.elf file and parsed using GDB. This is the same approach used by STMStudio and CubeMonitor.
 
-For a quick start, please refer to [Variable Viewer](https://github.com/klonyyy/STMViewer#variable-viewer-1)
+For a quick start, please refer to [Variable Viewer](https://github.com/klonyyy/STMViewer#variable-viewer-1).
 
 ### PID controller
 Let's see Variable Viewer in action on a step response of a classic cascaded PID from a servo drive:
@@ -79,7 +79,7 @@ can be used to visualize a float value.
 
 Each register write generates two frames on the SWO pin: a data frame and a relative timestamp frame. The data frame holds the channel value, size, and data, while the timestamp frame holds the time elapsed since the last frame, expressed in clock cycles. The variable length of these frames, especially the timestamp frame, makes it very effective in utilizing the available SWO bandwidth. More information on the SWO trace protocol can be found in the Armv7-M Reference Manual[^0].
 
-For a complete quick start, please refer to [Trace Viewer](https://github.com/klonyyy/STMViewer#trace-viewer-1)
+For a complete quick start, please refer to [Trace Viewer](https://github.com/klonyyy/STMViewer#trace-viewer-1).
 
 Let's now see a couple of real-life examples.
 
