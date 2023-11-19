@@ -385,7 +385,7 @@ The [DTSpec](https://www.devicetree.org/specifications/) includes some standard 
 | Description | Specifies the current speed of a serial device in bits per second. A boot program should set this property if it has initialized the serial device. |
 | Example     | 115,200 Baud: `current-speed = <115200>;`                                                                                                           |
 
-**Note:** In case you're wondering why `current-speed` is not listed in the _"Standard Properties"_ section in the [DTSpec](https://www.devicetree.org/specifications/), but all of a sudden appears in the section about _"Serial devices" in the "Device Bindings", there's a very short answer for that: `current-speed` is only relevant for certain node types. It isn't a property that is globally defined and can be applied to any kind of node.
+> **Note:** In case you're wondering why `current-speed` is not listed in the _"Standard Properties"_ section in the [DTSpec](https://www.devicetree.org/specifications/), but all of a sudden appears in the section about _"Serial devices" in the "Device Bindings", there's a very short answer for that: `current-speed` is only relevant for certain node types. It isn't a property that is globally defined and can be applied to any kind of node.
 
 Finally, we're getting somewhere! We now know what the `current-speed` property is all about: We know its type, its physical unit, and its _meaning_. But this is just some table in the [DTSpec](https://www.devicetree.org/specifications/), how is this information represented in Zephyr?
 
