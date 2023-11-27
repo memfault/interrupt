@@ -101,8 +101,6 @@ _West_ can also be used if you're _not_ planning to create a Zephyr project. In 
 
 ```bash
 workspace $ mkdir app
-workspace $ cd app
-workspace/app $ cd ../
 workspace $ tree
 .
 ├── app
@@ -856,7 +854,6 @@ $ tree --dirsfirst -a -L 5
 │   ├── CMakeLists.txt
 │   ├── prj.conf
 │   ├── setup-sdk-nrf.sh
-│   ├── west-sdk-nrf.yml
 │   └── west.yml
 ├── build  [13 entries exceeds filelimit, not opening dir]
 └── deps
