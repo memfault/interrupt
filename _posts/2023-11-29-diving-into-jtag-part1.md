@@ -207,6 +207,8 @@ Steps 6-8 show the sequential shift of the `IDCODE` (`0b1110`) instruction bit b
 
 In Part 2 of this series, we'll dive into debugging with JTAG.
 
+>**Note**: This article was originally published on by Aliaksandr on his blog. You can find the original article [here](https://medium.com/@aliaksandr.kavalchuk/diving-into-jtag-protocol-part-1-overview-fbdc428d3a16).
+
 ## References
 
 - [Introduction to JTAG and the Test Access Port (TAP)](https://www.allaboutcircuits.com/technical-articles/introduction-to-jtag-test-access-port-tap/)
