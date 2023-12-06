@@ -42,10 +42,10 @@ A discussion on various aspects of Picolibc led by Keith Packard. Picolibc is an
 - [**Webinar: Getting Started with Zephyr RTOS (On Demand)**](https://embeddedonlineconference.com/freesession/Getting_Started_with_Zephyr_RTOS.php?ref=mem)<br>
 Curious about Zephyr? Jacob Beningo and Memfault Ambassador Mohammed Billoo will teach you about Zephyr's main components, navigating the codebase, building custom applications, and how to leverage Memfault to gain firmware insights.
 
-- [**Memfault Webinar - NXP, Memfault & Golioth: Observability & Device Management for IoT (Recording)**](https://go.memfault.com/nxp-memfault-golioth-bringing-observability-device-management-to-iot-devices-webinar)<br>
+- [**Memfault Webinar - NXP, Memfault & Golioth: Observability & Device Management for IoT (Recording)**](https://hubs.la/Q026Gsz30)<br>
 Integrate complementary IoT cloud services over a single, secure connection using Memfault, Golioth, and NXP Semiconductors, allowing you to proactively manage and monitor your devices.
 
-- [**Memfault Webinar - How Embedded Device Observability Helps Latch Build Ultra-Reliable Products (Recording)**](https://go.memfault.com/how-embedded-observability-helps-latch-build-ultra-reliable-products)<br>
+- [**Memfault Webinar - How Embedded Device Observability Helps Latch Build Ultra-Reliable Products (Recording)**](https://hubs.la/Q02912r10)<br>
 Discover how Memfault customers such as Latch collect high-quality debugging and performance data from their devices in the field and use it to ensure their customers get the best possible product.
 
 - [**Webinar: Accelerate development and optimize in-field device quality with remote debugging and monitoring - nordicsemi.com (Recording)**](https://www.nordicsemi.com/Events/2023/Webinar-Accelerate-development-and-optimize-in-field-device-quality)<br>
