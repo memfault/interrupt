@@ -295,7 +295,7 @@ int main(void) {
     sscanf(new_ver, "%d.%d.%d", &newMajor, &newMinor, &newPatch);
 
     if (newMajor < currentMajor || newMinor < currentMinor) {
-        // Dowgrade. Do not perform the "update".
+        // Downgrade detected. Do not perform the "update".
     }
 }
 ```
