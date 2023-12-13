@@ -5,6 +5,10 @@ author: gminn
 tags: [lte, connectivity]
 ---
 
+Cellular devices and networks have come a long way, from brick phones and Blackberrys to iPhones and Google Pixels. In addition to being the ubiquitous connectivity protocol that keeps the internet at our fingertips at all times, LTE is appearing in IoT products across all industries. LTE modems now boast reduced power consumption and a more compact form factor than ever; coupled with the promises of 5G technology's support for millions more connected devices, we will see widespread adoption of cellular connectivity across numerous sectors.
+
+Lately, I have been learning everything I can about LTE-enabled IoT systems, starting from the ground up. I had to start from scratch as this recent dive is my first real foray into cellular technology. I began with dumping acronym definitions in a doc called "All About LTE" (UE, GSM, LPWAN, E-UTRAN, PTW, MNO — there are so many! 😱), and I realized weaving these together into a cohesive picture, or a story of sorts would probably help me, and perhaps some readers too.
+
 <!-- excerpt start -->
 
 In this article, I describe some of my findings from a recent investigation of how LTE technology was built for IoT systems. Complete with some history
@@ -18,21 +22,19 @@ and a few diagrams to illustrate cellular network architecture and LTE power-sav
 
 ---
 
-## Introduction
-
-Cellular devices and networks have come a long way, from brick phones and Blackberrys to iPhones and Google Pixels. In addition to being the ubiquitous connectivity protocol that keeps the internet at our fingertips at all times, LTE is appearing in IoT products across all industries. LTE modems now boast reduced power consumption and a more compact form factor than ever; coupled with the promises of 5G technology's support for millions more connected devices, we will see widespread adoption of cellular connectivity across numerous sectors.
-
-Lately, I have been learning everything I can about LTE-enabled IoT systems, starting from the ground up. I had to start from scratch as this recent dive is my first real foray into cellular technology. I began with dumping acronym definitions in a doc called "All About LTE" (UE, GSM, LPWAN, E-UTRAN, PTW, MNO — there are so many! 😱), and I realized weaving these together into a cohesive picture, or a story of sorts would probably help me, and perhaps some readers too. In this pocket article, I will share some of my research so far starting with some history, then I will take a look at cellular technologies for the IoT use cases, and finally, walk through some power-saving modes provided by LTE.
-
 ## A Brief History
 
-To understand LTE, the standard backing 4G cellular networks, I wanted to understand some context around the technology — what came before and what is next. Before LTE, cellular networks went through several evolutions, beginning in the 80s with just analog voice — no data. Think brick phones with a massive antenna like the [Motorola DynaTAC](https://youtu.be/LvyDYhBiXLw?feature=shared&t=15). Then came the move to digital voice in the 90s, and a new network was created based on the GSM standard, which was labeled the 2G network, and its predecessor, the 1G. Data services were also now available, enabling SMS text messaging and later, SMS's extension, MMS, which enabled sending pictures, video, and audio. Think the [Nokia 8110](https://youtu.be/zdbqyp_pLY4?feature=shared&t=4) (a.k .a. The Matrix phone). The first "high speed" mobile network arrived with the 3G network in the early 2000s, which was based on the UMTS standard and had rates around 2 Mbps. The smartphone era began with the introduction of 3G, such as the BlackBerry 5810, in 2002. Then, in 2008, 3GPP (3rd Generation Partnership Project), an umbrella term for the organizations that develop mobile telecoms standards, launched the 4G network, which leverages the LTE (Long-Term Evolution) standard. 4G LTE brought faster, more reliable connections with 50 Mbps uplink and 150 Mbps download speeds [^0]. Now, we live in the era of 5G, which began deploying worldwide in 2019 delivering faster data rates, increased reliability, and lower latency than 4G.
+To understand LTE, the standard backing 4G cellular networks, I wanted to understand some context around the technology — what came before and what is next. Before LTE, cellular networks went through several evolutions, beginning in the 80s with just analog voice — no data. Think brick phones with a massive antenna like the [Motorola DynaTAC](https://youtu.be/LvyDYhBiXLw?feature=shared&t=15). Then came the move to digital voice in the 90s, and a new network was created based on the GSM standard, which was labeled the 2G network, and its predecessor, the 1G. Data services were also now available, enabling SMS text messaging and later, SMS's extension, MMS, which enabled sending pictures, video, and audio. Think the [Nokia 8110](https://youtu.be/zdbqyp_pLY4?feature=shared&t=4) (a.k .a. The Matrix phone).
+
+The first "high speed" mobile network arrived with the 3G network in the early 2000s, which was based on the UMTS standard and had rates around 2 Mbps. The smartphone era began with the introduction of 3G, such as the BlackBerry 5810, in 2002. Then, in 2008, 3GPP (3rd Generation Partnership Project), an umbrella term for the organizations that develop mobile telecoms standards, launched the 4G network, which leverages the LTE (Long-Term Evolution) standard. 4G LTE brought faster, more reliable connections with 50 Mbps uplink and 150 Mbps download speeds [^0]. Now, we live in the era of 5G, which began deploying worldwide in 2019 delivering faster data rates, increased reliability, and lower latency than 4G.
+
+I have a sketch here of roughly where each evolution falls in terms of data rates.
 
 <p align="center">
   <img width="650" src="{% img_url lte-and-iot/cellular-tech-timeline.png %}" alt="Timeline of cellular technology" />
 </p>
 
-I have a sketch here of roughly where each evolution falls in terms of data rates. I had to bunch up the scale on the Y-axis to squeeze in 4G and 5G because the downlink speeds jumped so significantly! The standards relevant to today's technology map to 3GPP releases starting with release 8. Those release specifications are available on [3PGG's portal](https://portal.3gpp.org/#/55936-specifications) under the Specifications tab. A convenient link to all the 3GPP documents in the 36 series (the series on LTE) is available [here](https://www.3gpp.org/dynareport?code=36-series.htm), which is where I have been spending some quality time.
+I had to bunch up the scale on the Y-axis to squeeze in 4G and 5G because the downlink speeds jumped so significantly! The standards relevant to today's technology map to 3GPP releases starting with release 8. Those release specifications are available on [3PGG's portal](https://portal.3gpp.org/#/55936-specifications) under the Specifications tab. A convenient link to all the 3GPP documents in the 36 series (the series on LTE) is available [here](https://www.3gpp.org/dynareport?code=36-series.htm), which is where I have been spending some quality time.
 
 IoT products started leveraging cellular networks for connectivity with the introduction of 2G and 3G data services. 2G and 3G provided an opportunity for devices with low bandwidth requirements; with 3G technology, transmitting too much data incurred a power cost that did not support the widespread use of battery-powered IoT devices with higher data requirements, like the advanced asset tracking applications we see today. However, 2G and 3G networks remain a fallback for many IoT products despite many carriers [shutting down support for them](https://www.u-blox.com/en/blogs/insights/2g-switch-off-iot-lte). When AT&T shut down its 2G networks in 2017, some [buses in San Francisco went off the grid](https://sfbay.ca/2017/01/06/muni-nextbus-outage-could-stretch-for-weeks/). Despite the declining support from carriers, IoT SIM providers still support 2G and 3G networks, such as [Hologram](https://www.hologram.io/coverage/), [iBASIS](https://ibasis.com/solutions/iot-connectivity/), and [onomondo](https://onomondo.com/product/global-iot-sim/).
 
@@ -48,17 +50,17 @@ Before zooming in on how LTE-M and NB-IoT work, let us first zoom out and take a
 
 The word cell in cellular and cell phone comes from the network architecture -- a fact which I vaguely understood before but did not fully comprehend. Cellular networks are composed of cells organized in a hexagonal pattern covering a geographic area. At the center of a cell is a base station with a transceiver, which provides network coverage to a cell. In other words, a cell is the coverage area of a base station.
 
-> Why hexagons? 🤔  While coverage from the transceiver's radio is circular, dividing up an area via circles would result in overlapping areas, so the abstraction of another shape is needed to represent coverage better and optimize for fewer base stations when laying out stations. To minimize the number of base stations, the shape chosen should maximize the area of the base station it is centered around. Of all the basic shapes, Hexagons take up the greatest percentage of a circle. Note there is still overlapping in regions where signals from two neighboring cells are available. Still, the area of these overlapping regions is smallest when using hexagons to organize stations.
-
 <p align="center">
   <img width="450" src="{% img_url lte-and-iot/hexagon-cells.png %}" alt="Cells arranged as hexagons" />
 </p>
 
-In LTE networks, a cellular-enabled device called the **User Equipment (UE)** connects to a base station called the **evolved Node B (eNB)**. The signal traveling to the eNB is the **Uplink (UL)** signal, while the signal traveling to the UE is the **Downlink (DL)** signal. The UE, eNB, and E-UTRA (Evolved UMTS Terrestrial Radio Access), the wireless communication technology used in LTE networks, all make up what is called the E-UTRAN (Evolved UMTS Terrestrial Radio Access Network). This network is distinct from another entity, the Evolved Packet Core (EPC), which connects the radio access network to the internet. Radio Resource Control (RRC) is the physical layer protocol of the E-UTRAN, and is used for communication between the UE and eNB. Two RRC states, idle and connected, will play a role in power save modes.
+In LTE networks, a cellular-enabled device called the **User Equipment (UE)** connects to a base station called the **evolved Node B (eNB)**. The signal traveling to the eNB is the **Uplink (UL)** signal, while the signal traveling to the UE is the **Downlink (DL)** signal. The UE, eNB, and E-UTRA (Evolved UMTS Terrestrial Radio Access), the wireless communication technology used in LTE networks, all make up what is called the E-UTRAN (Evolved UMTS Terrestrial Radio Access Network). This network is distinct from another entity, the Evolved Packet Core (EPC), which connects the radio access network to the Internet. Radio Resource Control (RRC) is the physical layer protocol of the E-UTRAN, and is used for communication between the UE and eNB. Two RRC states, idle and connected, will play a role in power save modes.
 
 <p align="center">
   <img width="450" src="{% img_url lte-and-iot/cell-ue-enb.png %}" alt="Cells arranged as hexagons" />
 </p>
+
+> Why hexagons? 🤔 While coverage from the transceiver's radio is circular, dividing up an area via circles would result in overlapping areas, so the abstraction of another shape is needed to represent coverage better and optimize for fewer base stations when laying out stations. To minimize the number of base stations, the shape chosen should maximize the area of the base station it is centered around. Of all the basic shapes, Hexagons take up the greatest percentage of a circle. Note there is still overlapping in regions where signals from two neighboring cells are available. Still, the area of these overlapping regions is smallest when using hexagons to organize stations.
 
 ## Low-power Technologies
 
@@ -93,11 +95,15 @@ Modems in PSM have a current draw on the order of a few microamps. The nRF91 mod
 
 PSM is a good option for systems that can tolerate higher latency and have stricter power requirements because it has a lower power draw in its deep sleep mode. However, it will not respond for the duration of its sleep, and it takes longer to get out of that sleep mode. For systems that need more frequent check-ins with the network but need more power savings than leaving the modem in the regular RRC Connected state, eDRX is the better option because it checks for data from the network more frequently and connects to the network faster coming out of sleep.
 
+{% include newsletter.html %}
+
 ## Conclusion
 
 I have barely scratched the surface of how LTE works for IoT systems! However, with some fundamentals like the history of cellular standards, cellular network architecture, an understanding of LTE power-save modes, and a handful of acronyms, the rest is much easier to wade through.
 
-I am always are eager to gain insights into details I might have overlooked, as well as hear about your experience learning about and working with LTE. Engage with me in the comments, or connect with me on the interrupt Slack community for a more extensive discussion!
+I am always are eager to gain insights into details I might have overlooked, as well as hear about your experience learning about and working with LTE. Engage with me in the comments, or connect with me on the [Interrupt Slack](https://interrupt-slack.herokuapp.com/) community for a more extensive discussion!
+
+{:.no_toc}
 
 ## References
 
