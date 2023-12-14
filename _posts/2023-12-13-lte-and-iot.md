@@ -1,5 +1,5 @@
 ---
-title: LTE and IoT
+title: LTE and IoT - How We Got Here
 description: "A look at LTE technology for IoT"
 author: gminn
 tags: [lte, connectivity]
