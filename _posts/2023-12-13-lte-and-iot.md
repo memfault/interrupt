@@ -5,9 +5,9 @@ author: gminn
 tags: [lte, connectivity]
 ---
 
-Cellular devices and networks have come a long way, from brick phones and Blackberrys to iPhones and Google Pixels. In addition to being the ubiquitous connectivity protocol that keeps the Internet at our fingertips at all times, LTE is appearing in IoT products across all industries. LTE modems now boast reduced power consumption and a more compact form factor than ever; coupled with the promises of 5G technology's support for millions more connected devices, there is no doubt that this is an exciting time to be working on a LTE-enabled device!
+Cellular devices and networks have come a long way, from brick phones and Blackberrys to iPhones and Google Pixels. In addition to being the ubiquitous connectivity protocol that keeps the Internet at our fingertips at all times, LTE is appearing in IoT products across all industries. LTE modems now boast reduced power consumption and a more compact form factor than ever; coupled with the promises of 5G technology's support for millions more connected devices, there is no doubt that this is an exciting time to be working on an LTE-enabled device!
 
-Lately, I have been learning everything I can about LTE as it pertains to IoT systems, starting from the ground up. I had to start from scratch because this recent dive is my first real foray into cellular technology. I began with dumping acronym definitions in a doc (UE, GSM, LPWAN, E-UTRAN, PTW, MNO — there are so many! 😱) until I realized that weaving these together into a cohesive story would help me and perhaps some readers too.
+Lately, I have been learning everything I can about LTE as it pertains to IoT systems, starting from the ground up. I had to start from scratch because this recent dive was my first real foray into cellular technology. I began with dumping acronym definitions in a doc (UE, GSM, LPWAN, E-UTRAN, PTW, MNO — there are so many! 😱) until I realized that weaving these together into a cohesive story would help me and perhaps some readers too.
 
 <!-- excerpt start -->
 
@@ -103,7 +103,7 @@ PSM is a good option for systems that can tolerate higher latency and have stric
 
 I have barely scratched the surface of how LTE works for IoT systems! However, with some fundamentals like the history of cellular standards, cellular network architecture, an understanding of LTE power-save modes, and a handful of acronyms, the rest is much easier to wade through.
 
-I am always are eager to gain insights into details I might have overlooked, as well as hear about your experience learning about and working with LTE. Engage with me in the comments, or connect with me on the [Interrupt Slack](https://interrupt-slack.herokuapp.com/) community for a more extensive discussion!
+I am always eager to gain insights into details I might have overlooked, as well as hear about your experience learning about and working with LTE. Engage with me in the comments, or connect with me on the [Interrupt Slack](https://interrupt-slack.herokuapp.com/) community for a more extensive discussion!
 
 {:.no_toc}
 
