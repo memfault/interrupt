@@ -1,11 +1,11 @@
 ---
-title: Pocket Article - LTE and IoT
+title: LTE and IoT
 description: "A look at LTE technology for IoT"
 author: gminn
 tags: [lte, connectivity]
 ---
 
-Cellular devices and networks have come a long way, from brick phones and Blackberrys to iPhones and Google Pixels. In addition to being the ubiquitous connectivity protocol that keeps the internet at our fingertips at all times, LTE is appearing in IoT products across all industries. LTE modems now boast reduced power consumption and a more compact form factor than ever; coupled with the promises of 5G technology's support for millions more connected devices, we will see widespread adoption of cellular connectivity across numerous sectors.
+Cellular devices and networks have come a long way, from brick phones and Blackberrys to iPhones and Google Pixels. In addition to being the ubiquitous connectivity protocol that keeps the Internet at our fingertips at all times, LTE is appearing in IoT products across all industries. LTE modems now boast reduced power consumption and a more compact form factor than ever; coupled with the promises of 5G technology's support for millions more connected devices, we will see widespread adoption of cellular connectivity across numerous sectors.
 
 Lately, I have been learning everything I can about LTE-enabled IoT systems, starting from the ground up. I had to start from scratch as this recent dive is my first real foray into cellular technology. I began with dumping acronym definitions in a doc called "All About LTE" (UE, GSM, LPWAN, E-UTRAN, PTW, MNO — there are so many! 😱), and I realized weaving these together into a cohesive picture, or a story of sorts would probably help me, and perhaps some readers too.
 
