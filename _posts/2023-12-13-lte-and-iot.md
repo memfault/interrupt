@@ -52,8 +52,6 @@ Before zooming in on how LTE-M and NB-IoT work, let us first zoom out and take a
 
 The word cell in cellular and cell phone comes from the network architecture -- a fact which I vaguely understood before but did not fully comprehend. Cellular networks are composed of cells organized in a hexagonal pattern covering a geographic area. At the center of a cell is a base station with a transceiver, which provides network coverage to a cell. In other words, a cell is the coverage area of a base station.
 
-> Why hexagons? 🤔  While coverage from the transceiver's radio is circular, dividing up an area via circles would result in overlapping areas, so the abstraction of another shape is needed to represent coverage better and optimize for fewer base stations when laying out stations. To minimize the number of base stations, the shape chosen should maximize the area of the base station it is centered around. Of all the basic shapes, Hexagons take up the greatest percentage of a circle. Note there is still overlapping in regions where signals from two neighboring cells are available. Still, the area of these overlapping regions is smallest when using hexagons to organize stations.
-
 <p align="center">
   <img width="450" src="{% img_url lte-and-iot/hexagon-cells.png %}" alt="Cells arranged as hexagons" />
 </p>
@@ -63,6 +61,8 @@ In LTE networks, a cellular-enabled device called the **User Equipment (UE)** 
 <p align="center">
   <img width="450" src="{% img_url lte-and-iot/cell-ue-enb.png %}" alt="Cells arranged as hexagons" />
 </p>
+
+> Why hexagons? 🤔  While coverage from the transceiver's radio is circular, dividing up an area via circles would result in overlapping areas, so the abstraction of another shape is needed to represent coverage better and optimize for fewer base stations when laying out stations. To minimize the number of base stations, the shape chosen should maximize the area of the base station it is centered around. Of all the basic shapes, Hexagons take up the greatest percentage of a circle. Note there is still overlapping in regions where signals from two neighboring cells are available. Still, the area of these overlapping regions is smallest when using hexagons to organize stations.
 
 ## Low-power Technologies
 
