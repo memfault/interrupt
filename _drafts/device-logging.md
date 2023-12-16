@@ -1,0 +1,273 @@
+---
+title: Trade-offs and considerations for logging on embedded devices
+description: "Trade-offs and considerations for logging on embedded hardware"
+author: victorlai
+---
+
+Logging on client devices comes with a host of interesting, unique challenges that aren't found on the server &mdash; devices are generally more memory, bandwidth, space, and CPU constrained than a server, and devices often take weeks, months, or years to update, rather than days or hours. This has interesting ramifications on how we log: we can't log as much data as we'd want to, logs have a more finite lifespan, and the format of logs are much more permanent, so if we don't log the right data in the right way to begin with, it can be months before we ship the next release with new logs. All that being said, there's also a lot of literature and learnings from logging on the server that we can also apply on the client side.
+
+In this article, I discuss some of the problems I’ve encountered in both producing and analyzing device logs over the years, on single digit number of devices up to hundred of thousands, and concepts I’ve applied to manage that complexity. My background is Android, so some of the examples may skew towards much more powerful hardware than simple microcontrollers.
+
+{% include newsletter.html %}
+
+{% include toc.html %}
+
+## Log collection
+
+### Log cache size
+
+One of the fundamental constraints to work around with device logging is how much disk space to allocate just for logging. Unlike on servers where the log cache is basically infinite (and you can often pay more for the storage), most logging systems on hardware will reserve a fixed amount of disk space or memory in the form of a rotating buffer of logs.
+
+The amount of disk space chosen has a large influence on logging &mdash; it affects how verbose your logs can be, how long your logs are be retained, what information you'll want prioritize logging, how you'll store the logs, and more. You’ll want to choose the maximum amount of space you can afford, where the logs you get back contain enough useful information at the timeframe of the incident. But you'll also want to change how you log to accomodate for the amount of space, such as using an abbreviated short form instead of full words.
+
+I've been lucky in that embedded Android devices are generally not very disk space constrained, so I’ve had the benefit of having 10's of MBs of logs to store (and comb) through. But even so, that would only constitute maybe 2-3 hours of logs, depending on how busy the device was, and there was a constant trade-off with how much information was being logged.
+
+### On-location versus Remote collection
+
+One of my favorite often overlooked questions once you have a product device is, "how do I get the logs off of my device and onto my laptop"?
+
+During development, this is as simple as hooking a cable directly to the device and downloading the logs files off the filesystem directly. But when the device is in the field, it’s not so simple.
+
+I distinctly remember going to out to a customer’s store and connecting to their network so I could pull logs off of a remotely accessible device, just to diagnose an issue they were having.
+
+This is of course, unsustainable, if you have hardware that’s distributed across multiple locations, and if you have the want to collect logs faster than just waiting until you are physically connected to the device again.
+
+In that case, you’ll want to build a way to upload logs to a backend somewhere, account for all the storage and privacy-related concerns and regulations, and then a way to download those logs from your computer to analyze them.
+
+### Pull versus Push remote collection triggers
+
+Naively, the easiest way to upload logs is have the user do it. If the device has a UI, it’s as simple as building a button for the user to click when they’re having problems &mdash; think about the "Shake to Report Feedback" or "Submit Feedback" feature on many apps. This way, you can be upfront about the data you’re collecting right, at the time of collection.
+
+Sadly, this depends on the user though, and users are notoriously unreliable. If they’re a technical user, they might not even need an UI! — they might be happy using a CLI tool instead. But if they’re non-technical, even asking them to navigate to a certain page might be a huge burden.
+
+The first alternative that comes to mind is a push system for retrieving logs &mdash; send a notification from the server to the device, and the device will upload the logs when it receives the message. This can take the form of an actual push notification mechanism with a connected web socket, or something as simple as having the device perform a poll every once in a while and collecting the log if the poll tells it to.
+
+The problem with using a push to upload logs is that by the time you send the push, or by the time that the device receives it, the log cache might not contain the data from the time of the interest anymore. At a previous company, it was often the case that because our log cache often saved the last 2-3 hours of logs, by the time our engineers were informed about an incident in the field, a day would have passed and the logs that we’d retrieve wouldn’t have any useful information from the time of the incident.
+
+One of the cooler [log collection triggers](https://docs.memfault.com/docs/android/android-logging#log-collection) we developed here at Memfault is what I like to call "Just in time" log collection. Instead of having the user of the device click a button or someone send a push to the device, we can automatically detect if an abnormal event happened, and then mark the log files around that time as significant, where they will then be uploaded at the next convenient moment. This allows us to capture the exact log files that are relevant to an incident, if we can automatically detect that abnormal event.
+
+<p align="center">
+  <img width="850" src="{% img_url blog-device-logging/jit-logs.png %}" alt="Just in time log collection" />
+</p>
+
+## Logging practices
+
+### Write logs for the target audience
+
+It’s important to consider the target audience of your logs, especially as the use of your device grow over the years, and more people and more teams are involved in its development.
+
+When you’re only logging for yourself — really, anything goes, as you’ll have all the context to make interpreting the logs easier (though you might still want to give your future self an easier time too). But when your logs might be used by your teammates, or even other teams with varying context and skills, you might want to use some strategies to make sure that the logs are also effective for them.
+
+#### Make logs actionable
+
+During development, we can be guilty of logging in a way that’s technically accurate rather than actionable, because we assume the eventual reader of the log will have as much context and knowledge of the domain as we do, and they’ll be able to diagnose the remedy themselves.
+
+```kotlin
+when (val name = reader.nextName()) {
+ VERSION -> Logger.w("Invalid key: '$name'")
+  else -> Logger.w("Unhandled key: '$name'")
+}
+```
+
+Instead of only adding the technical reason for the failure, I’ve found it helpful to add information about how the error is expected to be resolved, in addition to the domain specific information about what went wrong [^meaningfulmessages].
+
+```kotlin
+when (val name = reader.nextName()) {
+ VERSION -> Logger.w(
+    "Invalid key: '$name', the key should only be written, not read"
+  )
+  else -> Logger.w(
+  "Unhandled key: '$name', is the parser version behind the writer version?"
+ )
+}
+```
+
+Adding additional context can jumpstart the debugging effort, as now the person debugging has an avenue to investigate immediately after seeing the log.
+
+#### Link logs to additional documentation
+
+It doesn't feel right to write a paragraph in the log, but it can often take a few sentences to actually explain what the error being logged is.
+
+```kotlin
+try {
+  ...
+} catch (e: RemoteException) {
+  Logger.w("Unable to connect to Reporter, this happens if Reporter is so old that it does not contain the Service at all.", e)
+}
+```
+
+Instead of logging a large paragraph, we can log a reference link to somewhere else where the paragraph is written. This is similar to how SDKs will also contain a glossary of all the exceptions it may throw, what each error means, and documentation on how to resolve each one. We can apply that same logic with our own logging.
+
+```kotlin
+try {
+  ...
+} catch (e: RemoteException) {
+  // This can happen if Reporter is so old that it does not contain the Service at all
+  Logger.w("[REPORTER_SERVICE_NOT_FOUND] Unable to connect to Reporter", e)
+}
+```
+
+A comment is often sufficient, but for target audiences that might not have access to the project source code, it can also be added to an external page in a format that’s much more human readable, for others to use.
+
+```markdown
+REPORTER_SERVICE_NOT_FOUND
+  * Reason: This can happen if Reporter is so old that it does not contain the Service at all
+  * Steps to fix: Update the Reporter application
+```
+
+### Improve the readability of logs
+
+One of the biggest difficulties of logging is that there’s often so much of it! On Android, you’re especially susceptible to the verbosity of whatever the OS is already logging for you, when sometimes you only care about a certain event during your investigation.
+
+```markdown
+2012-12-21 14:00:05.000119000 +0000  1000  1369  1505 I InputReader: Reconfiguring input devices ...
+2012-12-21 14:00:05.000119000 +0000 u0_a5  2505  2505 V bort    : Network connection established!
+2012-12-21 14:00:05.000119000 +0000  1000  1369  1442 W VoiceInteractionManagerService: no available ...
+2012-12-21 14:00:05.000119000 +0000  1000  1369  1369 I Telecom : DefaultDialerCache: Refreshing default dialer ...
+2012-12-21 14:00:05.000119000 +0000  1002  1542  1542 D Avrcp   : isBrowsableListUpdated: false
+2012-12-21 14:00:05.000119000 +0000  1002  1542  1542 V NewAvrcpMediaPlayerList: mPackageChangedBroadcastReceiver: ...
+2012-12-21 14:00:05.000119000 +0000  1002  1542  1542 D NewAvrcpMediaPlayerList: Name of package changed:  ...
+2012-12-21 14:00:05.000119000 +0000  1000  1369  1682 D PackageManager: Instant App installer not found with ...
+2012-12-21 14:00:05.000119000 +0000  1000  1369  1682 D PackageManager: Clear ephemeral installer activity
+2012-12-21 14:00:05.000119000 +0000 u0_a5  2505  2505 V bort    : Lost network connectivity!
+```
+
+In the example above, we only wanted to see Bort’s "Network connection established!" and "Lost network connectivity!" events, but it’s visually difficult to dig out from the noise of the rest of the logs.
+
+#### Consistent formatting
+
+One way to make it more readable is to log in a more consistent format. When logging state, you should log in a consistent key-value format so that the information is more visibly related.
+
+```markdown
+V bort    : Network connected: true
+W VoiceInteractionManagerService: no available ...
+I Telecom : DefaultDialerCache: Refreshing default dialer ...
+D Avrcp   : isBrowsableListUpdated: false
+V NewAvrcpMediaPlayerList: mPackageChangedBroadcastReceiver: ...
+D NewAvrcpMediaPlayerList: Name of package changed:  ...
+D PackageManager: Instant App installer not found with ...
+D PackageManager: Clear ephemeral installer activity
+V bort    : Network connected: false
+```
+
+This allows you to more easily filter by just the lines containing the "Network connected" string via `grep`, CTRL+F, or other text search tool (I use a plugin in Visual Studio Code).
+
+```markdown
+V bort    : Network connected: true
+V bort    : Network connected: false
+```
+
+#### Session IDs
+
+For complex operations with lots of related logging, it can make sense to take a page out of server-side best practices, and log a session ID during the entire series of operation, which makes it easy to track information that should be correlated together.
+
+```markdown
+V bort    : Payment started: payment_session_id=0xFF
+W VoiceInteractionManagerService: no available ...
+I Telecom : DefaultDialerCache: Refreshing default dialer ...
+D Avrcp   : isBrowsableListUpdated: false
+V bort    : Awaiting response: payment_session_id=0xFF
+V NewAvrcpMediaPlayerList: mPackageChangedBroadcastReceiver: ...
+D NewAvrcpMediaPlayerList: Name of package changed:  ...
+D PackageManager: Instant App installer not found with ...
+D PackageManager: Clear ephemeral installer activity
+V bort    : Payment rejected 500: payment_session_id=0xFF, msg=...
+```
+
+With your filtering tool of choice, you can filter by `payment_session_id=0xFF` and see just the relevant information quickly.
+ 
+```markdown
+V bort    : Payment started: payment_session_id=0xFF
+V bort    : Awaiting response: payment_session_id=0xFF
+V bort    : Payment rejected 500: payment_session_id=0xFF, msg=...
+```
+
+#### Unique logs
+
+A major impedance to reading logs is when the exact same string is re-used multiple times.
+
+```markdown
+V bort    : Payment started: payment_session_id=0xFF
+```
+
+```kotlin
+fun startPayment() {
+    Logger.v("Payment started: payment_session_id=$id")
+    ...
+}
+
+fun retryPayment() {
+    Logger.v("Payment started: payment_session_id=$id")
+    ...
+}
+```
+
+If you see this log and trying to diagnose the underlying issue, you might have no clue which line of code it’s actually referring to, so it’s important that all our logs are unique from one another.
+
+### Log for computers first
+
+We'll never really stop reading logs, but it can become a chore to read 1000s of lines of logs, or look to see if multiple sets of logs from multiple devices may be experiencing the same issue. One of the best ways to get out of the business of reading logs, is to have our computers read it for us, and display it in a more digestible format.
+
+At past companies, we developed command line tools that would read log files and print out a text summary of all the exceptions, any network connectivity issues detected, and various other useful information. The benefit of this was massive — the tool could analyze logs much faster than we could individually and in much less time, we could share the tool with our colleagues and save time across the board, we could iterate on adding new features to the tool as the team grew and new scenarios were discovered.
+
+To facilitate that more easily, it would’ve helped if we could rely on the format of logs to be much more machine readable.
+
+#### Avoid multiline logs
+
+Multiline logs are a particularly painful problem for computers to parse. Most system expect logs to all be on a single line, and tracking logs across multiple lines requires retaining state specific to that error message just to parse that error.
+
+```markdown
+E bort    : Network error: -55
+E bort    :     RSSI: 61
+E bort    :     SSID: "Home-Guest"
+```
+
+On one line, it’s slightly less visually readable, but vastly more easily machine parsable.
+
+```markdown
+E bort    : Network error: -55, RSSI: 61, SSID: "Home-Guest"
+```
+
+#### Consider using Structured logs
+
+We can take another page out of server logging best practices [^structuredlogging], and use structured logging. Logs by default are unstructured strings. If we logged more often in a structured format that was easily machine parsable, we could greatly simplify parsing and organizing the data. This is especially useful when we want to eventually parse specific information in the log, otherwise we'd have to write a Regex to parse the log.
+
+```markdown
+E bort    : {"Network error": "-55", "RSSI": 61, "SSID": "Home-Guest"}
+```
+
+JSON is the most common format for structured logs, and can be written manually in code fairly quickly. It's also fairly readable compared to the unstructured log, too.
+
+#### Skip the reading and build visualizations
+
+The end state of logging is ideally to never read the raw logs ourselves. Once we can empower computers to read all sorts of logs, we can build the tools to parse and then visualize the information, and save ourselves the effort of piecing together all the information in our head.
+
+<p align="center">
+  <img width="850" src="{% img_url blog-device-logging/logging-fidelity.png %}" alt="Wi-Fi connection status over time" />
+</p>
+
+If this sounds familiar, this is pitch for Memfault! Instead of reading logs, we can acquire a lot of the same data that the log would have produced, and then display it on a browsable timeline in extremely high resolution.
+
+## Conclusion
+
+Logging is a fundamental part of our day to day debugging toolset, and it's hard to imagine it ever going away entirely. But we all agree, there is a lot of noise in our logs, there are really no standards for logging, and there's a lot we could probably improve how we log, if we only had the time. Hopefully I've shared some new or helpful ideas around logging that you can put to use today!
+
+<!-- Interrupt Keep START -->
+{% include newsletter.html %}
+
+{% include submit-pr.html %}
+<!-- Interrupt Keep END -->
+
+{:.no_toc}
+
+## Additional Reading
+
+* [Logging v. instrumentation](https://peter.bourgon.org/blog/2016/02/07/logging-v-instrumentation.html)
+* [Tracing: structured logging, but better in every way](https://andydote.co.uk/2023/09/19/tracing-is-better/)
+
+## References
+
+<!-- prettier-ignore-start -->
+[^meaningfulmessages]: [Log meaningful messages](https://newrelic.com/blog/best-practices/best-log-management-practices#toc-log-meaningful-messages-that-drive-decisions-)
+[^structuredlogging]: [Structured logging](https://newrelic.com/blog/how-to-relic/structured-logging)
+<!-- prettier-ignore-end -->

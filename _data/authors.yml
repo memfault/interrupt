@@ -251,4 +251,9 @@ gminn:
     github: gminn
     linkedin: https://www.linkedin.com/in/gillian-minnehan/
     blurb: is a firmware solutions architect at Memfault. Gillian previously worked on embedded software teams in space and defense.
-
+victorlai:
+    name: Victor Lai
+    image: /img/author/victorlai.jpg
+    github: blisse
+    linkedin: https://www.linkedin.com/in/laivictor/
+    blurb: is an Android solutions architect at Memfault.
