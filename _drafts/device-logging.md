@@ -1,11 +1,11 @@
 ---
-title: Trade-offs and considerations for logging on embedded devices
-description: "Trade-offs and considerations for logging on embedded hardware"
+title: Trade-offs and Considerations for Logging on Embedded Devices
+description: "Trade-offs and Considerations for Logging on Embedded Hardware"
 author: victorlai
 tags: [android, debugging, logging]
 ---
 
-Logging on embedded devices comes with a host of interesting, unique challenges that aren't found on the server &mdash; devices are generally more memory, bandwidth, space, and CPU constrained than a server, and devices often take weeks, months, or years to update, rather than days or hours. This has interesting ramifications on how we log: we can't log as much data as we'd want to, logs have a more finite lifespan, and the format of logs are much more permanent, so if we don't log the right data in the right way to begin with, it can be months before we ship the next release with new logs. All that being said, there is still a lot of literature and learnings from logging on the server that we can also apply on the client side.
+Logging on embedded devices comes with a host of interesting and unique challenges that aren't found on the server &mdash; devices are generally more memory, bandwidth, space, and CPU constrained than a server, and devices often take weeks, months, or years to update, rather than days or hours. This has interesting ramifications on how we log: we can't log as much data as we'd want to, logs have a more finite lifespan, and the format of logs are much more permanent, so if we don't log the right data in the right way to begin with, it can be months before we ship the next release with new logs. All that being said, there is still a lot of literature and learnings from logging on the server that we can also apply to the client side.
 
 <!-- excerpt start -->
 
@@ -25,31 +25,33 @@ As is common in embedded development, there are many interesting decisions to be
 
 ### Log Cache Size
 
-One of the fundamental constraints to work around with device logging is how much disk space to allocate just for logging. Unlike on servers where the log cache is basically infinite (and you can often pay more for the storage), most logging systems on hardware will reserve a fixed amount of disk space or memory in the form of a rotating buffer of logs. When you log past the limit, the logs in the oldest buffer gets written over.
+One of the fundamental constraints to work around with device logging is how much disk space to allocate just for logging. Unlike on servers where the log cache is basically infinite (and you can often pay more for the storage), most logging systems on hardware will reserve a fixed amount of disk space in the form of a rotating buffer of logs. When you log past the limit, the logs in the oldest buffer gets written over.
 
 The amount of disk space chosen has a large influence on logging &mdash; it affects how verbose your logs can be, how long your logs are be retained, what information you'll want prioritize logging, how you'll store the logs, and more. You’ll want to choose the maximum amount of space you can afford, where the logs you get back contain enough useful information at the timeframe of the incident. But you'll also want to change how you log to accomodate for the amount of space, such as using an abbreviated short form instead of full words.
 
 I've been lucky in that embedded Android devices are generally not very disk space constrained, so I’ve had the benefit of having 10's of MBs of logs to store (and comb) through. But even so, that would only constitute maybe 2-3 hours of logs, depending on how busy the device was, and there was a constant trade-off with how much information was being logged.
 
-### On-location v. Remote Collection
+Some embedded devices might not write logs to disk at all, and instead write the logs only to memory, but still as a rotating buffer! The size of this buffer is even more constrained than on disk due to the lower amount of memory versus disk space, and there's a downside of all the logs being cleared if the device restarts. However, this could be a useful way to mitigate concerns around flash wear if logging is a large contributor, or if there's just no non-volatile memory on the device. But whether the logs are on disk or in memory, we still have to get access to them!
+
+### On-location vs. Remote Collection
 
 One of my favorite often overlooked questions when you develop a new embedded device product is, "how do I get the logs off of my production device and onto my computer"? During development, this could be as easy as connecting a cable directly to the device and downloading the logs files off the filesystem directly. But when the device is in the field, it’s not so simple.
 
-I distinctly remember going to out to a customer’s store and connecting to their network so I could pull logs off of a network connected device, just to diagnose an issue they were having. This is of course, unsustainable if you have hardware that’s distributed across multiple locations and want to collect logs more frequently than each time you have physical access to the device.
+I distinctly remember going to out to a customer’s business and connecting to their network so I could pull logs off of a network connected device, just to diagnose an issue they were having. This is of course, unsustainable if you have hardware that’s distributed across multiple locations and want to collect logs more frequently than each time you have physical access to the device.
 
-In that case, you’ll want to build a way to upload logs to a backend somewhere, account for all the storage and privacy-related concerns and regulations, and then a way to download those logs from your computer to analyze them.
+In that case, you’ll want to build a way to upload logs to a backend somewhere, account for all the storage and privacy-related concerns and regulations, and then a way to download those logs for analysis on your computer.
 
 ### Triggering Collection
 
-Naively, the easiest way to upload logs is have the user do it. If the device has a UI, it’s as simple as building a button for the user to click when they’re having problems &mdash; think about the "Shake to Report Feedback" or "Submit Feedback" feature on many apps. This way, you can be upfront about the data you’re collecting right, at the time of collection.
+Naively, the easiest way to upload logs is have the user do it. If the device has a UI, it’s as simple as building a button for the user to click when they’re having problems &mdash; think about the "Shake to Report Feedback" or "Submit Feedback" feature on many apps. This way, you can be upfront about the data you’re collecting, right at the time of collection.
 
 Sadly, this depends on the user though, and users are notoriously unreliable. If they’re a technical user, they might not even need an UI! — they might be happy using a CLI tool instead. But if they’re non-technical, even asking them to navigate to a certain page might be a huge burden.
 
-The first alternative that comes to mind is a push system for retrieving logs &mdash; send a notification from the server to the device, and the device will upload the logs when it receives the message. This can take the form of an actual push notification mechanism with a connected web socket, or something as simple as having the device perform a poll every once in a while and collecting the log if the poll tells it to.
+A simpler technical solution would be to have your devices poll periodically to see if it needs to upload logs. Or, instead of polling, the devices can register for push notifications from the server using a web socket, MQTT, or equivalent, and upload the logs when it receives the push message.
 
-The problem with using a push to upload logs is that by the time you send the push, or by the time that the device receives it, the log cache might not contain the data from the time of the interest anymore. At a previous company, it was often the case that because our log cache often saved the last 2-3 hours of logs, by the time our engineers were informed about an incident in the field, a day would have passed and the logs that we’d retrieve wouldn’t have any useful information from the time of the incident.
+The problem with using only a push or poll system to upload logs is that by the time you request the logs from the device, either via a push or a poll, the log cache might not contain the data from the time of the interest anymore. At a previous company, it was often the case that our log cache often only saved the last 2-3 hours of logs, so by the time our engineers were informed about an incident in the field, a day would have passed and the logs that we’d retrieve wouldn’t have any useful information from the time of the incident.
 
-One of the cooler [log collection triggers](https://docs.memfault.com/docs/android/android-logging#log-collection) we developed here at Memfault is what I like to call "Just in time" log collection. Instead of having the user of the device click a button or someone send a push to the device, we can automatically detect if an abnormal event happened, and then mark the log files around that time as significant, where they will then be uploaded at the next convenient moment. This allows us to capture the exact log files that are relevant to an incident, if we can automatically detect that abnormal event.
+One of the cooler [log collection triggers](https://docs.memfault.com/docs/android/android-logging#log-collection) we developed here at Memfault is what I like to call "Just in time" log collection. Instead of having the user click a button or someone send a push to the device, we can automatically detect if an abnormal event happened, and then mark the log files around that time as significant, where they will then be uploaded at the next convenient moment. This allows us to capture the exact log files that are relevant to an incident, if we can automatically detect that abnormal event.
 
 <p align="center">
   <img width="850" src="{% img_url blog-device-logging/jit-logs.png %}" alt="Just in time log collection" />
@@ -78,7 +80,7 @@ when (val name = reader.nextName()) {
 }
 ```
 
-Instead of only logging the technical reason for the failure, I could have added information about how the error is expected to be resolved [^meaningfulmessages], which would give me context in the future about what kinds of problems could have led to this log. And the plus side is, this context is added when we're adding the log, while the code is fresh in our mind.
+Instead of only logging the technical reason for the failure, I could have added information about how the error is expected to be resolved in an meaningful way [^meaningfulmessages], which would give me context in the future about what kinds of problems could have led to this log. And the plus side is, this context is added when we're adding the log, while the code is fresh in our mind.
 
 ```kotlin
 when (val name = reader.nextName()) {
@@ -238,13 +240,15 @@ E bort    : Network error: -55, RSSI: 61, SSID: "Home-Guest"
 
 #### Structured Logs
 
-We can take another page out of server logging best practices [^structuredlogging], and use structured logging. Logs by default are unstructured strings. If we logged more often in a structured format that was easily machine parsable, we could greatly simplify parsing and organizing the data. This is especially useful when we want to eventually parse specific information in the log, otherwise we'd have to write a Regex to parse the log.
+We can take another page out of server logging best practices, and use structured logging. Logs by default are unstructured strings. If we logged more often in a structured format that was easily machine parsable, we could greatly simplify parsing and organizing the data. This is especially useful when we want to eventually parse specific information in the log, otherwise we'd have to write a Regex to parse the log.
 
 ```markdown
 E bort    : {"Network error": "-55", "RSSI": 61, "SSID": "Home-Guest"}
 ```
 
 JSON is the most common format for structured logs, and can be written manually in code fairly quickly. It's also fairly readable compared to the unstructured log, too.
+
+Just watch out for your platform's maximum line length (Android's logcat truncates lines at 4096 characters). Some languages, like Go, even have structured logging [built in to their standard library](https://go.dev/blog/slog)!
 
 #### Skip Log Reading -- Build Visualizations!
 
@@ -266,7 +270,7 @@ Or here, instead of scanning the logs to see when and which package was installe
   <img width="850" src="{% img_url blog-device-logging/logging-package-install-context.png %}" alt="Package Install contextualized example" />
 </p>
 
-Once we've collected enough data, we can plot all the logs as events on a timeline, which allows us to make correlations instantly that we'd have so much more trouble from just reading.
+Once we've collected enough data, we can plot all the logs as events on a timeline, which allows us to make correlations instantly that we'd have to read logs to maybe get. In the above example, we can see the package installation correlated to doze being disabled, an app being foregrounded, and a drop in battery voltage, all correlations we can make instantaneously.
 
 If this sounds familiar, this is pitch for Memfault! Instead of reading logs, we can acquire a lot of the same data that the log would have produced, and then display it on a browsable timeline in extremely high resolution.
 
@@ -286,10 +290,10 @@ Logging is a fundamental part of our day to day debugging toolset, and it's hard
 
 * [Logging v. instrumentation](https://peter.bourgon.org/blog/2016/02/07/logging-v-instrumentation.html)
 * [Tracing: structured logging, but better in every way](https://andydote.co.uk/2023/09/19/tracing-is-better/)
+* [Debugging Android Devices](https://interrupt.memfault.com/blog/debugging-android-devices)
 
 {:.no_toc}
 
 <!-- prettier-ignore-start -->
 [^meaningfulmessages]: [Log meaningful messages](https://newrelic.com/blog/best-practices/best-log-management-practices#toc-log-meaningful-messages-that-drive-decisions-)
-[^structuredlogging]: [Structured logging](https://newrelic.com/blog/how-to-relic/structured-logging)
 <!-- prettier-ignore-end -->
