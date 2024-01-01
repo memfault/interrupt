@@ -82,7 +82,7 @@ JTAG registers are an important part of the microcontroller debugging process be
 Data transfer (read/write) in the JTAG protocol is performed by the shift register principle. In a shift register, the data is transferred sequentially, bit by bit, one per clock cycle.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part1/shift-reg.gif %}" alt="JTAG Debug TAP" />
+  <img width="400" src="{% img_url jtag-part1/shift-reg.gif %}" alt="JTAG Debug TAP" />
 </p>
 
 This register is located between the `TDI` and `TDO` pins and is used to receive information from the `TDI` pin and output information to the `TDO` pin. Every time you want to write something to the TAP via JTAG protocol - you set the necessary signals to the `TDI` pin - these signals are synchronously written to the shift register starting from the highest bit and gradually moving to the lowest bit of the register with each new clock, and the value of the lowest bit of the shift register with each clock is moved to the `TDO` pin, from which we can read it.
