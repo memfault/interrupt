@@ -12,7 +12,7 @@ This is the start of a new article series about _Zephyr's basics_: It will walk 
 
 So why another article series, and what's different in this one?
 
-When I first started looking into Zephyr the learning curve felt quite overwhelming. Even as an embedded developer with a decent amount of experience, understanding key concepts and tools like _Kconfig_ or _devicetree_ for creating even a simple application, had me chasing down the rabbit hole, following link after link after link, night after night - and it was exhausting. Personally, existing article series felt as if they would only brush on core concepts like _Kconfig_ and _devicetree_ and would leave me with more questions than answers; I still didn't understand those tools since I had no previous experience whatsoever with them.
+When I first started looking into Zephyr the learning curve felt quite overwhelming. Even as an embedded developer with a decent amount of experience, understanding key concepts and tools like _Kconfig_ or _devicetree_ for creating even a simple application, had me chasing down the rabbit hole, following link after link after link, night after night - and it was exhausting. Personally, existing article series felt as if they would only brush over core concepts like _Kconfig_ and _devicetree_ and would leave me with more questions than answers; I still didn't understand those tools since I had no previous experience whatsoever with them.
 
 What I'm trying to achieve with this article series is the following:
 
@@ -210,7 +210,7 @@ Instead of setting `ZEPHYR_BASE` manually as, e.g., done by the `env.sh` script 
 
 The final command, `west zephyr-export`, is a ["Zephyr extension command"](https://docs.zephyrproject.org/latest/develop/west/zephyr-cmds.html#installing-cmake-packages-west-zephyr-export) that installs the required _CMake_ packages that we'll need in the next steps when using `find_package` to locate Zephyr's sources in a `CMakeLists.txt` file.
 
-That's it for the environment, we can now go ahead and create applications. One last time I'd like to emphasize that this was just a warm-up to get started with Zephyr. It is not required or recommended to use such a `setup.sh` script, it's just many of the possibilities you have when bringing up your development environment.
+That's it for the environment, we can now go ahead and create applications. One last time I'd like to emphasize that this was just a warm-up to get started with Zephyr. It is not required or recommended to use such a `setup.sh` script, it's just one of many possibilities you have when bringing up your development environment.
 
 
 
@@ -220,7 +220,7 @@ Now that we have a working installation, we can start with the important parts o
 
 ### Zephyr application types
 
-Zephyr supports different [application types](https://docs.zephyrproject.org/latest/develop/application/index.html#application-types), differentiated essentially depending on the location of your application in relation to Zephyr's sources:
+Zephyr supports different [application types](https://docs.zephyrproject.org/latest/develop/application/index.html#application-types), differentiated by the location of your application in relation to Zephyr's sources:
 
 - [Freestanding applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-freestanding-app) exist independent of Zephyr's location, meaning Zephyr is not part of the application's repository or file tree. The relation with Zephyr is only established in the build process, when using `find_package` to locate Zephyr, typically based on the `ZEPHYR_BASE` environment variable.
 - [Workspace applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app) use a [_West_ workspace](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#west-workspaces): For such applications, _West_ is used to initialize your workspace, e.g., based on a `west.yml` manifest file. The manifest file is used by _West_ to create complex workspaces: For each external dependency that is used in your project, the location and revision are specified in the manifest file. West then uses this manifest to populate your workspace. Kind of like a very, very powerful version of [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
@@ -228,7 +228,7 @@ Zephyr supports different [application types](https://docs.zephyrproject.org/lat
 
 The most common and easiest approach is to **start** with a freestanding application: You'll only need a couple of files to get started. As with the nRF Connect SDK, Zephyr is located in a known installation directory that is configured via the environment.
 
-In more advanced projects you typically want to have all dependencies in your workspace and will therefore switch to a workspace application type: External dependencies will be cloned directly into your project by _West_ to avoid dependencies to local installations. We'll get to that at the end of this article series.
+In more advanced projects you typically want to have all dependencies in your workspace and will therefore switch to a workspace application type: External dependencies will be cloned directly into your project by _West_ to avoid depending on separate local installations. We'll get to that at the end of this article series.
 
 For now, we'll rely entirely on the [freestanding application type](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-freestanding-app).
 
@@ -578,7 +578,7 @@ Setting up debugging in `vscode` is explained in the [official documentation](ht
 
 ![]({% img_url practical-zephyr/vscode-debug.png %})
 
-Your mileage, however, will always vary according to the MCU that you're using, and there is no generic solution. Zephyr's official documentation also comes with a dedicated [section about debugging](https://docs.zephyrproject.org/latest/develop/debug/index.html), and a separate section about [flash&debug host tools](https://docs.zephyrproject.org/latest/develop/flash_debug/host-tools.html). Pick your poison!
+Your mileage, however, will always vary according to the MCU that you're using, and there is no generic solution. Zephyr's official documentation also comes with a dedicated [section about debugging](https://docs.zephyrproject.org/latest/develop/debug/index.html), and a separate section about [flash & debug host tools](https://docs.zephyrproject.org/latest/develop/flash_debug/host-tools.html). Pick your poison!
 
 Another great resource about `vscode` with Zephyr is [Jonathan Beri's presentation "Zephyr & Visual Studio Code: How to Develop Zephyr Apps with a Modern, Visual IDE"](https://www.youtube.com/watch?v=IKNHPmG-Qxo) from the 2023 Zephyr Development Summit.
 
