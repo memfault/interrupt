@@ -88,7 +88,7 @@ Instead of using Nordic's full-blown IDE solution, however, we'll create our own
 
 > **Note:** In case you want a "Zephyr only" installation without downloading Nordic's software, feel free to follow the installation procedure in the [official documentation](https://docs.zephyrproject.org/latest/develop/getting_started/index.html) - and I'll meet you again in the [next section](#creating-an-empty-application-skeleton)!
 
-As mentioned in the introduction, later in this series we'll see a much better approach where we don't need Zephyr's sources to be installed at all: The only thing you'll need are the host tools documented in Zephyr's [getting started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies). For now, I'm using Nordic's toolchain installer simply to have a running setup that we can use to explore Zephyr's sources and tools.
+As mentioned in the introduction, later in this series we'll see a much better approach where Zephyr's sources will be pulled into our _workspace_ rather than separately installed: The only thing you'll need are the host tools documented in Zephyr's [getting started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies). For now, I'm using Nordic's toolchain installer simply to have a running setup that we can use to explore Zephyr's sources and tools.
 
 
 ### Setup using Nordic's toolchain manager
