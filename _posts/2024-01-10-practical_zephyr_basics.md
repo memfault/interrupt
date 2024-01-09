@@ -636,7 +636,7 @@ Finally, have a look at the files in the [accompanying GitHub repository](https:
 [boseji]: https://boseji.com/docs/zephyr/
 [cabe]: https://blog.benjamin-cabe.com/
 
-[VS Code]: https://code.visualstudio.com/
+[vscode]: https://code.visualstudio.com/
 
 [zephyr-ds-2022-playlist]: https://www.youtube.com/watch?v=o-f2qCd2AXo&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe
 [zephyr-ds-2023-playlist]: https://www.youtube.com/watch?v=PY64voxdhAU&list=PLzRQULb6-ipERkFrHaBh8tuSnK923ZUjY
