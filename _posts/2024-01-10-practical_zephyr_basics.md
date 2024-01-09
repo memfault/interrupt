@@ -2,6 +2,7 @@
 title: Practical Zephyr - Zephyr Basics (Part 1)
 description: Article series "Practical Zephyr", the first part about West, CMake, and Zephyr application types.
 author: lampacher
+tags: [zephyr, build-system]
 ---
 
 This is the start of a new article series about _Zephyr's basics_: It will walk you through Zephyr's [build and configuration systems](https://docs.zephyrproject.org/latest/build/index.html) _West_, _Kconfig_ and _devicetree_.
@@ -70,11 +71,11 @@ This is where the journey **ends**. After this series, you should find it easy -
 
 ## Prerequisites
 
-You should be familiar with embedded software since we won't cover the basics. Some knowledge in using build systems such _CMake_ doesn't hurt but is unnecessary. If you don't know what Zephyr is, look briefly at the [introduction in the official documentation](https://docs.zephyrproject.org/latest/introduction/index.html).
+You should be familiar with embedded software since we won't cover the basics. Some knowledge in using build systems such _CMake_ doesn't hurt but is not required. If you don't know what Zephyr is, look briefly at the [introduction in the official documentation](https://docs.zephyrproject.org/latest/introduction/index.html).
 
 The practical examples in this series use [Nordic's](https://www.nordicsemi.com/) [nRF52840 development kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk). If you don't have such a board, don't worry. You should be able to follow along using most of the boards in [Zephyr's long list of supported boards](https://docs.zephyrproject.org/latest/boards/index.html) - or using an emulation target. However, we won't cover using emulation targets in this article series. Most of the content of this series does not require any hardware; we'll just _compile_ the project for a specific board for simplicity.
 
-Whenever relevant, we'll use [Visual Studio Code](https://code.visualstudio.com/) as the editor of choice. However, **using `vscode` is, of course, entirely optional** and not required at all. Only in certain sections, e.g., debugging, we'll show how using `vscode` and some plugins can make your life easier - and we won't cover any other editor.
+Whenever relevant, we'll use [Visual Studio Code](https://code.visualstudio.com/) as the editor of choice. However, **using `VS Code` is, of course, entirely optional** and not required at all. Only in certain sections, e.g., debugging, we'll show how using `VS Code` and some plugins can make your life easier - and we won't cover any other editor.
 
 We won't assume any operating system, but - for the sake of simplicity - we'll be exclusively using _Linux_ shell commands. Windows users should have a "`bash`-compatible" environment - or _WSL_ - installed. We won't jump through the hoops of creating Windows-compatible shell scripts, batch files, or other atrocities.
 
@@ -95,14 +96,14 @@ As mentioned in the introduction, later in this series, we'll see a much better 
 
 Nordic provides the [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk) for its microcontrollers. This SDK is based on Zephyr and, therefore, its version of it (plus some vendor-specific extras). Still, instead of having to go through all the installation steps of the [getting started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html), it comes with a very handy [toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager) to manage different versions of the SDK and thus also Zephyr. We'll also use it as a reference when checking the necessary steps to set up a Zephyr environment.
 
-The nRF Connect SDK also comes with a [`vscode` extension pack](https://nrfconnect.github.io/vscode-nrf-connect/): We'll see several of the extensions throughout this series but won't use the fully integrated solution since we want to understand what's going on underneath the hood. Go ahead and:
+The nRF Connect SDK also comes with a [`VS Code` extension pack](https://nrfconnect.github.io/vscode-nrf-connect/): We'll see several of the extensions throughout this series but won't use the fully integrated solution since we want to understand what's going on underneath the hood. Go ahead and:
 
 - Follow the [toolchain manager's instructions](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager) to install the current toolchain,
-- _[optional]_ install the [nRF Kconfig extension for `vscode`](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig),
-- _[optional]_ install the [nRF DeviceTree extension for `vscode`](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig).
+- _[optional]_ install the [nRF Kconfig extension for `VS Code`](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig),
+- _[optional]_ install the [nRF DeviceTree extension for `VS Code`](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig).
 - If you plan to follow along using a board from Nordic, install the [command line tools](https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools).
 
-> **Note:** If you like Nordic's [nRF Connect for `vscode` extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), you can now also skip the _toolchain manager_ installation step and install the toolchain straight from within `vscode`.
+> **Note:** If you like Nordic's [nRF Connect for `VS Code` extension pack](https://nrfconnect.github.io/VS Code-nrf-connect/), you can now also skip the _toolchain manager_ installation step and install the toolchain straight from within `VS Code`.
 
 If you're not convinced and want to install the SDK manually, you can also have a look at the steps performed in the [Dockerfile](https://github.com/lmapii/practical-zephyr/blob/main/builder.Dockerfile) in the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr). Notice that this _Dockerfile_ is tailored to the needs of this article series and is _not_ a generic solution. If you want something more generic, look at [Zephyr's docker-image repository](https://github.com/zephyrproject-rtos/docker-image).
 
@@ -124,7 +125,7 @@ As you can see in the above screenshot of the [toolchain manager](https://develo
 
 - Open a terminal,
 - generate your own `env.sh`, which you can then `source` in your terminal of choice,
-- open a dedicated `vscode` instance for the chosen SDK version.
+- open a dedicated `VS Code` instance for the chosen SDK version.
 
 Since we want a better idea of what's happening underneath it all, we'll use *none* of the above options. Instead, we create our own `setup.sh` script based on the `env.sh` the toolchain manager generates for you.
 
@@ -216,7 +217,7 @@ That's it for the environment; we can now create applications. One last time, th
 
 ## Creating an empty application skeleton
 
-Now that we have a working installation, we can start with the important parts of this article series. Before creating our first files, review Zephyr's supported application _types_.
+Now that we have a working installation, we can start with the important parts of this article series. Before creating our first files, let's review Zephyr's supported application _types_.
 
 ### Zephyr application types
 
@@ -358,7 +359,7 @@ $ cmake -B ../build
 $ cmake --build ../build -- -j4
 ```
 
-> **Note:** The [GitHub repository](https://github.com/lmapii/practical-zephyr) uses subfolders for all example applications. Using a build directory `../build` located in the root of the repository allows an editor such as `vscode` to pick up the compile commands independent of the example that is being built. In case you're using `vscode`, have a look at the provided [`settings.json`](https://github.com/lmapii/practical-zephyr/blob/main/.vscode/settings.json) file.
+> **Note:** The [GitHub repository](https://github.com/lmapii/practical-zephyr) uses subfolders for all example applications. Using a build directory `../build` located in the root of the repository allows an editor such as `VS Code` to pick up the compile commands independent of the example that is being built. In case you're using `VS Code`, have a look at the provided [`settings.json`](https://github.com/lmapii/practical-zephyr/blob/main/.vscode/settings.json) file.
 
 With this, the `../build` folder contains the application built for the `BOARD` specified in the [CMakeLists.txt](CMakeLists.txt) file. The following command allows passing the `BOARD` to CMake directly and thereby either **overrides** a given `set(BOARD ...)` instruction or provides the `BOARD` in case it hasn't been specified at all:
 
@@ -429,7 +430,7 @@ manifest.file=west.yml
 zephyr.base=zephyr
 build.board=nrf52840dk_nrf52840
 # It is also possible to delete an option
-#, e.g., using `west config -d build. board`
+#, e.g., using `west config -d build.board`
 ```
 
 > **Note:** The _West_ configuration options can also be used to define arguments for CMake. This can be useful when debugging or when defining your own CMake caches, refer to the [documentation](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#permanent-cmake-arguments) for details.
@@ -450,7 +451,7 @@ $ west build -d ../build --pristine
 
 ## A quick glance at IDE integrations
 
-In the [prerequisites](#prerequisites), we've promised that we won't have a detailed look at IDEs - and we won't. In this section, we'll just have a look `vscode` and some information that is relevant for any type of editor. Let's start with the editor-independent information:
+In the [prerequisites](#prerequisites), we've promised that we won't have a detailed look at IDEs - and we won't. In this section, we'll just have a look at `VS Code` and some information that is relevant for any type of editor. Let's start with the editor-independent information:
 
 Zephyr configures CMake to export a _compilation database_ and thus produces a `compile_commands.json` file in the build directory:
 
@@ -464,7 +465,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE CACHE BOOL
 
 This compilation database essentially contains the commands that are used for each and every file that is compiled in the project. The database is not only used by tools such as [`clang-tidy`](https://clang.llvm.org/extra/clang-tidy) but also by IDEs and their extensions, e.g., to resolve include paths.
 
-E.g., `vscode` has a [C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), which can be configured to pick up the provided compilation database as follows in `vscode`'s [`settings.json`](https://github.com/lmapii/practical-zephyr/blob/main/.vscode/settings.json):
+E.g., `VS Code` has a [C/C++ extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), which can be configured to pick up the provided compilation database as follows in `VS Code`'s [`settings.json`](https://github.com/lmapii/practical-zephyr/blob/main/.vscode/settings.json):
 
 `.vscode/settings.json`
 ```json
@@ -473,7 +474,7 @@ E.g., `vscode` has a [C/C++ extension](https://marketplace.visualstudio.com/item
 }
 ```
 
-If you like `vscode` and use [Nordic](https://www.nordicsemi.com/)'s MCUs, you can also have a look at their [extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), which comes with a graphical *devicetree* and *KConfig* extension, debugging support, and much more:
+If you like `VS Code` and use [Nordic](https://www.nordicsemi.com/)'s MCUs, you can also have a look at their [extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), which comes with a graphical *devicetree* and *KConfig* extension, debugging support, and much more:
 
 ![]({% img_url practical-zephyr/nrf-vscode.png %})
 
@@ -546,13 +547,13 @@ Breakpoint 1, main () at /path/to/src/main.c:11
 Debugging with `gdb` may be all you need, especially if you pair this with Python scripts.
 
 
-### Debugging ARM Cortex-M targets in `vscode`
+### Debugging ARM Cortex-M targets in `VS Code`
 
 Aside from plain `gdb`, step debugging in your editor of choice is another very popular approach.
 
-`vscode` is becoming more and more prominent, which is why it is worth mentioning that debugging solutions exist that allow step debugging within the editor, e.g., via the [`cortex-debug`](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug) extension for ARM Cortex-M microcontrollers.
+`VS Code` is becoming more and more prominent, which is why it is worth mentioning that debugging solutions exist that allow step debugging within the editor, e.g., via the [`cortex-debug`](https://marketplace.visualstudio.com/items?itemName=marus25.cortex-debug) extension for ARM Cortex-M microcontrollers.
 
-Setting up debugging in `vscode` is explained in the [official documentation](https://code.visualstudio.com/docs/editor/debugging), and comes down to providing launch configurations in the JSON file `.vscode/launch.json`. The following is an example file that can be used to debug Zephyr applications on boards using the nRF52840 microcontroller:
+Setting up debugging in `VS Code` is explained in the [official documentation](https://code.visualstudio.com/docs/editor/debugging), and comes down to providing launch configurations in the JSON file `.vscode/launch.json`. The following is an example file that can be used to debug Zephyr applications on boards using the nRF52840 microcontroller:
 
 `.vscode/launch.json`
 ```json
@@ -574,13 +575,13 @@ Setting up debugging in `vscode` is explained in the [official documentation](ht
 }
 ```
 
-> **Note:** Support for GDB comes out of the box with `vscode` and could also be used instead of relying on `cortex-debug`. Also, in case you're sourcing `setup.sh` before launching `vscode`, you can use the environment variable for the `gdbPath` setting, e.g., `"gdbPath": "${env:ZEPHYR_SDK_INSTALL_DIR}/arm-zephyr-eabi/bin/arm-zephyr-eabi-gdb"`
+> **Note:** Support for GDB comes out of the box with `VS Code` and could also be used instead of relying on `cortex-debug`. Also, in case you're sourcing `setup.sh` before launching `VS Code`, you can use the environment variable for the `gdbPath` setting, e.g., `"gdbPath": "${env:ZEPHYR_SDK_INSTALL_DIR}/arm-zephyr-eabi/bin/arm-zephyr-eabi-gdb"`
 
 ![]({% img_url practical-zephyr/vscode-debug.png %})
 
 Your mileage, however, will always vary according to the MCU that you're using, and there is no generic solution. Zephyr's official documentation also comes with a dedicated [section about debugging](https://docs.zephyrproject.org/latest/develop/debug/index.html), and a separate section about [flash & debug host tools](https://docs.zephyrproject.org/latest/develop/flash_debug/host-tools.html). Pick your poison!
 
-Another great resource about `vscode` with Zephyr is [Jonathan Beri's presentation "Zephyr & Visual Studio Code: How to Develop Zephyr Apps with a Modern, Visual IDE"](https://www.youtube.com/watch?v=IKNHPmG-Qxo) from the 2023 Zephyr Development Summit.
+Another great resource about `VS Code` with Zephyr is [Jonathan Beri's presentation "Zephyr & Visual Studio Code: How to Develop Zephyr Apps with a Modern, Visual IDE"](https://www.youtube.com/watch?v=IKNHPmG-Qxo) from the 2023 Zephyr Development Summit.
 
 
 
@@ -592,7 +593,7 @@ In this article, we installed Zephyr and its tools using Nordic's [toolchain man
 
 We then had a quick look at Zephyr's application types and created a skeleton _freestanding_ application, which we've compiled using CMake directly, and via Zephyr's meta-tool _West_. We've seen how we can parameterize our build to pick a certain _board_ and concluded, that it might be beneficial to use _West_ over plain CMake - but you can always pick your preference.
 
-We then brushed over the extension commands `flash` and `debug` that allow us to program the application to our board and debug it using `gdb`. Finally, we've had a quick look at a possible `vscode` debugging integration.
+We then brushed over the extension commands `flash` and `debug` that allow us to program the application to our board and debug it using `gdb`. Finally, we've had a quick look at a possible `VS Code` debugging integration.
 
 Next up in line for this article series is _Kconfig_, which we briefly encountered when we created the minimum set of files for a freestanding application - which included a `prj.conf` file.
 
@@ -635,7 +636,7 @@ Finally, have a look at the files in the [accompanying GitHub repository](https:
 [boseji]: https://boseji.com/docs/zephyr/
 [cabe]: https://blog.benjamin-cabe.com/
 
-[vscode]: https://code.visualstudio.com/
+[VS Code]: https://code.visualstudio.com/
 
 [zephyr-ds-2022-playlist]: https://www.youtube.com/watch?v=o-f2qCd2AXo&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe
 [zephyr-ds-2023-playlist]: https://www.youtube.com/watch?v=PY64voxdhAU&list=PLzRQULb6-ipERkFrHaBh8tuSnK923ZUjY
