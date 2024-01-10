@@ -103,7 +103,7 @@ The nRF Connect SDK also comes with a [`VS Code` extension pack](https://nrfconn
 - _[optional]_ install the [nRF DeviceTree extension for `VS Code`](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig).
 - If you plan to follow along using a board from Nordic, install the [command line tools](https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools).
 
-> **Note:** If you like Nordic's [nRF Connect for `VS Code` extension pack](https://nrfconnect.github.io/VS Code-nrf-connect/), you can now also skip the _toolchain manager_ installation step and install the toolchain straight from within `VS Code`.
+> **Note:** If you like Nordic's [nRF Connect for `VS Code` extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), you can now also skip the _toolchain manager_ installation step and install the toolchain straight from within `VS Code`.
 
 If you're not convinced and want to install the SDK manually, you can also have a look at the steps performed in the [Dockerfile](https://github.com/lmapii/practical-zephyr/blob/main/builder.Dockerfile) in the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr). Notice that this _Dockerfile_ is tailored to the needs of this article series and is _not_ a generic solution. If you want something more generic, look at [Zephyr's docker-image repository](https://github.com/zephyrproject-rtos/docker-image).
 
