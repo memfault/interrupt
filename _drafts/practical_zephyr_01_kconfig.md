@@ -1,7 +1,8 @@
 ---
-title: Practical Zephyr - Kconfig
+title: Practical Zephyr - Kconfig (Part 2)
 description: Article series "Practical Zephyr", second part, covering the kernel configuration system Kconfig.
 author: lampacher
+tags: [zephyr, kconfig]
 ---
 
 <!-- excerpt start -->
@@ -16,7 +17,7 @@ In this second article of the "Practical Zephyr" series, we'll explore the [kern
 
 ## Prerequisites
 
-This article is part of an article _series_. In case you haven't read the previous article, please go ahead and have a look since it explains the required installation steps to follow along. If you're already familiar with Zephyr and have a working installation at hand, it should be easy enough for you to follow using your own setup.
+This article is part of an article _series_. In case you haven't read the [previous article]({% post_url 2024-01-10-practical_zephyr_basics %}), please go ahead and have a look since it explains the required installation steps to follow along. If you're already familiar with Zephyr and have a working installation at hand, it should be easy enough for you to follow using your own setup.
 
 > **Note:** A full example application including all the configuration files that we'll see throughout this article is available in the [`01_kconfig` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/01_kconfig).
 
@@ -24,7 +25,7 @@ This article is part of an article _series_. In case you haven't read the previo
 
 ## Warm up with `printk`
 
-Go ahead and create a new, empty freestanding application, e.g., using the application from the previous article.
+Go ahead and create a new, empty freestanding application, e.g., using the application from the [previous article]({% post_url 2024-01-10-practical_zephyr_basics %}).
 
 ```bash
 $ tree --charset=utf-8 --dirsfirst
@@ -98,6 +99,7 @@ The debugging subsystem of Zephyr defines the _Kconfig_ symbol `PRINTK` that all
 
 > For details about _Kconfig_'s syntax, you can have a look at the _Kconfig_ language specification in the [Linux kernel documentation](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html) or Zephyr's [Kconfig tips and best practices](https://docs.zephyrproject.org/latest/build/kconfig/tips.html#kconfig-tips-and-best-practices).
 
+`zephyr/subsys/debug/Kconfig`
 ```conf
 config PRINTK
 	bool "Send printk() to console"
@@ -251,7 +253,7 @@ Symbols currently y-selecting this symbol:
 ...
 ```
 
-We find the reason why we can't disable the symbol at the very bottom fo the `PRINTK`'s symbol information! The symbol `BOOT_BANNER` is `y-selecting` the `PRINTK` symbol, which is why we can't disable it and why the application's configuration has no effect. This simple example should also make you realize that it is hard if not impossible to figure out dependencies by navigating `Kconfig` fragments. Let's fix our configuration:
+We found the reason why we can't disable the symbol at the very bottom fo the `PRINTK`'s symbol information! The symbol `BOOT_BANNER` is `y-selecting` the `PRINTK` symbol, which is why we can't disable it and why the application's configuration has no effect. This simple example should also make you realize that it is hard if not impossible to figure out dependencies by navigating `Kconfig` fragments file by file. Let's fix our configuration:
 
 * Navigate to the `BOOT_BANNER` symbol and disable it.
 * Going back to `PRINTK` it should now be possible to disable it.
@@ -287,13 +289,13 @@ $ diff ../build/zephyr/.config ../build/zephyr/.config.old
 
 > **Notice:** The `# CONFIG_<symbol> is not set` comment syntax is used by `zephyr/.config` instead of `CONFIG_<symbol>=n` for historical reasons, as also mentioned in the [official documentation](https://docs.zephyrproject.org/latest/build/kconfig/setting.html#setting-kconfig-configuration-values). This allows parsing configuration files directly as `makefiles`.
 
-You can now simply take the changes from the `diff` and persist them, e.g., by writing them into your application configuration file. Keep in mind, however, that this only works for changes performed between **one** _Save_ operation. If you _Save_ multiple times, `.config.old` is always replaced by the current `.config`. The `diff` operation must therefore be performed after each _Save_.
+You can now simply take the changes from the `diff` and persist them, e.g., by writing them into your application configuration file. Keep in mind that this only works for changes performed between **one** _Save_ operation. If you _Save_ multiple times, `.config.old` is always replaced by the current `.config`. The `diff` operation must therefore be performed after each _Save_.
 
 This approach, however, is not always feasible. E.g., try to enable the logging subsystem _Subsystems and OS Services > Logging_: You'll notice that the `diff` is huge even though you've only changed one option. This is due to the large number of dependencies of the `CONFIG_LOG=y` setting.
 
 **Save minimal configuration**
 
-Both `menuconfig` and `guiconfig`, have the _Save minimal config_ option. As the name implies, this option exports a minimal `Kconfig` file containing _all_ symbols that differ from their default values. This does, however, also mean that symbols that differ from their default values due to _other_ `Kconfig` fragments than your application's configuration. E.g., the symbols in the `Kconfig` files of the chosen board are saved in this minimal configuration file.
+Both `menuconfig` and `guiconfig`, have the _Save minimal config_ option. As the name implies, this option exports a minimal `Kconfig` file containing _all_ symbols that differ from their default values. This does, however, also include symbols that differ from their default values due to _other_ `Kconfig` fragments than your application's configuration. E.g., the symbols in the `Kconfig` files of the chosen board are saved in this minimal configuration file.
 
 Let's try this out with our settings for the `BOOT_BANNER` and `PRINTK` symbols.
 
@@ -342,9 +344,9 @@ In case you don't like `menuconfig` or `guiconfig`, or just want to browse avail
 While this search does point out that there is a dependency on the `BOOT_BANNER` symbol, it cannot know our current configuration and therefore can't tell us that disabling `PRINTK` won't have any effect since `BOOT_BANNER` is also still enabled by default.
 
 
-### Nordic's Kconfig extension for `vscode`
+### Nordic's Kconfig extension for VS Code
 
-Another graphical user interface for _Kconfig_ is the [nRF Kconfig](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig) extension for `vscode`. This is an extension tailored for use with the [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk) and with Nordic's [complete `vscode` extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), but to some extent, this extension can also be used for a generic Zephyr project and might therefore also be useful if you're not developing for a target from [Nordic](https://www.nordicsemi.com/):
+Another graphical user interface for _Kconfig_ is the [nRF Kconfig](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig) extension for VS Code. This is an extension tailored for use with the [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk) and with Nordic's [complete VS Code extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), but to some extent, this extension can also be used for a generic Zephyr project and might therefore also be useful if you're not developing for a target from [Nordic](https://www.nordicsemi.com/):
 
 ![]({% img_url practical-zephyr/kconfig-nrf-vscode.png %})
 
@@ -366,13 +368,13 @@ However, as visible in the above screenshot, at the time of writing the extensio
 * The _Save minimal config_ option seems to recognize options coming from a `_defconfig` file and therefore really only exports the configuration options set within the extension.
 * The extension adds auto-completion to your `.conf` files.
 
-With this last tool to explore `Kconfig`, let's have a look at a couple of more options.
+With this last tool to explore _Kconfig_, let's have a look at a couple of more options.
 
 
 
 ## Using different configuration files
 
-Until now, we've only used the _application configuration file_ [prj.conf](https://github.com/lmapii/practical-zephyr/blob/main/00_basics/prj.conf) for setting _Kconfig_ symbols. In addition to this configuration file, the Zephyr build system automatically picks up additional _Kconfig_ _fragments_, if provided, and also allows explicitly specifying additional or alternative fragments.
+Until now, we've only used the _application configuration file_ [prj.conf](https://github.com/lmapii/practical-zephyr/blob/main/00_basics/prj.conf) for setting _Kconfig_ symbols. In addition to this configuration file, Zephyr's build system automatically picks up additional _Kconfig_ _fragments_, if provided, and also allows explicitly specifying additional or alternative fragments.
 
 We'll quickly glance through the most common practices here.
 
@@ -739,7 +741,7 @@ $ west build -d ../build -t menuconfig
 > **Notice:** It is also possible to source `Kconfig.zephyr` _after_ defining the application symbols and menus. This would have the effect that your options will be listed _before_ the Zephyr symbols and menus. In this section, we've sourced `Kconfig.zephr` before our own options since this is also the case in the template used by the official documentation.
 
 
-### Configuring the application build using `Kconfig`
+### Configuring the application build using _Kconfig_
 
 Now that we have our own `Kconfig` symbol, we can make use of it in the application's build process. Create two new files `usr_fun.c` and `usr_fun.h` in the `src` directory:
 
@@ -922,7 +924,7 @@ The following are great resources when it comes to Zephyr and are worth a read _
 
 - Zephyr's own [official documentation on Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig) is of course the first go-to reference.
 - Zephyr's official docs also contain a great collection of [Kconfig tips and best practices](https://docs.zephyrproject.org/latest/build/kconfig/tips.html#kconfig-tips-and-best-practices), including  [what not to turn into Kconfig options](https://docs.zephyrproject.org/latest/build/kconfig/tips.html#what-not-to-turn-into-kconfig-options) in case you're thinking about creating your own symbols.
-- If you want to see `Kconfig` in action in a device driver, I can highly recommend watching the [Tutorial: Mastering Zephyr Driver Development](https://www.youtube.com/watch?v=o-f2qCd2AXo) by Gerard Marull Paretas from the Zephyr Development Summit 2022.
+- If you want to see _Kconfig_ in action in a device driver, I can highly recommend watching the [Tutorial: Mastering Zephyr Driver Development](https://www.youtube.com/watch?v=o-f2qCd2AXo) by Gerard Marull Paretas from the Zephyr Development Summit 2022.
 - The Linux Kernel documentation contains a great section about the [Kconfig Language](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html).
 - In case you haven't done it yet, the [nRF Connect SDK Fundamentals](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/) course in Nordic's [DevAcademy](https://academy.nordicsemi.com/) also covers _Kconfig_.
 - [Golioth](https://golioth.io/) also has a large number of [blog posts about Zephyr](https://blog.golioth.io/category/zephyr/), make sure to check them out!
