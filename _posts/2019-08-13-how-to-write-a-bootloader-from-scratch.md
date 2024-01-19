@@ -28,7 +28,7 @@ use to make your bootloader more useful.
 <!-- excerpt end -->
 
 > If you'd rather listen to me present this information and see some demos in action, watch
-> [this webinar recording](https://www.youtube.com/watch?v=owPdKRQhMzk)
+> [this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar-recording-0)
 
 {% include newsletter.html %}
 
@@ -622,6 +622,6 @@ Next time in the series, we'll talk about bootstrapping the C library!
 
 _EDIT: Post written!_ - [Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
 
-> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://www.youtube.com/watch?v=owPdKRQhMzk)
+> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://go.memfault.com/device-firmware-update-best-practices-webinar-recording-0)
 
 {% include newsletter.html %}
