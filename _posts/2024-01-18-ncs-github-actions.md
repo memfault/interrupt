@@ -9,7 +9,7 @@ author: noah
 
 Recently we ran through a re-vamp of our CI builds targeting the Nordic
 nRF-Connect SDK, and I wanted to share some of the things we learned along the
-way! This article walks through of setting up a GitHub Actions workflow for
+way! This article walks through setting up a GitHub Actions workflow for
 building nRF-Connect SDK projects.
 
 <!-- excerpt end -->
