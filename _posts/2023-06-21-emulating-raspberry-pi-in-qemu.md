@@ -9,7 +9,7 @@ The Raspberry Pi, a compact single-board computer, is widely used for DIY projec
 
 With many available versions and flavors of Raspberry-compatible Linux, it's challenging to debug issues related to dependencies of each Linux version, and reflashing the Raspberry SD card each time with a different image is time-consuming. Emulating a Raspberry Pi with a tool such as QEMU could offer a solution to some of these challenges. While emulation is severely limited, and most hardware interactions will probably lead to application crashing, it is enough to debug dependency issues across Raspberry Linux versions.
 
-This article will delve into the challenges and opportunities of emulating a Raspberry Pi using QEMU. If you don't care about the details, you can jump straight to the [Docker image](#Dockerfile) section to get it running.
+This article will delve into the challenges and opportunities of emulating a Raspberry Pi using QEMU. If you don't care about the details, you can jump straight to the [Docker image](#dockerfile) section to get it running.
 
 <!-- excerpt start -->
 

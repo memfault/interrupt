@@ -246,7 +246,7 @@ $ tree --charset=utf-8 --dirsfirst
 └── prj.conf
 ```
 
-You should immediately notice that we're using a [CMakeLists.txt](CMakeLists.txt). Zephyr's build system is based on [CMake](https://cmake.org/). You've read that right: Zephyr provides its own meta-tool _West_, which uses yet another meta build system _CMake_, which will, in turn, e.g., use `make` or `ninja`.
+You should immediately notice that we're using a `CMakeLists.txt`. Zephyr's build system is based on [CMake](https://cmake.org/). You've read that right: Zephyr provides its own meta-tool _West_, which uses yet another meta build system _CMake_, which will, in turn, e.g., use `make` or `ninja`.
 
 > **Note:** You can find the complete application skeleton, including some additional comments, in the [`00_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/00_basics).
 
@@ -258,7 +258,7 @@ Since we want to learn how things work underneath, for the following steps, we'l
 
 #### Kconfig
 
-Our application skeleton also has a very suspicious [prj.conf](prj.conf) file. This file must exist for any application, even if empty, and is used by the [Kconfig configuration system](https://docs.zephyrproject.org/latest/build/kconfig/index.html). We'll go into detail about [Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html) (and *devicetree*) later in this series.
+Our application skeleton also has a very suspicious `prj.conf` file. This file must exist for any application, even if empty, and is used by the [Kconfig configuration system](https://docs.zephyrproject.org/latest/build/kconfig/index.html). We'll go into detail about [Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html) (and *devicetree*) later in this series.
 
 For now, simply keep in mind that we'll be using this configuration file to tell the build system which modules and which features we want to use in our application. Anything we don't plan on using will be deactivated, decreasing the size of our application and reducing compilation times.
 
@@ -292,7 +292,7 @@ Notice that this is a plain infinite loop and it doesn't make any use of threads
 
 Now we come to the heart of this first step towards Zephyr: The build configuration. In case you're not familiar at all with *CMake*, there are several articles and even books about ["Effective Modern CMake"](https://gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1): *CMake* has evolved significantly, and only certain patterns should be used for new applications. We won't explain *CMake* here, but if you're an experienced developer, you should understand the basics just fine when reading along.
 
-Let's go through the steps to create our [CMakeLists.txt](CMakeLists.txt) for this empty application:
+Let's go through the steps to create our `CMakeLists.txt` for this empty application:
 
 ```cmake
 cmake_minimum_required(VERSION 3.20.0)
@@ -350,7 +350,7 @@ endmacro()
 
 ### Building the application
 
-With the [CMakeLists.txt](CMakeLists.txt) in place, we can build the application. There are several ways to do this and if you're familiar with CMake, the below commands are no surprise. What we want to show, however, is the slight differences between using CMake or _West_ when building your application. Let's first use CMake:
+With the `CMakeLists.txt` in place, we can build the application. There are several ways to do this and if you're familiar with CMake, the below commands are no surprise. What we want to show, however, is the slight differences between using CMake or _West_ when building your application. Let's first use CMake:
 
 #### Building with CMake
 
@@ -361,7 +361,7 @@ $ cmake --build ../build -- -j4
 
 > **Note:** The [GitHub repository](https://github.com/lmapii/practical-zephyr) uses subfolders for all example applications. Using a build directory `../build` located in the root of the repository allows an editor such as `VS Code` to pick up the compile commands independent of the example that is being built. In case you're using `VS Code`, have a look at the provided [`settings.json`](https://github.com/lmapii/practical-zephyr/blob/main/.vscode/settings.json) file.
 
-With this, the `../build` folder contains the application built for the `BOARD` specified in the [CMakeLists.txt](CMakeLists.txt) file. The following command allows passing the `BOARD` to CMake directly and thereby either **overrides** a given `set(BOARD ...)` instruction or provides the `BOARD` in case it hasn't been specified at all:
+With this, the `../build` folder contains the application built for the `BOARD` specified in the `CMakeLists.txt` file. The following command allows passing the `BOARD` to CMake directly and thereby either **overrides** a given `set(BOARD ...)` instruction or provides the `BOARD` in case it hasn't been specified at all:
 
 ```bash
 # Build for a specific board determined during build time.
