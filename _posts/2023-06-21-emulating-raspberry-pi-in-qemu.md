@@ -32,7 +32,7 @@ Since I'm on a Mac, and the purpose is to get a working Docker image, I set up a
 apt-get install -y qemu-system-aarch64
 ```
 
-If you want to skip to the working Docker image just go to [Docker image](#Dockerfile) section and make sure you have Docker installed on your system (if not go to [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)).
+If you want to skip to the working Docker image just go to [Docker image](#dockerfile) section and make sure you have Docker installed on your system (if not go to [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)).
 
 ## Getting the Raspberry Pi image
 
