@@ -253,7 +253,11 @@ Symbols currently y-selecting this symbol:
 ...
 ```
 
-We found the reason why we can't disable the symbol at the very bottom fo the `PRINTK`'s symbol information! The symbol `BOOT_BANNER` is `y-selecting` the `PRINTK` symbol, which is why we can't disable it and why the application's configuration has no effect. This simple example should also make you realize that it is hard if not impossible to figure out dependencies by navigating `Kconfig` fragments file by file. Let's fix our configuration:
+We found the reason why we can't disable the symbol at the very bottom fo the `PRINTK`'s symbol information! The symbol `BOOT_BANNER` is `y-selecting` the `PRINTK` symbol, which is why we can't disable it and why the application's configuration has no effect. This simple example should also make you realize that it is hard if not impossible to figure out dependencies by navigating `Kconfig` fragments file by file.
+
+> **Notice:** In case you can't find a Kconfig symbol in `menuconfig`, you can toggle the _Show all_ mode using `Shift+A`. This shows hidden Kconfig symbols - and your symbol might be one of those!
+
+Let's fix our configuration:
 
 * Navigate to the `BOOT_BANNER` symbol and disable it.
 * Going back to `PRINTK` it should now be possible to disable it.
