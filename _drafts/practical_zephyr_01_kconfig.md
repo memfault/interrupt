@@ -536,7 +536,7 @@ Configuration saved to '/path/to/build/zephyr/.config'
 
 ### Extra configuration files
 
-There is one more option to modify the _Kconfig_, listed among the [important build system variables in Zephyr's official documentation](https://docs.zephyrproject.org/latest/develop/application/index.html#important-build-system-variables): `EXTRA_CONF_FILE`. This build system variable accepts one or more additional _Kconfig_ fragments. This option can be useful, e.g., to specify additional configuration options used by multiple build types (normal builds, "release" builds, "debug" builds) in a separate fragment.
+There is one more option to modify the _Kconfig_, listed among the [important build system variables in Zephyr's official documentation](https://docs.zephyrproject.org/latest/develop/application/index.html#important-build-system-variables): `EXTRA_CONF_FILE`. This build system variable accepts one or more additional _Kconfig_ fragments. This option can be useful, e.g., to specify additional configuration options used by multiple build types (normal builds, "release" builds, "debug" builds) in a separate fragment. An example could be adding TLS configs with a `tls.conf` or adding external NOR configs with `qspi_nor.conf`
 
 > **Note:** Since [Zephyr 3.4.0](https://docs.zephyrproject.org/latest/releases/release-notes-3.4.html) the `EXTRA_CONF_FILE` build system variable replaces the deprecated variable `OVERLAY_CONFIG`.
 
