@@ -411,9 +411,14 @@ CONFIG_USE_SEGGER_RTT=n
 CONFIG_BUILD_OUTPUT_STRIPPED=y
 CONFIG_FAULT_DUMP=0
 CONFIG_STACK_SENTINEL=y
+
+# Optimize build for size
+CONFIG_SIZE_OPTIMIZATIONS=y
 ```
 
-For now, don't worry about the symbols in this file, we'll catch up on them in the section about [Kconfig hardening](#kconfig-hardening). We can now instruct _West_ to use this `prj_release.conf` _instead_ of our `prj.conf` for the build by using the following command:
+For our release build, we set the symbol `CONFIG_SIZE_OPTIMIZATIONS` to `y` and thereby optimize our release build for _size_: [Build optimizations](https://docs.zephyrproject.org/latest/kconfig.html#CONFIG_COMPILER_OPTIMIZATIONS) are not set up in your _CMake_ configuration, but instead using _Kconfig_. Don't worry about all the other symbols in this file for now, we'll catch up on them in the section about [Kconfig hardening](#kconfig-hardening).
+
+We can now instruct _West_ to use this `prj_release.conf` _instead_ of our `prj.conf` for the build by using the following command:
 
 ```bash
 $ rm -rf ../build
@@ -431,7 +436,7 @@ Configuration saved to '/path/to/zephyr_practical/build/zephyr/.config'
 
 Thus, in short, Zephyr accepts build types by specifying an alternative `Kconfig` file that typically uses the file name format `prj_<build>.conf`, using the `CONF_FILE` build system variable. The name of the build type is entirely application-specific and does not imply any, e.g., compiler optimizations.
 
-> **Notice:** Zephyr uses _Kconfig_ to specify build types and also optimizations. Thus, _CMake_ options such as [`CMAKE_BUILD_TYPE`](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html) are typically **not** used directly in Zephyr projects.
+> **Notice:** Zephyr uses _Kconfig_ to specify build types and also optimizations. Thus, _CMake_ options such as [`CMAKE_BUILD_TYPE`](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html) are typically **not** used directly in Zephyr projects. This includes compiler optimization flags such as `-Os` or `-O2`, which are set using the [`CONFIG_COMPILER_OPTIMIZATIONS`](https://docs.zephyrproject.org/latest/kconfig.html#CONFIG_COMPILER_OPTIMIZATIONS) in Kconfig instead.
 
 
 ### Board-specific Kconfig fragments
@@ -459,7 +464,7 @@ $ cat boards/nrf52840dk_nrf52840.conf
 CONFIG_UART_CONSOLE=n
 ```
 
-Then, we perform a _pristine_ build of the project.
+Then, we perform a _pristine_ build of the project. Notice that a `--pristine` build is required at this point since otherwise our newly added `.conf` file is not picked up by the build system: This is one of the very few occasions where a pristine build is actually required.
 
 ```bash
 $ west build --board nrf52840dk_nrf52840 -d ../build --pristine
@@ -563,6 +568,8 @@ $ cat extra1.conf
 CONFIG_GPIO=n
 ```
 
+> **Notice:** In an actual project, you'll definitely need to pick better names for the extra configuration files, e.g., `no-debug.conf` and `no-gpio.conf`. I picked the names to explicitly show their use and to make the order in which the files are applied visible, as you'll see just now.
+
 We can now pass the two extra configuration fragments to the build system using the `EXTRA_CONF_FILE` variable. The paths are relative to the project root and can either be separated using semicolons or spaces:
 
 ```bash
@@ -641,7 +648,7 @@ The symbols in `prj_release.conf` have been chosen such that at the time of writ
 
 ## A custom Kconfig symbol
 
-In the previous sections, we had a thorough look at _Kconfig_ and its workings. To wrap up this article, we'll create a custom, application-specific symbol and use it in our application _and_ build process. While this is a rather unlikely use case, it nicely demonstrates how _Kconfig_ works.
+In the previous sections, we had a thorough look at _Kconfig_ and its workings. To wrap up this article, we'll create a custom, application-specific symbol and use it in our application _and_ build process.
 
 > **Note:** This section borrows from the [nRF Connect SDK Fundamentals lesson on configuration files](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/lessons/lesson-3-elements-of-an-nrf-connect-sdk-application/topic/configuration/) that is freely available in the [Nordic Developer Academy](https://academy.nordicsemi.com/). If you're looking for additional challenges, check out the available courses!
 
@@ -680,7 +687,7 @@ config USR_FUN
 endmenu
 ```
 
-The skeleton of this `Kconfig` file is well explained in the [official documentation](https://docs.zephyrproject.org/latest/develop/application/index.html#application-cmakelists-txt):
+The skeleton of this `Kconfig` file is well explained in [step 4 in the "Application CMakeLists.txt" section in the official documentation](https://docs.zephyrproject.org/latest/develop/application/index.html#application-cmakelists-txt):
 
 The statement _"mainmenu"_ defines a custom text that is used as our `Kconfig` main menu. It is shown, e.g., as a title in the build target `menuconfig`. We'll see this in a moment when we'll build our target and launch `menuconfig`.
 
@@ -695,7 +702,7 @@ source "Kconfig.zephyr"
 
 By sourcing the `Kconfig.zephr` file we're loading all _Kconfig_ menus and symbols provided with Zephr. Next, we declare our own menu between the _"menu"_ and _"endmenu"_ statements to group our application symbols. Within this menu, we declare our `USR_FUN` symbol, which we'll use to enable a function `usr_fun`.
 
-Let's rebuild our application without configuring `USR_FUN` and have a look at the build output:
+Let's rebuild our application without configuring `USR_FUN` and have a look at the build output. A `--pristine` build is required to pick up the new `Kconfig` file:
 
 ```bash
 $ west build --board nrf52840dk_nrf52840 -d ../build --pristine
