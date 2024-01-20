@@ -572,7 +572,7 @@ $ cat extra1.conf
 CONFIG_GPIO=n
 ```
 
-> **Notice:** In an actual project, you'll definitely need to pick better names for the extra configuration files, e.g., `no-debug.conf` and `no-gpio.conf`. I picked the names to explicitly show their use and to make the order in which the files are applied visible, as you'll see just now.
+> **Notice:** In an actual project, you'll definitely need to pick better names for the extra configuration files, e.g., `no-debug.conf` and `no-gpio.conf`. I'm using `extra0.conf` and `extra1.conf` to explicitly show their use and to make the order in which the files are applied visible, as you'll see just now.
 
 We can now pass the two extra configuration fragments to the build system using the `EXTRA_CONF_FILE` variable. The paths are relative to the project root and can either be separated using semicolons or spaces:
 
