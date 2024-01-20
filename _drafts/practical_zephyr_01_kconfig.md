@@ -738,7 +738,7 @@ $ west build -d ../build -t menuconfig
 ![]({% img_url practical-zephyr/kconfig-custom.png %})
 ![]({% img_url practical-zephyr/kconfig-application.png %})
 
-> **Notice:** It is also possible to source `Kconfig.zephyr` _after_ defining the application symbols and menus. This would have the effect that your options will be listed _before_ the Zephyr symbols and menus. In this section, we've sourced `Kconfig.zephr` before our own options since this is also the case in the template used by the official documentation.
+> **Notice:** It is also possible to source `Kconfig.zephyr` _after_ defining the application symbols and menus. This would have the effect that your options will be listed _before_ the Zephyr symbols and menus. In this section, we've sourced `Kconfig.zephr` before our own options.
 
 
 ### Configuring the application build using _Kconfig_
