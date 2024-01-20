@@ -871,7 +871,7 @@ Now our build succeeds for either configuration of the `USR_FUN` symbol. Clearly
 
 > **Note:** The application builds and links, but you won't see any output on the serial console in case you've followed along: The _Kconfig_ symbols responsible for the serial output are still disabled within `prj.conf` and the board-specific fragment. Feel free to update your configuration, e.g., by enabling the debug output for normal builds while disabling it for the "release" build!
 
-To understand why we can use the `CONFIG_USR_FUN` definition, we can have a look at the compiler commands used to compiler `main.c`. Conveniently (as mentioned in the previous article), by default, Zephyr enables the _CMake_ variable [`CMAKE_EXPORT_COMPILE_COMMANDS`](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html). The compiler command for `main.c` is thus captured by the `compile_commands.json` in our build directory:
+To understand why we can use the `CONFIG_USR_FUN` definition, we can have a look at the compiler commands used to compile `main.c`. Conveniently (as mentioned in the previous article), by default, Zephyr enables the _CMake_ variable [`CMAKE_EXPORT_COMPILE_COMMANDS`](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html). The compiler command for `main.c` is thus captured by the `compile_commands.json` in our build directory:
 
 ```json
 {
