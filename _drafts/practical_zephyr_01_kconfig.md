@@ -156,7 +156,7 @@ $ west build --board nrf52840dk_nrf52840 --build-dir ../build --pristine
 $ west flash --build-dir ../build
 ```
 
-> **Notice:** When changing your _Kconfig_ symbols, it is recommended to use the `--pristine` option to enforce a complete rebuild of your application. This in turn also requires specifying the correct `--board` in case you didn't configure it using `west config`.
+> **Notice:** In most cases when changing your _Kconfig_ symbols, you can simply run `west build` and the build system will rebuild the appropriate source. But in some cases it is required to use the `--pristine` option to enforce a complete rebuild of your application. Typically this is needed when adding new build or configuration files. If you do encounter a build error or are missing a configuration change, try rebuilding with `--pristine`. This in turn also requires specifying the correct `--board` in case you didn't configure it using `west config`.
 
 ```
 $ screen /dev/tty.usbmodem<some-serial-number> 115200
