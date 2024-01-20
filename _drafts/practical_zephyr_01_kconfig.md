@@ -215,7 +215,7 @@ $ west build --build-dir ../build -t menuconfig
 $ west build --build-dir ../build -t guiconfig
 ```
 
-> **Notice:** If you did not build your project or if the project does not compile, then the tool will not load since the `zephyr/.config` file is missing.
+> **Notice:** If you did not build your project or if the build system cannot build the required targets due to CMake/Kconfig processing issues, then the tool will not load since the `zephyr/.config` file is missing.
 
 ![]({% img_url practical-zephyr/kconfig-menuconfig.png %})
 ![]({% img_url practical-zephyr/kconfig-guiconfig.png %})
