@@ -132,6 +132,33 @@ manifest:
 > (which is what the nRF-Connect SDK does), since I only have two projects
 > imported.
 
+> Note #2: we could make use of the
+> [`name-allowlist`](https://docs.zephyrproject.org/3.5.0/develop/west/manifest.html#option-3-mapping)
+> key when importing the nRF-Connect SDK, to only import the projects we need.
+> This can be very useful to reduce the size of the workspace, but it's not
+> required. It looks something like this:
+>
+> ```yaml
+>     - name: sdk-nrf
+>       path: nrf
+>       url: https://github.com/nrfconnect/sdk-nrf.git
+>       revision: v2.5.1
+>       import:
+>         name-allowlist:
+>           - hostap
+>           - zephyr
+>           - mcuboot
+>           - mbedtls
+>           - nrfxlib
+>           - cmsis
+>           - hal_nordic
+> ```
+>
+> It can be a little tricky to figure out which projects are required. The `west
+> manifest --resolve` command can be helpful to print out all the projects
+> selected by the manifest. I recommend saving the full list to a file, then
+> start pruning and rebuilding the workspace until the minimal set is found.
+
 Let's save our work and push it to a new GitHub repository:
 
 ```bash
