@@ -4,7 +4,7 @@ description: Article series "Practical Zephyr", third part, devicetree basics.
 author: lampacher
 ---
 
-In the previous article, we configured _software_ using the [kernel configuration tool Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig), and we've silently assumed that there's a UART interface on our board that is configurable and used for logging.
+In the [previous article]({% post_url 2024-01-24-practical_zephyr_kconfig %}), we configured _software_ using the [kernel configuration tool Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig), and we've silently assumed that there's a UART interface on our board that is configurable and used for logging.
 
 <!-- excerpt start -->
 
@@ -33,7 +33,7 @@ A short heads-up: We will _not_ define our own, custom _board_, and we will _not
 
 ## What's a _devicetree_?
 
-Let's first deal with the terminology: In simple words, the _devicetree_ is a tree data structure that you provide to describe your hardware. Each _node_ describes one _device_, e.g., the UART peripheral that we used for logging via `printk` in the previous article. Except for the root note, each node has exactly one parent, thus the term device*tree*.
+Let's first deal with the terminology: In simple words, the _devicetree_ is a tree data structure that you provide to describe your hardware. Each _node_ describes one _device_, e.g., the UART peripheral that we used for logging via `printk` in the [previous article]({% post_url 2024-01-24-practical_zephyr_kconfig %}). Except for the root note, each node has exactly one parent, thus the term device*tree*.
 
 Devicetree files use their own _DeviceTree Source (DTS) format_, defined in the [official devicetree specification](https://www.devicetree.org/specifications/). For certain file types (bindings) used by _devicetree_, Zephyr uses yet another file format - but fear not, it simply replaces the _DTS format_ with simple `.yaml` files. We'll cover _bindings_ in the next article, so for now we'll just focus on devicetree source files. There are also some subtle differences between the official devicetree specification and the way it is used in Zephyr, but we'll touch up on that throughout this article.
 
