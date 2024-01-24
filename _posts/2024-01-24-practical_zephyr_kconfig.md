@@ -1,13 +1,13 @@
 ---
 title: Practical Zephyr - Kconfig (Part 2)
-description: Article series "Practical Zephyr", second part, covering the kernel configuration system Kconfig.
+description: Article series "Practical Zephyr", the second part covering the kernel configuration system Kconfig.
 author: lampacher
 tags: [zephyr, kconfig]
 ---
 
 <!-- excerpt start -->
 
-In this second article of the "Practical Zephyr" series, we'll explore the [kernel configuration system Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig) by looking at the `printk` logging option in Zephyr. We won't explore the logging service as such in detail, but instead use it as an excuse to dive deep into [Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig). Finally, we'll create our own little application-specific _Kconfig_ configuration.
+In this second article of the "Practical Zephyr" series, we'll explore the [kernel configuration system Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig) by looking at the `printk` logging option in Zephyr. We won't explore the logging service as such in detail but instead use it as an excuse to dive deep into [Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig). Finally, we'll create our own little application-specific _Kconfig_ configuration.
 
 <!-- excerpt end -->
 
@@ -17,11 +17,9 @@ In this second article of the "Practical Zephyr" series, we'll explore the [kern
 
 ## Prerequisites
 
-This article is part of an article _series_. In case you haven't read the [previous article]({% post_url 2024-01-10-practical_zephyr_basics %}), please go ahead and have a look since it explains the required installation steps to follow along. If you're already familiar with Zephyr and have a working installation at hand, it should be easy enough for you to follow using your own setup.
+This article is part of an article _series_. In case you haven't read the [previous article]({% post_url 2024-01-10-practical_zephyr_basics %}), please go ahead and have a look since it explains the required installation steps to follow along. If you're already familiar with Zephyr and have a working installation handy, it should be easy to follow using your own setup.
 
 > **Note:** A full example application including all the configuration files that we'll see throughout this article is available in the [`01_kconfig` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/01_kconfig).
-
-
 
 ## Warm up with `printk`
 
@@ -54,11 +52,11 @@ void main(void)
 
 But where does our output end up?
 
-As mentioned in the previous article, in this guide we're using a development kit from [Nordic](https://www.nordicsemi.com/); in my case the [development kit for the nRF52840](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk). For most development kits the logging output is available via its UART interface and the following settings:
+As mentioned in the previous article, we're using a development kit from [Nordic](https://www.nordicsemi.com/); in my case, the [development kit for the nRF52840](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk). For most development kits, the logging output is available via its UART interface and the following settings:
 
 * Baud rate: _115200_ bits/s
 * Data bits: _8_
-* No parity, one stop bit.
+* No parity, one stop bit
 
 The connection settings for the UART interface are configured using [devicetree](https://docs.zephyrproject.org/latest/build/dts/index.html) - which we'll explore in a later article. Since these default settings are all we need for now, let's focus on Kconfig. We build and flash the project as follows:
 
@@ -79,9 +77,7 @@ Message in a bottle.
 $ # use CTRL+A+k to quit the screen command.
 ```
 
-Great! But what if we'd like to get rid of this feature entirely without changing our code? We all know that string processing is expensive and slow on an embedded system. Let's assume that in a production build, we want to get rid of any logging output to reduce our image size and to speed up our application. How do we achieve this? This is where the [kernel configuration system _"Kconfig"_](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig) comes into play.
-
-
+Great! But what if we'd like to get rid of this feature entirely without changing our code? We all know that string processing is expensive and slow on an embedded system. Let's assume that in a production build, we want to get rid of any logging output to reduce our image size and speed up our application. How do we achieve this? This is where the [kernel configuration system _"Kconfig"_](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig) comes into play.
 
 ## Kconfig
 
@@ -89,17 +85,18 @@ We've seen that Zephyr uses [CMake](https://docs.zephyrproject.org/latest/build/
 
 In this article, we'll explore the _practical_ aspects of Kconfig. As always, much more detailed information about Kconfig in Zephyr can be found in the [official documentation](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig). So, what is Kconfig?
 
-In simple words, Kconfig is a configuration system that uses a hierarchy of configuration _files_ (with their own syntax) which in turn define a hierarchy of configuration _options_, also called _symbols_. These symbols are used by the _build system_ to include or exclude files from the build process and as configuration options in the _source code_ itself. All in all, this allows you to modify your application without having to modify the source code.
+In simple words, Kconfig is a configuration system that uses a hierarchy of configuration _files_ (with their own syntax), which in turn define a hierarchy of configuration _options_, also called _symbols_. The _build system uses these symbols_ to include or exclude files from the build process and as configuration options in the _source code_ itself. All in all, this allows you to modify your application without modifying the source code.
 
 ### Configuring symbols
 
 For the time being, let's ignore _how_ the entire _Kconfig_ hierarchy is built or merged, and let's just have a look at how the configuration system works in general.
 
-The debugging subsystem of Zephyr defines the _Kconfig_ symbol `PRINTK` that allows you to enable or disable the `printk` output. This `PRINTK` _symbol_ is defined in the `Kconfig` file `zephyr/subsys/debug/Kconfig`. We won't go into detail about the syntax here, for this simple example it is quite self-explanatory.
+The debugging subsystem of Zephyr defines the _Kconfig_ symbol `PRINTK` that allows you to enable or disable the `printk` output. This `PRINTK` _symbol_ is defined in the `Kconfig` file `zephyr/subsys/debug/Kconfig`. We won't go into detail about the syntax here. It is quite self-explanatory for this example.
 
 > For details about _Kconfig_'s syntax, you can have a look at the _Kconfig_ language specification in the [Linux kernel documentation](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html) or Zephyr's [Kconfig tips and best practices](https://docs.zephyrproject.org/latest/build/kconfig/tips.html#kconfig-tips-and-best-practices).
 
 `zephyr/subsys/debug/Kconfig`
+
 ```conf
 config PRINTK
 	bool "Send printk() to console"
@@ -112,7 +109,7 @@ As you can see from the above `Kconfig` file, unless configured otherwise, `PRIN
 CONFIG_<symbol name>=<value>
 ```
 
-> **Note:**  At the time of writing no spaces are allowed before or after the `=` operator.
+> **Note:**  At the time of writing, no spaces are allowed before or after the `=` operator.
 
 Our `PRINTK` is a symbol of type `bool` and can be assigned the values `y` and `n` (have a look at the [official documentation](https://docs.zephyrproject.org/latest/build/kconfig/setting.html#setting-kconfig-configuration-values) for details). To disable `PRINTK`, we can therefore add the following to our application configuration file [prj.conf](https://github.com/lmapii/practical-zephyr/blob/main/01_kconfig/prj.conf):
 
@@ -125,29 +122,31 @@ What's the effect of changing a symbol? As mentioned before, this _can_ affect t
 Let's have a short look at our `PRINTK` symbol. A quick search for `CONFIG_PRINTK` in our local Zephyr code reveals how the symbol is used in the implementation of the `printk` debugging subsystem. Notice that the below snippets are simplified versions of the real code:
 
 `zephyr/lib/os/printk.h`
+
 ```c
 #ifdef CONFIG_PRINTK
 extern void printk(const char *fmt, ...);
 #else
 static inline void printk(const char *fmt, ...)
 {
-	ARG_UNUSED(fmt);
+    ARG_UNUSED(fmt);
 }
 ```
 
 `zephyr/lib/os/printk.c`
+
 ```c
 #ifdef CONFIG_PRINTK
 void printk(const char *fmt, ...)
 {
-  // ...
+    // ...
 }
 #endif /* defined(CONFIG_PRINTK) */
 ```
 
-> **Notice:** In our `prj.conf` file we **set** `CONFIG_PRINTK=n`, but in the implementation, this translates to a missing definition, not a definition with a value of `n`. This is simply what a `bool` symbol translates to in the implementation. For details, I'll once again have to direct you to the [official documentation](https://docs.zephyrproject.org/latest/build/kconfig/setting.html#setting-kconfig-configuration-values).
+> **Notice:** In our `prj.conf` file, we **set** `CONFIG_PRINTK=n`, but in the implementation, this translates to a missing definition, not a definition with a value of `n`. This is simply what a `bool` symbol translates to in the implementation. For details, I'll once again have to direct you to the [official documentation](https://docs.zephyrproject.org/latest/build/kconfig/setting.html#setting-kconfig-configuration-values).
 
-In the header file `zephyr/lib/os/printk.h` we can see that `printk` is replaced by a dummy function in case `PRINTK` is disabled. Thus, all the calls to `printk` will effectively be removed by the compiler. In the `zephyr/lib/os/printk.c` source file we can see that the `#if` directive is used to conditionally compile the relevant source code only in case `PRINTK` is enabled. Later in this section, we'll also see an example of how files can be excluded entirely by the build system in case an option is not enabled.
+In the header file `zephyr/lib/os/printk.h` we can see that `printk` is replaced by a dummy function in case `PRINTK` is disabled. Thus, all the calls to `printk` will effectively be removed by the compiler. In the `zephyr/lib/os/printk.c` source file, we can see that the `#if` directive is used to conditionally compile the relevant source code only in case `PRINTK` is enabled. Later in this section, we'll also see an example of how files can be excluded entirely by the build system if an option is not enabled.
 
 With `printk` disabled in our application configuration file, let's try to rerun our application to verify that the output is indeed disabled:
 
@@ -156,7 +155,7 @@ $ west build --board nrf52840dk_nrf52840 --build-dir ../build --pristine
 $ west flash --build-dir ../build
 ```
 
-> **Notice:** In most cases when changing your _Kconfig_ symbols, you can simply run `west build` and the build system will rebuild the appropriate source. But in some cases it is required to use the `--pristine` option to enforce a complete rebuild of your application. Typically this is needed when adding new build or configuration files. If you do encounter a build error or are missing a configuration change, try rebuilding with `--pristine`. This in turn also requires specifying the correct `--board` in case you didn't configure it using `west config`.
+> **Notice:** In most cases when changing your _Kconfig_ symbols, you can simply run `west build` and the build system will rebuild the appropriate source. But in some cases, it is required to use the `--pristine` option to enforce a complete rebuild of your application. Typically, this is needed when adding new build or configuration files. If you encounter a build error or are missing a configuration change, try rebuilding with `--pristine`. This in turn also requires specifying the correct `--board` in case you didn't configure it using `west config`.
 
 ```
 $ screen /dev/tty.usbmodem<some-serial-number> 115200
@@ -166,17 +165,16 @@ Message in a bottle.
 
 Huh. Even though we've disabled `PRINTK` using `CONFIG_PRINTK=n` in our `prj.conf` file, the output is still not disabled. The build passed, and there were no warnings - did we miss something?
 
-
-
 ## Navigating Kconfig
 
 As mentioned before, _Kconfig_ uses an entire _hierarchy_ of `Kconfig` files. The initial configuration is merged from several `Kconfig` files, including the `Kconfig` file of the specified board. The exact procedure used by Zephyr for merging the configuration file is explained in great detail in a [dedicated section of the official documentation](https://docs.zephyrproject.org/latest/build/kconfig/setting.html#the-initial-configuration) but is not worth repeating here.
 
 > **Notice:** The command line output of `west build` also shows the order in which _Kconfig_ merges the configuration files. We'll see this in the section about [build types and alternative Kconfig files](#build-types-and-alternative-kconfig-files).
 
-When debugging _Kconfig_ settings, it can be helpful to have a look at the generated output. All _Kconfig_ symbols are merged into a single `zephyr/.config` file located in the build directory, in our case `build/zephyr/.config`. There, we find the following setting:
+When debugging _Kconfig_ settings, it can be helpful to have a look at the generated output. All _Kconfig_ symbols are merged into a single `zephyr/.config` file located in the build directory, in our case, `build/zephyr/.config`. There, we find the following setting:
 
 `build/zephyr/.config`
+
 ```conf
 #
 # Debugging Options
@@ -189,10 +187,9 @@ CONFIG_PRINTK=y
 
 It seems that our `CONFIG_PRINTK` setting was not accepted. Why?
 
-The reason is that `Kconfig` files can have _dependencies_: Enabling one option can automatically also enable other options. Sadly, at the time of writing, _Kconfig_ does not seem to warn about conflicting values for symbols, e.g., from the application configuration file: It'd be great if Kconfig would tell me that my `CONFIG_PRINTK=n` setting is overwritten by some other option and has no effect!
+The reason is that `Kconfig` files can have _dependencies_: Enabling one option can automatically also enable other options. Sadly, at the time of writing, _Kconfig_ does not seem to warn about conflicting values for symbols, e.g., from the application configuration file: It'd be great if Kconfig would tell me that some other option overwrites my `CONFIG_PRINTK=n` setting and has no effect!
 
 Zephyr contains _hundreds_ of so-called Kconfig _fragments_. It is therefore almost impossible to navigate these files without tool support. Thankfully, _West_ integrates two graphical tools to explore available _Kconfig_ options and their current setting: `menuconfig` and `guiconfig`.
-
 
 ### Loading `menuconfig` and `guiconfig`
 
@@ -215,7 +212,7 @@ $ west build --build-dir ../build -t menuconfig
 $ west build --build-dir ../build -t guiconfig
 ```
 
-> **Notice:** If you did not build your project or if the build system cannot build the required targets due to CMake/Kconfig processing issues, then the tool will not load since the `zephyr/.config` file is missing.
+> **Notice:** If you did not build your project or the build system cannot build the required targets due to CMake/Kconfig processing issues, the tool will not load since the `zephyr/.config` file is missing.
 
 ![]({% img_url practical-zephyr/kconfig-menuconfig.png %})
 ![]({% img_url practical-zephyr/kconfig-guiconfig.png %})
@@ -226,11 +223,11 @@ For the sake of simplicity, we'll use `menuconfig` in the remainder of this arti
 PRINTK(=y) "Send printk() to console"
 ```
 
-Navigate to the symbol either using the search or using the path _Subsystems and OS Services > Debugging Options_. You should see the following screen:
+Navigate to the symbol using the search or the path _Subsystems and OS Services > Debugging Options_. You should see the following screen:
 
 ![]({% img_url practical-zephyr/kconfig-menuconfig-debug.png %})
 
-Typically, you can toggle `bool` symbols using `Space` or `Enter`, but this does not seem to be possible for `PRINTK`. You can see that a symbol cannot be changed - which is indicated by the marker `*` being enclosed by dashes `-*-` instead of square brackets `[*]`. Using `?` we can display the symbol's information:
+Typically, you can toggle `bool` symbols using `Space` or `Enter`, but this does not seem to be possible for `PRINTK`. You can see that a symbol cannot be changed - which is indicated by the marker `*` being enclosed by dashes `-*-` instead of square brackets `[*]`. Using `?`, we can display the symbol's information:
 
 ```
 Name: PRINTK
@@ -253,15 +250,14 @@ Symbols currently y-selecting this symbol:
 ...
 ```
 
-We found the reason why we can't disable the symbol at the very bottom fo the `PRINTK`'s symbol information! The symbol `BOOT_BANNER` is `y-selecting` the `PRINTK` symbol, which is why we can't disable it and why the application's configuration has no effect. This simple example should also make you realize that it is hard if not impossible to figure out dependencies by navigating `Kconfig` fragments file by file.
+We found the reason why we can't disable the symbol at the very bottom fo the `PRINTK`'s symbol information! The symbol `BOOT_BANNER` is `y-selecting` the `PRINTK` symbol, so we can't disable it, and the application's configuration has no effect. This simple example should also make you realize that it is hard, if not impossible, to figure out dependencies by navigating `Kconfig` fragments file by file.
 
-> **Notice:** In case you can't find a Kconfig symbol in `menuconfig`, you can toggle the _Show all_ mode using `Shift+A`. This shows hidden Kconfig symbols - and your symbol might be one of those!
+> **Notice:** If you can't find a Kconfig symbol in `menuconfig`, you can toggle the _Show all_ mode using `Shift+A`. This shows hidden Kconfig symbols - your symbol might be one of those!
 
 Let's fix our configuration:
 
 * Navigate to the `BOOT_BANNER` symbol and disable it.
 * Going back to `PRINTK` it should now be possible to disable it.
-
 
 ### Persisting `menuconfig` and `guiconfig` changes
 
@@ -299,7 +295,7 @@ This approach, however, is not always feasible. E.g., try to enable the logging 
 
 **Save minimal configuration**
 
-Both `menuconfig` and `guiconfig`, have the _Save minimal config_ option. As the name implies, this option exports a minimal `Kconfig` file containing _all_ symbols that differ from their default values. This does, however, also include symbols that differ from their default values due to _other_ `Kconfig` fragments than your application's configuration. E.g., the symbols in the `Kconfig` files of the chosen board are saved in this minimal configuration file.
+Both `menuconfig` and `guiconfig` have the _Save minimal config_ option. As the name implies, this option exports a minimal `Kconfig` file containing _all_ symbols that differ from their default values. This does, however, also include symbols that differ from their default values due to _other_ `Kconfig` fragments than your application's configuration. E.g., the symbols in the `Kconfig` files of the chosen board are saved in this minimal configuration file.
 
 Let's try this out with our settings for the `BOOT_BANNER` and `PRINTK` symbols.
 
@@ -311,6 +307,7 @@ $ west build -d ../build -t menuconfig
 # - Use [D] "Save minimal config" and write the changes to tmp.conf.
 $ cat tmp.conf
 ```
+
 ```conf
 CONFIG_GPIO=y
 CONFIG_PINCTRL=y
@@ -338,7 +335,6 @@ CONFIG_BOOT_BANNER=n
 
 Now, after rebuilding, the output on our serial interface indeed remains empty. Also, if you look at the output of your build should notice that the _flash_ usage decreased by around 2 KB.
 
-
 ### Kconfig search
 
 In case you don't like `menuconfig` or `guiconfig`, or just want to browse available configuration options, Zephyr's documentation also includes a dedicated [Kconfig search](https://docs.zephyrproject.org/latest/kconfig.html). E.g., when [searching for our `PRINTK` configuration](https://docs.zephyrproject.org/latest/kconfig.html#CONFIG_PRINTK) we'll be presented with the following output:
@@ -347,14 +343,13 @@ In case you don't like `menuconfig` or `guiconfig`, or just want to browse avail
 
 While this search does point out that there is a dependency on the `BOOT_BANNER` symbol, it cannot know our current configuration and therefore can't tell us that disabling `PRINTK` won't have any effect since `BOOT_BANNER` is also still enabled by default.
 
-
 ### Nordic's Kconfig extension for VS Code
 
 Another graphical user interface for _Kconfig_ is the [nRF Kconfig](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig) extension for VS Code. This is an extension tailored for use with the [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk) and with Nordic's [complete VS Code extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), but to some extent, this extension can also be used for a generic Zephyr project and might therefore also be useful if you're not developing for a target from [Nordic](https://www.nordicsemi.com/):
 
 ![]({% img_url practical-zephyr/kconfig-nrf-vscode.png %})
 
-At the time of writing and for this repository the following configuration options were necessary to use the extension in a workspace that does not rely on the entire extension set:
+At the time of writing and for this repository, the following configuration options were necessary to use the extension in a workspace that does not rely on the entire extension set:
 
 ```json
 {
@@ -365,7 +360,7 @@ At the time of writing and for this repository the following configuration optio
 }
 ```
 
-> **Note:** Let's hope that the good people at Nordic find the time to change this extension such that it is easily usable for any kind of Zephyr project!
+> **Note:** Let's hope that the good people at Nordic find the time to change this extension so that it is easily usable for any Zephyr project!
 
 However, as visible in the above screenshot, at the time of writing the extension fails to inform the user about the dependency to `BOOT_BANNER`, and in contrast to `menuconfig` and `guiconfig` it is therefore not visible why the configuration option cannot be disabled. Aside from that, this extension has two major benefits:
 
@@ -374,14 +369,11 @@ However, as visible in the above screenshot, at the time of writing the extensio
 
 With this last tool to explore _Kconfig_, let's have a look at a couple of more options.
 
-
-
 ## Using different configuration files
 
 Until now, we've only used the _application configuration file_ [prj.conf](https://github.com/lmapii/practical-zephyr/blob/main/00_basics/prj.conf) for setting _Kconfig_ symbols. In addition to this configuration file, Zephyr's build system automatically picks up additional _Kconfig_ _fragments_, if provided, and also allows explicitly specifying additional or alternative fragments.
 
 We'll quickly glance through the most common practices here.
-
 
 ### Build types and alternative Kconfig files
 
@@ -405,6 +397,7 @@ $ tree --charset=utf-8 --dirsfirst
 
 $ cat prj_release.conf
 ```
+
 ```conf
 CONFIG_LOG=n
 CONFIG_PRINTK=n
@@ -420,7 +413,7 @@ CONFIG_STACK_SENTINEL=y
 CONFIG_SIZE_OPTIMIZATIONS=y
 ```
 
-For our release build, we set the symbol `CONFIG_SIZE_OPTIMIZATIONS` to `y` and thereby optimize our release build for _size_: [Build optimizations](https://docs.zephyrproject.org/latest/kconfig.html#CONFIG_COMPILER_OPTIMIZATIONS) are not set up in your _CMake_ configuration, but instead using _Kconfig_. Don't worry about all the other symbols in this file for now, we'll catch up on them in the section about [Kconfig hardening](#kconfig-hardening).
+For our release build, we set the symbol `CONFIG_SIZE_OPTIMIZATIONS` to `y` and thereby optimize our release build for _size_: [Build optimizations](https://docs.zephyrproject.org/latest/kconfig.html#CONFIG_COMPILER_OPTIMIZATIONS) are not set up in your _CMake_ configuration, but instead using _Kconfig_. Don't worry about all the other symbols in this file for now. We'll catch up on them in the section about [Kconfig hardening](#kconfig-hardening).
 
 We can now instruct _West_ to use this `prj_release.conf` _instead_ of our `prj.conf` for the build by using the following command:
 
@@ -442,14 +435,13 @@ Thus, in short, Zephyr accepts build types by specifying an alternative `Kconfig
 
 > **Notice:** Zephyr uses _Kconfig_ to specify build types and also optimizations. Thus, _CMake_ options such as [`CMAKE_BUILD_TYPE`](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html) are typically **not** used directly in Zephyr projects. This includes compiler optimization flags such as `-Os` or `-O2`, which are set using the [`CONFIG_COMPILER_OPTIMIZATIONS`](https://docs.zephyrproject.org/latest/kconfig.html#CONFIG_COMPILER_OPTIMIZATIONS) in Kconfig instead.
 
-
 ### Board-specific Kconfig fragments
 
 Aside from the application configuration file [prj.conf](https://github.com/lmapii/practical-zephyr/blob/main/01_kconfig/prj.conf), Zephyr also automatically picks up board-specific Kconfig _fragments_. Board fragments are placed in the `boards` directory in the project root (next to the `CMakeLists.txt` file) and use the `<board>.conf` name format.
 
 E.g., throughout this guide, we're using the nRF52840 development kit, which has the board name `nrf52840dk_nrf52840`. Thus, the file `boards/nrf52840dk_nrf52840.conf` is automatically merged into the `Kconfig` configuration during the build, if present.
 
-Let's try this out by disabling UART as console output using a new fragment `boards/nrf52840dk_nrf52840.conf`. For the nRF52840 development kit, this symbol is enabled by default, you can go ahead and verify this by checking the default configuration `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig` - or take my word for it:
+Let's try this by disabling UART as console output using a new fragment `boards/nrf52840dk_nrf52840.conf`. For the nRF52840 development kit, this symbol is enabled by default. You can go ahead and verify this by checking the default configuration `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig` - or take my word for it:
 
 ```bash
 tree --charset=utf-8 --dirsfirst
@@ -464,11 +456,12 @@ tree --charset=utf-8 --dirsfirst
 
 $ cat boards/nrf52840dk_nrf52840.conf
 ```
+
 ```conf
 CONFIG_UART_CONSOLE=n
 ```
 
-Then, we perform a _pristine_ build of the project. Notice that a `--pristine` build is required at this point since otherwise our newly added `.conf` file is not picked up by the build system: This is one of the very few occasions where a pristine build is actually required.
+Then, we perform a _pristine_ build of the project. Notice that a `--pristine` build is required at this point because otherwise, the build system does not pick up our newly added `.conf` file. This is one of the very few occasions where a pristine build is actually required.
 
 ```bash
 $ west build --board nrf52840dk_nrf52840 -d ../build --pristine
@@ -490,7 +483,7 @@ CMake Warning at /opt/nordic/ncs/v2.4.0/zephyr/CMakeLists.txt:838 (message):
 
 You can of course verify that the symbol is indeed disabled by checking the `zephyr/.config` file in the `build` directory.
 
-> **Notice:** Previous versions of Zephyr used a `prj_<board>.conf` fragment in the project root directory instead of board fragments in the `boards` directory. At the time of writing the build system still merges any such file into the configuration. This `prj_<board>.conf` fragment, however, is deprecated, and `boards/<board>.conf` should be used instead.
+> **Notice:** Previous versions of Zephyr used a `prj_<board>.conf` fragment in the project root directory instead of board fragments in the `boards` directory. At the time of writing, the build system still merges any such file into the configuration. However, this `prj_<board>.conf` fragment is deprecated, and `boards/<board>.conf` should be used instead.
 
 How are board fragments used by our previously created `release` build type? Let's try it out and have a look at the build output:
 
@@ -498,6 +491,7 @@ How are board fragments used by our previously created `release` build type? Let
 $ rm -rf ../build
 $ west build --board nrf52840dk_nrf52840 -d ../build -- -DCONF_FILE=prj_release.conf
 ```
+
 ```
 Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
 Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
@@ -505,7 +499,7 @@ Merged configuration '/path/to/01_kconfig/prj_release.conf'
 Configuration saved to '/path/to/build/zephyr/.config'
 ```
 
-Well, this is awkward: Even though we provided a board-specific `Kconfig` fragment it is ignored as soon as we switch to our alternative `prj_release.conf` configuration. This is, however, [working as intended](https://docs.zephyrproject.org/latest/build/kconfig/setting.html#the-initial-configuration): When using alternative `Kconfig` files in the format `prj_<build>.conf`, Zephyr looks for a board fragment matching the file name `boards/<board>_<build>.conf`.
+Well, this is awkward: Even though we provided a board-specific `Kconfig` fragment, it is ignored as soon as we switch to our alternative `prj_release.conf` configuration. This is, however, [working as intended](https://docs.zephyrproject.org/latest/build/kconfig/setting.html#the-initial-configuration): When using alternative `Kconfig` files in the format `prj_<build>.conf`, Zephyr looks for a board fragment matching the file name `boards/<board>_<build>.conf`.
 
 In my case, I need to create the file `boards/nrf52840dk_nrf52840_release.conf`. Let's get rid of the warning for the Zephyr library `drivers__console` by disabling the `CONSOLE` entirely in our board's release configuration:
 
@@ -523,17 +517,19 @@ tree --charset=utf-8 --dirsfirst
 
 $ cat boards/nrf52840dk_nrf52840_release.conf
 ```
+
 ```conf
 CONFIG_CONSOLE=n
 CONFIG_UART_CONSOLE=n
 ```
 
-Now, when we rebuild the project we see that our board fragment is merged into the `Kconfig` configuration, and no warning is issued by `west build`:
+Now, when we rebuild the project, we see that our board fragment is merged into the `Kconfig` configuration, and no warning is issued by `west build`:
 
 ```bash
 $ rm -rf ../build
 $ west build --board nrf52840dk_nrf52840 -d ../build -- -DCONF_FILE=prj_release.conf
 ```
+
 ```
 Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
 Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
@@ -541,7 +537,6 @@ Merged configuration '/path/to/01_kconfig/prj_release.conf'
 Merged configuration '/path/to/01_kconfig/boards/nrf52840dk_nrf52840_release.conf'
 Configuration saved to '/path/to/build/zephyr/.config'
 ```
-
 
 ### Extra configuration files
 
@@ -572,7 +567,7 @@ $ cat extra1.conf
 CONFIG_GPIO=n
 ```
 
-> **Notice:** In an actual project, you'll definitely need to pick better names for the extra configuration files, e.g., `no-debug.conf` and `no-gpio.conf`. I'm using `extra0.conf` and `extra1.conf` to explicitly show their use and to make the order in which the files are applied visible, as you'll see just now.
+> **Notice:** In an actual project, you'll need to pick better names for the extra configuration files, e.g., `no-debug.conf` and `no-gpio.conf`. I'm using `extra0.conf` and `extra1.conf` to explicitly show their use and to make the order in which the files are applied visible, as you'll see just now.
 
 We can now pass the two extra configuration fragments to the build system using the `EXTRA_CONF_FILE` variable. The paths are relative to the project root and can either be separated using semicolons or spaces:
 
@@ -581,6 +576,7 @@ $ rm -rf ../build
 $ west build --board nrf52840dk_nrf52840 -d ../build -- \
   -DEXTRA_CONF_FILE="extra0.conf;extra1.conf"
 ```
+
 ```
 Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
 Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
@@ -599,6 +595,7 @@ $ west build --board nrf52840dk_nrf52840 -d ../build -- \
   -DCONF_FILE="prj_release.conf" \
   -DEXTRA_CONF_FILE="extra1.conf;extra0.conf"
 ```
+
 ```
 Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
 Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
@@ -609,11 +606,9 @@ Merged configuration '/path/to/01_kconfig/extra0.conf'
 Configuration saved to '/path/to/build/zephyr/.config'
 ```
 
-
-
 ## Kconfig hardening
 
-Another tool worth mentioning when talking about _Kconfig_ is the [hardening tool](https://docs.zephyrproject.org/latest/security/hardening-tool.html). Just like `menuconfig` and `guiconfig`, this tool is a target for `west build`. It is executed using the `-t hardenconfig` target in the call to `west build`. The hardening tool checks the _Kconfig_ symbols against a set of known configuration options that should be used for a secure Zephyr application and lists all differences found in the application.
+Another tool worth mentioning when talking about _Kconfig_ is the [hardening tool](https://docs.zephyrproject.org/latest/security/hardening-tool.html). Just like `menuconfig` and `guiconfig`, this tool is a target for `west build`. It is executed using the `-t hardenconfig` target in the call to `west build`. The hardening tool checks the _Kconfig_ symbols against a set of known configuration options that should be used for a secure Zephyr application. It then lists all differences found in the application.
 
 We can use this tool to check our normal and _release_ configurations:
 
@@ -632,7 +627,7 @@ $ west build --board nrf52840dk_nrf52840 \
   -- -DCONF_FILE=prj_release.conf
 ```
 
-For the normal build using `prj.conf`, the hardening tool displays a table of all symbols whose current values do not match the recommended, secure configuration value. E.g., at the time of writing this is the output for the normal build in my demo application:
+For the normal build using `prj.conf`, the hardening tool displays a table of all symbols whose current values do not match the recommended, secure configuration value. E.g., at the time of writing, this is the output for the normal build in my demo application:
 
 ```
 -- west build: running target hardenconfig
@@ -648,21 +643,17 @@ CONFIG_STACK_SENTINEL                 |    n    |      y      ||     FAIL
 
 The symbols in `prj_release.conf` have been chosen such that at the time of writing all hardening options are fulfilled and the above table is empty.
 
-
-
 ## A custom Kconfig symbol
 
-In the previous sections, we had a thorough look at _Kconfig_ and its workings. To wrap up this article, we'll create a custom, application-specific symbol and use it in our application _and_ build process.
+In the previous sections, we examined _Kconfig_ in detail. To wrap up this article, we'll create and use a custom, application-specific symbol in our application _and_ build process.
 
 > **Note:** This section borrows from the [nRF Connect SDK Fundamentals lesson on configuration files](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/lessons/lesson-3-elements-of-an-nrf-connect-sdk-application/topic/configuration/) that is freely available in the [Nordic Developer Academy](https://academy.nordicsemi.com/). If you're looking for additional challenges, check out the available courses!
 
-
 ### Adding a custom configuration
 
-[CMake automatically detects a `Kconfig` file](https://docs.zephyrproject.org/latest/develop/application/index.html#application-cmakelists-txt) if it is placed in the same directory of the application's `CMakeLists.txt`, and that is what we'll use for our own configuration file. In case you want to place the `Kconfig` file somewhere else, you can customize this behavior using an absolute path for the `KCONFIG_ROOT` build system variable.
+[CMake automatically detects a `Kconfig` file](https://docs.zephyrproject.org/latest/develop/application/index.html#application-cmakelists-txt) if it is placed in the same directory of the application's `CMakeLists.txt`, and that is what we'll use for our own configuration file. If you want to place the `Kconfig` file somewhere else, you can customize this behavior using an absolute path for the `KCONFIG_ROOT` build system variable.
 
 Similar to the file `zephyr/subsys/debug/Kconfig` of Zephyr's _debug_ subsystem, the `Kconfig` file specifies all available configuration options and their dependencies. We'll only specify a simple boolean symbol in the `Kconfig` file in our application's root directory. Please refer to the [official documentation](https://docs.zephyrproject.org/latest/build/kconfig/setting.html#setting-kconfig-configuration-values) for details about the `Kconfig` syntax:
-
 
 ```bash
 $ tree --charset=utf-8 --dirsfirst -L 1
@@ -678,6 +669,7 @@ $ tree --charset=utf-8 --dirsfirst -L 1
 
 $ cat Kconfig
 ```
+
 ```conf
 mainmenu "Customized Menu Name"
 source "Kconfig.zephyr"
@@ -704,13 +696,14 @@ mainmenu "Zephyr Kernel Configuration"
 source "Kconfig.zephyr"
 ```
 
-By sourcing the `Kconfig.zephr` file we're loading all _Kconfig_ menus and symbols provided with Zephr. Next, we declare our own menu between the _"menu"_ and _"endmenu"_ statements to group our application symbols. Within this menu, we declare our `USR_FUN` symbol, which we'll use to enable a function `usr_fun`.
+By sourcing the `Kconfig.zephr` file, we're loading all _Kconfig_ menus and symbols provided with Zephr. Next, we declare our own menu between the _"menu"_ and _"endmenu"_ statements to group our application symbols. Within this menu, we declare our `USR_FUN` symbol, which we'll use to enable a function `usr_fun`.
 
 Let's rebuild our application without configuring `USR_FUN` and have a look at the build output. A `--pristine` build is required to pick up the new `Kconfig` file:
 
 ```bash
 $ west build --board nrf52840dk_nrf52840 -d ../build --pristine
 ```
+
 ```
 Parsing /path/to/01_kconfig/Kconfig
 Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
@@ -730,8 +723,6 @@ The remainder of the output should look familiar. When we look at the generated 
 
 ```bash
 $ cat ../build/zephyr/.config
-```
-```conf
 # Application Options
 #
 # CONFIG_USR_FUN is not set
@@ -751,10 +742,9 @@ $ west build -d ../build -t menuconfig
 
 > **Notice:** It is also possible to source `Kconfig.zephyr` _after_ defining the application symbols and menus. This would have the effect that your options will be listed _before_ the Zephyr symbols and menus. In this section, we've sourced `Kconfig.zephr` before our own options.
 
-
 ### Configuring the application build using _Kconfig_
 
-Now that we have our own `Kconfig` symbol, we can make use of it in the application's build process. Create two new files `usr_fun.c` and `usr_fun.h` in the `src` directory:
+Now that we have our own `Kconfig` symbol, we can use it in the application's build process. Create two new files `usr_fun.c` and `usr_fun.h` in the `src` directory:
 
 ```bash
 $ tree --charset=utf-8 --dirsfirst
@@ -782,6 +772,7 @@ We're defining a simple function `usr_fun` that prints an additional message on 
 
 void usr_fun(void);
 ```
+
 ```c
 // Content of usr_fun.c
 #include "usr_fun.h"
@@ -793,7 +784,7 @@ void usr_fun(void)
 }
 ```
 
-Now all that's left to do is to tell _CMake_ about our new files. Instead of always including these files when building our application, we can use our _Kconfig_ symbol `USR_FUN` to only include the files in the build in case the symbol is enabled. Add the adding the following to `CMakeLists.txt`:
+Now, all that's left is to tell _CMake_ about our new files. Instead of always including these files when building our application, we can use our _Kconfig_ symbol `USR_FUN` to only include the files in the build if the symbol is enabled. Add the adding the following to `CMakeLists.txt`:
 
 ```cmake
 target_sources_ifdef(
@@ -805,7 +796,6 @@ target_sources_ifdef(
 ```
 
 `target_sources_ifdef` is another _CMake_ extension from `zephyr/cmake/modules/extensions.cmake`: It conditionally includes our files in the build in case `CONFIG_USR_FUN` is defined. Since the symbol `USR_FUN` is _disabled_ by default, our build currently does not include `usr_fun`.
-
 
 ### Using the application's `Kconfig` symbol
 
@@ -834,6 +824,7 @@ Unsurprisingly, building this application fails since `usr_fun.c` is not include
 ```bash
 $ west build --board nrf52840dk_nrf52840 -d ../build --pristine
 ```
+
 ```
 [158/168] Linking C executable zephyr/zephyr_pre0.elf
 FAILED: zephyr/zephyr_pre0.elf zephyr/zephyr_pre0.map
@@ -852,7 +843,7 @@ We have two possibilities to fix our build: The first possibility is to enable `
 CONFIG_USR_FUN=y
 ```
 
-This, however, kind of defeats the purpose of having a configurable build: The build would still fail in case we're not enabling `USR_FUN`. Instead, we can also use the `USR_FUN` symbol within our code to only conditionally include parts of our application:
+This, however, defeats the purpose of having a configurable build: The build would still fail in case we're not enabling `USR_FUN`. Instead, we can also use the `USR_FUN` symbol within our code to only conditionally include parts of our application:
 
 ```c
 #include <zephyr/kernel.h>
@@ -878,9 +869,9 @@ void main(void)
 }
 ```
 
-Now our build succeeds for either configuration of the `USR_FUN` symbol. Clearly, we could also use the same approach as `printk` and provide an empty function or definition for `usr_fun` instead of adding conditional statements to our application.
+Now, our build succeeds for either configuration of the `USR_FUN` symbol. Clearly, we could also use the same approach as `printk` and provide an empty function or definition for `usr_fun` instead of adding conditional statements to our application.
 
-> **Note:** The application builds and links, but you won't see any output on the serial console in case you've followed along: The _Kconfig_ symbols responsible for the serial output are still disabled within `prj.conf` and the board-specific fragment. Feel free to update your configuration, e.g., by enabling the debug output for normal builds while disabling it for the "release" build!
+> **Note:** The application builds and links, but you won't see any output on the serial console in case you've followed along; The _Kconfig_ symbols responsible for the serial output are still disabled within `prj.conf` and the board-specific fragment. Feel free to update your configuration, e.g., by enabling the debug output for normal builds while disabling it for the "release" build!
 
 To understand why we can use the `CONFIG_USR_FUN` definition, we can have a look at the compiler commands used to compile `main.c`. Conveniently (as mentioned in the previous article), by default, Zephyr enables the _CMake_ variable [`CMAKE_EXPORT_COMPILE_COMMANDS`](https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html). The compiler command for `main.c` is thus captured by the `compile_commands.json` in our build directory:
 
@@ -907,13 +898,11 @@ This header file contains the configured value of the `USR_FUN` symbol as a macr
 
 Looking at the [official documentation of the `-imacros` option for `gcc`](https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html), you'll find that this option acquires all the macros of the specified header without also processing its declarations. Thus, all macros within the `autoconf.h` files are also available at compile time.
 
-
-
 ## Conclusion
 
 In this article, we've explored the _kernel configuration system_ _Kconfig_ in great detail. Even if you've never used _Kconfig_ before, you should now be able to at least use _Kconfig_ with Zephyr, and - in case you're stuck - you should be able to easily navigate the official documentation. We've seen:
 
-- How to find and change existing _Kconfig_ symbols,
+- how to find and change existing _Kconfig_ symbols,
 - how to analyze dependencies between different symbols,
 - files that are automatically picked up by the build system,
 - files generated by _Kconfig_,
@@ -926,8 +915,6 @@ In this article, we've explored the _kernel configuration system_ _Kconfig_ in g
 If you've followed along, you may also have noticed that `Kconfig` files are not something you'd like to explore file by file. While writing this article, I wanted to include an entire include graph showing this, but in the end, it is just too many files. I'd recommend sticking to the available tools!
 
 In your future Zephyr projects, _Kconfig_ will become especially important once you're starting to build your own device drivers. With this article, I hope I can give you an easy start.
-
-
 
 ## Further reading
 
@@ -943,8 +930,6 @@ The following are great resources when it comes to Zephyr and are worth a read _
 Just like in the previous article, I can always warmly recommend browsing through the videos from the _Zephyr Development Summit_, e.g., the playlists from the [2022](https://www.youtube.com/watch?v=o-f2qCd2AXo&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe) and [2023](https://www.youtube.com/watch?v=PY64voxdhAU&list=PLzRQULb6-ipERkFrHaBh8tuSnK923ZUjY) Developers Summits.
 
 Finally, have a look at the files in the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr) and I hope you'll follow along with the future articles of this series!
-
-
 
 <!-- References
 
