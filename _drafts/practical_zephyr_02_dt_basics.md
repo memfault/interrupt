@@ -261,7 +261,7 @@ At the beginning of this article, we mentioned that Zephyr uses the `dtc` device
 
 Now, why would you want to do that? The devicetree compiler `dtc` is typically used to compile devicetree sources into a _binary_ format called the devicetree blob `dtb`. The Linux kernel parses the DTB and uses the information to configure and initialize the hardware components described in the DTB. This allows the kernel to know how to communicate with the hardware without hardcoding this information in the kernel code. Thus, in Linux, the devicetree is parsed and loaded during _runtime_ and thus can be _changed_ without modifying the application.
 
-Zephyr, however, is designed to run on resource-constrained, embedded systems. It is simply not feasible to load a devicetree blob during runtime: Any such structure would take up too many resources in both, the Zephyr drivers and for storing the devicetree itself. Instead, the devicetree is resolved during _compile time_.
+Zephyr, however, is designed to run on resource-constrained, embedded systems. It is simply not feasible to load a devicetree blob during runtime: Any such structure would take up too many resources in both the Zephyr drivers and storing the devicetree blob. Instead, the devicetree is resolved during _compile time_.
 
 > **Note:** In case this article is too slow for you but you still want to know more about devicetree, there is a [brilliant video of the Zephyr Development Summit 2022 by Martí Bolívar on devicetree](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe).
 
