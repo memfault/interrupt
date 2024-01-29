@@ -394,7 +394,7 @@ Now we can address all of our nodes using their full path. As you might imagine,
 };
 ```
 
-Now, instead of using `/node/subnode@0123ABC` to identify the node, we can simply use its label `subnode_label` - which must be **unique** throughout the entire devicetree. We'll go into details about labels and their use in a later section, for now, it is enough to know that we can use _node labels_ as a shorthand for a node's full path.
+Now, instead of using `/node/subnode@0123ABC` to identify the node, we can simply use its label `subnode_label` - which must be **unique** throughout the entire devicetree. This form of the label syntax is known as a _node label_. This term is not explicitly defined in the Devicetree specification but is used extensively in Zephyr.
 
 That's it for the first theory lesson - let's see how nodes look like in a real devicetree source (_include_) file in Zephyr. The following is a snippet of the devicetree source file for the nRF52840 microcontroller:
 
