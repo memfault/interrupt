@@ -195,7 +195,7 @@ The included `C/C++` header files `.h` are just a "bonus" since Zephyr uses the 
 
 This type of include graph is very common for devicetrees in Zephyr: You start with your _board_, which uses a specific _MCU_, which has a certain _architecture_ and vendor-specific peripherals.
 
-For each included file, each devicetree source file can _reference_ nodes or overwrite properties. E.g., for our console output we can find the following parts (the below snippets are incomplete!) in the devicetree source file of the development kit:
+For each included file, each devicetree source file can _reference_ nodes to add, remove, or modify properties. E.g., for our console output we can find the following parts (the below snippets are incomplete!) in the devicetree source file of the development kit:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
 
