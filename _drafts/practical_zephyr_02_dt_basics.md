@@ -476,14 +476,14 @@ Zephyr uses the type names summarized below. For details, refer to the [_"type"_
 
 The syntax used for property _values_ is a bit peculiar. Except for `phandles`, which we'll cover separately, the following table contains all property types supported by Zephyr and their DTSpec equivalent.
 
-| Zephyr type    | DTSpec equivalent                      | Syntax                                                                                                  | Example                                            |
+| Zephyr type    | DTSpec equivalent                      |  Example                                            |
 | :------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------ | :------------------------------------------------- |
-| `boolean`      | `<empty>`                              | no value; a property is `true` if the property exists                                                   | `interrupt-controller;`                            |
+| `boolean`      | `property with no value`                                                 | `interrupt-controller;`                            |
 | `string`       | `<string>`                             | double-quoted text (null terminated string)                                                             | `status = "disabled";`                             |
-| `array`        | `<prop-encoded-array>`                 | 32-bit values enclosed in `<` and `>`, separated by spaces                                              | `reg = <0x40002000 0x1000>;`                       |
-| `int`          | `<u32>`                                | a single 32-bit value ("cell"), enclosed in `<` and `>`                                                 | `current-speed = <115200>;`                        |
-| `array`        | `<u64>`                                | 64-bit values are represented by an array of two *cells*                                                | `value = <0xBAADF00D 0xDEADBEEF>;`                 |
-| `uint8-array`  | `<prop-encoded-array>` or "bytestring" | 8-bit hexadecimal values _without_ `0x` prefix, enclosed in `[` and `]`, separated by spaces (optional) | `mac-address = [ DE AD BE EF 12 34 ];`             |
+| `array`        | `32-bit integer cells`                                              | `reg = <0x40002000 0x1000>;`                       |
+| `int`          | `A single 32-bit integer cell`                                 | `current-speed = <115200>;`                        |
+| `64-bit integer`        | `32-bit integer cells`                                | `value = <0xBAADF00D 0xDEADBEEF>;`                 |
+| `uint8-array`  | `<bytestring>` | `mac-address = [ DE AD BE EF 12 34 ];`             |
 | `string-array` | `<stringlist>`                         | `string`s, separated by commas                                                                          | `compatible = "nordic,nrf-egu", "nordic,nrf-swi";` |
 | `compound`     | "comma-separated components"           | comma-separated values                                                                                  | `foo = <1 2>, [3, 4], "five"`                      |
 
