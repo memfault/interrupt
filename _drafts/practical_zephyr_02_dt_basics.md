@@ -1,6 +1,6 @@
 ---
 title: Practical Zephyr - Devicetree basics (Part 3)
-description: Article series "Practical Zephyr", the third part covering devicetree basics.
+description: Article series "Practical Zephyr", the third part covering Devicetree basics.
 author: lampacher
 tags: [zephyr, devicetree]
 ---
@@ -9,13 +9,13 @@ In the [previous article]({% post_url 2024-01-24-practical_zephyr_kconfig %}), w
 
 <!-- excerpt start -->
 
-In this third article of the "Practical Zephyr" series we'll see how we configure and use _hardware_. For this, Zephyr borrows another tool from the Linux kernel: [**devicetree**](https://docs.zephyrproject.org/latest/build/dts/index.html).
+In this third article of the "Practical Zephyr" series we'll see how we configure and use _hardware_. For this, Zephyr borrows another tool from the Linux kernel: [**Devicetree**](https://docs.zephyrproject.org/latest/build/dts/index.html).
 
-In contrast to _Kconfig_, the *devicetree* syntax and its use are a bit more intricate. Therefore, we'll cover *devicetree* in two articles: In this article, we'll see what a devicetree is and how we can write our own devicetree source files. In the next article, we'll look at so-called devicetree _bindings_, which add semantics to our devicetree. Be prepared for a fair bit of theory, but as usual, we'll use an example project to follow along.
+In contrast to _Kconfig_, the *Devicetree* syntax and its use are a bit more intricate. Therefore, we'll cover *Devicetree* in two articles: In this article, we'll see what a Devicetree is and how we can write our own Devicetree source files. In the next article, we'll look at so-called Devicetree _bindings_, which add semantics to our Devicetree. Be prepared for a fair bit of theory, but as usual, we'll use an example project to follow along.
 
 <!-- excerpt end -->
 
-> **Disclaimer:** This article covers devicetree in _detail_ and from first principles. If you're already somewhat familiar with devicetree or if you don't want to know how it works in detail, this article may not be for you. Instead, consider tuning in for the next article!
+> **Disclaimer:** This article covers Devicetree in _detail_ and from first principles. If you're already somewhat familiar with Devicetree or if you don't want to know how it works in detail, this article may not be for you. Instead, consider tuning in for the next article!
 
 {% include newsletter.html %}
 
@@ -25,20 +25,20 @@ In contrast to _Kconfig_, the *devicetree* syntax and its use are a bit more int
 
 This article is part of an article _series_. In case you haven't read the previous articles, please go ahead and have a look. The [first article]({% post_url 2024-01-10-practical_zephyr_basics %}) explains the required installation steps, and we'll follow along with our running UART example from the [previous article]({% post_url 2024-01-24-practical_zephyr_kconfig %}). If you're already familiar with Zephyr and have a working installation at hand, it should be easy enough for you to follow along with your own setup and without reading the previous articles.
 
-> **Note:** A full example application including all the devicetree source files that we'll see throughout this article is available in the [`02_devicetree_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/02_devicetree_basics).
+> **Note:** A full example application including all the Devicetree source files that we'll see throughout this article is available in the [`02_devicetree_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/02_devicetree_basics).
 
 We'll again be using the [development kit for the nRF52840](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) as a reference and explore its files in Zephyr, but you can follow along with any target - even virtual ones.
 
-A short heads-up: We will _not_ define our own, custom _board_, and we will _not_ describe memory layouts. Those are more advanced topics and go beyond this series. With this article, we just want to have a detailed look and familiarize ourselves with devicetree and the syntax of its input files.
+A short heads-up: We will _not_ define our own, custom _board_, and we will _not_ describe memory layouts. Those are more advanced topics and go beyond this series. With this article, we just want to have a detailed look and familiarize ourselves with Devicetree and the syntax of its input files.
 
 
-## What's a _devicetree_?
+## What's a _Devicetree_?
 
-Let's first deal with the terminology: In simple words, the _devicetree_ is a tree data structure that you provide to describe your hardware. Each _node_ describes one _device_, e.g., the UART peripheral that we used for logging via `printk` in the [previous article]({% post_url 2024-01-24-practical_zephyr_kconfig %}). Except for the root note, each node has exactly one parent, thus the term device*tree*.
+Let's first deal with the terminology: In simple words, the _Devicetree_ is a tree data structure that you provide to describe your hardware. Each _node_ describes one _device_, e.g., the UART peripheral that we used for logging via `printk` in the [previous article]({% post_url 2024-01-24-practical_zephyr_kconfig %}). Except for the root note, each node has exactly one parent, thus the term device*tree*.
 
-Devicetree files use their own _Devicetree Source (DTS) format_, defined in the [official devicetree specification](https://www.devicetree.org/specifications/). For certain file types (bindings) used by _devicetree_, Zephyr uses yet another file format - but fear not, it simply replaces the _DTS format_ with simple `.yaml` files. We'll cover _bindings_ in the next article, so for now we'll just focus on devicetree source files. There are also some subtle differences between the official devicetree specification and the way it is used in Zephyr, but we'll touch up on that throughout this article.
+Devicetree files use their own _Devicetree Source (DTS) format_, defined in the [official Devicetree specification](https://www.devicetree.org/specifications/). For certain file types (bindings) used by _Devicetree_, Zephyr uses yet another file format - but fear not, it simply replaces the _DTS format_ with simple `.yaml` files. We'll cover _bindings_ in the next article, so for now we'll just focus on Devicetree source files. There are also some subtle differences between the official Devicetree specification and the way it is used in Zephyr, but we'll touch up on that throughout this article.
 
-The build system takes the _devicetree_ specification and feeds it to its own compiler, which - in the case of Zephyr - generates `C` macros that are in turn used by Zephyr's device drivers. For all the readers coming straight from Linux - yes, this approach is a little different than what you're used to, but we'll get to that.
+The build system takes the _Devicetree_ specification and feeds it to its own compiler, which - in the case of Zephyr - generates `C` macros that are in turn used by Zephyr's device drivers. For all the readers coming straight from Linux - yes, this approach is a little different than what you're used to, but we'll get to that.
 
 The following is a snippet of [Nordic's](https://www.nordicsemi.com/) _Devicetree Source Include_ file of their nRF52840 SoC:
 
@@ -60,18 +60,18 @@ The following is a snippet of [Nordic's](https://www.nordicsemi.com/) _Devicetre
 };
 ```
 
-One could compare the devicetree to something like a `struct` in `C`, or a `JSON` object. Each node (or object) lists its properties and their values and thus describes the associated device and its configuration. From the above snippet we can already somehow see that there's a _system on chip (soc)_ node, that in turn contains a UART instance with some configuration data.
+One could compare the Devicetree to something like a `struct` in `C`, or a `JSON` object. Each node (or object) lists its properties and their values and thus describes the associated device and its configuration. From the above snippet we can already somehow see that there's a _system on chip (soc)_ node, that in turn contains a UART instance with some configuration data.
 
-Personally, I felt the details of the [devicetree specification](https://www.devicetree.org/specifications/) or [Zephyr's official documentation on _devicetree_](https://docs.zephyrproject.org/latest/build/dts/index.html) a bit overwhelming, and I could hardly keep all the information in my head when reading straight through it (getting lost following links again), so in this article, I'm choosing a slightly different approach:
+Personally, I felt the details of the [Devicetree specification](https://www.devicetree.org/specifications/) or [Zephyr's official documentation on _Devicetree_](https://docs.zephyrproject.org/latest/build/dts/index.html) a bit overwhelming, and I could hardly keep all the information in my head when reading straight through it (getting lost following links again), so in this article, I'm choosing a slightly different approach:
 
 Instead of going into great detail about the _DTS (Devicetree Source) format_, we'll start with a simple project, build it, and dive straight into the input and output files used or generated by the build process. Based on those files, one by one, we'll try and figure out how this whole thing works. Finally, we'll also create our own nodes, but we won't fully specify the file format.
 
 In case you're looking for a more detailed description of the _DTS (Devicetree Source) format_, other authors provided much more detailed descriptions - much better than anything I could possibly come up with. Here are some of my favorites:
 
-- My obvious first choice is the [official devicetree specification](https://www.devicetree.org/specifications/). Just keep in mind that Zephyr made some slight adjustments.
-- Second, when it comes to details [Zephyr's official documentation on devicetree](https://docs.zephyrproject.org/latest/build/dts/index.html) is very hard to beat.
-- Zephyr's official documentation also includes a more practical information article in the form of a [devicetree how-tos](https://docs.zephyrproject.org/latest/build/dts/index.html).
-- Finally, the official Raspberry PI documentation also has a [great section about devicetree and the DTS syntax](https://www.raspberrypi.com/documentation/computers/configuration.html#device-trees-overlays-and-parameters).
+- My obvious first choice is the [official Devicetree specification](https://www.devicetree.org/specifications/). Just keep in mind that Zephyr made some slight adjustments.
+- Second, when it comes to details [Zephyr's official documentation on Devicetree](https://docs.zephyrproject.org/latest/build/dts/index.html) is very hard to beat.
+- Zephyr's official documentation also includes a more practical information article in the form of a [Devicetree how-tos](https://docs.zephyrproject.org/latest/build/dts/index.html).
+- Finally, the official Raspberry PI documentation also has a [great section about Devicetree and the DTS syntax](https://www.raspberrypi.com/documentation/computers/configuration.html#device-trees-overlays-and-parameters).
 
 
 
@@ -110,7 +110,7 @@ As usual, we can now build this application for the development kit of choice, i
 $ west build --board nrf52840dk_nrf52840 --build-dir ../build
 ```
 
-But wait, we didn't "do anything devicetree" yet, did we? That's right, someone else already did it for us! After our first look into Zephyr and after exploring Kconfig, we're familiar with the build output of our Zephyr application, so let's have a look! You should find a similar output right at the start of your build:
+But wait, we didn't "do anything Devicetree" yet, did we? That's right, someone else already did it for us! After our first look into Zephyr and after exploring Kconfig, we're familiar with the build output of our Zephyr application, so let's have a look! You should find a similar output right at the start of your build:
 
 ```
 -- Found Dtc: /opt/nordic/ncs/toolchains/4ef6631da0/bin/dtc (found suitable version "1.6.1", minimum required is "1.4.6")
@@ -122,14 +122,14 @@ But wait, we didn't "do anything devicetree" yet, did we? That's right, someone 
 
 ### CMake integration
 
-The build output shows us that devicetree - just like Kconfig - is a central part of any application build. It is, in fact, added to your build via the CMake module `zephyr/cmake/modules/dts.cmake`. The first thing that Zephyr is looking for, is the _devicetree compiler_ `dtc` (see, `zephyr/cmake/modules/FindDtc.cmake`). Typically, this tool is in your `$PATH` after installing Zephyr or loading your Zephyr environment:
+The build output shows us that Devicetree - just like Kconfig - is a central part of any application build. It is, in fact, added to your build via the CMake module `zephyr/cmake/modules/dts.cmake`. The first thing that Zephyr is looking for, is the _Devicetree compiler_ `dtc` (see, `zephyr/cmake/modules/FindDtc.cmake`). Typically, this tool is in your `$PATH` after installing Zephyr or loading your Zephyr environment:
 
 ```bash
 $ where dtc
 /opt/nordic/ncs/toolchains/4ef6631da0/bin/dtc
 ```
 
-Since we didn't specify any so-called _devicetree overlay file_ (bear with me for now, we'll see how to modify our devicetree using _overlay_ files in a later section), Zephyr then looks for a devicetree source file that matches the specified _board_. In my case, that's the nRF52840 development kit, which is supported in the current Zephyr version: The board and thus its devicetree is fully described by the file `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`.
+Since we didn't specify any so-called _Devicetree overlay file_ (bear with me for now, we'll see how to modify our Devicetree using _overlay_ files in a later section), Zephyr then looks for a Devicetree source file that matches the specified _board_. In my case, that's the nRF52840 development kit, which is supported in the current Zephyr version: The board and thus its Devicetree is fully described by the file `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`.
 
 > **Note:** If you'd be using a custom board that is not supported by Zephyr, you'd have to provide your own DTS file for the board you're using. We won't go into details about adding support for a custom board in this article (and maybe the next one), but at the end of it, you should have all the knowledge to do that - or to understand any other article showing you how to do it.
 
@@ -140,7 +140,7 @@ Let's not dive into the file's contents for now, and instead have a look at the 
 
 ### Devicetree includes and sources in Zephyr
 
-If you're familiar with the [devicetree specification](https://www.devicetree.org/specifications/), you might have wondered why the devicetree snippet that we've seen before uses `C/C++` style `#include` directives:
+If you're familiar with the [Devicetree specification](https://www.devicetree.org/specifications/), you might have wondered why the Devicetree snippet that we've seen before uses `C/C++` style `#include` directives:
 
 `zephyr/dts/arm/nordic/nrf52840.dtsi`
 
@@ -149,15 +149,15 @@ If you're familiar with the [devicetree specification](https://www.devicetree.or
 #include "nrf_common.dtsi"
 ```
 
-The [devicetree specification](https://www.devicetree.org/specifications/) introduces a dedicated `/include/` compiler directive to include other sources in a DTS file. E.g., our include for `nrf_common.dtsi` should have the following format:
+The [Devicetree specification](https://www.devicetree.org/specifications/) introduces a dedicated `/include/` compiler directive to include other sources in a DTS file. E.g., our include for `nrf_common.dtsi` should have the following format:
 
 ```dts
 /include/ "nrf_common.dtsi"
 ```
 
-The reason for this discrepancy is that Zephyr uses the `C/C++` preprocessor to resolve includes - and for resolving actual `C` macros that are used within DTS files. This happens in the call to the CMake function `zephyr_dt_preprocess` in the mentioned devicetree CMake module.
+The reason for this discrepancy is that Zephyr uses the `C/C++` preprocessor to resolve includes - and for resolving actual `C` macros that are used within DTS files. This happens in the call to the CMake function `zephyr_dt_preprocess` in the mentioned Devicetree CMake module.
 
-Let's have a look at the "include" tree of the devicetree source file of the nRF52840 development kit used in my build:
+Let's have a look at the "include" tree of the Devicetree source file of the nRF52840 development kit used in my build:
 
 ```
 nrf52840dk_nrf52840.dts
@@ -182,20 +182,20 @@ nrf52840dk_nrf52840.dts
 └── nrf52840dk_nrf52840-pinctrl.dtsi
 ```
 
-> **Note:** You might have noticed the file extensions `.dts` and `.dtsi`. Both file extensions are devicetree source files, but by convention the `.dtsi` extension is used for DTS files that are intended to be _included_ by other files.
+> **Note:** You might have noticed the file extensions `.dts` and `.dtsi`. Both file extensions are Devicetree source files, but by convention the `.dtsi` extension is used for DTS files that are intended to be _included_ by other files.
 
 That "include" tree makes a lot of sense, doesn't it?
-- Since we didn't specify anything external in an overlay file, our outermost devicetree source file is our _board_ `nrf52840dk_nrf52840.dts`.
-- Our board uses the nRF52840 QIAA microcontroller from Nordic, which is described in its own devicetree include source file `nrf52840_qiaa.dtsi`.
+- Since we didn't specify anything external in an overlay file, our outermost Devicetree source file is our _board_ `nrf52840dk_nrf52840.dts`.
+- Our board uses the nRF52840 QIAA microcontroller from Nordic, which is described in its own Devicetree include source file `nrf52840_qiaa.dtsi`.
 - That MCU is, in turn, a variant of the nRF52840, and therefore includes `nrf52840.dtsi`.
 - The nRF52840 is an ARMv7 core, which is described in `armv7-m.dtsi`.
 - In addition, the nRF52840 uses Nordic's peripherals, specified in `nrf_common.dtsi`.
 
-The included `C/C++` header files `.h` are just a "bonus" since Zephyr uses the preprocessor and we're therefore allowed to use `C/C++` macros within devicetree source files: All the macros will be replaced by their values before the actual compilation process. E.g., the macro `NRF_DEFAULT_IRQ_PRIORITY` in `interrupts = <2 NRF_DEFAULT_IRQ_PRIORITY>;` that we've seen before is expanded and thus replaced by its actual value before the devicetree is compiled.
+The included `C/C++` header files `.h` are just a "bonus" since Zephyr uses the preprocessor and we're therefore allowed to use `C/C++` macros within Devicetree source files: All the macros will be replaced by their values before the actual compilation process. E.g., the macro `NRF_DEFAULT_IRQ_PRIORITY` in `interrupts = <2 NRF_DEFAULT_IRQ_PRIORITY>;` that we've seen before is expanded and thus replaced by its actual value before the Devicetree is compiled.
 
-This type of include graph is very common for devicetrees in Zephyr: You start with your _board_, which uses a specific _MCU_, which has a certain _architecture_ and vendor-specific peripherals.
+This type of include graph is very common for Devicetrees in Zephyr: You start with your _board_, which uses a specific _MCU_, which has a certain _architecture_ and vendor-specific peripherals.
 
-For each included file, each devicetree source file can _reference_ nodes to add, remove, or modify properties. E.g., for our console output we can find the following parts (the below snippets are incomplete!) in the devicetree source file of the development kit:
+For each included file, each Devicetree source file can _reference_ nodes to add, remove, or modify properties. E.g., for our console output we can find the following parts (the below snippets are incomplete!) in the Devicetree source file of the development kit:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
 
@@ -216,7 +216,7 @@ For each included file, each devicetree source file can _reference_ nodes to add
 
 With `zephyr,console` we seem to be able to tell Zephyr that we want it to use the node `uart0` for the console output and therefore `printk` statements. We're also modifying the `&uart0` reference's properties, e.g., we set the baud rate to `115200` and enable it by setting its status to "okay".
 
-The `uart0` node is originally defined in the included devicetree source file of the SoC `nrf52840.dtsi`, and seems to be disabled by default:
+The `uart0` node is originally defined in the included Devicetree source file of the SoC `nrf52840.dtsi`, and seems to be disabled by default:
 
 `zephyr/dts/arm/nordic/nrf52840.dtsi`
 
@@ -233,7 +233,7 @@ The `uart0` node is originally defined in the included devicetree source file of
 };
 ```
 
-But that's enough devicetree syntax for now. After this step, we end up with a single `zephyr.dts.pre` devicetree (DTS) source file in the `build/zephyr` output directory. In there, we can also find our `uart@40002000` node (with the value of the expanded `NRF_DEFAULT_IRQ_PRIORITY` macro):
+But that's enough Devicetree syntax for now. After this step, we end up with a single `zephyr.dts.pre` Devicetree (DTS) source file in the `build/zephyr` output directory. In there, we can also find our `uart@40002000` node (with the value of the expanded `NRF_DEFAULT_IRQ_PRIORITY` macro):
 
 `build/zephyr/zephyr.dts.pre`
 
@@ -255,15 +255,15 @@ But that's enough devicetree syntax for now. After this step, we end up with a s
 ```
 
 
-### Compiling the devicetree
+### Compiling the Devicetree
 
-At the beginning of this article, we mentioned that Zephyr uses the `dtc` devicetree compiler to generate the corresponding source code. That is, however, not entirely true: While the official devicetree compiler `dtc` is definitely invoked during in the build process, it is not used to generate any source code. Instead, Zephyr feeds the generated `build/zephyr/zephyr.dts.pre` into its own `GEN_DEFINES_SCRIPT` Python script, located at `zephyr/scripts/dts/gen_defines.py`.
+At the beginning of this article, we mentioned that Zephyr uses the `dtc` Devicetree compiler to generate the corresponding source code. That is, however, not entirely true: While the official Devicetree compiler `dtc` is definitely invoked during in the build process, it is not used to generate any source code. Instead, Zephyr feeds the generated `build/zephyr/zephyr.dts.pre` into its own `GEN_DEFINES_SCRIPT` Python script, located at `zephyr/scripts/dts/gen_defines.py`.
 
-Now, why would you want to do that? The devicetree compiler `dtc` is typically used to compile devicetree sources into a _binary_ format called the devicetree blob `dtb`. The Linux kernel parses the DTB and uses the information to configure and initialize the hardware components described in the DTB. This allows the kernel to know how to communicate with the hardware without hardcoding this information in the kernel code. Thus, in Linux, the devicetree is parsed and loaded during _runtime_ and thus can be _changed_ without modifying the application.
+Now, why would you want to do that? The Devicetree compiler `dtc` is typically used to compile Devicetree sources into a _binary_ format called the Devicetree blob `dtb`. The Linux kernel parses the DTB and uses the information to configure and initialize the hardware components described in the DTB. This allows the kernel to know how to communicate with the hardware without hardcoding this information in the kernel code. Thus, in Linux, the Devicetree is parsed and loaded during _runtime_ and thus can be _changed_ without modifying the application.
 
-Zephyr, however, is designed to run on resource-constrained, embedded systems. It is simply not feasible to load a devicetree blob during runtime: Any such structure would take up too many resources in both the Zephyr drivers and storing the devicetree blob. Instead, the devicetree is resolved during _compile time_.
+Zephyr, however, is designed to run on resource-constrained, embedded systems. It is simply not feasible to load a Devicetree blob during runtime: Any such structure would take up too many resources in both the Zephyr drivers and storing the Devicetree blob. Instead, the Devicetree is resolved during _compile time_.
 
-> **Note:** In case this article is too slow for you but you still want to know more about devicetree, there is a [brilliant video of the Zephyr Development Summit 2022 by Martí Bolívar on devicetree](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe).
+> **Note:** In case this article is too slow for you but you still want to know more about Devicetree, there is a [brilliant video of the Zephyr Development Summit 2022 by Martí Bolívar on Devicetree](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe).
 
 So if not a binary, what's the output of this `gen_defines.py` generator? Let's have another peek at the output of our build process:
 
@@ -275,9 +275,9 @@ So if not a binary, what's the output of this `gen_defines.py` generator? Let's 
 
 The build process creates three important output files: The `zephyr.dts` that has been generated out of the preprocessed `zephyr.dts.pre`, a `devicetree_generated.h` header file, and a CMake file `dts.cmake`.
 
-As promised, the original devicetree `dtc` compiler _is_ invoked during the build, and that's where it comes into play: The `zephyr.dts` devicetree source file is fed into `dtc`, but not to generate any binaries or source code: Instead, it is only used to generate warnings and errors; the output itself is discarded. This helps to reduce the complexity of the Python devicetree script `gen_defines.py` and ensures that the generated devicetree source file used in Zephyr is at least still compatible with the original specification.
+As promised, the original Devicetree `dtc` compiler _is_ invoked during the build, and that's where it comes into play: The `zephyr.dts` Devicetree source file is fed into `dtc`, but not to generate any binaries or source code: Instead, it is only used to generate warnings and errors; the output itself is discarded. This helps to reduce the complexity of the Python Devicetree script `gen_defines.py` and ensures that the generated Devicetree source file used in Zephyr is at least still compatible with the original specification.
 
-The `devicetree_generated.h` header file replaces the devicetree blob `dtb`. It contains _macros_ for "all things devicetree" and is included by the drivers and our application and thereby strips all unnecessary or unused parts. **"Macrobatics"** is the term that Martí Bolívar used in his [talk about the Zephyr devicetree at the June 2022 developer summit](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe), and it fits. Even for our tiny application, the generated header is over 15000 lines of code! We'll see how these macros look like and how they are used with the Zephyr devicetree API in the next article. If you're curious, have a look at `zephyr/include/zephyr/devicetree.h` already. In fact, let's have a glimpse:
+The `devicetree_generated.h` header file replaces the Devicetree blob `dtb`. It contains _macros_ for "all things Devicetree" and is included by the drivers and our application and thereby strips all unnecessary or unused parts. **"Macrobatics"** is the term that Martí Bolívar used in his [talk about the Zephyr Devicetree at the June 2022 developer summit](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe), and it fits. Even for our tiny application, the generated header is over 15000 lines of code! We'll see how these macros look like and how they are used with the Zephyr Devicetree API in the next article. If you're curious, have a look at `zephyr/include/zephyr/devicetree.h` already. In fact, let's have a glimpse:
 
 `build/zephyr/include/generated/devicetree_generated.h`
 
@@ -289,16 +289,16 @@ The `devicetree_generated.h` header file replaces the devicetree blob `dtb`. It 
 ```
 
 Looks cryptic? With just a few hints, this becomes kind of readable. Know that:
-- `DT_` is just the common prefix for devicetree macros,
+- `DT_` is just the common prefix for Devicetree macros,
 - `_S_` is a forward slash `/`,
 - `_N_` refers to a _node_,
 - `_P_` is a _property_.
 
-Thus, e.g., `DT_N_S_soc_S_uart_40002000_P_current_speed` simply refers to the _property_ `current_speed` of the _node_ `/soc/uart_40002000`. In Zephyr, this configuration value is set during _compile time_. You'll need to recompile your application in case you want to change this property. The approach in Linux would be different: There, the (UART speed) property is read from the devicetree blob `dtb` during runtime. You could change the property, recompile the devicetree, exchange the devicetree blob, and wouldn't need to touch your application or the Kernel at all.
+Thus, e.g., `DT_N_S_soc_S_uart_40002000_P_current_speed` simply refers to the _property_ `current_speed` of the _node_ `/soc/uart_40002000`. In Zephyr, this configuration value is set during _compile time_. You'll need to recompile your application in case you want to change this property. The approach in Linux would be different: There, the (UART speed) property is read from the Devicetree blob `dtb` during runtime. You could change the property, recompile the Devicetree, exchange the Devicetree blob, and wouldn't need to touch your application or the Kernel at all.
 
-But let's leave it at that for now, we'll have a proper look at this later. For now, it is just important to know that we'll resolve our devicetree at _compile time_ using lots of generated macros.
+But let's leave it at that for now, we'll have a proper look at this later. For now, it is just important to know that we'll resolve our Devicetree at _compile time_ using lots of generated macros.
 
-Finally, the generated `dts.cmake` is a file that basically allows to access the entire devicetree from within CMake, using CMake target properties, e.g., we'll find the _current speed_ of our UART peripheral also within CMake:
+Finally, the generated `dts.cmake` is a file that basically allows to access the entire Devicetree from within CMake, using CMake target properties, e.g., we'll find the _current speed_ of our UART peripheral also within CMake:
 
 `dts.cmake`
 
@@ -311,30 +311,30 @@ set_target_properties(
 ```
 
 That's it for a peek into the Zephyr build. Let's wrap it up:
-- Zephyr uses a so-called devicetree to describe hardware.
-- Most of the devicetree sources are already available within Zephyr, e.g., MCUs and boards.
-- We'll use devicetree source files mostly to override or extend existing DTS files.
-- In Zephyr, the devicetree is resolved at _compile time_, using [macrobatics](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe).
+- Zephyr uses a so-called Devicetree to describe hardware.
+- Most of the Devicetree sources are already available within Zephyr, e.g., MCUs and boards.
+- We'll use Devicetree source files mostly to override or extend existing DTS files.
+- In Zephyr, the Devicetree is resolved at _compile time_, using [macrobatics](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe).
 
 
 
 ## Basic source file syntax
 
-Now we finally take a closer look at the devicetree syntax and its files. We'll walk through it by creating our own devicetree nodes. This section heavily borrows from existing documentation such as the [devicetree specification](https://www.devicetree.org/specifications/), [Zephyr's devicetree docs](https://docs.zephyrproject.org/latest/build/dts/index.html) and the [nRF Connect SDK Fundamentals lesson on devicetree](https://academy.nordicsemi.com/topic/devicetree/).
+Now we finally take a closer look at the Devicetree syntax and its files. We'll walk through it by creating our own Devicetree nodes. This section heavily borrows from existing documentation such as the [Devicetree specification](https://www.devicetree.org/specifications/), [Zephyr's Devicetree docs](https://docs.zephyrproject.org/latest/build/dts/index.html) and the [nRF Connect SDK Fundamentals lesson on Devicetree](https://academy.nordicsemi.com/topic/devicetree/).
 
-> **Note:** We won't explain _all_ syntactical aspects, but will focus on the most important ones. Have a look at the [devicetree specification](https://www.devicetree.org/specifications/) for a full syntax description. Also, misplaced semicolons etc. will also be caught by the devicetree compiler in the future, so we won't talk about trivial details.
+> **Note:** We won't explain _all_ syntactical aspects, but will focus on the most important ones. Have a look at the [Devicetree specification](https://www.devicetree.org/specifications/) for a full syntax description. Also, misplaced semicolons etc. will also be caught by the Devicetree compiler in the future, so we won't talk about trivial details.
 
 
 ### Node names, unit-addresses, `reg`, and labels
 
-Let's start from scratch. We create an empty devicetree source file `.dts` with the following empty tree:
+Let's start from scratch. We create an empty Devicetree source file `.dts` with the following empty tree:
 
 ```dts
 /dts-v1/;
 / { /* Empty. */ };
 ```
 
-The first line contains the _tag_ `/dts-v1/;` which identifies the file as a version _1_ devicetree source file. Without this tag, the devicetree compiler would treat the file as being of the obsolete version _0_ - which is incompatible with the current major devicetree version _1_ used by Zephyr. The tag `/dts-v1/;` is therefore required when working with Zephyr. Following the version tag is an empty devicetree: Its only _node_ is the _root node_, identified by convention by a forward slash `/`.
+The first line contains the _tag_ `/dts-v1/;` which identifies the file as a version _1_ Devicetree source file. Without this tag, the Devicetree compiler would treat the file as being of the obsolete version _0_ - which is incompatible with the current major Devicetree version _1_ used by Zephyr. The tag `/dts-v1/;` is therefore required when working with Zephyr. Following the version tag is an empty Devicetree: Its only _node_ is the _root node_, identified by convention by a forward slash `/`.
 
 > **Note:** Devicetree source files use `C/C++` style comments. You can use both, multi-line `/* ... */` and single-line `//` comments.
 
@@ -354,7 +354,7 @@ Within this root node, we can now define our own nodes in the form of a tree, ki
 
 Nodes are identified via their _node name_. Each node can have _subnodes_ and _properties_. In the above example, we have a node with the name _node_, containing a subnode named, well, _subnode_. For now, all you need to know about _properties_ is that they are name/value pairs.
 
-A node in the devicetree can be uniquely identified by specifying the full _path_ from the root node, through all subnodes, to the desired node, separated by forward slashes. E.g., our full path to our _subnode_ is `/node/subnode`.
+A node in the Devicetree can be uniquely identified by specifying the full _path_ from the root node, through all subnodes, to the desired node, separated by forward slashes. E.g., our full path to our _subnode_ is `/node/subnode`.
 
 Node names can also have and an optional, hexadecimal _unit-address_, specified using an `@` and thus resulting in the full node name format `node-name@unit-address`. E.g., we could give our `subnode` the _unit-address_ `0123ABC` as follows:
 
@@ -373,11 +373,11 @@ Node names can also have and an optional, hexadecimal _unit-address_, specified 
 
 The _unit-address_ can be used to distinguish between several subnodes of the same type. It can be a real register address, typically a base address, e.g., the base address of the register space of a specific UART interface, but also a plain instance number, e.g., when describing a multi-core MCU by using a `/cpus` node, with two instances `cpu@0` and `cpu@1` for each CPU core. Each node with a _unit-address_ **must** also have the property `reg` - and any node _without_ a _unit-address_ must _not_ have the property `reg`. It may seem redundant now, but we'll learn more about the `reg` property later in this article.
 
-Let's finish up on the node name with a convention that ensures that each node in the devicetree can be uniquely identified by specifying its full _path_. For any node name and property at the same level in the tree:
+Let's finish up on the node name with a convention that ensures that each node in the Devicetree can be uniquely identified by specifying its full _path_. For any node name and property at the same level in the tree:
 - in the case of _node-name_ without an _unit-address_ the `node-name` must be unique,
 - or if a node has a _unit-address_, then the full `node-name@unit-address` must be unique.
 
-Now we can address all of our nodes using their full path. As you might imagine, within a more complex devicetree the paths become quite long, and if you'd ever need to reference a node (we'll see how that works in practice later) this is quite tedious, which is why any node can be assigned a unique _node label_:
+Now we can address all of our nodes using their full path. As you might imagine, within a more complex Devicetree the paths become quite long, and if you'd ever need to reference a node (we'll see how that works in practice later) this is quite tedious, which is why any node can be assigned a unique _node label_:
 
 ```dts
 /dts-v1/;
@@ -392,9 +392,9 @@ Now we can address all of our nodes using their full path. As you might imagine,
 };
 ```
 
-Now, instead of using `/node/subnode@0123ABC` to identify the node, we can simply use its label `subnode_label` - which must be **unique** throughout the entire devicetree. This form of the label syntax is known as a _node label_. This term is not explicitly defined in the Devicetree specification but is used extensively in Zephyr.
+Now, instead of using `/node/subnode@0123ABC` to identify the node, we can simply use its label `subnode_label` - which must be **unique** throughout the entire Devicetree. This form of the label syntax is known as a _node label_. This term is not explicitly defined in the Devicetree specification but is used extensively in Zephyr.
 
-That's it for the first theory lesson - let's see how nodes look like in a real devicetree source (_include_) file in Zephyr. The following is a snippet of the devicetree source file for the nRF52840 microcontroller:
+That's it for the first theory lesson - let's see how nodes look like in a real Devicetree source (_include_) file in Zephyr. The following is a snippet of the Devicetree source file for the nRF52840 microcontroller:
 
 `zephyr/dts/arm/nordic/nrf52840.dtsi`
 
@@ -444,14 +444,14 @@ Let's now have a look at properties. As we've already seen for the property `reg
 - lower and uppercase letters `a-z` and `A-Z`,
 - and any of the special characters `.,_+?#-`.
 
-Most of the properties you'll encounter in Zephyr simply use `kebab-case` names, though you'll also encounter properties starting with a `#`, e.g., the standard properties `#address-cells` and `#size-cells` (also described in the [devicetree specification](https://www.devicetree.org/specifications/)). The special character `#` is really just part of the property name, there's no magic behind it.
+Most of the properties you'll encounter in Zephyr simply use `kebab-case` names, though you'll also encounter properties starting with a `#`, e.g., the standard properties `#address-cells` and `#size-cells` (also described in the [Devicetree specification](https://www.devicetree.org/specifications/)). The special character `#` is really just part of the property name, there's no magic behind it.
 
 <!--
-For describing property values, we'll follow the approach of the [official devicetree specification (DTSpec)](https://www.devicetree.org/specifications/). If you're not interested in the details, skip ahead to the table containing value types and matching examples. The goal of the following paragraphs is to help you understand the connection between the DTSpec and [Zephyr's documentation](https://docs.zephyrproject.org/latest/build/dts/index.html) - which can sometimes be confusing. Let's start with the definition of a property value from the section _"Property values"_ in the [DTSpec](https://www.devicetree.org/specifications/):
+For describing property values, we'll follow the approach of the [official Devicetree specification (DTSpec)](https://www.devicetree.org/specifications/). If you're not interested in the details, skip ahead to the table containing value types and matching examples. The goal of the following paragraphs is to help you understand the connection between the DTSpec and [Zephyr's documentation](https://docs.zephyrproject.org/latest/build/dts/index.html) - which can sometimes be confusing. Let's start with the definition of a property value from the section _"Property values"_ in the [DTSpec](https://www.devicetree.org/specifications/):
 
 > "A property value is an **array** of zero or more bytes that contain information associated with the property. Properties might have an empty value if conveying true-false information. In this case, the presence or absence of the property is sufficiently descriptive." [[DTSpec]](https://www.devicetree.org/specifications/)
 
-This is basically just a fancy way of saying that devicetree supports properties without a value assignment, as well as properties with one or multiple values. The [[DTSpec]](https://www.devicetree.org/specifications/) then goes ahead and provides the following possible _"property values"_ and their representation in memory. In our table, we can skip the memory representation since we've learned that [Zephyr doesn't compile the DTS files into a binary](#compiling-the-devicetree):
+This is basically just a fancy way of saying that Devicetree supports properties without a value assignment, as well as properties with one or multiple values. The [[DTSpec]](https://www.devicetree.org/specifications/) then goes ahead and provides the following possible _"property values"_ and their representation in memory. In our table, we can skip the memory representation since we've learned that [Zephyr doesn't compile the DTS files into a binary](#compiling-the-devicetree):
 
 | Type                   | Description                                                            |
 | :--------------------- | :--------------------------------------------------------------------- |
@@ -460,19 +460,19 @@ This is basically just a fancy way of saying that devicetree supports properties
 | `<u64>`                | A 64-bit integer in big endian format. Consists of two `<u32>` values. |
 | `<string>`             | A printable, null-terminated string.                                   |
 | `<prop-encoded-array>` | An array of values, where the type is defined by the property.         |
-| `<phandle>`            | A `<u32>` value used to reference another node in the devicetree.      |
+| `<phandle>`            | A `<u32>` value used to reference another node in the Devicetree.      |
 | `<stringlist>`         | A list of concatenated `<string>` values.                              |
 
-> **Note:** The term **"cell"** is typically used to refer to the individual data elements within properties and can thus be thought of as a single unit of data in a property. The [devicetree specification](https://www.devicetree.org/specifications/) v0.4 defines a **"cell"** as _"a unit of information consisting of 32 bits"_ and thus explicitly defines its size as 32 bits. Meaning it is just another confusing name for a 32-bit integer.
+> **Note:** The term **"cell"** is typically used to refer to the individual data elements within properties and can thus be thought of as a single unit of data in a property. The [Devicetree specification](https://www.devicetree.org/specifications/) v0.4 defines a **"cell"** as _"a unit of information consisting of 32 bits"_ and thus explicitly defines its size as 32 bits. Meaning it is just another confusing name for a 32-bit integer.
 
-If you find this information underwhelming - you're not alone. It also won't be of much help when trying to understand property values from Zephyr's devicetree source files. The missing link to understanding the nature of the above table is the following: Values in Zephyr's DTS files are **represented** using the _"Devicetree Source (DTS) Format"_ version _1_, meaning they use a specific format or **syntax** to represent the above property value types. The above table, on the other hand, is a format-agnostic list of types that any specific DTS value format must translate to. E.g., a new _"Devicetree Source (DTS) Format"_ version _2_ might use a different syntax to represent values of the listed types.
+If you find this information underwhelming - you're not alone. It also won't be of much help when trying to understand property values from Zephyr's Devicetree source files. The missing link to understanding the nature of the above table is the following: Values in Zephyr's DTS files are **represented** using the _"Devicetree Source (DTS) Format"_ version _1_, meaning they use a specific format or **syntax** to represent the above property value types. The above table, on the other hand, is a format-agnostic list of types that any specific DTS value format must translate to. E.g., a new _"Devicetree Source (DTS) Format"_ version _2_ might use a different syntax to represent values of the listed types.
 
-The information that you'll most likely be interested in is part of the later section _"Devicetree Source (DTS) Format"_ in the DTSpec, specifically the subsection _"Node and property definitions"_. There, you'll find the matching syntax description for the above types - or at least the very basic information. Thankfully, Zephyr (and most likely any other ecosystem using devicetree) doesn't just verbally describe its supported types but uses specific type names. We'll summarize the basics below. For details, refer to the [_"type"_ section in Zephyr's documentation on devicetree bindings](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#type) or [Zephyr's devicetree introduction on property values](https://docs.zephyrproject.org/latest/build/dts/intro-syntax-structure.html#writing-property-values).
+The information that you'll most likely be interested in is part of the later section _"Devicetree Source (DTS) Format"_ in the DTSpec, specifically the subsection _"Node and property definitions"_. There, you'll find the matching syntax description for the above types - or at least the very basic information. Thankfully, Zephyr (and most likely any other ecosystem using Devicetree) doesn't just verbally describe its supported types but uses specific type names. We'll summarize the basics below. For details, refer to the [_"type"_ section in Zephyr's documentation on Devicetree bindings](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#type) or [Zephyr's Devicetree introduction on property values](https://docs.zephyrproject.org/latest/build/dts/intro-syntax-structure.html#writing-property-values).
 -->
 
-Zephyr uses the type names summarized below. For details, refer to the [_"type"_ section in Zephyr's documentation on devicetree bindings](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#type) or [Zephyr's devicetree introduction on property values](https://docs.zephyrproject.org/latest/build/dts/intro-syntax-structure.html#writing-property-values).
+Zephyr uses the type names summarized below. For details, refer to the [_"type"_ section in Zephyr's documentation on Devicetree bindings](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#type) or [Zephyr's Devicetree introduction on property values](https://docs.zephyrproject.org/latest/build/dts/intro-syntax-structure.html#writing-property-values).
 
-> **Note:** If you're planning on reading the devicetree specification, skip ahead to the section _"Devicetree Source (DTS) Format"_, specifically the subsection _"Node and property definitions"_. In case something is unclear, try to find the information in the initial chapters. Reading the specification top to bottom can be quite confusing.
+> **Note:** If you're planning on reading the Devicetree specification, skip ahead to the section _"Devicetree Source (DTS) Format"_, specifically the subsection _"Node and property definitions"_. In case something is unclear, try to find the information in the initial chapters. Reading the specification top to bottom can be quite confusing.
 
 The syntax used for property _values_ is a bit peculiar. Except for `phandles`, which we'll cover separately, the following table contains all property types supported by Zephyr and their DTSpec equivalent.
 
@@ -505,7 +505,7 @@ An `array` is a lists of values enclosed in `<` and `>`, separated by spaces. `a
 
 An `int`eger is represented as an `array` containing a single 32-bit value ("cell"): It's a single 32-bit value enclosed in `<` and `>`.
 
-> **Note:** The term **"cell"** is typically used to refer to the individual data elements within properties and can thus be thought of as a single unit of data in a property. The [devicetree specification](https://www.devicetree.org/specifications/) v0.4 defines a **"cell"** as _"a unit of information consisting of 32 bits"_ and thus explicitly defines its size as 32 bits. Meaning it is just another confusing name for a 32-bit integer.
+> **Note:** The term **"cell"** is typically used to refer to the individual data elements within properties and can thus be thought of as a single unit of data in a property. The [Devicetree specification](https://www.devicetree.org/specifications/) v0.4 defines a **"cell"** as _"a unit of information consisting of 32 bits"_ and thus explicitly defines its size as 32 bits. Meaning it is just another confusing name for a 32-bit integer.
 
 64-bit integers do not have their own type but are instead represented by an array of two `int`egers.
 
@@ -525,9 +525,9 @@ A `string-array` is just a comma-separated list of strings. The only thing worth
 
 The `compound` type is essentially a "catch-all" for custom types. Zephyr does **not** generate any code for `compound` properties. Also, notice how compound value definitions are syntactically ambiguous, e.g., for `foo = <1 2>, "three", "four"`: Is `"three", "four"` a single value of type `string-array`, or two separate `string` values?
 
-When reading Zephyr DTS files, keep in mind that [in Zephyr all DTS files are fed into the preprocessor](#devicetree-includes-and-sources-in-zephyr) and therefore Zephyr allows the use of macros in DTS files. E.g., you might encounter properties like `max-frequency = <DT_FREQ_M(8)>;`, which do not match the devicetree syntax at all. There, the preprocessor replaces the macro `DT_FREQ_M` with the corresponding literal before the source file is parsed.
+When reading Zephyr DTS files, keep in mind that [in Zephyr all DTS files are fed into the preprocessor](#devicetree-includes-and-sources-in-zephyr) and therefore Zephyr allows the use of macros in DTS files. E.g., you might encounter properties like `max-frequency = <DT_FREQ_M(8)>;`, which do not match the Devicetree syntax at all. There, the preprocessor replaces the macro `DT_FREQ_M` with the corresponding literal before the source file is parsed.
 
-The following is a snippet of a test file of Zephyr's Python devicetree generator. It contains the node `props` that nicely demonstrate the different property types supported by Zephyr.
+The following is a snippet of a test file of Zephyr's Python Devicetree generator. It contains the node `props` that nicely demonstrate the different property types supported by Zephyr.
 
 `zephyr/scripts/dts/python-devicetree/tests/test.dts`
 
@@ -556,14 +556,14 @@ There's one more thing that is worth mentioning: Parentheses, arithmetic operato
 };
 ```
 
-The property `bar` contains a single 32-bit value ("cell") with the value _64_. Notice that operators are not just allowed in Zephr, but also according to the [devicetree specification](https://www.devicetree.org/specifications/): You therefore don't _need_ to use macros for simple arithmetic or bit operations.
+The property `bar` contains a single 32-bit value ("cell") with the value _64_. Notice that operators are not just allowed in Zephr, but also according to the [Devicetree specification](https://www.devicetree.org/specifications/): You therefore don't _need_ to use macros for simple arithmetic or bit operations.
 
 
 ## References and `phandle` types
 
-We've already seen how we can create _node labels_ as shorthand forms of a node's full path, but haven't really seen how such labels are used within the devicetree. Tired of all the theory? I thought so. Now that we're familiar with a good part of the devicetree source file syntax, it's time for _a little_ hands-on, so let's dive back into the command line.
+We've already seen how we can create _node labels_ as shorthand forms of a node's full path, but haven't really seen how such labels are used within the Devicetree. Tired of all the theory? I thought so. Now that we're familiar with a good part of the Devicetree source file syntax, it's time for _a little_ hands-on, so let's dive back into the command line.
 
-We'll practice using a devicetree _overlay_ file. In the next article, we'll go more into detail about what an overlay is. For now, it is enough to know that an overlay file is simply an additional DTS file on top of the hierarchy of files that is included starting with the board's devicetree source file. We can [specify an extra devicetree overlay file using the CMake variable `EXTRA_DTC_OVERLAY_FILE`](https://docs.zephyrproject.org/latest/build/dts/howtos.html#set-devicetree-overlays), and we'll use a newly created `props-phandles.overlay` file for that:
+We'll practice using a Devicetree _overlay_ file. In the next article, we'll go more into detail about what an overlay is. For now, it is enough to know that an overlay file is simply an additional DTS file on top of the hierarchy of files that is included starting with the board's Devicetree source file. We can [specify an extra Devicetree overlay file using the CMake variable `EXTRA_DTC_OVERLAY_FILE`](https://docs.zephyrproject.org/latest/build/dts/howtos.html#set-devicetree-overlays), and we'll use a newly created `props-phandles.overlay` file for that:
 
 ```bash
 $ mkdir -p dts/playground
@@ -591,13 +591,13 @@ So what is a `phandle`? The easy answer is: Devicetree source files need some wa
 - In addition, the [DTSpec](https://www.devicetree.org/specifications/) also defines a standard **property** named `phandle` - ironically of type _32-bit integer_, and not _phandle_. We'll see this property in just a second.
 - In Zephyr, the term `phandle` is used pretty much only for node **references** in any format and never even mentions the same named _property_.
 
-Why this ambiguity? Because in the end, any reference to a node is replaced by a unique, 32-bit value that identifies the node - the value stored in the node's `phandle` property. The fact that `phandle` _property_ is not intended to be set manually, but is instead created by the devicetree compiler for each referenced node, makes mentioning the `phandle` property as such unnecessary. Thus, the approach chosen in Zephyr's documentation - referring to any reference as `phandle` - makes a lot of sense.
+Why this ambiguity? Because in the end, any reference to a node is replaced by a unique, 32-bit value that identifies the node - the value stored in the node's `phandle` property. The fact that `phandle` _property_ is not intended to be set manually, but is instead created by the Devicetree compiler for each referenced node, makes mentioning the `phandle` property as such unnecessary. Thus, the approach chosen in Zephyr's documentation - referring to any reference as `phandle` - makes a lot of sense.
 
-But enough nit-picking, let's see how this looks in a real devicetree source file. Let's create two nodes `node_a` and `node_refs` in our overlay file, and have `node_refs` reference the `node_a` once by its path and once by a label `label_a` that we create for `node_a`. How do we do this? The syntax is specified in the [DTSpec](https://www.devicetree.org/specifications/) as follows:
+But enough nit-picking, let's see how this looks in a real Devicetree source file. Let's create two nodes `node_a` and `node_refs` in our overlay file, and have `node_refs` reference the `node_a` once by its path and once by a label `label_a` that we create for `node_a`. How do we do this? The syntax is specified in the [DTSpec](https://www.devicetree.org/specifications/) as follows:
 
 > "Labels are created by appending a colon ('`:`') to the label name. References are created by prefixing the label name with an ampersand ('`&`'), or they may be followed by a node's full path in braces." [[DTSpec]](https://www.devicetree.org/specifications/)
 
-Thus, in our devicetree overlay file, we can create the properties as shown below. Notice how we're missing the DTS version `/dts-v1/;`: The version is only defined devicetree *source* files, but **not** in *overlay* files.
+Thus, in our Devicetree overlay file, we can create the properties as shown below. Notice how we're missing the DTS version `/dts-v1/;`: The version is only defined Devicetree *source* files, but **not** in *overlay* files.
 
 ```dts
 / {
@@ -637,11 +637,11 @@ We can now see that the generator has created a `phandle` property for our refer
 
 > Property name `phandle`, value type _32-bit integer_.
 >
-> The `phandle` property specifies a numerical identifier for a node that is unique within the devicetree. The `phandle` property value is used by other nodes that need to refer to the node associated with the property.
+> The `phandle` property specifies a numerical identifier for a node that is unique within the Devicetree. The `phandle` property value is used by other nodes that need to refer to the node associated with the property.
 >
 > **Note:** Most devicetrees [...] will not contain explicit phandle properties. The DTC tool automatically inserts the phandle properties when the DTS is compiled [...].
 
-This is also what we see in the generated `zephyr.dts`: Since `node_a` is referenced by `node_ref`, Zephyr's DTS generator has inserted the property `phandle` for `node_a` in our devicetree. To see what happens to the reference within this `phandle` property, we need to jump back to the syntax section in the [DTSpec](https://www.devicetree.org/specifications/), where we find the following:
+This is also what we see in the generated `zephyr.dts`: Since `node_a` is referenced by `node_ref`, Zephyr's DTS generator has inserted the property `phandle` for `node_a` in our Devicetree. To see what happens to the reference within this `phandle` property, we need to jump back to the syntax section in the [DTSpec](https://www.devicetree.org/specifications/), where we find the following:
 
 > "In a cell array, a reference to another node will be expanded to that node's phandle."
 
@@ -678,7 +678,7 @@ After executing `west build` with the previous parameters again, we indeed end u
 };
 ```
 
-What's the use of a `phandle`? A single `phandle` can be useful where a 1:1 relation between nodes in the devicetree is required. E.g., the following is a snippet from the nRF52840 DTS include file, which contains a software PWM node with a configurable generator, which by default refers to `timer2`:
+What's the use of a `phandle`? A single `phandle` can be useful where a 1:1 relation between nodes in the Devicetree is required. E.g., the following is a snippet from the nRF52840 DTS include file, which contains a software PWM node with a configurable generator, which by default refers to `timer2`:
 
 `zephyr/dts/arm/nordic/nrf52840.dtsi`
 
@@ -790,7 +790,7 @@ Next, `phandles`. This is not a typo: The plural form `phandles` of `phandle` is
 
 The output is not surprising: Both nodes are now referenced by `node_ref`'s `phandles` and therefore get their own `phandle` property. The `phandles` type is especially useful when we need to reference nodes of the same type, like the `cpu-power-states` example in the previous table.
 
-This leaves us with the last type `phandle-array`, a type that is used quite a lot in devicetree. Let's go by example:
+This leaves us with the last type `phandle-array`, a type that is used quite a lot in Devicetree. Let's go by example:
 
 ```dts
 / {
@@ -834,7 +834,7 @@ So what's this `phandle-array` type? It is a list of phandles _with metadata_ fo
 
 _Specifier cells_ like `#phandle-array-of-ref-cells` have a defined naming convention: The name is formed by removing the plural '_s_' and attaching '_-cells_' to the name of the `phandle-array` property. For our property _phandle-array-of-refs_, we thus end up with _phandle-array-of-ref~~s~~**-cells**_.
 
-If you've been browsing Zephyr's devicetree files, you may have noticed that the property `#gpio-cells` doesn't follow the specifier cell naming convention: Every rule has its exceptions, and in case you're interested in details, I'll leave you with a reference to [Zephyr's documentation on specifier cells](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#specifier-cell-names-cells).
+If you've been browsing Zephyr's Devicetree files, you may have noticed that the property `#gpio-cells` doesn't follow the specifier cell naming convention: Every rule has its exceptions, and in case you're interested in details, I'll leave you with a reference to [Zephyr's documentation on specifier cells](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#specifier-cell-names-cells).
 
 Before we look at a real-world example of a `phandle-array`, let's sum up `phandle` types. You'll find this exact list also in [Zephyr's documentation on `phandle` types](https://docs.zephyrproject.org/latest/build/dts/phandles.html), but since it is a short one, I hope it's OK to borrow it:
 
@@ -849,9 +849,9 @@ In case you're still confused, we'll look at a real-world example for a `phandle
 
 In case you've been experimenting with the above overlay, you may have noticed that I've been cheating a little: The project still _compiles_ just fine even if you delete the `#phandle-array-of-ref-cells` properties, or give `phandle-array-of-refs` a different name that does _not_ end in an _s_.
 
-Why? Our devicetree is still _syntactically_ correct even if we do not follow the given convention. In the end, `phandle-array-of-refs` is simply an array of cells since every reference is expanded to the node's `phandle` property's value - even without the expansion, its syntax would still fit an array of 32-bit integer cells. A _syntactically_ sound devicetree, however, is only half the job: Eventually, we'll have to define some _schema_ and add _meaning_ to all the properties and their values; we'll have to define the devicetree's **semantics**.
+Why? Our Devicetree is still _syntactically_ correct even if we do not follow the given convention. In the end, `phandle-array-of-refs` is simply an array of cells since every reference is expanded to the node's `phandle` property's value - even without the expansion, its syntax would still fit an array of 32-bit integer cells. A _syntactically_ sound Devicetree, however, is only half the job: Eventually, we'll have to define some _schema_ and add _meaning_ to all the properties and their values; we'll have to define the Devicetree's **semantics**.
 
-Without semantics, the DTS generator can't make sense of the provided devicetree and therefore also won't generate anything that you'd be able to use in your application. Once you add semantics to your nodes, you'll have to strictly follow the previous convention, which is also why I've already included the notation in this article. The details, however, we'll explore in the next article about devicetree _bindings_.
+Without semantics, the DTS generator can't make sense of the provided Devicetree and therefore also won't generate anything that you'd be able to use in your application. Once you add semantics to your nodes, you'll have to strictly follow the previous convention, which is also why I've already included the notation in this article. The details, however, we'll explore in the next article about Devicetree _bindings_.
 
 
 #### `phandle-array` in practice
@@ -892,9 +892,9 @@ Thus, the nRF52840 uses two instances `P0` and `P1` of the GPIO peripheral to ex
 };
 ```
 
-With this structure it is clear that we cannot just reference the entire `gpio` instance in case we want to control only one pin: We always have to choose either `gpio0` or `gpio1` _and_ specify at least which exact _pin_ of the _port_ we need. Let's see how this is solved in the nRF52840 development kit's devicetree source file.
+With this structure it is clear that we cannot just reference the entire `gpio` instance in case we want to control only one pin: We always have to choose either `gpio0` or `gpio1` _and_ specify at least which exact _pin_ of the _port_ we need. Let's see how this is solved in the nRF52840 development kit's Devicetree source file.
 
-The nRF52840 development kit connects LEDs to the nRF52840 MCU, which are described using the node `leds` in the board's DTS file. Within this devicetree, we now see how the `led` instances reference to the nRF52840's GPIOs: E.g., `gpio0` is used in `led0`'s property `gpios` using a `phandle-array`:
+The nRF52840 development kit connects LEDs to the nRF52840 MCU, which are described using the node `leds` in the board's DTS file. Within this Devicetree, we now see how the `led` instances reference to the nRF52840's GPIOs: E.g., `gpio0` is used in `led0`'s property `gpios` using a `phandle-array`:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
 
@@ -910,7 +910,7 @@ The nRF52840 development kit connects LEDs to the nRF52840 MCU, which are descri
 };
 ```
 
-There are no individual nodes for each pin in the nRF52840's devicetree. Therefore, when referencing the `gpio0` node, we need to be able to tell exactly which pin we're using for our LED. In addition, we also typically need to provide some configuration for our pin, e.g., set the pin to _active low_.
+There are no individual nodes for each pin in the nRF52840's Devicetree. Therefore, when referencing the `gpio0` node, we need to be able to tell exactly which pin we're using for our LED. In addition, we also typically need to provide some configuration for our pin, e.g., set the pin to _active low_.
 
 The nodes `gpio0` and `gpio1` both contain the _specifier cells_ `#gpio-cells` which indicate that we need to pass exactly two _cells_ to use the node in a `phandle-array`. In the `led0`'s property `gpios` of type `phandle-array` we can see that we do exactly that: We use the two cells to specify the _pin_ and _flags_ that we're using for the LED. Now, how would we know that `13` is the pin number and `GPIO_ACTIVE_LOW` is a flag?
 
@@ -962,14 +962,14 @@ It is again worth mentioning that the `compound` type is only a "catch-all" for 
 
 ## About `/aliases` and `/chosen`
 
-There are two standard _nodes_ that are important to know when talking about *devicetree*: `/aliases` and `/chosen`. We'll see them again in the next article about devicetree bindings, but since they are quite prominent in Zephyr's DTS files, we can't just leave them aside for now.
+There are two standard _nodes_ that are important to know when talking about *Devicetree*: `/aliases` and `/chosen`. We'll see them again in the next article about Devicetree bindings, but since they are quite prominent in Zephyr's DTS files, we can't just leave them aside for now.
 
 
 ### `/aliases`
 
 Let's have a look at `/aliases` first. The [DTSpec](https://www.devicetree.org/specifications/) specifies that the `/aliases` node is a child node of the root node. The following is specified for its properties:
 
-> Each property of the `/aliases` node defines an alias. The property _"name"_ specifies the _alias name_. The property _"value"_ specifies the _full **path** to a node in the devicetree_. [[DTSpec]](https://www.devicetree.org/specifications/)
+> Each property of the `/aliases` node defines an alias. The property _"name"_ specifies the _alias name_. The property _"value"_ specifies the _full **path** to a node in the Devicetree_. [[DTSpec]](https://www.devicetree.org/specifications/)
 
 Simply put, `/aliases` are just yet another way to get the full path to nodes _in your application_. In the [previous section](#path-phandles-and-phandle-array), we've learned that outside of `<` and `>` a reference to another node is expanded to that node's full path. Thus, for any alias, we can specify its **value of type `path`** using references or a plain string, as shown in the example below:
 
@@ -986,9 +986,9 @@ Simply put, `/aliases` are just yet another way to get the full path to nodes _i
 };
 ```
 
-So what's the point of having an alias? Can't we just use labels instead? Well, yes - but also no. As mentioned, _for the application_ there is no real difference between referring to a node via its label, its full path - or using its alias. We'll learn about the devicetree API in Zephyr in the next article. For now, know that there are three macros `DT_ALIAS`, `DT_LABEL`, and `DT_PATH` in `zephyr/include/zephyr/devicetree.h` that you can use to get a node's identifier.
+So what's the point of having an alias? Can't we just use labels instead? Well, yes - but also no. As mentioned, _for the application_ there is no real difference between referring to a node via its label, its full path - or using its alias. We'll learn about the Devicetree API in Zephyr in the next article. For now, know that there are three macros `DT_ALIAS`, `DT_LABEL`, and `DT_PATH` in `zephyr/include/zephyr/devicetree.h` that you can use to get a node's identifier.
 
-Why the emphasis on "_the application_" and what exactly doesn't work? It's important to know that `/aliases` is just another node with properties that are compiled accordingly. You can**not** use aliases in the devicetree itself as you can do with _labels_. Thus, you can't replace an occurrence of a label with its alias. E.g., the following does not compile:
+Why the emphasis on "_the application_" and what exactly doesn't work? It's important to know that `/aliases` is just another node with properties that are compiled accordingly. You can**not** use aliases in the Devicetree itself as you can do with _labels_. Thus, you can't replace an occurrence of a label with its alias. E.g., the following does not compile:
 
 ```dts
 / {
@@ -1118,9 +1118,9 @@ According to the [DTSpec](https://www.devicetree.org/specifications/), technical
 };
 ```
 
-At the time of writing, Zephyr uses `/chosen` properties exclusively for references to other _nodes_ and therefore the `/chosen` node only contains properties of the type `path`. Also, the `DT_CHOSEN` macro in the devicetree API is only used to retrieve node identifiers. You can find a list of all Zephyr-specific `/chosen` nodes [in the official documentation](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-chosen-nodes).
+At the time of writing, Zephyr uses `/chosen` properties exclusively for references to other _nodes_ and therefore the `/chosen` node only contains properties of the type `path`. Also, the `DT_CHOSEN` macro in the Devicetree API is only used to retrieve node identifiers. You can find a list of all Zephyr-specific `/chosen` nodes [in the official documentation](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-chosen-nodes).
 
-So when would you use `/aliases` and when `/chosen` properties? If you want to specify a _node_ that is independent of the nodes in a devicetree, you should use an _alias_ rather than a chosen property. `/chosen` is used to specify global configuration options and properties that affect the system as a whole. In Zephyr, `/chosen` is typically only used for [Zephyr-specific parameters](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-chosen-nodes) and not for application-specific configuration options.
+So when would you use `/aliases` and when `/chosen` properties? If you want to specify a _node_ that is independent of the nodes in a Devicetree, you should use an _alias_ rather than a chosen property. `/chosen` is used to specify global configuration options and properties that affect the system as a whole. In Zephyr, `/chosen` is typically only used for [Zephyr-specific parameters](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-chosen-nodes) and not for application-specific configuration options.
 
 Also, think twice when considering adding `/chosen` properties - for some _configuration options_, [Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig) is probably better suited. Zephyr's official documentation has a dedicated page on [Devicetree vs. Kconfig](https://docs.zephyrproject.org/latest/build/dts/dt-vs-kconfig.html), check it out!
 
@@ -1130,7 +1130,7 @@ Also, think twice when considering adding `/chosen` properties - for some _confi
 
 Along with [the complete list of Zephyr's property types](#a-complete-list-of-zephyrs-property-types), we can now create two overlay files as complete examples for basic types, `phandle`s, `/aliases`, and `/chosen` nodes.
 
-> **Note:** The full example application including all the devicetree files that we've seen throughout this article is available in the [`02_devicetree_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/02_devicetree_basics).
+> **Note:** The full example application including all the Devicetree files that we've seen throughout this article is available in the [`02_devicetree_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/02_devicetree_basics).
 
 The first example covers all the basic types that we've seen:
 
@@ -1139,7 +1139,7 @@ The first example covers all the basic types that we've seen:
 ```dts
 / {
   aliases {
-    // Aliases cannot be used as a references in the devicetree itself, but are
+    // Aliases cannot be used as a references in the Devicetree itself, but are
     // used within the applicaiton as an alternative name for a node.
     alias-by-label = &label_equivalent;
     alias-by-path = &{/node_with_equivalent_arrays};
@@ -1215,7 +1215,7 @@ The following is the generated output for the two nodes `/node_with_props` and `
 };
 ```
 
-The second overlay file shows the use of `path`s, `phandle`, `phandle`s, and `phandle-array`, including the alternative array syntax that we've just seen. Here, for the property `phandle-array-of-refs`, you can see how this syntax can sometimes result in a more readable devicetree source file.
+The second overlay file shows the use of `path`s, `phandle`, `phandle`s, and `phandle-array`, including the alternative array syntax that we've just seen. Here, for the property `phandle-array-of-refs`, you can see how this syntax can sometimes result in a more readable Devicetree source file.
 
 `dts/playground/props-phandles.overlay`
 
@@ -1267,9 +1267,9 @@ $ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
 
 ## Zephyr's DTS skeleton and addressing
 
-Ok - we've seen nodes, labels, properties, and value types _including_ `phandles`, we know how Zephyr compiles the devicetree and we've even seen the standard nodes `/aliases` and `/chosen`. Are we done yet? Almost. There's the famous _one last thing_ that is worth looking into before wrapping up on the devicetree _basics_. Yes, these are the basics, there's more coming in the next article!
+Ok - we've seen nodes, labels, properties, and value types _including_ `phandles`, we know how Zephyr compiles the Devicetree and we've even seen the standard nodes `/aliases` and `/chosen`. Are we done yet? Almost. There's the famous _one last thing_ that is worth looking into before wrapping up on the Devicetree _basics_. Yes, these are the basics, there's more coming in the next article!
 
-> **Note:** Technically, we're again describing **semantics** even though I've promised that we'll wait with that until the next article about _bindings_, but one of our goals was being able to read Zephyr devicetree files. Without understanding the standard properties `#address-cells`, `#size-cells`, and `reg`, we'd hardly be able to claim that.
+> **Note:** Technically, we're again describing **semantics** even though I've promised that we'll wait with that until the next article about _bindings_, but one of our goals was being able to read Zephyr Devicetree files. Without understanding the standard properties `#address-cells`, `#size-cells`, and `reg`, we'd hardly be able to claim that.
 
 When [exploring Zephyr's build](#devicetree-includes-and-sources-in-zephyr), we've seen that our DTS file "include" tree ends up including a skeleton file `zephyr/dts/common/skeleton.dtsi`. The following is a stripped-down version of the full "include" tree that we've seen in the [introduction](#devicetree-includes-and-sources-in-zephyr) when building our empty application for the nRF52840 development kit:
 
@@ -1281,7 +1281,7 @@ nrf52840dk_nrf52840.dts
             └── skeleton.dtsi
 ```
 
-This `skeleton.dtsi` contains the minimal set of nodes and properties in a Zephyr devicetree:
+This `skeleton.dtsi` contains the minimal set of nodes and properties in a Zephyr Devicetree:
 
 ```dts
 / {
@@ -1331,7 +1331,7 @@ Using the information from the [DTSpec](https://www.devicetree.org/specification
 > - The `#address-cells` property defines the number of _32-bit integers_ used to encode the **address** field in a child node’s `reg` property.
 > - The `#size-cells` property defines the number of _32-bit integers_ used to encode the **size** field in a child node’s `reg` property.
 >
-> The `#address-cells` and `#size-cells` properties are not inherited from ancestors in the devicetree. [...] A DTSpec-compliant boot program shall supply `#address-cells` and `#size-cells` on **all** nodes that have children. If missing, a client program should assume a default value of _2_ for `#address-cells`, and a value of _1_ for `#size-cells`.
+> The `#address-cells` and `#size-cells` properties are not inherited from ancestors in the Devicetree. [...] A DTSpec-compliant boot program shall supply `#address-cells` and `#size-cells` on **all** nodes that have children. If missing, a client program should assume a default value of _2_ for `#address-cells`, and a value of _1_ for `#size-cells`.
 
 Ok, now we're getting somewhere: We need to look at the parent's properties to know how many cells in the `reg` property's value are used to encode the _address_ and the _length_. In the DTS file `zephyr/dts/arm/nordic/nrf52840.dtsi`, however, there are no such properties for `soc`.
 
@@ -1347,7 +1347,7 @@ Ok, now we're getting somewhere: We need to look at the parent's properties to k
 
 So, do we need to assume the defaults defined in the [DTSpec](https://www.devicetree.org/specifications/)? We might have to, but we've learned that node properties don't all need to be provided in one place, and therefore the `#address-cells` and `#size-cells` of the `soc` might be provided by some includes.
 
-Instead of going through all includes, we've seen that in Zephyr all includes are resolved by the preprocessor, and therefore a single devicetree file is available in the build directory. You can therefore find the combined `soc`'s properties in `build/zephyr/zephyr.dts`. Since our include graph is rather easy to traverse, though, we'll also find the missing information in the CPU architecture's DTS file:
+Instead of going through all includes, we've seen that in Zephyr all includes are resolved by the preprocessor, and therefore a single Devicetree file is available in the build directory. You can therefore find the combined `soc`'s properties in `build/zephyr/zephyr.dts`. Since our include graph is rather easy to traverse, though, we'll also find the missing information in the CPU architecture's DTS file:
 
 `zephyr/dts/arm/armv7-m.dtsi`
 
@@ -1410,24 +1410,24 @@ In the _board_ DTS file, we find which I2C peripherals are actually hooked up to
 };
 ```
 
-With this, we're really done with our devicetree introduction.
+With this, we're really done with our Devicetree introduction.
 
 
 ## Conclusion
 
 In this article, we've learned what a _devicetree_ is, its most important syntax, and how it is used in Zephyr. We've seen:
 
-- What a devicetree actually is,
-- how a devicetree is structured and how it represents the hardware,
+- What a Devicetree actually is,
+- how a Devicetree is structured and how it represents the hardware,
 - all basic property types and `phandle`s, including `phandle-array`s,
 - we've seen the standard nodes `/chosen` and `/aliases`,
-- and we've learned about addressing within devicetree.
+- and we've learned about addressing within Devicetree.
 
-Even without looking at _bindings_ yet, this is a lot to take in, especially if you've never worked with *devicetree* before. If you feel overwhelmed, don't worry, we'll look into each property type again in the next article about _bindings_ and thus **semantics**. Practice is key!
+Even without looking at _bindings_ yet, this is a lot to take in, especially if you've never worked with *Devicetree* before. If you feel overwhelmed, don't worry, we'll look into each property type again in the next article about _bindings_ and thus **semantics**. Practice is key!
 
-> **Note:** The full example application including all the devicetree files that we've seen throughout this article is available in the [`02_devicetree_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/02_devicetree_basics).
+> **Note:** The full example application including all the Devicetree files that we've seen throughout this article is available in the [`02_devicetree_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/02_devicetree_basics).
 
-Just like _Kconfig_, in your future Zephyr projects, _Kconfig_ will become especially important once you're starting to build your own device drivers. With this article, I hope I can give you an easy start and I hope to see you in the next article about devicetree _bindings_!
+Just like _Kconfig_, in your future Zephyr projects, _Kconfig_ will become especially important once you're starting to build your own device drivers. With this article, I hope I can give you an easy start and I hope to see you in the next article about Devicetree _bindings_!
 
 
 
@@ -1435,14 +1435,14 @@ Just like _Kconfig_, in your future Zephyr projects, _Kconfig_ will become espec
 
 The following are great resources when it comes to Zephyr and are worth a read _or watch_:
 
-- Of course, [Linaro](https://www.linaro.org/blog/introducing-devicetree-org/) deserves an honorable mention as the inventor of *devicetree*.
-- Second, of course, [Zephyr's official documentation on devicetree](https://docs.zephyrproject.org/latest/build/dts/index.html).
-- Reading or at least skimming through the [official devicetree specification](https://www.devicetree.org/specifications/) is very highly recommended.
-- Zephyr's official documentation also includes a more practical information article in the form of a [devicetree how-tos](https://docs.zephyrproject.org/latest/build/dts/index.html).
+- Of course, [Linaro](https://www.linaro.org/blog/introducing-devicetree-org/) deserves an honorable mention as the inventor of *Devicetree*.
+- Second, of course, [Zephyr's official documentation on Devicetree](https://docs.zephyrproject.org/latest/build/dts/index.html).
+- Reading or at least skimming through the [official Devicetree specification](https://www.devicetree.org/specifications/) is very highly recommended.
+- Zephyr's official documentation also includes a more practical information article in the form of a [Devicetree how-tos](https://docs.zephyrproject.org/latest/build/dts/index.html).
 - As usual, the [nRF Connect SDK Fundamentals](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals) course in Nordic's [DevAcademy](https://academy.nordicsemi.com/) also covers _devicetree_.
-- The official Raspberry PI documentation also has a [great section about devicetree and the DTS syntax](https://www.raspberrypi.com/documentation/computers/configuration.html#device-trees-overlays-and-parameters).
+- The official Raspberry PI documentation also has a [great section about Devicetree and the DTS syntax](https://www.raspberrypi.com/documentation/computers/configuration.html#device-trees-overlays-and-parameters).
 - I can highly recommend watching the presentation [Zephyr Devicetree Mysteries, Solved](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe) by Martí Bolívar in case you can't wait for the next article.
-- `elinux.org` has an interesting wiki page about [devicetree mysteries](https://elinux.org/Device_Tree_Mysteries), though this is mainly targeted at Linux.
+- `elinux.org` has an interesting wiki page about [Devicetree mysteries](https://elinux.org/Device_Tree_Mysteries), though this is mainly targeted at Linux.
 
 Finally, have a look at the files in the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr).
 
