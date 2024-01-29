@@ -60,7 +60,7 @@ The following is a snippet of [Nordic's](https://www.nordicsemi.com/) _Devicetre
 };
 ```
 
-One could compare the devicetree to something like a `struct` in `C`, or a `JSON` object. Each node (or object) lists its properties and their values and thus describes the associated device and its configuration. From the above snippet we can already somehow see that there's a _system on chip (soc)_ node, that in turn contains a UART instance with some configuration data, but the above snippet should make it obvious that, e.g., in contrast to the much simpler _Kconfig_ files, _devicetree_ specifications are by no means self-explanatory.
+One could compare the devicetree to something like a `struct` in `C`, or a `JSON` object. Each node (or object) lists its properties and their values and thus describes the associated device and its configuration. From the above snippet we can already somehow see that there's a _system on chip (soc)_ node, that in turn contains a UART instance with some configuration data.
 
 Personally, I felt the details of the [devicetree specification](https://www.devicetree.org/specifications/) or [Zephyr's official documentation on _devicetree_](https://docs.zephyrproject.org/latest/build/dts/index.html) a bit overwhelming, and I could hardly keep all the information in my head when reading straight through it (getting lost following links again), so in this article, I'm choosing a slightly different approach:
 
@@ -371,9 +371,7 @@ Node names can also have and an optional, hexadecimal _unit-address_, specified 
 };
 ```
 
-The _unit-address_ can be used to distinguish between several subnodes of the same type. It can be a real register address, typically a base address, e.g., the base address of the register space of a specific UART interface, but also a plain instance number, e.g., when describing a multi-core MCU by using a `/cpus` node, with two instances `cpu@0` and `cpu@1` for each CPU core.
-
-The fact that the _unit-address_ is also used for the register address of a device is also the reason why each node with a _unit-address_ **must** have the property `reg` - and any node _without_ a _unit-address_ must _not_ have the property `reg`. While we don't know anything about the exact syntax of the property and its value yet, it clearly seems redundant in the above example. In a real devicetree, however, the `reg` property usually provides _more_ information than the plain _unit-address_, e.g., the length of the address space, and can therefore be seen as a more detailed view of the addressable resources within a node (we'll see this soon).
+The _unit-address_ can be used to distinguish between several subnodes of the same type. It can be a real register address, typically a base address, e.g., the base address of the register space of a specific UART interface, but also a plain instance number, e.g., when describing a multi-core MCU by using a `/cpus` node, with two instances `cpu@0` and `cpu@1` for each CPU core. Each node with a _unit-address_ **must** also have the property `reg` - and any node _without_ a _unit-address_ must _not_ have the property `reg`. It may seem redundant now, but we'll learn more about the `reg` property later in this article.
 
 Let's finish up on the node name with a convention that ensures that each node in the devicetree can be uniquely identified by specifying its full _path_. For any node name and property at the same level in the tree:
 - in the case of _node-name_ without an _unit-address_ the `node-name` must be unique,
@@ -448,6 +446,7 @@ Let's now have a look at properties. As we've already seen for the property `reg
 
 Most of the properties you'll encounter in Zephyr simply use `kebab-case` names, though you'll also encounter properties starting with a `#`, e.g., the standard properties `#address-cells` and `#size-cells` (also described in the [devicetree specification](https://www.devicetree.org/specifications/)). The special character `#` is really just part of the property name, there's no magic behind it.
 
+<!--
 For describing property values, we'll follow the approach of the [official devicetree specification (DTSpec)](https://www.devicetree.org/specifications/). If you're not interested in the details, skip ahead to the table containing value types and matching examples. The goal of the following paragraphs is to help you understand the connection between the DTSpec and [Zephyr's documentation](https://docs.zephyrproject.org/latest/build/dts/index.html) - which can sometimes be confusing. Let's start with the definition of a property value from the section _"Property values"_ in the [DTSpec](https://www.devicetree.org/specifications/):
 
 > "A property value is an **array** of zero or more bytes that contain information associated with the property. Properties might have an empty value if conveying true-false information. In this case, the presence or absence of the property is sufficiently descriptive." [[DTSpec]](https://www.devicetree.org/specifications/)
@@ -469,6 +468,11 @@ This is basically just a fancy way of saying that devicetree supports properties
 If you find this information underwhelming - you're not alone. It also won't be of much help when trying to understand property values from Zephyr's devicetree source files. The missing link to understanding the nature of the above table is the following: Values in Zephyr's DTS files are **represented** using the _"Devicetree Source (DTS) Format"_ version _1_, meaning they use a specific format or **syntax** to represent the above property value types. The above table, on the other hand, is a format-agnostic list of types that any specific DTS value format must translate to. E.g., a new _"Devicetree Source (DTS) Format"_ version _2_ might use a different syntax to represent values of the listed types.
 
 The information that you'll most likely be interested in is part of the later section _"Devicetree Source (DTS) Format"_ in the DTSpec, specifically the subsection _"Node and property definitions"_. There, you'll find the matching syntax description for the above types - or at least the very basic information. Thankfully, Zephyr (and most likely any other ecosystem using devicetree) doesn't just verbally describe its supported types but uses specific type names. We'll summarize the basics below. For details, refer to the [_"type"_ section in Zephyr's documentation on devicetree bindings](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#type) or [Zephyr's devicetree introduction on property values](https://docs.zephyrproject.org/latest/build/dts/intro-syntax-structure.html#writing-property-values).
+-->
+
+Zephyr uses the type names summarized below. For details, refer to the [_"type"_ section in Zephyr's documentation on devicetree bindings](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#type) or [Zephyr's devicetree introduction on property values](https://docs.zephyrproject.org/latest/build/dts/intro-syntax-structure.html#writing-property-values).
+
+> **Note:** If you're planning on reading the devicetree specification, skip ahead to the section _"Devicetree Source (DTS) Format"_, specifically the subsection _"Node and property definitions"_. In case something is unclear, try to find the information in the initial chapters. Reading the specification top to bottom can be quite confusing.
 
 The syntax used for property _values_ is a bit peculiar. Except for `phandles`, which we'll cover separately, the following table contains all property types supported by Zephyr and their DTSpec equivalent.
 
@@ -502,6 +506,8 @@ A `string` property is just like a `C` string literal: double-quoted, null-termi
 **`int`**
 
 An `int`eger is represented as an `array` containing a single 32-bit value ("cell").
+
+> **Note:** The term **"cell"** is typically used to refer to the individual data elements within properties and can thus be thought of as a single unit of data in a property. The [devicetree specification](https://www.devicetree.org/specifications/) v0.4 defines a **"cell"** as _"a unit of information consisting of 32 bits"_ and thus explicitly defines its size as 32 bits. Meaning it is just another confusing name for a 32-bit integer.
 
 Just like specified for the type `<u64>` in the [DTSpec](https://www.devicetree.org/specifications/), 64-bit integers do not have their own type but are instead represented by an array of two `int`egers.
 
