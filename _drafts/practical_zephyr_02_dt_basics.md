@@ -435,18 +435,7 @@ Finally, each UART instance also has a unique label:
 - `uart0` is the label of the node `/soc/uart@40002000`,
 - `uart1` is the label of the node `/soc/uart@40028000`.
 
-> **Note:** Throughout this article, we sometimes refer to _node_ labels as just "labels". The [devicetree specification](https://www.devicetree.org/specifications/), however, allows labels to be placed also at other locations, e.g., in front of property values. The following is an example where we create a label `array_idx_one` for the second entry in an `array` value, and for a `string` value:
->
-> ```dts
-> / {
->   some_node {
->     array = <1 array_idx_one: 2 3>;
->     string = foo_value: "foo";
->   };
-> };
-> ```
->
-> Zephyr's DTS generator accepts this input and won't complain about the additional labels. It will, however, ignore such labels and therefore you can't _use_ such labels to refer to values somewhere else in your devicetree source files. We therefore use the terms _label_ and _node label_ interchangeably.
+> **Note:** Throughout this article, we sometimes refer to _node_ labels as just "labels". The [Devicetree specification](https://www.devicetree.org/specifications/) also allows creating labels to reference properties and their values but Zephyr's DTS generator ignores this feature. We therefore use the terms _label_ and _node label_ interchangeably.
 
 
 ### Property names and basic value types
