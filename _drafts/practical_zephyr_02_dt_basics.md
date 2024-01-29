@@ -257,7 +257,7 @@ But that's enough devicetree syntax for now. After this step, we end up with a s
 
 ### Compiling the devicetree
 
-At the beginning of this article, we mentioned that Zephyr uses the `dtc` devicetree compiler to generate the corresponding source code. That is, however, not entirely true: While the official devicetree compiler `dtc` is definitely invoked during in the build process, it is not used to generate any source code. Instead, Zephyr feeds the generated `build/zephyr/zephyr.dts.pre` into its own `GEN_DEFINES_SCRIPT` Python script, which defaults to `zephyr/scripts/dts/gen_defines.py`.
+At the beginning of this article, we mentioned that Zephyr uses the `dtc` devicetree compiler to generate the corresponding source code. That is, however, not entirely true: While the official devicetree compiler `dtc` is definitely invoked during in the build process, it is not used to generate any source code. Instead, Zephyr feeds the generated `build/zephyr/zephyr.dts.pre` into its own `GEN_DEFINES_SCRIPT` Python script, located at `zephyr/scripts/dts/gen_defines.py`.
 
 Now, why would you want to do that? The devicetree compiler `dtc` is typically used to compile devicetree sources into a _binary_ format called the devicetree blob `dtb`. The Linux kernel parses the DTB and uses the information to configure and initialize the hardware components described in the DTB. This allows the kernel to know how to communicate with the hardware without hardcoding this information in the kernel code. Thus, in Linux, the devicetree is parsed and loaded during _runtime_ and thus can be _changed_ without modifying the application.
 
