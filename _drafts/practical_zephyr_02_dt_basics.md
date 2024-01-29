@@ -40,7 +40,7 @@ Devicetree files use their own _Devicetree Source (DTS) format_, defined in the 
 
 The build system takes the _devicetree_ specification and feeds it to its own compiler, which - in the case of Zephyr - generates `C` macros that are in turn used by Zephyr's device drivers. For all the readers coming straight from Linux - yes, this approach is a little different than what you're used to, but we'll get to that.
 
-The following is a snippet of [Nordic's](https://www.nordicsemi.com/) _Device Tree Source Include_ file of their nRF52840 SoC:
+The following is a snippet of [Nordic's](https://www.nordicsemi.com/) _Devicetree Source Include_ file of their nRF52840 SoC:
 
 `zephyr/dts/arm/nordic/nrf52840.dtsi`
 
