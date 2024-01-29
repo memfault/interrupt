@@ -263,7 +263,7 @@ Now, why would you want to do that? The devicetree compiler `dtc` is typically u
 
 Zephyr, however, is designed to run on resource-constrained, embedded systems. It is simply not feasible to load a devicetree blob during runtime: Any such structure would take up too many resources in both, the Zephyr drivers and for storing the devicetree itself. Instead, the devicetree is resolved during _compile time_.
 
-> **Note:** In case this article is too slow for you but you still want to know more about devicetree, there is a [brilliant video of the Zephyr Development Summit 2022 by Bolivar on devicetree](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe).
+> **Note:** In case this article is too slow for you but you still want to know more about devicetree, there is a [brilliant video of the Zephyr Development Summit 2022 by Martí Bolívar on devicetree](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe).
 
 So if not a binary, what's the output of this `gen_defines.py` generator? Let's have another peek at the output of our build process:
 
