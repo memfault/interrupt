@@ -1225,7 +1225,7 @@ The second overlay file shows the use of `path`s, `phandle`, `phandle`s, and `ph
 
   node_refs_equivalents {
     phandles = <&{/node_a}>, <&label_b>;
-    phandle-array-of-refs = <&{/node_a} 1>, <2 &label_b 3>;
+    phandle-array-of-refs = <&{/node_a} 1 2>, <&label_b 3>;
   };
 
   node_with_phandle {
