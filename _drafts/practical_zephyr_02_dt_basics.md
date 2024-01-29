@@ -476,16 +476,16 @@ Zephyr uses the type names summarized below. For details, refer to the [_"type"_
 
 The syntax used for property _values_ is a bit peculiar. Except for `phandles`, which we'll cover separately, the following table contains all property types supported by Zephyr and their DTSpec equivalent.
 
-| Zephyr type    | DTSpec equivalent                      |  Example                                            |
-| :------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------ | :------------------------------------------------- |
-| `boolean`      | `property with no value`                                                 | `interrupt-controller;`                            |
-| `string`       | `<string>`                             | double-quoted text (null terminated string)                                                             | `status = "disabled";`                             |
-| `array`        | `32-bit integer cells`                                              | `reg = <0x40002000 0x1000>;`                       |
-| `int`          | `A single 32-bit integer cell`                                 | `current-speed = <115200>;`                        |
-| `64-bit integer`        | `32-bit integer cells`                                | `value = <0xBAADF00D 0xDEADBEEF>;`                 |
-| `uint8-array`  | `<bytestring>` | `mac-address = [ DE AD BE EF 12 34 ];`             |
-| `string-array` | `<stringlist>`                         | `string`s, separated by commas                                                                          | `compatible = "nordic,nrf-egu", "nordic,nrf-swi";` |
-| `compound`     | "comma-separated components"           | comma-separated values                                                                                  | `foo = <1 2>, [3, 4], "five"`                      |
+| Zephyr type      | DTSpec equivalent              | Example                                            |
+| :--------------- | :----------------------------- | :------------------------------------------------- |
+| `boolean`        | `property with no value`       | `interrupt-controller;`                            |
+| `string`         | `string`                       | `status = "disabled";`                             |
+| `array`          | `32-bit integer cells`         | `reg = <0x40002000 0x1000>;`                       |
+| `int`            | `A single 32-bit integer cell` | `current-speed = <115200>;`                        |
+| `64-bit integer` | `32-bit integer cells`         | `value = <0xBAADF00D 0xDEADBEEF>;`                 |
+| `uint8-array`    | `bytestring`                   | `mac-address = [ DE AD BE EF 12 34 ];`             |
+| `string-array`   | `stringlist`                   | `compatible = "nordic,nrf-egu", "nordic,nrf-swi";` |
+| `compound`       | "comma-separated components"   | `foo = <1 2>, [3, 4], "five"`                      |
 
 The table deserves some observations and explanations, but we'll repeat all the types just for the sake of completeness:
 
@@ -493,25 +493,25 @@ The table deserves some observations and explanations, but we'll repeat all the 
 
 A `boolean` property is `true` if the property exists, otherwise `false`.
 
-<!-- --- -->
-
 **`string`**
 
 A `string` property is just like a `C` string literal: double-quoted, null-terminated text.
 
 **`array`**
 
-`arrays` could in theory contain mixed elements of any supported type but most commonly uses 32-bit integers. Just like in `C/C++`, the prefix `0x` is used for hexadecimal numbers, and numbers _without_ a prefix are decimals.
+An `array` is a lists of values enclosed in `<` and `>`, separated by spaces. `arrays` could in theory contain mixed elements of any supported type but most commonly uses 32-bit integers. Just like in `C/C++`, the prefix `0x` is used for hexadecimal numbers, and numbers _without_ a prefix are decimals.
 
 **`int`**
 
-An `int`eger is represented as an `array` containing a single 32-bit value ("cell").
+An `int`eger is represented as an `array` containing a single 32-bit value ("cell"): It's a single 32-bit value enclosed in `<` and `>`.
 
 > **Note:** The term **"cell"** is typically used to refer to the individual data elements within properties and can thus be thought of as a single unit of data in a property. The [devicetree specification](https://www.devicetree.org/specifications/) v0.4 defines a **"cell"** as _"a unit of information consisting of 32 bits"_ and thus explicitly defines its size as 32 bits. Meaning it is just another confusing name for a 32-bit integer.
 
-Just like specified for the type `<u64>` in the [DTSpec](https://www.devicetree.org/specifications/), 64-bit integers do not have their own type but are instead represented by an array of two `int`egers.
+64-bit integers do not have their own type but are instead represented by an array of two `int`egers.
 
 **`uint8-array`**
+
+A `uint-array` consists of 8-bit hexadecimal values enclosed in `[` and `]`, _optionally_ separated by spaces.
 
 In contrast to an `array`, a `uint8-array` _always_ uses **hexadecimal** literals _without_ the prefix `0x` - which can be confusing at first. E.g., `<11 12>` represents the two _32-bit_ integers with the decimal values `11` and `12`, whereas `[11, 12]` represents the two _8-bit_ integers with the decimal values `17` and `18`.
 
@@ -587,8 +587,8 @@ The build system's output now announces that it encountered the newly created ov
 
 So what is a `phandle`? The easy answer is: Devicetree source files need some way to refer to nodes, something like pointers in `C`, and that's what `phandle`s are. If we're being picky about the terminology - it's complicated. Why?
 
-- In the [DTSpec](https://www.devicetree.org/specifications/), we've seen that `<phandle>` is a base **type**.
-- In addition, the [DTSpec](https://www.devicetree.org/specifications/) also defines a standard **property** named `phandle` - ironically of type `<u32>`, and not `<phandle>`. We'll see this property in just a second.
+- In the [DTSpec](https://www.devicetree.org/specifications/), we've seen that a `phandle` is a base **type**.
+- In addition, the [DTSpec](https://www.devicetree.org/specifications/) also defines a standard **property** named `phandle` - ironically of type _32-bit integer_, and not _phandle_. We'll see this property in just a second.
 - In Zephyr, the term `phandle` is used pretty much only for node **references** in any format and never even mentions the same named _property_.
 
 Why this ambiguity? Because in the end, any reference to a node is replaced by a unique, 32-bit value that identifies the node - the value stored in the node's `phandle` property. The fact that `phandle` _property_ is not intended to be set manually, but is instead created by the devicetree compiler for each referenced node, makes mentioning the `phandle` property as such unnecessary. Thus, the approach chosen in Zephyr's documentation - referring to any reference as `phandle` - makes a lot of sense.
@@ -635,7 +635,7 @@ $ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
 
 We can now see that the generator has created a `phandle` property for our referenced `node_a`. Your mileage may vary on the exact value for the property since it depends on the number of referenced nodes in the set of DTS files that are merged. What is this `phandle` property? The [DTSpec](https://www.devicetree.org/specifications/) defines `phandle` as follows:
 
-> Property name `phandle`, value type `<u32>`.
+> Property name `phandle`, value type _32-bit integer_.
 >
 > The `phandle` property specifies a numerical identifier for a node that is unique within the devicetree. The `phandle` property value is used by other nodes that need to refer to the node associated with the property.
 >
@@ -703,13 +703,21 @@ In Zephyr, however, an array containing a **single** node reference has its own 
 ### `path`, `phandles` and `phandle-array`
 
 In addition to the `phandle` type, three more types are available in Zephyr when dealing with `phandle`s and references:
-
+<!--
 | Zephyr type     | DTSpec equivalent      | Syntax                                   | Example                                |
 | :-------------- | :--------------------- | :--------------------------------------- | :------------------------------------- |
 | `path`          | `<prop-encoded-array>` | A plain node path string or reference    | `zephyr,console = &uart0;`             |
 | `phandle`       | `<phandle>`            | An `array` containing a single reference | `pinctrl-0 = <&uart0_default>;`        |
 | `phandles`      | `<prop-encoded-array>` | An array of references                   | `cpu-power-states = <&idle &suspend>;` |
 | `phandle-array` | `<prop-encoded-array>` | An array containing references and cells | `gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;` |
+-->
+
+| Zephyr type     | DTSpec equivalent      | Example                                |
+| :-------------- | :--------------------- | :------------------------------------- |
+| `path`          | `32-bit integer cells` | `zephyr,console = &uart0;`             |
+| `phandle`       | `phandle`              | `pinctrl-0 = <&uart0_default>;`        |
+| `phandles`      | `32-bit integer cells` | `cpu-power-states = <&idle &suspend>;` |
+| `phandle-array` | `32-bit integer cells` | `gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;` |
 
 Let's go through the remaining types one by one, starting with `path`s: In our previous example, we've enclosed the references in `<` and `>` and ended up with our `phandle` type. If we don't place the reference within `<` and `>`, the [DTSpec](https://www.devicetree.org/specifications/) defines the following behavior:
 
@@ -749,7 +757,7 @@ The `phandle` property for `node_a` is gone! The reason for this is simple - and
 
 In Zephyr, you'll encounter `path`s exclusively for properties of the standard nodes `/aliases` and `/chosen`, both of which we'll see in a [later section in this article](#about-aliases-and-chosen). Meaning: You can't actually use `path`s for your own nodes.
 
-Next, `phandles`. This is not a typo: The plural form `phandles` of `phandle` is really a separate type in Zephyr, and it's as simple as it sounds: Instead of supporting only a single _reference_ - or _phandle_ - in its value, it is an array of _phandles_. Let's create another `node_b` and change `node_refs` to contain only a new property `phandles` and recompile:
+Next, `phandles`. This is not a typo: The plural form `phandles` of `phandle` is really a separate type in Zephyr, and it's as simple as it sounds: Instead of supporting only a single _reference_ - or _phandle_ - in its value, it is an **array** of _phandles_. Let's create another `node_b` and change `node_refs` to contain only a new property `phandles` and recompile:
 
 
 ```dts
@@ -841,7 +849,7 @@ In case you're still confused, we'll look at a real-world example for a `phandle
 
 In case you've been experimenting with the above overlay, you may have noticed that I've been cheating a little: The project still _compiles_ just fine even if you delete the `#phandle-array-of-ref-cells` properties, or give `phandle-array-of-refs` a different name that does _not_ end in an _s_.
 
-Why? Our devicetree is still _syntactically_ correct even if we do not follow the given convention. In the end, `phandle-array-of-refs` is simply an array of cells since every reference is expanded to the node's `phandle` property's value - even without the expansion, its syntax would still fit a `<prop-encoded-array>`. A _syntactically_ sound devicetree, however, is only half the job: Eventually, we'll have to define some _schema_ and add _meaning_ to all the properties and their values; we'll have to define the devicetree's **semantics**.
+Why? Our devicetree is still _syntactically_ correct even if we do not follow the given convention. In the end, `phandle-array-of-refs` is simply an array of cells since every reference is expanded to the node's `phandle` property's value - even without the expansion, its syntax would still fit an array of 32-bit integer cells. A _syntactically_ sound devicetree, however, is only half the job: Eventually, we'll have to define some _schema_ and add _meaning_ to all the properties and their values; we'll have to define the devicetree's **semantics**.
 
 Without semantics, the DTS generator can't make sense of the provided devicetree and therefore also won't generate anything that you'd be able to use in your application. Once you add semantics to your nodes, you'll have to strictly follow the previous convention, which is also why I've already included the notation in this article. The details, however, we'll explore in the next article about devicetree _bindings_.
 
@@ -916,6 +924,22 @@ In the next article, we'll see how to use the standard property `compatible` and
 
 Having explored `phandle` types and `paths`, we can complete the list of types that are used in Zephyr devicetrees. You can find the same information in [Zephyr's documentation on bindings](https://docs.zephyrproject.org/latest/build/dts/bindings-syntax.html#type) and [Zephyr's how-to on property values](https://docs.zephyrproject.org/latest/build/dts/intro-syntax-structure.html#writing-property-values).
 
+| Zephyr type      | DTSpec equivalent              | Example                                            |
+| :--------------- | :----------------------------- | :------------------------------------------------- |
+| `boolean`        | `property with no value`       | `interrupt-controller;`                            |
+| `string`         | `string`                       | `status = "disabled";`                             |
+| `array`          | `32-bit integer cells`         | `reg = <0x40002000 0x1000>;`                       |
+| `int`            | `A single 32-bit integer cell` | `current-speed = <115200>;`                        |
+| `64-bit integer` | `32-bit integer cells`         | `value = <0xBAADF00D 0xDEADBEEF>;`                 |
+| `uint8-array`    | `bytestring`                   | `mac-address = [ DE AD BE EF 12 34 ];`             |
+| `string-array`   | `stringlist`                   | `compatible = "nordic,nrf-egu", "nordic,nrf-swi";` |
+| `compound`       | "comma-separated components"   | `foo = <1 2>, [3, 4], "five"`                      |
+| `path`           | `32-bit integer cells`         | `zephyr,console = &uart0;`                         |
+| `phandle`        | `phandle`                      | `pinctrl-0 = <&uart0_default>;`                    |
+| `phandles`       | `32-bit integer cells`         | `cpu-power-states = <&idle &suspend>;`             |
+| `phandle-array`  | `32-bit integer cells`         | `gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;`             |
+
+<!--
 | Zephyr type     | DTSpec equivalent                      | Syntax                                                                                                  | Example                                            |
 | :-------------- | :------------------------------------- | :------------------------------------------------------------------------------------------------------ | :------------------------------------------------- |
 | `boolean`       | `<empty>`                              | no value; a property is `true` if the property exists                                                   | `interrupt-controller;`                            |
@@ -930,6 +954,7 @@ Having explored `phandle` types and `paths`, we can complete the list of types t
 | `phandles`      | `<prop-encoded-array>`                 | An array of references                                                                                  | `cpu-power-states = <&idle &suspend>;`             |
 | `phandle-array` | `<prop-encoded-array>`                 | An array containing references and cells                                                                | `gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;`             |
 | `compound`      | "comma-separated components"           | comma-separated values                                                                                  | `foo = <1 2>, [3, 4], "five"`                      |
+-->
 
 It is again worth mentioning that the `compound` type is only a "catch-all" for custom types. Zephyr does **not** generate any macros for `compound` properties.
 
@@ -1069,10 +1094,11 @@ Now what about the `/chosen` node? If you've been following along, or if you've 
 
 So what's the difference between a property in `/chosen` and in `/aliases`? Let's first look at the definition of the `/chosen` node in the [DTSpec](https://www.devicetree.org/specifications/):
 
-> The `/chosen` node does not represent a real device in the system but describes parameters chosen or specified by the
-system firmware at run time. It shall be a child of the root node. [[DTSpec]](https://www.devicetree.org/specifications/)
+> The `/chosen` node does not represent a real device in the system but describes parameters chosen or specified by the system firmware at run time. It shall be a child of the root node. [[DTSpec]](https://www.devicetree.org/specifications/)
 
 The first sentence can be a bit misleading: It doesn't mean that we cannot refer to "real devices" using `/chosen` properties, it simply means that a device defined as a `/chosen` property is always a _reference_. Thus, in short, `/chosen` contains a list of _system parameters_.
+
+> **Note:** In Zephyr, `/chosen` is only used at build-time. There is no run-time feature.
 
 According to the [DTSpec](https://www.devicetree.org/specifications/), technically, `/chosen` properties are not restricted to the `path` type. The following are acceptable `/chosen` properties according to the specification, and Zephyr's DTS generator does indeed accept them as input:
 
@@ -1275,11 +1301,11 @@ Even though they match the naming convention, their purpose, however, is a diffe
 
 Let's first have a look at what we can find out about `reg` in the [DTSpec](https://www.devicetree.org/specifications/):
 
-> Property name `reg`, value type `<prop-encoded-array>` encoded as an arbitrary number of _(address, length)_ pairs.
+> Property name `reg`, value type _32-bit integer cells_ encoded as an arbitrary number of _(address, length)_ pairs.
 >
 > The `reg` property describes the address of the device’s resources within the address space defined by its parent [...]. Most commonly this means the offsets and lengths of memory-mapped IO register blocks [...].
 >
-> The value is a `<prop-encoded-array>`, composed of an arbitrary number of pairs of _address and length_, `<address length>`. The number of `<u32>` cells required to specify the address and length are [...] specified by the `#address-cells` and `#size-cells` properties in the parent of the device node. If the parent node specifies a value of _0_ for `#size-cells`, the length field in the value of `reg` shall be omitted.
+> The value is a [`3_bit integer cells`,_composed of an arbitrary number of pairs of _address and length_, `<address length>`. The number of 32-bit cells required to specify the address and length are [...] specified by the `#address-cells` and `#size-cells` properties in the parent of the device node. If the parent node specifies a value of _0_ for `#size-cells`, the length field in the value of `reg` shall be omitted.
 
 Bit much? Let's bring up our good old `uart@40002000` node from the nRF52840's DTS include file:
 
@@ -1297,13 +1323,13 @@ Bit much? Let's bring up our good old `uart@40002000` node from the nRF52840's D
 };
 ```
 
-Using the information from the [DTSpec](https://www.devicetree.org/specifications/) we should now be able to tell for sure that `0x40002000` is the _address_ and `_0x1000` the _length_, right? Yes, but no: We've also learned that a `<u64>` value is represented using two cells, thus `<0x40002000 0x1000>` could technically be a single `<u64>`, and _length_ could be omitted. To be _really_ sure how `uart@40002000` is addressed, we need to look at the parent node's `#address-cells` and `#size-cells` properties. So what are those properties? Let's look them up in the [DTSpec](https://www.devicetree.org/specifications/):
+Using the information from the [DTSpec](https://www.devicetree.org/specifications/) we should now be able to tell for sure that `0x40002000` is the _address_ and `_0x1000` the _length_, right? Yes, but no: We've also learned that a 64-bit integer value is represented using two cells, thus `<0x40002000 0x1000>` could technically be a single 64-bit integer, and _length_ could be omitted. To be _really_ sure how `uart@40002000` is addressed, we need to look at the parent node's `#address-cells` and `#size-cells` properties. So what are those properties? Let's look them up in the [DTSpec](https://www.devicetree.org/specifications/):
 
-> Property names `#address-cells`, `#size-cells`, value type `<u32>`.
+> Property names `#address-cells`, `#size-cells`, value type _32-bit integer_.
 >
 > The `#address-cells` and `#size-cells` properties [...] describe how child device nodes should be addressed.
-> - The `#address-cells` property defines the number of `<u32>` cells used to encode the **address** field in a child node’s `reg` property.
-> - The `#size-cells` property defines the number of `<u32>` cells used to encode the **size** field in a child node’s `reg` property.
+> - The `#address-cells` property defines the number of _32-bit integers_ used to encode the **address** field in a child node’s `reg` property.
+> - The `#size-cells` property defines the number of _32-bit integers_ used to encode the **size** field in a child node’s `reg` property.
 >
 > The `#address-cells` and `#size-cells` properties are not inherited from ancestors in the devicetree. [...] A DTSpec-compliant boot program shall supply `#address-cells` and `#size-cells` on **all** nodes that have children. If missing, a client program should assume a default value of _2_ for `#address-cells`, and a value of _1_ for `#size-cells`.
 
@@ -1356,7 +1382,7 @@ We can also find an example of a **64-bit architecture** in Zephyr's DTS files:
 };
 ```
 
-Here, `uart0`'s _address_ is formed by the `<u64>` value `<0x0 0x10010000>` and the _length_ by the `<u64>` value `<0x0 0x1000>`.
+Here, `uart0`'s _address_ is formed by the 64-bit integer value `<0x0 0x10010000>` and the _length_ by the 64-bit integer value `<0x0 0x1000>`.
 
 Addressing is not only used for register mapped devices but, e.g., also for _bus_ addresses. For this, let's have a look at [Nordic's Thingy:53](https://www.nordicsemi.com/Products/Development-hardware/Nordic-Thingy-53), a more complex board with several I2C peripherals connected to the nRF5340 MCU. The I2C bus of the nRF5340 uses the `#address-cells` and `#size-cells` properties to indicate that I2C nodes are uniquely identified via their address, no size is needed:
 
