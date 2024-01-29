@@ -1420,7 +1420,7 @@ The following are great resources when it comes to Zephyr and are worth a read _
 - Zephyr's official documentation also includes a more practical information article in the form of a [devicetree how-tos](https://docs.zephyrproject.org/latest/build/dts/index.html).
 - As usual, the [nRF Connect SDK Fundamentals](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals) course in Nordic's [DevAcademy](https://academy.nordicsemi.com/) also covers _devicetree_.
 - The official Raspberry PI documentation also has a [great section about devicetree and the DTS syntax](https://www.raspberrypi.com/documentation/computers/configuration.html#device-trees-overlays-and-parameters).
-- I can highly recommend watching the presentation [Zephyr Devicetree Mysteries, Solved](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe) by Marti Bolivar in case you can't wait for the next article.
+- I can highly recommend watching the presentation [Zephyr Devicetree Mysteries, Solved](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe) by Martí Bolívar in case you can't wait for the next article.
 - `elinux.org` has an interesting wiki page about [devicetree mysteries](https://elinux.org/Device_Tree_Mysteries), though this is mainly targeted at Linux.
 
 Finally, have a look at the files in the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr).
