@@ -909,7 +909,7 @@ The nRF52840 development kit connects LEDs to the nRF52840 MCU, which are descri
 
 There are no individual nodes for each pin in the nRF52840's devicetree. Therefore, when referencing the `gpio0` node, we need to be able to tell exactly which pin we're using for our LED. In addition, we also typically need to provide some configuration for our pin, e.g., set the pin to _active low_.
 
-The nodes `gpio0` and `gpio1` both contain the _specifier cells_ `#gpio-cells` which indicate that we need to pass exactly two _cells_ in case the node is used in a `phandle-array`. In the `led0`'s property `gpios` of type `phandle-array` we can see that we do exactly that: We use the two cells to specify the _pin_ and _flags_ that we're using for the LED. Now, how would we know that `13` is the pin number and `GPIO_ACTIVE_LOW` is a flag?
+The nodes `gpio0` and `gpio1` both contain the _specifier cells_ `#gpio-cells` which indicate that we need to pass exactly two _cells_ to use the node in a `phandle-array`. In the `led0`'s property `gpios` of type `phandle-array` we can see that we do exactly that: We use the two cells to specify the _pin_ and _flags_ that we're using for the LED. Now, how would we know that `13` is the pin number and `GPIO_ACTIVE_LOW` is a flag?
 
 As we've seen before, without additional information all the DTS compiler can do is make sure the _syntax_ of your file is correct. It doesn't know anything about the **semantics** and therefore can't really associate the values in the `phandle-array` to `gpio0`. It therefore also doesn't care about any semantic requirements.
 
