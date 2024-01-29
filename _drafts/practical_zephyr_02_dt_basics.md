@@ -497,7 +497,7 @@ A `string` property is just like a `C` string literal: double-quoted, null-termi
 
 **`array`**
 
-`arrays` could in theory contain mixed elements of any supported type. In practice and in Zephyr, however, an `array` is essentially always a list of 32-bit integers: Just like in `C/C++`, the prefix `0x` is used for hexadecimal numbers, and numbers _without_ a prefix are decimals.
+`arrays` could in theory contain mixed elements of any supported type but most commonly uses 32-bit integers. Just like in `C/C++`, the prefix `0x` is used for hexadecimal numbers, and numbers _without_ a prefix are decimals.
 
 **`int`**
 
