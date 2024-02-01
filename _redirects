@@ -6,6 +6,8 @@
 /blog/drafting-a-c-dev-environment /blog/a-modern-c-dev-env
 /blog/mcu-periphral-forwarding /blog/mcu-peripheral-forwarding
 
+/blog/authors/* /authors/:splat
+
 # Stable redirect for subscribing to Interrupt's Event calendar.
 # Here in case we switch to Google Calendar or another provider in the future
 /events-calendar https://airtable.com/shrPIHX3y3gQ0WlRd/iCal?timeZone=America%2FLos_Angeles&userLocale=en

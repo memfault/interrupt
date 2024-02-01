@@ -715,7 +715,7 @@ generates pretty HTML-based reports, as we saw in the [Introduction to Renode
 post]({% post_url 2020-03-23-intro-to-renode %}#renode--integration-tests).
 
 > I've included the HTML report for the above test.
-> [Click here to view it](/blog/misc/test-automation-renode/log.html).
+> [Click here to view it](/misc/test-automation-renode/log.html).
 
 ## Debugging Failing Tests in CI
 
