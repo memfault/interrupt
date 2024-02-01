@@ -11,7 +11,8 @@ In the [previous article]({% post_url 2024-01-24-practical_zephyr_kconfig %}), w
 
 In this third article of the "Practical Zephyr" series, we'll see how we configure and use _hardware_. For this, Zephyr borrows another tool from the Linux kernel: [**Devicetree**](https://docs.zephyrproject.org/latest/build/dts/index.html).
 
-In contrast to _Kconfig_, the *Devicetree* syntax and its use are more intricate. Therefore, we'll cover *Devicetree* in two articles. In this article, we'll see what Devicetree is and how we can write our Devicetree source files. In the next article, we'll look at so-called Devicetree _bindings_, which add semantics to our Devicetree. Be prepared for a fair bit of theory, but as usual, we'll use an example project to follow along.
+In contrast to _Kconfig_, the *Devicetree* syntax and its use are more intricate. Therefore, we'll cover *Devicetree* in two articles. In this article, we'll see what Devicetree is and how we can write our own Devicetree source files. In the next article, we'll look at so-called Devicetree _bindings_, which add semantics to our Devicetree. Be prepared for a fair bit of theory, but as usual, we'll use an example project to follow along.
+
 
 <!-- excerpt end -->
 
