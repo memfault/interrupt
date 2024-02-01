@@ -77,7 +77,7 @@ In case you're looking for a more detailed description of the _DTS (Devicetree S
 
 ## Devicetree and Zephyr
 
-We create a new freestanding application with the files listed below to get started. If you're not familiar with the required files, the installation, or the build process, have a look at the previous articles or the official documentation. As mentioned in the [prerequisites](# prerequisites), you should be familiar with creating, building, and running a Zephr application.
+We create a new freestanding application with the files listed below to get started. If you're not familiar with the required files, the installation, or the build process, have a look at the previous articles or the official documentation. As mentioned in the [prerequisites](#prerequisites), you should be familiar with creating, building, and running a Zephr application.
 
 ```bash
 $ tree --charset=utf-8 --dirsfirst
