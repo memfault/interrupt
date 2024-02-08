@@ -1213,8 +1213,8 @@ Let's briefly review the rules for using `phandle-array`s that we've seen in the
 
 - By convention, a `phandle-array` property is plural and its name must thus end in _s_.
 - The value of a `phandle-array` property is an array of phandles, but each phandle is followed by the pre-defined number of cells for each referenced node.
-- The number of cells that can follow a node's reference is specified by the node's _specifier cells_ property `#<prefix>-cells`.
-- _Specifier cells_ have a defined naming convention: The name is formed by removing the plural '_s_' and attaching '_-cells_' to the name of the `phandle-array` property.
+- The number of cells that can follow a node's reference is specified by the node's _specifier cells_ property
+- The _specifier cells_ property has a defined naming convention: The name is formed by removing the plural '_s_' and attaching '_-cells_' to the name of the `phandle-array` property: `#<name-without-s>-cells`
 
 Let's extend our `props-phandles.overlay` with a new property `phandle-array-of-refs`. Within this property, we'll reference `/node_a` and pass along two cells, and `/node_b` with just one cell as metadata:
 
