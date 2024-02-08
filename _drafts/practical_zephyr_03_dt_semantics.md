@@ -644,7 +644,7 @@ We'll learn how to use those macros in the section about [Zephyr's Devicetree AP
 
 ### Basic types
 
-In the previous article, we've seen all types supported by devicetrees in Zephyr. We'll now use the same node, but extend it by two properties called `enum-int` and `enum-string`, since *enum*erations are represented differently in bindings. In the previous article, we've seen that Zephyr's Devicetree generator ignores _value_ labels. We'll throw in two of those, named `second_value` and `string_value`, for good practice, and also add the `label_with_props` for `/node_with_props`:
+In the previous article, we've seen all of the types supported by devicetrees in Zephyr. We'll now use the same node, but extend it by two properties called `enum-int` and `enum-string`, since *enum*erations are represented differently in bindings. In the previous article, we've seen that Zephyr's Devicetree generator ignores _value_ labels. We'll throw in two of those, named `second_value` and `string_value`, for good practice, and also add the `label_with_props` for `/node_with_props`:
 
 `dts/playground/props-basics.overlay`
 ```dts
