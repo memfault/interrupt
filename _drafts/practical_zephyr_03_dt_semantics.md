@@ -1462,7 +1462,7 @@ Having seen the macros provided by Zephyr's generator script, it is now pretty o
 
 // Tokens in C macros are pasted using `##`.
 #define TOKEN_CAT_3(a1, a2, a3)      a1##a2##a3
-#define NODE_PROP(node_id, property) TOKEN_CAT_3(node, _, string_value)
+#define NODE_PROP(node_id, property) TOKEN_CAT_3(node, _, property)
 
 // The following resolves to `node_string_value` and thus to "123-test"
 static const char *str = NODE_PROP(node, string_value);
