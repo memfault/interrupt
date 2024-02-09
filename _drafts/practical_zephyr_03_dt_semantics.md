@@ -19,7 +19,7 @@ Notice that we'll only look at Zephyr's _basic_ Devicetree API and won't analyze
 
 ## Prerequisites
 
-This article is part of the _Practical Zephyr_ article series. In case you haven't read the previous articles, please go ahead and have a look. In this article we're building up on what we've seen in the *Devicetree* basics: We'll add _bindings_ to the same nodes that we've created in the [previous article]({% post_url 2024-02-01-practical_zephyr_dt %}). If you have some experience with _devicetree_ and Zephyr, you should be able to follow along just fine without reading the previous articles.
+This article is part of the _Practical Zephyr_ article series. In case you haven't read the previous articles, please go ahead and have a look. In this article we're building up on what we've seen in the [Devicetree basics]({% post_url 2024-02-01-practical_zephyr_dt %}): We'll add _bindings_ to the same nodes that we've created in the [previous article]({% post_url 2024-02-01-practical_zephyr_dt %}). If you have some experience with _Devicetree_ and Zephyr, you should be able to follow along just fine without reading the previous articles.
 
 > **Note:** A full example application including all files that we'll see throughout this article is available in the [`03_devicetree_semantics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/03_devicetree_semantics).
 
@@ -155,7 +155,8 @@ If, instead, we specify the CMake variable `DTC_OVERLAY_FILE` as `app.overlay` i
 
 ```bash
 $ west build --board dummy_board@123 -- \
-  -DTC_OVERLAY_FILE="app.overlay" -DEXTRA_DTC_OVERLAY_FILE="dts/extra/extra_0.overlay;dts/extra/extra_1.overlay"
+  -DTC_OVERLAY_FILE="app.overlay" \
+  -DEXTRA_DTC_OVERLAY_FILE="dts/extra/extra_0.overlay;dts/extra/extra_1.overlay"
 ```
 
 The overlay files would thus be added as follows and with _increasing_ precedence:
@@ -177,7 +178,7 @@ Now that we finally know what _overlays_ are and how we can use them in our buil
 We start by creating our own overlay file `dts/playground/props-basics.overlay`:
 
 ```bash
-$ tree --charset=utf-8 --dirsfirst.
+$ tree --charset=utf-8 --dirsfirst .
 ├── dts
 │   └── playground
 │       └── props-basics.overlay
@@ -345,7 +346,7 @@ Something's still missing.
 
 ### Matching `compatible` bindings
 
-What's the difference between `/soc/uart@40002000` and our `/node_with_props`? Admittedly, there are _lots_ of differences, but the significant difference is that `/soc/uart@40002000` has a **`compatible`** property. `compatible` is a standard property defined in the [DTSpec](https://www.devicetree.org/specifications/), so let's look it up:
+What's the difference between `/soc/uart@40002000` and our `/node_with_props`? Admittedly, there are _lots_ of differences, but the significant difference is that `/soc/uart@40002000` has a **compatible** property. `compatible` is a standard property defined in the [DTSpec](https://www.devicetree.org/specifications/), so let's look it up:
 
 > Property name `compatible`, value type `<stringlist>`.
 >
@@ -426,7 +427,7 @@ The contents of included files are essentially merged using a recursive dictiona
 
 > **Note:** In case you're wondering what happens with duplicated keys and/or values, try it out based on what we'll learn in the next section, where we'll create our own bindings.
 
-Since `nordic,nrf-uarte.yaml` doesn't seem to define anything related to our properties - just like in the article on `Kconfig` - we once again have to follow the include tree. Let's try `nordic,nrf-uart-common.yaml`:
+Since `nordic,nrf-uarte.yaml` doesn't seem to define anything related to our properties - just like in the [article about Kconfig]({% post_url 2024-01-24-practical_zephyr_kconfig %}) - we once again have to follow the include tree. Let's try `nordic,nrf-uart-common.yaml`:
 
 `zephyr/dts/bindings/serial/nordic,nrf-uart-common.yaml`
 ```yaml
@@ -1335,7 +1336,7 @@ The above binding thus defines a _name_ and **semantics** for each value that fo
 
 We're therefore providing the means for the [Devicetree API](#zephyrs-devicetree-api) to access the _metadata_ passed with the _phandle_ using a descriptive name.
 
-> **Note:** One thing that is not immediately clear is, that number of elements in the `-cells` key of the _binding_ **must** match the number of `-cells = <n>` specified in the _devicetree_. It is, e.g., **not** possible to provide _more_ elements in a binding's list and restrict the exact number of cells using the matching Devicetree property. Thus, for any node that has a binding, the property `-cells` in the Devicetree is actually redundant.
+> **Note:** One thing that is not immediately clear is, that number of elements in the `-cells` key of the _binding_ **must** match the number of `-cells = <n>` specified in the _Devicetree_. It is, e.g., **not** possible to provide _more_ elements in a binding's list and restrict the exact number of cells using the matching Devicetree property. Thus, for any node that has a binding, the property `-cells` in the Devicetree is actually redundant.
 
 We can now go ahead and assign the bindings to our nodes with the `compatible` property, and recompile the project.
 
@@ -1914,7 +1915,7 @@ In this article, we've learned about Devicetree _bindings_ and how they are used
 
 We haven't used specific subsystems, such as `gpio`, which add yet another layer of complexity on top of the basic Devicetree API. There are also other, more advanced concepts in Devicetree still that we haven't seen, e.g., _nexus_ nodes.
 
-However, with what you've learned from this and the previous article about _devicetree_ and _bindings_, you should have no problems looking things up in [Zephyr's official documentation](https://docs.zephyrproject.org/latest/build/dts/index.html), without having to follow too many links due to the missing basics.
+However, with what you've learned from this and the previous article about _Devicetree_ and _bindings_, you should have no problems looking things up in [Zephyr's official documentation](https://docs.zephyrproject.org/latest/build/dts/index.html), without having to follow too many links due to the missing basics.
 
 > **Note:** The full example application including all the Devicetree files that we've seen throughout this article is available in the [`03_devicetree_semantics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/03_devicetree_semantics).
 
@@ -1926,10 +1927,10 @@ The following are great resources when it comes to Zephyr and are worth a read _
 
 - As we've seen, the [official Devicetree specification](https://www.devicetree.org/specifications/) also contains information on Devicetree _bindings_.
 - Second, of course, [Zephyr's official documentation on Devicetree](https://docs.zephyrproject.org/latest/build/dts/index.html) is still a go-to reference.
-- The course [nRF Connect SDK Fundamentals](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/)] in Nordic's [DevAcademy](https://academy.nordicsemi.com/) guides you through some examples using the _devicetree API_ and is therefore highly recommended.
+- The course [nRF Connect SDK Fundamentals](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/)] in Nordic's [DevAcademy](https://academy.nordicsemi.com/) guides you through some examples using the _Devicetree API_ and is therefore highly recommended.
 - Definitely watch the presentation [Zephyr Devicetree Mysteries, Solved](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe) by Martí Bolívar.
-- More _devicetree_ examples can also be found in the [API documentation](https://docs.zephyrproject.org/latest/build/dts/api/api.html), but also in Zephyr's tests, e.g., `zephyr/dts/bindings/test` and `zephyr/tests/lib/devicetree/api/src/main.c`.
-- Advanced usage of the _devicetree API_ is shown in the [documentation about instance-based APIs](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-inst-apis).
+- More _Devicetree_ examples can also be found in the [API documentation](https://docs.zephyrproject.org/latest/build/dts/api/api.html), but also in Zephyr's tests, e.g., `zephyr/dts/bindings/test` and `zephyr/tests/lib/devicetree/api/src/main.c`.
+- Advanced usage of the _Devicetree API_ is shown in the [documentation about instance-based APIs](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-inst-apis).
 - The [Tutorial: Mastering Zephyr Driver Development](https://www.youtube.com/watch?v=o-f2qCd2AXo) by Gerard Marull Paretas from the Zephyr Development Summit 2022 is also a great resource if you want to learn more about device driver development in Zephyr.
 
 Finally, have a look at the files in the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr) and I hope I'll see you again in the next article, where we'll finally see a practical application of everything we've learned in this article!
