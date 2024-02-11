@@ -1,16 +1,17 @@
 ---
-title: Practical Zephyr - Devicetree practice
-description: Article series "Practical Zephyr", fifth part, devicetree practice.
+title: Practical Zephyr - Devicetree practice (Part 5)
+description: Article series "Practical Zephyr", the fifth part, Devicetree practice.
 author: lampacher
+tags: [zephyr, devicetree]
 ---
 
 <!-- excerpt start -->
 
-In the previous articles, we covered _devicetree_ in great detail: We've seen how we can create our own nodes, we've seen the supported property types, we know what bindings are, and we've seen how to access the devicetree using Zephyr's `devicetree.h` API. In this fifth article of the _Practical Zephyr_ series, we'll look at how devicetree is used in _practice_.
+In the previous articles, we covered _Devicetree_ in great detail: We've seen how we can create our own nodes, we've seen the supported property types, we know what bindings are, and we've seen how to access the Devicetree using Zephyr's `devicetree.h` API. In this fifth article of the _Practical Zephyr_ series, we'll look at how Devicetree is used in _practice_.
 
 <!-- excerpt end -->
 
-Using a practical example, we'll see that our deep dive into devicetree was really only covering the basics that we need to understand more advanced concepts, such as [pin control](https://docs.zephyrproject.org/latest/hardware/pinctrl/index.html) and device drivers.
+Using a practical example, we'll see that our deep dive into Devicetree was really only covering the basics that we need to understand more advanced concepts, such as [pin control](https://docs.zephyrproject.org/latest/hardware/pinctrl/index.html) and device drivers.
 
 {% include newsletter.html %}
 
@@ -20,7 +21,7 @@ Using a practical example, we'll see that our deep dive into devicetree was real
 
 ## Prerequisites
 
-This article is part of the _Practical Zephyr_ article series. In case you haven't read the previous articles, please go ahead and have a look. This article requires that you're able to build and flash a Zephyr application to the board of your choice and that you're familiar with _devicetree_.
+This article is part of the _Practical Zephyr_ article series. In case you haven't read the previous articles, please go ahead and have a look. This article requires that you're able to build and flash a Zephyr application to the board of your choice and that you're familiar with _Devicetree_.
 
 We'll be mainly using the [development kit for the nRF52840](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) but will also refer to example files from the [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-c031c6.html) towards the end of the article. You can follow along with any target - real or virtual.
 
@@ -73,12 +74,12 @@ Instead, Zephyr's chosen approach is to provide a list of related **code samples
 
 > **Note:** [Blinky](https://docs.zephyrproject.org/latest/samples/basic/blinky/README.html) is an example for a [Zephyr _repository_ application](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-repo-app). We continue using a [_freestanding_ application](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-freestanding-app), and in the next article, we'll finally create a [_workspace_ application](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app).
 
-Straight from the documentation, we follow the _"Open in GitHub"_ link to find the application in Zephyr's repository and simply copy the contents from [`main.c`](https://github.com/zephyrproject-rtos/zephyr/blob/main/samples/basic/blinky/src/main.c) into our own application. We'll now compare the `gpio` devicetree API with the "plain" API in `zephyr/include/zephyr/devicetree.h` that we've seen in the last article.
+Straight from the documentation, we follow the _"Open in GitHub"_ link to find the application in Zephyr's repository and simply copy the contents from [`main.c`](https://github.com/zephyrproject-rtos/zephyr/blob/main/samples/basic/blinky/src/main.c) into our own application. We'll now compare the `gpio` Devicetree API with the "plain" API in `zephyr/include/zephyr/devicetree.h` that we've seen in the last article.
 
 
 ### Blinky with a `/chosen` LED node
 
-The *Blinky* example chooses the LED devicetree node using the _alias_ `led0`. Zephyr keeps its devicetrees clean and we've seen that aliases, including `led0` are usually consistent throughout supported boards. Thus, if there's a board supported by Zephyr that has at least one light on it that works like LED, you can be sure that there's also a matching `led0` alias:
+The *Blinky* example chooses the LED Devicetree node using the _alias_ `led0`. Zephyr keeps its Devicetrees clean and we've seen that aliases, including `led0` are usually consistent throughout supported boards. Thus, if there's a board supported by Zephyr that has at least one light on it that works like LED, you can be sure that there's also a matching `led0` alias:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
 ```dts
@@ -118,7 +119,7 @@ $ tree --charset=utf-8 --dirsfirst
 };
 ```
 
-In the example application, we use `DT_CHOSEN(app_led)` instead of `DT_ALIAS(led0)`, but that's about the only change for the original *Blinky* sources that we need. Notice that again we specify the chosen node's name using its "lowercase-and-underscore" form `app_led` instead of the node's name `app-led` in the devicetree. With a few minor adaptions, our application looks as follows:
+In the example application, we use `DT_CHOSEN(app_led)` instead of `DT_ALIAS(led0)`, but that's about the only change for the original *Blinky* sources that we need. Notice that again we specify the chosen node's name using its "lowercase-and-underscore" form `app_led` instead of the node's name `app-led` in the Devicetree. With a few minor adaptions, our application looks as follows:
 
 ```c
 /** \file main.c */
@@ -177,14 +178,14 @@ struct gpio_dt_spec {
 };
 ```
 
-> **Disclaimer:** This section is a nose dive deep into Zephyr's use of the generated devicetree files. In case you don't want - or don't need - to know about the inner workings, I highly recommend sticking to [Zephyr's samples and demos](https://docs.zephyrproject.org/latest/samples/index.html) or the official documentation in general. Skip ahead to the [next section about the `status` property](#the-status-property) instead. In case I couldn't talk you out of it, hold on tight!
+> **Disclaimer:** This section is a nose dive deep into Zephyr's use of the generated Devicetree files. In case you don't want - or don't need - to know about the inner workings, I highly recommend sticking to [Zephyr's samples and demos](https://docs.zephyrproject.org/latest/samples/index.html) or the official documentation in general. Skip ahead to the [next section about the `status` property](#the-status-property) instead. In case I couldn't talk you out of it, hold on tight!
 
 
-### Applying the devicetree API
+### Applying the Devicetree API
 
-Let's ignore the `gpio_dt_spec` structure's contents for now. Instead, let's see how `GPIO_DT_SPEC_GET` is used to populate the structure and how it compares with what we've learned about the devicetree API in the last articles:
+Let's ignore the `gpio_dt_spec` structure's contents for now. Instead, let's see how `GPIO_DT_SPEC_GET` is used to populate the structure and how it compares with what we've learned about the Devicetree API in the last articles:
 
-So far, we've only used the macros from the devicetree API `zephyr/include/zephyr/devicetree.h`. Now we see how Zephyr's drivers create their own devicetree macros on top of this basic API. We can find the macro declaration in Zephyr's `gpio.h` header file.
+So far, we've only used the macros from the Devicetree API `zephyr/include/zephyr/devicetree.h`. Now we see how Zephyr's drivers create their own Devicetree macros on top of this basic API. We can find the macro declaration in Zephyr's `gpio.h` header file.
 
 `zephyr/include/zephyr/drivers/gpio.h`
 ```c
@@ -198,7 +199,7 @@ So far, we've only used the macros from the devicetree API `zephyr/include/zephy
   }
 ```
 
-Similar to what we've seen for our own example in the last article, Zephyr uses devicetree macros to create an initializer expression for the matching type that should be used with the corresponding macro. The macros `DT_GPIO_PIN_BY_IDX` and `DT_GPIO_FLAGS_BY_IDX` simply expand to the `DT_PHA_<x>` macros we've already used when accessing `phandle-array`s:
+Similar to what we've seen for our own example in the last article, Zephyr uses Devicetree macros to create an initializer expression for the matching type that should be used with the corresponding macro. The macros `DT_GPIO_PIN_BY_IDX` and `DT_GPIO_FLAGS_BY_IDX` simply expand to the `DT_PHA_<x>` macros we've already used when accessing `phandle-array`s:
 
 ```c
 #define DT_GPIO_PIN_BY_IDX(node_id, gpio_pha, idx) \
@@ -207,7 +208,7 @@ Similar to what we've seen for our own example in the last article, Zephyr uses 
   DT_PHA_BY_IDX_OR(node_id, gpio_pha, idx, flags, 0)
 ```
 
-Ignoring the `.port` field (we'll get to that, don't worry), `GPIO_DT_SPEC_GET` expands to a very familiar format, where `.pin` and `.dt_flags` are initialized using the `pin` and `flags` _specifier cells_ from our devicetree:
+Ignoring the `.port` field (we'll get to that, don't worry), `GPIO_DT_SPEC_GET` expands to a very familiar format, where `.pin` and `.dt_flags` are initialized using the `pin` and `flags` _specifier cells_ from our Devicetree:
 
 ```c
 #define GPIO_DT_SPEC_GET(node_id, prop)                              \
@@ -223,7 +224,7 @@ Ignoring the `.port` field (we'll get to that, don't worry), `GPIO_DT_SPEC_GET` 
 
 ### Reviewing *phandle-array*s
 
-Properties of type `phandle-array` are heavily used in devicetrees. Since we now have one at hand with our *Blinky* example, let's use it to review what we've learned about `phandle-array`s - practice and repetition is the key to learning new concepts! The `/leds/led0` is defined in the board's DTS file as follows:
+Properties of type `phandle-array` are heavily used in Devicetrees. Since we now have one at hand with our *Blinky* example, let's use it to review what we've learned about `phandle-array`s - practice and repetition is the key to learning new concepts! The `/leds/led0` is defined in the board's DTS file as follows:
 
 `(reduced) zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
 ```dts
@@ -254,7 +255,7 @@ Nothing unexpected here: Since `gpios` is of type `phandle-array`, we can use it
 
 We don't.
 
-Looking at the *devicetree* in isolation, you can, in fact, use references to _any_ node, as long as the node has the matching `#gpio-cells` property. You could, e.g., create your own node and binding, where `#gpio-cells` doesn't use `pin` and `flags` as specifiers. E.g., we could define our own binding `custom-cells-a`:
+Looking at the *Devicetree* in isolation, you can, in fact, use references to _any_ node, as long as the node has the matching `#gpio-cells` property. You could, e.g., create your own node and binding, where `#gpio-cells` doesn't use `pin` and `flags` as specifiers. E.g., we could define our own binding `custom-cells-a`:
 
 `dts/bindings/custom-cells-a.yaml`
 ```yaml
@@ -299,7 +300,7 @@ If we were to revert our `main.c` file to the original dummy application that do
 };
 ```
 
-There is no mechanism in *devicetree* that allows declaring a `phandle-array` which is _"generic over a type"_ or _"something GPIO compatible"_. E.g., there's no such thing as a _base class_, _interface_, or _trait_ that you might know from programming languages.
+There is no mechanism in *Devicetree* that allows declaring a `phandle-array` which is _"generic over a type"_ or _"something GPIO compatible"_. E.g., there's no such thing as a _base class_, _interface_, or _trait_ that you might know from programming languages.
 
 Even if there was an annotation `phandle-array<T>`, e.g., to specify the required `compatible` property, what would we provide for `T`? GPIO nodes use different models depending on the vendor, e.g., the following snippets show the `compatible` properties of the GPIO nodes of the nRF52840 and STM32:
 
@@ -329,7 +330,7 @@ Even if there was an annotation `phandle-array<T>`, e.g., to specify the require
 
 Sure, both "nordic,nrf-gpio" and "st,stm32-gpio" could claim compatibility with some "base binding", but there'd always be the odd corner case that doesn't entirely match the model.
 
-By discarding such a requirement, we gain flexibility - at the cost of "loose typing" _within the devicetree_. If we were to try and use the Zephyr GPIO API with the above assignment to `gpios`, the application would fail to compile since the required _specifier cells_ do not have the names `pin` and `flags` read using the `DT_PHA_BY_IDX[_OR]` macros in the `GPIO_DT_SPEC_GET` macro. There's one more thing within `GPIO_DT_SPEC_GET` that is related to this discussion, can you see it?
+By discarding such a requirement, we gain flexibility - at the cost of "loose typing" _within the Devicetree_. If we were to try and use the Zephyr GPIO API with the above assignment to `gpios`, the application would fail to compile since the required _specifier cells_ do not have the names `pin` and `flags` read using the `DT_PHA_BY_IDX[_OR]` macros in the `GPIO_DT_SPEC_GET` macro. There's one more thing within `GPIO_DT_SPEC_GET` that is related to this discussion, can you see it?
 
 ```c
 #define GPIO_DT_SPEC_GET(node_id, prop)                              \
@@ -340,9 +341,9 @@ By discarding such a requirement, we gain flexibility - at the cost of "loose ty
   }
 ```
 
-Looking at `dt_flags`, we see that `GPIO_DT_SPEC_GET` uses the `_OR` variant of the phandle macro `DT_PHA_BY_IDX` to read the `flags` from the devicetree:
+Looking at `dt_flags`, we see that `GPIO_DT_SPEC_GET` uses the `_OR` variant of the phandle macro `DT_PHA_BY_IDX` to read the `flags` from the Devicetree:
 
-* For nodes with a _compatible binding_ that have both, `pin` and `flags` specifiers, the devicetree compiler ensures that values are provided for both, `pin` and `flags` whenever the node is references in a `phandle-array`; providing a value for `flags` is **not** optional for such phandles.
+* For nodes with a _compatible binding_ that have both, `pin` and `flags` specifiers, the Devicetree compiler ensures that values are provided for both, `pin` and `flags` whenever the node is references in a `phandle-array`; providing a value for `flags` is **not** optional for such phandles.
 * For nodes with a _compatible binding_ that does **not** have the `flags` specifier, the value _0_ is used in the specification. The compatible driver can also completely ignore the _flags_ field in any API call.
 
 This adds another level of flexibility to the generic binding `gpio-leds` for LEDs, supporting any kind of GPIO node LEDs, regardless of whether or not they support using `flags`, e.g., as follows:
@@ -426,7 +427,7 @@ On we go! `DEVICE_DT_GET` takes this node identifier as its parameter `node_id`.
 
 What can the documentation tell us about this macro?
 
-> Returns a pointer to a device object created from a devicetree node, if any device was allocated by a driver. If no such device was allocated, this will fail at linker time. If you get an error that looks like `undefined reference to __device_dts_ord_<N>` [...]
+> Returns a pointer to a device object created from a Devicetree node, if any device was allocated by a driver. If no such device was allocated, this will fail at linker time. If you get an error that looks like `undefined reference to __device_dts_ord_<N>` [...]
 
 Since we don't know yet what "_device objects_" are, this is a bit cryptic. There is, however, one good hint in the linker error message: It seems like this macro is trying to provide a reference to a symbol called `__device_dts_ord_<N>`, where `N` is a number.
 
@@ -457,18 +458,18 @@ In the following snippet we replace referenced macros step by step _without_ sho
 
 > **Note:** In case you're wondering what the difference between `_CONCAT` and `DT_CAT` is, experiment with token pasting. Hint: One of the macros simply pastes tokens, whereas the other one also expands the pasted token.
 
-It's easy enough to see how we end up with the prefix `__device_dts_ord_`, but it is not entirely clear yet how we get to the ordinal _11_. For this, we still need to resolve `DT_CAT(node_id, _ORD)`. Remembering that we already resolved our input parameter `node_id` to `DT_N_S_soc_S_gpio_50000000`, `DT_CAT` simply pastes the two tokens, and we end up with `DT_N_S_soc_S_gpio_50000000_ORD`. But what's that? This is a macro that is again provided by Zephyr's devicetree generator:
+It's easy enough to see how we end up with the prefix `__device_dts_ord_`, but it is not entirely clear yet how we get to the ordinal _11_. For this, we still need to resolve `DT_CAT(node_id, _ORD)`. Remembering that we already resolved our input parameter `node_id` to `DT_N_S_soc_S_gpio_50000000`, `DT_CAT` simply pastes the two tokens, and we end up with `DT_N_S_soc_S_gpio_50000000_ORD`. But what's that? This is a macro that is again provided by Zephyr's Devicetree generator:
 
 ```bash
 $ grep DT_N_S_soc_S_gpio_50000000_ORD ../build/zephyr/include/generated/devicetree_generated.h
 #define DT_N_S_soc_S_gpio_50000000_ORD 11
 ```
 
-In simple words, Zephyr's devicetree generator assigns _ordinals_ to device instances. This is a fundamental concept of Zephyr's _device_ API `zephyr/include/zephyr/device.h`, which is used to represent devices and their instances. Since this is a rather elaborate concept that goes beyond the scope of this article series, I'll leave you with a link to Zephyr's official documentation about the [device driver model](https://docs.zephyrproject.org/latest/kernel/drivers/index.html) and [instance-based APIs](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-inst-apis).
+In simple words, Zephyr's Devicetree generator assigns _ordinals_ to device instances. This is a fundamental concept of Zephyr's _device_ API `zephyr/include/zephyr/device.h`, which is used to represent devices and their instances. Since this is a rather elaborate concept that goes beyond the scope of this article series, I'll leave you with a link to Zephyr's official documentation about the [device driver model](https://docs.zephyrproject.org/latest/kernel/drivers/index.html) and [instance-based APIs](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-inst-apis).
 
-> **Note:** You might ask yourself why we even need _ordinals_ if devicetree nodes are unique. One simple reason is that nodes can support multiple _drivers_, e.g., an IC might support SPI as well as I2C, and therefore two instances exist for a single node.
+> **Note:** You might ask yourself why we even need _ordinals_ if Devicetree nodes are unique. One simple reason is that nodes can support multiple _drivers_, e.g., an IC might support SPI as well as I2C, and therefore two instances exist for a single node.
 
-For now, it is enough to know that Zephyr creates symbols for each device instance in the devicetree. In fact, in `devicetree_generated.h` we can find a list of the node ordering and thus ordinals of each instance at the very beginning of the file. Here, we find the ordinal _11_ for the device of the GPIO node `/soc/gpio@50000000`, and also the ordinal _104_ of the device for our second GPIO node `/soc/gpio@50000300`:
+For now, it is enough to know that Zephyr creates symbols for each device instance in the Devicetree. In fact, in `devicetree_generated.h` we can find a list of the node ordering and thus ordinals of each instance at the very beginning of the file. Here, we find the ordinal _11_ for the device of the GPIO node `/soc/gpio@50000000`, and also the ordinal _104_ of the device for our second GPIO node `/soc/gpio@50000300`:
 
 `build/zephyr/include/generated/devicetree_generated.h`
 ```c
@@ -539,7 +540,7 @@ We found it! It seems to be declared in Nordic's GPIO driver `zephyr/drivers/gpi
 
 #### Macrobatics: Declaring compatilble drivers and device object
 
-I promised that we wouldn't go into detail about [Zephyr's device driver model](https://docs.zephyrproject.org/latest/kernel/drivers/index.html) - and we won't. In this section, we'll only look at how the device instances are defined and how the connection with the nodes in the devicetree is established.
+I promised that we wouldn't go into detail about [Zephyr's device driver model](https://docs.zephyrproject.org/latest/kernel/drivers/index.html) - and we won't. In this section, we'll only look at how the device instances are defined and how the connection with the nodes in the Devicetree is established.
 
 The two responsible parts within `gpio_nrfx.c` for defining the instances are the following:
 
@@ -556,7 +557,7 @@ The two responsible parts within `gpio_nrfx.c` for defining the instances are th
 DT_INST_FOREACH_STATUS_OKAY(GPIO_NRF_DEVICE)
 ```
 
-The macro definition `DT_DRV_COMPAT` is placed at the beginning of the file. It is the device driver's equivalent to the `compatible` property of devicetree nodes and the same-named key in the devicetree binding: It is defined to the "lowercase-and-underscore" form `nordic_nrf_gpio` of `nordic,nrf-gpio`.
+The macro definition `DT_DRV_COMPAT` is placed at the beginning of the file. It is the device driver's equivalent to the `compatible` property of Devicetree nodes and the same-named key in the Devicetree binding: It is defined to the "lowercase-and-underscore" form `nordic_nrf_gpio` of `nordic,nrf-gpio`.
 
 At the end of the file, the device driver creates instances for all GPIO devices with the `status` property set to "okay" using the macro `DT_INST_FOREACH_STATUS_OKAY`. And that's where somehow the "_device objects_" `__device_dts_ord_104` and `__device_dts_ord_11` of the corresponding GPIO nodes are created, pretty likely through `DEVICE_DT_INST_DEFINE`.
 
@@ -586,9 +587,9 @@ grep -w DT_COMPAT_HAS_OKAY_nordic_nrf_gpio ../build/zephyr/include/generated/dev
 #define DT_COMPAT_HAS_OKAY_nordic_nrf_gpio 1
 ```
 
-Zephyr's devicetree generator creates a lot more information than just macros for the property values of our devicetree nodes! Here, we see that the generator also provides macros indicating whether it encountered some nodes that claim compatibility with "`nordic,nrf-gpio`". If it doesn't encounter any such node, it won't create the corresponding macros and we'd know that the content of any driver compatible with "`nordic,nrf-gpio`" is unused and can thus be discarded. Pretty neat!
+Zephyr's Devicetree generator creates a lot more information than just macros for the property values of our Devicetree nodes! Here, we see that the generator also provides macros indicating whether it encountered some nodes that claim compatibility with "`nordic,nrf-gpio`". If it doesn't encounter any such node, it won't create the corresponding macros and we'd know that the content of any driver compatible with "`nordic,nrf-gpio`" is unused and can thus be discarded. Pretty neat!
 
-The devicetree generator does this for each and every driver and node. This allows heavy optimizations in the codebase as we've seen above.
+The Devicetree generator does this for each and every driver and node. This allows heavy optimizations in the codebase as we've seen above.
 
 Now we found out that our driver is used, and thus the second parameter of `COND_CODE_1` is expanded. We've already seen that `UTIL_CAT` concatenates and expands the provided macros, which are `DT_FOREACH_OKAY_INST_` and our `DT_DRV_COMPAT` macro, which expands to `nordic_nrf_gpio`. Thus, we're now looking for a macro `DT_FOREACH_OKAY_INST_nordic_nrf_gpio`:
 
@@ -597,7 +598,7 @@ grep -w DT_FOREACH_OKAY_INST_nordic_nrf_gpio ../build/zephyr/include/generated/d
 #define DT_FOREACH_OKAY_INST_nordic_nrf_gpio(fn) fn(0) fn(1)
 ```
 
-Also here Zephyr's devicetree generator creates another useful macro based on the number of devices in the devicetree claiming compatibility with the `nordic,nrf-gpio` device driver. For each device it encounters it adds a `fn(n)` to the macro, where `n` is the _instance_ number of the device, one for each of our GPIO nodes. Given this macro, we now know the complete expansion of the `DT_INST_FOREACH_STATUS_OKAY` macro:
+Also here Zephyr's Devicetree generator creates another useful macro based on the number of devices in the Devicetree claiming compatibility with the `nordic,nrf-gpio` device driver. For each device it encounters it adds a `fn(n)` to the macro, where `n` is the _instance_ number of the device, one for each of our GPIO nodes. Given this macro, we now know the complete expansion of the `DT_INST_FOREACH_STATUS_OKAY` macro:
 
 ```c
 // `DT_INST_FOREACH_STATUS_OKAY(GPIO_NRF_DEVICE)`
@@ -653,12 +654,12 @@ $ grep -w DT_N_INST_1_nordic_nrf_gpio ../build/zephyr/include/generated/devicetr
 #define DT_N_INST_1_nordic_nrf_gpio DT_N_S_soc_S_gpio_50000300
 ```
 
-Yet again Zephyr's devicetree generator provides the necessary macros to map the instance number `inst` to the matching node that claims compatibility with a given device driver:
+Yet again Zephyr's Devicetree generator provides the necessary macros to map the instance number `inst` to the matching node that claims compatibility with a given device driver:
 
 - `/soc/gpio@50000000` is instance _0_, and
 - `/soc/gpio@50000300` is instance _1_ of the driver `nordic,nrf-gpio`.
 
-This is it! We now have the connection from our _instance_ number to _node identifier_ and thus the devicetree node. We've already seen how we can get from the _node identifier_ to the _"device object's"_ name, and can therefore apply that knowledge to declare the symbol.
+This is it! We now have the connection from our _instance_ number to _node identifier_ and thus the Devicetree node. We've already seen how we can get from the _node identifier_ to the _"device object's"_ name, and can therefore apply that knowledge to declare the symbol.
 
 Through several expansions, the device macro `DEVICE_DT_DEFINE` effectively does exactly that: It declares a global constant using the name `__device_dts_ord_<N>`, where `N` is the ordinal it obtains using the _node identifier_ of the corresponding instance. The following is an oversimplified definition for the macro `DEVICE_DT_DEFINE`:
 
@@ -697,7 +698,7 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
 //  }
 ```
 
-Zephyr's devicetree generator provides much more than just macros for accessing property values in the devicetree. It also creates the necessary macros to _associate_ driver instances with nodes, and to _create_ the corresponding instances in the device driver itself. And then some ...
+Zephyr's Devicetree generator provides much more than just macros for accessing property values in the Devicetree. It also creates the necessary macros to _associate_ driver instances with nodes, and to _create_ the corresponding instances in the device driver itself. And then some ...
 
 
 
@@ -723,9 +724,9 @@ In the nRF52840 development kit's DTS file, the `status` property is overwritten
 &gpio1 { status = "okay"; };
 ```
 
-Zephyr's introduction to devicetree explains the `status` property in a dedicated section for [important devicetree properties](https://docs.zephyrproject.org/2.7.5/guides/dts/intro.html#important-properties) as follows:
+Zephyr's introduction to Devicetree explains the `status` property in a dedicated section for [important Devicetree properties](https://docs.zephyrproject.org/2.7.5/guides/dts/intro.html#important-properties) as follows:
 
-> "A node is considered enabled if its `status` property is either `"okay"` or not defined (i.e., does not exist in the devicetree source). Nodes with `status` `"disabled"` are explicitly disabled. [...] Devicetree nodes which correspond to physical devices must be enabled for the corresponding `struct` device in the Zephyr driver model to be allocated and initialized."
+> "A node is considered enabled if its `status` property is either `"okay"` or not defined (i.e., does not exist in the Devicetree source). Nodes with `status` `"disabled"` are explicitly disabled. [...] Devicetree nodes which correspond to physical devices must be enabled for the corresponding `struct` device in the Zephyr driver model to be allocated and initialized."
 
 This matches with what we've seen for the `DT_INST_FOREACH_STATUS_OKAY` macro in `gpio_nrfx.c`: Instances are only created for each node with the `status` set to `"okay"`. We can disable the node by setting the `status` to `"disabled"` in our application's board overlay file:
 
@@ -755,7 +756,7 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
 #endif
 ```
 
-Discard the changes to the board's overlay and remove the conditional compilation in the sources. The documentation also mentions, that the `status` property is implicitly added with the value `"okay"` for nodes that do not define the property in the devicetree. As we can see in the merged `zephyr.dts` file in the build folder, our `/leds/led_0` node doesn't have the `status` property:
+Discard the changes to the board's overlay and remove the conditional compilation in the sources. The documentation also mentions, that the `status` property is implicitly added with the value `"okay"` for nodes that do not define the property in the Devicetree. As we can see in the merged `zephyr.dts` file in the build folder, our `/leds/led_0` node doesn't have the `status` property:
 
 `build/zephyr/zephyr.dts`
 ```dts
@@ -854,7 +855,7 @@ Memory region     Used Size  Region Size  %age Used
 
 Even though we still won't write an instance-based device driver in this article series it is worth quickly (and this time I mean _really quickly_) reviewing how Zephyr's API function calls map to the function tables provided by the device drivers.
 
-Let's first have a look at an overly simplified devicetree driver function call tree for `gpio_pin_configure_dt`, which looks approximately as follows:
+Let's first have a look at an overly simplified Devicetree driver function call tree for `gpio_pin_configure_dt`, which looks approximately as follows:
 
 ```
 gpio_pin_configure_dt(
@@ -950,7 +951,7 @@ Before we look at how `pinctrl` works, you might ask yourself why we need anothe
 
 For some MCUs, like Nordic's nRF series, this might work since pin multiplexing for such MCUs is not restricted: On Nordic's MCUs it is possible to assign any functionality to any pin. Other MCUs (e.g., STM32) typically restrict this and clearly define possible alternate pin functions for all pins.
 
-MCU manufacturers can be quite creative when it comes to pin multiplexing, and before Zephyr 3.0 pin multiplexing was entirely vendor-specific. With Zephyr 3.0 (and mostly adopted with version 3.1) Zephyr adopted the [Linux `pinctl`](https://www.kernel.org/doc/html/v4.13/driver-api/pinctl.html) concept as a _standardized_ way of assigning peripheral functions to pins in devicetree - and called it `pinctrl`.
+MCU manufacturers can be quite creative when it comes to pin multiplexing, and before Zephyr 3.0 pin multiplexing was entirely vendor-specific. With Zephyr 3.0 (and mostly adopted with version 3.1) Zephyr adopted the [Linux `pinctl`](https://www.kernel.org/doc/html/v4.13/driver-api/pinctl.html) concept as a _standardized_ way of assigning peripheral functions to pins in Devicetree - and called it `pinctrl`.
 
 There is, of course, still an overlap between `gpios` and `pinctrl` since both associate nodes with pins and their parameters (e.g., pull resistors). As a rule of thumb, `pinctrl` is generally used if the pin goes to a **peripheral** in the `/soc` node, whereas `gpios` are used if the pin is used by the application.
 
@@ -968,11 +969,11 @@ Other MCUs, such as the STM32, do not allow an arbitrary pin assignment. Instead
 
 **Devicetree approach**
 
-Whether an MCU uses centralized or distributed pin control does not necessarily have an impact on how the pin control is reflected in the devicetree. Zephyr supports two approaches in _devicetree_ for pin multiplexing: **Grouped** and **node** approach.
+Whether an MCU uses centralized or distributed pin control does not necessarily have an impact on how the pin control is reflected in the Devicetree. Zephyr supports two approaches in _Devicetree_ for pin multiplexing: **Grouped** and **node** approach.
 
-- In the **node approach** the vendor provides a DTS file containing dedicated nodes for **all** pins and the supported alternative functions. The provided nodes are referenced **unmodified** by the `pinctrl` properties of the peripheral. This is mostly used for MCUs with centralized pin control and fixed alternative functions and we'll see a practical example when browsing the [STM32 devicetree source files](#node-approach-with-the-stm32).
+- In the **node approach** the vendor provides a DTS file containing dedicated nodes for **all** pins and the supported alternative functions. The provided nodes are referenced **unmodified** by the `pinctrl` properties of the peripheral. This is mostly used for MCUs with centralized pin control and fixed alternative functions and we'll see a practical example when browsing the [STM32 Devicetree source files](#node-approach-with-the-stm32).
 
-- In the **grouped approach** the vendor's devicetree sources do not provide nodes for all possible combinations. Instead, nodes containing the pin configuration are created either for the board or by the application, and pins are grouped by their configuration (e.g., pull resistors), thus the name "grouped". The pin multiplexing may or may not be restricted and thus this approach is for both, distributed and centralized pin multiplexing. We'll see this when we browse the [Nordic devicetree source files in the next section](#node-approach-with-the-stm32).
+- In the **grouped approach** the vendor's Devicetree sources do not provide nodes for all possible combinations. Instead, nodes containing the pin configuration are created either for the board or by the application, and pins are grouped by their configuration (e.g., pull resistors), thus the name "grouped". The pin multiplexing may or may not be restricted and thus this approach is for both, distributed and centralized pin multiplexing. We'll see this when we browse the [Nordic Devicetree source files in the next section](#node-approach-with-the-stm32).
 
 Neither concept or approach is "better or worse", it is just what's implemented by hardware. As mentioned, MCU manufacturers can be very, very creative, and thus pin control will probably always remain vendor-specific.
 
@@ -1082,7 +1083,7 @@ child-binding:
 
 The property `psels` is specific to Nordic MCUs and - as documented - you're supposed to use the `NRF_PSEL` macro to create an entry in the `psels` array for all pins that you're using. This macro (defined in `zephyr/include/zephyr/dt-bindings/pinctrl/nrf-pinctrl.h`) takes the pin _function_, _port_, and _pin_ as a parameter.
 
-Other vendors use an entirely different set of properties and macros for their devicetree nodes and values. E.g., _Espressif_ uses the property `pinmux` instead of `psels` for the ESP32, as specified by `espressif,esp32-pinctrl.yaml`:
+Other vendors use an entirely different set of properties and macros for their Devicetree nodes and values. E.g., _Espressif_ uses the property `pinmux` instead of `psels` for the ESP32, as specified by `espressif,esp32-pinctrl.yaml`:
 
 `zephyr/boards/xtensa/esp_wrover_kit/esp_wrover_kit-pinctrl.dtsi`
 ```dts
@@ -1185,7 +1186,7 @@ The content in the matching DTS file in the [STM32 HAL](https://github.com/zephy
 
 > **Note:** If you're also using the Nordic toolchain installer to install Zephyr, you won't find the `stm32c031c(4-6)tx-pinctrl.dtsi` locally, since `hal_stm32` is not included in the installation. Check the [STM32 HAL on GitHub](https://github.com/zephyrproject-rtos/hal_stm32) until we solve this problem in the next article.
 
-> **Note:** `/omit-if-no-ref/` is used to tell the devicetree generator that no code should be generated for the node in case it is not referenced in the devicetree. This avoids adding unnecessary content to the devicetree since `pinctrl` nodes are only used when referenced.
+> **Note:** `/omit-if-no-ref/` is used to tell the Devicetree generator that no code should be generated for the node in case it is not referenced in the Devicetree. This avoids adding unnecessary content to the Devicetree since `pinctrl` nodes are only used when referenced.
 
 On the STM32, the RX and TX functionality for `USART2` can only be selected via a pin's alternative function and is therefore not available on all pins. Instead of providing macros for all combinations, in the node approach, you'll find predefined _nodes_ for all pins and functions, e.g., for `USART2_TX` the following nodes exist in `stm32c031c(4-6)tx-pinctrl.dtsi`.
 
@@ -1217,11 +1218,11 @@ You can explore the pin control for your vendor of choice by looking it up in [Z
 
 ## Devicetree and `vscode`
 
-If you like `vscode`, you can also have a look at Nordic's [nRF DeviceTree extension](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-devicetree). It includes devicetree language support and even a visual devicetree editor in case you're using [Nordic](https://www.nordicsemi.com/)'s MCUs.
+If you like `vscode`, you can also have a look at Nordic's [nRF DeviceTree extension](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-devicetree). It includes Devicetree language support and even a visual Devicetree editor in case you're using [Nordic](https://www.nordicsemi.com/)'s MCUs.
 
 ![]({% img_url practical-zephyr/nrf-vscode-dt.png %})
 
-While I haven't used the visual editor, it is also able to visualize multiple assignments for the same GPIO within the devicetree. The extension is very useful when browsing devicetree source files.
+While I haven't used the visual editor, it is also able to visualize multiple assignments for the same GPIO within the Devicetree. The extension is very useful when browsing Devicetree source files.
 
 
 
@@ -1289,13 +1290,13 @@ When using multiple MCUs it is therefore much better to stop using installed sou
 
 ## Conclusion
 
-In this article, we made use of what we've learned about the devicetree and its bindings and had a detailed look at advanced devicetree concepts in Zephyr. I really hope that this article made up for all the theory that I've put you through!
+In this article, we made use of what we've learned about the Devicetree and its bindings and had a detailed look at advanced Devicetree concepts in Zephyr. I really hope that this article made up for all the theory that I've put you through!
 
 Some of you might have expected a bit more of a "practice" article, but looking at APIs and drivers in Zephyr, I see no point in writing an article when there are so many [samples and demos](https://docs.zephyrproject.org/latest/samples/index.html) that do a much better job - and are maintained by the awesome Zephyr contributors.
 
-Instead, we had a look at _some_ of Zephyr's APIs and device drivers to learn that _devicetree_ is much more than just simple macro pasting for obtaining property values. The section on _pin control_ showed us a more advanced concept in devicetree that you'll for sure need for even simple applications. At the same time, it also showed us that _devicetree_ concepts in Zephyr are still evolving, since the `pinctrl` feature was not available prior to Zephyr 3.0 - and that's very good news!
+Instead, we had a look at _some_ of Zephyr's APIs and device drivers to learn that _Devicetree_ is much more than just simple macro pasting for obtaining property values. The section on _pin control_ showed us a more advanced concept in Devicetree that you'll for sure need for even simple applications. At the same time, it also showed us that _Devicetree_ concepts in Zephyr are still evolving, since the `pinctrl` feature was not available prior to Zephyr 3.0 - and that's very good news!
 
-> **Note:** The full example application including all the devicetree files that we've seen throughout this article is available in the [`04_practice` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/04_practice).
+> **Note:** The full example application including all the Devicetree files that we've seen throughout this article is available in the [`04_practice` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/04_practice).
 
 
 
