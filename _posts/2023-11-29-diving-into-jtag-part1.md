@@ -82,7 +82,7 @@ JTAG registers are an important part of the microcontroller debugging process be
 Data transfer (read/write) in the JTAG protocol is performed by the shift register principle. In a shift register, the data is transferred sequentially, bit by bit, one per clock cycle.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part1/shift-reg.gif %}" alt="JTAG Debug TAP" />
+  <img width="400" src="{% img_url jtag-part1/shift-reg.gif %}" alt="JTAG Debug TAP" />
 </p>
 
 This register is located between the `TDI` and `TDO` pins and is used to receive information from the `TDI` pin and output information to the `TDO` pin. Every time you want to write something to the TAP via JTAG protocol - you set the necessary signals to the `TDI` pin - these signals are synchronously written to the shift register starting from the highest bit and gradually moving to the lowest bit of the register with each new clock, and the value of the lowest bit of the shift register with each clock is moved to the `TDO` pin, from which we can read it.
@@ -111,6 +111,10 @@ Let’s look at some of the most common instructions.
 The `IDCODE` instruction in JTAG is used to get the unique identifier of the device connected to the JTAG circuit. Each device that supports JTAG has its own unique ID code, which can be read using the `IDCODE` command. This can be useful to identify the device type, manufacturer, and version.
 
 This identifier is 32-bit in size and consists of next fields:
+
+<p align="center">
+  <img width="650" src="{% img_url jtag-part1/idcode-instruction-reg.png %}" alt="IDCODE" />
+</p>
 
 So when you load `IDCODE` instruction in `IR` register this will force the `IDCODE` register to be selected as the data register.
 
@@ -159,14 +163,15 @@ Let's describe the most important states. But since `IR` path and DR path have i
 - **Test-Logic-Reset** — all test logic is disabled, chip behaves normally.
 - **Run-Test/Idle** — first state to initialize test logic and default idling state
 - **Select-DR/IR-Scan** — this state is necessary to select the current path: data or instruction. I think this can be visualized as the operation of the switches: SW1, SW1, SW3, SW4. When the Select-DR-Scan the state is hit, the switches SW1, SW1, SW3, SW4 are switched to the corresponding DR register. When the Select-IR-Scan state is reached - switches SW1, SW1 are switched to the `IR` register.
+
+<p align="center">
+  <img width="650" src="{% img_url jtag-part1/debug-tap-2.gif %}" alt="Select DR and IR switching" />
+</p>
+
 - **Capture-DR** — In this state, there is a parallel loading of the value stored in the selected DR register into the shift register if you follow the Select-DR-Scan state branch and loading of a special pattern if we follow the Select-IR-Scan state path, the value 0x01 is usually selected as the pattern.
 
 <p align="center">
   <img width="400" src="{% img_url jtag-part1/capture-dr-state-dr.gif %}" alt="DR register during catpure-DR state" />
-</p>
-
-<p align="center">
-  <img width="400" src="{% img_url jtag-part1/capture-dr-state-ir.gif %}" alt="IR register during catpure-IR state" />
 </p>
 
 - **Shift-DR** — register shifts data from `TDI` one step forward `TDO`. The Shift-DR and Shift-IR states are the main states for serial-loading data into either data registers or the instruction register.
@@ -176,10 +181,6 @@ Let's describe the most important states. But since `IR` path and DR path have i
 </p>
 
 - **Update-DR** — the state in which the data in the shift register is written to the corresponding register in the chip. The Update-DR and Update-IR states latch the data into the registers, setting the data in the instruction register as the current instruction
-
-<p align="center">
-  <img width="400" src="{% img_url jtag-part1/update-dr-state-dr.gif %}" alt="DR register during shift-DR state" />
-</p>
 
 <p align="center">
   <img width="400" src="{% img_url jtag-part1/update-dr-state-ir.gif %}" alt="DR register during shift-DR state" />
@@ -201,9 +202,9 @@ Now that we’ve covered the theory, it’s time to see the JTAG protocol in act
   <img width="650" src="{% img_url jtag-part1/jtag-example.gif %}" alt="Example of JTAG state transitions" />
 </p>
 
-So, initially, we are in the Run-Test/Idle state. In order to read the chip ID code we need to write the instruction code `IDCODE` into `IR` (let it be `0b1110` for our example). To write the instruction to `IR` we need to select the blue branch of our state machine. Images 2 and 3 show this transition. Image 3 shows how the keys SW1 and SW2 are switched when entering the Select-IR-Scan state. Next, in step 4 in the Capture-IR state, the pattern `0b0001` is loaded into the shift register. In step 5, a transition to the Shift-IR state is made and at this transition, bit 1 of the loaded pattern is advanced to the `TDO` pin.
+So, initially we are in the `Run-Test/Idle` state. In order to read the chip ID code we need to write the instruction code `IDCODE` into `IR` (let it be `0b1110` for our example). To write the instruction to `IR` we need to select the blue branch of our state machine. Images `2` and `3` show this transition. Image `3` shows how the keys `SW1` and `SW2` are switched when entering the `Select-IR-Scan` state. Next, at step `4` in the `Capture-IR` state, the `0b0001` pattern is loaded into the shift register. In step `5`, a transition to the `Shift-IR` state is made and at this transition, bit `1` of the loaded pattern is advanced to the `TDO` pin.
 
-Steps 6-8 show the sequential shift of the `IDCODE` (`0b1110`) instruction bit by bit into the shift register with the last bit being shifted in at the moment of transition to the Exit1-IR state (step 9). At step 10 (state Update-IR), the instruction code written to the shift register is latched into the `IR` register. At 11 we return to the initial state. We have written the instruction code, now we need to read the data corresponding to this instruction, for this purpose, we will use the green branch of the automaton. At step 12 we go to the Select-DR-Scan state, at that the keys SW1 and SW2 are switched to the DR register and the ID the register is selected because during the `IR` phase we selected the instruction `IDCODE`. In step 13 the Capture-DR state, 32 bits of ID code is loaded into the shift register. At step 14 the transition to the Shift-DR state is performed and at this transition the low-order bit of the ID code is advanced to the `TDO` output and all the steps of sequential shifting of the whole ID code is conditionally combined. At step 15, a transition to the Exit1-DR the state is made and the last bit of the ID of the code is promoted. Step 16 (Update-DR state) - there should be a latch of the code written to the shift register into the selected DR register, but in case of `IDCODE` command, this does not happen. At step, 17 we return to the initial state again.
+Steps `6-7` show the sequential shift of the `IDCODE (0b1110)` instruction bit by bit into the shift register with the last bit being shifted in at the moment of transition to the `Exit1-IR` state (step `8`). At step `9` (state `Update-IR`), the instruction code written to the shift register is latched into the `IR` register.  At `10` we return to the initial state. We have written the instruction code, now we need to read the data corresponding to this instruction, for this purpose we will use the green branch of the automaton. At step `11` we go to the `Select-DR-Scan` state, at that the keys `SW1` and `SW2` are switched to the `DR` register and the `ID` register is selected because during the `IR` phase we selected the instruction `IDCODE`. In step `12` the `Capture-DR` state, 32 bits of `ID` code are loaded into the shift register. At step `13` the transition to the `Shift-DR` state is performed and at this transition the low-order bit of the `ID` code is advanced to the `TDO` output. Steps `14-20` show the sequential shift of the chip id code `(0b111001101)` bit by bit. At step `21`, a transition to the `Exit1-DR` state is made and the last bit of the `ID` of the code is promoted. Step `22` (`Update-DR` state) - there should be a latch of the code written to the shift register into the selected `DR` register, but in case of `IDCODE` command this does not happen. At step `23` we return to the initial state again.
 
 In Part 2 of this series, we'll dive into debugging with JTAG.
 

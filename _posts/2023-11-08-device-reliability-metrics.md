@@ -130,7 +130,7 @@ MTBF is almost the same as the uptime metric above, but this isn’t obvious at 
 
 MTBF and the uptime calculation above break down when devices crash frequently. If Device A crashes once a week, but Device B crashes 100 times an hour due to a hardware problem, the MTBF becomes heavily skewed by a single crashing device. If we have a few thousand devices in the field, just a handful of outlier devices can bring down the average if we don’t adjust how this metric is calculated. I’ve never tried it myself, but maybe **median** time between failures works better at times.
 
-Below is an example of 3 devices sending their crash rate and operating time metrics, and we calculate the MTBF. Notice how Device B crashes 3 times with an operating time, bringing the average down. Also, MTBF has a more excellent value than our average uptime above since Device A didn’t crash.
+Below is an example of 3 devices sending their crash rate and operating time metrics, and we calculate the MTBF. Notice how Device B crashes 3 times, bringing the resulting average down. Also, MTBF has a more excellent value than our average uptime above since Device A didn’t crash.
 
 <p align="center">
   <img width="600" src="{% img_url device-reliability-metrics/mtbf.png %}" alt="Diagram of how mean time between failures is collected" />
