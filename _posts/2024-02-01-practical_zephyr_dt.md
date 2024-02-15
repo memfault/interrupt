@@ -1306,7 +1306,7 @@ Let's first have a look at what we can find out about `reg` in the [DTSpec](http
 >
 > The `reg` property describes the address of the device’s resources within the address space defined by its parent [...]. Most commonly this means the offsets and lengths of memory-mapped IO register blocks [...].
 >
-> The value is a [`3_bit integer cells`,_composed of an arbitrary number of pairs of _address and length_, `<address length>`. The number of 32-bit cells required to specify the address and length are [...] specified by the `#address-cells` and `#size-cells` properties in the parent of the device node. If the parent node specifies a value of _0_ for `#size-cells`, the length field in the value of `reg` shall be omitted.
+> The value consists of _32-bit integer cells_, composed of an arbitrary number of pairs of _address and length_, `<address length>`. The number of 32-bit cells required to specify the address and length are [...] specified by the `#address-cells` and `#size-cells` properties in the parent of the device node. If the parent node specifies a value of _0_ for `#size-cells`, the length field in the value of `reg` shall be omitted.
 
 Bit much? Let's bring up our good old `uart@40002000` node from the nRF52840's DTS include file:
 
