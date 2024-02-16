@@ -1,13 +1,13 @@
 ---
 title: Practical Zephyr - Devicetree practice (Part 5)
-description: Article series "Practical Zephyr", the fifth part, Devicetree practice.
+description: Article series "Practical Zephyr", the fifth part about Devicetree practice.
 author: lampacher
 tags: [zephyr, devicetree]
 ---
 
 <!-- excerpt start -->
 
-In the previous articles, we covered _Devicetree_ in great detail: We've seen how we can create our own nodes, we've seen the supported property types, we know what bindings are, and we've seen how to access the Devicetree using Zephyr's `devicetree.h` API. In this fifth article of the _Practical Zephyr_ series, we'll look at how Devicetree is used in _practice_.
+In the previous articles, we covered _Devicetree_ in great detail: We've seen how we can create our own nodes, we've seen the supported property types, we know what bindings are, and we've seen how to access the Devicetree using Zephyr's `devicetree.h` API. In this fifth article of the _Practical Zephyr_ series, we'll look at how Devicetree is used in _practice_ by dissecting the _Blinky_ application.
 
 <!-- excerpt end -->
 
@@ -82,6 +82,7 @@ Straight from the documentation, we follow the _"Open in GitHub"_ link to find t
 The *Blinky* example chooses the LED Devicetree node using the _alias_ `led0`. Zephyr keeps its Devicetrees clean and we've seen that aliases, including `led0` are usually consistent throughout supported boards. Thus, if there's a board supported by Zephyr that has at least one light on it that works like LED, you can be sure that there's also a matching `led0` alias:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+
 ```dts
 / {
   leds {
@@ -111,6 +112,7 @@ $ tree --charset=utf-8 --dirsfirst
 ```
 
 `boards/nrf52840dk_nrf52840.overlay`
+
 ```dts
 / {
     chosen {
@@ -167,6 +169,7 @@ I don't know about you, but even after all those years a blinking LED still puts
 Looking through the function prototypes of `gpio_is_ready_dt`, `gpio_pin_configure_dt`, and `gpio_pin_toggle_dt`,  you'll notice that they take a "_GPIO specification_" `const struct gpio_dt_spec *spec` as a parameter. We find the matching declaration in Zephyr's `gpio.h`:
 
 `zephyr/include/zephyr/drivers/gpio.h`
+
 ```c
 struct gpio_dt_spec {
   /** GPIO device controlling the pin */
@@ -188,6 +191,7 @@ Let's ignore the `gpio_dt_spec` structure's contents for now. Instead, let's see
 So far, we've only used the macros from the Devicetree API `zephyr/include/zephyr/devicetree.h`. Now we see how Zephyr's drivers create their own Devicetree macros on top of this basic API. We can find the macro declaration in Zephyr's `gpio.h` header file.
 
 `zephyr/include/zephyr/drivers/gpio.h`
+
 ```c
 #define GPIO_DT_SPEC_GET(node_id, prop) GPIO_DT_SPEC_GET_BY_IDX(node_id, prop, 0)
 // At some other location ...
@@ -227,6 +231,7 @@ Ignoring the `.port` field (we'll get to that, don't worry), `GPIO_DT_SPEC_GET` 
 Properties of type `phandle-array` are heavily used in Devicetrees. Since we now have one at hand with our *Blinky* example, let's use it to review what we've learned about `phandle-array`s - practice and repetition is the key to learning new concepts! The `/leds/led0` is defined in the board's DTS file as follows:
 
 `(reduced) zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+
 ```dts
 / {
   leds {
@@ -241,6 +246,7 @@ Properties of type `phandle-array` are heavily used in Devicetrees. Since we now
 The matching binding specifies that all child nodes of `led` have the required property `gpios` of type `phandle-array`:
 
 `(reduced) zephyr/dts/bindings/led/gpio-leds.yaml`
+
 ```yaml
 compatible: "gpio-leds"
 child-binding:
@@ -258,6 +264,7 @@ We don't.
 Looking at the *Devicetree* in isolation, you can, in fact, use references to _any_ node, as long as the node has the matching `#gpio-cells` property. You could, e.g., create your own node and binding, where `#gpio-cells` doesn't use `pin` and `flags` as specifiers. E.g., we could define our own binding `custom-cells-a`:
 
 `dts/bindings/custom-cells-a.yaml`
+
 ```yaml
 description: Dummy for matching "cells"
 compatible: "custom-cells-a"
@@ -270,6 +277,7 @@ gpio-cells:
 In our board overlay, we can create a dummy `node_a` with the above binding, and overwrite the property `gpio` of `led0` with a reference to this dummy node:
 
 `boards/nrf52840dk_nrf52840.overlay`
+
 ```dts
 / {
     chosen {
@@ -288,6 +296,7 @@ In our board overlay, we can create a dummy `node_a` with the above binding, and
 If we were to revert our `main.c` file to the original dummy application that doesn't use the `gpio` subsystem, the build passes without warnings and we'd find our `/leds/led_0` node with the following properties in the merged `zephyr.dts` file:
 
 `build/zephyr/zephyr.dts`
+
 ```dts
 / {
   leds {
@@ -305,6 +314,7 @@ There is no mechanism in *Devicetree* that allows declaring a `phandle-array` wh
 Even if there was an annotation `phandle-array<T>`, e.g., to specify the required `compatible` property, what would we provide for `T`? GPIO nodes use different models depending on the vendor, e.g., the following snippets show the `compatible` properties of the GPIO nodes of the nRF52840 and STM32:
 
 `zephyr/dts/arm/nordic/nrf52840.dtsi`
+
 ```dts
 / {
   soc {
@@ -315,6 +325,7 @@ Even if there was an annotation `phandle-array<T>`, e.g., to specify the require
 ```
 
 `zephyr/dts/arm/st/c0/stm32c0.dtsi`
+
 ```dts
 / {
   soc {
@@ -472,6 +483,7 @@ In simple words, Zephyr's Devicetree generator assigns _ordinals_ to device inst
 For now, it is enough to know that Zephyr creates symbols for each device instance in the Devicetree. In fact, in `devicetree_generated.h` we can find a list of the node ordering and thus ordinals of each instance at the very beginning of the file. Here, we find the ordinal _11_ for the device of the GPIO node `/soc/gpio@50000000`, and also the ordinal _104_ of the device for our second GPIO node `/soc/gpio@50000300`:
 
 `build/zephyr/include/generated/devicetree_generated.h`
+
 ```c
 /*
  * Generated by gen_defines.py
@@ -707,6 +719,7 @@ Zephyr's Devicetree generator provides much more than just macros for accessing 
 One important property that we've touched already is the `status` property. While our LED node has no such property, the referenced GPIO node in its `gpios` property does. The nodes are first defined in the MCU's DTS file with the `status` property set to `"disabled"`:
 
 `zephyr/dts/arm/nordic/nrf52840.dtsi`
+
 ```dts
 / {
   soc {
@@ -719,6 +732,7 @@ One important property that we've touched already is the `status` property. Whil
 In the nRF52840 development kit's DTS file, the `status` property is overwritten with `"okay"`:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+
 ```dts
 &gpio0 { status = "okay"; };
 &gpio1 { status = "okay"; };
@@ -759,6 +773,7 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
 Discard the changes to the board's overlay and remove the conditional compilation in the sources. The documentation also mentions, that the `status` property is implicitly added with the value `"okay"` for nodes that do not define the property in the Devicetree. As we can see in the merged `zephyr.dts` file in the build folder, our `/leds/led_0` node doesn't have the `status` property:
 
 `build/zephyr/zephyr.dts`
+
 ```dts
 / {
   leds {
@@ -788,11 +803,11 @@ What's the use of the `status`, then? You can and should use `status` to _disabl
 
 ### Intermezzo: Power profiling
 
-Let's apply what we've just learned and observe the MCU's current consumption with and without disabling unused nodes. To do that, I'll be using Nordic's [Power Profiler Kit](https://www.nordicsemi.com/Products/Development-hardware/Power-Profiler-Kit-2).
+Let's apply what we've just learned and observe the MCU's current consumption with and without disabling unused nodes. To do that, I'll be using Nordic's [Power Profiler Kit](https://www.nordicsemi.com/Products/Development-hardware/Power-Profiler-Kit-2). You can, of course, use any clamp meter or other measurement hardware to verify the current consumption.
 
 ![]({% img_url practical-zephyr/kit-ppk.jpg %})
 
-> **Disclaimer:** Nope, I'm not affiliated with Nordic in any way. I'm just a big fan of their MCUs, hardware, and software. You can, of course, use any clamp meter or other measurement hardware to verify the current consumption.
+<!-- > **Disclaimer:** Nope, I'm not affiliated with Nordic in any way. I'm just a big fan of their MCUs, hardware, and software. You can, of course, use any clamp meter or other measurement hardware to verify the current consumption. -->
 
 Without disabling unused nodes, I'm observing a current consumption in the application's sleep cycles of around *550 uA*. The screenshot below shows the measurement for an interval of 3 seconds, where the y-axis measures the current consumption truncated to a range of *0 .. 5 mA*. You should still be able to make out the three peaks in the current consumption where the MCU wakes up to toggle the LED.
 
@@ -805,6 +820,7 @@ Zephyr's board DTS files typically enable plenty of nodes, mostly for you to be 
 In case of doubt another good location to look for a node's `status` is the `zephyr.dts` in the build directory. I've picked the following nodes from there and disabled them in the board's overlay:
 
 `boards/nrf52840dk_nrf52840.overlay`
+
 ```dts
 &adc {status = "disabled"; };
 &i2c0 {status = "disabled"; };
@@ -841,6 +857,7 @@ Memory region     Used Size  Region Size  %age Used
          RAM:        7552 B       256 KB      2.88%
     IDT_LIST:          0 GB         2 KB      0.00%
 ```
+
 ```
 # west build with optimized node status
 Memory region     Used Size  Region Size  %age Used
@@ -871,6 +888,7 @@ gpio_pin_configure_dt(
 A call to `gpio_pin_configure_dt` thus maps to the function call `spec->port->api->pin_configure`. When we dissected the GPIO pin information type, we've already seen that `spec->port` is assigned the [device object `__device_dts_ord_<N>`](#macrobatics-resolving-device-objects-with-device_dt_get). Knowing already that our device object is created in `zephyr/drivers/gpio/gpio_nrfx.c`, we can immediately see that the API function table is the last parameter passed to the macro `DEVICE_DT_INST_DEFINE`:
 
 `zephyr/drivers/gpio/gpio_nrfx.c`
+
 ```c
 static const struct gpio_driver_api gpio_nrfx_drv_api_funcs = {
   .pin_configure = gpio_nrfx_pin_configure,
@@ -936,6 +954,7 @@ void main(void)
 To see how pins are assigned to our UART peripheral, we need to look into our board's DTS file. There, we find `pinctrl-<x>` properties for the `&uart0` node:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+
 ```dts
 &uart0 {
   compatible = "nordic,nrf-uarte";
@@ -984,6 +1003,7 @@ Let's bring up the `&uart0` node in the nRF52840 development kit's DTS file to s
 #### Pin control basics
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+
 ```dts
 &uart0 {
   compatible = "nordic,nrf-uarte";
@@ -1012,6 +1032,7 @@ Except for a list of pre-defined properties that we'll see in just a bit, this i
 We can find the referenced nodes `&uart0_default` and `&uart0_sleep` in the matching `-pinctrl.dtsi` DTS include file of the board:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840-pinctrl.dtsi`
+
 ```dts
 &pinctrl {
   uart0_default: uart0_default {
@@ -1043,6 +1064,7 @@ Pins with common _properties_ are _grouped_ into child nodes with the name `grou
 Within each group, Nordic uses a vendor-specific format and thus also vendor-specific binding. We can find the referenced node `&pinctrl` in the included `nrf_common.dtsi` file, where the compatible binding is defined:
 
 `zephyr/dts/arm/nordic/nrf_common.dtsi`
+
 ```dts
 / {
   pinctrl: pin-controller {
@@ -1054,6 +1076,7 @@ Within each group, Nordic uses a vendor-specific format and thus also vendor-spe
 Within this compatible binding, we see that `child-binding` and thus format of all children of `nordic,nrf-pinctrl` compatible nodes is defined:
 
 `zephyr/dts/bindings/pinctrl/nordic,nrf-pinctrl.yaml`
+
 ```yaml
 compatible: "nordic,nrf-pinctrl"
 include: base.yaml
@@ -1086,6 +1109,7 @@ The property `psels` is specific to Nordic MCUs and - as documented - you're sup
 Other vendors use an entirely different set of properties and macros for their Devicetree nodes and values. E.g., _Espressif_ uses the property `pinmux` instead of `psels` for the ESP32, as specified by `espressif,esp32-pinctrl.yaml`:
 
 `zephyr/boards/xtensa/esp_wrover_kit/esp_wrover_kit-pinctrl.dtsi`
+
 ```dts
 &pinctrl {
   uart0_default: uart0_default {
@@ -1109,6 +1133,7 @@ But let's get back to our `&uart0` node on the nRF52840 development kit. We've n
 The binding `pincfg-node.yaml` contains **standardized** pin properties that _should_, in turn, be used by a vendor's `pinctrl`. E.g., properties for the pull resistor configuration, low-power modes, slew rates, etc.
 
 `zephyr/dts/bindings/pinctrl/pincfg-node.yaml`
+
 ```yaml
 properties:
   bias-disable:
@@ -1149,6 +1174,7 @@ Having seen the _grouped approach_, let's see how the _node approach_ is applied
 [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-c031c6.html)'s DTS file:
 
 `zephyr/boards/arm/nucleo_c031c6/nucleo_c031c6.dts`
+
 ```dts
 &usart2 {
   pinctrl-0 = <&usart2_tx_pa2 &usart2_rx_pa3>;
@@ -1168,6 +1194,7 @@ Aside from the fact that we're using **two** _phandles_, the node names already 
 The content in the matching DTS file in the [STM32 HAL](https://github.com/zephyrproject-rtos/hal_stm32) specifies just that:
 
 `hal_stm32/dts/st/c0/stm32c031c(4-6)tx-pinctrl.dtsi`
+
 ```dts
 / {
   soc {
@@ -1233,6 +1260,7 @@ With what we've learned about [grouped pin control with the nRF52840](#basics-an
 E.g., let's use the pins _P1.6_ and _P1.8_ instead. There are two ways to do this: Either we define our own nodes and assign them to the `pinctrl-<n>` properties of the `&uart0` node, or we overwrite the `psels` of the existing `&uart0_default` and `&uart0_default` nodes. For MCUs using the grouping approach, there's really no difference at all, and since it is easier, we'll just overwrite the existing nodes in our overlay as follows:
 
 `04_practice/boards/nrf52840dk_nrf52840.overlay`
+
 ```dts
 &uart0_default {
   group1 {
@@ -1272,6 +1300,7 @@ Since I have a spare [STM32 Nucleo-64 development board](https://www.st.com/en/e
 $ rm -rf ../build
 $ west build --board nucleo_c031c6 --build-dir ../build
 ```
+
 ```
 In file included from <command-line>:
 /opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nucleo_c031c6/nucleo_c031c6.dts:9:10: fatal error: st/c0/stm32c031c(4-6)tx-pinctrl.dtsi: No such file or directory
