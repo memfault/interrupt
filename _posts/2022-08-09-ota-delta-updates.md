@@ -596,7 +596,7 @@ updates? Let us know! And if you see anything you'd like to change, don't
 hesitate to submit a pull request or open an issue on
 [Github](https://github.com/memfault/interrupt)
 
-> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/H0KPq8M0)
+> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
