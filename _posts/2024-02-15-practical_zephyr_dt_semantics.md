@@ -1927,7 +1927,7 @@ The following are great resources when it comes to Zephyr and are worth a read _
 
 - As we've seen, the [official Devicetree specification](https://www.devicetree.org/specifications/) also contains information on Devicetree _bindings_.
 - Second, of course, [Zephyr's official documentation on Devicetree](https://docs.zephyrproject.org/latest/build/dts/index.html) is still a go-to reference.
-- The course [nRF Connect SDK Fundamentals](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/)] in Nordic's [DevAcademy](https://academy.nordicsemi.com/) guides you through some examples using the _Devicetree API_ and is therefore highly recommended.
+- The course [nRF Connect SDK Fundamentals](https://academy.nordicsemi.com/courses/nrf-connect-sdk-fundamentals/) in Nordic's [DevAcademy](https://academy.nordicsemi.com/) guides you through some examples using the _Devicetree API_ and is therefore highly recommended.
 - Definitely watch the presentation [Zephyr Devicetree Mysteries, Solved](https://www.youtube.com/watch?v=w8GgP3h0M8M&list=PLzRQULb6-ipFDwFONbHu-Qb305hJR7ICe) by Martí Bolívar.
 - More _Devicetree_ examples can also be found in the [API documentation](https://docs.zephyrproject.org/latest/build/dts/api/api.html), but also in Zephyr's tests, e.g., `zephyr/dts/bindings/test` and `zephyr/tests/lib/devicetree/api/src/main.c`.
 - Advanced usage of the _Devicetree API_ is shown in the [documentation about instance-based APIs](https://docs.zephyrproject.org/latest/build/dts/api/api.html#devicetree-inst-apis).
