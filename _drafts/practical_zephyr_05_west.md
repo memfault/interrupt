@@ -1,12 +1,13 @@
 ---
-title: Practical Zephyr - West workspaces
-description: Article series "Practical Zephyr", sixth part, West workspaces.
+title: Practical Zephyr - West workspaces (Part 6)
+description: Article series "Practical Zephyr" the sixth part about West workspaces.
 author: lampacher
+tags: [zephyr, west]
 ---
 
 <!-- excerpt start -->
 
-In the previous articles, we used _freestanding_ applications and relied on a global Zephyr installation. In this article, we'll see how we can use _West_ to resolve global dependencies by using _workspace_ applications instead. We'll first explore _West_ without even including _Zephyr_ and then recreate the modified **Blinky** application from the previous article in a _West workspace_.
+In the previous articles, we used _freestanding_ applications and relied on a global Zephyr installation. In this article, we'll see how we can use _West_ to resolve global dependencies by using _workspace_ applications. We first explore _West_ without even including _Zephyr_ and then recreate the modified **Blinky** application from the previous article in a _West workspace_.
 
 <!-- excerpt end -->
 
@@ -18,7 +19,7 @@ After this article, you should know _West_ not as a meta-tool for `build` and `f
 
 ## Prerequisites
 
-This article is part of the _Practical Zephyr_ article series. In case you haven't read the previous articles, please go ahead and have a look. This article requires that you're able to build and flash a Zephyr application to the board of your choice and that you're familiar with _devicetree_.
+This article is part of the _Practical Zephyr_ article series. In case you haven't read the previous articles, please go ahead and have a look. This article requires that you're able to build and flash a Zephyr application to the board of your choice and that you're familiar with _Devicetree_.
 
 We'll be using the [development kit for the nRF52840](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) and the [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-f411re.html), but you can follow along with any target - real or virtual.
 
@@ -26,7 +27,7 @@ We'll be using the [development kit for the nRF52840](https://www.nordicsemi.com
 > - [practical-zephyr-t2-empty-ws](https://github.com/lmapii/practical-zephyr-t2-empty-ws) contains an empty _manifest_ repository for creating a dummy _West_ workspace that we'll use to explore _West_ without Zephyr.
 > - [practical-zephyr-manifest-repository](https://github.com/lmapii/practical-zephyr-manifest-repository) contains the _manifest repository_ of the Zephyr application that we're building in this article.
 
-> **Note:** While writing this article series, I had to switch from STM's Nucleo-C031C6 to the Nucleo-F411RE since the development kit is no longer working. Apologies for the subtle switch - but you should be able to follow along with any board.
+> **Note:** While writing this article series, I had to switch from STM's Nucleo-C031C6 to the Nucleo-F411RE since I broke my C031C6 development kit. Apologies for the subtle switch - but you should be able to follow along with any board.
 
 
 
@@ -89,7 +90,7 @@ In the remainder of this article, I won't explicitly refer to the `python` envir
 
 ### Adding a manifest
 
-We now want to use _West_ to handle our dependencies: We really want to move on from using a global installation that may or will change at any time, and instead have all of our dependencies managed in our _workspace_. Zephyr evolves fast and it is therefore very important to have fixed versions of all modules and even Zephyr's source code.
+We now want to use _West_ to handle our dependencies: We really want to move on from using a global installation that may or will change at any time, and instead have all of our dependencies managed in our _workspace_. Zephyr evolves fast and it is therefore very important to have fixed versions of all modules and Zephyr's source code.
 
 _West_ solves this by using a so-called [_manifest_ file](https://docs.zephyrproject.org/latest/develop/west/manifest.html), which is nothing else than a list of external dependencies - and then some. _West_ uses this manifest file to basically act like a package manager for your _C_ project, similar to what [`cargo`](https://doc.rust-lang.org/stable/cargo/) does with its `cargo.toml` files for [_Rust_](https://www.rust-lang.org/).
 
@@ -112,19 +113,20 @@ workspace $ tree
 The minimal content of our _manifest_ file is the following:
 
 `app/west.yml`
+
 ```yaml
 manifest:
   # lowest version of the manifest file schema that can parse this file’s data
   version: 0.8
 ```
 
-Zephyr's [official documentation on West basics](https://docs.zephyrproject.org/latest/develop/west/basics.html) calls the `workspace` folder the "_topdir_" and our _app_ folder should be the _manifest **repository**_: In an idiomatic workspace, the folder containing the manifest file is a direct sibling of the "topdir" or workspace root directory, and it is a `git` repository. The folder name `app` is just a personal choice.
+Zephyr's [official documentation on West basics](https://docs.zephyrproject.org/latest/develop/west/basics.html) calls the `workspace` folder the "_topdir_" and our `app` folder the _manifest **repository**_: In an idiomatic workspace, the folder containing the manifest file is a direct sibling of the "topdir" or workspace root directory, and it is a `git` repository. The folder name `app` is just a personal preference.
 
 > **Note:** I'm using the term "idiomatic" since there are multiple ways of setting up _West workspaces_. Placing your manifest file into a folder that is a direct sibling of the workspace is a _convention_. Nothing stops you from placing your manifest file in a different folder, e.g., deeper within your folder tree. This does, however, have some drawbacks since some of the _West_ commands, e.g., `west init`, are currently not very customizable, e.g., initializing a workspace using a repository and the `-m` argument won't work out-of-the-box.
 >
 > Feel free to experiment with your version of _West_. I'm sure there will be some changes in the future, but for now, we focus on the intended or "_idiomatic_" way of using _West_.
 
-Let's initialize a repository for our `app` folder containing the manifest files:
+Let's initialize the repository for our `app` folder containing the manifest files:
 
 ```bash
 workspace/app $ git init
@@ -146,12 +148,12 @@ workspace/app $ git push -u origin main
 
 ### Initializing the workspace
 
-Having everything under version control we can relax and start exploring. First, we finally _create_ the _West_ workspace using [`west init`](https://docs.zephyrproject.org/latest/develop/west/basics.html#west-init-and-west-update). There are two ways to initialize a _West_ workspace:
+Having everything under version control we can relax and start exploring. First, we finally _initialize_ the _West_ workspace using [`west init`](https://docs.zephyrproject.org/latest/develop/west/basics.html#west-init-and-west-update). There are two ways to initialize a _West_ workspace:
 
 - **Locally**, using the `-l` or `--local` flag: This assumes that your manifest repository already exists in your filesystem, e.g., you already used `git clone` to populate it in the _topdir_.
 - **Remotely**, by specifying the URL to the manifest repository using the argument `-m`. With this argument, _West_ clones the manifest repository into the _topdir_ for you before initializing the workspace. We'll see how this works in a [later section](#creating-a-workspace-from-a-repository).
 
-There is no difference between the two methods except that _West_ also clones the repository when using the `-m` argument to pass the manifest repository URL. Since our manifest repository is initialized in the `app` folder already, let's create a workspace using the local manifest repository:
+There is no difference between the two methods except that _West_ also clones the repository when using the `-m` argument to pass the manifest repository URL. Since our manifest repository is initialized already in the `app` folder, we can initialize the workspace using this local manifest repository:
 
 ```bash
 workspace/app $ west init --local .
@@ -175,6 +177,7 @@ When initializing a workspace, _West_ creates a `.west` directory in the _topdir
 ```bash
 workspace/app $ cat ../.west/config
 ```
+
 ```ini
 [manifest]
 path = app
@@ -183,14 +186,15 @@ file = west.yml
 
 The location of the `.west` folder "marks" the _topdir_ and thus the _West_ workspace root directory. Within this file, we can see that _West_ stores the location and name of the manifest file. Modifying this file - or any file within the `.west` folder -  is not recommended, since some of _West's_ commands might no longer work as expected.
 
-Doesn't _"west config"_ sound familiar? If you've been following this article series, you might remember that we've already encountered the `west config` command in the very first article. We've used it, e.g., to configure the _board_ so that we didn't have to pass it as an argument to `west build` anymore.
+_"west/config"_ sounds familiar, doesn't it? If you've been following this article series, you might remember that we already encountered the `west config` command in the very [first article]({% post_url 2024-01-10-practical_zephyr_basics %}): We used the command "`west config build.board nrf52840dk_nrf52840`" to configure the _board_ for our build so that we didn't have to pass it as an argument to `west build` anymore. This does sound suspiciously similar to _"west/config"_!
 
-Let's try this in our workspace and see how it affects `.west/config`:
+Let's try and see how `west config` affects our workspace and `.west/config`:
 
 ```bash
 workspace/app $ west config build.board nrf52840dk_nrf52840
 workspace/app $ cat ../.west/config
 ```
+
 ```ini
 [manifest]
 path = app
@@ -200,7 +204,7 @@ file = west.yml
 board = nrf52840dk_nrf52840
 ```
 
-Having initialized a _West workspace_, `west config` by default uses this _local_ configuration file to store its configuration options. _West_ also supports storing configuration options globally or even system-wide. Have a look at the  [official documentation](https://docs.zephyrproject.org/latest/develop/west/config.html) in case you need to know more.
+Having initialized a _West workspace_, we can now see that `west config` by default uses this _local_ configuration file to store its configuration options. _West_ also supports storing configuration options globally or even system-wide. Have a look at the  [official documentation](https://docs.zephyrproject.org/latest/develop/west/config.html) in case you need to know more.
 
 Let's get rid of the configuration option and finally run [`west update`](https://docs.zephyrproject.org/latest/develop/west/basics.html#west-init-and-west-update) as suggested by the output we got in our call to `west init`:
 
@@ -219,6 +223,7 @@ Huh, that was disappointing. `west update` didn't do anything - feel free to che
 In your manifest file, you can use the `manifest.projects` key to define all Git repositories that you want to have in your workspace. Let's say that we're planning to use a more modern [doxygen](https://doxygen.nl/) documentation for our project and therefore want to add [Doxygen Awesome](https://github.com/jothepro/doxygen-awesome-css) to our workspace. We can add this external dependency as an entry in the `manifest.projects` key of our manifest file:
 
 `app/west.yml`
+
 ```yaml
 manifest:
   version: 0.8
@@ -234,7 +239,7 @@ manifest:
 
 Every _project_ at least has a **unique** name. Typically, you'll also specify the `url` of the repository, but there are several options, e.g., you could use the [`remotes` key](https://docs.zephyrproject.org/latest/develop/west/manifest.html#remotes) to specify a list of URLs and add specify the `remote` that is used for your project. You can find examples and a detailed explanation of all available options in the [official documentation for the `projects` key](https://docs.zephyrproject.org/latest/develop/west/manifest.html#projects).
 
-With the `revision` key you can tell _West_ to check out either a specific _branch_, _tag_, or commit hash. Without specifying the `revision`, at the time of writing _West_ defaults to the `master` branch. Since [Doxygen Awesome](https://github.com/jothepro/doxygen-awesome-css) uses `main` as a development branch, we have to explicitly specify it.
+With the `revision` key you can tell _West_ to check out either a specific _branch_, _tag_, or commit hash. Without specifying the `revision`, at the time of writing _West_ defaults to the `master` branch. Since [Doxygen Awesome](https://github.com/jothepro/doxygen-awesome-css) uses `main` as a development branch, we have to specify it explicitly.
 
 The `path` key is also an optional key that tells _West_ the _relative_ path to the _topdir_ that it should use when cloning the project. Without specifying the `path`, _West_ uses the project's `name` as the path. Notice that you're **not** allowed to specify a path that is outside of the _topdir_ and thus _West_ workspace.
 
@@ -274,6 +279,7 @@ In our manifest file, we specified that we want to use the `main` branch for the
 At the time of writing, the tag `v2.2.1` was the latest release available for `doxygen-awesome`, pointing at the commit with the shortened hash `df83fbf`. Let's update the manifest to use the latest tag:
 
 `app/west.yml`
+
 ```yaml
 manifest:
   version: 0.8
@@ -308,6 +314,8 @@ Looks like the `main` branch was already two commits ahead of the specified revi
 
 _West_ thus takes care of all the projects that we're using. We can, in fact, delete the entire `deps` repository and run `west update` again, and it'll simply put it back into its specified state. This is also the reason why it makes sense to group external dependencies, e.g., into this `deps` folder (full credits to Mike Szczys and [Golioth](https://golioth.io/)): Whenever you're not working on this project anymore, you can simply delete the `deps` and `.west` folders to save disk space (as soon as we'll add Zephyr this becomes a significant amount of disk space). Once you pick it up again, simply run `west init` and `west update` and you're ready to go.
 
+> **Note:** More complex applications include lots of _projects_ in their manifest hierarchy. Having a single dependency folder `deps` can also help in your CI builds: E.g., with GitHub actions you can _cache_ your dependency folder and thereby significantly reduce the time required to run `west update`. The GitHub action used by the [practical-zephyr-manifest-repository](https://github.com/lmapii/practical-zephyr-manifest-repository/blob/main/.github/workflows/ci.yml) that we'll create later in this article uses such a cache for demonstration purposes. Noah Pendleton wrote an [excellent article]({% post_url 2024-01-18-ncs-github-actions %}) about GitHub actions for NCS applications.
+
 Whatever project structure you're using, however, is entirely up to you and always subject to personal preference.
 
 
@@ -316,7 +324,7 @@ Whatever project structure you're using, however, is entirely up to you and alwa
 
 In Zephyr's official documentation for _West_, the first example call to `west init` uses the `-m` argument to specify the manifest repository's URL. In the previous section, we've seen how we can _create_ such a manifest repository and how to use `west init --local` to initialize the workspace _locally_.
 
-Instead of initializing a workspace _locally_, let's use the manifest file and repository that we've created in the previous section and initialize it using its remote URL. Let's fire up a new terminal (I'll be installing _West_ again in a virtual environment) and get started right away:
+Instead of initializing a workspace _locally_, let's use the manifest file and repository that we've created in the previous section and initialize the workspace from scratch using its remote URL. Let's fire up a new terminal (I'll be installing _West_ again in a virtual environment) and get started right away:
 
 ```bash
 $ mkdir workspace-m
@@ -358,6 +366,7 @@ The manifest file uses the key `manifest.self` for configuring the manifest repo
 Let's update the `west.yml` file in the folder that `west init` cloned for us as follows:
 
 `practical-zephyr-t2-empty-ws.git/west.yml`
+
 ```yaml
 manifest:
   version: 0.8
@@ -444,6 +453,7 @@ We can also see this in the configuration file `.west/config`:
 ```bash
 workspace-m $ cat .west/config
 ```
+
 ```ini
 [manifest]
 path = app
@@ -486,6 +496,7 @@ $ tree --dirsfirst -a -L 3
 As an application, we're using a modified version of the *Blinky* sample, where we select the LED node via a newly created `/chosen` node, and output "Tick" and "Tock" each time the LED is turned on or off:
 
 `app/main.c`
+
 ```c
 /** \file main.c */
 
@@ -530,6 +541,7 @@ void main(void)
 I'll again build the application for my [nRF52840 Development Kit from Nordic](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) and will only later switch to the [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-f411re.html), so, for now, all I need is the matching `nrf52840dk_nrf52840.overlay` that specifies the chosen LED node:
 
 `app/boards/nrf52840dk_nrf52840.overlay`
+
 ```dts
 / {
     chosen {
@@ -541,6 +553,7 @@ I'll again build the application for my [nRF52840 Development Kit from Nordic](h
 The `prj.conf` remains empty, and the `CMakeLists.txt` only includes the same old boilerplate to create a Zephyr application with a single `main.c` source file:
 
 `app/CMakeLists.txt`
+
 ```cmake
 cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
@@ -559,7 +572,7 @@ target_sources(
 )
 ```
 
-Try to run `west build` shows us that we're not just missing the Zephyr source code, but we're also still lacking the Zephyr-specific [extension commands](https://docs.zephyrproject.org/latest/develop/west/zephyr-cmds.html), e.g., `build`:
+Trying to run `west build` shows us that we're not just missing the Zephyr source code, but we're also still lacking the Zephyr-specific [extension commands](https://docs.zephyrproject.org/latest/develop/west/zephyr-cmds.html), e.g., `build`:
 
 ```bash
 workspace-m $ west build
@@ -608,6 +621,7 @@ $ west init --local app
 Before running `west update`, let's add Zephyr as a project in `manifest.projects` just like what we've done for the [Doxygen-Awesome](https://github.com/jothepro/doxygen-awesome-css) dependency before:
 
 `app/west.yml`
+
 ```yaml
 manifest:
   version: 0.8
@@ -634,7 +648,7 @@ Initialized empty Git repository in /path/to/workspace/deps/zephyr/.git/
 HEAD is now at 356c8cbe63 release: Zephyr 3.4.0 release
 ```
 
-Now, we have a complete "T2 star topology" workspace, where the Zephyr dependency is placed in a separate `deps` folder in the _topdir_ (as suggested by Mike Szczys in his talk ["Manifests: Project Sanity in the Ever-Changing Zephyr World"](https://www.youtube.com/watch?v=PVhu5rg_SGY)):
+Now, we have a complete "T2 star topology" workspace, where the Zephyr dependency is placed in a separate `deps` folder in the _topdir_ (again following the convention presented by Mike Szczys in his talk ["Manifests: Project Sanity in the Ever-Changing Zephyr World"](https://www.youtube.com/watch?v=PVhu5rg_SGY)):
 
 
 ```bash
@@ -666,6 +680,7 @@ west: unknown command "build"; workspace /path/to/workspace does not define this
 We can fix this by adding the `west-commands` key to the `zephyr` project: Zephyr's _West_ extensions are provided by the file `scripts/west-commands.yml` in Zephyr's repository. Using the key `west-commands`, we can provide a relative path to _West_ extension commands within the project:
 
 `app/west.yml`
+
 ```yaml
 manifest:
   version: 0.8
@@ -722,6 +737,8 @@ Toolchain management is always a highly opinionated topic, so I'll try to keep t
 - Host dependencies such as `python`, `cmake`, `ninja`, etc., as explained in Zephyr's [Getting Started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies)
 - An installation of the _Zephyr SDK_, containing the architecture specific toolchain. Zephyr's official documentation includes a dedicated section on the [Zephyr SDK](https://docs.zephyrproject.org/latest/develop/toolchains/zephyr_sdk.html) and its installation instructions. The _Zephyr SDK_ does **not** contain Zephyr's _sources_!
 
+> **Note:** Yes, the inconsistent use of the term "SDK" is quite annoying. While Zephyr uses _SDK_ exclusively for refering to the toolchain, I'd claim that an SDK typically also includes source code.
+
 The host tools are typically in your `$PATH` - at least for the executing terminal. For pointing Zephyr's build process to your installed SDK you can use the two environment variables [`ZEPHYR_TOOLCHAIN_VARIANT`](https://docs.zephyrproject.org/latest/develop/env_vars.html#envvar-ZEPHYR_TOOLCHAIN_VARIANT) and [`ZEPHYR_SDK_INSTALL_DIR`](https://docs.zephyrproject.org/latest/develop/env_vars.html#envvar-ZEPHYR_SDK_INSTALL_DIR).
 
 In the first article of this series, we installed the correct SDK for the [nRF52840 Development Kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) using [Nordic's toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager). This installation contains not only the Zephyr SDK but also the host dependencies that I need for building Zephyr applications for nRF devices.
@@ -731,6 +748,7 @@ Since both, the STM32 and the nRF52840, are ARM MCUs, the installed Zephyr SDK a
 For that, I could, e.g., use a _shell_ script similar to what we've seen in the first article of this series:
 
 `app/setup-sdk-nrf.sh`
+
 ```sh
 #!/bin/sh
 
@@ -753,6 +771,8 @@ done
 export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
 export ZEPHYR_SDK_INSTALL_DIR=$ncs_install_dir/toolchains/$ncs_bin_version/opt/zephyr-sdk
 ```
+
+> **Notice:** Zephyr provides [environment scripts](https://docs.zephyrproject.org/latest/develop/env_vars.html#zephyr-environment-scripts) including a `zephyr-env.sh`, which you can source in case you're using [Zephyr's official SDK](https://docs.zephyrproject.org/latest/develop/toolchains/zephyr_sdk.html).
 
 In this script, I'm extending my `$PATH` for the binaries that come with Nordic's toolchain installation. This includes `cmake`, `ninja`, and all other host tools used by Zephyr. In fact, this installation even contains `git` and `python`, but by appending to `$PATH`, my local installations have precedence over Nordic's binaries.
 
@@ -805,9 +825,10 @@ The build process was now able to correctly determine the `host-tools` and `tool
 
 ### Manifest imports
 
-The build fails since we're only adding the plain _Zephyr_ repository as a dependency. This is not enough: The Zephyr repository has its own dependencies, which it lists as _projects_ in its own `west.yml` file. We can _import_ the required projects from Zephyr using the `import` key as follows:
+The build fails since we're only adding the _Zephyr_ repository as a dependency. This is not enough: The Zephyr repository has its own dependencies, which it lists as _projects_ in its own `west.yml` file. We can _recursively import_ the required projects from Zephyr using the `import` key as follows:
 
 `app/west.yml`
+
 ```yaml
 manifest:
   version: 0.8
@@ -834,7 +855,9 @@ manifest:
 
 We got rid of the `path` key, since `import.path-prefix` allows us to define a common prefix for all projects. Using the `import.file` key, we're telling _West_ to look for a `west.yml` file in Zephyr's repository and also consider the projects listed there. Instead of adding _all_ of Zephyr's dependencies, we pick the ones we need _by their name_ using the `import.name-allowlist` key.
 
-With this, _West_ **recursively** imports all dependencies from the `zephyr` project. The details are explained nicely in the [official documentation on "Manifest Imports"](https://docs.zephyrproject.org/latest/develop/west/manifest.html#west-manifest-import).
+> **Notice:** Without `name-allowlist` we'd instruct _West_ to clone **all** dependencies, recursively. If you have a quick look at Zephyr's manifest file [`west.yml`](https://github.com/zephyrproject-rtos/zephyr/blob/main/west.yml), you'll see that it has _a lot_ of dependencies. Running `west update` without limiting the dependencies may take several minutes and lots of disk space!
+
+With this, _West_ **recursively** imports all allowed dependencies from the `zephyr` project. The details are explained nicely in the [official documentation on "Manifest Imports"](https://docs.zephyrproject.org/latest/develop/west/manifest.html#west-manifest-import).
 
 Running `west update`, the new dependencies are placed in the `deps/modules` folder: We specified the `deps` prefix, whereas the `module` folder comes from Zephyr's own `west.yml` file:
 
@@ -862,7 +885,21 @@ $ tree --dirsfirst -a -L 5
     └── zephyr  [43 entries exceeds filelimit, not opening dir]
 ```
 
-Now, our `west build` indeed succeeds.
+Now, our `west build` indeed succeeds:
+
+
+```bash
+$ west build --board nrf52840dk_nrf52840 app
+...
+
+[163/163] Linking C executable zephyr/zephyr.elf
+Memory region         Used Size  Region Size  %age Used
+           FLASH:       24852 B         1 MB      2.37%
+             RAM:        4416 B       256 KB      1.68%
+        IDT_LIST:          0 GB         2 KB      0.00%
+```
+
+> **Notice:** In addition to the `name-allowlist` you can also instruct _West_ to use shallow clones instead of a complete `git clone` for all its projects. E.g., use `west update -o=--depth=1 -n` to create shallow clones. Have a look at the help output of `west update --help`!
 
 
 ## Switching boards
@@ -870,6 +907,7 @@ Now, our `west build` indeed succeeds.
 With our workspace set up and our knowledge about Zephyr's imports, we're ready to add support for the [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-f411re.html). The first thing we need is an overlay file to specify the `/chosen` LED node:
 
 `app/boards/nucleo_f411re.overlay`
+
 ```dts
 / {
     chosen {
@@ -892,6 +930,7 @@ $ grep stm32 deps/zephyr/west.yml -A 2 --ignore-case
 The STM32 HAL is part of the project `hal_stm32`, which we can now add to our allow-list in the manifest file:
 
 `app/west.yml`
+
 ```yaml
 manifest:
   version: 0.8
@@ -910,7 +949,7 @@ manifest:
         name-allowlist:
           - cmsis
           - hal_nordic
-          - hal_stm32
+          - hal_stm32 # <-- added STM32 HAL
 ```
 
 Running `west update`, _West_ populates the `stm32` HAL in the expected folder `deps/modules/hal/stm32`:
@@ -958,7 +997,7 @@ Oh, the STM32 development kit uses a different _runner_ than the nRF52840 develo
 
 Thus, you don't only need the host tools and Zephyr SDK for your target, but also all other supporting tools, such as Nordic's command line tools or in this case `openocd`. On my computer, a simple `brew install open-ocd` fixes this problem, and I'm able to flash the application to the device.
 
-In a more serious setup, your entire toolchain should be maintained in a much better way, but - as promised - I won't go into detail about the available options there.
+In a more serious setup, your entire toolchain should be maintained in a much better way, but - as promised - I won't try to tell how you should do that - it's entirely up to you.
 
 
 
@@ -968,7 +1007,7 @@ When browsing allowed imports, we've seen that Zephyr has dependencies. What we 
 
 E.g., looking at the [GitHub repository the _nRF Connect SDK_](https://github.com/nrfconnect/sdk-nrf/), we find that Nordic uses their own fork of the official Zephyr repository and has it listed as a _project_ in the SDK's [`west.yml`](https://github.com/nrfconnect/sdk-nrf/blob/e464540b74daca7f4a660f04fee0886b04365f70/west.yml#L62) file:
 
-`https://github.com/nrfconnect/sdk-nrf/blob/main/west.yml`
+[`https://github.com/nrfconnect/sdk-nrf/blob/main/west.yml`](https://github.com/nrfconnect/sdk-nrf/blob/main/west.yml)
 
 ```yaml
 manifest:
@@ -984,11 +1023,10 @@ manifest:
           - ...
 ```
 
-> **Note:** Yes, the inconsistent use of the term "SDK" is quite annoying. While Zephyr uses _SDK_ exclusively for refering to the toolchain, an SDK typically includes source code.
-
 Another example is the [Golioth Zephyr SDK](https://docs.golioth.io/firmware/zephyr-device-sdk/), which lists the official Zephyr repository as a project in their [`west-zephyr.yml`](https://github.com/golioth/golioth-zephyr-sdk/blob/4f0fcea1370bfec84f6754caaca8b3f35bbc3573/west-zephyr.yml#L3) manifest:
 
-`https://github.com/golioth/golioth-zephyr-sdk/blob/main/west-zephyr.yml`
+[`https://github.com/golioth/golioth-zephyr-sdk/blob/main/west-zephyr.yml`](https://github.com/golioth/golioth-zephyr-sdk/blob/main/west-zephyr.yml)
+
 ```yaml
 manifest:
   projects:
@@ -1003,7 +1041,7 @@ These dependencies are something that you need to handle yourself since [_West_ 
 
 It is your responsibility to ensure that the projects are **compatible** - or deal with resolving differences in case they are **not**. _West_ doesn't do that for you.
 
-For some applications, it can therefore be beneficial to maintain multiple manifest files: E.g., when building for devices from Nordic, you should use the [`sdk-nrf`](https://github.com/nrfconnect/sdk-nrf) as a _project_ in your manifest file instead of adding "vanilla" _Zephyr_.
+For some applications, it can therefore be beneficial to maintain multiple manifest files: E.g., when building for devices from Nordic, you may want to use the [`sdk-nrf`](https://github.com/nrfconnect/sdk-nrf) as a _project_ in your manifest file instead of adding "vanilla" _Zephyr_.
 
 This may be tedious but is necessary and not a downside of using Zephyr: If you were to switch MCUs or if you'd be including a big SDK in any other firmware project, you'd also have to ensure compatibility. West manifests simply make this explicit, reproducible, and manageable.
 
@@ -1013,7 +1051,7 @@ This may be tedious but is necessary and not a downside of using Zephyr: If you 
 
 Even though we mostly ignored the inner workings of _West_, there's one thing that you need to be aware of when working with West workspaces: Except for the _manifest repository_, _West_ creates and controls a Git branch named `manifest-rev` in each _project_ and thus for all dependencies.
 
-Let's take the West workspace that we created for the modified **Blinky** application in the section ["Zephyr with West"](#zephyr-with-west):
+E.g., let's have a look at the `deps/zephyr` repository that we cloned using _West_ for the modified **Blinky** application in the section ["Zephyr with West"](#zephyr-with-west):
 
 ```bash
 $ cd deps/zephyr
@@ -1022,9 +1060,11 @@ HEAD detached at refs/heads/manifest-rev
 nothing to commit, working tree clean
 ```
 
-The manifest repository is not affected since - as we've seen before - West does not touch the manifest repository at all. This behavior is also explained in the [official documentation](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#west-manifest-rev).
+We're not on Zephyr's `main` branch nor are we on a detached head at a specific revision - we're on the `manifest-rev` branch that is maintained by _West_.
 
-For all other _projects_, however, West creates and manages its own `manifest-rev` branch. It is important that you do not modify the `manifest-rev` branch and that you don't push it to your remote since West recreates and resets the `manifest-rev` branch on each execution of `west update` command. Any changes would be **lost**.
+This is done for all _projects_ in a manifest. The manifest repository itself is not affected since - as we've seen before - West does not touch the manifest repository. This behavior is also explained in the [official documentation](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#west-manifest-rev).
+
+For all other _projects_, however, West creates and manages its own `manifest-rev` branch. It is important that you **do not modify the `manifest-rev` branch** and that you don't push it to your remote since West recreates and resets the `manifest-rev` branch on each execution of `west update` command. Any changes would be **lost**.
 
 You need to be especially aware of this behavior if you're using _West_ in a ["T3 forest topology"](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#topologies-supported) or, e.g., if you're using a separate repository for shared code. E.g., we could add the following `shared/dummy` project to our workspace:
 
@@ -1042,7 +1082,7 @@ manifest:
 
 In case you need to update such a shared dependency, make sure to push the changes to a new or existing branch, but **don't commit to the `manifest-rev` branch**. Also, after running `west update`, make sure to switch back to your working branch.
 
-This sounds brittle, but it really isn't. It isn't that easy to lose changes to files with a `west update` unless you commit these changes on the `manifest-rev` branch.
+This sounds brittle, but it really isn't. It isn't that easy to lose changes to files with a `west update` unless you commit these changes on your local `manifest-rev` branch and then run `west update`.
 
 Let's see this in action. In case you want to follow along, add your own dummy repository to the manifest - I'll be using the above project in my `west.yml` - a dummy repository that contains an empty `test.txt` file:
 
@@ -1151,7 +1191,9 @@ In this article, we've seen how we can use _West_ to manage our dependencies, in
 
 We also managed to build an application for MCUs from different vendors: This is possible in Zephyr, though it may take a bit more effort than advertised - at least in case you're dealing with a professional application. Personally, I still think that _Zephyr_ is a great step forward: Switching MCUs or supporting multiple targets _always_ includes efforts, but with Zephyr, the efforts are predictable and manageable.
 
-This article marks the end of the _Practical Zephyr_ series: I hope that I could get you past the steep section of Zephyr's learning curve, towards a more enjoyable and reasonable experience. There's still a ton to explore!
+This article marks the **end of the _Practical Zephyr_ series**: I hope that I could get you past the steep section of Zephyr's learning curve, towards a more enjoyable and reasonable experience. There's still a ton to explore!
+
+A big **Thank You** to the team at [Memfault](https://memfault.com/) for their patience, the reviews, the invaluable feedback for these articles, and for maintaining the [Interrupt](https://interrupt.memfault.com/) blog!
 
 
 
