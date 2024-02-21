@@ -1,6 +1,6 @@
 ---
 title: Counting Crashes to Improve Device Reliability
-description: Understand IoT device reliability using metrics such as mean time between failure, crash-free hours, crash-free devices, and crash-free sessions.
+description: Understand IoT device reliability using metrics such as mean time between failure, crash-free hours, crash-free devices, and crash-free sessions. These all surface insights about device stability.
 author: tyler
 tags: [monitoring, better-firmware]
 image: /img/device-reliability-metrics/device-reliability-crash-metrics.png
@@ -40,17 +40,19 @@ The three core metrics that we cared about at Pebble were the following:
 - [Average battery life]({% post_url 2023-07-26-monitoring-battery-life %})
 - Percentage of time the watch was connected via Bluetooth to the phone (we’d often have connectivity regressions!)
 
-The easiest metric to improve upon was the average time between crashes since we had a pretty slick diagnostics system akin to Memfault’s product offering. Internally, at Memfault, we’ve been calling the various metrics related to crashes “Crashiness,” so without further ado, let’s dig into some Crashiness metrics.
+The easiest metric to improve upon was the average time between crashes since we had a pretty slick diagnostics system akin to Memfault’s product offering. Internally, at Memfault, we’ve been calling the various metrics related to crashes **Stability Metrics**, and crash free hours as **Stable Hours**, which we have found to be better understood by our customers.
+
+Let’s dig into some Stability metrics.
 
 > This article primarily talks about crashes. If you'd like to track other failures, read up on how you might [adjust these metrics](#non-crash-failures) to work for you.
 
-## Crashiness Metrics
+## Stability Metrics
 
 In an ideal world, the firmware on a device never crashes. This is only realistic for some modern firmware operating on even the most basic MCUs, especially since we keep writing in C, which lacks robust compile-time checks and memory safety features. The best we have is [offensive programming practices]({% post_url 2020-12-15-defensive-and-offensive-programming %}) and liberal usage of [asserts]({% post_url 2019-11-05-asserts-in-embedded-systems %}).
 
 With this acknowledged, we need a way to measure how often our devices crash in the field. Sounds simple! I only wish it was. To compare the different metrics we can collect on the device and compute in a data warehouse, we’ll develop a few criteria.
 
-We want to collect a crashiness metric that:
+We want to collect a stability metric that:
 
 - **Can quickly assess the reliability of a group of devices:** We want to get a signal from a metric within hours and days after releasing a new firmware version, not wait weeks or months. We also want to compare this metric with previous firmware releases to determine whether there is a regression.
 - **Handles expected vs unexpected reboots:** We want to be able to separate crashes from user shutdowns or the battery being depleted.
@@ -97,7 +99,7 @@ Although very easy to collect, there are two significant problems with using dev
 
 First, if you want to know if your devices can be ‘up’ for 30 days on average, you need to wait at least 30 days to compute it. This problem is similar to estimating the battery life, where if a device is supposed to last 30 days, you may need to wait 30 days to know if it will. Just like we talked about in our [battery life measurement post]({% post_url 2023-07-26-monitoring-battery-life %}#do-record-the-delta-of-the-state-of-charge), there is a better way here to determine uptime.
 
-The second issue with uptime is that users sometimes shut off devices themselves! With the crashiness metric, we only want to track failures, which leads us to the classic metric, Mean Time Between Failures.
+The second issue with uptime is that users sometimes shut off devices themselves! With the stability metric, we only want to track failures, which leads us to the classic metric, Mean Time Between Failures.
 
 #### Collection
 
@@ -114,7 +116,7 @@ I do not recommend using uptime to measure device reliability, and I would use i
 | Can assess the reliability of devices & software quickly after firmware updates | ❌     | Need to wait N days to see if uptime averages to N.                                     |
 | Handles expected vs unexpected reboots                                          | ❌     | Expected resets (user shutdowns, firmware updates, etc.) will reset the uptime counter. |
 | Not susceptible to a small subset of misbehaving devices skewing the metric     | ❌     | One device resetting often will cause the metric to skew lower.                         |
-| Works well with session-based devices                                           | ❌     | If a device is powered on once a day for N hours, its uptime will only be N hours. |
+| Works well with session-based devices                                           | ❌     | If a device is powered on once a day for N hours, its uptime will only be N hours.      |
 
 <br>
 
@@ -144,11 +146,11 @@ To collect MTBF from the devices, record the last boot’s uptime according to t
 
 I do not recommend MTBF as a reporting metric and would instead opt to use any one of the metrics listed later in this article.
 
-| Criteria                                                                        | Rating | Notes                                                                                                                                                                                                  |
-| ------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Can assess the reliability of devices & software quickly after firmware updates | ❌     | Like uptime, we need to wait N days before being confident our devices can go N days between crashes.                                                                                             |
-| Handles expected vs unexpected reboots                                          | ✅     | Expected reboots performed by the user are properly ignored.                                                                                                                                           |
-| Not susceptible to a small subset of misbehaving devices skewing the metric     | ❌     | One device resetting often will cause the metric to skew lower.                                                                                                                                        |
+| Criteria                                                                        | Rating | Notes                                                                                                                                                                                         |
+| ------------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Can assess the reliability of devices & software quickly after firmware updates | ❌     | Like uptime, we need to wait N days before being confident our devices can go N days between crashes.                                                                                         |
+| Handles expected vs unexpected reboots                                          | ✅     | Expected reboots performed by the user are properly ignored.                                                                                                                                  |
+| Not susceptible to a small subset of misbehaving devices skewing the metric     | ❌     | One device resetting often will cause the metric to skew lower.                                                                                                                               |
 | Works well with session-based devices                                           | ⚠️     | MTBF can work well with session-based devices, but it’s not intuitive. If a device is used 1 hour a day and its MTBF metric is 24 hours, it’s expected to crash every 24 days, not every day. |
 
 <br>
@@ -198,7 +200,7 @@ I like using crash free sessions, especially if the devices operate in a session
 
 <br>
 
-### Crash Free Hours
+### Crash Free Hours (Stable Hours)
 
 When IoT devices are not operating within sessions, they typically run 24 hours a day, 365 days a year. They constantly monitor and react to their environment, and they ideally never turn off or break down. This is the type of device I’m most familiar with, having worked in the wearables space building smartwatches that never came off our user’s wrists except for charging.
 
@@ -343,19 +345,19 @@ Once you take steps to monitor how often devices in the field crash, you’ll se
 
 ## Tracking Failures That Aren’t Crashes {#non-crash-failures}
 
-This article is focused on tracking crashes to assess reliability. However, what is great about these fundamental metrics is that they can apply to any failure your company wants to monitor closely.
+This article is focused on tracking crashes to assess reliability and stability. However, what is great about these fundamental metrics is that they can apply to any failure your company wants to monitor closely.
 
 For example, if my company makes an IoT weather sensor that needs to send data back every minute, I will want to track how often it fails. Instead of recording crashes as a failure, I would record the number of times the device fails to send a weather-related reading. Then, I would calculate “weather sync failure” free hours and “weather sync failure” free devices.
 
 As long as there is an event that can fail, and you have a count of the number of attempts, you can use this methodology to measure any time of failure!
 
-## Towards Crash Free Firmware
+## Towards Stable, Crash Free Firmware
 
 By collecting and constantly obsessing over these metrics at Pebble, we produced reliable firmware despite the complexity of being crammed into a 1MB flash part full of C code. Our firmware still crashed occasionally, but our average was around 14 days between crashes, which was pretty good.
 
 I hope this post was a good primer on measuring device reliability related to crashes and that you have the information and tools to get these metrics into your firmware and data warehouse.
 
-If you’re feeling overwhelmed by having to build all the intricate libraries in hooks in firmware, the serialization and protocol, processing and data pipeline, SQL queries, and dashboarding-fu necessary to surface these crashiness metrics, [reach out to us](mailto:hello@memfault.com) at Memfault. We’d love to help or steer you in the right direction.
+If you’re feeling overwhelmed by having to build all the intricate libraries in hooks in firmware, the serialization and protocol, processing and data pipeline, SQL queries, and dashboarding-fu necessary to surface these stability metrics, [reach out to us](mailto:hello@memfault.com) at Memfault. We’d love to help or steer you in the right direction.
 
 <!-- Interrupt Keep START -->
 
