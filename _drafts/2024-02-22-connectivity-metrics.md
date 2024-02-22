@@ -10,19 +10,18 @@
 #
 # It will now show up in the front page when running Jekyll locally.
 
-title: Connecting Monitoring and Observability to Your Devices
+title: Observing Connectivity of Connected Devices
 description: Measure and monitor device connectivity using techniques such as logging, protocol captures, and metrics like connection uptime and sync success.
 author: ericj
 ---
 
 With the number of wireless SoCs on the market, “Just add connectivity” is finally a reality! “Just” does a lot of lifting in that phrase. Connectivity, whether wired or wireless, adds numerous layers of complexity to your device. Treating your connectivity as a black box early in development is easy, but this strategy will implode when thousands of devices enter the field. It’s not enough to test from end-to-end, pushing data through your device to the cloud. Controlled tests only partially emulate how a device’s connectivity might perform in the field.
 
-It is crucial to thoroughly understand how your device’s connectivity performs, both presently and compared to future releases. Connectivity is the central conduit delivering core data to and from users, whether through a BLE connection to a phone or gateway, or a direct Internet connection with WiFi or LTE. Without reliable connectivity, user happiness and device utility plummet. Device makers must have a handle on this aspect of their product.
+It is crucial to thoroughly understand how your device’s connectivity performs, both presently and compared to future releases. Connectivity is the central conduit delivering core data to and from users, whether through a BLE connection to a phone or gateway, or a direct Internet connection with WiFi or LTE. Without reliable connectivity, user happiness and device utility plummet. Device makers must have a handle on this aspect of their product. The best time to instrument your connectivity is yesterday and the next best time is now!
 
 <!-- excerpt start -->
 
-This post will cover why connectivity is complex and what methods we have available to diagnose and solve connectivity problems. We’ll survey briefly tools like logging and protocol analysis. Then, we'll look in-depth at the utility of metrics and finally, wrap up with some practical examples to use in your device.  
-
+This post will cover why connectivity is complex and what methods we have available to diagnose and solve connectivity problems. The tool at the core of our strategy is metrics. We’ll survey briefly other tools like logging and protocol analysis. We'll look in-depth at the utility of metrics and finally, wrap up with some practical metric examples to use in your device.  
 
 <!-- excerpt end -->
 
@@ -45,7 +44,14 @@ All of these are difficult and challenging problems. I learned so much solving t
 
 ## Techniques for Monitoring and Debugging Connectivity
 
-But fear not! You do not have to enter this world blind. We have several tools at our disposal to tackle issues. As with any monitoring/debugging toolkit, each method complements the others. As problems pop up, it’s best to use a mix of these techniques to find the solution.
+But fear not! You do not have to enter this world blind. We have several tools at our disposal to tackle issues. As with any monitoring/debugging toolkit, each method complements the others. As problems pop up, it’s best to use a mix of these techniques and find what works best for your team and device. The three we'll cover are:
+
+- Logging
+- Protocol Analyzers
+- Metrics
+- Attributes
+
+ Metrics will bring the most utility and insight as your fleet begins to grow. Other techniques can suffice for single or small group drilldown investigations to help solve specific problems. With metrics you can easily measure changes from version to version, or subgroups within your fleet. You cannot do this for every device as your fleet grows, save your sanity and start early using metrics!
 
 ### Logging
 
@@ -58,25 +64,17 @@ I (504) net80211: net80211 rom version: e7ae62f
 I (514) wifi:wifi driver task: 3fcb4c08, prio:23, stack:6656, core=0
 I (524) wifi:wifi firmware version: 9aad399
 I (524) wifi:wifi certification version: v7.0
-I (524) wifi:config NVS flash: enabled
-I (524) wifi:config nano formating: disabled
-I (524) wifi:Init data frame dynamic rx buffer num: 32
-I (544) wifi:Init management frame dynamic rx buffer num: 32
-I (544) wifi:Init management short buffer num: 32
+...
 I (554) wifi:Init dynamic tx buffer num: 32
 I (554) wifi:Init static tx FG buffer num: 2
 I (554) wifi:Init static rx buffer size: 1600
 I (554) wifi:Init static rx buffer num: 10
 I (564) wifi:Init dynamic rx buffer num: 32
-I (574) wifi_init: rx ba win: 6
-I (574) wifi_init: tcpip mbox: 32
-I (574) wifi_init: udp mbox: 6
-I (574) wifi_init: tcp mbox: 6
+...
 I (584) wifi_init: tcp tx win: 5744
 I (594) wifi_init: tcp rx win: 5744
 I (594) wifi_init: tcp mss: 1440
-I (594) wifi_init: WiFi IRAM OP enabled
-I (604) wifi_init: WiFi RX IRAM OP enabled
+...
 I (614) phy_init: phy_version 601,fe52df4,May 10 2023,17:26:54
 ```
 
@@ -102,11 +100,7 @@ Next, the device proceeds and connects with a local WiFi router.
 I (8154) wifi:security: WPA3-SAE, phy: bgn, rssi: -49
 I (8164) wifi:pm start, type: 1
 
-I (8164) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 0, mt_pti: 25000, mt_time: 10000
-I (8184) wifi:<ba-add>idx:0 (ifx:0, <my_routers_mac_addr>), tid:6, ssn:0, winSize:64
-I (8184) wifi:AP's beacon interval = 102400 us, DTIM period = 1
-I (8904) wifi:<ba-add>idx:1 (ifx:0, <my_routers_mac_addr>), tid:5, ssn:2, winSize:64
-I (9174) esp_netif_handlers: sta ip: 192.168.50.235, mask: 255.255.255.0, gw: 192.168.50.1
+...
 I (9174) wifi station: got ip:192.168.50.235
 I (9174) wifi station: connected to ap SSID:<my_network>
 I (9874) mflt: Result: 0
@@ -136,7 +130,7 @@ Protocol analyzers offer a more sophisticated approach to connectivity monitorin
 With regards to software, I absolutely must recommend Wireshark. Wireshark is an incredibly powerful tool that captures and analyzes WiFi + networking protocols (IP, TCP, UDP, MQTT, etc), USB, and even BLE. This tool has saved me tons of effort and helped me numerous times. I’ve used Wireshark to find a bug in a BLE stack, profile MQTT connections, and improve my USB throughput, to name a few instances. It’s insane that it’s free, and I’d pay (practically) any price they offered. Here’s an example of a capture I collected to find a problem in my BLE stack:
 
 <p align="center">
-  <img width="650" src="{% img_url connectivity-metrics/wireshark-ble-capture.png %}" alt="BLE Packet Capture in Wireshark" />
+  <img width="800" src="{% img_url connectivity-metrics/wireshark-ble-capture.png %}" alt="BLE Packet Capture in Wireshark" />
 </p>
 
 For this problem, I observed lower throughput than expected during data transfer. Logs showed that the connection parameters were set correctly initially, but the data rate did not match this. Inspecting the capture in Wireshark led me to discover that two different connection parameter update methods in the BLE stack clobbered values set by the other, resulting in decreased throughput.
@@ -158,17 +152,31 @@ Use protocol analyzers when you need extreme detail for a **single** device at y
 
 ### Metrics
 
-So you’re ready to wrangle thousands, maybe millions of devices out in the wild, all operating in different locations and under different conditions. Not only that, but you’ve got a new release in the works to add a new feature. We know protocol traces aren’t possible without the device next to you, and logs can only provide so much context. The tool to reach for to gather fleet-wide connectivity insights are metrics. Collecting data using counters, timers, and gauge metrics allows you to measure various aspects of connectivity performance, such as packet loss rates, latency, and throughput across your fleet.
+The tool to reach for to gather connectivity insights are metrics. Collecting data using counters, timers, and gauge metrics allows you to measure various aspects of connectivity performance, such as packet loss rates, latency, and throughput across your fleet. We have a previous post detailing how to [implement heartbeat metrics]({% post_url 2020-09-02-device-heartbeat-metrics %}), or checkout the [Memfault SDK](https://docs.memfault.com/docs/mcu/metrics-api) for our specific implementation.
+
+What makes metrics so powerful is using them at any level of detail for your fleet. Use metrics for an individual device for views into operation. Pair this with logs for additional context on the metric values gathered. This zoomed in view is great especially for correlating with other events, for instance fault handling or reboots!
+
+The superpower of metrics is aggregating values for your fleet. None of the other tools discussed are capable of combining in this fashion to inform about your fleet's connectivity. Simple operations like sums and averages can yield insights on message failure rates, connection uptime, throughput and others. Additionally since we have these aggregate measures we can compare between different software versions in our fleet. This allows us to easily a determine new stack version does not impact time to connect, or a different connection parameter doesn't degrade throughput. We can look to a single measure to judge if our connectivity has gotten better or worse.
+
+Let's take a look at some examples of collected metrics. Here's a zoomed in look at a single device:
 
 <p align="center">
-  <img width="650" src="{% img_url connectivity-metrics/metrics-example-1.png %}" alt="Example metric chart showing sync success metrics over time" />
+  <img width="650" src="{% img_url connectivity-metrics/metrics-example-1.png %}" alt="Example metrics for a single device" />
 </p>
 
-Looking at this first screenshot, we can see the battery level drop quite drastically in the middle of the chart. This does not correlate with our selected connectivity metrics though.
+We can see that our device had a failure to send Memfault data while operating. This happened at the same time that our LTE connection lost count increment and we can see that our RSRP is starting to droop as well. The likely cause here is poor signal causing this sync failure. Since we're also measuring other metrics we can see this caused quite a significant battery drop too, we lost 6% in that hour!
+
+Taking a look at our fleet we can check out how our latest release is performing:
 
 <p align="center">
-  <img width="650" src="{% img_url connectivity-metrics/metrics-example-2.png %}" alt="Example metric chart showing correlation between data transmission and battery percentage drop" />
+  <img width="650" src="{% img_url connectivity-metrics/metrics-example-2.png %}" alt="Example metrics for a fleet" />
 </p>
+
+In this screenshot we have 3 charts built around sync success and sync failure metrics. We can clearly see that overall, our latest firmware version from 2024/02/21 is performing a bit worse on average than our previous version from 2024/02/14. The variation across the fleet for sync success though has tightened quite a bit but this is likely to the lower sample count for the latest version. We know all this thanks to a little bit of work to add a metrics system on our device, and a bit of data analysis on our backend. This is a huge improvement over what the other methods covered can do.
+
+In short, use metrics for everything from individual device investigations to signing off on release readiness. There's nothing better than being able to clearly say "version x is better than version y, send it!" and have confidence you've delivered a great new update to your entire fleet. Even if you do introduce a problem, metrics help spot regressions quickly!
+
+
 
 **Strengths**:
 
@@ -182,7 +190,70 @@ Looking at this first screenshot, we can see the battery level drop quite drasti
 - Entire fleets or individual devices
 - Characterizing the overall performance and state of fleet connectivity
 
-### Attributes
+## Connectivity Metrics In Practice
+
+Once you’ve added an existing metrics implementation or created your own, the next step is figuring out how to instrument your connectivity stack. Some of the best examples apply to many different connectivity setups. To help generalize these metrics for any connectivity type, I will use the word connection to mean a data channel established between the downstream device and the upstream gateway or backend. Let's get into to some examples!
+
+### Sync Success and Connected Time
+
+The first two metrics I'll outline are sync success and connected time. These two metrics provide signal at a high-level on how connectivity is operating overall. Sync success is aimed at devices that connect periodically, while connected time is best suited to always-on connections.
+
+#### Sync Success
+
+With a periodic connection, we want to focus on measuring each attempt to send/receive data. Each time we attempt to transmit data, we count either a success or failure. Again, instead of using the absolute counts, let’s take a ratio of success to the total sync attempts (whether successful or not):
+
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/sync-success-eq.png %}" alt="Equation for Sync Success metric" />
+</p>
+
+This metric can also be used for always-on connections as well to determine if data can reach it's destination. For periodic connections though, this is the best summary metric.
+
+#### Connected Time
+
+Just like we can measure device stability with crash-free hours, we should measure our connectivity with a similar measure: connected time. This is best suited for devices that have an  always-on or continuous connection. Instead of an absolute connected time in seconds, we’ll take a ratio between the time we expected to be connected and the actual time we were connected.
+
+This allows an understanding of how frequently these intermittent connections are succeeding or not. Since we are using a relative measurement, we can easily compare this across different aspects of our fleet without considering the equivalent number of samples.
+
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/connected-time-eq.png %}" alt="Equation for Connected Time metric" />
+</p>
+
+
+Connected Time demonstrates how well our devices can maintain their always-on connection. This metric can also be used when a device enters a state where it knows the connection should be maintained throughout.
+
+### Measuring Time in Connectivity States
+
+Many protocols have different states that devices will transition into and out of during operation. BLE devices start by broadcasting an advertisement packet that a phone or gateway would scan to connect and transfer data with the device. Many IP connections will require a device to obtain a lease on an address when it joins the network. Understanding the time spent in different connection states for LTE devices can drastically impact battery life. To instrument these scenarios, we use a timer metric to measure how long the device spent in a particular state and take the average time to transition into and out of the state.
+
+#### Equation
+
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/connecting-state-avg-dur.png %}" alt="Equation for Connecting State Average Duration" />
+</p>
+
+We can easily observe changes in this value across all of our devices using the average. We can quickly identify if tweaking a connection parameter affected device behavior. Connection-forming states such as the following are critical to measure:
+
+- Connetion-forming states. These are important for measuring latency because they’re overhead on when a device can start sending or receiving data. Your users will notice if this increases significantly!
+  - **BLE**: Total time between starting advertising to the connection established or bond formed
+  - **LTE**: Total time between idle and connected state
+  - **WiFi**: Total time to associate and obtain an IP address
+
+### Throughput
+
+We need to have a good sense of how much data is sent between our device and backend so we can create metric for bytes sent and received. Key to this is deciding which specific point in our connectivity stack to set these two metrics. We want to be at the lowest layer available to your application and ideally at single point to record bytes sent and a single point to record bytes received. Lower level instrumentation will give us the most accurate count for these metrics, and locating at the point that bytes are sent/received keeps the instrumentation code to a minimum. Use simple counters to update based on the number of bytes sent and received. Metric rollover can be common in this use-case, so be sure to account for this with appropriate metric value datatypes. With a metric for sent and received data, we can easily calculate a throughput with a timer measuring the metric heartbeat period:
+
+#### Equation
+
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/transmit-throughput.png %}" alt="Equation for Transmit Throughput" />
+</p>
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/receive-throughput.png %}" alt="Equation for Receive Throughput" />
+</p>
+
+It's important to measure both received and transmitted bytes as your connectivity channel may not be symmetric in both directions.
+
+### Attributes, A Supplement To Your Tools
 
 Attributes are used to supplement logging, metrics, and protocol traces. Attributes are bits of additional info related to the device that change infrequently or not at all. These attributes provide more context as to what is unique about the device. Some examples are component vendors, modem firmware versions, gateway/phone OS versions, or geography identifiers. An attribute could help identify a particular battery provider between devices that frequently lose connection due to out-of-spec power output.
 
@@ -200,44 +271,6 @@ In the screenshot above, I've collected attributes for a thingy91 related to it'
 
 - Additional context when investigating devices
 - Selecting devices with matching values
-
-## Connectivity Metrics In Practice
-
-Once you’ve added an existing metrics implementation or created your own, the next step is figuring out how to instrument your connectivity stack. Some of the best examples apply to many different connectivity setups. To help generalize these metrics for any connectivity type, I will use the word connection to mean a data channel established between the downstream device and the upstream gateway or backend.
-
-### Measuring Time in Connectivity States
-
-Many protocols have different states that devices will transition into and out of during operation. BLE devices start by broadcasting an advertisement packet that a phone or gateway would scan to connect and transfer data with the device. Many IP connections will require a device to obtain a lease on an address when it joins the network. Understanding the time spent in different connection states for LTE devices can drastically impact battery life. To instrument these scenarios, we use a timer metric to measure how long the device spent in a particular state and take the average time to transition into and out of the state.
-
-#### Equation
-
-Avg time spent in state = Total time spent in state / number of state transitions
-
-We can easily observe changes in this value across all of our devices using the average. We can quickly identify if tweaking a connection parameter affected device behavior. Connection-forming states such as the following are critical to measure:
-
-- Connetion-forming states. These are important for measuring latency because they’re overhead on when a device can start sending or receiving data. Your users will notice if this increases significantly!
-  - **BLE**: Total time between starting advertising to the connection established or bond formed
-  - **LTE**: Total time between idle and connected state
-  - **WiFi**: Total time to associate and obtain an IP address
-
-### Connection Time
-
-Just like we can measure device stability with crash-free hours, we should measure our connectivity with a similar measure: connection time. This is best suited for devices that have an  always-on or continuous connection. Instead of an absolute connection time in seconds, we’ll take a ratio between the time we expected to be connected and the actual time we were connected.
-
-#### Equation
-
-Connection Time = Actual Connection Time / Expected Connection Time
-Connection Time demonstrates how well our devices can maintain their always-on connection. This metric can also be used when a device enters a state where it knows the connection should be maintained throughout.
-
-### Sync Success Rate
-
-For other devices, they may connect periodically. The metric best suited to measure the overall connection here is looking at each attempt to send/receive data. Each time we attempt a sync, we count either a success or failure. Again, instead of using the absolute counts, let’s take a ratio of success to the total sync attempts (whether successful or not):
-
-#### Equation
-
-Sync Success % = Sync Success Count / (Sync Success Count + Sync Failure Count)
-
-This allows an understanding of how frequently these intermittent connections are succeeding or not. Since we are using a relative measurement, we can easily compare this across different aspects of our fleet without considering the equivalent number of samples.
 
 ## Conclusion
 
