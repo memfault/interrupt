@@ -40,7 +40,11 @@ At one of my previous companies, we released a BLE hub device to forward data fr
 - **Environmental Conditions**: One of the most challenging factors is how a device’s environment affects connectivity performance. Depending on the protocol and congestion, this can reduce bandwidth by orders of magnitude or even result in full denial of service. The device environment can manifest in strange intermittent failures or change the operating range of your device.
 - **Accessibility**: One of the most frustrating problems is that when you need your device’s data the most, you may not be able to get it! To get insights on connectivity, either you need an out-of-band channel using a different method, or you need to be connected. To get connectivity data, we need connectivity in the first place!
 
-All of these are difficult and challenging problems. I learned so much solving these problems, but I was terrified when a new one would pop up. It was a ton of effort each time and it took far too long for us to get an initial monitoring component in place.
+All of these are difficult and challenging problems. I learned so much solving these problems, but I was terrified when a new one would pop up. It was a ton of effort each time and it took far too long for us to get an initial monitoring component in place. I dreamed of a dashboard like this:
+
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/metrics-dashboard-example.png %}" alt="Example connectivity metrics dashboard" />
+</p>
 
 ## Techniques for Monitoring and Debugging Connectivity
 
