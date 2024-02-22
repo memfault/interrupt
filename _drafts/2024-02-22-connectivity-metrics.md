@@ -167,7 +167,7 @@ So you’re ready to wrangle thousands, maybe millions of devices out in the wil
 Looking at this first screenshot, we can see the battery level drop quite drastically in the middle of the chart. This does not correlate with our selected connectivity metrics though.
 
 <p align="center">
-  <img width="650" src="{% img_url connectivity-metrics/metrics-exmaple-2.png %}" alt="Example metric chart showing correlation between data transmission and battery percentage drop" />
+  <img width="650" src="{% img_url connectivity-metrics/metrics-example-2.png %}" alt="Example metric chart showing correlation between data transmission and battery percentage drop" />
 </p>
 
 **Strengths**:
@@ -187,7 +187,7 @@ Looking at this first screenshot, we can see the battery level drop quite drasti
 Attributes are used to supplement logging, metrics, and protocol traces. Attributes are bits of additional info related to the device that change infrequently or not at all. These attributes provide more context as to what is unique about the device. Some examples are component vendors, modem firmware versions, gateway/phone OS versions, or geography identifiers. An attribute could help identify a particular battery provider between devices that frequently lose connection due to out-of-spec power output.
 
 <p align="center">
-  <img width="650" src="{% img_url connectivity-metrics/wireshark-ble-capture.png %}" alt="BLE Packet Capture in Wireshark" />
+  <img width="650" src="{% img_url connectivity-metrics/attributes-example.png %}" alt="BLE Packet Capture in Wireshark" />
 </p>
 
 In the screenshot above, I've collected attributes for a thingy91 related to it's modem version and network. If later I see several devices with similar attributes, this may help root cause the issue.
