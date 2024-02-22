@@ -159,7 +159,7 @@ Attributes are used to supplement logging, metrics, and protocol traces. Attribu
 
 So you’re ready to wrangle thousands, maybe millions of devices out in the wild, all operating in different locations and under different conditions. Not only that, but you’ve got a new release in the works to add a new feature. We know protocol traces aren’t possible without the device next to you, and logs can only provide so much context. The tool to reach for to gather fleet-wide connectivity insights are metrics. Collecting data using counters, timers, and gauge metrics allows you to measure various aspects of connectivity performance, such as packet loss rates, latency, and throughput across your fleet.
 
-<screenshots>
+**ADD SCREENSHOTS HERE**
 
 **Strengths**:
 
