@@ -15,13 +15,14 @@ description: Measure and monitor device connectivity using techniques such as lo
 author: ericj
 ---
 
-With the number of wireless SoCs on the market, “Just add connectivity” is finally a reality! “Just” does a lot of lifting in that phrase. Connectivity, whether wired or wireless, adds numerous layers of complexity to your device. Treating your connectivity as a black box early in development is easy, but this strategy will implode when thousands of devices enter the field. It's not enough to test from end-to-end pushing data through your device up to the cloud. Controlled tests barely scratch the surface of how a device's connectivity might perform in the field.
+With the number of wireless SoCs on the market, “Just add connectivity” is finally a reality! “Just” does a lot of lifting in that phrase. Connectivity, whether wired or wireless, adds numerous layers of complexity to your device. Treating your connectivity as a black box early in development is easy, but this strategy will implode when thousands of devices enter the field. It’s not enough to test from end-to-end, pushing data through your device to the cloud. Controlled tests only partially emulate how a device’s connectivity might perform in the field.
 
-It is crucial to have a thorough understand of how your device's connectivity performs, both presently and compared to future releases. Connectivity is the link to a device and it's core features. Without reliable connectivity, user happiness and device utility plummet. Device makers must have a handle on this aspect of their product.
+It is crucial to thoroughly understand how your device’s connectivity performs, both presently and compared to future releases. Connectivity is the central conduit delivering core data to and from users, whether through a BLE connection to a phone or gateway, or a direct Internet connection with WiFi or LTE. Without reliable connectivity, user happiness and device utility plummet. Device makers must have a handle on this aspect of their product.
 
 <!-- excerpt start -->
 
-This post will cover why connectivity is complex and what methods we have available to diagnose and solve connectivity problems. We’ll survey briefly tools like logging and protocol analysis. We’ll wrap with an in-depth look at the strengths of metrics and practical examples to use in your device.
+This post will cover why connectivity is complex and what methods we have available to diagnose and solve connectivity problems. We’ll survey briefly tools like logging and protocol analysis. Then, we'll look in-depth at the utility of metrics and finally, wrap up with some practical examples to use in your device.  
+
 
 <!-- excerpt end -->
 
@@ -33,8 +34,7 @@ Too often teams jump into building a connected device without thinking about how
 
 ## The Fun Nightmares of Connected Devices
 
-At a previous company, we released a BLE hub device to forward data from our BLE-based wearable over WiFi/Ethernet. The hub allowed users to quickly upload their recorded data without requiring a phone to be near these BLE devices during transfer. Many times, customers would power on a new hub only to not be able to connect to a network (unsupported WiFi band), connect to our backend (port 443 blocked), or required using the Ethernet port (WiFi interface literally unplugged from inside the housing). Even crossing continents caused issues as the device booted with the incorrect system time.
-At some point, you will experience some of the fun nightmares of connectivity. Why do these problems exist in the first place, though? Here’s some of what makes connectivity challenging:
+At one of my previous companies, we released a BLE hub device to forward data from our BLE-based wearable over WiFi/Ethernet. The hub allowed users to quickly upload their recorded data without requiring a phone to be near these BLE devices during transfer. Many times, customers would power on a new hub only to not be able to connect to a network (unsupported WiFi band) or connect to our backend (port 443 blocked). The only workaround required customers to use the Ethernet port (WiFi interface literally unplugged from inside the housing). Even crossing continents caused issues as the device booted with the incorrect system time. At some point, you will experience some of the fun nightmares of connectivity. Why do these problems exist in the first place, though? Here’s some of what makes connectivity challenging:
 
 - **Complexity**: Connectivity schemes are complex, but for good reason. These protocols have separate layers responsible for security, routing, retransmission, framing, and error detection. This significant cost does bring the benefit of robustness in nearly all situations.
 - **Interoperability**: Connectivity requires compatible operation between multiple components and entities. Let’s take the case of BLE. Here, we have to contend with our device’s BLE version, the phone/gateway’s BLE version, the phone/gateway OS-supported BLE features, the version of the device’s BLE service, the client-side compatibility with the service, etc. There’s an unlimited number of combinations to take into account.
@@ -49,7 +49,7 @@ But fear not! You do not have to enter this world blind. We have several tools a
 
 ### Logging
 
-Logging is a foundational tool for understanding the behavior of embedded devices’ connectivity. By capturing key events and status updates, logs summarize what transpires within the connectivity stack. The following example is from an ESP32S3 connecting to my home wifi network:
+Logging is a foundational tool for understanding the behavior of embedded devices’ connectivity. Logs summarize what transpires within the connectivity stack by capturing key events and status updates. The following example is from an ESP32S3 connecting to my home wifi network:
 
 ```text
 I (454) mflt: Data poster task up and running every 60s.
@@ -78,6 +78,11 @@ I (594) wifi_init: tcp mss: 1440
 I (594) wifi_init: WiFi IRAM OP enabled
 I (604) wifi_init: WiFi RX IRAM OP enabled
 I (614) phy_init: phy_version 601,fe52df4,May 10 2023,17:26:54
+```
+
+This first group provides information on the initialization and configuration of the WiFi stack. We get information on what version each component is running, the configurations selected, and memory and kernel object information. The version info is excellent for matching behavior to any known issues. The memory reservation and kernel object counts are especially useful when attempting to profile and understand the stack’s memory usage.
+
+```
 I (654) wifi:mode : sta (60:55:f9:f5:2a:d0)
 I (664) wifi:enable tsf
 I (674) wifi:new:<7,0>, old:<1,0>, ap:<255,255>, sta:<7,0>, prof:1
@@ -89,6 +94,11 @@ I (7474) wifi:state: init -> auth (b0)
 I (8134) wifi:state: auth -> assoc (0)
 I (8134) wifi:state: assoc -> run (10)
 I (8154) wifi:connected with <my_network>, aid = 9, channel 7, BW20, bssid = <my_routers_mac_addr>
+```
+
+Next, the device proceeds and connects with a local WiFi router.
+
+```text
 I (8154) wifi:security: WPA3-SAE, phy: bgn, rssi: -49
 I (8164) wifi:pm start, type: 1
 
@@ -104,7 +114,7 @@ I (9874) mflt: Checking for OTA Update
 I (10494) mflt: Up to date!
 ```
 
-However, logs have many shortcomings, especially when your fleet grows beyond your co-workers as beta testers. Relying solely on logging will consume valuable time because searching through logs for each device is tedious, brittle, and slow. The Ghost of Engineer’s Past will find and haunt you… in addition to the 50 tickets whose attached logs you have yet to sift through. Check out this post on [logging and heartbeat metrics]({% post_url 2020-09-02-device-heartbeat-metrics %}#transforming-logs-into-metrics) for more info! We'll get to metrics later in this post.
+Finally, we see the device complete the connection, obtain an IP address, successfully post Memfault data, and check for updates. The collected logs are great for following along with a device; we know the approximate steps and sequence taken during the session.
 
 **Strengths**:
 
@@ -117,9 +127,13 @@ However, logs have many shortcomings, especially when your fleet grows beyond yo
 - Additional context when events happen
 - Local development
 
+However, logs have many shortcomings, especially when your fleet grows beyond the "co-workers as beta testers" stage. Relying solely on logging will consume valuable time because searching through logs for each device is tedious, brittle, and slow. The Ghost of Engineer’s Past will find and haunt you… in addition to the 50 tickets whose attached logs you have yet to sift through. Check out this post on [logging and heartbeat metrics]({% post_url 2020-09-02-device-heartbeat-metrics %}#transforming-logs-into-metrics) for more info! We'll get to metrics later in this post.
+
 ### Capturing Packets With Protocol Analyzers
 
-Protocol analyzers offer a more sophisticated approach to connectivity monitoring, enabling developers to delve deeper into the intricacies of communication protocols. These tools provide detailed insights into packet structure, message sequences, and protocol validation. Protocol analyzers consist of hardware to capture and process the signals and software to visualize and further analyze the captured packets. Dedicated hardware and software can be a worthwhile investment, but these are pricey solutions. Check their capabilities and software compatibility against what you need; you would be surprised how often only older versions of Windows are supported. For 90% of us, some excellent free software and affordable hardware will suffice. With regards to software, I absolutely must recommend Wireshark. Wireshark is an incredibly powerful tool that captures and analyzes WiFi + networking protocols (IP, TCP, UDP, MQTT, etc), USB, and even BLE. This tool has saved me tons of effort and helped me numerous times. I’ve used Wireshark to find a bug in a BLE stack, profile MQTT connections, and improve my USB throughput, to name a few instances. It’s insane that it’s free, and I’d pay (practically) any price they offered. Here’s an example of a capture I collected to find a problem in my BLE stack:
+Protocol analyzers offer a more sophisticated approach to connectivity monitoring, enabling developers to delve deeper into the intricacies of communication protocols. These tools provide detailed insights into packet structure, message sequences, and protocol validation. Protocol analyzers consist of hardware to capture and process the signals and software to visualize and further analyze the captured packets. Dedicated hardware and software can be a worthwhile investment, but these are pricey solutions. Check their capabilities and software compatibility against what you need; you would be surprised how often only older versions of Windows are supported. For 90% of us, some excellent free software and affordable hardware will suffice.
+
+With regards to software, I absolutely must recommend Wireshark. Wireshark is an incredibly powerful tool that captures and analyzes WiFi + networking protocols (IP, TCP, UDP, MQTT, etc), USB, and even BLE. This tool has saved me tons of effort and helped me numerous times. I’ve used Wireshark to find a bug in a BLE stack, profile MQTT connections, and improve my USB throughput, to name a few instances. It’s insane that it’s free, and I’d pay (practically) any price they offered. Here’s an example of a capture I collected to find a problem in my BLE stack:
 
 <p align="center">
   <img width="650" src="{% img_url connectivity-metrics/wireshark-ble-capture.png %}" alt="BLE Packet Capture in Wireshark" />
@@ -127,7 +141,7 @@ Protocol analyzers offer a more sophisticated approach to connectivity monitorin
 
 For this problem, I observed lower throughput than expected during data transfer. Logs showed that the connection parameters were set correctly initially, but the data rate did not match this. Inspecting the capture in Wireshark led me to discover that two different connection parameter update methods in the BLE stack clobbered values set by the other, resulting in decreased throughput.
 
-Depending on the protocol, you may not need additional hardware. Wireshark can use your WiFi interface’s monitor or promiscuous mode to capture any signals in the air. It can also hook into your local Ethernet and USB interfaces for packet capture. For BLE sniffing hardware, I reach for my closest nRF52 dev kit! Nordic Semiconductor offers a BLE Sniffer package to download that includes plugins for Wireshark. With these, Wireshark will use your dev kit as an interface to capture packets from.
+Depending on the protocol, you may not need additional hardware. Wireshark can use your [WiFi interface’s monitor or promiscuous mode](https://wiki.wireshark.org/CaptureSetup/WLAN) to capture any signals in the air. It can also hook into your local Ethernet and [USB interfaces](https://wiki.wireshark.org/CaptureSetup/WLAN) for packet capture. For BLE sniffing hardware, I reach for my closest nRF52 dev kit! Nordic Semiconductor offers a [BLE Sniffer package](https://www.nordicsemi.com/Products/Development-tools/nrf-sniffer-for-bluetooth-le/download#infotabs) to download that includes plugins for Wireshark. With these, Wireshark will use your dev kit as an interface to capture packets from.
 
 **Strengths**:
 
@@ -142,24 +156,19 @@ Depending on the protocol, you may not need additional hardware. Wireshark can u
 
 Use protocol analyzers when you need extreme detail for a **single** device at your bench or desk. These tools will not help in the field unless you’re present. They should rarely be used because packet captures are very large and process-intense. Packet captures focus on a single device and can’t be used to aggregate across a growing fleet.
 
-### Attributes
-
-Attributes are used to supplement logging, metrics, and protocol traces. Attributes are bits of additional info related to the device that change infrequently or not at all. These attributes provide more context as to what is unique about the device. Some examples are component vendors, modem firmware versions, gateway/phone OS versions, or geography identifiers. An attribute could help identify a particular battery provider between devices that frequently lose connection due to out-of-spec power output.
-
-**Strengths**:
-
-- Provide simple metadata to your devices
-
-**Best Used For**:
-
-- Additional context when investigating devices
-- Selecting devices with matching values
-
 ### Metrics
 
 So you’re ready to wrangle thousands, maybe millions of devices out in the wild, all operating in different locations and under different conditions. Not only that, but you’ve got a new release in the works to add a new feature. We know protocol traces aren’t possible without the device next to you, and logs can only provide so much context. The tool to reach for to gather fleet-wide connectivity insights are metrics. Collecting data using counters, timers, and gauge metrics allows you to measure various aspects of connectivity performance, such as packet loss rates, latency, and throughput across your fleet.
 
-**ADD SCREENSHOTS HERE**
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/metrics-example-1.png %}" alt="Example metric chart showing sync success metrics over time" />
+</p>
+
+Looking at this first screenshot, we can see the battery level drop quite drastically in the middle of the chart. This does not correlate with our selected connectivity metrics though.
+
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/metrics-exmaple-2.png %}" alt="Example metric chart showing correlation between data transmission and battery percentage drop" />
+</p>
 
 **Strengths**:
 
@@ -172,6 +181,25 @@ So you’re ready to wrangle thousands, maybe millions of devices out in the wil
 - Monitoring and alerting
 - Entire fleets or individual devices
 - Characterizing the overall performance and state of fleet connectivity
+
+### Attributes
+
+Attributes are used to supplement logging, metrics, and protocol traces. Attributes are bits of additional info related to the device that change infrequently or not at all. These attributes provide more context as to what is unique about the device. Some examples are component vendors, modem firmware versions, gateway/phone OS versions, or geography identifiers. An attribute could help identify a particular battery provider between devices that frequently lose connection due to out-of-spec power output.
+
+<p align="center">
+  <img width="650" src="{% img_url connectivity-metrics/wireshark-ble-capture.png %}" alt="BLE Packet Capture in Wireshark" />
+</p>
+
+In the screenshot above, I've collected attributes for a thingy91 related to it's modem version and network. If later I see several devices with similar attributes, this may help root cause the issue.
+
+**Strengths**:
+
+- Provide simple metadata to your devices
+
+**Best Used For**:
+
+- Additional context when investigating devices
+- Selecting devices with matching values
 
 ## Connectivity Metrics In Practice
 
