@@ -13,6 +13,7 @@
 title: Observing Connectivity of Connected Devices
 description: Measure and monitor device connectivity using techniques such as logging, protocol captures, and metrics like connection uptime and sync success.
 author: ericj
+tags: [monitoring, better-firmware, connectivity]
 ---
 
 With the number of wireless SoCs on the market, “Just add connectivity” is finally a reality! “Just” does a lot of lifting in that phrase. Connectivity, whether wired or wireless, adds numerous layers of complexity to your device. Treating your connectivity as a black box early in development is easy, but this strategy will implode when thousands of devices enter the field. It’s not enough to test from end-to-end, pushing data through your device to the cloud. Controlled tests only partially emulate how a device’s connectivity might perform in the field.
@@ -224,7 +225,7 @@ Connected time demonstrates how well our devices can maintain their always-on co
 
 ### Measuring Time in Connectivity States
 
-Many protocols have different states that devices will transition into and out of during operation. BLE devices start by broadcasting an advertisement packet that a phone or gateway would scan to connect and transfer data with the device. Many IP connections will require a device to obtain a lease on an address when it joins the network. Understanding the time spent in different connection states for LTE devices can drastically impact battery life. To instrument these scenarios, we use a timer metric to measure how long the device spent in a particular state and take the average time to transition into and out of the state.
+Many protocols have different states that devices will transition into and out of during operation. BLE devices start by broadcasting an advertisement packet that a phone or gateway would scan to connect and transfer data with the device. Many IP connections will require a device to obtain a lease on an address when it joins the network. Understanding the time spent in different connection states for LTE devices can drastically impact battery life (read our post [here]({% post_url 2023-12-13-lte-and-iot %}) for more info). To instrument these scenarios, we use a timer metric to measure how long the device spent in a particular state and take the average time to transition into and out of the state.
 
 <p align="center">
   <img width="650" src="{% img_url connectivity-metrics/connecting-state-avg-dur-eq.png %}" alt="Equation for Connecting State Average Duration" />
