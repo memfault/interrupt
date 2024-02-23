@@ -1,19 +1,9 @@
 ---
-# This is a template for Interrupt posts. Use previous, more recent posts from the _posts/
-# directory for more inspiration and patterns.
-#
-# When submitting a post for publishing, submit a PR with the post in the _drafts/ directory
-# and it will be moved to _posts/ on the date of publish.
-#
-# e.g.
-# $ cp _drafts/_template.md _drafts/my_post.md
-#
-# It will now show up in the front page when running Jekyll locally.
-
 title: Best Practices for Monitoring Device Connectivity
 description: Measure and monitor device connectivity using techniques such as logging, protocol captures, and metrics like connection uptime and sync success.
 author: ericj
 tags: [monitoring, better-firmware, connectivity]
+image: /img/connectivity-metrics/cover.png
 ---
 
 With the number of wireless SoCs on the market, “Just add connectivity” is finally a reality! “Just” does a lot of lifting in that phrase. Connectivity, whether wired or wireless, adds numerous layers of complexity to your device. Treating your connectivity as a black box early in development is easy, but this strategy will implode when thousands of devices enter the field - trust me, I know. It’s not enough to test from end to end a few times in the office. Controlled tests only partially emulate how a device’s connectivity might perform in the field.
@@ -288,6 +278,5 @@ A robust monitoring and debugging system for connectivity requires several diffe
 ## References
 
 <!-- prettier-ignore-start -->
-[^reference_key]: [Post Title](https://example.com)
 [^bluetooth]: [Interrupt: Bluetooth Low Energy: A Primer]({% post_url 2019-07-30-bluetooth-low-energy-a-primer %})
 <!-- prettier-ignore-end -->
