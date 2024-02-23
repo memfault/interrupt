@@ -144,7 +144,7 @@ With regards to software, I absolutely must recommend [Wireshark](https://www.wi
 
 For this problem, I observed lower throughput than expected during data transfer. Logs showed that the connection parameters were set correctly initially, but the data rate did not match this. Inspecting the capture in Wireshark led me to discover that two different connection parameter update methods in the BLE stack clobbered values set by the other, resulting in decreased throughput.
 
-Depending on the protocol, you may not need additional hardware. Wireshark can use your [WiFi interface’s monitor or promiscuous mode](https://wiki.wireshark.org/CaptureSetup/WLAN) to capture any signals in the air. It can also hook into your local Ethernet and [USB interfaces](https://wiki.wireshark.org/CaptureSetup/WLAN) for packet capture. 
+Depending on the protocol, you may not need additional hardware. Wireshark can use your [WiFi interface’s monitor or promiscuous mode](https://wiki.wireshark.org/CaptureSetup/WLAN) to capture any signals in the air. It can also hook into your local Ethernet and [USB interfaces](https://wiki.wireshark.org/CaptureSetup/WLAN) for packet capture.
 
 For BLE sniffing hardware, I reach for my closest Nordic Semiconductor nRF52 dev kit! Nordic offers a fantastic [BLE Sniffer software package](https://www.nordicsemi.com/Products/Development-tools/nrf-sniffer-for-bluetooth-le/download#infotabs) that includes plugins for Wireshark. It's amazing - check it out!
 
@@ -244,9 +244,10 @@ Using the average, we can easily observe changes in this value across all our de
 Some of the most critical states to measure are connection-forming states. These are states of a connectivity state machine that must occur because a full connection is made, and they must be completed before a device can start sending or receiving data. Measure these durations and track them over time - if they increase, your users will notice!
 
 A few of the most common connection-forming states are:
-  - **BLE**: Total time between starting advertising to the connection established or bond formed
-  - **LTE**: Total time between idle and connected state
-  - **WiFi**: Total time to associate and obtain an IP address
+
+- **BLE**: Total time between starting advertising to the connection established or bond formed
+- **LTE**: Total time between idle and connected state
+- **WiFi**: Total time to associate and obtain an IP address
 
 ### Throughput
 
