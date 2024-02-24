@@ -74,7 +74,7 @@ Instead, Zephyr's chosen approach is to provide a list of related **code samples
 
 > **Note:** [Blinky](https://docs.zephyrproject.org/latest/samples/basic/blinky/README.html) is an example for a [Zephyr _repository_ application](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-repo-app). We continue using a [_freestanding_ application](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-freestanding-app), and in the next article, we'll finally create a [_workspace_ application](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app).
 
-Straight from the documentation, we follow the _"Open in GitHub"_ link to find the application in Zephyr's repository and simply copy the contents from [`main.c`](https://github.com/zephyrproject-rtos/zephyr/blob/main/samples/basic/blinky/src/main.c) into our own application. We'll now compare the `gpio` Devicetree API with the "plain" API in `zephyr/include/zephyr/devicetree.h` that we've seen in the last article.
+Straight from the documentation, we follow the _"Open in GitHub"_ link to find the application in Zephyr's repository and simply copy the contents from [`main.c`](https://github.com/zephyrproject-rtos/zephyr/blob/main/samples/basic/blinky/src/main.c) into our own application. We'll now compare the `gpio` Devicetree API with the "plain" API in `zephyr/include/zephyr/devicetree.h` that we've seen in the [previous article]({% post_url 2024-02-15-practical_zephyr_dt_semantics %}).
 
 
 ### Blinky with a `/chosen` LED node
@@ -186,7 +186,7 @@ struct gpio_dt_spec {
 
 ### Applying the Devicetree API
 
-Let's ignore the `gpio_dt_spec` structure's contents for now. Instead, let's see how `GPIO_DT_SPEC_GET` is used to populate the structure and how it compares with what we've learned about the Devicetree API in the last articles:
+Let's ignore the `gpio_dt_spec` structure's contents for now. Instead, let's see how `GPIO_DT_SPEC_GET` is used to populate the structure and how it compares with what we've learned about the Devicetree API in the previous articles:
 
 So far, we've only used the macros from the Devicetree API `zephyr/include/zephyr/devicetree.h`. Now we see how Zephyr's drivers create their own Devicetree macros on top of this basic API. We can find the macro declaration in Zephyr's `gpio.h` header file.
 
@@ -203,7 +203,7 @@ So far, we've only used the macros from the Devicetree API `zephyr/include/zephy
   }
 ```
 
-Similar to what we've seen for our own example in the last article, Zephyr uses Devicetree macros to create an initializer expression for the matching type that should be used with the corresponding macro. The macros `DT_GPIO_PIN_BY_IDX` and `DT_GPIO_FLAGS_BY_IDX` simply expand to the `DT_PHA_<x>` macros we've already used when accessing `phandle-array`s:
+Similar to what we've seen for our own example in the [previous article][previous article]({% post_url 2024-02-15-practical_zephyr_dt_semantics %}), Zephyr uses Devicetree macros to create an initializer expression for the matching type that should be used with the corresponding macro. The macros `DT_GPIO_PIN_BY_IDX` and `DT_GPIO_FLAGS_BY_IDX` simply expand to the `DT_PHA_<x>` macros that we used when accessing `phandle-array`s:
 
 ```c
 #define DT_GPIO_PIN_BY_IDX(node_id, gpio_pha, idx) \
@@ -355,7 +355,7 @@ By discarding such a requirement, we gain flexibility - at the cost of "loose ty
 Looking at `dt_flags`, we see that `GPIO_DT_SPEC_GET` uses the `_OR` variant of the phandle macro `DT_PHA_BY_IDX` to read the `flags` from the Devicetree:
 
 * For nodes with a _compatible binding_ that have both, `pin` and `flags` specifiers, the Devicetree compiler ensures that values are provided for both, `pin` and `flags` whenever the node is references in a `phandle-array`; providing a value for `flags` is **not** optional for such phandles.
-* For nodes with a _compatible binding_ that does **not** have the `flags` specifier, the value _0_ is used in the specification. The compatible driver can also completely ignore the _flags_ field in any API call.
+* For nodes with a _compatible binding_ that do **not** have the `flags` specifier, the value _0_ is used in the specification. The compatible driver can also completely ignore the _flags_ field in any API call.
 
 This adds another level of flexibility to the generic binding `gpio-leds` for LEDs, supporting any kind of GPIO node LEDs, regardless of whether or not they support using `flags`, e.g., as follows:
 
