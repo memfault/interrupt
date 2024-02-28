@@ -3,7 +3,7 @@
 title: Diving into JTAG protocol. Part 2 — Debugging.
 description:
     "This article explores debugging microcontrollers using JTAG, with a special focus on the ARM Cortex-M architecture and the STM32F407VG microcontroller."
-author: Aliaksandr Kavalchuk
+author: zamuhrishka
 tags: arm, mcu, debugging, debugger
 ---
 
