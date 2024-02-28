@@ -202,7 +202,7 @@ Well, we’ve briefly explored how JTAG is used in microcontroller debugging. Th
 
 Thank you for your time! :)
 
-Next part: [Diving into JTAG. Part 3 — Boundary Scan](https://medium.com/@aliaksandr.kavalchuk/diving-into-jtag-part-3-boundary-scan-17f9975ecc59)
+>**Note**: This article was originally published by Aliaksandr on his blog. You can find the original article [here](https://medium.com/@aliaksandr.kavalchuk/diving-into-jtag-protocol-part-2-debugging-56a566db3cf8)
 
 ## Links
 * [RM0090: Reference manual](https://www.st.com/resource/en/reference_manual/rm0090-stm32f405415-stm32f407417-stm32f427437-and-stm32f429439-advanced-armbased-32bit-mcus-stmicroelectronics.pdf)
