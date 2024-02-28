@@ -1,10 +1,10 @@
 ---
 
-title: Diving into JTAG protocol. Part 2 — Debugging.
+title: Diving into JTAG protocol — Debugging (Part 2)
 description:
     "This article explores debugging microcontrollers using JTAG, with a special focus on the ARM Cortex-M architecture and the STM32F407VG microcontroller."
 author: zamuhrishka
-tags: arm, mcu, debugging, debugger
+tags: [arm, cortex-m, mcu, debugging, debugger]
 ---
 
 <!-- excerpt start -->
@@ -19,7 +19,7 @@ Part 2 of a JTAG deep-dive series gives an in-depth look at interacting with a m
 
 ![image](https://github.com/memfault/interrupt/assets/33341738/8993d42a-f524-48b5-97bc-83f6c6f89db3)
 
-As noted in my previous article [Diving into JTAG protocol. Part 1 — Overview](https://medium.com/@aliaksandr.kavalchuk/diving-into-jtag-protocol-part-1-overview-fbdc428d3a16), JTAG was initially developed for testing integrated circuits and printed circuit boards. However, its potential for debugging was realized over time, and now JTAG has become the standard protocol for microcontroller debugging. Many Firmware and Embedded engineers first encountered it in this particular context.
+As noted in my previous article [Diving into JTAG protocol. Part 1 — Overview](https://interrupt.memfault.com/blog/diving-into-jtag-part1), JTAG was initially developed for testing integrated circuits and printed circuit boards. However, its potential for debugging was realized over time, and now JTAG has become the standard protocol for microcontroller debugging. Many Firmware and Embedded engineers first encountered it in this particular context.
 
 However, there’s a catch: while the use of JTAG in testing is fairly standardized when it comes to debugging, each processor architecture has its unique nuances. With that in mind, this article will focus on debugging using JTAG on the ARM Cortex-M architecture, specifically with the STM32F407VG microcontroller.
 
