@@ -644,8 +644,8 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: docker/setup-buildx-action@v2
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
         name: Build builder-image
         with:
           context: .
@@ -675,22 +675,22 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: docker/setup-buildx-action@v2
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
       -
         name: Create docker cache folder
         run: mkdir -p /tmp/docker
       -
         name: Restore docker image
         id: cache-docker
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/docker
           key: ${{ runner.os }}-docker-${{ hashFiles('builder.Dockerfile') }}
       -
         name: Build docker builder-image
         if: steps.cache-docker.outputs.cache-hit != 'true'
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: builder.Dockerfile
@@ -716,12 +716,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker-build
     steps:
-      - uses: actions/checkout@v3
-      - uses: docker/setup-buildx-action@v2
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
       -
         name: Restore docker image
         id: cache-docker
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/docker
           key: ${{ runner.os }}-docker-${{ hashFiles('builder.Dockerfile') }}
@@ -782,7 +782,7 @@ jobs:
           echo "ASSET=$staging.tar.gz" >> $GITHUB_ENV
       -
         name: Archive artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reports-${{github.run_number}}
           path: ${{ env.ASSET }}
