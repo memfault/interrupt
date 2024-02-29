@@ -179,6 +179,13 @@ scan-build: 8 bugs found.
 scan-build: Run 'scan-view /var/folders/dm/b0yt' to examine bug reports.
 ```
 
+`scan-build` uses `gcc` by default on some platforms.
+If this happens, you may see error messages related to unrecognized command line options and the `===GCC Compiler Detected===` message.
+Set the compiler for `scan-build` to clang with the `--use-cc` and `--use-c++` options:
+```bash
+$ scan-build --use-cc=clang --use-c++=clang make
+```
+
 #### core.NullDereference Checker
 
 ```c
