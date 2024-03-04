@@ -430,6 +430,11 @@ Creative Commons may be contacted at creativecommons.org.
 
 ## Code Released under MIT License
 
+### Examples within Interrupt Blog Posts
+
+All code examples with blog posts are MIT licensed, and each project may
+have dependencies with their own licenses.
+
 ### Interrupt fork
 
 Copyright (c) 2019 Memfault, Inc.
