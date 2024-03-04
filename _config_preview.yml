@@ -1,0 +1,5 @@
+# Preview build settings
+show_drafts: true
+future: true
+unpublished: true
+verbose: true
