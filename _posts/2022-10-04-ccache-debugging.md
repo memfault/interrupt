@@ -351,6 +351,33 @@ More details here:
 
 <https://ccache.dev/manual/4.6.3.html#config_compiler_check>
 
+### `__has_include` False Hit
+
+There's a known limitation with `ccache` when using `__has_include` to
+optionally include header files- `ccache` is not able to track if the presence
+of the optional file changes, and will fetch from the cache as usual. From the
+[manual](https://ccache.dev/manual/4.9.1.html#_the_direct_mode):
+
+> There is a catch with the direct mode: header files that were used by the
+> compiler are recorded, but header files that were not used, but would have
+> been used if they existed, are not. So, when ccache checks if a result can be
+> taken from the cache, it currently can’t check if the existence of a new
+> header file should invalidate the result. In practice, the direct mode is safe
+> to use in the absolute majority of cases.
+
+The workaround I recommend is to set the `CCACHE_NODIRECT=true` setting, which
+forces the preprocessor to run before checking for a cache hit.
+
+Since preprocessor invocation should typically be very fast, I just leave this
+setting on globally on my development machine (in the relevant shell rc file),
+and you can also set it in CI, for example for GitHub actions:
+
+```yaml
+env:
+  # disable ccache Direct Mode for all jobs
+  CCACHE_NODIRECT: true
+```
+
 <!-- Interrupt Keep START -->
 
 {% include newsletter.html %}
