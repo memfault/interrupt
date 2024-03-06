@@ -15,6 +15,17 @@ We hope you enjoy these links, and we look forward to hearing what you've been
 reading in the comments or [on the Interrupt Slack](https://interrupt-slack.herokuapp.com/).
 
 
+## News & Announcements
+- [**Memfault's Launch Week**](https://go.memfault.com/memfault-launch-week-march-2024)<br>
+We have been hard at work building new features to make it easier to identify and address issues while your devices are in the field. Join Memfault's week-long celebration of our newest release, which will be marked by a webinar and accompanying videos and blog posts. Check out the agenda and join our newsletter to stay up to date on all release-related activities!  
+
+- [**STMicro ST60A3H0 and ST60A3H1 60 GHz transceiver ICs aim to replace USB cables - CNX Software**](https://www.cnx-software.com/2024/02/22/stmicro-st60a3h0-and-st60a3h1-60-ghz-transceiver-ics-aim-to-replace-usb-cables/?amp=1)<br>
+60GHz wireless USB transceivers from ST Micro. - Noah
+
+- [**Welcome, Zephyr 3.6! - Zephyr Project**](https://www.zephyrproject.org/welcome-zephyr-3-6/)<br>
+Zephyr 3.6 is here! [Click here to read the full release notes](https://docs.zephyrproject.org/latest/releases/release-notes-3.6.html) and transition to 3.6 using the accompanying [migration guide](https://docs.zephyrproject.org/latest/releases/release-notes-3.6.html). 
+
+
 ## Articles & Learning
 - [**oss-security - Out-of-bounds read & write in the glibc's qsort()**](https://www.openwall.com/lists/oss-security/2024/01/30/7)<br>
 A tricky out-of-bounds access vulnerability in glibc `qsort` implementation that has been lurking since at least 1992! There’s some really great details on why this problem exists and how it can easily be overlooked thanks to subtraction overflows. - Eric
@@ -74,16 +85,7 @@ Catch the highlights of Zephyr's 3.6 release, including new features and improve
 ## Projects & Tools
 
 - [**meshtastic/firmware: Meshtastic device firmware**](https://github.com/meshtastic/firmware)<br>
-An open source, decentralized mesh network that lets you use LoRa radios as a long range off-grid communicator for areas without reliable cellular service.
-
-
-## News & Announcements
-
-- [**STMicro ST60A3H0 and ST60A3H1 60 GHz transceiver ICs aim to replace USB cables - CNX Software**](https://www.cnx-software.com/2024/02/22/stmicro-st60a3h0-and-st60a3h1-60-ghz-transceiver-ics-aim-to-replace-usb-cables/?amp=1)<br>
-60GHz wireless USB transceivers from ST Micro. - Noah
-
-- [**Welcome, Zephyr 3.6! - Zephyr Project**](https://www.zephyrproject.org/welcome-zephyr-3-6/)<br>
-Zephyr 3.6 is here! [Click here to read the full release notes](https://docs.zephyrproject.org/latest/releases/release-notes-3.6.html) and transition to 3.6 using the accompanying [migration guide](https://docs.zephyrproject.org/latest/releases/release-notes-3.6.html). 
+An open-source, decentralized mesh network that lets you use LoRa radios as a long-range off-grid communicator for areas without reliable cellular service.
 
 
 ## Upcoming Events
