@@ -28,7 +28,7 @@ Zephyr 3.6 is here! [Click here to read the full release notes](https://docs.zep
 
 ## Articles & Learning
 - [**oss-security - Out-of-bounds read & write in the glibc's qsort()**](https://www.openwall.com/lists/oss-security/2024/01/30/7)<br>
-A tricky out-of-bounds access vulnerability in glibc `qsort` implementation that has been lurking since at least 1992! There’s some really great details on why this problem exists and how it can easily be overlooked thanks to subtraction overflows. - Eric
+A tricky out-of-bounds access vulnerability in glibc `qsort` implementation that has been lurking since at least 1992! There are some really great details on why this problem exists and how it can easily be overlooked thanks to subtraction overflows. - Eric
 
 - [**Visual overview of a custom malloc() implementation — The silent tower**](https://silent-tower.net/projects/visual-overview-malloc#fnref:2-Mmap)<br>
 An approachable overview of how a `malloc` implementation works with some accompanying visuals. - Eric
@@ -43,22 +43,22 @@ An interesting project overview that decodes the encrypted protocol used by Good
 One solution for a very thorny problem with ESP-IDF: updating a partition table! - Eric
 
 - [**Doom running on Silicon Labs & Sparkfun Microcontrollers: A Quick Look**](https://community.silabs.com/s/share/a5UVm00000002Y5MAI/doom-running-on-silicon-labs-sparkfun-microcontrollers-a-quick-look?language=en_US&source=Email&detail=Newsletter&cid=eml-new-blu-022224&mkt_tok=NjM0LVNMVS0zNzkAAAGRcTWjktUpLJn8KTdKnqQPvKeWCtC_jHippIHL15RT0YNDIggH6jJYLXt44qTMDUsFieDGewcR4YbpO-WLcDfmY63FZBSRbMQZHMD9KZaFSJRCJTc)<br>
-Who doesn’t love a “we put Doom on an embedded device” post? - Eric
+Who doesn’t love a “We put Doom on an embedded device” post? - Eric
 
 - [**M0AGX / LB9MG - Abusing reserved interrupt vectors on Cortex-M for metadata**](https://m0agx.eu/cortex-m-reserved-vectors-as-metadata.html)<br>
 Follow this example of using a simple, small, single CRC32 checksum appended to a raw binary file for easy verification in bare-metal bootloaders, as opposed to the elaborate file formats of OS executables.
 
 - [**The State of Developer Ecosystem in 2023 Infographic | JetBrains**](https://www.jetbrains.com/lp/devecosystem-2023/embedded/)<br>
-JetBrains published their 2023 developer survey, and there's a way to filer it for embedded engineers. I love to use CLion, and I'm glad they are focusing more on embedded!
+JetBrains published their 2023 developer survey, and there's a way to filter it for embedded engineers. I love to use CLion, and I'm glad they are focusing more on embedded!
 
 - [**USB in a NutShell - Making sense of the USB standard**](https://www.beyondlogic.org/usbnutshell/usb1.shtml)<br>
-Oldie but a goodie; probably the best USB resource I’ve used that’s not digging into the standard. - Eric
+Oldie but a goodie; it is probably the best USB resource I’ve used that’s not digging into the standard. - Eric
 
 - [**Board Porting Guide — Zephyr Project Documentation**](https://docs.zephyrproject.org/latest/hardware/porting/board_porting.html#transition-to-the-current-hardware-model)<br>
 There’s a new Zephyr change for how users define their hardware that will be in v3.7 LTS, and this migration guide helps move to these new features. - Eric
 
 - [**Get up to speed with partial clone and shallow clone - The GitHub Blog**](https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/)<br>
-A good explainer on partial and shallow clones, how they work, and when to use different forms. Great to help speed up downloading large vendor HALs. - Eric
+A good explainer of partial and shallow clones, how they work, and when to use different forms. Great to help speed up downloading large vendor HALs. - Eric
 
 - [**What is Name Mangling in C++? – Abstract Expression**](https://abstractexpr.com/2023/01/03/what-is-name-mangling-in-cpp/)<br>
 Great explanation of name mangling (encoding a name and a signature to a symbol name) and how to demangle.
@@ -74,9 +74,6 @@ Programming languages such as C and C++ are under scrutiny from the [White House
 
 - [**New Hardware Model / Zephyr Meetup Cologne - YouTube**](https://www.youtube.com/watch?v=lt-bioPbZgw)<br>
 At a recent Zephyr Meetup, Johann Fischer from Nordic Semiconductor discusses the challenges of setting up hardware for specific architectures, tackling issues with multiple boards, and advocates for a more adaptable and structured approach.
-
-- [**Implementing a Shell over BLE in Zephyr // Zephyr Tech Talk #012 - YouTube**](https://www.youtube.com/watch?v=uuev2T0x80Q)<br>
-Learn about implementing BLE support as an additional transport layer and discover why the BLE Shell can be a great tool for creating custom command-based protocols and CLI-like interfaces in Bluetooth projects.
 
 - [**Live community Q&A - Zephyr 3.6 Release // Zephyr Tech Talk #013 - YouTube**](https://www.youtube.com/watch?v=ay22XeIlWA0&t=2s)<br>
 Catch the highlights of Zephyr's 3.6 release, including new features and improvements, with the release managers and some of the maintainers and contributors. 
