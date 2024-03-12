@@ -7,7 +7,7 @@ author: ericj
 tags: [toolchain, symbol-files]
 ---
 
-Have you ever wondered, is ELF portable between 32-bit and 64-bit targets?
+Have you ever wondered if ELF is portable between 32-bit and 64-bit targets?
 Probably not, but this might be a common scenario for you if you work on 32-bit
 embedded devices but use a 64-bit host. Or maybe you've developed tooling for
 32-bit MCUs and are transitioning to working on 64-bit targets.
@@ -15,7 +15,7 @@ embedded devices but use a 64-bit host. Or maybe you've developed tooling for
 <!-- excerpt start -->
 
 The ELF object file format is one of the most commonly used today. Most build
-systems provide an output to this format and ELF is commonly used to output
+systems provide an output to this format, and ELF is commonly used to output
 coredumps. The format varies in subtle ways for 32-bit and 64-bit targets
 though, which can present problems for tools supporting both. This post will
 highlight the main differences and is intended as a quick reference for these
@@ -33,14 +33,14 @@ If you’re running a program on a UNIX-ish system, you’re probably using an E
 file. If you’re building firmware for your MCU, it’s probably an ELF file
 targeted for your MCU architecture. MacOS and Windows of course have their own
 slightly different formats, Mach-O and Portable Executable. This format contains
-information on how to load your program into memory or to link with other object
-files to form an executable object. Static libraries are ELFs. The result of
-compiling a source file produces an ELF. Coredumps can be collected as ELFs. You
-might even be an ELF 😱!
+information on loading your program into memory or linking with other object
+files to form an executable object. Static libraries are ELFs. Compiling a
+source file produces an ELF. Coredumps can be collected as ELFs. You might even
+be an ELF 😱!
 
 ## ELF Internals
 
-This post won’t detail the complete specification, for that task I’ll recommend
+This post won’t detail the complete specification. For that task, I recommend
 these:
 
 - [https://blog.k3170makan.com/2018/09/introduction-to-elf-format-elf-header.html](https://blog.k3170makan.com/2018/09/introduction-to-elf-format-elf-header.html)
@@ -74,7 +74,7 @@ in the following ways:
 - If both a data type and field order differ, both the data type _and_ field
   name will be bold
 
-At the end of each structure seciton, I will also include a few bullet points to
+At the end of each structure section, I will also include a few bullet points to
 summarize if sizes, field order, or both differ.
 
 ## Data Representation Differences
@@ -127,12 +127,12 @@ The file headers differ in two ways:
 
 ### e_ident Bytes
 
-The `e_ident` field is composed of 16 bytes which differ very minimally between
-the two formats. You very likely would not encounter an issue here but there is
+The `e_ident` field is composed of 16 bytes, which differ very minimally between
+the two formats. You very likely would not encounter an issue here, but there is
 a slight difference. ELF-64 specifies byte 7 as `EI_OSABI` and byte 8 as
 `EI_ABIVERSION` with padding starting at byte 9. ELF-32 lacks these components
-and instead starts padding at byte 7. ELF-32 specifies padding bytes be 0, so we
-at least have well defined values for forward compatibility.
+and instead starts padding at byte 7. ELF-32 specifies padding bytes as 0, so we
+at least have well-defined values for forward compatibility.
 
 | Byte Name         | ELF-32 Index | ELF-64 Index |
 | ----------------- | ------------ | ------------ |
@@ -162,7 +162,7 @@ this byte is 0x1, while for ELF-64 it is 0x2.
 | sh_size      | Elf32_Word  | --  | sh_size      | Elf64_Word     |
 | sh_link      | Elf32_Word  | --  | sh_link      | Elf64_Word     |
 | sh_info      | Elf32_Word  | --  | sh_info      | Elf64_Word     |
-| sh_addralign | Elf32_Word  | --  | sh_addralign | Elf64\_ Word   |
+| sh_addralign | Elf32_Word  | --  | sh_addralign | Elf64_Word     |
 | sh_entsize   | Elf32_Word  | --  | sh_entsize   | Elf64_Word     |
 
 Section headers differ due to:
@@ -237,6 +237,6 @@ Program Headers differ due to the following:
 
 ## Conclusion
 
-If you’ve made it this far, first apologies because that probably means you’ve
-hit a nasty bug or problem with a tool. Second, thanks for sticking around and I
-hope this provides a quick and easy resource to compare ELF-32 vs ELF-64.
+If you’ve made it this far, first, apologies because that probably means you’ve
+hit a nasty bug or problem with a tool. Second, thanks for sticking around, and
+I hope this provides a quick and easy resource to compare ELF-32 vs ELF-64.
