@@ -1,7 +1,7 @@
 # Notification Banner
-Device Vitals Launch Week:
+Embedded World:
     background: '#141845'
     textcolor: '#fff'
-    title: Launch Week
-    description: '<i>See What is Happening During Our Upcoming Launch Week - March 11th-15th </i><a href="https://memfault.com/launch-week/">Join Us!</a>'
+    title: Embedded World
+    description: '<i> Going to Embedded World 2024? </i><a href="https://go.memfault.com/2024-embedded-world">Swing by our booth!</a>'
 
