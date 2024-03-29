@@ -1,5 +1,5 @@
 ---
-title: Diving into JTAG — Debugging (Part 3)
+title: Diving into JTAG — Boundary Scan (Part 3)
 description:
   "This article dives into JTAG Boundary Scan, a method for testing
   interconnects on PCBs and internal IC sub-blocks."
@@ -201,7 +201,7 @@ where,
 - `cell`: Is the cell type as defined by the standard.
 - `port`: Is the design port name. Control cells do not have a port name.
 - `function`: Is the function of the cell as defined by the standard. Is one of
-  input, output2,output3, bidir, control or control.
+  `input`, `output2`, `output3`, `bidir`, `control`, or `controlr`.
 
 We can see from this file that:
 
