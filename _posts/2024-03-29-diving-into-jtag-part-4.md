@@ -10,7 +10,7 @@ tags: [arm, cortex-m, mcu, debugging, debugger]
 In the previous article of this series, we briefly touched on how `.bsd` files
 written in Boundary Scan Description Language (BSDL) describe the structure of
 the boundary scan chain and the instruction set. In this article, we will
-examine this language's syntax more closely before seeing how they are leveraged
+examine this language's syntax more closely before seeing how `.bsd` files are leveraged
 in JTAG testing in the next article.
 
 <!-- excerpt end -->
