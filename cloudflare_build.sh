@@ -1,0 +1,1 @@
+bundle exec jekyll build --config _config.yml${JEKYLL_BUILD_CONFIG_PARAM} && cp _redirects _site/_redirects
