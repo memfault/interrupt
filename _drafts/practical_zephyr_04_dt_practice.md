@@ -438,7 +438,7 @@ On we go! `DEVICE_DT_GET` takes this node identifier as its parameter `node_id`.
 
 What can the documentation tell us about this macro?
 
-> Returns a pointer to a device object created from a Devicetree node, if any device was allocated by a driver. If no such device was allocated, this will fail at linker time with an error like `undefined reference to __device_dts_ord_<N>`
+> Returns a pointer to a device object created from a Devicetree node, if any device was allocated by a driver. If no such device was allocated, this will fail at linker time [with an error like `undefined reference to __device_dts_ord_<N>`]
 
 Since we don't know yet what "_device objects_" are, this is a bit cryptic. There is, however, one good hint in the linker error message: It seems like this macro is trying to provide a reference to a symbol called `__device_dts_ord_<N>`, where `N` is a number.
 
