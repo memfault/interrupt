@@ -7,7 +7,7 @@ tags: [zephyr, devicetree]
 
 <!-- excerpt start -->
 
-In the previous articles, we covered _Devicetree_ in great detail: We've seen how we can create our own nodes, we've seen the supported property types, we know what bindings are, and we've seen how to access the Devicetree using Zephyr's `devicetree.h` API. In this fifth article of the _Practical Zephyr_ series, we'll look at how Devicetree is used in _practice_ by dissecting the _Blinky_ application.
+In the previous articles, we covered _Devicetree_ in great detail: We've seen how we can create our own nodes, we've seen the supported property types, we know what bindings are, and we've seen how to access the Devicetree using Zephyr's `devicetree.h` API. In this fifth article of the _Practical Zephyr_ series, we'll look at how Devicetree is used in _practice_ by dissecting the _Blinky_ application..
 
 <!-- excerpt end -->
 
