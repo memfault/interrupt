@@ -438,7 +438,7 @@ On we go! `DEVICE_DT_GET` takes this node identifier as its parameter `node_id`.
 
 What can the documentation tell us about this macro?
 
-> Returns a pointer to a device object created from a Devicetree node, if any device was allocated by a driver. If no such device was allocated, this will fail at linker time. If you get an error that looks like `undefined reference to __device_dts_ord_<N>` [...]
+> Returns a pointer to a device object created from a Devicetree node, if any device was allocated by a driver. If no such device was allocated, this will fail at linker time with an error like `undefined reference to __device_dts_ord_<N>`
 
 Since we don't know yet what "_device objects_" are, this is a bit cryptic. There is, however, one good hint in the linker error message: It seems like this macro is trying to provide a reference to a symbol called `__device_dts_ord_<N>`, where `N` is a number.
 
@@ -970,9 +970,9 @@ Before we look at how `pinctrl` works, you might ask yourself why we need anothe
 
 For some MCUs, like Nordic's nRF series, this might work since pin multiplexing for such MCUs is not restricted: On Nordic's MCUs it is possible to assign any functionality to any pin. Other MCUs (e.g., STM32) typically restrict this and clearly define possible alternate pin functions for all pins.
 
-MCU manufacturers can be quite creative when it comes to pin multiplexing, and before Zephyr 3.0 pin multiplexing was entirely vendor-specific. With Zephyr 3.0 (and mostly adopted with version 3.1) Zephyr adopted the [Linux `pinctl`](https://www.kernel.org/doc/html/v4.13/driver-api/pinctl.html) concept as a _standardized_ way of assigning peripheral functions to pins in Devicetree - and called it `pinctrl`.
+MCU manufacturers can be quite creative when it comes to pin multiplexing, and before Zephyr 3.0, pin multiplexing was entirely vendor-specific. Zephyr 3.0 adopted the [Linux `pinctl`](https://www.kernel.org/doc/html/v4.13/driver-api/pinctl.html) concept as a _standardized_ way of assigning peripheral functions to pins in Devicetree - and called it `pinctrl`.
 
-There is, of course, still an overlap between `gpios` and `pinctrl` since both associate nodes with pins and their parameters (e.g., pull resistors). As a rule of thumb, `pinctrl` is generally used if the pin goes to a **peripheral** in the `/soc` node, whereas `gpios` are used if the pin is used by the application.
+There is, of course, still an overlap between `gpios` and `pinctrl` since both associate nodes with pins and their parameters (e.g., pull resistors). As a rule of thumb, `pinctrl` is generally used if the pin goes to a **peripheral** in the `/soc` node, whereas `gpios` are used if the pin is used directly by the application.
 
 #### Pin control concepts
 
@@ -1015,7 +1015,7 @@ Let's bring up the `&uart0` node in the nRF52840 development kit's DTS file to s
 };
 ```
 
-The first thing we notice are the two properties `pinctrl-0` and `pinctrl-1`. The property names don't really give a hint about their semantics. You could, of course, look at the matching binding and its include `zephyr/dts/bindings/pinctrl/pinctrl-device.yaml`, but in this case, the meaning of these properties is better described in [Zephyr's official documentation about pin control](https://docs.zephyrproject.org/latest/hardware/pinctrl/index.html):
+The first thing we notice are the two properties `pinctrl-0` and `pinctrl-1`. The property names don't really give a hint about their semantics. You could, of course, look at the matching binding `zephyr/dts/bindings/pinctrl/pinctrl-device.yaml`, but in this case, the meaning of these properties is better described in [Zephyr's official documentation about pin control](https://docs.zephyrproject.org/latest/hardware/pinctrl/index.html):
 
 Each device can have multiple _pin controller_ **states**. The names of the supported states are listed in the `pinctrl-names` property, in this case `"default"` and `"sleep"`. Both states are standard states defined by Zephyr for when the device is operational and in its sleep mode (if supported).
 
@@ -1073,7 +1073,7 @@ Within each group, Nordic uses a vendor-specific format and thus also vendor-spe
 };
 ```
 
-Within this compatible binding, we see that `child-binding` and thus format of all children of `nordic,nrf-pinctrl` compatible nodes is defined:
+Within the `nordic,nrf-pinctrl.yaml` binding, we find a `child-binding` property to define the child nodes of `nordic,nrf-pinctrl`:
 
 `zephyr/dts/bindings/pinctrl/nordic,nrf-pinctrl.yaml`
 
