@@ -3,5 +3,5 @@ Embedded World:
     background: '#141845'
     textcolor: '#fff'
     title: Embedded World
-    description: '<i> Going to Embedded World 2024? </i><a href="https://go.memfault.com/2024-embedded-world">Swing by our booth, at Hall 4 | Stand 238!</a>'
-
+    description: |
+        <i> From April 16-18 we'll be at Embedded Open Source Summit (EOSS)! <a href="https://go.memfault.com/eoss-2024">Visit us at Booth #E29.</a></i>
