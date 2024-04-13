@@ -446,7 +446,7 @@ workspace-m $ tree --dirsfirst -a -L 3 --filelimit 8
 
 What is the difference between a _West workspace_ that has been initialized locally using the `--local` flag, or remotely by passing the URL of the manifest repository? As mentioned already, thankfully, the short answer is _none_.
 
-The only difference is that for remotely initialized workspaces _West_ clones the repository for you and thus you essentially don't need to use `git clone` for _any_ of the repositories in your workspace: West takes care of this, "forget" about `git clone` if you like.
+The only difference is that for remotely initialized workspaces _West_ clones the repository for you and thus you essentially don't need to use `git clone` to obtain the manifest repo used to setup the workspace.
 
 We can also see this in the configuration file `.west/config`:
 
