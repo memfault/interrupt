@@ -1037,7 +1037,7 @@ manifest:
       import: true
 ```
 
-These dependencies are something that you need to handle yourself since [_West_ ignores projects that have already been defined in other files](https://docs.zephyrproject.org/latest/develop/west/manifest.html#manifest-imports). E.g., if you define _Zephyr_ as a project in your manifest file, and _after_ it add [Golioth's Zephyr SDK](https://docs.golioth.io/firmware/zephyr-device-sdk/), then the _Zephyr_ project in the `west-zephyr.yml` file of the Golioth SDK is _ignored_.
+These dependencies are something that you need to handle yourself since [_West_ ignores projects that have already been defined in other files](https://docs.zephyrproject.org/latest/develop/west/manifest.html#manifest-imports). E.g., if you define _Zephyr_ as a project in your manifest file, and _after_ add [Golioth's Zephyr SDK](https://docs.golioth.io/firmware/zephyr-device-sdk/), then the _Zephyr_ project in the `west-zephyr.yml` file of the Golioth SDK is _ignored_.
 
 It is your responsibility to ensure that the projects are **compatible** - or deal with resolving differences in case they are **not**. _West_ doesn't do that for you.
 
