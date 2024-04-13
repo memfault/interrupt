@@ -585,7 +585,7 @@ As we've seen in previous articles, e.g., `build` and `flash` are Zephyr-specifi
 
 ### Setting up the manifest repository and file
 
-For our workspace structure, we're using what's known as a ["T2 star topology"](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#topologies-supported): In such a topology, the _manifest repository_ does not only contain the _manifest file(s)_ but also contains all application files. If you'd move your application code to a separate repository, populated in turn again using a "project" in the manifest file, you'd end up with Zephyr's documentation calls a "T3: forest topology".
+For our workspace structure, we're using what's known as a ["T2 star topology"](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#topologies-supported): In such a topology, the _manifest repository_ does not only contain the _manifest file(s)_ but also contains all application files.
 
 We have all of our application code ready in the `app` folder, so let's go ahead, create an empty `app/west.yml` and make the `app` folder our manifest repository:
 
@@ -693,7 +693,7 @@ manifest:
       revision: v3.4.0
       url: https://github.com/zephyrproject-rtos/zephyr
       path: deps/zephyr
-      # add Zephyr-specific West extensions
+      # explicitly add Zephyr-specific West extensions
       west-commands: scripts/west-commands.yml
 ```
 
@@ -719,6 +719,8 @@ CMake Error at /path/to/workspace/deps/zephyr/cmake/modules/FindZephyr-sdk.cmake
 ```
 
 The error message is quite clear: Zephyr builds require that a toolchain is either installed globally or specified using the `ZEPHYR_TOOLCHAIN_VARIANT` environment variable. I didn't do either.
+
+> **Note:** The `west-commands` is only needed since we've not seen the `import` key yet. I've added it explicitly so that you know about this key and how the West extension commands are handled in a manifest file, but you typically don't need to specify this in your `west.yml`.
 
 The term ["Zephyr SDK"](https://docs.zephyrproject.org/latest/develop/toolchains/zephyr_sdk.html) refers to the toolchains that must be provided for each of Zephyr’s supported architectures. With our manifest, we only add Zephyr's _sources_ to our workspace. The required tools, however, e.g., the GCC compiler for ARM Cortex-M, are **not** included.
 
@@ -842,18 +844,22 @@ manifest:
       url: https://github.com/zephyrproject-rtos/zephyr
       # the path is no longer needed since we're now using `path-prefix`
       # path: deps/zephyr
-      # add Zephyr-specific West extensions
-      west-commands: scripts/west-commands.yml
+      # explicitly adding the Zephyr-specific West extensions is also no longer needed since
+      # they are added accordingly with the `import` key.
+      # west-commands: scripts/west-commands.yml
       # recursively import Zephyr dependencies
       import:
         path-prefix: deps
+        # the `file` key is not strictly needed since `west.yml` is the default value.
         file: west.yml
         name-allowlist:
           - cmsis
           - hal_nordic
 ```
 
-We got rid of the `path` key, since `import.path-prefix` allows us to define a common prefix for all projects. Using the `import.file` key, we're telling _West_ to look for a `west.yml` file in Zephyr's repository and also consider the projects listed there. Instead of adding _all_ of Zephyr's dependencies, we pick the ones we need _by their name_ using the `import.name-allowlist` key.
+We got rid of the `path` key, since `import.path-prefix` allows us to define a common prefix for all projects. Using the `import.file` key, we're telling _West_ to look for a `west.yml` file in Zephyr's repository and also consider the projects and West commands listed there. Notice that by default West looks for a `west.yml` file when using `import` and therefore it is not neccessary to provide the `import.file` entry.
+
+Instead of adding _all_ of Zephyr's dependencies, we pick the ones we need _by their name_ using the `import.name-allowlist` key.
 
 > **Notice:** Without `name-allowlist` we'd instruct _West_ to clone **all** dependencies, recursively. If you have a quick look at Zephyr's manifest file [`west.yml`](https://github.com/zephyrproject-rtos/zephyr/blob/main/west.yml), you'll see that it has _a lot_ of dependencies. Running `west update` without limiting the dependencies may take several minutes and lots of disk space!
 
@@ -942,10 +948,8 @@ manifest:
     - name: zephyr
       revision: v3.4.0
       url: https://github.com/zephyrproject-rtos/zephyr
-      west-commands: scripts/west-commands.yml
       import:
         path-prefix: deps
-        file: west.yml
         name-allowlist:
           - cmsis
           - hal_nordic
@@ -1033,7 +1037,6 @@ manifest:
     - name: zephyr
       revision: v3.5.0
       url: https://github.com/zephyrproject-rtos/zephyr
-      west-commands: scripts/west-commands.yml
       import: true
 ```
 
@@ -1066,8 +1069,7 @@ This is done for all _projects_ in a manifest. The manifest repository itself is
 
 For all other _projects_, however, West creates and manages its own `manifest-rev` branch. It is important that you **do not modify the `manifest-rev` branch** and that you don't push it to your remote since West recreates and resets the `manifest-rev` branch on each execution of `west update` command. Any changes would be **lost**.
 
-You need to be especially aware of this behavior if you're using _West_ in a ["T3 forest topology"](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#topologies-supported) or, e.g., if you're using a separate repository for shared code. E.g., we could add the following `shared/dummy` project to our workspace:
-
+Being aware how West manages projects is especially important if you're using _West_ in a ["T3 forest topology"](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#topologies-supported) or, e.g., if you're using a separate repository for shared code. E.g., we could add the following `shared/dummy` project to our workspace:
 
 ```bash
 manifest:
@@ -1082,9 +1084,7 @@ manifest:
 
 In case you need to update such a shared dependency, make sure to push the changes to a new or existing branch, but **don't commit to the `manifest-rev` branch**. Also, after running `west update`, make sure to switch back to your working branch.
 
-This sounds brittle, but it really isn't. It isn't that easy to lose changes to files with a `west update` unless you commit these changes on your local `manifest-rev` branch and then run `west update`.
-
-Let's see this in action. In case you want to follow along, add your own dummy repository to the manifest - I'll be using the above project in my `west.yml` - a dummy repository that contains an empty `test.txt` file:
+This sounds brittle, but it really isn't. It isn't that easy to lose changes to files with a `west update`. Let's see this in action. In case you want to follow along, add your own dummy repository to the manifest - I'll be using the above project in my `west.yml` - a dummy repository that contains an empty `test.txt` file:
 
 ```bash
 # after adding the "dummy" project to west.yml, update the project
@@ -1100,6 +1100,16 @@ $ tree --dirsfirst -a -L 4 --filelimit 10 -I hal
 └── shared
     └── dummy
         └── test.txt
+```
+
+West does not checkout the repository's `main` branch as specified in the with the `revision: main` entry in the manifest file, but instead uses the local `manifest-rev` branch mentioned before:
+
+```bash
+$ cd shared/dummy
+$ git status
+On branch manifest-rev
+nothing to commit, working tree clean
+$ cd ../../ # workspace root
 ```
 
 Without checking out a new branch, I can modify the contents of `test.txt` and run `west update`. The changes won't be lost and `west update` succeeds since the changes are not in conflict with any incoming change:
@@ -1143,7 +1153,7 @@ Aborting
 ERROR: update failed for project dummy
 ```
 
-The only irreversible mistake that we can make is to commit changes to the `manifest-rev` branch. Let's do just that:
+OK, time to really try and mess things up: Let's assume we had a long day and we simply forgot that we're changing things in a repository managed by West. We're changing things in `test.txt` and commit the changes to the local `manifest-rev` branch:
 
 ```bash
 $ cd shared/dummy
@@ -1153,7 +1163,7 @@ $ git commit -m "an honest mistake"
  1 file changed, 1 insertion(+)
 ```
 
-Running `west update` we can indeed see that we're losing the commit:
+Running `west update` we can indeed see that we're about to lose the commit:
 
 ```bash
 cd ../../
@@ -1177,9 +1187,21 @@ HEAD is now at d22a413 updated test.txt
 ...
 ```
 
-The output that you see above is just Git's output. You can't actually restore the commit `8de0853` since West discarded it, the changes are really lost.
+Whoops! Git is telling us that we're about to leave behind a commit and at the same time tells us that nothing is lost yet: We can recover the lost change in a new branch by using the proposed command:
 
-Also keep in mind that all _projects_ in a West manifest are managed entirely by _West_. If you're working on those repositories, use dedicated branches. After **every** _West update_, double-check that you're still working on the correct branch and do **not** commit to the `manifest-rev` branch.
+```bash
+$ cd shared/dummy
+$ git branch recover-an-honest-mistake 8de0853
+$ git checkout recover-an-honest-mistake
+Previous HEAD position was c8deb58 initial commit
+Switched to branch 'recover-an-honest-mistake'
+$ cat test.txt
+this-is-a-test.123-test%
+```
+
+Whew! A close call, but even after commiting to our local `manifest-rev` branch the changes are not lost an can be restored as instructed by the command line output.
+
+Keep in mind that all _projects_ in a West manifest are managed entirely by _West_. If you're working on those repositories, use dedicated branches. After **every** _West update_, double-check that you're still working on the correct branch and do **not** commit to the `manifest-rev` branch.
 
 Have a look at the official documentation for [`west update`](https://docs.zephyrproject.org/latest/develop/west/built-in.html#west-update). There, you'll find a detailed description of the entire update procedure, including some options that allow you to selectively update projects.
 
