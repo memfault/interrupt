@@ -203,7 +203,7 @@ So far, we've only used the macros from the Devicetree API `zephyr/include/zephy
   }
 ```
 
-Similar to what we've seen for our own example in the [previous article][previous article]({% post_url 2024-02-15-practical_zephyr_dt_semantics %}), Zephyr uses Devicetree macros to create an initializer expression for the matching type that should be used with the corresponding macro. The macros `DT_GPIO_PIN_BY_IDX` and `DT_GPIO_FLAGS_BY_IDX` simply expand to the `DT_PHA_<x>` macros that we used when accessing `phandle-array`s:
+Similar to what we've seen for our own example in the [previous article]({% post_url 2024-02-15-practical_zephyr_dt_semantics %}), Zephyr uses Devicetree macros to create an initializer expression for the matching type that should be used with the corresponding macro. The macros `DT_GPIO_PIN_BY_IDX` and `DT_GPIO_FLAGS_BY_IDX` simply expand to the `DT_PHA_<x>` macros that we used when accessing `phandle-array`s:
 
 ```c
 #define DT_GPIO_PIN_BY_IDX(node_id, gpio_pha, idx) \
