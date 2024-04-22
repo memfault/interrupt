@@ -1,0 +1,12 @@
+target-version = "py310"
+preview = true
+
+# match black config
+line-length = 100
+
+# [lint]
+
+# select = ["ALL"]
+
+# ignore = [
+# ""

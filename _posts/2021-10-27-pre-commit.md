@@ -177,7 +177,7 @@ my patches clean and tidy!
 Other popular languages/frameworks have de-facto styling tools, for example:
 
 - Rust: <https://github.com/rust-lang/rustfmt>
-- Python: <https://github.com/hhatto/autopep8> or <https://github.com/psf/black>
+- Python: <https://github.com/astral-sh/ruff> or <https://github.com/psf/black>
 - Javascript: <https://prettier.io/>
 - Go: <https://go.dev/blog/gofmt>
 
@@ -271,7 +271,7 @@ exclude: "^\
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.6.0
     hooks:
       - id: check-added-large-files # prevents giant files from being committed.
       - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
@@ -290,19 +290,14 @@ repos:
       - id: prettier
         files: \.(js|ts|jsx|tsx|css|less|html|json|markdown|md|yaml|yml)$
 
-  - repo: https://github.com/psf/black
-    rev: 21.12b0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.1
     hooks:
-      - id: black
-
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
-    hooks:
-      - id: isort
-        args: [--profile=black]
+      - id: ruff
+      - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v13.0.0
+    rev: v18.1.4
     hooks:
       - id: clang-format
 ```
@@ -349,15 +344,15 @@ amazing ✨!
 
 #### Python checks
 
-- `black` - formats python files 🥳
-- `isort` - sorts imports in python files. note that we select `--profile=black`
-  to make sure it's compatible with `black`'s formatting
+- `ruff` - a Python linter that can catch a lot of common issues, and also
+  formats and sorts imports. Replaces `flake8` and `isort` and `black` in one
+  go!
 
 Another very useful check is `pylint`:
 
 ```yaml
 - repo: https://github.com/PyCQA/pylint
-  rev: v2.12.2
+  rev: v3.1.0
   hooks:
     - id: pylint
 ```
@@ -393,8 +388,7 @@ no required setup outside of `pre-commit`! If you're managing your own
 
 To configure `clang-format`, either add a `.clang-format` file to the repo (the
 [default](https://github.com/pre-commit/mirrors-clang-format/blob/ca42fca/.pre-commit-hooks.yaml#L6)),
-or specify command-line options in the hook config (eg `args: ["-style=Google",
-"-i"]`).
+or specify command-line options in the hook config (eg `args: ["-style=Google", "-i"]`).
 
 Note that `clang-format` has a lot of configuration options. Recommendations for
 how to tune a config is outside the scope of this article, but here's some
@@ -515,7 +509,7 @@ config files that can save some churn when testing new actions:
 
 ```yaml
 - repo: https://github.com/sirosen/check-jsonschema
-  rev: 0.10.0
+  rev: 0.28.2
   hooks:
     - id: check-github-actions
     - id: check-github-workflows
@@ -527,7 +521,7 @@ Some useful and quality-of-life checks for shell scripts:
 
 ```yaml
 - repo: https://github.com/shellcheck-py/shellcheck-py
-  rev: v0.8.0.3
+  rev: v0.10.0.1
   hooks:
     - id: shellcheck
 ```
@@ -586,5 +580,5 @@ Here's a couple of examples of how `pre-commit` could be used in CI:
 <!-- prettier-ignore-start -->
 
 - [Yelp announcement of
-  pre-commit](https://engineeringblog.yelp.com/2014/08/announcing-pre-commit-yelps-multi-language-package-manager-for-pre-commit-hooks.html)
+pre-commit](https://engineeringblog.yelp.com/2014/08/announcing-pre-commit-yelps-multi-language-package-manager-for-pre-commit-hooks.html)
 <!-- prettier-ignore-end -->
