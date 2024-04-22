@@ -8,7 +8,7 @@ exclude: "^\
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.6.0
     hooks:
       - id: check-added-large-files # prevents giant files from being committed.
       - id: check-case-conflict # checks for files that would conflict in case-insensitive filesystems.
@@ -35,29 +35,24 @@ repos:
         files: \.(js|ts|jsx|tsx|css|less|html|json|markdown|md|yaml|yml)$
 
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.10.0
+    rev: 0.28.2
     hooks:
       - id: check-github-actions
       - id: check-github-workflows
 
-  - repo: https://github.com/psf/black
-    rev: 21.12b0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.1
     hooks:
-      - id: black
-
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0 
-    hooks:
-      - id: isort
-        args: [--profile=black]
+      - id: ruff
+      - id: ruff-format
 
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.12.2
+    rev: v3.1.0
     hooks:
       - id: pylint
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v0.931"
+    rev: "v1.9.0"
     hooks:
       - id: mypy
 
@@ -67,12 +62,12 @@ repos:
       - id: dockerfilelint
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.8.0.3
+    rev: v0.10.0.1
     hooks:
       - id: shellcheck
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v13.0.0
+    rev: v18.1.4
     hooks:
       - id: clang-format
 
@@ -83,8 +78,7 @@ repos:
         name: compiledb
         entry: compiledb
         language: system
-        args:
-          [--overwrite, make, CC=clang, -n, -B]
+        args: [--overwrite, make, CC=clang, -n, -B]
         always_run: true
         require_serial: true
         pass_filenames: false
