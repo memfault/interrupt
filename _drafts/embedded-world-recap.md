@@ -137,7 +137,7 @@ industry, and get a pulse on boarder hardware and software trends. Companies
 building devices should consider sending an engineer or two.
 
 I look forward to seeing you all there next year. In the meantime, I will be at
-the brand new Embedded World North America conference in Austin this October!
+the brand new [Embedded World North America conference](https://www.embedded-world.de/en/embedded-world-wide/embedded-world-north-america) in Austin this October!
 
 
 <!-- Interrupt Keep START -->
