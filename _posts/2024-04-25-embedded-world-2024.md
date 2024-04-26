@@ -55,7 +55,7 @@ to see serious ecosystem players like Hightec make such a huge bet on Rust, as I
 believe it is a better language and runtime for the embedded world.
 
 This was not the only Rust I saw at the show. For example, I had a great chat
-with engineers at Bluewind[^bluewind] about their use of Rust. We also had many
+with engineers at Bluewind[^bluewind-rust] about their use of Rust. We also had many
 booth visitors ask us whether or not Memfault supports Rust - we do and were
 glad to share our experience building some of our SDKs in Rust at Memfault.
 We've known for a while that Rust is growing in use in embedded - several of our
