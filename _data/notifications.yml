@@ -1,0 +1,7 @@
+# Notification Banner
+Benchmark Report:
+    background: '#141845'
+    textcolor: '#fff'
+    title: Benchmark Report
+    description: |
+        <i> New 2024 Benchmark Report on the State of IoT Software Development | <a href="https://hubs.la/Q02t-j2B0">See the Research</a></i>
