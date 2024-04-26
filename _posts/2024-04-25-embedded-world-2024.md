@@ -183,7 +183,7 @@ in Austin this October!
 [^ew]: <https://www.embedded-world.de/en>
 [^bluewind-rust]: <https://www.bluewind.it/case-study/rust/>
 [^hightec]: <https://hightec-rt.com/en/>
-[^ai-at-the-edge]: <https://www.wevolver.com/article/2024-state-of-edge-ai-report?utm_source=linkedin-newsleter&utm_medium=edge_ai>
+[^ai-at-the-edge]: <https://www.wevolver.com/article/2024-state-of-edge-ai-report>
 [^psoc6-ai]: <https://www.infineon.com/cms/en/product/evaluation-boards/cy8ckit-062s2-ai/>
 [^exein]: <https://www.exein.io/>
 [^emproof]: <https://www.emproof.com/>
