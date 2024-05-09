@@ -18,7 +18,7 @@ hopefully, inspire you to go watch them!
 
 <!-- excerpt start -->
 
-We cover the talks I was able to see in person, as well as some talks since by
+We cover the talks I was able to see in person, as well as some talks seen by
 my colleagues since they were posted. Obviously this is just our little biased
 selection, we have not been able to see everything, let us know in the comments
 what we missed!
@@ -105,7 +105,7 @@ The talk goes in much more details on how to actually implement this.
 Demonstrates the commands to create certificates, options available in SSH to
 restrict permissions of the key, mentions a few tools that can be used to manage
 the certificate and sign the keys for the engineers, etc. He also discusses some
-challenges that are specific to embedded device such as how to deal with devices
+challenges that are specific to embedded devices such as how to deal with devices
 that may not have the correct time set (he also reminds us that NTP is not a
 safe protocol and time attacks are possible).
 
@@ -124,7 +124,7 @@ to hear him talk about Rust. The talk did not disappoint.
 Fabien starts with a good overview of what is available for Rust in the Kernel.
 He explains that Rust is limited to the device drivers because “core” components
 of the Kernel needs to remain compatible with all architectures and some of
-these architectures are not supported by the LLVM backend used by rustc.
+these architectures are not supported by the LLVM backend used by rustc (LLVM is shiny and new but [the kernel built with gcc still supports more architectures](https://chat.openai.com/share/b275dd72-bc8b-4faf-8a10-6fd368210896)).
 
 A big challenge for Rust kernel developers today is that although tooling was
 merged, there is very little in terms of abstraction. So to develop a new device
