@@ -148,7 +148,7 @@ sit and complain about the state of things or take it as a challenge ;)
 
 ## Yocto Project: 5 Year Plan, Now What?
 
-- [YouTube link](https://www.youtube.com/watch?v=enejawJmb5k&list=PLbzoR-pLrL6q2lcVcQ8s1uVNxde0aVdp3&index=11&pp=iAQB)
+- [YouTube link](https://www.youtube.com/watch?v=mSP5MNt-58U&list=PLbzoR-pLrL6q2lcVcQ8s1uVNxde0aVdp3&index=26)
 - Recommended by: Thomas
 
 Megan Knight (AWS) and Andrew Wafa (ARM) went through the 5 year plan for Yocto,
