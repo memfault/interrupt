@@ -36,7 +36,7 @@ what we missed!
 
 Drew Moseley, from Toradex and ex-Mender engineer, did some great research to
 compare different strategies to update Linux systems. He starts with a little
-explaination of what delta updates can look like for an A/B system: he covers
+explanation of what delta updates can look like for an A/B system: he covers
 SWUpdate with ZChunks, Rauc, and Mender proprietary delta-update. Of course, he
 also includes Toradex and starts with a little refresher of how it works
 differently using libostree (a git like approach to your entire filesystem).
@@ -58,14 +58,14 @@ community!
 - Recommended by: Thomas
 
 _(EDIT: An initial version of this post incorrectly attributed the
-"silent-read-only behavior to Samsung - Andrew clarified that this was observed on a SanDisk card. We regret the error.)_
+"silent-read-only behavior" to Samsung - Andrew clarified that this was observed on a SanDisk card. We regret the error.)_
 
 Andrew Murray of the good penguin shared of their research on SDCards. Like
 Andy, we often run into customers who use SDCard as their primary flash storage
 and have lots of questions about the reliability of these cards. I will now
 systematically point them to this great talk!
 
-Andy started with a very thorough explaination of how flash storage works. I
+Andy started with a very thorough explanation of how flash storage works. I
 thought I knew the topic well but I still learnt quite a bit, especially what
 multi-layer flash storage really is and how it works (the 0 and 1 on the flash
 are really analog values - instead of reducing one analog value to a 0 or a 1,
