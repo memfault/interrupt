@@ -57,6 +57,9 @@ community!
 - [YouTube link](https://www.youtube.com/watch?v=mxed984GAIw&list=PLbzoR-pLrL6q2lcVcQ8s1uVNxde0aVdp3&index=51&pp=iAQB)
 - Recommended by: Thomas
 
+_(EDIT: An initial version of this post incorrectly attributed the
+"silent-read-only behavior to Samsung - Andrew clarified that this was observed on a SanDisk card. We regret the error.)_
+
 Andrew Murray of the good penguin shared of their research on SDCards. Like
 Andy, we often run into customers who use SDCard as their primary flash storage
 and have lots of questions about the reliability of these cards. I will now
@@ -73,9 +76,10 @@ roles.
 
 He then presented a test setup that his team and him devised to take some
 real-world measurement of flash storage and see how it would fail. He discusses
-how different flash brands can fail in different ways (some Samsung apparently
-goes read-only - without telling the OS that it’s not writing, some other flash
-just start timing-out on all read and write operations).
+how different flash brands can fail in different ways (some <s>Samsung</s>
+SanDisk apparently goes read-only - without telling the OS that it’s not
+writing, some other flash just start timing-out on all read and write
+operations).
 
 KrillKounter is their attempt to build a tool from all this research. It will
 keep track of how many writes to a flash (not easy because it needs to be
