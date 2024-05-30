@@ -1,4 +1,3 @@
-
 ---
 title: Diving into JTAG — Usage Scenarios (Part 5)
 description: "Some examples of JTAG usage"
