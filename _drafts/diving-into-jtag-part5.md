@@ -21,12 +21,11 @@ a firmware/embedded developer: Bring-up and Reverse Engineering.
 
 ## Getting Started
 
-To make working for this use case more convenient you need a specialized program. In this article,
-I will consider  working with the program [TopJTAG Probe](http://www.topjtag.com/probe/) and debugger
-[SEGGER J-Link](https://www.segger.com/products/debug-probes/j-link/), but it doesn't mean that
-only they are suitable for such tasks, just at the moment of writing this article I have them because
-I am a long-time fan of J-Link debuggers, and the TopJTAG Probe program turned out to be the simplest and
-the most accessible from a quick Google search.
+To make working on this use case more convenient you need a specialized program. In this article,
+we will look at working with the program [TopJTAG Probe](http://www.topjtag.com/probe/) and debugger
+[SEGGER J-Link](https://www.segger.com/products/debug-probes/j-link/). These aren't the only tools
+suitable for this task, but I am a long-time fan of J-Link debuggers, and the TopJTAG Probe program
+turned out to be the simplest and the most accessible from a quick Google search.
 
 While many people are familiar with SEGGER products, TopJTAG Probe requires an introduction.
 
