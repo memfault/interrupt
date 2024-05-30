@@ -135,7 +135,7 @@ LEDs are connected to pins: `PD12`, `PD13`, `PD14`, `PD15`. They are turned on b
 one and turned off by a logic zero. To select the required level on a pin, it is necessary to
 find this pin in the *Pin* window and select the necessary actions from the context menu:
 
-[Controlling LEDs on STM32DISCO board using JTAG Boundary Scan](https://youtu.be/DrXdemXd80I)
+<iframe width="420" height="315" src="https://youtu.be/DrXdemXd80I" frameborder="0" allowfullscreen></iframe>
 
 ### GPIO input state view
 
@@ -144,7 +144,7 @@ This can also be done using the JTAG Boundary Scan and TopJTAG application. You 
 either in the *Watch* window or in the *Waveform* window. Let's look at the state of the output to which
 the button is connected:
 
-[Check GPIO input state using JTAG Boundary Scan](https://youtu.be/DrXdemXd80I)
+<iframe width="420" height="315" src="https://youtu.be/DrXdemXd80I" frameborder="0" allowfullscreen></iframe>
 
 >**Note:** that as mentioned in the article
 >[Diving into JTAG. Part 3 - Boundary Scan](https://interrupt.memfault.com/blog/diving-into-jtag-part-3)
@@ -196,7 +196,7 @@ However, despite such limited use of this functionality, it can still be useful 
 see which pins of the controller are alive and functioning at all or analyze the logic of the firmware, for example
 on this example:
 
-[Simple and bad Logic Analyzer based on JTAG Boundary Scan](https://youtu.be/Z1xsTKtW4J8)
+<iframe width="420" height="315" src="https://youtu.be/Z1xsTKtW4J8" frameborder="0" allowfullscreen></iframe>
 
 You can see that after we press the button - communication starts on some protocol, and although it is difficult to
 understand it from the signal, but it is SPI protocol.
