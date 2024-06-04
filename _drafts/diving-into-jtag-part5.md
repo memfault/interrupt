@@ -7,11 +7,11 @@ tags: [arm, cortex-m, mcu, debugging, debugger]
 
 <!-- excerpt start -->
 
-In previous articles we have considered the main examples of JTAG usage, such as debugging
+In previous articles, we have considered the primary uses of JTAG, including debugging
 and testing boards in production. For firmware/embedded developers, the
-first example - debugging - is the most useful. In this article, I want to look
-at two examples of JTAG Boundary Scan, which can be very useful in the everyday work of
-a firmware/embedded developer: Bring-up and Reverse Engineering.
+first - debugging - is the most common. In this article, I want to look
+at two uses of JTAG Boundary Scan, which are also common tasks for
+a firmware/embedded developer: board bring-up and reverse engineering.
 
 <!-- excerpt end -->
 
@@ -67,7 +67,7 @@ a TAP, it will be put into the `BYPASS` state.
 
 We specify [STM32F405_415_407_417_LQFP100.bsd](https://bsdl.info/details.htm?sid=61a8799988cb03f688ca59b002289d77)
 file for the first TAP - SGS/Thomson(`06413041h`) as it is responsible for Boundary Scan. We leave the second TAP
-in `BYPASS .`To select a file, click the *CLICK HERE TO SET* link and select the desired file.
+in `BYPASS`. To select a file, click the *CLICK HERE TO SET* link and select the desired file.
 
 <p align="center">
  <img width="650" src="{% img_url jtag-part5/topjtag-create-new-prj-step-4.png %}" alt="TOPJtag new project creation step 4" />
@@ -107,30 +107,30 @@ before they start working on the firmware. Usually (at least in the case where I
 the circuit designer. Still, since the microcontroller is empty, this check is limited to the test that the board
 does not burn up when turned on and that the power supply system provides all the necessary voltages.
 
-Sometimes, a special test firmware can be prepared specifically for Bring-Up, which automatically or
-via the CLI interface can enable/disable board modules for testing. In any case, no matter how it happens, Bring-Up
-It almost always requires interaction between the embedded and circuit designer and additional work to create test firmware.
+Sometimes, a special test firmware can be prepared specifically for bring-up, which automatically or
+via the CLI interface can enable/disable board modules for testing. In any case, no matter how it happens, bring-up
+almost always requires interaction between the embedded and circuit designer and additional work to create test firmware.
 
 However, JTAG Boundary Scan can facilitate this work by allowing the circuit designer to control
 the microcontroller pins and thus perform a better and deeper analysis of the board without depending on the programmer.
-It also saves the programmer from having to write special firmware for Bring-Up. You only need a test board,
+It also saves the programmer from having to write special firmware for bring-up. You only need a test board,
 a .BSDL file for the corresponding microcontroller, a debugger, and a unique program to control the
 controller pins through GUI. Also, an additional advantage of this approach is universality, i.e., you
 don't need to write a new version of the test firmware for each new microcontroller. And if you remember that
 Boundary Scan allows you to check the signal integrity for a multiprocessor chain, where processors may have BGA
 cases and multilayer boards, and it may be very difficult to get to the contacts with probes.
 
-Let's see what is needed for an elementary Bring-Up. To begin with, at least, you need to be able to control
+Let's see what is needed for an elementary bring-up. To begin with, at least, you need to be able to control
 the microcontroller pins (set to logic one/logic zero) and read the state in which the microcontroller pin is
 located, and JTAG allows you to do this, and programs like TopJTAG Probe allow you to do it more or less conveniently.
 
-As a board for Bring-Up, I will use what I am already familiar with from the previous parts.
+As a board for bring-up, I will use what I am already familiar with from the previous parts.
 [STM32F407G-DISC1](https://www.st.com/en/evaluation-tools/stm32f4discovery.html) with microcontroller
 [STM32F407VG](https://www.st.com/en/microcontrollers-microprocessors/stm32f407vg.html).
 
 ### GPIO output control
 
-Let's control the LEDs on our board. Quite a workable task for Bring-Up. So we know that the
+Let's control the LEDs on our board. Quite a workable task for bring-up. So we know that the
 LEDs are connected to pins: `PD12`, `PD13`, `PD14`, `PD15`. They are turned on by setting the pin to a logical
 one and turned off by a logic zero. To select the required level on a pin, it is necessary to
 find this pin in the *Pin* window and select the necessary actions from the context menu:
@@ -139,7 +139,7 @@ find this pin in the *Pin* window and select the necessary actions from the cont
 
 ### GPIO input state view
 
-Another necessary operation for such a Bring-Up is to view the state of the chip pin.
+Another necessary operation for such a bring-up is to view the state of the chip pin.
 This can also be done using the JTAG Boundary Scan and TopJTAG application. You can view the output state
 either in the *Watch* window or in the *Waveform* window. Let's look at the state of the output to which
 the button is connected:
@@ -153,16 +153,16 @@ the button is connected:
 >scan cell duplicates this signal, as seen in the video with LEDs. Still, if the output works only for receiving,
 >the signal is present only on one cell, as seen in the video with the button.
 
-## Revers Enginnering
+## Reverse Engineering
 
 One of the exciting things is that the `SAMPLE` instruction does not affect the firmware in any way, which
 means that you can use it for a logic analyzer built into the controller. Where can it be useful?
 For example, when you don't have an oscilloscope or analyzer. And, as it seems to me, this function can be
-useful when Revers Engineering a board, especially microchips with BGA-type packages or multilayer boards when it is
+useful when reverse engineering a board, especially microchips with BGA-type packages or multilayer boards when it is
 difficult to determine with a simple multimeter which pin of the chip is responsible for what and then using the
 `SAMPLE` command can help.
 
-However, this is **** a very simple logic analyzer. While seeing some very simple and low-speed signals
+However, this is a very simple logic analyzer. While seeing some very simple and low-speed signals
 (such as controlling LEDs, pressing a button, or controlling some load) with this analyzer, it is quite easy and simple
 as shown in the chapter above, when dealing with higher-speed protocols, the signal that is drawn on the Waveform is
 very distorted. Here is an example of how the transmission of the symbol "**U**" (which has a code equal to `0x55`)
@@ -198,8 +198,8 @@ on this example:
 
 <iframe width="420" height="315" src="https://youtu.be/Z1xsTKtW4J8" frameborder="0" allowfullscreen></iframe>
 
-You can see that after we press the button - communication starts on some protocol, and although it is difficult to
-understand it from the signal, but it is SPI protocol.
+You can see that after we press the button, communication starts on some protocol. Although it is difficult to
+understand it from the signal, it is SPI protocol.
 
 ## Conclusion
 
