@@ -8,10 +8,10 @@ tags: [arm, cortex-m, mcu, debugging, debugger]
 <!-- excerpt start -->
 
 In previous articles, we have considered the primary uses of JTAG, including
-debugging and testing boards in production. For firmware/embedded developers,
-the first - debugging - is the most common. In this article, I want to look at
-two uses of JTAG Boundary Scan, which are also common tasks for a
-firmware/embedded developer: board bring-up and reverse engineering.
+debugging and testing boards in production. For firmware developers, the first -
+debugging - is the most common. In this article, I want to look at two uses of
+JTAG Boundary Scan, which are also common tasks for a firmware developer: board
+bring-up and reverse engineering.
 
 <!-- excerpt end -->
 
@@ -46,14 +46,14 @@ To start working with TopJTAG Probe, we need to create a new project. To do
 this, go to the _File->New Project Wizard_ menu.
 
 <p align="center">
- <img width="650" src="{% img_url jtag-part5/topjtag-create-new-prj-step-1.png %}" alt="TOPJtag new project creation step 1" />
+ <img width="100%" src="{% img_url jtag-part5/topjtag-create-new-prj-step-1.png %}" alt="TOPJtag new project creation step 1" />
 </p>
 
 In the next window, select the required JTAG Probe and frequency. In my case, it
 is SEGGER J-Link and 12 MHz.
 
 <p align="center">
- <img width="650" src="{% img_url jtag-part5/topjtag-create-new-prj-step-2.png %}" alt="TOPJtag new project creation step 2" />
+ <img width="100%" src="{% img_url jtag-part5/topjtag-create-new-prj-step-2.png %}" alt="TOPJtag new project creation step 2" />
 </p>
 
 Click _Next_.
@@ -64,7 +64,7 @@ The program will scan our JTAG circuit and display a list of available TAP IDs.
 > this step to go well
 
 <p align="center">
- <img width="650" src="{% img_url jtag-part5/topjtag-create-new-prj-step-3.png %}" alt="TOPJtag new project creation step 3" />
+ <img width="100%" src="{% img_url jtag-part5/topjtag-create-new-prj-step-3.png %}" alt="TOPJtag new project creation step 3" />
 </p>
 
 Click _Next_.
@@ -73,13 +73,13 @@ At this point, you must specify .BSD files for each detected TAP. If you do not
 specify a .BSD file for a TAP, it will be put into the `BYPASS` state.
 
 We specify
-[STM32F405_415_407_417_LQFP100.bsd](https://bsdl.info/details.htm?sid=61a8799988cb03f688ca59b002289d77)
-file for the first TAP - SGS/Thomson(`06413041h`) as it is responsible for
+[STM32F405\_415\_407\_417\_LQFP100.bsd](https://bsdl.info/details.htm?sid=61a8799988cb03f688ca59b002289d77)
+file for the first TAP - SGS/Thomson (`06413041h`) as it is responsible for
 Boundary Scan. We leave the second TAP in `BYPASS`. To select a file, click the
 _CLICK HERE TO SET_ link and select the desired file.
 
 <p align="center">
- <img width="650" src="{% img_url jtag-part5/topjtag-create-new-prj-step-4.png %}" alt="TOPJtag new project creation step 4" />
+ <img width="100%" src="{% img_url jtag-part5/topjtag-create-new-prj-step-4.png %}" alt="TOPJtag new project creation step 4" />
 </p>
 
 After that, press _Finish_, and the program is ready.
@@ -87,7 +87,7 @@ After that, press _Finish_, and the program is ready.
 Appearance of the program:
 
 <p align="center">
- <img width="650" src="{% img_url jtag-part5/topjtag-main-view.png %}" alt="TOPJtag the main window" />
+ <img width="100%" src="{% img_url jtag-part5/topjtag-main-view.png %}" alt="TOPJtag the main window" />
 </p>
 
 `1` - Pins Window. The _Pins window_ lists all pins belonging to the selected
@@ -161,7 +161,7 @@ are turned on by setting the pin to a logical one and turned off by a logic
 zero. To select the required level on a pin, it is necessary to find this pin in
 the _Pin_ window and select the necessary actions from the context menu:
 
-<iframe width="420" height="315" src="https://youtu.be/DrXdemXd80I" frameborder="0" allowfullscreen></iframe>
+<iframe width="100%" height="600px" src="https://www.youtube.com/embed/DrXdemXd80I" frameborder="0" allowfullscreen></iframe>
 
 ### GPIO input state view
 
@@ -170,16 +170,15 @@ pin. This can also be done using the JTAG Boundary Scan and TopJTAG application.
 You can view the output state either in the _Watch_ window or in the _Waveform_
 window. Let's look at the state of the output to which the button is connected:
 
-<iframe width="420" height="315" src="https://youtu.be/DrXdemXd80I" frameborder="0" allowfullscreen></iframe>
+<iframe width="100%" height="600px" src="https://youtube.com/embed/DrXdemXd80I" frameborder="0" allowfullscreen></iframe>
 
-> **Note:** that as mentioned in the article
-> [Diving into JTAG. Part 3 - Boundary Scan](https://interrupt.memfault.com/blog/diving-into-jtag-part-3)
+> **Note:** As mentioned in the article
+> [Diving into JTAG. Part 3 - Boundary Scan](https://interrupt.memfault.com/blog/diving-into-jtag-part-3),
 > there can be several scan cells per pin, and here you can see two of them: one
-> for receiving and one for transmitting. And as you can see, when the
-> controller transmits something, the receiving scan cell duplicates this
-> signal, as seen in the video with LEDs. Still, if the output works only for
-> receiving, the signal is present only on one cell, as seen in the video with
-> the button.
+> for receiving and one for transmitting. When the controller transmits
+> something, the receiving scan cell duplicates this signal, as seen in the
+> video with LEDs. Still, if the output works only for receiving, the signal is
+> present only on one cell, as seen in the video with the button.
 
 ## Reverse Engineering
 
@@ -201,13 +200,13 @@ transmission of the symbol "**U**" (which has a code equal to `0x55`) through
 UART at 1200 baud looks like:
 
 <p align="center">
- <img width="650" src="{% img_url jtag-part5/topjtag-uart-1200-baudrate-view.png %}" alt="TOPJtag uart 1200-baudrate-view" />
+ <img width="100%" src="{% img_url jtag-part5/topjtag-uart-1200-baudrate-view.png %}" alt="TOPJtag uart 1200-baudrate-view" />
 </p>
 
 and at 2400 baud:
 
 <p align="center">
- <img width="650" src="{% img_url jtag-part5/topjtag-uart-2400-baudrate-view.png %}" alt="TOPJtag uart 2400-baudrate-view" />
+ <img width="100%" src="{% img_url jtag-part5/topjtag-uart-2400-baudrate-view.png %}" alt="TOPJtag uart 2400-baudrate-view" />
 </p>
 
 As you can see, even at 2400 baud, the signal is distorted (2 bits were lost).
@@ -215,7 +214,7 @@ As you can see, even at 2400 baud, the signal is distorted (2 bits were lost).
 And here is what the SPI signal looks like with baudrate of 250 KBits/sec:
 
 <p align="center">
- <img width="650" src="{% img_url jtag-part5/topjtag-spi-view.png %}" alt="TOPJtag spi waveform" />
+ <img width="100%" src="{% img_url jtag-part5/topjtag-spi-view.png %}" alt="TOPJtag spi waveform" />
 </p>
 
 As you can see, it is hard to recognize SPI from this waveform, especially if
@@ -231,7 +230,7 @@ in some specific cases: you can see which pins of the controller are alive and
 functioning at all or analyze the logic of the firmware, for example on this
 example:
 
-<iframe width="420" height="315" src="https://youtu.be/Z1xsTKtW4J8" frameborder="0" allowfullscreen></iframe>
+<iframe width="100%" height="600px" src="https://youtube.com/embed/Z1xsTKtW4J8" frameborder="0" allowfullscreen></iframe>
 
 You can see that after we press the button, communication starts on some
 protocol. Although it is difficult to understand it from the signal, it is SPI
