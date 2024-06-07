@@ -1,0 +1,5 @@
+Notification Banner:
+  background: "#141845"
+  textcolor: "#fff"
+  description: |
+    <i> Memfault's Upcoming Launch Week - Product Analytics | June 24th - 28th <a href="https://memfault.com/launch-week/">Join us!</a></i>
