@@ -303,7 +303,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 - `cmake_minimum_required` just indicates the allowed CMake versions. Zephyr has its requirements and maintains its minimal required CMake version in `zephyr/cmake/modules/zephyr_default.cmake`.
 - The `set` function writes the board we're building our application for to the variable `BOARD`. This step is optional and can be specified during the build step as a parameter. `nrf52840dk_nrf52840` is Zephyr's name for the [nRF52840 development kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk).
-- Then, we load Zephyr using the `find_package` function. In our [setup script][#creating-a-setup-script], we've exported the `ZEPHYR_BASE` environment variable, which is now passed as a hint to the `find_package` function to locate the correct Zephyr installation.
+- Then, we load Zephyr using the `find_package` function. In our [setup script](#creating-a-setup-script), we've exported the `ZEPHYR_BASE` environment variable, which is now passed as a hint to the `find_package` function to locate the correct Zephyr installation.
 
 > **Note:** There are several ways to use the Zephyr CMake package, each of which is described in detail in [Zephyr's CMake package documentation](https://docs.zephyrproject.org/latest/build/zephyr_cmake_package.html). You can also have a look at the [Zephyr CMake package source code](https://docs.zephyrproject.org/latest/build/zephyr_cmake_package.html#zephyr-cmake-package-source-code) for details.
 
