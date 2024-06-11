@@ -169,7 +169,7 @@ Let's override the default `MemManage` fault handler for the purposes of our exa
 a MemManage Fault is hit and we can investigate further.
 
 ```c
-// The NRF52 fault handlers can be overriden because they are declared as weak
+// The NRF52 fault handlers can be overridden because they are declared as weak
 // Let's override the handler and insert a breakpoint when it's hit
 __attribute__((naked))
 void MemoryManagement_Handler(void) {

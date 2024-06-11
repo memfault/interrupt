@@ -49,7 +49,7 @@ Mode**. The rest of the time the MCU runs in **Thread Mode**.
 
 The core can operate at either a **privileged** or **unprivileged** level. Certain instructions and
 operations are only allowed when the software is executing as privileged.
-For example, unpriviledged code may not access NVIC registers. In Handler Mode, the core is
+For example, unprivileged code may not access NVIC registers. In Handler Mode, the core is
 _always_ privileged. In Thread Mode, the software can execute at either level.
 
 Switching Thread Mode from the unprivileged to privileged level
