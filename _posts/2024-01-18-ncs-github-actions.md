@@ -798,7 +798,7 @@ RUN . /venv/bin/activate \
 We'll build the image using this command:
 
 ```bash
-# note the image tag is set to use the GitHub container registy (ghcr.io), and
+# note the image tag is set to use the GitHub container registry (ghcr.io), and
 # we're setting the current ISO-8601 date as the tag
 $ DOCKER_BUILDKIT=1 docker build -f .github/Dockerfile . -t ghcr.io/noahp/memfault-nrfconnect-ci-app:$(date --iso)
 ```

@@ -145,12 +145,12 @@ We can see that the runtime was linked in:
 ```
 
 If we run that program with problematic input, UBSan prints a warning, and the
-printf was modifed to print a `(null)` value instead of the possibly problematic
+printf was modified to print a `(null)` value instead of the possibly problematic
 fetch.
 
 [![img/ubsan-trap/ubsan-basic.png](/img/ubsan-trap/ubsan-basic.png)](/img/ubsan-trap/ubsan-basic.png)
 
-If it's preferrable to have the program crash instead, use the
+If it's preferable to have the program crash instead, use the
 `-fno-sanitize-recover=all` to disable the error recovery functionality and
 immediately crash (exit with non-zero exit code) on errors:
 

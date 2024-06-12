@@ -643,7 +643,7 @@ objcopy --compress-debug-sections
 ```
 
 This requires no changes when using the file- debuggers and binutils are all
-good about unpacking the data, and worst case it can be reveresed with
+good about unpacking the data, and worst case it can be reversed with
 `--decompress-debug-sections`.
 
 The `dwz` tool definitely performs nice optimizations on larger binaries, but it

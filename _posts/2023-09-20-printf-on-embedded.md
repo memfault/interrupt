@@ -149,7 +149,7 @@ handlers (and is probably a reasonable idea to prohibit them).
 
 Here's an approach that will cause a runtime error if a non-reentrant function
 is called in an interrupt context. Unfortunately it requires rebuilding newlib,
-so it's really only for curiousity or the very paranoid.
+so it's really only for curiosity or the very paranoid.
 
 First, rebuild newlib (or build it as part of your project build; this is
 probably only practical if you're using a compiler cache like ccache), setting
@@ -225,7 +225,7 @@ void Foo_Interrupt_Handler(void) {
 }
 ```
 
-This is a pretty manual technique but it is relatively simple, and doens't
+This is a pretty manual technique but it is relatively simple, and doesn't
 require disabling interrupts or knowing the relative preemption priority of the
 current call site.
 
