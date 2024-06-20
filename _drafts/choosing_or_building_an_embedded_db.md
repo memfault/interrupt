@@ -70,7 +70,6 @@ up records from the embedded system inside a mobile app or a server.
 
 That new processor may be 64-bit processor, or may even use a 
 different endianness than the microcontroller. Taking a closer look at
-```suggestion
 the `fishtank_config_t` struct, we see that the basic `int` type is
 used, which uses 4 bytes on 32-bit chips, but might use 16- or 8- bits
 on other architectures, and the endianness (byte order) depends on the processor.
