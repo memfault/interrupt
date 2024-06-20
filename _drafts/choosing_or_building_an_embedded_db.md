@@ -24,7 +24,7 @@ an e-bike may store a geofence and riding log,
 and a smart home hub must store device, group, and schedule information.
 
 Let's assume for now that we're talking about a small embedded system,
-like an STM32 with only the built-in flash available for persistant storage.
+like an STM32 with only the built-in flash available for persistent storage.
 Is there an obvious solution? What happens if we just write our data to flash
 and read it back on reboot?
 
@@ -56,7 +56,7 @@ but as the product evolves we are going to run into a few issues:
  1. The persisted data is not portable due to endianness and integer size differences,
  2. The config will be corrupted if power is lost during the `save()` function,
  3. If a `temperature` field is added to the struct, it will be read as `-1` upon 
-    firmare upgrade, which may be unexpected.
+    firmware upgrade, which may be unexpected.
 
 So we see that even for the simplest products, persisting data to flash
 presents some mantainability challenges.
@@ -89,7 +89,7 @@ your fishtank), then you get a 16-byte structure because
 
 For portability, use the fixed-width definitions in `stdint.h`
 and instruct the compiler to pack your structure to remove any padding
-which would otherwise be added to encourage alignment to word boundries:
+which would otherwise be added to encourage alignment to word boundaries:
 
 ```c
 #pragma pack(push, 1)
@@ -107,7 +107,7 @@ been "big-endian" processors which represent multi-byte integers with the
 most-significant byte first rather than least-significant byte first
 (so-called "little endian") which has become the dominant endianness today.
 This means that even with the fixed-sized, packed structure above,
-there may be processors where a record with `salinity == 2` is intepreted
+there may be processors where a record with `salinity == 2` is interpreted
 as `33554432` because of the endian mismatch.
 
 At Bond, we initially took pains to build `hton` (host-to-network) 
@@ -149,7 +149,7 @@ a scheme known as "wear leveling".
 So frequently-accessed data must at least be cached in RAM.
 
 These challenges mean that for non-trivial applications such as the
-smart home hub where there are many small peices of information to persist,
+smart home hub where there are many small pieces of information to persist,
 there is a clear need for a well-organized scheme for managing the use of the 
 flash to save and load this data. This is what we refer to as an **embedded database**.
 
@@ -222,7 +222,7 @@ is idle (sounds better, but hard to pull off).
 #### Do you need a backup and restore function?
 
 Effectively backing up and restoring from backups can be a really powerful user story.
-However, doing this well will require some support at the embeded database level.
+However, doing this well will require some support at the embedded database level.
 Simply copying the entire database partition may be excessively large.
 
 Databases can also be designed to stream records out as part of a backup mechansism.
@@ -251,7 +251,7 @@ The header contains a 64-bit unique record key, 16-bit record type, the 64-bit k
 record (useful for building hierarchical relationships), the length of the record data,
 a checksum of the record data, and finally a checksum of the header.
 
-At boot, the microcontroller can efficienty scan through the database, loading the key and type 
+At boot, the microcontroller can efficiently scan through the database, loading the key and type 
 metadata, memorizing the physical address (flash offset) of every record.
 This scan is efficient because only the headers need be read. The contents can be skipped over.
 Things only slow down in the case of corruption, in which case it is necessary to scan through
@@ -269,9 +269,9 @@ can then be erased, freeing up the space occupied by dead (deleted) records.
 A killer feature of Beau is backup and restore. 
 To back up, we simply stream the database records out using HTTP chunked transfer.
 To restore, we again use chunked transfer and this time write each record to the database.
-This technique has unlocked effecient transfer of smart home devices between hubs,
+This technique has unlocked efficient transfer of smart home devices between hubs,
 and for an easy path for upgrades to newer models of hubs, and of course for recovery
-after hardware failure or catestrophic firmware issues.
+after hardware failure or catastrophic firmware issues.
 
 ## Remote Monitoring of Database Statistics
 
@@ -314,7 +314,7 @@ our allocation of 4 MB for the database has left us lots of room for expansion:
 }
 ```
 
-Happy building! And remember, persistance is not futile. Just never underestimate the limitations of flash memory.
+Happy building! And remember, persistence is not futile. Just never underestimate the limitations of flash memory.
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
