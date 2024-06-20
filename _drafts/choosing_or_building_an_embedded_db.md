@@ -153,7 +153,7 @@ smart home hub where there are many small peices of information to persist,
 there is a clear need for a well-organized scheme for managing the use of the 
 flash to save and load this data. This is what we refer to as an **embedded database**.
 
-# Considering your Requirements for an Embedded Database
+## Considering your Requirements for an Embedded Database
 
 Now that it's clear why you need an embedded database, let's consider the different
 constraints which may lead you in one direction or another when shopping or building 
