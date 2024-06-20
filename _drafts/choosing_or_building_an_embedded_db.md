@@ -159,7 +159,7 @@ Now that it's clear why you need an embedded database, let's consider the differ
 constraints which may lead you in one direction or another when shopping or building 
 a solution:
 
-#### How much data do you have to store? And how much flash is available?
+### How much data do you have to store? And how much flash is available?
 
 You should start with a back-of-the-envelope calculation of the total amount of data
 that your device needs to store. This is harder than it sounds because you've got 
