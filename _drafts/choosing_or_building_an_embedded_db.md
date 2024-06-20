@@ -109,6 +109,27 @@ This means that even with the fixed-sized, packed structure above,
 there may be processors where a record with `salinity == 2` is interpreted
 as `33554432` because of the endian mismatch.
 
+If this sounds confusing, that's because it is.
+Even when working in a systems language such as C, 
+we get used to the convenient abstraction of "an integer"
+without worrying about how it is layed out in memory. So let's take a look 
+at how the a 32-bit unsigned integer with the hexedecimal value `0xDEADBEEF`
+is stored in memory using either endianness convention:
+
+|---------------|--------|--------|--------|--------|
+| endianness    | byte 0 | byte 1 | byte 2 | byte 3 |
+|---------------|--------|--------|--------|--------|
+| little-endian |  0xEF  |  0xBE  |  0xAD  |  0xDE  |
+|---------------|--------|--------|--------|--------|
+| big-endian    |  0xDE  |  0xAD  |  0xBE  |  0xEF  |
+|---------------|--------|--------|--------|--------|
+
+You can see that on little-endian systems, the least significant byte (`0xEF`) comes
+in the first memory location, as opposed to big-endian which starts with the most significant
+byte (`0xDE`). Now it should be clear that if the same byte buffer is loaded
+into a big-endian and a little-endian system, they will be intepreted as 
+very different integers.
+
 At Bond, we initially took pains to build `hton` (host-to-network) 
 functions for every structure which would enforce big-endian
 integer representations, in keeping with the tradition of TCP/IP 
