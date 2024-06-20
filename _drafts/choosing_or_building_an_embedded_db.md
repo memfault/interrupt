@@ -16,7 +16,7 @@ Let's take a look at some of the pitfalls and how they may be avoided.
 
 {% include toc.html %}
 
-## Why You Should Care About NVM
+## Why You Should Care About NVM (Non-Volatile Memory)
 
 Nearly every embedded system needs to persist data across power cycle.
 A smart fishtank needs to remember the configured salinity and oxygen setpoints,
