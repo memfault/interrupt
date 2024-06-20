@@ -87,7 +87,7 @@ However, if you compile on an AWS EC2 instance
 your fishtank), then you get a 16-byte structure because
 `int` there is 8 bytes.
 
-The bottom line for portability is, to use the definitions in `stdint.h`
+For portability, use the fixed-width definitions in `stdint.h`
 and instruct the compiler to pack your structure to remove any padding
 which would otherwise be added to encourage alignment to word boundries:
 
