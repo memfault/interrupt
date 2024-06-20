@@ -102,7 +102,7 @@ typedef struct {
 
 ### Much Ado About Endianness
 
-There's one remaining possible portability issue. There have historically 
+There's one remaining portability issue. There have historically 
 been "big-endian" processors which represent multi-byte integers with the
 most-significant byte first rather than least-significant byte first
 (so-called "little endian") which has become the dominant endianness today.
