@@ -16,7 +16,7 @@ Let's take a look at some of the pitfalls and how they may be avoided.
 
 {% include toc.html %}
 
-## Why You Should Care About NVM (Non-Volatile Memory)
+## Why You Should Care About NVS (Non-Volatile Storage)
 
 Nearly every embedded system needs to persist data across power cycle.
 A smart fishtank needs to remember the configured salinity and oxygen setpoints,
@@ -112,7 +112,7 @@ as `33554432` because of the endian mismatch.
 If this sounds confusing, that's because it is.
 Even when working in a systems language such as C, 
 we get used to the convenient abstraction of "an integer"
-without worrying about how it is layed out in memory. So let's take a look 
+without worrying about how it is laid out in memory. So let's take a look 
 at how the a 32-bit unsigned integer with the hexedecimal value `0xDEADBEEF`
 is stored in memory using either endianness convention:
 
@@ -127,7 +127,7 @@ is stored in memory using either endianness convention:
 You can see that on little-endian systems, the least significant byte (`0xEF`) comes
 in the first memory location, as opposed to big-endian which starts with the most significant
 byte (`0xDE`). Now it should be clear that if the same byte buffer is loaded
-into a big-endian and a little-endian system, they will be intepreted as 
+into a big-endian and a little-endian system, they will be interpreted as 
 very different integers.
 
 At Bond, we initially took pains to build `hton` (host-to-network) 
@@ -179,7 +179,7 @@ Now that it's clear why you need an embedded database, let's consider the differ
 constraints which may lead you in one direction or another when shopping or building 
 a solution:
 
-### How much data do you have to store? And how much flash is available?
+#### How much data do you have to store? And how much flash is available?
 
 You should start with a back-of-the-envelope calculation of the total amount of data
 that your device needs to store. This is harder than it sounds because you've got 
@@ -247,13 +247,59 @@ Simply copying the entire database partition may be excessively large.
 
 Databases can also be designed to stream records out as part of a backup mechansism.
 
-## Example: Bond's "Beau" Embedded Database
+#### Is the database read-write or write-only?
+
+In many applications the data you are storing may be logs or sensor data that never needs to be
+read by the embedded system, but only recorded for later analysis by a larger application.
+Usually this kind of data forms a time-series. If you know the records to be of fixed size
+or small maximum size, you could simply write each record to flash at regular offsets.
+However, you still should consider what happens when reaching the end of the allotted flash space.
+If continued writes are needed after the partition is full, then a scheme for handling the erasure
+of full pages is required which again complicates life for the implementor.
+
+## A Brief Look at a Few Existing Solutions
+
+Now that we've discussed the main challenges of flash memory for data storage,
+let's take a very brief look at a few specific implementations and their design choices:
+
+### Espressif's NVS Flash
+
+If you are building a product using Espressif SoCs like ESP32, then you have an full-featured
+built-in choice called [nvs_flash](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/storage/nvs_flash.html). Some salient features are:
+
+ - key-value store with string-based keys
+ - namespace system avoids conflicts between components
+ - can efficiently enumerate all records in a given namespace
+ - binary blobs are allowed to exceed page size
+ - highly efficient for small entries such as integers
+ - supports resuming of a compaction operation interrupted by power loss
+ - only officially available for Espressif chips
+
+### Zephyr's NVS
+
+The Zephyr operating system also offers a key-value [database implementation](https://docs.zephyrproject.org/latest/services/storage/nvs/nvs.html),
+which is characteristically lightweight. Two points to note are:
+
+ - keys are only 16-bit, so careful planning is required to avoid conflicts
+ - unlike other solutions, the data CRC is optional, so you can live dangerously and save on flash space
+
+### SPIFFS (SPI Flash File System)
+
+[SPIFFS](https://github.com/pellepl/spiffs) is way more ambitious than the 
+key-value stores discussed above, seeking to provide a POSIX-like filesystem interface featuring
+ `open`, `write`, `read`, and `seek` functions so that code written for SPIFFS could potentially 
+execute unmodified on a major OS like Linux. However, trying to pack full filesystem-like capabilities
+into the RAM available in a small embedded system leades to steep tradeoffs in performance and safety.
+Reading the [SPIFFS FAQ](https://github.com/pellepl/spiffs/wiki/FAQ) shines some light on these challenges.
+
+### Bond's _Beau_ Embedded Database
 
 When we were building the Bond Bridge, we looked around
-for embedded database solutions but came up short. The venerable FAT12 
-format was too inefficient with small records and the SPIFFS database 
-(at least at the time) did not support some of the key features
-we needed, so we rolled our own embedded database that we call Beau.
+for embedded database solutions but none of the free software solutions available at the time
+were up for the task. ESP32 nvs_flash was in early days and the venerable FAT12 
+format was too inefficient with small records.
+So after shipping an MVP with a very limited database that we affectionately dubbed "UglyDB",
+we rolled our own embedded database that we call _Beau_.
 
 We've used Beau on both smart ceiling fans with 128 kB storing
 schedules, group, and scenes and 4 MB for Bond Bridge (basically a smart home hub) which needs to store similar information about possibly hundreds of devices plus recorded 
