@@ -1,15 +1,4 @@
 ---
-# This is a template for Interrupt posts. Use previous, more recent posts from the _posts/
-# directory for more inspiration and patterns.
-#
-# When submitting a post for publishing, submit a PR with the post in the _drafts/ directory
-# and it will be moved to _posts/ on the date of publish.
-#
-# e.g.
-# $ cp _drafts/_template.md _drafts/my_post.md
-#
-# It will now show up in the front page when running Jekyll locally.
-
 title: A Schematic Review Checklist for Firmware Engineers
 description: A checklist with supporting stories for firmware engineers to review when  doing a schematic review.
 author: mschulte
@@ -43,40 +32,6 @@ Some pre-schematic review checklist items:
  - [ ] Get invited to the schematic review. Really, this is a callout to be working with your electrical engineer. If you've been working with your electrical engineer, providing guidance on what hardware you'll need, being invited to the schematic review should be a given.
  - [ ] Build your checklist up front. Use this blog post as a starting point, but make sure you customize the list for the given project.
 
-## My current checklist
-Here's my current checklist. I didn't list all the stories as above (this would've made way to long of a checklist), but I hope it's helpful for others!
-
-### Power/Battery
-
-- [ ] How does the firmware power off the device? Especially for a battery powered device.[1](#story-1-brown-out-loop)
-- [ ] For a battery powered device, Can the firmware measure how much power is available? How much accuracy is needed in this measurement? [1](#story-1-brown-out-loop)
-- [ ] How does an user reset your device?[2](#story-2-reset)
-
-### GPIOs
-
-- [ ] Provide a GPIO map in a spreadsheet.
-- [ ] Are all MCU peripherals used only once?
-- [ ] If the MCU is held in reset, are the peripheral devices held in their proper state? (Pull-up/pull-downs where needed)
-- [ ] Does the reset line have a proper pull-up or pull-down? (This is a common failure, so worth noting).
-- [ ] Are the debug GPIOs used _only_ for debug purposes?
-
-### Busses
-
-- [ ] Do you have a mechanism to reset all IC's attached to buses (when appropriate)?
-- [ ] Are all I2C devices on the same bus on different addresses?
-- [ ] If your MCU resets in the middle of an I2C read, how do you recover talking with the device you were reading from?[3](#story-3-i2c-resets)
-- [ ] If your MCU resets in the middle of a SPI transfer, how does the device the MCU was talking with handle that?
-- [ ] For all UART devices, are RTS/CTS lines needed?
-- [ ] For all UART devices, are RTS/CTS lines setup properly (this is confusing, because RTS -> CTS, but some devices label them differently)?
-
-### Debug/Test Infrastructure
-
-- [ ] How will you (a firmware engineer) attach a debugger to the board? (By soldering is not usually a good answer).
-- [ ] Are non-essential, but helpful, GPIOs exposed for a debugger, such as SWO or ETM?
-- [ ] Do test points exist for power rails, analog signals, and busses? If not, you'll need a plan for how to debug issues in those areas.
-- [ ] Where will crash logs be stored? (Typically need to survive a system reset). Think about this when thinking about RAM requirements.
-
-
 ## Story 1 - Brown-out Loop
 Years ago, I worked on an LTE enabled e-bike. The LTE module was powered off the battery that powered the electric assist for the bike, but had a single cell backup battery that would be used if the main battery was removed from the device.
 
@@ -88,10 +43,12 @@ Because of this brown-out loop, we were essentially stress testing our external 
 
 As a workaround, we ended up putting a voltage detection circuit + loop at the very start of our firmware. If the device was attempting to boot with a measured voltage of < CUTOFF VOLTAGE and the device did not detect a second power source (measured by a GPIO being pulled high), the device would sit in a `while (!external_power_okay()) {pet_watchdog();}` style loop, keeping at least external flash ok. We also upgraded our external flash filesystem to a version that was much more relisiant to boot loops.
 
-## Story 2 - Reset By Power Drain
-On the same LTE enabled e-bike, we occasionally noticed the device would become unresponsive. While we had a watchdog, for some reason the watchdog was not triggering in these cases. Once we were able to connect firmware tools (namely, a CAN dongle), we could reset the device, it would recover and work perfectly. However, we had missed designing in from the beginning a mechanism to reset the device.
+After this story, I always look to see if a battery powered device can both: (1) effectively monitor battery state of charge, and (2) shutdown in a low state of charge condition to prevent these sort of brown-out loops.
 
-Unfortunately, devices stuck in this unresponsive mode were also in a low power state. Luckily, our low power mode was not that good at the time, but we ended up having to instruct our users to let bikes set for 4 days before they could recover. That's a pretty poor user experience.
+## Story 2 - Reset By Power Drain
+On that same project years back, we occasionally noticed the device would become unresponsive. While we had a watchdog, for some reason the watchdog was either not triggering, or not resetting enough state on the device. Once we were able to connect our debug tools (namely, a CAN dongle), we could send a reset command the device, it would recover and work perfectly. However, we had missed designing in from the beginning a mechanism to reset the device that was accessible to our users.
+
+Because we had a battery in the device, our instructions to our users had to be "set the device aside and wait for the battery to lose power." Unfortunately for us, the bike stuck in this state was also in our lowest power mode, and had no UX difference between a bike with a dead battery. We ended up instructing our users to let bikes set for 4 days before they could recover. That's a pretty poor user experience.
 
 While we solved this in future releases by adding an NFC based reset, this is an issue that can only be fixed going forward, and not in reverse. Adding a physical way to reset the device for a human user from the beginning is a very powerful solution. How many things are fixed by "turning it off and turning it back on again"? 
 
@@ -112,9 +69,49 @@ However, the electrical engineers point was that firmware engineers rely too muc
 
 So I think that debuggers are essential tools for firmware engineers, and we should not hamper their usage. However, it's important to commit to building tools and systems for debugging systems in the field that use only the tools that will be available in the field, as your end goal as a firmware developer is to be able to fix those issues, not just the ones you can see at your desk.
 
+## My current checklist
+Here's my current checklist. I didn't list all the stories as above (this would've made way to long of a checklist), but I hope it's helpful for others!
+
+### Power/Battery
+
+- [ ] How does the firmware shutdown the device? Especially for a battery powered device.[1](#story-1-brown-out-loop)
+- [ ] For a battery powered device, Can the firmware measure how much power is available? How much accuracy is needed in this measurement? [1](#story-1-brown-out-loop)
+- [ ] How does an user reset your device?[2](#story-2-reset)
+
+### GPIOs
+
+- [ ] Provide a GPIO map in a spreadsheet, with main function after reset, intended function, and any additional notes.
+- [ ] Are all MCU peripherals used only once?
+- [ ] If the MCU is held in reset, are the peripheral devices held in their proper state? (Pull-up/pull-downs where needed)
+- [ ] Does the reset line have a proper pull-up or pull-down? (This is a common failure, so worth noting).
+- [ ] Are the debug GPIOs used _only_ for debug purposes?
+
+### Busses
+
+- [ ] Do you have a mechanism to reset all IC's attached to buses (when appropriate)?
+- [ ] Are all I2C devices on the same bus on different addresses?
+- [ ] If your MCU resets in the middle of an I2C read, how do you recover talking with the device you were reading from?[3](#story-3-i2c-resets)
+- [ ] If your MCU resets in the middle of a SPI transfer, how does the device the MCU was talking with handle that?
+- [ ] For all UART devices, are Rx/Tx lines setup properly (ensure Tx->Rx, and check the datasheets of the device to see if Rx means receiving on the peripheral side)?
+- [ ] For all UART devices, are RTS/CTS lines needed?
+- [ ] For all UART devices, are RTS/CTS lines setup properly (this is confusing, because RTS -> CTS, but some devices label them differently)?
+
+### Memory/Flash Storage
+
+- [ ] Do you have a code size estimate? And RAM estimate? How much buffer do you have in case your estimate is low?
+- [ ] Do you have sufficient space for additional features over the lifetime of the product?
+- [ ] Where will crash logs be stored? (Typically need to survive a system reset). Think about this when thinking about RAM requirements.
+
+### Debug/Test Infrastructure
+
+- [ ] How will you (a firmware engineer) attach a debugger to the board? (By soldering is not usually a good answer).[5](#story-5-too-much-or-to-little-debug)
+- [ ] Are non-essential, but helpful, GPIOs exposed for a debugger, such as SWO or ETM?
+- [ ] Do test points exist for power rails, analog signals, and busses?
+
+
 ## Conclusion
 
-This is the start of my checklist for schematic reviews. Feel free to take it/modify, and add to it. I've found it useful to keep stories with rules to help me remember why the rules exist in the first place. All rules are meant to be broken, and sometimes I end up waiving items from the checklist, or adding new items for specific projects. These rules have helped me catch a few hardware/software interactions before boards were produced, which helped us keep to our schedule and get devices shipped on time!
+This is the start of my checklist for schematic reviews. Feel free to take it/modify, and add to it. Or, even better, comment on this article with your own horror stories and lessons learned! I've found it useful to keep stories with rules to help me remember why the rules exist in the first place. All rules are meant to be broken, and sometimes I end up waiving items from the checklist, or adding new items for specific projects. These rules have helped me catch a few hardware/software interactions before boards were produced, which helped us keep to our schedule and get devices shipped on time!
 
 
 <!-- Interrupt Keep START -->
@@ -125,8 +122,3 @@ This is the start of my checklist for schematic reviews. Feel free to take it/mo
 
 {:.no_toc}
 
-## References
-
-<!-- prettier-ignore-start -->
-[^reference_key]: [Post Title](https://example.com)
-<!-- prettier-ignore-end -->
