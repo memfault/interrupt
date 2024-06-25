@@ -136,7 +136,7 @@ Add `/usr/bin/memfault-ota` to the image with the following content (and make su
 
 ```bash
 #!/bin/sh
-DATA_DIR=$(cat /etc/memfaultd.conf | jq -r '.data_dir')
+
 PROJECT_KEY=$(cat /etc/memfaultd.conf | jq -r '.project_key')
 MEMFAULT_SOFTWARE_TYPE=$(cat /etc/memfaultd.conf | jq -r '.software_type')
 MEMFAULT_SOFTWARE_VERSION=$(cat /etc/memfaultd.conf | jq -r '.software_version')
@@ -144,13 +144,12 @@ eval "$(memfault-device-info)"
 
 url=$(curl -f -s --get \
     --data-urlencode "hardware_version=${MEMFAULT_HARDWARE_VERSION}" \
+    --data-urlencode "software_type=${MEMFAULT_SOFTWARE_TYPE}" \
+    --data-urlencode "software_version=${MEMFAULT_SOFTWARE_VERSION}" \
     --data-urlencode "device_serial=${MEMFAULT_DEVICE_ID}" \
     --header "Memfault-Project-Key: ${PROJECT_KEY}" \
     "https://api.memfault.com/api/v0/releases/latest/url")
 exit_code=$?
-
-echo $url
-echo $exit_code
 
 if [ "$exit_code" -eq 0 ] && [ -n "$url" ]; then
     # The following line will need to be updated for the specific update installer
@@ -185,7 +184,7 @@ wget -O /ota/package.tar $1
 
 echo "Preparing..."
 tar -C /ota/package -xf /ota/package.tar
-tar -C /ota/package -pxf /ota/package/ota_tools.tar.bz2
+tar -C /ota/package -pxf /ota/package/ota_tools.tar.tbz2
 
 echo "Installing..."
 cd /ota/package/Linux_for_Tegra/tools/ota_tools/version_upgrade/
