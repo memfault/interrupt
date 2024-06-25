@@ -7,13 +7,15 @@ tags: [linux, ota, nvidia, jetson, memfault]
 ---
 
 <!-- excerpt start -->
+
 NVIDIA offers one of the most comprehensive SDKs for developers of AI-heavy products. It includes a development kit that can emulate other devices in the lineup (Jetson AGX Orin DK), a simpler development kit for “entry-level” products (Jetson Orin Nano DK), a ton of exciting software libraries, AI models and even more examples of how to use them. It’s truly outstanding and out of the box shows up as a Ubuntu workstation which will feel very familiar.
 
 However, it can be a bit daunting to figure out how to take this workstation experience and turn it into a headless unit that you can ship to customers far away and update remotely.
 
 <!-- excerpt end -->
 
-In this article, I will walk you through building a simpler image, based on NVIDIA Jetson Linux and updating it via Memfault OTA service.
+In this article, I will walk you through building a customized image of NVIDIA
+Jetson Linux and updating it via Memfault OTA service.
 
 ## Pre-requisites
 
@@ -28,7 +30,7 @@ at the time of publication) and specifically the following files:
 
 > If your developer kit is brand new, you may need to update your firmware to support Jetson 36. [We found these instructions easy to follow.](https://www.jetson-ai-lab.com/initial_setup_jon.html#__tabbed_1_1)
 
-## Preparing the initial image
+## Preparing the image
 
 NVIDIA provides a pre-built root filesystem which includes a graphical filesystem and lots of examples and tools. It’s great for initial experimentation but before going into production you will want to reduce the size of the image and only include software that is used.
 
@@ -104,7 +106,12 @@ Now would also be a great time to add Memfault monitoring to your image (make su
 ```bash
 curl -sSf https://raw.githubusercontent.com/patwolfe/memfaultd-experimental/main/quickstart.sh | sudo  MEMFAULT_PROJECT_KEY="<YOUR PROJECT KEY>" chroot rootfs/ sh
 ```
-> Note: This script will show some errors because it is not designed to run in a chroot environment. However, it will install the necessary packages and configuration files.
+
+> **Make sure to replace `<YOUR PROJECT KEY>` with your actual Memfault project key!**
+>
+> This script will show some errors because it is not designed to run in a
+chroot environment. However, it will install the necessary packages and
+configuration files.
 
 We want the version number reported to Memfault to include the NVIDIA `/etc/user_release_version` file. So we adjust `/usr/bin/memfault-device-info`:
 
@@ -221,12 +228,12 @@ WantedBy=timers.target
 Now is a great time to apply further customization to the image. You can add
 your programs, configuration files, etc. Hopefully, the examples above will provide some good inspiration.
 
-## Flash the initial image
+## Flash your device (first-time)
 
 At this point, our image is ready to be packaged and flashed via a direct USB
 link to a device.
 
-This will be our initial preparation of the device, the one you would flash at
+This is the initial preparation of the device, the one you would do at
 the factory:
 
 ```bash
@@ -239,6 +246,7 @@ $ sudo ROOTFS_AB=1 ./tools/kernel_flash/l4t_initrd_flash.sh --showlogs --no-flas
 # Flash images into the both storage devices
 $ sudo ./tools/kernel_flash/l4t_initrd_flash.sh --showlogs --network usb0 --flash-only
 ```
+([Reference documentation](https://docs.nvidia.com/jetson/archives/r36.3/DeveloperGuide/SD/FlashingSupport.html#using-initrd-flash-with-orin-nx-and-nano))
 
 Your system will reboot after the last command, and is ready to be used!
 
@@ -256,12 +264,13 @@ This will generate the `bootloader/jetson-orin-nano-devkit/ota_payload_package.t
 Our `update-instaler` also needs the OTA tools so we will include them in each release.
 
 ```bash
-$ cd ~/nvidia/Linux_for_Tegra/bootloader/bootloader/jetson-orin-nano-devkit
+$ cd ~/nvidia/Linux_for_Tegra/bootloader/jetson-orin-nano-devkit
 $ cp ~/nvidia/ota_tools_R36.3.0_aarch64.tbz2 ./ota_tools.tar.bz2
-$ tar -xf update-0.2.tar ota_tools.tar.bz2 ota_payload_package.tar.gz
+$ source ../../nv_tegra/user_version
+$ tar -cf update-22.04.$USER_VERSION.tar ota_tools.tar.tbz2 ota_payload_package.tar.gz
 ```
 
-This `update-0.2.tar` file is our complete update payload. It's what will be distributed by Memfault OTA service. We are not compressing it because its content is already compressed (it's one tar containing two compressed files).
+This `update-0.2.tar` file is our complete update payload. It's what will be distributed by Memfault OTA service. We are not compressing it because it's content is already compressed (it's one tar containing two compressed files).
 
 ## Deploy the update
 
@@ -269,7 +278,7 @@ To upload the update you could use the Memfault web interface but it's generally
 
 ```bash
 $ pip install memfault-cli
-$ memfault --org $MEMFAULT_ORG --org-token $MEMFAULT_OAT --project $MEMFAULT_PROJECT upload-ota-payload --hardware-version orin --software-type ubuntu --software-version 22.04.00.01 ~/nvidia/update-1.tar
+$ memfault --org $MEMFAULT_ORG --org-token $MEMFAULT_OAT --project $MEMFAULT_PROJECT upload-ota-payload --hardware-version orin --software-type ubuntu --software-version 22.04.$USER_VERSION update-22.04.$USER_VERSION.tar
 ```
 
 To activate this update, navigate to Memfault OTA and activate the release.
@@ -284,13 +293,21 @@ $ sudo memfault-ota
 
 ## Conclusion
 
-We have built a custom image for a NVIDIA Orin Nano Developer
-Kit with Memfault OTA and Memfault Monitoring. We are now able to update this device (and all it's replicas!) over the air.
+We have built a custom image for an NVIDIA Orin Nano Developer
+Kit with Memfault OTA and Memfault Monitoring. We are now able to update this
+device (and all its replicas!) over the air **reliably**.
 
-This is a great starting point for building a production ready device.
+This is a great starting point for building a production-ready device.
 
 We left out signing and verifying the image. From an OTA distribution
-perspective, it makes no difference if the image is signed and encrypted. For a real deployment, you should do a threat analysis and implement appropriate security measures. NVIDIA also includes a suite of tools to sign and verify updates.
+perspective, it makes no difference if the image is signed and encrypted. For a
+real deployment, you should do a threat analysis and implement appropriate
+security measures. NVIDIA includes a suite of tools to sign and verify
+updates.
 
 If you have any questions or need help, feel free to reach out to us!
+
+## References
+
+- [NVIDIA guide on image based update](https://docs.nvidia.com/jetson/archives/r36.3/DeveloperGuide/SD/SoftwarePackagesAndTheUpdateMechanism.html#updating-jetson-linux-with-image-based-over-the-air-update)
 
