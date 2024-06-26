@@ -77,7 +77,7 @@ $ cd ~/nvidia/Linux_for_Tegra/rootfs
 $ sudo tar xpf ../tools/samplefs/sample_fs.tbz2
 $ cd ..
 
-# Install NVidia binary packages into the rootfs
+# Install NVIDIA binary packages into the rootfs
 $ ./apply_binaries.sh
 ```
 
@@ -101,14 +101,12 @@ devices.
 
 ### Install Memfault monitoring
 
-Now would also be a great time to add Memfault monitoring to your image (make sure to replace YOUR_PROJECT_KEY with a valid project key).
+Now would also be a great time to add Memfault monitoring to your image (make sure to replace `<YOUR_PROJECT_KEY>` with a valid [Memfault Project Key](https://docs.memfault.com/docs/platform/data-routes)).
 
 ```bash
-curl -sSf https://raw.githubusercontent.com/patwolfe/memfaultd-experimental/main/quickstart.sh | sudo  MEMFAULT_PROJECT_KEY="<YOUR PROJECT KEY>" chroot rootfs/ sh
+curl -sSf https://app.memfault.com/static/scripts/linux-quickstart.sh | sudo  MEMFAULT_PROJECT_KEY="<YOUR PROJECT KEY>" chroot rootfs/ sh
 ```
 
-> **Make sure to replace `<YOUR PROJECT KEY>` with your actual Memfault project key!**
->
 > This script will show some errors because it is not designed to run in a
 chroot environment. However, it will install the necessary packages and
 configuration files.
