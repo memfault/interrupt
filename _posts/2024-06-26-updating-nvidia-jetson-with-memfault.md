@@ -1,7 +1,7 @@
 ---
-title: Updating NVIDIA Jetson devices with Memfault
+title: Updating NVIDIA Jetson devices with Memfault OTA
 description:
-  How to use Memfault to update NVIDIA Jetson devices over-the-air.
+  How to use Memfault to update NVIDIA Jetson devices over-the-air (OTA).
 author: tsarlandie
 tags: [linux, ota, nvidia, jetson, memfault]
 ---
