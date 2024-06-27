@@ -2,7 +2,7 @@
 title: Practical Zephyr - Devicetree semantics (Part 4)
 description: Article series "Practical Zephyr", the fourth part about Devicetree bindings.
 author: lampacher
-tags: [zephyr, devicetree]
+tags: [zephyr, devicetree, practical-zephyr-series]
 ---
 
 <!-- excerpt start -->
@@ -10,6 +10,8 @@ tags: [zephyr, devicetree]
 Having covered the *Devicetree basics* in the [previous article]({% post_url 2024-02-01-practical_zephyr_dt %}), we now add **semantics** to our *Devicetree* using so-called _bindings_: For each supported type, we'll create a corresponding _binding_ and look at the generated output to understand how it can be used with Zephyr's Devicetree API.
 
 <!-- excerpt end -->
+
+👉 Find the other parts of the *Practical Zephyr* series [here](/tags#practical-zephyr-series).
 
 Notice that we'll only look at Zephyr's _basic_ Devicetree API and won't analyze specific subsystems such as `gpio` in detail. We're saving this for a practice round in the next article of this _Practical Zephyr_ series.
 

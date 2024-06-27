@@ -2,7 +2,7 @@
 title: Practical Zephyr - Devicetree basics (Part 3)
 description: Article series "Practical Zephyr", the third part covering Devicetree basics.
 author: lampacher
-tags: [zephyr, devicetree]
+tags: [zephyr, devicetree, practical-zephyr-series]
 ---
 
 In the [previous article]({% post_url 2024-01-24-practical_zephyr_kconfig %}), we configured _software_ using the [kernel configuration tool Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig), and we've silently assumed that there's a UART interface on our board that is configurable and used for logging.
@@ -15,6 +15,8 @@ In contrast to _Kconfig_, the *Devicetree* syntax and its use are more intricate
 
 
 <!-- excerpt end -->
+
+👉 Find the other parts of the *Practical Zephyr* series [here](/tags#practical-zephyr-series).
 
 > **Disclaimer:** This article covers Devicetree in _detail_ and from first principles. If you're already familiar with Devicetree or don't want to know how it works in detail, this article may not be for you. Instead, consider tuning in for the next article!
 

@@ -2,7 +2,7 @@
 title: Practical Zephyr - Devicetree practice (Part 5)
 description: Article series "Practical Zephyr", the fifth part about Devicetree practice.
 author: lampacher
-tags: [zephyr, devicetree]
+tags: [zephyr, devicetree, practical-zephyr-series]
 ---
 
 <!-- excerpt start -->
@@ -12,6 +12,8 @@ In the previous articles, we covered _Devicetree_ in great detail: We've seen ho
 <!-- excerpt end -->
 
 Using a practical example, we'll see that our deep dive into Devicetree was really only covering the basics that we need to understand more advanced concepts, such as [pin control](https://docs.zephyrproject.org/latest/hardware/pinctrl/index.html) and device drivers.
+
+👉 Find the other parts of the *Practical Zephyr* series [here](/tags#practical-zephyr-series).
 
 {% include newsletter.html %}
 

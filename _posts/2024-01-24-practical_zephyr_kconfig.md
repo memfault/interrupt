@@ -2,7 +2,7 @@
 title: Practical Zephyr - Kconfig (Part 2)
 description: Article series "Practical Zephyr", the second part covering the kernel configuration system Kconfig.
 author: lampacher
-tags: [zephyr, kconfig]
+tags: [zephyr, kconfig, practical-zephyr-series]
 ---
 
 <!-- excerpt start -->
@@ -10,6 +10,8 @@ tags: [zephyr, kconfig]
 In this second article of the "Practical Zephyr" series, we'll explore the [kernel configuration system Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig) by looking at the `printk` logging option in Zephyr. We won't explore the logging service as such in detail but instead use it as an excuse to dive deep into [Kconfig](https://docs.zephyrproject.org/latest/build/kconfig/index.html#configuration-system-kconfig). Finally, we'll create our own little application-specific _Kconfig_ configuration.
 
 <!-- excerpt end -->
+
+👉 Find the other parts of the *Practical Zephyr* series [here](/tags#practical-zephyr-series).
 
 {% include newsletter.html %}
 
