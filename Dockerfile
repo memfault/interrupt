@@ -1,4 +1,4 @@
-FROM ruby:3.0-slim-buster
+FROM ruby:3.2.4-slim-bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -6,10 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     python3 \
     python3-pip \
+    python3-venv \
     nodejs
-
-# explicit and recent version of pip avoids needing to build wheel deps
-RUN pip3 install pip==22.3.1
 
 WORKDIR /memfault/interrupt
 
@@ -19,7 +17,8 @@ RUN bundle config force_ruby_platform true
 RUN bundle install
 
 COPY requirements.txt .
-RUN python3 -m pip install -r requirements.txt
+RUN python3 -m venv /venv && . /venv/bin/activate && \
+    python3 -m pip install -r requirements.txt
 
 COPY entrypoint.sh ./entrypoint.sh
 
