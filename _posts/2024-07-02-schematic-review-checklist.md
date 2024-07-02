@@ -1,6 +1,6 @@
 ---
 title: A Schematic Review Checklist for Firmware Engineers
-description: A checklist with supporting stories for firmware engineers to review when  doing a schematic review.
+description: A checklist with supporting stories for firmware engineers to review when  doing a schematic review.
 author: mschulte
 ---
 
@@ -12,8 +12,8 @@ Schematic reviews are a part of the hardware development cycle in many, if not m
 
 This post written in a voice that makes two general assumptions:
 
- 1. The reader is a firmware engineer.
- 1. The reader is not doing the schematic layout 
+ 1. The reader is a firmware engineer.
+ 1. The reader is not doing the schematic layout
 
 While those two assumptions helped me write this post, I think the learnings/stories in it are still applicable for a variety of setups. e.g.: If the reader is an electrical engineer that wants to understand some firmware concerns. Or if the reader is responsible for both the electrical and firmware design of a project. With either of these assumptions broken, feel free to put on your firmware engineer hat, and read! Hopefully this will be helpful for you.
 
@@ -29,8 +29,8 @@ Most of the schematic reviews I've attended are led by electrical engineers, and
 
 Some pre-schematic review checklist items:
 
- - [ ] Get invited to the schematic review. Really, this is a callout to be working with your electrical engineer. If you've been working with your electrical engineer, providing guidance on what hardware you'll need, being invited to the schematic review should be a given.
- - [ ] Build your checklist up front. Use this blog post as a starting point, but make sure you customize the list for the given project.
+ - [ ] Get invited to the schematic review. Really, this is a callout to be working with your electrical engineer. If you've been working with your electrical engineer, providing guidance on what hardware you'll need, being invited to the schematic review should be a given.
+ - [ ] Build your checklist up front. Use this blog post as a starting point, but make sure you customize the list for the given project.
 
 ## Story 1 - Brown-out Loop
 Years ago, I worked on an LTE enabled e-bike. The LTE module was powered off the battery that powered the electric assist for the bike, but had a single cell backup battery that would be used if the main battery was removed from the device.
@@ -50,7 +50,7 @@ On that same project years back, we occasionally noticed the device would become
 
 Because we had a battery in the device, our instructions to our users had to be "set the device aside and wait for the battery to lose power." Unfortunately for us, the bike stuck in this state was also in our lowest power mode, and had no UX difference between a bike with a dead battery. We ended up instructing our users to let bikes set for 4 days before they could recover. That's a pretty poor user experience.
 
-While we solved this in future releases by adding an NFC based reset, this is an issue that can only be fixed going forward, and not in reverse. Adding a physical way to reset the device for a human user from the beginning is a very powerful solution. How many things are fixed by "turning it off and turning it back on again"? 
+While we solved this in future releases by adding an NFC based reset, this is an issue that can only be fixed going forward, and not in reverse. Adding a physical way to reset the device for a human user from the beginning is a very powerful solution. How many things are fixed by "turning it off and turning it back on again"?
 
 ## Story 3 - I2C Resets
 While developing a fitness tracker, I kept running into a bug where I occasionally needed to fully power cycle a device to get the temperature sensor to start working again. The temperature sensor was connected over I2C, and digging into the issue I found that, when this was happening, the I2C SDA line was stuck low. We were able to reproduce that failure by having the MCU reset in the middle of an I2C read. Because the I2C controller on the MCU was controlling the clock, and stopped clocking, the peripheral was still driving the SDA line, waiting for the next clock signal.
@@ -63,14 +63,14 @@ However, I'd still have preferred a true reset line.
 This is less of a war story, and more of a shoutout to good electrical engineers. Before walking into the schematic review for one project I was working on, the EE on the project published a spreadsheet of all the GPIOs for the MCU. This included their main function after reset, intended function, and any additional notes. It made it very easy as a firmware engineer to scan the list of GPIOs and ensure they were all configured properly. I'd recommend this is something that all firmware engineers ask for when looking at a schematic.
 
 ## Story 5: Too much or too little debug
-I worked on a project once with an electrical engineer that proposed we make it hard to attach a debugger to the board. He proposed that we force someone to solder wires/leads to debug pads in order to get a debugger to work. As a young firmware engineer, I was floored. The debugger was my lifeline, and especially on a Cortex-M4 could help troubleshoot so many things. Making it difficult for a firmware engineer to use their most powerful tool seemed ludicras to me.
+I worked on a project once with an electrical engineer that proposed we make it hard to attach a debugger to the board. He proposed that we force someone to solder wires/leads to debug pads in order to get a debugger to work. As a young firmware engineer, I was floored. The debugger was my lifeline, and especially on a Cortex-M4 could help troubleshoot so many things. Making it difficult for a firmware engineer to use their most powerful tool seemed ludicrous to me.
 
 However, the electrical engineers point was that firmware engineers rely too much on debuggers to debug devices, and don't spend enough time building tools/systems to track down crashes/bugs in the field, where a debugger is likely not attached. This was a good point. While working on fitness trackers years ago, I'd seen a firmware update over UART protocol continuously fail because none of the firmware developers used it (because it was broken of course). This meant it was only ever used by our QA team, who would file bugs, but it was never prioritized until one day it became a necessary firmware update path, and required a lot of scripting on the host side to work around firmware bugs.
 
 So I think that debuggers are essential tools for firmware engineers, and we should not hamper their usage. However, it's important to commit to building tools and systems for debugging systems in the field that use only the tools that will be available in the field, as your end goal as a firmware developer is to be able to fix those issues, not just the ones you can see at your desk.
 
 ## My current checklist
-Here's my current checklist. I didn't list all the stories as above (this would've made way to long of a checklist), but I hope it's helpful for others!
+Here's my current checklist. I didn't list all the stories as above (this would've made way too long of a checklist), but I hope it's helpful for others!
 
 ### Power/Battery
 
@@ -106,7 +106,7 @@ Here's my current checklist. I didn't list all the stories as above (this would'
 
 - [ ] How will you (a firmware engineer) attach a debugger to the board? (By soldering is not usually a good answer).[5](#story-5-too-much-or-to-little-debug)
 - [ ] Are non-essential, but helpful, GPIOs exposed for a debugger, such as SWO or ETM?
-- [ ] Do test points exist for power rails, analog signals, and busses?
+- [ ] Do test points exist for power rails, analog signals, and buses?
 
 
 ## Conclusion
