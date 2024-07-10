@@ -37,7 +37,7 @@ You can now access the server at [http://0.0.0.0:4000](http://0.0.0.0:4000)
 
 You'll need:
 - Python 3.8 or later
-- Ruby 3.2.2
+- Ruby 2.7.7
 
 #### Install Dependencies
 
