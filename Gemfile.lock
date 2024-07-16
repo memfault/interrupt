@@ -1,18 +1,14 @@
-GIT
-  remote: https://github.com/memfault/jekyll-lunr-js-search.git
-  revision: 497e6c31849162d74872ec421017f364fd84b7c4
-  ref: 497e6c31849162d74872ec421017f364fd84b7c4
-  specs:
-    jekyll-lunr-js-search (3.3.0)
-      execjs (~> 2.7)
-      json (~> 2.0)
-      nokogiri (~> 1.7)
-
 GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
+    algolia_html_extractor (2.6.4)
+      json (~> 2.0)
+      nokogiri (~> 1.10)
+    algoliasearch (1.27.5)
+      httpclient (~> 2.8, >= 2.8.3)
+      json (>= 1.5.1)
     colorator (1.1.0)
     concurrent-ruby (1.3.3)
     deep_merge (1.2.2)
@@ -20,10 +16,11 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0)
     eventmachine (1.2.7)
-    execjs (2.9.1)
     ffi (1.17.0)
+    filesize (0.2.0)
     forwardable-extended (2.6.0)
     http_parser.rb (0.8.0)
+    httpclient (2.8.3)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     jekyll (4.2.2)
@@ -41,6 +38,15 @@ GEM
       rouge (~> 3.0)
       safe_yaml (~> 1.0)
       terminal-table (~> 2.0)
+    jekyll-algolia (1.7.1)
+      algolia_html_extractor (~> 2.6)
+      algoliasearch (~> 1.26)
+      filesize (~> 0.1)
+      jekyll (>= 3.6, < 5.0)
+      json (~> 2.0)
+      nokogiri (~> 1.6)
+      progressbar (~> 1.9)
+      verbal_expressions (~> 0.1.5)
     jekyll-diagrams (0.10.0)
       jekyll (>= 3.8, < 5.0)
     jekyll-feed (0.15.1)
@@ -76,6 +82,7 @@ GEM
       racc (~> 1.4)
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
+    progressbar (1.13.0)
     public_suffix (6.0.0)
     racc (1.8.0)
     rb-fsevent (0.11.2)
@@ -91,6 +98,7 @@ GEM
     terminal-table (2.0.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     unicode-display_width (1.8.0)
+    verbal_expressions (0.1.5)
     webrick (1.8.1)
 
 PLATFORMS
@@ -98,10 +106,10 @@ PLATFORMS
 
 DEPENDENCIES
   jekyll (~> 4.2.1)
+  jekyll-algolia (~> 1.0)
   jekyll-diagrams
   jekyll-feed (~> 0.15.1)
   jekyll-get-json (~> 1.0)
-  jekyll-lunr-js-search!
   jekyll-paginate (~> 1.1)
   jekyll-seo-tag (~> 2.7.1)
   jekyll-sitemap (~> 1.4)

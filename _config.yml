@@ -78,3 +78,8 @@ exclude:
   - netlify.toml
   - readme.html
   - example
+
+algolia:
+  application_id: '2CRUIKB5WA'
+  index_name: 'search'
+  search_only_api_key: '0e240341a5eff44c808d3b9e0b503f74'
