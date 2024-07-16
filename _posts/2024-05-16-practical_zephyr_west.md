@@ -2,7 +2,7 @@
 title: Practical Zephyr - West workspaces (Part 6)
 description: Article series "Practical Zephyr" the sixth part about West workspaces.
 author: lampacher
-tags: [zephyr, west]
+tags: [zephyr, west, practical-zephyr-series]
 ---
 
 <!-- excerpt start -->
@@ -12,6 +12,8 @@ In the previous articles, we used _freestanding_ applications and relied on a gl
 <!-- excerpt end -->
 
 After this article, you should know _West_ not as a meta-tool for `build` and `flash` commands, but as a powerful dependency manager for your Zephyr applications. Hopefully - after reading this article - you will no longer create _freestanding_ Zephyr applications but will use _West workspaces_ only.
+
+👉 Find the other parts of the *Practical Zephyr* series [here](/tags#practical-zephyr-series).
 
 {% include newsletter.html %}
 

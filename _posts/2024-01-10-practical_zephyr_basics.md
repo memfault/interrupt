@@ -2,7 +2,7 @@
 title: Practical Zephyr - Zephyr Basics (Part 1)
 description: Article series "Practical Zephyr", the first part about West, CMake, and Zephyr application types.
 author: lampacher
-tags: [zephyr, build-system]
+tags: [zephyr, build-system, practical-zephyr-series]
 ---
 
 This is the start of a new article series about _Zephyr's basics_: It will walk you through Zephyr's [build and configuration systems](https://docs.zephyrproject.org/latest/build/index.html) _West_, _Kconfig_ and _devicetree_.
@@ -24,6 +24,8 @@ If you're working a full-time job and would still like to get started with Zephy
 <!-- excerpt end -->
 
 After this series, you should understand Zephyr's build and configuration tools. The learning curve flattens, and you can continue learning without getting lost in Zephyr's documentation.
+
+👉 Find the other parts of the *Practical Zephyr* series [here](/tags#practical-zephyr-series).
 
 > **Note:** This series is **not** for you if you're not interested in details and how things work but instead want to _use_ Zephyr. We'll go through _generated code and configuration files and learn _devicetree_ from first principles! Also, if you're experienced with Linux and already know how _Kconfig_ and _devicetree_ work, the articles of this series are just not for you.
 
@@ -224,7 +226,7 @@ Now that we have a working installation, we can start with the important parts o
 Zephyr supports different [application types](https://docs.zephyrproject.org/latest/develop/application/index.html#application-types), differentiated by the location of your application in relation to Zephyr's sources
 
 - [Freestanding applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-freestanding-app) exist independent of Zephyr's location, meaning Zephyr is not part of the application's repository or file tree. The relation with Zephyr is only established in the build process when using `find_package` to locate Zephyr, typically based on the `ZEPHYR_BASE` environment variable.
-- [Workspace applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app) use a [_West_ workspace](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#west-workspaces): For such applications, _West_ is used to initialize your workspace, e.g., based on a `west.yml` manifest file. _ West _ uses the manifest file to create complex workspaces: The location and revision are specified in the manifest file for each external dependency used in your project. West then uses this manifest to populate your workspace—like a very, very powerful version of [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+- [Workspace applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-workspace-app) use a [_West_ workspace](https://docs.zephyrproject.org/latest/develop/west/workspaces.html#west-workspaces): For such applications, _West_ is used to initialize your workspace, e.g., based on a `west.yml` manifest file. _West_ uses the manifest file to create complex workspaces: The location and revision are specified in the manifest file for each external dependency used in your project. West then uses this manifest to populate your workspace—like a very, very powerful version of [Git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 - [Zephyr repository applications](https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-repo-app) live within the Zephyr repository itself, e.g., demo applications that are maintained with Zephyr. You could add applications in a fork of the Zephyr repository, but this is not very common.
 
 The most common and easiest approach is to **start** with a freestanding application: You'll only need a couple of files to get started. As with the nRF Connect SDK, Zephyr is configured via the environment in a known installation directory.
@@ -303,7 +305,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 - `cmake_minimum_required` just indicates the allowed CMake versions. Zephyr has its requirements and maintains its minimal required CMake version in `zephyr/cmake/modules/zephyr_default.cmake`.
 - The `set` function writes the board we're building our application for to the variable `BOARD`. This step is optional and can be specified during the build step as a parameter. `nrf52840dk_nrf52840` is Zephyr's name for the [nRF52840 development kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk).
-- Then, we load Zephyr using the `find_package` function. In our [setup script][#creating-a-setup-script], we've exported the `ZEPHYR_BASE` environment variable, which is now passed as a hint to the `find_package` function to locate the correct Zephyr installation.
+- Then, we load Zephyr using the `find_package` function. In our [setup script](#creating-a-setup-script), we've exported the `ZEPHYR_BASE` environment variable, which is now passed as a hint to the `find_package` function to locate the correct Zephyr installation.
 
 > **Note:** There are several ways to use the Zephyr CMake package, each of which is described in detail in [Zephyr's CMake package documentation](https://docs.zephyrproject.org/latest/build/zephyr_cmake_package.html). You can also have a look at the [Zephyr CMake package source code](https://docs.zephyrproject.org/latest/build/zephyr_cmake_package.html#zephyr-cmake-package-source-code) for details.
 

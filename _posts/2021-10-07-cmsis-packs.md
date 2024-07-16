@@ -127,8 +127,8 @@ file to flash chips) is the flash algorithm, which is specified in the top-level
 
 <https://www.keil.com/pack/doc/CMSIS/Pack/html/packFormat.html>
 
-The file contains many intersting pieces of information. One particularly useful
-one is the Flash Algorithms used to program a peice of hardware. Look for a
+The file contains many interesting pieces of information. One particularly useful
+one is the Flash Algorithms used to program a piece of hardware. Look for a
 section of the XML with the `<algorithm>` tag, for example:
 
 _Note: I added the comments explaining each section_

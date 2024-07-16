@@ -1,0 +1,5 @@
+Notification Banner:
+  background: "#141845"
+  textcolor: "#fff"
+  description: |
+    <i> In-Person Denver Meetup: When to Build Security Into Your IoT Device - Thursday, July 18th @ 6pm MT. <a href="https://www.eventbrite.com/e/when-to-build-security-into-your-iot-device-tickets-911357283167">Save your spot!</a></i>

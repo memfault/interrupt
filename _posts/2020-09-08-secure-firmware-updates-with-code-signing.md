@@ -635,11 +635,11 @@ shell>
 The full example is available on Github at
 [interrupt@fwup-signing](https://github.com/memfault/interrupt/tree/master/example/fwup-signing).
 
-> Note: While researching this post I came across Tinycrypt, an open source
-> library maintained by Intel. Tinycript combines micro-ecc with additional
-> primitives such as SHA-256. If I were to do it again, I would look into using
-> tinycript rather than two separate libraries.
-
+> Note: While researching this post I came across
+> [Tinycrypt](https://github.com/intel/tinycrypt), an open source library
+> maintained by Intel. Tinycrypt combines micro-ecc with additional primitives
+> such as SHA-256. If I were to do it again, I would look into using tinycrypt
+> rather than two separate libraries.
 
 ## Additional Considerations
 

@@ -488,7 +488,7 @@ Then the following set of rules are applied to the promoted values:
 It can be hard to keep track of the set of conversions taking place but fortunately the
 `-Wconversion` option can be used to generate warnings when **implicit** conversions that are
 likely to change the underlying value take place. This warning can be tedious to eliminate from a codebase
-but I've seen it help catch real bugs on numerous occassions in the past.
+but I've seen it help catch real bugs on numerous occasions in the past.
 
 Consider the following simple example as an illustration:
 
@@ -704,9 +704,9 @@ documentation[^13] states that the two permitted ABI variants for enumeration ty
 >   of its enumerated values the type occupies a double word (long long or unsigned long long).
 > - The type of the storage container for an enumerated type is the smallest integer type that can contain all of its enumerated values
 
-There a few key disadvantges of truncating enums to the shortest width type:
+There a few key disadvantages of truncating enums to the shortest width type:
 
-- Binary compatiblity can be broken if the values in an enum change between releases. For example, if the max value in
+- Binary compatibility can be broken if the values in an enum change between releases. For example, if the max value in
   one version is 255 and then in a future version it's 4096, the size of the enum will change from a
   1-byte to a 2-byte representation. This means linking against a pre-compiled library using the older version
   of the enum will no longer work.
@@ -722,7 +722,7 @@ There a few key disadvantges of truncating enums to the shortest width type:
 
 The following is an example of how operating on a shorter width type (`uint8_t`) requires an extra
 masking instruction than operating on a type aligned with the architecture register size
-(`int`). When an enum is trucated to a smaller width, the same type of masking instructions may be
+(`int`). When an enum is truncated to a smaller width, the same type of masking instructions may be
 needed when operations are performed with it.
 
 ```c

@@ -119,7 +119,7 @@ $ make -l $(python -c "import multiprocessing; print(multiprocessing.cpu_count()
 #### Output During Parallel Invocation
 
 If you have a lot of output from the commands Make is executing in parallel, you
-might see output interleaved on `stdout`. To handle this, Make has the option [`--ouput-sync`](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html).
+might see output interleaved on `stdout`. To handle this, Make has the option [`--output-sync`](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html).
 
 I recommend using **`--output-sync=recurse`**, which will print the entire
 output of each target's recipe when it completes, without interspersing other
@@ -407,7 +407,7 @@ test: build
 ```
 
 > **NOTE!!! `.PHONY` targets are ALWAYS considered out-of-date, so Make will
-ALWAYS run the recipe for those targets (and therfore any target that has a
+ALWAYS run the recipe for those targets (and therefore any target that has a
 `.PHONY` prerequisite!). Use with caution!!**
 
 #### Implicit Rules
@@ -963,7 +963,7 @@ $(BUILD_FOLDER)/%.o: %.c
 
 # The rule for building the executable "example", using OBJ_FILES as
 # prerequisites. Since we're not relying on an implicit rule, we need to
-# explicity list CFLAGS, LDFLAGS, LDLIBS
+# explicitly list CFLAGS, LDFLAGS, LDLIBS
 $(BUILD_FOLDER)/example: $(OBJ_FILES)
 	@echo Linking $(notdir $@)
 	$(Q) $(CC) $(CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@

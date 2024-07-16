@@ -5,13 +5,13 @@ author: francois
 tags: [fw-code-size, toolchain]
 ---
 
-<!-- excerpt start -->
-
 Every firmware engineer has run out of code space at some point or another.
 Whether they are trying to cram in another feature, or to make enough space for
 [A/B firmware
 updates](https://sbabic.github.io/swupdate/overview.html#double-copy-with-fall-back)
 more code space is always better.
+
+<!-- excerpt start -->
 
 In this [series of posts]({% tag_url fw-code-size %}), we'll explore ways to save code space and ways not to
 do it. We will cover compiler options, coding style, logging, as well as
@@ -20,6 +20,10 @@ desperate hacks when all you need is another 24 bytes.
 But first, let's talk about measuring code size.
 
 <!-- excerpt end -->
+
+{% include newsletter.html %}
+
+{% include toc.html %}
 
 ## Why measure?
 
@@ -47,9 +51,10 @@ $ arm-none-eabi-size build/with-libc.elf
 ```
 
 So in this program we have:
-* 10800 bytes of `text`, which is code
-* 104 bytes of `data`, which is statically initalized memory
-* 8272 bytes of `bss`, which is zero-initialized memory
+
+- 10800 bytes of `text`, which is code
+- 104 bytes of `data`, which is statically initalized memory
+- 8272 bytes of `bss`, which is zero-initialized memory
 
 Unfortunately, the output of this tool is a little misleading. You may think
 that your program will occupy `10800` bytes of flash, but this is not the case.
@@ -134,6 +139,7 @@ print_region $ram $max_ram "RAM"
 ```
 
 which gives us:
+
 ```terminal
 $ ./get-fw-size build/with-libc.elf 0x40000
 0x8000
@@ -159,7 +165,7 @@ and `bss`.
 
 ## Digging into functions
 
-The above tells us *how much* code space we are using, but not *why*. To answer
+The above tells us _how much_ code space we are using, but not _why_. To answer
 the latter, we need to go deeper.
 
 This is where another tool bundled with the GNU ARM toolchain comes in handy:
@@ -233,22 +239,22 @@ Truly, it is a firmware analysis swiss army knife!
 Using puncover is relatively straightforward. You'll need to lightly prepare
 your codebase, setup the tool itself, and run it.
 
-## Preparing our codebase
+### Preparing our codebase
 
 In order to for puncover to work, our elf file needs to contain the requisite
 information. As such, you'll need to make sure you've got the following CFLAGS
 set:
 
-* `-g`: this generates debug information which puncover requires for analysis
-* `-fdebug-prefix-map=/=`: this flag forces gcc to collect full paths for
+- `-g`: this generates debug information which puncover requires for analysis
+- `-fdebug-prefix-map=/=`: this flag forces gcc to collect full paths for
   filenames. This allows puncover to create the hierarchical view of the code.
-Even better would be to use your repository's root (usually found by running
-`git rev-parse --show-toplevel`).
+  Even better would be to use your repository's root (usually found by running
+  `git rev-parse --show-toplevel`).
 
 I typically add those two to my CFLAGS for every project directly in my
 Makefile.
 
-## Setting up puncover
+### Setting up puncover
 
 Puncover is relatively straightforward to setup: you simply need to clone it,
 setup a virtualenv, and install the dependencies.
@@ -282,7 +288,7 @@ mock-1.3.0 nose-1.3.7 nose-cov-1.6 pbr-5.2.0 requests-2.21.0 six-1.12.0
 urllib3-1.24.3
 ```
 
-## Running puncover
+### Running puncover
 
 While you can install puncover as an executable, I typically just run the
 `runner.py` script directly. All it requires is the path to your GNU ARM
@@ -323,6 +329,20 @@ symbols do not come with file information as newlib is not compiled with `-g` in
 most distributions. If you built your own newlib from source, you could fix
 that!
 
+### Puncover in Zephyr
+
+The Zephyr RTOS project has the ability to [run puncover directly within West](https://docs.zephyrproject.org/latest/develop/optimizations/tools.html#build-target-puncover). It's slick!
+
+You can do so by running the following:
+
+```
+# Build as normal
+west build ...
+
+# After installing puncover with 'pip install puncover'
+west build -t puncover
+```
+
 ## Epilogue
 
 Upon reviewing this blog post, a friend suggested I look at Bloaty by Google.
@@ -333,8 +353,8 @@ Bloaty is a nifty tool that wraps all the objdump analysis into a nice CLI
 client, and can even tell you what sections, symbols, and files grew or shrunk
 between two ELFs which would be very useful for a CI system.
 
-What tools and technique do you use to debug code size? Let us know in the
+What tools and techniques do you use to debug code size? Let us know in the
 comments!
 
-Next in the series, we'll talk about compiler settings you can use to optimize
-for code size.
+Next in the series, we'll talk about [compiler settings you can use to optimize
+for code size]({% post_url 2019-08-20-code-size-optimization-gcc-flags %}).

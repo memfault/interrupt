@@ -519,7 +519,7 @@ before/after others. Take a look at the official documentation for more ideas![^
 Once you can compile your project with Clang, there are other compiler warnings not
 supported by other compilers that you can enable. These can be helpful for catching potential bugs or issues.
 
-The exhaustive list of "Diagnostic Warnings" supported by Clang can be found in the official documentation online[^5]. However, I find it easiest to run a build with all the possible Clang warnings enabled by using `-Weverything`, disabling all errrors (`-Wno-error`) and piping the compilation output to a file I can grep after the fact. Let's try it out on the example project:
+The exhaustive list of "Diagnostic Warnings" supported by Clang can be found in the official documentation online[^5]. However, I find it easiest to run a build with all the possible Clang warnings enabled by using `-Weverything`, disabling all errors (`-Wno-error`) and piping the compilation output to a file I can grep after the fact. Let's try it out on the example project:
 
 ```bash
 $ make clean && CLI_CFLAG_OVERRIDES="-Weverything -Wno-error" \
@@ -822,7 +822,7 @@ Disclaimers: At the time of writing this article,
 
 - Some of the official documentation, such as the instructions for "Alternative using a cmake cache" no
   longer work.
-- It does not appear possible to compile a builtin targetting the Cortex-M hard float ABI (i.e
+- It does not appear possible to compile a builtin targeting the Cortex-M hard float ABI (i.e
   `armv7em` target).
 - It does not appear possible to compile `libclang_rt` for ARM Cortex-M on OSX. You need to use
   Docker or be running on Linux natively.
