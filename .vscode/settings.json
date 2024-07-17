@@ -1,13 +1,7 @@
 {
-  "grammarly.files.include": [
-    "**/readme.md",
-    "**/README.md",
-    "**/*.txt",
-    "**/*.md"
-  ],
-  "grammarly.config.documentDialect": "american",
-  "grammarly.config.suggestions.OxfordComma": true,
+  "editor.formatOnSave": true,
   "[markdown]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   }
 }
