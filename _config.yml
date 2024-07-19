@@ -77,3 +77,7 @@ exclude:
   - vendor/ruby/
   - readme.html
   - example
+
+algolia:
+  application_id: '5682VWHMXP'
+  index_name: 'interrupt'

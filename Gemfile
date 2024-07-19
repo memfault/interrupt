@@ -14,6 +14,7 @@ gem 'jekyll-seo-tag', "~> 2.7.1"
 
 group :jekyll_plugins do
   gem 'jekyll-diagrams'
+  gem 'jekyll-algolia', '~> 1.0'
 end
 
 gem "jekyll-target-blank", "~> 2.0"
