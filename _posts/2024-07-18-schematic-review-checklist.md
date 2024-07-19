@@ -62,10 +62,9 @@ Some pre-schematic review checklist items:
 - [x] Get invited to the schematic review. Really, this is a callout to be
       working with your electrical engineer. If you've been working with your
       electrical engineer, providing guidance on what hardware you'll need,
-      being invited to the schematic review should be a given.  
-- [x] Build your
-      checklist upfront. Use this blog post as a starting point, but make sure you
-      customize the list for the given project.
+      being invited to the schematic review should be a given.
+- [x] Build your checklist upfront. Use this blog post as a starting point, but
+      make sure you customize the list for the given project.
 
 ## Story 1 - Brown-out Loop {#story-1-brown-out-loop}
 
