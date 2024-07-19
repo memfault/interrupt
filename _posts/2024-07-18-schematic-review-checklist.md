@@ -103,7 +103,7 @@ voltage of < CUTOFF VOLTAGE and the device did not detect a second power source
 (measured by a GPIO being pulled high), the device would sit in a
 `while (!external_power_okay()) {pet_watchdog();}` style loop, keeping at least
 external flash ok. We also upgraded our external flash filesystem to a version
-that was much more reliant to boot loops.
+that was much more resilient to boot loops.
 
 After this story, I always look to see if a battery powered device can both: (1)
 effectively monitor battery state of charge, and (2) shutdown in a low state of
