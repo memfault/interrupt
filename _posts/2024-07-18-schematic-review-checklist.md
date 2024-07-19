@@ -59,10 +59,11 @@ cheap.
 
 Some pre-schematic review checklist items:
 
-- [ ] Get invited to the schematic review. Really, this is a callout to be
+- [x] Get invited to the schematic review. Really, this is a callout to be
       working with your electrical engineer. If you've been working with your
       electrical engineer, providing guidance on what hardware you'll need,
-      being invited to the schematic review should be a given.  - [ ] Build your
+      being invited to the schematic review should be a given.  
+- [x] Build your
       checklist upfront. Use this blog post as a starting point, but make sure you
       customize the list for the given project.
 
@@ -103,7 +104,7 @@ voltage of < CUTOFF VOLTAGE and the device did not detect a second power source
 (measured by a GPIO being pulled high), the device would sit in a
 `while (!external_power_okay()) {pet_watchdog();}` style loop, keeping at least
 external flash ok. We also upgraded our external flash filesystem to a version
-that was much more relisiant to boot loops.
+that was much more reliant to boot loops.
 
 After this story, I always look to see if a battery powered device can both: (1)
 effectively monitor battery state of charge, and (2) shutdown in a low state of
@@ -188,8 +189,7 @@ to be able to fix those issues, not just the ones you can see at your desk.
 
 ## My current checklist
 
-Here's my current checklist. I didn't list all the stories as above (this
-would've made way too long of a checklist), but I hope it's helpful for others!
+Given these experiences, I have compiled the following list:
 
 ### Power/Battery
 
@@ -247,12 +247,13 @@ would've made way too long of a checklist), but I hope it's helpful for others!
 
 ## Conclusion
 
-This is the start of my checklist for schematic reviews. Feel free to take
-it/modify, and add to it. Or, even better, comment on this article with your own
-horror stories and lessons learned! I've found it useful to keep stories with
-rules to help me remember why the rules exist in the first place. All rules are
-meant to be broken, and sometimes I end up waiving items from the checklist, or
-adding new items for specific projects. These rules have helped me catch a few
+This checklist captures the most important items I have learned to ask about as
+a firmware developer in schematic reviews. Feel free to take it/modify, and add
+to it. Or, even better, comment on this article with your own horror stories and
+lessons learned! I've found it useful to keep stories with rules to help me
+remember why the rules exist in the first place. All rules are meant to be
+broken, and sometimes I end up waiving items from the checklist, or adding new
+items for specific projects. These rules have helped me catch a few
 hardware/software interactions before boards were produced, which helped us keep
 to our schedule and get devices shipped on time!
 
