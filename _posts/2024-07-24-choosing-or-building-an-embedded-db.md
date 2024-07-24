@@ -60,7 +60,7 @@ are going to run into a few issues:
     upon firmware upgrade, which may be unexpected.
 
 So we see that even for the simplest products, persisting data to flash presents
-some mantainability challenges.
+some maintainability challenges.
 
 ## Aside: Portability of Records
 
@@ -110,7 +110,7 @@ mismatch.
 If this sounds confusing, that's because it is. Even when working in a systems
 language such as C, we get used to the convenient abstraction of "an integer"
 without worrying about how it is laid out in memory. So let's take a look at how
-the a 32-bit unsigned integer with the hexedecimal value `0xDEADBEEF` is stored
+the a 32-bit unsigned integer with the hexadecimal value `0xDEADBEEF` is stored
 in memory using either endianness convention:
 
 | endianness    | byte 0 | byte 1 | byte 2 | byte 3 |
@@ -184,10 +184,10 @@ product line, both to the code space and database. This way we can add features
 freely without concern for running out of space if the product is successful
 enough to experience a decade of feature creep.
 
-#### How important is resiliance to power loss during write operations?
+#### How important is resilience to power loss during write operations?
 
 Data loss and corruption is incredibly frustrating for customers and expensive
-in terms of customer support and reputationally. So, your embedded database
+in terms of customer support and reputation. So, your embedded database
 should not lose data if power is lost at an inopportune time (such as during a
 program or erase operation).
 
@@ -354,7 +354,9 @@ hardware failure or catastrophic firmware issues.
 ## Remote Monitoring of Database Statistics
 
 Lastly, building and deploying an embedded database requires some way of
-monitoring performance. Memfault's metrics can be used for this purpose.
+monitoring performance. [Memfault's
+metrics](https://memfault.com/customers/bond-home-case-study/) can be used for
+this purpose.
 
 These are a few things you may want to keep an eye on:
 
