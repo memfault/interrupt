@@ -52,7 +52,7 @@ Listing the dependencies would be tedious to do manually, so the team created [c
 
 Randy MacLeod of WindRiver Systems deserves significant credit for leading the efforts to formalize Rust support in Yocto—much appreciated! For those interested in diving deeper into the intricacies of this journey, [this presentation from Yocto Summit 2020](https://pretalx.com/media/yocto-project-summit-2020/submissions/THCHFZ/resources/Yocto_Project_DevDay_EU2020_Rust_USeJwUC.pdf) sheds light on the detailed process before completion. The culmination of these efforts was realized when it was [merged in 2021](https://github.com/meta-rust/meta-rust/issues/251#issuecomment-906752507) and subsequently released with Yocto 3.4 “Honister”.
 
-Like `meta-rust`, the official Rust support introduces a `cargo` class, making building a Rust package directly from a `Cargo.toml` file straightforwardly. The approach remains the same: building the Rust compiler from source using a snapshotted version of Rust and necessitating listing all dependencies in the recipe under the format `crate://` sources.
+Like `meta-rust`, the official Rust support introduces a `cargo` class, making building a Rust package directly from a `Cargo.toml` file straightforward. The approach remains the same: building the Rust compiler from source using a snapshotted version of Rust and necessitating listing all dependencies in the recipe under the format `crate://` sources.
 
 One limitation to note with this integration is anchoring the Rust version to the corresponding Yocto release.
 
