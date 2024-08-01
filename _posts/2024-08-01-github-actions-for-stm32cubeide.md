@@ -2,13 +2,14 @@
 title: GitHub Actions for STM32CubeIDE
 description: Using GitHub Actions to automate building STM32CubeIDE projects.
 author: noah
+tags: [ci, github-actions]
 ---
 
 <!-- excerpt start -->
 
 In this article, we will explore how to use GitHub Actions to automate building
 STM32CubeIDE projects. Eclipse-based IDEs like STM32CubeIDE are often used for
-developing embedded systems, but can be a little tricky to build in a headless
+developing embedded systems but can be a little tricky to build in a headless
 environment.
 
 <!-- excerpt end -->
@@ -16,7 +17,6 @@ environment.
 {% include newsletter.html %}
 
 {% include toc.html %}
-
 
 ## STM32CubeIDE, Docker, and GitHub Actions
 
@@ -35,7 +35,7 @@ necessary tools for building, flashing, and debugging STM32 projects (it bundles
 a pretty standard GCC ARM toolchain and the ST-Link tools for flashing and
 debugging).
 
-Typically developers install the STM32CubeIDE on their local machines and build
+Typically, developers install the STM32CubeIDE on their local machines and build
 projects using the GUI, but that manual and UI-based workflow doesn't fit well
 with modern CI systems- we want to build our projects automatically, without
 clicking through a UI, and in a reproducible way.
@@ -51,55 +51,58 @@ process!
 > project, similar to this:
 >
 > ```bash
-> PATH=~/STMicroelectronics/stm32cubeide_1.15.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.linux64_1.0.100.202403111256/tools/bin:$PATH make -r -j8 -C Debug all
-arm-none-eabi-gcc
+> $ PATH=~/STMicroelectronics/stm32cubeide_1.15.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.linux64_1.0.100.202403111256/tools/bin:$PATH make -r -j8 -C Debug all
+> arm-none-eabi-gcc
 > ```
 >
 > The downside is this diverges from the normal UI-based workflow- and if the
 > project configuration changes, requiring a Makefile update, that might not be
 > automatically reflected in the CI build.
 >
-> We're going to stick with hard mode, and build directly from the Eclipse
+> We're going to stick with hard mode and build directly from the Eclipse
 > command line to better replicate the UI workflow.
 
-Since Docker containers are generally Linux-based, and work best on the cheap
+Since Docker containers are generally Linux-based and work best on the cheap
 Linux VMs provided by GitHub Actions (or other CI systems), we'll use a
 Linux-based Docker image as our base.
 
 Our Docker image only needs a few dependencies to run STM32CubeIDE:
 
-1. `git` : we need this if we want to be able to clone our project from within the container
-2. Linux version of `STM32CubeIDE` : the main event! We'll download the installer and run it when
-   generating the image, which will "freeze" the IDE in the Docker image
+1. `git`: we need this if we want to be able to clone our project from within
+   the container
+2. Linux version of `STM32CubeIDE`: the main event! We'll download the installer
+   and run it when generating the image, which will "freeze" the IDE in the
+   Docker image
 
-With tools of this nature, I like follow this process to create the image:
+With tools of this nature, I like to follow this process to create the image:
 
 1. start with a base Linux image
-2. interactively run through the installation steps until I get to a functional state
+2. interactively run through the installation steps until I get to a functional
+   state
 3. copy the commands into a Dockerfile and generate the image
 4. test the image
 
 ```bash
 # run a container from the base image, interactively
-❯ docker run --tty --interactive ubuntu:22.04
+$ docker run --tty --interactive ubuntu:22.04
 ```
 
-I first tried following the [installation instructions provided by ST (PDF
-warning)](https://www.st.com/resource/en/user_manual/um2563-stm32cubeide-installation-guide-stmicroelectronics.pdf),
-which are pretty straightforward, in my case it was running this command after
+I first tried following the
+[installation instructions provided by ST (PDF warning)](https://www.st.com/resource/en/user_manual/um2563-stm32cubeide-installation-guide-stmicroelectronics.pdf),
+which are pretty straightforward; in my case it was running this command after
 downloading the installer:
 
 ```bash
 sudo sh ./st-stm32cubeide_1.15.0_20695_20240315_1429_amd64.deb_bundle.sh
 ```
 
-Unfortunately the embedded script in that self-extracting installer doesn't
+Unfortunately, the embedded script in that self-extracting installer doesn't
 fully support an unattended mode (at least in the versions I tested, 1.15 +
 1.16).
 
-After some experimentation I found a way to work around this; instead of running
-the installer as-is, I extracted the installation files from the package, and
-run them independently with a minor tweak.
+After some experimentation, I found a way to work around this; instead of
+running the installer as-is, I extracted the installation files from the
+package, and run them independently with a minor tweak.
 
 Below is the final Dockerfile I used to create the image, with some comments
 explaining the more exotic parts.
@@ -154,10 +157,10 @@ RUN mkdir -p /tmp/stm32cubeide && \
 Once we've created the Dockerfile, we'll build the image as usual:
 
 ```bash
-# note that i'm tagging the image with the build date, and putting it into a
+# note that I'm tagging the image with the build date and putting it into a
 # GitHub container registry namespace for later uploading to the GitHub
 # container registry
-❯ DOCKER_BUILDKIT=1 docker build -t ghcr.io/noahp/stm32wba55-example:2024-08-01 -f Dockerfile .
+$ DOCKER_BUILDKIT=1 docker build -t ghcr.io/noahp/stm32wba55-example:2024-08-01 -f Dockerfile .
 ```
 
 ### Testing the Docker Image
@@ -165,40 +168,47 @@ Once we've created the Dockerfile, we'll build the image as usual:
 To test it, we first need to figure out how to actually build an STM32CubeIDE
 project from the command line.
 
-After a bit of digging, I found that the Eclipse IDE has a command line build
+After a bit of digging, I found that the Eclipse IDE has a command-line build
 option, aptly named `-build`. When running from a container, we need to first
 import the project from the file system into the Eclipse workspace (in this
-case, from our cloned Git repo) , using the `-import` command, then we can build
+case, from our cloned Git repo), using the `-import` command, then we can build
 it.
 
 > Note: I'm using a test project from
 > [here](https://github.com/memfault/stm32wba55-example), because it's one I'm
 > familiar with, but the same process should work with any STM32CubeIDE project.
 
-These are the commands we run:
+From the root of our test process, start the Docker container with the current
+directory mounted inside it, so we can build it!
 
 ```bash
-# From the root of our test process, start the Docker container with the current
-# directory mounted inside it, so we can build it!
-❯ docker run --rm --tty --interactive --volume=${PWD}:/workdir ghcr.io/noahp/stm32wba55-example:2024-08-01
+$ docker run --rm --tty --interactive --volume=${PWD}:/workdir ghcr.io/noahp/stm32wba55-example:2024-08-01
+```
 
-# Inside the Docker container, the STM32CubeIDE executable is located at
-# "/opt/st/stm32cubeide_1.16.0/stm32cubeide". We also use the "-data" flag to
-# specify the workspace directory.
+Inside the Docker container, the STM32CubeIDE executable is located at
+`/opt/st/stm32cubeide_1.16.0/stm32cubeide`. We will run this with the `-import`
+command to import the project into the workspace, and the `-data` flag to
+specify the workspace directory:
 
-# Run the -import command to import the project into the workspace
-/opt/st/stm32cubeide_1.16.0/stm32cubeide --launcher.suppressErrors -nosplash \
+```bash
+$ /opt/st/stm32cubeide_1.16.0/stm32cubeide --launcher.suppressErrors -nosplash \
   -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
   -data /tmp/stm-workspace \
   -import "STM32CubeIDE"
+```
 
-# Run the -build command to build the project
-/opt/st/stm32cubeide_1.16.0/stm32cubeide --launcher.suppressErrors -nosplash \
+Then, we run the `-build` command to build the project:
+
+```bash
+$ /opt/st/stm32cubeide_1.16.0/stm32cubeide --launcher.suppressErrors -nosplash \
   -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
   -data /tmp/stm-workspace \
   -build BLE_p2pServer/Debug
+```
 
-# that will emit lots of output, then if it succeeds:
+That command will emit lots of output, then if it succeeds:
+
+```plaintext
 Finished building target: BLE_p2pServer.elf
 
 arm-none-eabi-size  BLE_p2pServer.elf
@@ -216,7 +226,7 @@ Finished building: BLE_p2pServer.list
 13:25:31 Build Finished. 0 errors, 1 warnings. (took 2s.487ms)
 ```
 
-🎉 Phew, we made it! that's the most exciting part of this article, now on to
+🎉 Phew, we made it! That's the most exciting part of this article. Now on to
 running the same build commands in a GitHub action.
 
 ## Creating a GitHub Actions Workflow
@@ -231,7 +241,8 @@ We're going to create a workflow that does the following:
 3. upload the build artifacts
 
 Before we can start, let's first upload our Docker image to the GitHub Container
-Registry. This will allow us to use the image in our GitHub Actions workflow.
+Registry. Uploading to the registry will allow us to use the image in our GitHub
+Actions workflow.
 
 Pushing the image to the GitHub container registry requires logging in
 (instructions
@@ -242,8 +253,8 @@ then doing the normal docker push command:
 $ docker push ghcr.io/noahp/stm32wba55-example:2024-08-01
 ```
 
-Next we'll open the container URL in our browser
-(<https://ghcr.io/noahp/stm32wba55-example>) and set the image to public, so our
+Next, we'll open the container URL in our browser
+(<https://ghcr.io/noahp/stm32wba55-example>) and set the image to public so our
 GitHub Actions workflow can use it without logging in.
 
 Now we're ready to write our GitHub Actions workflow.
@@ -303,7 +314,7 @@ jobs:
           path: STM32CubeIDE/Debug/BLE_p2pServer.*
 ```
 
-And that's it! We'll check that in to our test project, push it in a branch, and
+And that's it! We'll check that into our test project, push it to a branch, and
 open a test pull request to see it in action.
 
 ![Screenshot of the GitHub Actions workflow running](/img/stm32cubeide/github-actions-success.png)
@@ -313,18 +324,18 @@ uploaded files are correct ✅.
 
 ## In Conclusion
 
-Hope you enjoyed this article! It's always a fun challenge to coax some of the
+I hope you enjoyed this article! It's always a fun challenge to coax some of the
 less cooperative tools into working in a CI environment, and STM32CubeIDE was no
 exception.
 
-A similar process could be used for other Eclipse-based IDEs, since most support
+You could use a similar process for other Eclipse-based IDEs since most support
 the `-build` command line argument.
 
 One last note- this example is saving the build artifacts (`.elf` and `.bin`
-files, etc) as GitHub Actions artifacts, but you could also upload them to a
+files, etc.) as GitHub Actions artifacts, but you could also upload them to a
 cloud storage service, or even use the GitHub API to create a release with the
 artifacts attached. One simple approach is to push the artifacts into AWS S3
-storage, under a folder named after the commit hash, so you can easily find the
+storage under a folder named after the commit hash so you can easily find the
 artifacts for a given commit.
 
 Thanks for reading!
