@@ -1,3 +1,4 @@
-blockdiag
-Pillow==9.5.0
+# Install a newer version of blockdiag, that's compatible with modern pillow
+git+https://github.com/blockdiag/blockdiag.git@refs/pull/179/head
+Pillow==10.3.0
 funcparserlib==1.0.0a0
