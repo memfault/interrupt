@@ -1,4 +1,4 @@
-FROM ruby:3.2.4-slim-bookworm
+FROM ruby:3.0-slim-bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -18,6 +18,7 @@ RUN bundle install
 
 COPY requirements.txt .
 RUN python3 -m venv /venv && . /venv/bin/activate && \
+    python3 -m pip install wheel==0.42.0 && \
     python3 -m pip install -r requirements.txt
 
 COPY entrypoint.sh ./entrypoint.sh

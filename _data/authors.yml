@@ -63,9 +63,10 @@ rameen:
 noah:
     name: Noah Pendleton
     email: noah@memfault.com
-    web: https://www.linkedin.com/in/noah-pendleton-71437843/
-    linkedin: https://www.linkedin.com/in/noah-pendleton-71437843/
+    web: https://www.linkedin.com/in/noahpendleton/
+    linkedin: https://www.linkedin.com/in/noahpendleton/
     image: /img/author/noah.jpg
+    twitter: nlpendleton
     github: noahp
     blurb: is an embedded software engineer at Memfault. Noah previously worked on embedded software teams at Fitbit and Markforged
 shiva:
