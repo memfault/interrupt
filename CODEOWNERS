@@ -1,0 +1,10 @@
+# See CODEOWNERS syntax documentation at:
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#codeowners-syntax
+#
+# Order is important; the last matching pattern takes the most precedence.
+
+##############################################################################
+# Generic owners - platform & codebase wide
+##############################################################################
+* @memfault/owners-interrupt
+
