@@ -340,9 +340,10 @@ for more details.
 
 # Conclusion
 
-This article is a very superficial overview of the topic of embedded devices security
-in general and JTAG security in particular. This topic is very vast to cover in one
-article and unfortunately I am not an expert in this topic. :)
+This article has only scratched the surface of embedded devices security
+in general and JTAG security in particular. If you have experience
+in cyber security and/or JTAG attacks, I would love to hear what you have
+learned and what topics I missed! :)
 That's why I suggest you to read the sources mentioned below because there are still a
 lot of interesting things there. Well, this article concludes my dive into the topic
 of JTAG protocol. Thanks to all who read it.
