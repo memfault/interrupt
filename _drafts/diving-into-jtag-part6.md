@@ -21,9 +21,9 @@ article series, we will focus on security issues related to JTAG and the Debug P
 
 >**Disclaimer 1**: I am not a cyber-security expert and not deeply immersed in this
 topic, so this article does not aim to uncover any secrets or provide an in-depth exploration.
-It is simply a superficial look at this topic from an ordinary firmware engineer.
->**Disclaimer 2**: This article is for informational purposes only and is not a guide to action.
-Hacking devices is wrong and illegal.
+It is brief discussion from a standard firmware engineering perspective.
+>**Disclaimer 2**: This article is for informational purposes only and does not encourage hacking.
+
 
 # Protection
 
@@ -34,14 +34,16 @@ for an attacker who wants to gain unauthorized access to a device using the JTAG
 
 The simplest, most obvious, but probably least effective method of protection is to restrict access to
 the JTAG connector at the board level. This restriction is achieved by physically removing the JTAG
-connector from the board at the end of production.
+connector from the board at the end of production as shown on this picture where you can see that JTAG
+connector was removed:
 
 <p align="center">
  <img width="100%" src="{% img_url jtag-part6/board-level-protection-1.png %}" alt="The Board-level protection example 1" />
 </p>
 
 Another protection option is suitable when there is no JTAG connector on the board at all, and the
-JTAG pins are scattered across the board as test points.
+JTAG pins are scattered across the board as test points. For example on next picture you can see that board contain JTAG
+pins as separate pads.
 
 <p align="center">
  <img width="100%" src="{% img_url jtag-part6/board-level-protection-2.png %}" alt="The Board-level protection example 2" />
@@ -63,8 +65,7 @@ features depends on the specific core and microcontroller model.
 
 For instance, access to flash memory can be disabled. Some microcontroller models
 support completely disabling the debug interface. The exact configuration of possible
-protection features can be found in the microcontroller's documentation. An example is
-the Flash Readout Protection (RDP) technology in STM32 microcontrollers.
+protection features can be found in the microcontroller's [documentation](https://www.st.com/resource/en/application_note/an5156-introduction-to-security-for-stm32-mcus-stmicroelectronics.pdf). An example is the Flash Readout Protection (RDP) technology in STM32 microcontrollers.
 This technology allows protecting the contents of the microcontroller's embedded
 flash memory from being read through the debug interface.
 
@@ -90,11 +91,27 @@ All protections provided in Level 1 are active, and the MCU is fully protected. 
 RDP option byte and all other option bytes are frozen, and can no longer be modified.
 The JTAG, SWV (single-wire viewer), ETM, and boundary scan are all disabled.
 
-RDP can always be leveled up. A level regression is possible with the following
-consequences:
+RDP can always be leveled up. The level uping is nesseccory in next cases:
+
+- **Intellectual property protection**: Increasing the RDP level prevents reading the contents
+  of the flash memory, which protects the firmware and other important data from being copied
+  or analyzed by third parties.
+
+- **Prevention of unauthorized firmware modification**: At higher protection levels (e.g., Level 2),
+  it becomes impossible not only to read but also to write to flash memory without completely resetting
+  the microcontroller. This helps prevent the introduction of malicious modifications to the software.
+
+- **Debugging protection**: When the RDP level is raised, the microcontroller disables debugging interfaces
+  (e.g., JTAG or SWD), preventing attackers from using them to debug and analyze the program's operation.
+
+- **Compliance with safety standards**: In some applications (e.g., automotive or medical technology),
+  compliance with certain safety standards is required, which necessitates hardware-level data protection.
+
+A level regression is possible with the following consequences:
 
 - Regression from RDP level 1 to RDP level 0 leads to a flash memory mass erase, and
-the erase of SRAM2 and backup registers.
+the erase of SRAM2 and backup registers. This step could be used in case if you need to
+update to software that is already in flash memory or when you need repaire a production device that has been returned.
 - In RDP level 2, no regression is possible.
 
 In consumer products, RDP should always be set to at least level 1. This prevents
@@ -129,7 +146,7 @@ Attacks on the JTAG interface belong to the hardware none-invasive attack type.
 
 ## Detecting JTAG pins
 
-If there is absolutely no documentation for a given chip, the first thing to do
+If there is absolutely no documentation for a given chip, the first thing an attacker would do
 is to detect the actual JTAG pins. There are some features of the JTAG protocol
 and special tools that use these features to automate the process.
 
@@ -208,7 +225,7 @@ Examples of such attacks are described in more detail in the following sources:
 
 ## Attack on JTAG
 
-The next thing to determine is the number of devices in the JTAG chain, because even
+The next thing an attacker will determine is the number of devices in the JTAG chain, because even
 if we have only one microcontroller connected to JTAG - the number of TAPs in the
 chain may be more than one. Next we need to determine the lengths of the `IR` and
 `DR` registers, as well as the number of `DR` registers theoretically available.
