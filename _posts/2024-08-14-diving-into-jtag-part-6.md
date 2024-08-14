@@ -10,9 +10,9 @@ tags: [arm, cortex-m, mcu, debugging, debugger]
 The JTAG interface is an important tool for debugging and testing embedded
 systems, providing low-level access to the internal workings of microcontrollers
 and other integrated circuits. However, this powerful interface also presents
-significant security threats. In the sixth part of the "Diving into JTAG"
-article series, we will focus on security issues related to JTAG and the Debug
-Port.
+significant security threats. In the sixth and final part of this Diving into
+JTAG article series, we will focus on security issues related to JTAG and the
+Debug Port.
 
 <!-- excerpt end -->
 
@@ -39,7 +39,7 @@ device using the JTAG interface.
 The simplest, most obvious, but probably least effective method of protection is
 to restrict access to the JTAG connector at the board level. This restriction is
 achieved by physically removing the JTAG connector from the board at the end of
-production as shown on this picture where you can see that the JTAG connector
+production, as shown in this picture, where you can see that the JTAG connector
 was removed:
 
 <p align="center">
@@ -47,9 +47,9 @@ was removed:
 </p>
 
 Another protection option is suitable when there is no JTAG connector on the
-board at all, and the JTAG pins are scattered across the board as test points.
-For example, on the next picture you can see that board contains JTAG pins as
-separate pads.
+board at all and the JTAG pins are scattered across the board as test points.
+For example, in the next picture, you can see that the board contains JTAG pins
+as separate pads.
 
 <p align="center">
  <img width="80%" src="{% img_url jtag-part6/board-level-protection-2.png %}" alt="The Board-level protection example 2" />
@@ -76,8 +76,9 @@ models support completely disabling the debug interface. The exact configuration
 of possible protection features can be found in the microcontroller's
 documentation. An example is the
 [Flash Readout Protection (RDP) technology in STM32 microcontrollers](https://www.st.com/resource/en/application_note/an5156-introduction-to-security-for-stm32-mcus-stmicroelectronics.pdf).
-This technology allows for the protection the contents of the microcontroller's
-embedded flash memory from being read through the debug interface.
+This technology allows for the protection of the contents of the
+microcontroller's embedded flash memory from being read through the debug
+interface.
 
 <p align="center">
  <img width="100%" src="{% img_url jtag-part6/rdp-levels.png %}" alt="The RDP Levels" />
@@ -101,7 +102,8 @@ RDP has three levels of protection (0, 1, and 2):
   can no longer be modified. The JTAG, SWV (single-wire viewer), ETM, and
   boundary scan are all disabled.
 
-RDP can always be leveled up. The level uping is nesseccory in next cases:
+RDP can always be leveled up. Increasing the level is necessary in the following
+cases:
 
 - **Intellectual property protection**: Increasing the RDP level prevents
   reading the contents of the flash memory, which protects the firmware and
@@ -132,8 +134,8 @@ In consumer products, RDP should always be set to at least level 1. This setting
 prevents basic attacks through the debug port or bootloader. RDP level 2 is
 mandatory for implementing applications with a higher level of security.
 
-The RDP technology for STM32 an example; similar protection technologies exist
-for other microcontrollers.
+The RDP technology for STM32 is an example; similar protection technologies
+exist for other microcontrollers.
 
 ## Attack
 
@@ -157,12 +159,12 @@ In general, all attacks can be divided into the following types:
   destroying the device) and invasive attacks (carried out at the device and
   silicon level with the destruction of the package).
 
-Attacks on the JTAG interface belong to the hardware none-invasive attack type.
+Attacks on the JTAG interface belong to the hardware non-invasive attack type.
 
 ### Detecting JTAG pins
 
 If there is absolutely no documentation for a given chip, the first thing an
-attacker would do is to detect the actual JTAG pins. Special tools leverage some
+attacker would do is detect the actual JTAG pins. Special tools leverage some
 features of the JTAG protocol to automate the detection process. Let's dive into
 them.
 
@@ -174,15 +176,14 @@ Scan**. This method is simple because there is no need to scan `IR` and the
 `IDCODE` register has a fixed length of 32 bits. The algorithm of the method is
 as follows:
 
-1. At the first step we select the pins we want to scan and put these pins in
-   correspondence with JTAG lines (`TMS`, `TCK`, etc.), by luck, as you want.
-   But, if there are too many pins to be tested, you can potentially reduce
-   their number by doing some work with measuring the electrical parameters
-   (resistance, voltage) of the tested pins and using these measurements to draw
-   conclusions about the pin belonging to one or another JTAG signal, at least
-   to determine GND and VCC and not to include these pins in further scanning.
-   This procedure is shown very well in this video
-   [clip](https://youtu.be/_FSM_10JXsM?t=753).
+1. First we select the pins we want to scan and put these pins in correspondence
+   with JTAG lines (`TMS`, `TCK`, etc.), by luck, as you want. But, if there are
+   too many pins to be tested, you can potentially reduce their number by doing
+   some work with measuring the electrical parameters (resistance, voltage) of
+   the tested pins and using these measurements to draw conclusions about the
+   pin belonging to one or another JTAG signal, at least to determine GND and
+   VCC and not to include these pins in further scanning. This procedure is
+   shown very well in this video [clip](https://youtu.be/_FSM_10JXsM?t=753).
 2. Generate the sequence `0b0100` on the selected `TMS` pin to move to the
    `Shift-DR` state.
 3. Hold `TMS` in logic zero and generate 32 clock pulses on the `TCK` pin.
@@ -245,7 +246,7 @@ Examples of such attacks are described in more detail in the following sources:
 
 The next thing an attacker will determine is the number of devices in the JTAG
 chain, because even if we have only one microcontroller connected to JTAG - the
-number of TAPs in the chain may be more than one. Next we need to determine the
+number of TAPs in the chain may be more than one. Next, we need to determine the
 lengths of the `IR` and `DR` registers, as well as the number of `DR` registers
 theoretically available.
 
@@ -256,12 +257,12 @@ chain:
 
 - Send the sequence `0b01100` on the `TMS` pin, thus switching to the `Shift-IR`
   state.
-- Push a bunch of ones (as many as you can spare, e.g. 1000) through `TDI` to
-  all `IR` registers in the chain. After this all TAPs are in `BYPASS`.
+- Push a bunch of ones (as many as you can spare, e.g., 1000) through `TDI` to
+  all `IR` registers in the chain. After this, all TAPs will be in `BYPASS`.
 - Send the sequence `0b11000` to the selected `TMS` pin, thus switching to the
   `Shift-DR` state.
-- Push a bunch of zeros (as many as you can spare, e.g. 1000) through `TDI` into
-  all `DR` pins in the chain to reset them to zero
+- Push a bunch of zeros (as many as you can spare, e.g., 1000) through `TDI`
+  into all `DR` pins in the chain to reset them to zero
 - Start pushing ones through `TDI` into `DR`. As soon as you get a one from
   `TDO`, stop. The number of TAPs in the chain is equal to the number of ones
   pushed in.
@@ -282,7 +283,7 @@ The next step is to determine the length of the `IR` and `DR` registers:
 #### Defining undocumented JTAG instructions
 
 Defining undocumented instructions is useful to an attacker because in many
-cases these instructions hide test and debug functions, such as BIT modes for
+cases, these instructions hide test and debug functions, such as BIT modes for
 memory and I/O; scan modes; or debug modes and functions.
 
 In the last section, we determined the length of the `IR` register, and thus we
@@ -309,12 +310,10 @@ protection enabled. In such cases, to copy the firmware, for example, an
 attacker has to use techniques such as chip decapping or glitching the hardware
 logic by manipulating inputs such as power or clock sources and using the
 resulting behavior to successfully bypass these protections. However, sometimes
-an attacker does not have to use to such hardcore methods to achieve their goal,
+, an attacker does not have to use such hardcore methods to achieve their goal,
 especially if the level of protection enabled is not the highest. In this
-section I will give some examples of attack techniques, however I will describe
-these techniques in a superficial enough manner to describe the basic idea. More
-details about each technique can be found in the
-[original article](https://blog.includesecurity.com/2015/11/firmware-dumping-technique-for-an-arm-cortex-m0-soc/).
+section, I will give a high-level description of a few attack techniques. For a
+deeper dive, see the full articles linked with each.
 
 #### Firmware dumping technique for an ARM Cortex-M0 SoC
 
@@ -335,7 +334,7 @@ sound difficult to find the read word instruction. However, all we need is an
 instruction that reads memory from an address in some register to a register,
 which is a fairly common operation.
 
-Again, this method is described in detail in the article
+This method is described in detail in the article
 [Firmware dumping technique for an ARM Cortex-M0 SoC](https://blog.includesecurity.com/2015/11/firmware-dumping-technique-for-an-arm-cortex-m0-soc/).
 I highly recommend reading it.
 
@@ -416,6 +415,6 @@ dive into the topic of JTAG protocol. Thanks to all who read it.
 - [SECGlitcher (Part 1) - Reproducible Voltage Glitching on STM32 Microcontrollers](https://sec-consult.com/blog/detail/secglitcher-part-1-reproducible-voltage-glitching-on-stm32-microcontrollers/)
 - [Backdoor Silicon FUD](https://deadhacker.com/2012/06/08/backdoor-silicon-fud/)
 - [DEFCON 17: An Open JTAG Debugger](https://youtu.be/k3ac5iBcfnQ)
-- [Voltage (VCC) Glitching Raspberry Pi 3 model B+ with ChipWhisperer-Lite](https://youtu.be/dVkCNiM0PL8)
+- [Voltage (VCC) Glitching Raspberry Pi 3 Model B+ with ChipWhisperer-Lite](https://youtu.be/dVkCNiM0PL8)
 - [Shedding too much Light on a Microcontroller's Firmware Protection](https://www.aisec.fraunhofer.de/en/FirmwareProtection.html)
 - [Breakthrough silicon scanning discovers backdoor in military chip](https://www.cl.cam.ac.uk/~sps32/Silicon_scan_draft.pdf)
