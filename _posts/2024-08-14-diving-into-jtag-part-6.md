@@ -210,12 +210,11 @@ This method uses the `BYPASS` register to scan the JTAG circuit. The `BYPASS`
 register allows you to skip a logic element in the circuit and directly transfer
 data from input to output, minimizing latency.
 
-1. The first step is similar to the first step in the previous method.
-2. Send the sequence `0b01100` on the selected `TMS` pin to move thus to the
+1. The first step is the same as the first step in the `IDCODE` scan method.
+2. Send the sequence `0b01100` on the selected `TMS` pin to move it to the
    `Shift-IR` state.
-3. Now, it is not necessary to send the `BYPASS` command, but since the size of
-   the `IR` register is not known, it is necessary to send a large number of
-   units (as many as 1024, for example).
+3. Send the `BYPASS` command. Since the size of the `IR` register is not known,
+   you have to send a large number of ones (as many as 1024, for example).
 4. Send the sequence `0b11000` to the selected `TMS` pin, thus moving to the
    `Shift-DR` state.
 5. Using the `TDI` output - send some bit pattern that can be easily recognized.
