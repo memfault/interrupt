@@ -1,5 +1,5 @@
 ---
-title: Preventing Real-Time Disruptions — Debugging an Inefficient Memory Usage Pattern
+title: How Memory Usage Patterns Can Derail Real-time Performance
 description:
   A story about memory usage causing real-time performance issues in an audio
   system.
@@ -77,7 +77,7 @@ operating system, causing it to return too late and miss its real-time
 “deadline.”
 
 Eventually, I decided to use a profiler to figure out what was going on and
-turned to the excellent [Tracy profiler](https://github.com/wolfpld/tracy),
+turned to the excellent [Tracy Profiler](https://github.com/wolfpld/tracy),
 which is open source and free. Tracy is easy to integrate with your code,
 allowing you to define different zones for tracing and profiling. The Tracy
 profiling GUI application can connect over the network with your embedded
@@ -208,3 +208,11 @@ or libraries). 🤓
 <!-- Interrupt Keep END -->
 
 {:.no_toc}
+
+## Links
+
+- [GitHub \| Tracy Profiler](https://github.com/wolfpld/tracy)
+- [Tracy Profiler Manual (PDF warning)](https://github.com/wolfpld/tracy/releases/latest/download/tracy.pdf)
+- [Professional Website \| Bert Schiettecatte](http://www.bertschiettecatte.com/)
+- [Noisetron LLC](http://www.noisetron.com/)
+- [Percussa](http://www.percussa.com/)
