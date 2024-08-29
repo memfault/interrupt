@@ -1,272 +1,353 @@
 # Author Details
 francois:
-    name: François Baldassari
-    email: francois@memfault.com
-    web: https://twitter.com/baldassarifr
-    image: /img/author/francois.jpg
-    blurb: has worked on the embedded software teams at Sun, Pebble, and Oculus. He is currently the CEO of <a href='https://memfault.com'>Memfault</a>.
-    twitter: baldassarifr
-    linkedin: https://www.linkedin.com/in/francois-baldassari
-    github: franc0is
+  name: François Baldassari
+  email: francois@memfault.com
+  web: https://twitter.com/baldassarifr
+  image: /img/author/francois.jpg
+  blurb:
+    has worked on the embedded software teams at Sun, Pebble, and Oculus. He is
+    currently the CEO of <a href='https://memfault.com'>Memfault</a>.
+  twitter: baldassarifr
+  linkedin: https://www.linkedin.com/in/francois-baldassari
+  github: franc0is
 chris:
-    name: Chris Coleman
-    email: chris@memfault.com
-    web: https://www.linkedin.com/in/christopher-coleman-812aa06b/
-    image: /img/author/chris.jpg
-    blurb: is a founder and CTO at Memfault. Prior to founding Memfault, Chris worked on the embedded software teams at Sun, Pebble, and Fitbit.
-    github: chrisc11
-    linkedin: https://www.linkedin.com/in/christopher-coleman-812aa06b/
+  name: Chris Coleman
+  email: chris@memfault.com
+  web: https://www.linkedin.com/in/christopher-coleman-812aa06b/
+  image: /img/author/chris.jpg
+  blurb:
+    is a founder and CTO at Memfault. Prior to founding Memfault, Chris worked
+    on the embedded software teams at Sun, Pebble, and Fitbit.
+  github: chrisc11
+  linkedin: https://www.linkedin.com/in/christopher-coleman-812aa06b/
 tyler:
-    name: Tyler Hoffman
-    email: tyler@memfault.com
-    web: https://www.linkedin.com/in/tyhoff/
-    image: /img/author/tyler.jpg
-    blurb: has worked on the embedded software teams at Pebble and Fitbit. He is now a founder at <a href='https://memfault.com'>Memfault</a>.
-    twitter: ty_hoff
-    linkedin: https://www.linkedin.com/in/tyhoff/
-    github: tyhoff
+  name: Tyler Hoffman
+  email: tyler@memfault.com
+  web: https://www.linkedin.com/in/tyhoff/
+  image: /img/author/tyler.jpg
+  blurb:
+    has worked on the embedded software teams at Pebble and Fitbit. He is now a
+    founder at <a href='https://memfault.com'>Memfault</a>.
+  twitter: ty_hoff
+  linkedin: https://www.linkedin.com/in/tyhoff/
+  github: tyhoff
 mafaneh:
-    name: Mohammad Afaneh
-    email: mohammad@novelbits.io
-    web: https://www.novelbits.io
-    image: /img/author/mafaneh.jpg
-    blurb: is the founder and CEO of <a href='https://www.novelbits.io/'>Novel Bits</a>, a company that focuses on providing comprehensive tutorials, resources, and online training for Bluetooth developers.
-    twitter: m_afaneh
-    linkedin: https://www.linkedin.com/in/mafaneh/
-    github: mafaneh
+  name: Mohammad Afaneh
+  email: mohammad@novelbits.io
+  web: https://www.novelbits.io
+  image: /img/author/mafaneh.jpg
+  blurb:
+    is the founder and CEO of <a href='https://www.novelbits.io/'>Novel
+    Bits</a>, a company that focuses on providing comprehensive tutorials,
+    resources, and online training for Bluetooth developers.
+  twitter: m_afaneh
+  linkedin: https://www.linkedin.com/in/mafaneh/
+  github: mafaneh
 cyril:
-    name: Cyril Fougeray
-    email: cyril.fougeray@gmail.com
-    web: http://www.cyrilfougeray.com
-    linkedin: https://www.linkedin.com/in/cyrilfougeray/
-    twitter: cyrilfougeray
-    github: fouge
-    image: /img/author/cyril.jpg
-    blurb: is a freelance embedded software engineer you can hire <a href='http://www.cyrilfougeray.com'>through that page</a>. Previously he worked on embedded software at Equisense and Spire.
+  name: Cyril Fougeray
+  email: cyril.fougeray@gmail.com
+  web: http://www.cyrilfougeray.com
+  linkedin: https://www.linkedin.com/in/cyrilfougeray/
+  twitter: cyrilfougeray
+  github: fouge
+  image: /img/author/cyril.jpg
+  blurb:
+    is a freelance embedded software engineer you can hire <a
+    href='http://www.cyrilfougeray.com'>through that page</a>. Previously he
+    worked on embedded software at Equisense and Spire.
 james:
-    name: James Munns
-    email: james.munns@ferrous-systems.com
-    web: https://ferrous-systems.com
-    twitter: bitshiftmask
-    image: /img/author/james.jpg
-    github: jamesmunns
-    linkedin: https://www.linkedin.com/in/james-munns-8a42b429/
-    blurb: has worked on embedded systems from Safety Critical Avionics to rapidly prototyped IoT solutions. He is a Founder and Managing Director of <a href='https://ferrous-systems.com'>Ferrous Systems</a>.
+  name: James Munns
+  email: james.munns@ferrous-systems.com
+  web: https://ferrous-systems.com
+  twitter: bitshiftmask
+  image: /img/author/james.jpg
+  github: jamesmunns
+  linkedin: https://www.linkedin.com/in/james-munns-8a42b429/
+  blurb:
+    has worked on embedded systems from Safety Critical Avionics to rapidly
+    prototyped IoT solutions. He is a Founder and Managing Director of <a
+    href='https://ferrous-systems.com'>Ferrous Systems</a>.
 rameen:
-    name: Rameen Aryanpur
-    email: raryanpur@andium.com
-    web: https://www.linkedin.com/in/rameenaryanpur/
-    image: /img/author/rameen-headshot.png
-    twitter: raryanpur
-    linked: https://www.linkedin.com/in/rameenaryanpur/
-    blurb: leads the engineering team at Andium. He previously worked as a software engineer in robotics and distributed systems at Boston Engineering, and was co-founder and CTO of a connected device startup.
+  name: Rameen Aryanpur
+  email: raryanpur@andium.com
+  web: https://www.linkedin.com/in/rameenaryanpur/
+  image: /img/author/rameen-headshot.png
+  twitter: raryanpur
+  linked: https://www.linkedin.com/in/rameenaryanpur/
+  blurb:
+    leads the engineering team at Andium. He previously worked as a software
+    engineer in robotics and distributed systems at Boston Engineering, and was
+    co-founder and CTO of a connected device startup.
 noah:
-    name: Noah Pendleton
-    email: noah@memfault.com
-    web: https://www.linkedin.com/in/noahpendleton/
-    linkedin: https://www.linkedin.com/in/noahpendleton/
-    image: /img/author/noah.jpg
-    twitter: nlpendleton
-    github: noahp
-    blurb: is an embedded software engineer at Memfault. Noah previously worked on embedded software teams at Fitbit and Markforged
+  name: Noah Pendleton
+  email: noah@memfault.com
+  web: https://www.linkedin.com/in/noahpendleton/
+  linkedin: https://www.linkedin.com/in/noahpendleton/
+  image: /img/author/noah.jpg
+  twitter: nlpendleton
+  github: noahp
+  blurb:
+    is an embedded software engineer at Memfault. Noah previously worked on
+    embedded software teams at Fitbit and Markforged
 shiva:
-    name: Shiva Rajagopal
-    email: shiva.rajagopal@outlook.com
-    web: https://about.me/shiva.rajagopal
-    linkedin: https://www.linkedin.com/in/shivarajagopal/
-    image: /img/author/shiva.jpg
-    github: shivarajagopal
-    blurb: is an embedded software engineer at Fitbit.
+  name: Shiva Rajagopal
+  email: shiva.rajagopal@outlook.com
+  web: https://about.me/shiva.rajagopal
+  linkedin: https://www.linkedin.com/in/shivarajagopal/
+  image: /img/author/shiva.jpg
+  github: shivarajagopal
+  blurb: is an embedded software engineer at Fitbit.
 jaredwolff:
-    name: Jared Wolff
-    email: hello@jaredwolff.com
-    web: https://www.jaredwolff.com
-    linkedin: https://www.linkedin.com/in/jaredwolff/
-    image: /img/author/jaredwolff.jpg
-    twitter: jaredwolff
-    github: jaredwolff
-    blurb: Hardware and firmware enthusiast. Proud father of the <a href="https://www.jaredwolff.com/store/nrf91-feather/">nRF9160 Feather.</a>
+  name: Jared Wolff
+  email: hello@jaredwolff.com
+  web: https://www.jaredwolff.com
+  linkedin: https://www.linkedin.com/in/jaredwolff/
+  image: /img/author/jaredwolff.jpg
+  twitter: jaredwolff
+  github: jaredwolff
+  blurb:
+    Hardware and firmware enthusiast. Proud father of the <a
+    href="https://www.jaredwolff.com/store/nrf91-feather/">nRF9160 Feather.</a>
 amundas:
-    name: Amund Askeland
-    email: amund.ask@gmail.com
-    github: amundas
-    linkedin: https://www.linkedin.com/in/amund-askeland-9a2545149/
-    blurb: is a hardware and software enthusiast currently working on a PhD in embedded security.
-    image: /img/author/amund.png
+  name: Amund Askeland
+  email: amund.ask@gmail.com
+  github: amundas
+  linkedin: https://www.linkedin.com/in/amund-askeland-9a2545149/
+  blurb:
+    is a hardware and software enthusiast currently working on a PhD in embedded
+    security.
+  image: /img/author/amund.png
 ael-mess:
-    name: Amine El Messaoudi
-    email: amine.elmessaoudi@icloud.com
-    github: ael-mess
-    linkedin: https://www.linkedin.com/in/ael-mess/
-    blurb: is an embedded software and firmware engineer, passionate about low-level programming.
-    image: /img/author/ael-mess.jpg
+  name: Amine El Messaoudi
+  email: amine.elmessaoudi@icloud.com
+  github: ael-mess
+  linkedin: https://www.linkedin.com/in/ael-mess/
+  blurb:
+    is an embedded software and firmware engineer, passionate about low-level
+    programming.
+  image: /img/author/ael-mess.jpg
 erikfogg:
-    name: Erik Fogg
-    blurb: is the Chief Operating Officer at <a href="https://prodperfect.com/">ProdPerfect</a>, which is an autonomous E2E regression testing solution that leverages data from live user behavior data.
-    linkedin: https://www.linkedin.com/in/erikfogg/
-    image: /img/author/erikfogg.jpeg
+  name: Erik Fogg
+  blurb:
+    is the Chief Operating Officer at <a
+    href="https://prodperfect.com/">ProdPerfect</a>, which is an autonomous E2E
+    regression testing solution that leverages data from live user behavior
+    data.
+  linkedin: https://www.linkedin.com/in/erikfogg/
+  image: /img/author/erikfogg.jpeg
 nickmiller:
-    name: Nick Miller
-    blurb: is a principal embedded software engineer at <a href="https://spindance.com/">SpinDance</a>, an IoT solutions company.
-    linkedin: https://www.linkedin.com/in/nicholas-miller-666a37b7/
-    github: ncmiller
-    image: /img/author/nickmiller.png
+  name: Nick Miller
+  blurb:
+    is a principal embedded software engineer at <a
+    href="https://spindance.com/">SpinDance</a>, an IoT solutions company.
+  linkedin: https://www.linkedin.com/in/nicholas-miller-666a37b7/
+  github: ncmiller
+  image: /img/author/nickmiller.png
 thomas:
-    name:  Thomas Höhenleitner
-    blurb: has developed hardware devices and moved to embedded software development.
-    github: rokath
-    image: /img/author/thomas.jpg
+  name: Thomas Höhenleitner
+  blurb:
+    has developed hardware devices and moved to embedded software development.
+  github: rokath
+  image: /img/author/thomas.jpg
 nash:
-    name:  Nash Reilly
-    blurb: works as an independent EE consultant and runs <a href="https://www.rtljobs.com/?ref=memfault_bio">RTLjobs.com</a>, a job site for FPGA and RTL designers. He has previously written firmware for Sonos, Root.ai, and AppHarvest.
-    github: cushychicken
-    twitter: cushyChicken
-    linkedin: https://www.linkedin.com/in/nash-reilly-55284a33/
-    image: /img/author/nash.png
+  name: Nash Reilly
+  blurb:
+    works as an independent EE consultant and runs <a
+    href="https://www.rtljobs.com/?ref=memfault_bio">RTLjobs.com</a>, a job site
+    for FPGA and RTL designers. He has previously written firmware for Sonos,
+    Root.ai, and AppHarvest.
+  github: cushychicken
+  twitter: cushyChicken
+  linkedin: https://www.linkedin.com/in/nash-reilly-55284a33/
+  image: /img/author/nash.png
 lars:
-    name: Lars Pötter
-    blurb: is a freelance embedded software engineer, has worked on 8, 16 and 32 bit architectures and in safety critic projects. Creator of chipselect.org. Email me at <a href="mailto:interrupt@ing-poetter.de">interrupt@ing-poetter.de</a>
-    email: interrupt@ing-poetter.de
-    web: https://www.ing-poetter.de/
-    linkedin: https://www.linkedin.com/in/lars-p%C3%B6tter-32b42960
+  name: Lars Pötter
+  blurb:
+    is a freelance embedded software engineer, has worked on 8, 16 and 32 bit
+    architectures and in safety critic projects. Creator of chipselect.org.
+    Email me at <a
+    href="mailto:interrupt@ing-poetter.de">interrupt@ing-poetter.de</a>
+  email: interrupt@ing-poetter.de
+  web: https://www.ing-poetter.de/
+  linkedin: https://www.linkedin.com/in/lars-p%C3%B6tter-32b42960
 veverak:
-    name: Jan Koniarik
-    github: koniarik
-    linkedin: https://www.linkedin.com/in/jan-koniarik-21b9723b/
-    twitter: https://twitter.com/SquirrelCZE
-    blurb: -- robotics software engineer, keen interest in embedded, teaching assistant at university
+  name: Jan Koniarik
+  github: koniarik
+  linkedin: https://www.linkedin.com/in/jan-koniarik-21b9723b/
+  twitter: https://twitter.com/SquirrelCZE
+  blurb:
+    -- robotics software engineer, keen interest in embedded, teaching assistant
+    at university
 donatien:
-    name: Donatien Garnier
-    email: donatien.garnier@blecon.net
-    image: /img/author/donatien.png
-    blurb: is a co-founder of <a href='https://blecon.net/'>Blecon</a>. He was previously tech lead for Arm Mbed OS, and founder of an IoT startup.
-    twitter: donatiengarnier
-    linkedin: https://www.linkedin.com/in/donatiengarnier/
-    github: donatieng
+  name: Donatien Garnier
+  email: donatien.garnier@blecon.net
+  image: /img/author/donatien.png
+  blurb:
+    is a co-founder of <a href='https://blecon.net/'>Blecon</a>. He was
+    previously tech lead for Arm Mbed OS, and founder of an IoT startup.
+  twitter: donatiengarnier
+  linkedin: https://www.linkedin.com/in/donatiengarnier/
+  github: donatieng
 stawiski:
-    name: Mikolaj Stawiski
-    blurb: is a passionate software engineer coming from awesome electronics and hardware worlds.
-    linkedin: https://www.linkedin.com/in/mstawiski/
-    github: stawiski
-    image: /img/author/stawiski.png
+  name: Mikolaj Stawiski
+  blurb:
+    is a passionate software engineer coming from awesome electronics and
+    hardware worlds.
+  linkedin: https://www.linkedin.com/in/mstawiski/
+  github: stawiski
+  image: /img/author/stawiski.png
 mab:
-    name: Mohammed Billoo
-    blurb: is an embedded Linux consultant with over 14 years of experience in embedded software across a multitude of domains, including Defense, Space, and Commercial. He is an avid blogger and contributor to the open-source community.
-    linkedin: https://www.linkedin.com/in/mab-embedded/
-    github: mabembedded
-    image: /img/author/mab.jpeg
+  name: Mohammed Billoo
+  blurb:
+    is an embedded Linux consultant with over 14 years of experience in embedded
+    software across a multitude of domains, including Defense, Space, and
+    Commercial. He is an avid blogger and contributor to the open-source
+    community.
+  linkedin: https://www.linkedin.com/in/mab-embedded/
+  github: mabembedded
+  image: /img/author/mab.jpeg
 jonkurtz:
-    name: Jon Kurtz
-    email: jon.kurtz.uf@renesas.com
-    image: /img/author/jonkurtz.jpg
-    linkedin: https://www.linkedin.com/in/jonathankurtz1
-    blurb: is an FAE Connectivity manager at Renesas.
+  name: Jon Kurtz
+  email: jon.kurtz.uf@renesas.com
+  image: /img/author/jonkurtz.jpg
+  linkedin: https://www.linkedin.com/in/jonathankurtz1
+  blurb: is an FAE Connectivity manager at Renesas.
 tsarlandie:
-    name: Thomas Sarlandie
-    github: sarfata
-    image: /img/author/tsarlandie.jpg
-    blurb: is the Linux Tech Lead at Memfault.
+  name: Thomas Sarlandie
+  github: sarfata
+  image: /img/author/tsarlandie.jpg
+  blurb: is the Linux Tech Lead at Memfault.
 caglayan:
-    name: Çağlayan Dökme
-    blurb: is a young embedded software engineer who believes in the power of knowledge sharing.
-    email: caglayandokme@gmail.com
-    linkedin: https://www.linkedin.com/in/caglayandokme/
-    github: CaglayanDokme
+  name: Çağlayan Dökme
+  blurb:
+    is a young embedded software engineer who believes in the power of knowledge
+    sharing.
+  email: caglayandokme@gmail.com
+  linkedin: https://www.linkedin.com/in/caglayandokme/
+  github: CaglayanDokme
 ericj:
-    name: Eric Johnson
-    email: eric@memfault.com
-    github: ejohnso49
-    web: https://www.linkedin.com/in/ejohnso49
-    linkedin: https://www.linkedin.com/in/ejohnso49
-    image: /img/author/ejohnso49.png
-    blurb: is a Firmware Solutions Engineer at Memfault. Eric previously worked on embedded software teams at Walgreens Health and Athos
+  name: Eric Johnson
+  email: eric@memfault.com
+  github: ejohnso49
+  web: https://www.linkedin.com/in/ejohnso49
+  linkedin: https://www.linkedin.com/in/ejohnso49
+  image: /img/author/ejohnso49.png
+  blurb:
+    is a Firmware Solutions Engineer at Memfault. Eric previously worked on
+    embedded software teams at Walgreens Health and Athos
 blaise:
-    name: Blaise Lengrand
-    github: blaizard
-    image: /img/author/blaise.jpg
-    linkedin: https://www.linkedin.com/in/blaiselengrand
-    blurb: is a C++ software engineer with an insatiable passion for all things embedded and robotics!
+  name: Blaise Lengrand
+  github: blaizard
+  image: /img/author/blaise.jpg
+  linkedin: https://www.linkedin.com/in/blaiselengrand
+  blurb:
+    is a C++ software engineer with an insatiable passion for all things
+    embedded and robotics!
 mabe:
-    name: Markus Becker
-    blurb: is a Software Engineer for IoT and wireless topics, currently focussing on professional lighting equipment.
-    linkedin: https://www.linkedin.com/in/mabcomnets/
-    github: markus-becker-tridonic-com
-    image: /img/author/mabe.jpg
+  name: Markus Becker
+  blurb:
+    is a Software Engineer for IoT and wireless topics, currently focussing on
+    professional lighting equipment.
+  linkedin: https://www.linkedin.com/in/mabcomnets/
+  github: markus-becker-tridonic-com
+  image: /img/author/mabe.jpg
 blake:
-    name: Blake Hildebrand
-    blurb: is an embedded software engineer at Memfault. Blake previously worked on embedded software teams at Garmin and Amazon Robotics.
-    linkedin: https://www.linkedin.com/in/blake-a-hildebrand/
-    github: bahildebrand
-    image: /img/author/blake.jpg
+  name: Blake Hildebrand
+  blurb:
+    is an embedded software engineer at Memfault. Blake previously worked on
+    embedded software teams at Garmin and Amazon Robotics.
+  linkedin: https://www.linkedin.com/in/blake-a-hildebrand/
+  github: bahildebrand
+  image: /img/author/blake.jpg
 lampacher:
-    name: Martin Lampacher
-    image: /img/author/lampacher.jpg
-    linkedin: https://www.linkedin.com/in/martin-lampacher-4b532984
-    blurb: is a Freelance Embedded Engineer based in the Italian Alps.
-    github: lmapii
+  name: Martin Lampacher
+  image: /img/author/lampacher.jpg
+  linkedin: https://www.linkedin.com/in/martin-lampacher-4b532984
+  blurb: is a Freelance Embedded Engineer based in the Italian Alps.
+  github: lmapii
 chayes:
-    name: Chris Hayes
-    blurb: is an Android Solutions Engineer at Memfault. Chris previously worked at Square as an Embedded Android Engineer.
-    linkedin: https://www.linkedin.com/in/chrishayes6/
-    github: phoenixuprising
+  name: Chris Hayes
+  blurb:
+    is an Android Solutions Engineer at Memfault. Chris previously worked at
+    Square as an Embedded Android Engineer.
+  linkedin: https://www.linkedin.com/in/chrishayes6/
+  github: phoenixuprising
 guille:
-    name: Guillermo Garcia
-    web: https://embedded-dbl.com/
-    blurb: is an embedded software engineer who likes IoT projects.
-    linkedin: https://www.linkedin.com/in/guillermo-garcia-ch%C3%A1vez-1126951ab/
-    github: GuillerGC
+  name: Guillermo Garcia
+  web: https://embedded-dbl.com/
+  blurb: is an embedded software engineer who likes IoT projects.
+  linkedin: https://www.linkedin.com/in/guillermo-garcia-ch%C3%A1vez-1126951ab/
+  github: GuillerGC
 dangross:
-    name: Dan Gross
-    blurb: is passionate about reducing friction for developers. As a developer, Dan has worked on cloud and embedded systems for Sun, HP, Oracle, Samsung, and AWS.
-    image: /img/author/dangross.jpg
-    linkedin: https://www.linkedin.com/in/grossdan/
+  name: Dan Gross
+  blurb:
+    is passionate about reducing friction for developers. As a developer, Dan
+    has worked on cloud and embedded systems for Sun, HP, Oracle, Samsung, and
+    AWS.
+  image: /img/author/dangross.jpg
+  linkedin: https://www.linkedin.com/in/grossdan/
 ramanf:
-    name: Raman Filipau
-    github: romanf-dev
-    linkedin: https://www.linkedin.com/in/romanf-engineer/
-    blurb: -- firmware engineer. Previously worked on industrial automation and OS/RTOS design research.
+  name: Raman Filipau
+  github: romanf-dev
+  linkedin: https://www.linkedin.com/in/romanf-engineer/
+  blurb:
+    -- firmware engineer. Previously worked on industrial automation and OS/RTOS
+    design research.
 evgeny:
-    name: Evgeny Chormonov
-    web: https://ser-mk.github.io/
-    blurb: is a hardware and software engineer
-    linkedin: https://linkedin.com/in/echormonov
-    github: ser-mk
-    image: /img/author/evgeny.png
+  name: Evgeny Chormonov
+  web: https://ser-mk.github.io/
+  blurb: is a hardware and software engineer
+  linkedin: https://linkedin.com/in/echormonov
+  github: ser-mk
+  image: /img/author/evgeny.png
 piotrw:
-    name: Piotr Wasilewski
-    image: /img/author/piotrw.jpg
-    github: klonyyy
-    linkedin: https://www.linkedin.com/in/piotrek-wasilewski-9b63b198/
-    blurb: -- embedded software engineer specializing in motor control applications
-    web: https://pwwprojects.blogspot.com
+  name: Piotr Wasilewski
+  image: /img/author/piotrw.jpg
+  github: klonyyy
+  linkedin: https://www.linkedin.com/in/piotrek-wasilewski-9b63b198/
+  blurb:
+    -- embedded software engineer specializing in motor control applications
+  web: https://pwwprojects.blogspot.com
 zamuhrishka:
-    name: Aliaksandr Kavalchuk
-    image: /img/author/zamuhrishka.jpeg
-    github: Zamuhrishka
-    linkedin: https://www.linkedin.com/in/aleksander-kovalchuk-77030489/
-    blurb: is a firmware engineer with over 10 years of experience.
-    web: https://medium.com/@aliaksandr.kavalchuk
+  name: Aliaksandr Kavalchuk
+  image: /img/author/zamuhrishka.jpeg
+  github: Zamuhrishka
+  linkedin: https://www.linkedin.com/in/aleksander-kovalchuk-77030489/
+  blurb: is a firmware engineer with over 10 years of experience.
+  web: https://medium.com/@aliaksandr.kavalchuk
 gminn:
-    name: Gillian Minnehan
-    image: /img/author/gminn.jpeg
-    github: gminn
-    linkedin: https://www.linkedin.com/in/gillian-minnehan/
-    blurb: is a firmware solutions architect at Memfault. Gillian previously worked on embedded software teams in space and defense.
+  name: Gillian Minnehan
+  image: /img/author/gminn.jpeg
+  github: gminn
+  linkedin: https://www.linkedin.com/in/gillian-minnehan/
+  blurb:
+    is a firmware solutions architect at Memfault. Gillian previously worked on
+    embedded software teams in space and defense.
 victorlai:
-    name: Victor Lai
-    image: /img/author/victorlai.png
-    github: blisse
-    linkedin: https://www.linkedin.com/in/laivictor/
-    blurb: is an Android solutions architect at Memfault.
+  name: Victor Lai
+  image: /img/author/victorlai.png
+  github: blisse
+  linkedin: https://www.linkedin.com/in/laivictor/
+  blurb: is an Android solutions architect at Memfault.
 chrismerck:
-    name: Chris Merck
-    image: /img/author/chrismerck.jpg
-    github: chrismerck
-    linkedin: https://www.linkedin.com/in/christopher-merck-1987747a/
-    blurb: is Co-Founder and CTO at <a href="https://bondhome.io/">Bond</a>.
+  name: Chris Merck
+  image: /img/author/chrismerck.jpg
+  github: chrismerck
+  linkedin: https://www.linkedin.com/in/christopher-merck-1987747a/
+  blurb: is Co-Founder and CTO at <a href="https://bondhome.io/">Bond</a>.
 mschulte:
-    name: Mark Schulte
-    image: /img/author/mschulte.jpg
-    github: schultetwin
-    linkedin: https://www.linkedin.com/in/schulte-mark
-    blurb: is a firmware engineer trying to firmware
+  name: Mark Schulte
+  image: /img/author/mschulte.jpg
+  github: schultetwin
+  linkedin: https://www.linkedin.com/in/schulte-mark
+  blurb: is a firmware engineer trying to firmware
+bertschiettecatte:
+  name: Bert Schiettecatte
+  web: http://www.bertschiettecatte.com/
+  image: /img/author/bertschiettecatte.png
+  linkedin: https://www.linkedin.com/in/bertschiettecatte/
+  blurb:
+    is the founder of <a href="http://www.noisetron.com/">Noisetron LLC</a>, a
+    software & hardware engineering and expert witness consulting practice, and
+    the founder of <a href="http://www.percussa.com/">Percussa</a>, a pro-audio
+    consumer electronics company.
