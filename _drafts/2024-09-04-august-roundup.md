@@ -32,7 +32,7 @@ This post breaks down how to use Python’s multiprocessing module to sidestep t
 A great listen if you're into Yocto and Nvidia’s Jetson devices! Matt Madison dives into what makes a solid BSP, his work on meta-tegra, and tips from his experience as a Yocto/Embedded Linux pro. - Pat
 
 - [**Will Rust be alive in 10 years? - Blog - Tweede golf**](https://tweedegolf.nl/en/blog/128/rust-in-ten-years)<br>
-  Will still be around in 10, 20, or even 30 years? This article explores Rust's growing adoption across industries, especially due to its ability to solve memory safety issues. Read the blog to find out whether or not Rust is here to stay. 
+  This article explores Rust's growing adoption across industries, especially due to its ability to solve memory safety issues. Read the blog to find out whether or not Rust is here to stay. 
 
 - [**Rust Reviewed: the Current Trends and Pitfalls of the Ecosystem - InfoQ**](https://www.infoq.com/articles/rust-ecosystem-review-2023/)<br>
 This article takes a deep dive into the growing Rust community, how the industry is adopting it, and what folks love (and don’t) about the ecosystem. Despite a few challenges with debugging and profiling, Rust continues to prove itself with solid performance and memory safety.
