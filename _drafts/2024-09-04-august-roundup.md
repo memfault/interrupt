@@ -29,7 +29,7 @@ Google's Pigweed team has been working hard on making Bazel the best build syste
 This post breaks down how to use Python’s multiprocessing module to sidestep the GIL and supercharge your data processing, going from 80 to 1400 files/second. Definitely worth a read if you’re working with big data!
 
 - [**Matt Madison, meta-tegra, and what makes a good Yocto BSP**](https://tmpdir.org/034/)<br>
-A great listen if you're into Yocto and Nvidia’s Jetson devices! Matt Madison dives into what makes a solid BSP, his work on meta-tegra, and tips from his experience as a Yocto/Embedded Linux pro.
+A great listen if you're into Yocto and Nvidia’s Jetson devices! Matt Madison dives into what makes a solid BSP, his work on meta-tegra, and tips from his experience as a Yocto/Embedded Linux pro. - Pat
 
 - [**Will Rust be alive in 10 years? - Blog - Tweede golf**](https://tweedegolf.nl/en/blog/128/rust-in-ten-years)<br>
   Will still be around in 10, 20, or even 30 years? This article explores Rust's growing adoption across industries, especially due to its ability to solve memory safety issues. Read the blog to find out whether or not Rust is here to stay. 
