@@ -601,19 +601,19 @@ $ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
 ```
 ```
 -- Found devicetree overlay: dts/playground/props-basics.overlay
-node '/node_with_props' compatible 'dummy,props-basics' has unknown vendor prefix 'dummy'
+node '/node_with_props' compatible 'custom,props-basics' has unknown vendor prefix 'custom'
 -- Generated zephyr.dts: /path/to/build/zephyr/zephyr.dts
 -- Generated devicetree_generated.h: /path/to/build/zephyr/include/generated/devicetree_generated.h
 ```
 
 > **Note:** As mentioned, at the time of writing and in contrast to overlay files, bindings are not listed in the build output, not even for bindings in the application's `dts/bindings` directory.
 
-Even though the build passes, it seems that the Devicetree compiler is not too happy about our _"dummy"_ vendor prefix. Zephyr warns us here since it maintains a _"Devicetree binding vendor prefix registry"_ `zephyr/dts/bindings/vendor-prefixes.txt` to avoid name-space collisions for properties and bindings. If you're a vendor, you can of course add your name upstream, but for this article, we'll simply skip the vendor prefix and use the binding name _custom-props-basics_ instead.
+Even though the build passes, it seems that the Devicetree compiler is not too happy about our _"custom"_ vendor prefix. Zephyr warns us here since it maintains a _"Devicetree binding vendor prefix registry"_ `zephyr/dts/bindings/vendor-prefixes.txt` to avoid name-space collisions for properties and bindings. If you're a vendor, you can of course add your name upstream, but for this article, we'll simply skip the vendor prefix and use the binding name _custom-props-basics_ instead.
 
 ```bash
-$ mv dts/bindings/dummy,props-basics.yaml dts/bindings/custom-props-basics.yaml
-$ sed -i .bak 's/dummy,/custom-/g' dts/bindings/custom-props-basics.yaml
-$ sed -i .bak 's/dummy,/custom-/g' dts/playground/props-basics.overlay
+$ mv dts/bindings/custom,props-basics.yaml dts/bindings/custom-props-basics.yaml
+$ sed -i .bak 's/custom,/custom-/g' dts/bindings/custom-props-basics.yaml
+$ sed -i .bak 's/custom,/custom-/g' dts/playground/props-basics.overlay
 $ rm dts/**/*.bak
 
 $ tree --charset=utf-8 --dirsfirst.
@@ -628,7 +628,7 @@ $ tree --charset=utf-8 --dirsfirst.
 └── prj.conf
 ```
 
-Without recompiling, we can check whether the generator script has added our properties to `devicetree_generated.h`. The value _foo_ is unique enough for a quick `grep`; for our property _int_ we'll use what we've learned and expect to find some macro containing `node_with_props_P_int`. And indeed, we **finally** have our generated output!
+After recompiling, we can check whether the generator script has added our properties to `devicetree_generated.h`. The value _foo_ is unique enough for a quick `grep`; for our property _int_ we'll use what we've learned and expect to find some macro containing `node_with_props_P_int`. And indeed, we **finally** have our generated output!
 
 ```bash
 $ grep foo ../build/zephyr/include/generated/devicetree_generated.h
@@ -986,7 +986,7 @@ In the previous article about Devicetree basics, we've also seen the standard no
 };
 ```
 
-The node's aliases are translated to macros with the format `DT_N_ALIAS_<alias_in_lowercase>` in the node's section _"Existence and alternate IDs"_ that we've seen just before. Looking at the generated ouput it is now also clear why Zephyr makes no clear distinction between the terms _"references"_ and _"phandle"_:
+The node's aliases are translated to macros with the format `DT_N_ALIAS_<alias_in_lowercase>` in the node's section _"Existence and alternate IDs"_ that we've seen just before. Looking at the generated output it is now also clear why Zephyr makes no clear distinction between the terms _"references"_ and _"phandle"_:
 
 ```c
 /* Existence and alternate IDs: */
@@ -1178,7 +1178,7 @@ Let's briefly recall why we need a `phandle-array`: In the previous article, we'
 };
 ```
 
-Each instance handles _all_ pins in the corresponding port. However, some other Devicetree node, e.g., an LED, needs a way to control and configure a single pin of a given port. We can't do this using a normal _phandle_, e.g., `<&gpio0>`, we need a mechanisim to pass some _parameters_ or _metadata_ along with the _phandle_. `phandle-array`s implement this exact use case, allowing to pass a predefined number of cells with the _phandle_, e.g., as we can see in the nRF52840's development kit DTS file for `/leds/led_0`:
+Each instance handles _all_ pins in the corresponding port. However, some other Devicetree node, e.g., an LED, needs a way to control and configure a single pin of a given port. We can't do this using a normal _phandle_, e.g., `<&gpio0>`, we need a mechanism to pass some _parameters_ or _metadata_ along with the _phandle_. `phandle-array`s implement this exact use case, allowing to pass a predefined number of cells with the _phandle_, e.g., as we can see in the nRF52840's development kit DTS file for `/leds/led_0`:
 
 `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
 ```dts
@@ -1447,7 +1447,7 @@ Instead of providing the full example as text, I'll leave you with a [link to th
 
 Now that we've seen both, DTS files and their bindings, we'll wrap up this article by looking at how the generated macros are accessed in an application. We'll cover the most common macros from `zephyr/include/zephyr/devicetree.h`. Those macros are the basis for most Zephyr modules, e.g., `gpio`s, that in turn provide their own Devicetree API built on top of the mentioned macros.
 
-Except for the macros used to access a node's identifier, in practice you'll use macros provided by the corresponding subystem. E.g., the `gpio` subsystem has its own Devicetree macros. It is nevertheless important to understand the basics, especially if you're planning to write your own drivers. In the next article, we'll see some examples of practical, subsystem-specific Devicetree APIs.
+Except for the macros used to access a node's identifier, in practice you'll use macros provided by the corresponding subsystem. E.g., the `gpio` subsystem has its own Devicetree macros. It is nevertheless important to understand the basics, especially if you're planning to write your own drivers. In the next article, we'll see some examples of practical, subsystem-specific Devicetree APIs.
 
 > **Note:** For details, you'll always need to refer to the [official Devicetree API documentation](https://docs.zephyrproject.org/latest/build/dts/api/api.html) and to the corresponding subsystems. The documentation is really great and has **lots** of examples. We'll cover the basics here so that you can easily navigate the documentation. There are simply too many macros to cover them all!
 
