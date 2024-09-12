@@ -741,7 +741,7 @@ Toolchain management is always a highly opinionated topic, so I'll try to keep t
 - Host dependencies such as `python`, `cmake`, `ninja`, etc., as explained in Zephyr's [Getting Started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies)
 - An installation of the _Zephyr SDK_, containing the architecture specific toolchain. Zephyr's official documentation includes a dedicated section on the [Zephyr SDK](https://docs.zephyrproject.org/latest/develop/toolchains/zephyr_sdk.html) and its installation instructions. The _Zephyr SDK_ does **not** contain Zephyr's _sources_!
 
-> **Note:** Yes, the inconsistent use of the term "SDK" is quite annoying. While Zephyr uses _SDK_ exclusively for refering to the toolchain, I'd claim that an SDK typically also includes source code.
+> **Note:** Yes, the inconsistent use of the term "SDK" is quite annoying. While Zephyr uses _SDK_ exclusively for referring to the toolchain, I'd claim that an SDK typically also includes source code.
 
 The host tools are typically in your `$PATH` - at least for the executing terminal. For pointing Zephyr's build process to your installed SDK you can use the two environment variables [`ZEPHYR_TOOLCHAIN_VARIANT`](https://docs.zephyrproject.org/latest/develop/env_vars.html#envvar-ZEPHYR_TOOLCHAIN_VARIANT) and [`ZEPHYR_SDK_INSTALL_DIR`](https://docs.zephyrproject.org/latest/develop/env_vars.html#envvar-ZEPHYR_SDK_INSTALL_DIR).
 
@@ -859,7 +859,7 @@ manifest:
           - hal_nordic
 ```
 
-We got rid of the `path` key, since `import.path-prefix` allows us to define a common prefix for all projects. Using the `import.file` key, we're telling _West_ to look for a `west.yml` file in Zephyr's repository and also consider the projects and West commands listed there. Notice that by default West looks for a `west.yml` file when using `import` and therefore it is not neccessary to provide the `import.file` entry.
+We got rid of the `path` key, since `import.path-prefix` allows us to define a common prefix for all projects. Using the `import.file` key, we're telling _West_ to look for a `west.yml` file in Zephyr's repository and also consider the projects and West commands listed there. Notice that by default West looks for a `west.yml` file when using `import` and therefore it is not necessary to provide the `import.file` entry.
 
 Instead of adding _all_ of Zephyr's dependencies, we pick the ones we need _by their name_ using the `import.name-allowlist` key.
 
@@ -1201,7 +1201,7 @@ $ cat test.txt
 this-is-a-test.123-test%
 ```
 
-Whew! A close call, but even after commiting to our local `manifest-rev` branch the changes are not lost an can be restored as instructed by the command line output.
+Whew! A close call, but even after committing to our local `manifest-rev` branch the changes are not lost an can be restored as instructed by the command line output.
 
 Keep in mind that all _projects_ in a West manifest are managed entirely by _West_. If you're working on those repositories, use dedicated branches. After **every** _West update_, double-check that you're still working on the correct branch and do **not** commit to the `manifest-rev` branch.
 

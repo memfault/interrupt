@@ -1143,7 +1143,7 @@ The first example covers all the basic types that we've seen:
 / {
   aliases {
     // Aliases cannot be used as a references in the Devicetree itself, but are
-    // used within the applicaiton as an alternative name for a node.
+    // used within the application as an alternative name for a node.
     alias-by-label = &label_equivalent;
     alias-by-path = &{/node_with_equivalent_arrays};
     alias-as-string = "/node_with_equivalent_arrays";
