@@ -28,3 +28,7 @@
   <link href="{{ '/feed.xml' | absolute_url }}" type="application/rss+xml" rel="alternate" title="RSS 2.0 Feed" />
 
 </head>
+
+{% if page.mermaid %}
+  {% include mermaid.html %}
+{% endif %}
