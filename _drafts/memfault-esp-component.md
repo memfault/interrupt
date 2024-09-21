@@ -188,6 +188,14 @@ There were a few minor tweaks needed to the existing `CMakeLists.txt` (at
 `ports/esp_idf/memfault/CMakeLists.txt`) to make it work when included in this
 way, but nothing notable- just a few path adjustments.
 
+### Testing the change!
+
+## Final steps
+
+### Auto-publishing the component
+
+### Continous verification of the component
+
 ## OUTRO NAME TBD
 
 Thanks for reading!
