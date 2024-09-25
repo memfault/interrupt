@@ -1,5 +1,5 @@
 Notification Banner:
-    background: '#141845'
-    textcolor: '#fff'
-    description: |
-      <i> Webinar: How New IoT Security Regulations Will Shape the Industry's Future - Tuesday, Sept. 17th @ 9AM PT | 12PM ET | 6PM CET | <a href="https://hubs.la/Q02LvnFB0">RSVP Now</a> </i>
+  background: "#141845"
+  textcolor: "#fff"
+  description: |
+    Going to Embedded World North America 2024? <a href="https://go.memfault.com/embedded-world-usa-2024">Swing by our booth!</a>
