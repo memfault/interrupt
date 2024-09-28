@@ -245,7 +245,11 @@ Operating System: Ubuntu 24.04 LTS
 ```
 
 All other platforms are compared to the Ubuntu results because Ubuntu is the
-fastest.
+fastest.  For every platform, the duration of a Ubuntu 40 second long build is
+compared.  40s was chosen as the nominal build time because it's a relatively long build
+that I observed for a Zephyr project that used lots of libraries like LVGL,
+nanopb, crypto, and BLE and many peripheral drivers like ADC, SPI, USB, and I2C.
+This project's executable could be as big as 900kB.
 
 | Metric                  | Result     | Compared to Native Ubuntu |
 | ----------------------- | ---------- | ------------------------- |
