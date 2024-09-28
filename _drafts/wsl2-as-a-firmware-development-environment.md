@@ -181,8 +181,13 @@ on Native Ubuntu 24.04, WSL2 (Ubuntu 24.04), and Native Windows 11.
 
 A benchmark shouldn't take too long, yet it should be long enough that it
 smooths over some run-to-run issues you might see—_what are
-Windows Defender and Windows Update up to during the run_ 🔍?  A build-only twister
-run of 244 builds representing 4 common platforms from
+Windows Defender and Windows Update up to during the run_ 🔍?
+
+In the Zephyr ecosystem, a tool called Twister[https://docs.zephyrproject.org/latest/develop/test/twister.html]
+is used to collect and run build-only, emulated, and on-target tests for Zephyr
+boards and applications.
+
+A build-only twister run representing four common platforms from
 [ST](https://www.st.com),
 [Nordic](https://www.nordicsemi.com),
 [Espressif](https://www.espressif.com/),
@@ -199,6 +204,11 @@ times weren't too long.
   -p nucleo_g474re \
   -T tests/drivers
 ```
+
+This command selects a total of 244 test builds between the
+four platforms.  Some boards, like nrf52840dk, have more driver tests than the
+other boards. 
+
 244 Builds
 - 55 nucleo_g474re (ST)
 - 108 nrf52840dk (Nordic)
