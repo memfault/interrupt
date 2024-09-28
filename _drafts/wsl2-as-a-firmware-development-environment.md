@@ -69,7 +69,7 @@ in order to quantify performance of some common Zephyr toolchains.
 ### Graphics
 
 If you've previously setup X forwarding in WSL2, you'll be happy to learn that this is no longer
-necessary.  Linux GUIs "Just Work" in WSL2!
+necessary.  [Linux GUIs "Just Work" in WSL2!](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps)
 
 ### Network
 
