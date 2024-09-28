@@ -41,6 +41,13 @@ in order to quantify performance of some common Zephyr toolchains.
 
 ## Features and Limitations
 
+The table below lists some of the common features that are assessed for a
+firmware development host environment.  _Yes, you do need graphics to view that
+schematic, no, there's not an emacs package for that._<sup>E</sup>  You'll see that a
+few caveats are listed for each of the virtualized hosts.
+
+> <sup>E</sup> [_Hold on..._](https://www.reddit.com/r/emacs/comments/qkzkvu/schematics_in_gnu_emacs_symbols_library/)
+
 |                                  | Ubuntu 24.04 (Kernel 6.8) | Windows 11 | VMWare Workstation Pro 17 | WSL2 2.2.4.0 (Kernel 5.15) |
 | -------------------------------- | ------------------------- | ---------- | ------------------------- | -------------------------- |
 | Graphics                         | ✅                         | ✅          | ✅<sup>1</sup>             | ✅                          |
