@@ -494,7 +494,9 @@ If you’re interested in trying out WSL2 for firmware development, checkout the
 [complete tutorial](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md),
 or stay tuned to the Interrupt where the tutorial will be published TBD.
 
-<!-- TODO: replace the link to WSL2 tutorial when published [complete tutorial]({{ site.baseurl }}{% link _posts/wsl2-firmware-development-setup.md %}) -->
+{% comment %}
+TODO: replace the link to WSL2 tutorial when published [complete tutorial]({{ site.baseurl }}{% link _posts/wsl2-firmware-development-setup.md %})
+{% endcomment %}
 
 ## Acknowledgements
 
