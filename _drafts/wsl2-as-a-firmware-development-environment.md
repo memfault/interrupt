@@ -74,7 +74,9 @@ necessary.  [Linux GUIs "Just Work" in WSL2!](https://learn.microsoft.com/en-us/
 ### Network
 
 It’s no surprise that WSL2 can do anything you need over the network, since one of its
-primary use cases is web development.
+primary use cases is web development.  For example, you can establish remote
+network connections, SSH in and out, and host web servers—including containers—that will
+be available to the Windows host—or even the LAN!
 
 ### USB
 
