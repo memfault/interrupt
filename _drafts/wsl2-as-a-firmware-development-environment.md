@@ -112,24 +112,6 @@ Linux are [small](https://www.phoronix.com/review/windows11-wsl2-zen4/5),
 
 ## Zephyr Benchmark
 
-<div class="mermaid">
----
-config:
-    xyChart:
-        xAxis:
-            labelFontSize: 12
----
-xychart-beta 
-    title "Zephyr Benchmark"
-    x-axis "Platform" ["Ubuntu 24.04 6.8", "WSL2 24.04 5.15", "WSL2 24.04 6.1", "macOS Sonoma*", "Windows 11", "VMWare (no AMD-V)" ]
-    y-axis "Duration in seconds (lower is better)" 0 --> 1680
-    bar [664.44, 754.642, 723.323, 741.547, 1393.901, 1655.560]
-</div>
-
-> \* macOS Sonoma had the fastest result of 595.620s, but the value in the chart, 741.547s, 
-  is scaled in an attempt to account for CPU performance differences between the 
-  [x86 and Arm test platforms](#the-test-fixture).
-
 Recently, Intercreate upgraded my work laptop to the best I could find: a
 [Framework 16](https://frame.work/products/laptop16-diy-amd-7040).  This laptop put me in a uniquely convenient position to run a
 benchmark due to how easy it is to run both Windows and Linux.  Personally, I don’t enjoy
@@ -336,6 +318,28 @@ configured correctly for AMD-V or Intel VT-x, but let this benchmark be a remind
 that you shouldn't take configuration and compatibility for granted!
 
 ![Screenshot of the Windows benchmark run]({% img_url zephyr-development-environments/vmware-workstation-17-ubuntu-server-24-twister.png %})
+
+### Results Compared
+
+The Zephyr Benchmark duration in seconds of all of the tests described above are graphed below.
+
+<div class="mermaid">
+---
+config:
+    xyChart:
+        xAxis:
+            labelFontSize: 12
+---
+xychart-beta 
+    title "Zephyr Benchmark"
+    x-axis "Platform" ["Ubuntu 24.04 6.8", "WSL2 24.04 5.15", "WSL2 24.04 6.1", "macOS Sonoma*", "Windows 11", "VMWare (no AMD-V)" ]
+    y-axis "Duration in seconds (lower is better)" 0 --> 1680
+    bar [664.44, 754.642, 723.323, 741.547, 1393.901, 1655.560]
+</div>
+
+> \* macOS Sonoma had the fastest result of 595.620s, but the value in the chart, 741.547s, 
+  is scaled in an attempt to account for CPU performance differences between the 
+  [x86 and Arm test platforms](#the-test-fixture).
 
 ## Developer Experience
 
