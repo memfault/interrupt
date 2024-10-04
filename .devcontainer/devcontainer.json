@@ -1,0 +1,22 @@
+{
+    "name": "Interrupt",
+    "build": {
+        "dockerfile": "../Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "esbenp.prettier-vscode",
+                "DavidAnson.vscode-markdownlint"
+            ]
+        }
+    },
+    "postAttachCommand": ". /venv/bin/activate && bundle exec jekyll serve --host 0.0.0.0 -D --trace --future",
+    "forwardPorts": [4000],
+    "portsAttributes": {
+        "4000": {
+            "label": "Interrupt",
+            "onAutoForward": "openBrowser"
+        }
+    }
+}
