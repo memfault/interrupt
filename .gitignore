@@ -8,3 +8,12 @@ _site/
 /vendor
 /example/*/build
 /.venv
+/node_modules
+
+# Yarn 2
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

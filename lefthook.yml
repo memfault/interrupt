@@ -1,0 +1,15 @@
+# Lefthook configuration:
+#
+#   Refer for explanation to following link:
+#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+#
+
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      glob: "*.md"
+      run: yarn prettier --write --prose-wrap=always {staged_files}
+    typos:
+      glob: "*.md"
+      run: yarn typos --config _typos.toml {staged_files}
