@@ -75,6 +75,9 @@ exclude:
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
-  - netlify.toml
   - readme.html
   - example
+
+algolia:
+  application_id: '5682VWHMXP'
+  index_name: 'interrupt'

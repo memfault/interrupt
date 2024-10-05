@@ -13,5 +13,5 @@
 /events-calendar https://airtable.com/shrPIHX3y3gQ0WlRd/iCal?timeZone=America%2FLos_Angeles&userLocale=en
 
 # Custom 404 page
-# https://docs.netlify.com/routing/redirects/redirect-options/#custom-404-page-handling
+# https://developers.cloudflare.com/pages/configuration/redirects/
 /* /404.html 404
