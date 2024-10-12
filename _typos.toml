@@ -1,0 +1,12 @@
+# See config documentation here:
+# https://github.com/crate-ci/typos/blob/master/docs/reference.md
+[default.extend-words]
+
+[default]
+# extend-ignore-re list operates on sequences, not identifiers, so we can
+# have very targeted ignores
+extend-ignore-re = []
+
+[files]
+# list of files to exclude
+extend-exclude = []
