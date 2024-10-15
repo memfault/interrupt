@@ -108,7 +108,7 @@ Below is the final Dockerfile I used to create the image, with some comments
 explaining the more exotic parts.
 
 ```dockerfile
-# This is the newest Ubuntu version with simple support for STM32CubeIDE- it
+# This is the newest Ubuntu version with simple support for STM32CubeIDE-
 # the Cube .deb has a dependency on the python2.7 package, which is no longer
 # available in the latest Ubuntu LTS 24.04
 FROM ubuntu:22.04
