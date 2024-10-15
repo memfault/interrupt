@@ -1,0 +1,6 @@
+Notification Banner:
+  background: "#141845"
+  textcolor: "#fff"
+  title: Bond Home Webinar
+  description: |
+    <i>How Bond Home Built In-House Observability & Why They Switched to Memfault | Wed, October 30th - 9AM PT | 12PM ET | <a href="https://hubs.ly/Q02Rz4mJ0">RSVP</a></i>
