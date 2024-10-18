@@ -1,0 +1,22 @@
+{
+    "name": "Interrupt",
+    "build": {
+        "dockerfile": "../Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "esbenp.prettier-vscode",
+                "DavidAnson.vscode-markdownlint"
+            ]
+        }
+    },
+    "postAttachCommand": "./entrypoint.sh",
+    "forwardPorts": [4000],
+    "portsAttributes": {
+        "4000": {
+            "label": "Interrupt",
+            "onAutoForward": "openBrowser"
+        }
+    }
+}
