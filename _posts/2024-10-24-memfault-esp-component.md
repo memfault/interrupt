@@ -183,7 +183,7 @@ The first step is to create the required root-level files:
   similarly to the `CMakeLists.txt`:
 
   ```configuration
-  # If the repo is being used as an ESP-IDF component, bring in the ESP-IDF-Specific
+  # If the repo is being used as an ESP-IDF component, bring in the ESP-IDF-specific
   # Kconfig file. Otherwise, this should be unused.
   if IDF_TARGET != ""
   rsource "ports/esp_idf/memfault/Kconfig"
