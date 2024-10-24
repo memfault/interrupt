@@ -1,4 +1,4 @@
-FROM ruby:3.0-slim-bullseye
+FROM ruby:3.2.2-slim-bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
