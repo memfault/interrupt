@@ -56,22 +56,6 @@ function darkModeSetup() {
     })
 }
 
-// Ensures backward compatibility with IE old versions
-function searchScroll() {
-	const scrollBox = document.getElementById('search-results');
-	const SCROLLED_CLASSNAME = 'scrolled-down';
-
-	if (document.addEventListener && scrollBox) {
-		scrollBox.addEventListener('scroll', () => {
-			if (scrollBox.scrollTop > 50)  {
-				scrollBox.classList.add(SCROLLED_CLASSNAME);
-			} else {
-				scrollBox.classList.remove(SCROLLED_CLASSNAME);
-			}
-		});
-	}
-}
-
 // Function to set a cookie
 function setCookie(name, value, days) {
     const expires = new Date();

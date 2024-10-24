@@ -321,7 +321,7 @@ overridden by our environment, and now we can define this variable ourselves
 from our Invoke task!
 
 ```
-# ⁨nRF5_SDK_15.2.0/components⁩/toolchain⁩/gcc⁩/Makefile.common
+# nRF5_SDK_15.2.0/components/toolchain/gcc/Makefile.common
 
 CCACHE ?= $(if $(filter Windows%,$(OS)),, \
                $(if $(wildcard /usr/bin/ccache),ccache))
