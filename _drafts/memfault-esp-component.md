@@ -80,7 +80,7 @@ platforms (looking at you, Eclipse-based IDEs... 😁).
 
 ### Let me tell you about our existing integration
 
-[Insert steve zissou gif]
+<video autoplay loop src="/img/esp-component/zissou.webm" alt="Steve Zissou: let me tell you about my boat GIF"></video>
 
 ESP-IDF's build system is based on CMake, and has a LOT of features and options.
 
@@ -95,7 +95,7 @@ ESP-IDF based project[^1] (names are my own):
 
 1. Scan and load all selected components- each component's `CMakeLists.txt` file
    is processed in script mode
-1. `Kconfig` files are loaded from ESP-IDF and all registerd components.
+1. `Kconfig` files are loaded from ESP-IDF and all registered components.
    `Kconfig` settings are loaded (from `sdkconfig` or `sdkconfig.defaults` if
    `sdkconfig` is not already generated), and the final configuration is
    generated
@@ -274,14 +274,15 @@ registry:
 > Note: the example command above is uploading the component to the `memfault`
 > namespace. To register a new namespace, you'll need to create an account on
 > the ESP Component Registry website- the namespace will be set to the user
-> account name. Espressif supports custom namespaces, see
-> [docs here](https://docs.espressif.com/projects/idf-component-manager/en/latest/guides/packaging_components.html#authentication).
+> account name. Espressif does support custom namespaces, but they need to be
+> manually created by
+> [contacting Espressif](https://docs.espressif.com/projects/idf-component-manager/en/latest/guides/packaging_components.html#authentication).
 
 ### Auto-publishing the component
 
 We can automate the component publishing process by adding a step to our
-existing Memfault SDK publishing automation. A simplified example is show below,
-using GitHub Actions:
+existing Memfault SDK publishing automation. A simplified example is shown
+below, using GitHub Actions:
 
 ```yaml
 name: Publish ESP Component
@@ -315,7 +316,7 @@ jobs:
           compote component upload --archive dist/memfault-firmware-sdk_${{ github.ref_name }}.tgz --namespace memfault --name memfault-firmware-sdk
 ```
 
-### Continous verification of the component
+### Continuous verification of the component
 
 Finally, we also want to make sure the component doesn't break in the future
 (maybe we change some paths or files in the SDK that break the component).
