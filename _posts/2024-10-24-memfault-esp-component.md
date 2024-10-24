@@ -33,7 +33,7 @@ A little over 2 years ago, in 2022, Espressif introduced the
 [ESP Component Registry](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-component-manager.html),
 to streamline sharing and reusing public components.
 
-Initially, it was primarily used for breaking up the ESP-IDF itself into smaller
+Initially, it was used for breaking up the ESP-IDF itself into smaller
 components, but it has since grown to include a
 [variety of third-party components](https://components.espressif.com). This is a
 great way to share code and make it easier to integrate into your projects.
