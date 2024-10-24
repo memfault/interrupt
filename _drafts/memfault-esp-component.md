@@ -348,6 +348,33 @@ available as an ESP-IDF component; we love making it simpler to integrate
 Memfault into your projects, and this removes a few manual steps from the
 process 🥳.
 
+The final component is now available here:
+
+<https://components.espressif.com/components/memfault/memfault-firmware-sdk>
+
+One last thing- the ESP Component system permits including example apps. In our
+case, it's the same example application we provide with the non-component
+SDK[^2]. You can find the example here in the ESP Component Registry page:
+
+<https://components.espressif.com/components/memfault/memfault-firmware-sdk/versions/1.15.0/examples/esp32/apps/memfault_demo_app>
+
+And the ESP tooling makes it very easy to try out:
+
+```bash
+❯ idf.py create-project-from-example "memfault/memfault-firmware-sdk:esp32/apps/memfault_demo_app"
+Executing action: create-project-from-example
+Example "esp32/apps/memfault_demo_app" successfully downloaded to /home/noah/dev/memfault/interrupt/memfault_demo_app
+Done
+
+❯ cd memfault_demo_app
+
+# Add a Memfault Project Key:
+❯ echo "CONFIG_MEMFAULT_PROJECT_KEY=\"dummy\"\n" >> sdkconfig.defaults
+
+# Build for the default ESP32 target, flash, and start the serial port monitor:
+❯ idf.py build flash monitor
+```
+
 Thanks for reading!
 
 <!-- Interrupt Keep START -->
@@ -365,5 +392,6 @@ Thanks for reading!
 <!-- prettier-ignore-start -->
 
 [^1]: This is a simplification, but it's close enough for our purposes. See [full explanation here](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/build-system.html#build-process).
+[^2]: The example app is a simple ESP32 app that demonstrates the Memfault SDK's features, and can be [found here](https://github.com/memfault/memfault-firmware-sdk/tree/master/examples/esp32)
 
 <!-- prettier-ignore-end -->
