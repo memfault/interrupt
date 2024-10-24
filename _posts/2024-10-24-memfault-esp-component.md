@@ -3,6 +3,7 @@ title: Publishing the Memfault SDK as an ESP-IDF Component
 description: How we shipped our SDK as an ESP-IDF component
 author: noah
 tags: [ci, memfault, esp32, esp-idf, github-actions]
+image: /img/memfault-esp-component/esp-registry-page.png
 ---
 
 <!-- excerpt start -->
@@ -32,7 +33,7 @@ A little over 2 years ago, in 2022, Espressif introduced the
 [ESP Component Registry](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-component-manager.html),
 to streamline sharing and reusing public components.
 
-Initially it was used mostly for breaking up the ESP-IDF itself into smaller
+Initially, it was used for breaking up the ESP-IDF itself into smaller
 components, but it has since grown to include a
 [variety of third-party components](https://components.espressif.com). This is a
 great way to share code and make it easier to integrate into your projects.
@@ -82,14 +83,14 @@ platforms (looking at you, Eclipse-based IDEs... 😁).
 
 <video autoplay loop src="/img/esp-component/zissou.webm" alt="Steve Zissou: let me tell you about my boat GIF"></video>
 
-ESP-IDF's build system is based on CMake, and has a LOT of features and options.
+ESP-IDF's build system is based on CMake and has a LOT of features and options.
 
 The manual is here if you're interested in going on a deep dive:
 
 - [ESP-IDF CMake Build System](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/build-system.html)
 
-From our perspective, there's essentially 4 steps that happen when you build an
-ESP-IDF based project[^1] (names are my own):
+From our perspective, there are essentially 4 steps that happen when you build
+an ESP-IDF-based project[^1] (names are my own):
 
 ![Picture of 4 steps of esp-idf build system](/img/esp-component/idf.py-build-system.excalidraw.svg)
 
@@ -115,15 +116,15 @@ Note that we're using `register_component()` here, instead of the modern
 because we need to support older versions of ESP-IDF. More about that later!
 
 Otherwise, our SDK component is pretty standard- we have a `CMakeLists.txt` file
-and `Kconfig` file that define the SDK's build and configuration settings. Take
-a look here if you're curious:
+and a `Kconfig` file that define the SDK's build and configuration settings.
+Take a look here if you're curious:
 
 - [CMakeLists.txt](https://github.com/memfault/memfault-firmware-sdk/blob/master/ports/esp_idf/memfault/CMakeLists.txt)
 - [Kconfig](https://github.com/memfault/memfault-firmware-sdk/blob/master/ports/esp_idf/memfault/Kconfig)
 
 ### What we need to do to make this a component
 
-ESP Component Registry-enabled components have the follow properties:
+ESP Component Registry-enabled components have the following properties:
 
 - Root-level `idf_component.yml` manifest
 - Root-level `CMakeLists.txt` and `Kconfig` files
@@ -132,8 +133,8 @@ ESP Component Registry-enabled components have the follow properties:
 We have essentially 2 options when it comes to making our SDK an ESP-IDF
 component:
 
-1. **Reorganize our SDK to put the ESP port at the root, and the core files
-   under `src`, etc**:
+1. **Reorganize our SDK to put the ESP port at the root and the core files under
+   `src`, etc**:
    - This is the simplest option, but it requires changing the Memfault SDK's
      folder structure
 1. **Use a `CMakeLists.txt` file in the SDK's root folder to include the SDK
@@ -141,7 +142,7 @@ component:
    - This is more complex, but it allows us to keep the SDK's folder structure
      as-is
 
-We'll go with option #2, because it's simpler to keep the ESP Component version
+We'll go with option #2 because it's simpler to keep the ESP Component version
 of our SDK as close as possible to the upstream version (mostly, less confusing
 for us, the maintainers!).
 
@@ -182,8 +183,8 @@ The first step is to create the required root-level files:
   similarly to the `CMakeLists.txt`:
 
   ```configuration
-  # If the repo is being used as an ESP-IDF component, bring in the ESP-IDF specific
-  # Kconfig file. Otherwise this should be unused.
+  # If the repo is being used as an ESP-IDF component, bring in the ESP-IDF-specific
+  # Kconfig file. Otherwise, this should be unused.
   if IDF_TARGET != ""
   rsource "ports/esp_idf/memfault/Kconfig"
   endif
@@ -206,7 +207,7 @@ dependencies:
 ```
 
 One nuance here- the component name specified must exactly match the enclosing
-folder name, or the build will fail.
+folder name or the build will fail.
 
 Memfault uses a monorepo for our development, where the Memfault Firmware SDK is
 located in a subfolder at `sdk/embedded`. To make it easy to test the component
@@ -215,10 +216,11 @@ change, we'll create a bind mount with the correct name
 component build without needing to copy files around:
 
 ```bash
-mkdir /tmp/memfault-firmware-sdk && sudo mount --bind /path/to/memfault-monorepo/sdk/embedded /tmp/memfault-firmware-sdk
+mkdir /tmp/memfault-firmware-sdk && \
+sudo mount --bind /path/to/memfault-monorepo/sdk/embedded /tmp/memfault-firmware-sdk
 ```
 
-Now we can update our sample ESP32 app to use the Memfault SDK from the
+Now, we can update our sample ESP32 app to use the Memfault SDK from the
 filesystem as a component:
 
 ```yaml
@@ -248,7 +250,7 @@ our changes work as expected 🎉!
 
 Let's use the ESP component tooling to package up our component for upload to
 the ESP Component Registry. Modern ESP-IDF development environments come with
-the `compote` Python tool pre-installed, otherwise it can be installed with
+the `compote` Python tool pre-installed. Otherwise, it can be installed with
 `pip install idf-component-manager` to a Python environment.
 
 ```bash
@@ -333,15 +335,15 @@ We take a couple of strategies to ensure this:
 
 ## Summary
 
-It's a pretty dry topic, but always interesting to learn about a new software
-packaging system!
+It's a pretty dry topic, but it is always interesting to learn about a new
+software packaging system!
 
 Some of the techniques apply to other build systems, especially the overall
 methodology:
 
-1. identify and make the changes
-2. test (focus on an efficient test strategy!)
-3. automate the verification and distribution process
+1. Identify and make the changes
+1. Test (focus on an efficient test strategy!)
+1. Automate the verification and distribution process
 
 It was a fun project to work on, and I'm excited to see the Memfault SDK
 available as an ESP-IDF component; we love making it simpler to integrate
