@@ -32,7 +32,7 @@ Nice technique: v-cut vias for panelized boards for testing. — Noah
 Roundup of LLVM 19 contributions by ARM. — Noah
 
 - [**Playing with BOLT and Postgres | Tomas Vondra**](https://vondra.me/posts/playing-with-bolt-and-postgres/)<br>
-Writeup about applying LLVM's Binary Optimization and Layout Tool (BOLT) to a practical program: PostgreSQ. — Noah
+Writeup about applying LLVM's Binary Optimization and Layout Tool (BOLT) to a practical program: PostgreSQL. — Noah
 
 - [**Supporting Custom RISC-V Extensions in LLVM | Alex Bradbury, Igalia**](https://riscv-europe.org/summit/2024/media/Tutorial%20supporting%20custom%20RISC-V%20extensions%20in%20LLVM.pdf)<br>
 Presentation on how LLVM supports custom RISC-V extensions. — Noah
