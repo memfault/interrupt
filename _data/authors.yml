@@ -357,3 +357,12 @@ jphutchins:
   github: JPhutchins
   linkedin: https://www.linkedin.com/in/j-p-hutchins-17357547/
   blurb: is a firmware engineer at Intercreate.
+diondokter:
+  name: Dion Dokter
+  web: https://tweedegolf.nl/en/about/23/dion
+  image: /img/author/diondokter.jpeg
+  email: dion@tweedegolf.com
+  github: diondokter
+  blurb:
+    is an experienced Rust and embedded software engineer at Tweede Golf. He also
+    created and maintains a number of open source projects.
