@@ -1,7 +1,7 @@
 ---
-title: "What we've been reading in December (2024)"
+title: "What we've been reading in November (2024)"
 description:
-  Here are the articles, videos, and tools we've been excited about in December
+  Here are the articles, videos, and tools we've been excited about in November
   2024.
 author: gminn
 tags: [roundup]
@@ -10,7 +10,7 @@ tags: [roundup]
 <!-- excerpt start -->
 
 Here are the articles, videos, and tools that we've been excited about this
-December.
+November.
 
 <!-- excerpt end -->
 
