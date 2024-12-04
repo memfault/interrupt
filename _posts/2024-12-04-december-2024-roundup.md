@@ -1,8 +1,7 @@
 ---
 title: "What we've been reading in December (2024)"
 description:
-  Here are the articles, videos, and tools we've been excited about in December
-  2024.
+  Here are the articles, videos, and tools we've been excited about in December 2024.
 author: gminn
 tags: [roundup]
 ---
@@ -23,10 +22,10 @@ What have you been reading? Share in the comments or
 A fascinating walk-through on getting custom firmware running on the Nintendo Alarmo — a quirky alarm clock that wakes you up with sounds from your favorite Nintendo games. — Marc
 
 - [**pahole: Analysing Memory Layout of Complex Data Structures With Ease | Performance Engineering**](https://pramodkumbhar.com/2023/11/pahole-to-analyz-data-structure-memory-layouts-with-ease/)<br>
-Until gdb's ptype has a pahole flag, try this! — Noah
+A nice walkthrough of using `pahole`!
 
 - [**Good Comments Read Well and Are to the Point | Martin Tournoij**](https://www.arp242.net/comments.html)<br>
-A fantastic reminder to keep comments clear and succinct — even if it takes a few tries to distill the message. 
+A fantastic reminder to keep comments clear and succinct — even if it takes a few tries to distill the message.
 
 - [**TLS/DTLS 1.3 Profiles for the Internet of Things | Datatracker**](https://datatracker.ietf.org/doc/draft-ietf-uta-tls13-iot-profile/)<br>
 Interesting RFC related to TLS 1.3 on embedded devices. — Noah
@@ -43,6 +42,9 @@ Don’t be afraid to experiment with your lab instruments! Learn how to build au
 - [**Why systemd is a Problem for Embedded Linux | Kevin Boone**](https://kevinboone.me/systemd_embedded.html)<br>
 This article is generating a lot of discussion on Hacker News. What's your take?
 
+- [**ESP32 bootstrapping in Zephyr | Espressif Developer Blog**](https://developer.espressif.com/blog/esp32-bootstrapping/)<br>
+Nice article by Espressif on the boot process for ESP32 + Zephyr — Noah
+
 ## Projects & Tools
 
 - [**AES Encryption: Encrypt and Decrypt Online | cryptii**](https://cryptii.com/pipes/aes-encryption)<br>
@@ -52,6 +54,9 @@ Stumbled across this while looking for online AES tools. It's pretty handy! — 
 The Cyber Swiss Army Knife is a web app for encryption, encoding, compression, and data analysis. — Dave
 
 ## News & Announcements
+
+- [**Zephyr 4.0 is Generally Available | Zephyr Blog**](https://zephyrproject.org/zephyr-4-0-is-generally-available/)<br>
+Zephyr 4.0 was released on November 16th 🥳 We are especially excited to see all the [new boards](https://docs.zephyrproject.org/latest/releases/release-notes-4.0.html#boards-added-in-zephyr-4-0) (60 of them!) and the hard work done on new NXP and Espressif ESP32 chip support. — Noah
 
 - [**Empowering Developers. Driving Innovation. Everywhere.**](https://blackberry.qnx.com/en/products/qnx-everywhere)<br>
 QNX is now free for non-commercial use. (Maybe too little, too late?) — François
