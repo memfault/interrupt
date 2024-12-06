@@ -366,3 +366,9 @@ diondokter:
   blurb:
     is an experienced Rust and embedded software engineer at Tweede Golf. He also
     created and maintains a number of open source projects.
+gauravsingh:
+  name: Gaurav Singh
+  linkedin: https://www.linkedin.com/in/gaurav-singh-45596942
+  image: /img/author/gauravsingh.jpeg
+  blurb:
+    is a Senior Firmware Engineer at Ultrahuman. Gaurav previously worked on cloud chain monitoring systems and smart automobile technologies.
