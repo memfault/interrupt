@@ -3,12 +3,12 @@ title:
   How to Transition from nRF5 SDK to Zephyr NCS － Lessons from Ultrahuman’s
   Journey
 description:
-  Ultrahuman's account of doing a complex migration from nRF5 SDk to Zephyr NCS
-  on a Nordic-based project
+  Ultrahuman's account of doing a complex migration from nRF5 SDK to Zephyr NCS
+  on a nRF52 project
 author: gauravsingh
 ---
 
-## INTRODUCTION
+## Introduction
 
 At [Ultrahuman](https://www.ultrahuman.com/), innovation is at the core of
 everything we do. Our health devices, powered by the nRF52840 SoC for BLE
@@ -39,8 +39,6 @@ technology to improve their health and fitness.
 
 {% include toc.html %}
 
----
-
 ## The Vision Behind the Transition
 
 When Ultrahuman launched its flagship health-tracking devices, FreeRTOS provided
@@ -58,8 +56,6 @@ matured, so did our aspirations. We wanted to offer:
 
 But making the shift wasn’t going to be easy—especially with devices already out
 in the wild.
-
----
 
 ## The Early Days: Challenges Galore
 
@@ -93,10 +89,6 @@ This was a critical issue, as it not only disrupted user experience but also
 risked eroding trust in our brand. We needed a solution that would restore
 seamless connectivity across all devices.
 
----
-
----
-
 ## Behind the Solution
 
 We followed the path to change the older bootloader so that it could accommodate
@@ -107,16 +99,20 @@ The process works like this:
 1. Perform a Device Firmware Update (DFU) of an nRF5 SDK bootloader to remove
    protection on the MBR and bootloader regions.
 
-- Create an NCS image that matches the memory layout of the older image,
-  ensuring proper alignment to properly transfer the image with the older ones.
-- Sign the NCS image using the same private and public key as the nRF SDK image.
+1. Create an NCS image that matches the memory layout of the older image,
+   ensuring proper alignment to properly transfer the image with the older ones.
 
-BOOTLOADER UPDATE FOR MIGRATION SUPPORT:
+1. Sign the NCS image using the same private and public key as the nRF SDK
+   image.
 
-The following code changes needed to be added to the relevant bootloader files:
-Inside `nrf_dfu_validation.c`
+### 1\. Bootloader Update for Migration Support
+
+The following code changes, noted as commented out lines, needed to be made to the relevant bootloader files:
+
+`nrf_dfu_validation.c`
 
 ```c
+/*
  * @param[in]  sd_start_addr  Start address of received SoftDevice.
  * @param[in]  sd_size        Size of received SoftDevice in bytes.
  */
@@ -127,7 +123,9 @@ static bool softdevice_info_ok(uint32_t sd_start_addr, uint32_t sd_size)
     if (SD_MAGIC_NUMBER_GET(sd_start_addr) != SD_MAGIC_NUMBER)
     {
         NRF_LOG_ERROR("The SoftDevice does not contain the magic number identifying it as a SoftDevice.");
-        //result = false;
+
+        // Protection removed for bootloader migration
+        // result = false;
     }
     else if (SD_SIZE_GET(sd_start_addr) < ALIGN_TO_PAGE(sd_size + MBR_SIZE))
     {
@@ -146,7 +144,8 @@ static bool softdevice_info_ok(uint32_t sd_start_addr, uint32_t sd_size)
 }
 ```
 
-And of course, we needed to let go of SD magic number: Inside
+And of course, we needed to let go of SD magic number:
+
 `nrf_bootloader_fw_activation.c`
 
 ```c
@@ -163,7 +162,9 @@ static uint32_t sd_activate(void)
     if (SD_MAGIC_NUMBER_GET(src_addr) != SD_MAGIC_NUMBER)
     {
         NRF_LOG_ERROR("Source address does not contain a valid SoftDevice.")
-        //return NRF_ERROR_INTERNAL;
+        
+        // Protection removed for bootloader migration
+        // return NRF_ERROR_INTERNAL;
     }
 
     // This can be a continuation due to a power failure
@@ -194,35 +195,50 @@ static uint32_t sd_activate(void)
 }
 ```
 
-MATCHING MEMORY LAYOUT:
+### 2\. Matching Memory Layout
 
 The memory layout should match the below process:
 
-![][image1]
+<p align="center">
+ <img width="80%" src="{% img_url nrf5-sdk-to-ncs/matching-mem-layout.png %}" alt="Memory layout diagram" />
+</p>
 
-![][image2]
+<p align="center">
+ <img width="50%" src="{% img_url nrf5-sdk-to-ncs/flash-primary.png %}" alt="flash primary layout" />
+</p>
 
-SIGNING NCS IMAGE: The signature of the Zephyr-based image should match that of
-the nRF5 SDK to ensure the DFU update doesn\`t fail. Use the following
-configurations in MCUboot:
+### 3\. Signing NCS Image
 
-```
+The signature of the Zephyr-based image should match that of the nRF5 SDK to
+ensure the DFU update doesn't fail. Use the following configurations in MCUboot:
+
+```bash
 CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
 CONFIG_BOOT_SIGNATURE_TYPE_RSA=n
 CONFIG_BOOT_SIGNATURE_KEY_FILE="key/my_key.pem"
 ```
 
-CREATING NCS IMAGE AND DFU:
+### 4\. Creating NCS Image and DFU
 
 Create an NCS image using DFUbatch script, replacing the SoftDevice with the
-application and the bootloader with MCUboot.
+application and the bootloader with MCUboot:
 
-![][image3]
+```bash
+BOOTLOADER_HEX=../build/mcuboot/zephyr/zephyr.hex
+APPLICATION_HEX=../build/zephyr/app_signed.hex
+
+nrfutil pkg generate --hw-version 52 \
+--bootloader-version 102 \
+--sd-req 0x123
+--softdevice ${APPLICATION_HEX} \
+--bootloader ${BOOTLOADER_HEX} \
+--key-file ../child_image/mcuboot/boards/key/my_key.pem migration_dfu_test.zip
+```
 
 Use the nRFConnect application to DFU the new image, and it will be successfully
 applied, allowing the NCS image to advertise.
 
-ADDRESSING POST-RELEASE ISSUES:
+### 5\. Addressing Post-Release Issues
 
 Post-release migration of a DFU from an **nRF5 SDK-based application** to a
 **Zephyr-based application** presented significant challenges for iOS and
@@ -299,10 +315,10 @@ void extract_ltk(uint16_t handle)
 }
 ```
 
-Then,once the migration update completes, this information is handled in the
+Then, once the migration update completes, this information is handled in the
 Zephyr-based application, as shown below:
 
-```
+```c
 void retrieve_pairing_keys(void)
 {
   const volatile uint32_t *ptr =
@@ -316,7 +332,8 @@ void retrieve_pairing_keys(void)
   memcpy(&ltk_val[0], ((uint8_t *)ptr + 16 + 6 + 1), 16);
   memcpy(&ltk_ediv[0], ((uint8_t *)ptr + 16 + 6 + 16 + 1 + 2), 2);
   memcpy(&ltk_rand[0], ((uint8_t *)ptr + 16 + 6 + 16 + 2 + 1 + 2), 8);
-  // printk("Successfully copied pairing info from the memory\\n");
+
+  printk("Successfully copied pairing info from the memory\\n");
 }
 ```
 
@@ -357,7 +374,7 @@ static void pre_shared_bond_set(void)
 
   pairing_info = bt_keys_get_addr(0, &addr);
   if (pairing_info == NULL) {
-    // printk("Failed to get keyslot\\n");
+    printk("Failed to get keyslot\\n");
   }
 
   memcpy(&pairing_info->periph_ltk, &ltk, sizeof(pairing_info->ltk));
@@ -371,20 +388,20 @@ static void pre_shared_bond_set(void)
   if (memcmp(keys_addr, ff, 6) != 0) {
     err = bt_keys_store(pairing_info);
     if (err) {
-      // printk("Failed to store keys (err %d)\\n", err);
+      printk("Failed to store keys (err %d)\\n", err);
     } else {
-      // printk("Keys stored successfully\\n");
+      printk("Keys stored successfully\\n");
     }
   }
 }
 ```
 
-This completes the transfer of bonding information from the nRF5SDK-based
+This completes the transfer of bonding information from the nRF5 SDK-based
 application to the Zephyr-based application. However, we still needed to
 indicate service changes to ensure seamless transitioning and connectivity. This
 was done using the following:
 
-```
+```c
 void service_changed_work_handle(struct k_work *item)
 {
   int err;
@@ -410,8 +427,8 @@ void service_changed_work_handle(struct k_work *item)
 
   err = bt_gatt_indicate(local_connection, &indicate_params);
   if (err) {
-    // printk("Failed to send SC indication. (err %d)\\n", err);
-    // notify_service_changed(local_connection);
+    printk("Failed to send SC indication. (err %d)\\n", err);
+    notify_service_changed(local_connection);
   }
 }
 ```
@@ -458,8 +475,6 @@ might otherwise go unnoticed.
 The migration wasn’t just about solving today’s problems; it was about paving
 the way for future innovations. Zephyr’s modularity and scalability opened new
 doors for product development.
-
----
 
 ## Zephyr and the Future of Health & Fitness
 
@@ -523,8 +538,6 @@ enabling early detection of health issues, improving fitness outcomes, and
 fostering healthier habits, we’re not just building products—we’re building
 healthier communities.
 
----
-
 ## The Results: A Game-Changing Upgrade
 
 Despite the hardships, the migration was a resounding success. Here’s what we
@@ -538,8 +551,6 @@ achieved:
   didn’t even realize the complexity behind the transition.
 - **Scalable Future**: With Zephyr as the foundation, our devices are now
   equipped to handle future updates and innovations with ease.
-
----
 
 ## What’s Next?
 
@@ -556,7 +567,7 @@ was only possible because of you. Together, we’re building a healthier world.*
 
 {:.no_toc}
 
-# References
+## References
 
 <!-- prettier-ignore-start -->
 
