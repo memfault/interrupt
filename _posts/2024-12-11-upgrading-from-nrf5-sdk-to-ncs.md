@@ -8,8 +8,6 @@ description:
 author: gauravsingh
 ---
 
-## Introduction
-
 At [Ultrahuman](https://www.ultrahuman.com/), innovation is at the core of
 everything we do. Our health devices, powered by the nRF52840 SoC for BLE
 functionality, rely on Nordic Semiconductor’s renowned wireless technology. For
