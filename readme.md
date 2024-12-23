@@ -73,7 +73,7 @@ $ bundle install
 Serve with the following command, which will also open up the site in your browser:
 
 ```bash
-$ bundle exec jekyll serve --drafts --livereload --open-url
+$ bundle exec jekyll serve --drafts --livereload --open-url --future
 ```
 
 ## Acknowledgements
