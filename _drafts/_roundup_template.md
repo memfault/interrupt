@@ -2,7 +2,7 @@
 title: "What we've been reading in [month] (xxxx)"
 description:
   Here are the articles, videos, and tools we've been excited about in [month
-]  xxxx.
+] xxxx.
 author: gminn
 tags: [roundup]
 ---
