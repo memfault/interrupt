@@ -1,0 +1,22 @@
+name: Site Deployment
+
+on:
+  schedule:
+    # At 2:00pm UTC (10:00am ET) on Monday through Friday
+    # https://cron.help/#0_14_*_*_1-5
+    - cron: "0 14 * * 1-5"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    run_name:
+      description: "Name of the run, used to distinguish it from others"
+      required: false
+      type: string
+      default: ""
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy hook request
+        run: curl -X POST ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
