@@ -411,7 +411,7 @@ calls. Here it is:
 ```c
 int usleep(useconds_t us)
 {
-    const int us_per_tick = portTICK_PERIOD_MS * 1000;
+    const int64_t us_per_tick = portTICK_PERIOD_MS * 1000;
     if (us < us_per_tick) {
         esp_rom_delay_us((uint32_t) us);
     } else {
@@ -572,16 +572,18 @@ int usleep(useconds_t us)
     if (us < us_per_tick) {
         esp_rom_delay_us((uint32_t) us);
     } else {
-        /* Tick-based sleep may return up to (n-1) tick periods due to tick ISR
-           being asynchronous to vTaskDelay() call. Specification states we must
-           sleep at least the specified time, or longer. 
+        /* vTaskDelay may return up to (n-1) tick periods due to the tick ISR
+           being asynchronous to the call. We must sleep at least the specified
+           time, or longer. Checking the monotonic clock allows making an
+           additional call to vTaskDelay when needed to ensure minimal time is
+           actually slept. Adding `us_per_tick - 1` prevents ever passing 0 to
+           vTaskDelay(). 
         */
-        uint64_t start_us = esp_timer_get_time();
-        uint64_t now_us = start_us;
-        uint64_t target_us = start_us + us;
+        uint64_t now_us = esp_time_impl_get_time();
+        uint64_t target_us = now_us + us;
         do {
-            vTaskDelay((TickType_t)((target_us - now_us) / us_per_tick)+1);
-            now_us = esp_timer_get_time();
+            vTaskDelay((((target_us - now_us) + us_per_tick - 1) / us_per_tick));
+            now_us = esp_time_impl_get_time();
         } while (now_us < target_us);
     }
     return 0;
@@ -597,24 +599,56 @@ I opened a [PR](https://github.com/espressif/esp-idf/pull/15132) with this
 change to IDF. Hopefully it gets approved.
 
 Since I didn't want to work with a custom, patched IDF, I ended up replacing all
-calls to `std::this_thread::sleep_for()` with our own function with the same
-signature.
+calls to `std::this_thread::sleep_for()` with our own function. It has the same
+default signature, with the optional ability to specify a "sleep strategy." We
+can now force the custom `sleep_for()` to busy wait or to yield:
 
 ```c++
+enum class SleepStrategy {
+    Default,            // Platform decides when to use busy wait vs. yield
+    PreciseBusyWait,    // Busy wait, which is usually very precise
+    EfficientYield      // Efficently yield to other threads, but will often sleep longer than specified
+};
+
 template<typename _Rep, typename _Period>
-static void sleep_for(const std::chrono::duration<_Rep, _Period>& rtime) {
-  if (rtime <= rtime.zero()) return;
-  auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(rtime).count();            
-  uint64_t start_us = esp_timer_get_time();
-  uint64_t now_us = start_us;
-  uint64_t target_us = start_us + us;
-  do {
-      vTaskDelay((TickType_t)((target_us - now_us) / us_per_tick)+1);
-      now_us = esp_timer_get_time();
-  } while (now_us < target_us);
-#endif
+static void sleep_for(const std::chrono::duration<_Rep, _Period>& rtime, SleepStrategy strat = SleepStrategy::Default) {
+
+    static constexpr int64_t us_per_tick = portTICK_PERIOD_MS * 1000;
+    if (rtime <= rtime.zero()) return;
+    auto us = std::chrono::duration_cast<std::chrono::microseconds>(rtime).count();   
+    
+    if (strat == SleepStrategy::Default && (us < us_per_tick)) {
+        // Mimic how std::this_thread::sleep_for() would act, which is to
+        // (eventually) call usleep() after going through libstdc++. We only do
+        // this for periods less than a tick because for longer periods the
+        // implementation is broken (often returns in shorter than specified
+        // time). If `usleep()` is fixed then we will update this to always call
+        // it for the default strategy.
+        usleep(us);
+        return;
+    }
+
+    uint64_t now_us = esp_timer_get_time();
+    const uint64_t target_us = now_us + us;
+    do {
+        if (strat == SleepStrategy::PreciseBusyWait) {
+            // This is an "internal and unstable API" according to ESP, but
+            // `usleep()` is just a wrapper for it anyway. If it does change,
+            // this function needs to be updated.
+            esp_rom_delay_us(target_us - now_us);
+        } else {
+            // Ensure we never call vTaskDelay(0)
+            static constexpr int prevent_zero_ticks = us_per_tick - 1;
+            vTaskDelay((TickType_t)(((target_us - now_us) + prevent_zero_ticks) / us_per_tick));
+        }
+        // Validate against monotonic clock
+        now_us = esp_timer_get_time();
+    } while (now_us < target_us);
 }
 ```
+
+This approach gives us the minimal change needed to ensure things work correctly
+while allowing more control over how to perform the sleep when using C++.
 
 ## Conclusion
 
@@ -633,7 +667,7 @@ instruction pipelines.
 It seems today that using C++ for firmware brings up a lot of strong reactions.
 A lot of embedded people hate it. A lot of people love it. For myself, I think
 it can be a great tool, but it does have much complexity you need to get right,
-especially when using it on an MCU. This seems to be a good example of such.
+*especially* when using it on an MCU. This seems to be a good example of such.
 
 I sincerely hope `usleep()` is fixed. Until then, don't use
 `std::this_thread::sleep_for()` in your IDF v5 projects. It's a waste of time!
