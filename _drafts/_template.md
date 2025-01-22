@@ -11,9 +11,10 @@
 # It will now show up in the front page when running Jekyll locally.
 
 title: Post Title
-description:
-  Post Description (~140 words, used for discoverability and SEO)
-author: tyler
+description: 
+  Post Description (~140 words, used for discoverability and SEO) # update using key words
+author: tyler # update with author handle from authors.yml
+tags: [tag1, tag2] # update with relevant tags (see https://interrupt.memfault.com/tags for examples!)
 ---
 
 A little bit of background of why the reader should read this post.
@@ -32,9 +33,14 @@ Optional motivation to continue onwards
 
 ## Primary Section 1
 
+<!-- Uncomment and update image path to add an image. Place all images under img/my-post-name/ -->
+<!-- <p align="center">
+ <img width="80%" src="{% img_url my-post-name/my-image.png %}" alt="My post description" />
+</p> -->
+
 ## Conclusion
 
-
+Wrap up with a summary and optionally a call for readers to join the conversation.
 
 <!-- Interrupt Keep START -->
 {% include newsletter.html %}
