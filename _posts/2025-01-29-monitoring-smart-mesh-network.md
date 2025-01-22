@@ -1,10 +1,13 @@
 ---
 title: Monitoring a Low-Power Wireless Network Based on Smart Mesh IP
-description: Post Description (~140 words, used for discoverability and SEO)
+description:
+  Tutorial of Application Performance Monitoring (APM) using Zephyr, nRF52, an
+  Analog LTC5800, and Memfault
 author: fabiangraf
+tags: [monitoring, observability, mesh, memfault, zephyr]
 ---
 
-Monitoring IoT applications is essential due to theiroperation in dynamic and
+Monitoring IoT applications is essential due to their operation in dynamic and
 challenging environments, which makes them susceptible to various operational
 and connectivity issues. Application Performance Monitoring (APM) is the key to
 identifying and resolving these issues in real time, ensuring uninterrupted data
@@ -31,12 +34,15 @@ customer’s point of view.
 
 This blog post provides a practical tutorial demonstrating a simple APM solution
 for low-power devices. The solution leverages Zephyr RTOS on an nRF52, and
-SmartMesh IP on an Analog LTC5800 [^1] whichcan accommodate an arbitrary number
-of wireless motes. The motes can send a set of performance metrics at certain
+SmartMesh IP on an Analog LTC5800 which can accommodate an arbitrary number of
+wireless motes. The motes can send a set of performance metrics at certain
 heartbeat intervals via a framework provided by Memfault. The framework is
 scalable and allows the creation of a customized group of metrics.
 
 <!-- excerpt end -->
+
+> 👉 A full white paper[^1] was written on this topic -- take a look if you are
+> interested in diving into the details!
 
 {% include newsletter.html %}
 
@@ -56,13 +62,11 @@ enhancement of IEEE 802.15.4 (known as IEEE 802.15.4e), and in 2015, it was
 included in the related standard specification. TSCH deals with external
 interference and multi-path fading at the MAC layer. When two neighbor nodes
 exchange frames, they send subsequent frames at different frequencies, resulting
-in channel hopping. Therefore, the 2.4 GHz band is cut into 16 channels:
+in channel hopping. Therefore, the 2.4 GHz band is cut into 16 channels [^4]:
 
 <p align="center">
  <img width="80%" src="{% img_url monitoring-low-power-smart-mesh/802.15.4-channel-spectra.png %}" alt="Channel spectra for 802.15.4" />
 </p>
-
-[^4]
 
 The idea is that if external interference or multi-path fading causes the
 transmission of a frame to fail, the retransmission happens at a different
@@ -98,13 +102,11 @@ underlying model in this blog post.
 
 We use a HW setup that comprises a SmartMesh IP manager connected to a computer
 with internet connection, and a number of motes forming a wireless network based
-on a mesh topology.
+on a mesh topology [^5]:
 
 <p align="center">
  <img width="60%" src="{% img_url monitoring-low-power-smart-mesh/smart-mesh-ip-starter-kit-diagram.png %}" alt="Mesh architecture diagram" />
 </p>
-
-[^5]
 
 The motes consist of a networking chip (LTC5800) and an application chip.
 Although the choice of the application chip is up to the user, we show two
@@ -166,9 +168,9 @@ Memfault's data serialization techniques, which leverage CBOR and advanced
 symbol file processing to optimize data transmission.
 
 Memfault can be included in the nRF Connect SDK and Zephyr by editing the
-west.yml file. When creating a new project in the Memfault cloud, the generated
-project key must be pasted in the `prj.conf` file behind the corresponding
-identifier `CONFIG_MEMFAULT_NCS_PROJECT_KEY` when using the NCS.
+`west.yml` file. When creating a new project in the Memfault cloud, the
+generated project key must be pasted in the `prj.conf` file behind the
+corresponding identifier `CONFIG_MEMFAULT_NCS_PROJECT_KEY` when using the NCS.
 
 In the next step, we need to configure the metrics collection process. The NCS
 offers a small set of metrics out of the box, collected in a default heartbeat
@@ -184,22 +186,22 @@ metric name and its corresponding type as arguments. After that, we can place
 the corresponding Memfault heartbeat functions for metric collection, i.e., for
 counters, timers or gauges, at the appropriate places of the application source
 code. The metrics intended to be collected at the end of the heartbeat interval
-must be sampled in the memfault_metrics_heartbeat_collect_data function, invoked
-when the heartbeat interval timer expires.
+must be sampled in the `memfault_metrics_heartbeat_collect_data()` function,
+invoked when the heartbeat interval timer expires.
 
 The data packetizer is the Memfault module that handles the transformation of
 the collected metrics into a Memfault chunk, which is then given to the send
 function. A function template showing the usage of the data packetizer is
 available in the Memfault documentation. The function is called
-send_memfault_data_multi_part. In the beginning, the function checks to see if
-there is data available. This is the case when metrics are ready to be sent due
-to the elapsed timer of the heartbeat interval. Thus, the function can be
+`send_memfault_data_multi_part()`. In the beginning, the function checks to see
+if there is data available. This is the case when metrics are ready to be sent
+due to the elapsed timer of the heartbeat interval. Thus, the function can be
 theoretically called at any time since new data is available when a heartbeat
 interval is over. Therefore, it is recommended to call the function immediately
 after the end of an interval. If metrics are available, a data buffer is
 created. The buffer and the length of the chunk are passed into the send
-function, i.e., ntw_transmit from the SmartMesh IP C-library, handling the UART
-communication between the application and networking chip. Then the packet
+function, i.e., `ntw_transmit()` from the SmartMesh IP C-library, handling the
+UART communication between the application and networking chip. Then the packet
 arrives via UART at the networking chip, where it is ultimately sent out via the
 chip's radio into the network.
 
@@ -218,7 +220,7 @@ the cloud.
 
 The Memfault chunks finally arrive in the Memfault cloud. To process the data,
 Memfault requires that the symbol file matching the compiled FW file, e.g.,
-zephyr.elf, be uploaded to the service. It matches the incoming data to the
+`zephyr.elf`, be uploaded to the service. It matches the incoming data to the
 symbol file using a build ID. With this symbol file, Memfault extracts the names
 of the metrics from it and combines them with the metadata and values of the
 received Memfault chunk to write the metrics into a database and visualize them.
@@ -249,8 +251,8 @@ sessions.
 We tried to keep the Memfault chunk as minimalistic as possible to determine the
 minimum size a single chunk can have. It turns out that there are several
 metrics that Memfault and the NCS report by default. For testing purposes, we
-disable them by setting `CONFIG_MEMFAULT_METRICS_DEFAULT_SET_ENABLE = n` and
-`CONFIG_MEMFAULT_NCS_STACK _METRICS = n` in Zephyr's `proj.conf` file.
+disable them by setting `CONFIG_MEMFAULT_METRICS_DEFAULT_SET_ENABLE=n` and
+`CONFIG_MEMFAULT_NCS_STACK_METRICS=n` in Zephyr's `proj.conf` file.
 
 Furthermore, we define a test metric, a simple gauge metric incremented by a
 periodic timer. We end up with a metrics section consisting of just four metrics
@@ -263,7 +265,7 @@ in 7 B. In total, the Memfault chunk then has a payload size of 43 B, from which
 
 Besides the metrics, Metadata and Heartbeat Information fill the payload block.
 These values have a fixed size, but we can specify the Device Version Info
-fields, where we choose “aiot” as `CONFIG_MEMFAULT_NCS_FW_TYPE`. Since this
+fields, where we choose `aiot` as `CONFIG_MEMFAULT_NCS_FW_TYPE`. Since this
 information is transmitted with every metric payload, choosing short device
 version information is desirable in scenarios where every byte counts. In the
 following step, the packetizer serializes the Memfault chunk using CBOR and
@@ -278,7 +280,7 @@ different parameters. It also allows one to draw conclusions on the battery
 lifetime. To use the estimator for our HW setup we need to make some assumptions
 on the network. First, we assume that the power consumption of the application
 chip is comparatively small in contrast to the radio activity at the networking
-chip. Furthermore, a constant neighbor link PDR/path stability of 80 % is
+chip. Furthermore, a constant neighbor link PDR/path stability of 80% is
 presumed. The resulting simulation to estimate the average current draw of each
 mote is done based on a network consisting of 20 motes in total and a maximum
 hop-depth of 4. We assume that the motes are split up equally along the hops,
