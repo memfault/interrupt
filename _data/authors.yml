@@ -372,3 +372,9 @@ gauravsingh:
   image: /img/author/gauravsingh.jpeg
   blurb:
     is a Senior Firmware Engineer at Ultrahuman. Gaurav previously worked on cloud chain monitoring systems and smart automobile technologies.
+fabiangraf:
+  name: Fabian Graf
+  linkedin: https://www.linkedin.com/in/fabian-graf-bb461a189/
+  image: /img/author/fabiangraf.jpeg
+  blurb:
+    is a Firmware Engineer at Seimans. Fabian is currently pursuing a PhD in low-power wireless communications.
