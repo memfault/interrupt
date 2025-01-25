@@ -372,3 +372,9 @@ gauravsingh:
   image: /img/author/gauravsingh.jpeg
   blurb:
     is a Senior Firmware Engineer at Ultrahuman. Gaurav previously worked on cloud chain monitoring systems and smart automobile technologies.
+stevenoonan:
+  name: Steve Noonan
+  linkedin: https://www.linkedin.com/in/embeddeddev/
+  image: /img/author/stevenoonan.png
+  blurb:
+    is Principal Embedded Systems Engineer at Nomo International, Inc.
