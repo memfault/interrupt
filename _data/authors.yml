@@ -364,11 +364,20 @@ diondokter:
   email: dion@tweedegolf.com
   github: diondokter
   blurb:
-    is an experienced Rust and embedded software engineer at Tweede Golf. He also
-    created and maintains a number of open source projects.
+    is an experienced Rust and embedded software engineer at Tweede Golf. He
+    also created and maintains a number of open source projects.
 gauravsingh:
   name: Gaurav Singh
   linkedin: https://www.linkedin.com/in/gaurav-singh-45596942
   image: /img/author/gauravsingh.jpeg
   blurb:
-    is a Senior Firmware Engineer at Ultrahuman. Gaurav previously worked on cloud chain monitoring systems and smart automobile technologies.
+    is a Senior Firmware Engineer at Ultrahuman. Gaurav previously worked on
+    cloud chain monitoring systems and smart automobile technologies.
+fabiangraf:
+  name: Fabian Graf
+  linkedin: https://www.linkedin.com/in/fabian-graf-bb461a189/
+  image: /img/author/fabiangraf.jpeg
+  github: fabiangraf96
+  blurb:
+    is a Firmware Engineer at Siemens. Fabian is currently pursuing a PhD in
+    low-power wireless communications.
