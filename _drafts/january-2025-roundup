@@ -1,0 +1,44 @@
+---
+title: "What we've been reading in January (2025)"
+description:
+  Here are the articles, videos, and tools we've been excited about in January
+2025.
+author: gminn
+tags: [roundup]
+---
+
+<!-- excerpt start -->
+
+We hope your year is off to a great start! January has been an exciting month for Interrupt—not only have we seen more incredible contributions, but we also launched Interrupt Live, a new series where our co-founder and host, Tyler Hoffman, sits down with Interrupt contributors to share their insights and stories. We’d love for you to tune in ([**more details here**](https://interrupt.memfault.com/blog/interrupt-live)<br>)!
+
+Here are the articles, videos, and tools that we've been excited about this
+January.
+
+<!-- excerpt end -->
+
+What have you been reading? Share in the comments or
+[on the Interrupt Slack](https://interrupt-slack.herokuapp.com/).
+
+## Articles & Learning
+
+- [**Building a (T1D) smartwatch from scratch**](https://andrewchilds.com/posts/building-a-t1d-smartwatch-from-scratch)<br>
+I honestly think there's a market for this... tempted to try to build one myself... － Fausto
+
+- [**See the code that powered the Pebble smartwatches**](https://opensource.googleblog.com/2025/01/see-code-that-powered-pebble-smartwatches.html)<br>
+
+- [**The hunt for error -22 - Blog - Tweede golf**](https://tweedegolf.nl/en/blog/145/the-hunt-for-error--22)<br>
+
+## Projects & Tools
+
+- [**PSA Certified - Created to improve the security and trust of Internet of Things devices and their data**](https://products.psacertified.org/?ct=t(EMAIL_CAMPAIGN_12_31_2024_16_39)&page=1#results)<br>
+  Nice GUI-based tool for accessing Raspberry Pi GPIO pins (including the
+  Raspberry Pi Pico 2 W!) － Noah
+
+## News & Announcements
+
+- [**Introducing LVGL's UI Editor (Preview of v0.1) | LVGL YouTube**](https://www.youtube.com/watch?v=ntAuLhuK3Ck)<br>
+  The LVGL team recorded a walkthrough of their upcoming UI editor. I like how
+  beyond the editor itself, they embrace modern workflows such as “designers
+  live in Figma”, “reload UI without flashing new firmware” and even “generate
+  an interactive gallery of all composable UI elements in CI for stakeholders to
+  review early” － Heiko
