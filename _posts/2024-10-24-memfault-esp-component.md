@@ -16,8 +16,8 @@ projects.
 <!-- excerpt end -->
 
 > 🎬
-> _[Listen to Noah speak on Interrupt Live](https://www.youtube.com/watch?v=UPFhUrQa1bs)
-> about his motivations and process for writing this article._
+> _[Listen to Noah on Interrupt Live](https://www.youtube.com/watch?v=UPFhUrQa1bs)
+> talk about the content and motivations behind writing this article._
 
 {% include newsletter.html %}
 
