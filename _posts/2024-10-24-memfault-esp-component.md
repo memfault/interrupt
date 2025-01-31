@@ -2,7 +2,7 @@
 title: Publishing the Memfault SDK as an ESP-IDF Component
 description: How we shipped our SDK as an ESP-IDF component
 author: noah
-tags: [ci, memfault, esp32, esp-idf, github-actions]
+tags: [ci, memfault, esp32, esp-idf, github-actions, interrupt-live]
 image: /img/memfault-esp-component/esp-registry-page.png
 ---
 
@@ -14,6 +14,10 @@ to integrate Memfault into your projects, specifically targeting ESP32-based
 projects.
 
 <!-- excerpt end -->
+
+> 🎬
+> _[Listen to Noah on Interrupt Live](https://www.youtube.com/watch?v=UPFhUrQa1bs)
+> talk about the content and motivations behind writing this article._
 
 {% include newsletter.html %}
 
