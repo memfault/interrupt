@@ -24,15 +24,24 @@ What have you been reading? Share in the comments or
 - [**Building a (T1D) smartwatch from scratch**](https://andrewchilds.com/posts/building-a-t1d-smartwatch-from-scratch)<br>
 I honestly think there's a market for this... tempted to try to build one myself... － Fausto
 
+- [**Volvo with Julius Gustavsson - Rust in Production Podcast | corrode Rust Consulting**](https://corrode.dev/podcast/s03e08-volvo/)<br>
+
+- [**Round-Up of the Yocto Project Summit 2024.12**](https://burkhardstubert.substack.com/p/round-up-of-the-yocto-project-summit-86d?r=17mfiy&utm_campaign=post&utm_medium=web&triedRedirect=true)<br>
+
+- [**Setting up an LTE link in difficult terrain**](https://m0agx.eu/setting-up-an-lte-link-in-difficult-terrain.html)<br>
+
+- [**Evolving GitHub Issues (public preview)**](https://github.blog/changelog/2025-01-13-evolving-github-issues-public-preview/)<br>
+
 - [**See the code that powered the Pebble smartwatches**](https://opensource.googleblog.com/2025/01/see-code-that-powered-pebble-smartwatches.html)<br>
 
 - [**The hunt for error -22 - Blog - Tweede golf**](https://tweedegolf.nl/en/blog/145/the-hunt-for-error--22)<br>
 
+- [**This year in LLVM (2024) **](https://www.npopov.com/2025/01/05/This-year-in-LLVM-2024.html)<br>
+
 ## Projects & Tools
 
-- [**PSA Certified - Created to improve the security and trust of Internet of Things devices and their data**](https://products.psacertified.org/?ct=t(EMAIL_CAMPAIGN_12_31_2024_16_39)&page=1#results)<br>
-  Nice GUI-based tool for accessing Raspberry Pi GPIO pins (including the
-  Raspberry Pi Pico 2 W!) － Noah
+- [**2 boards you can finally use with Zephyr! - Benjamin Cabé**](https://blog.benjamin-cabe.com/2025/01/14/2-boards-you-can-finally-use-with-zephyr#raspberry-pi-pico-2)<br>
+The Raspberry Pi Pico 2 is now supported in Zephyr :partying_face: ! － Noah
 
 ## News & Announcements
 
