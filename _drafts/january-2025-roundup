@@ -42,7 +42,7 @@ Not embedded-specific, but you might notice your favorite open source projects t
 🥳 － Marc
 
 - [**The hunt for error -22 - Blog - Tweede golf**](https://tweedegolf.nl/en/blog/145/the-hunt-for-error--22)<br>
-Chasing down a bizarre, impossible-to-reproduce firmware bug on the nRF9160—turns out Rust, compiler optimizations, and a sneaky stack-allocated config struct were all in on it. － Pat
+Chasing down a bizarre, impossible-to-reproduce firmware bug on the nRF9160 — turns out Rust, compiler optimizations, and a sneaky stack-allocated config struct were all in on it. － Pat
 
 
 - [**This year in LLVM (2024) **](https://www.npopov.com/2025/01/05/This-year-in-LLVM-2024.html)<br>
