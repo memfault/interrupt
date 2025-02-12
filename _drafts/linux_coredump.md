@@ -108,7 +108,9 @@ Format[^elf_format] is a great resource.
 
 ![]({% img_url linux-coredump/elf-core-layout.png %})
 
-The above image gives us a very high level view of the layout of a coredump. The
+### ELF Header
+
+The above image gives us a very high level view of the layout of a coredump. To start, the
 ELF header outlines the layout of the file and source of the file. We can see if
 the producing system was 32-bit or 64-bit, little or big endian, and the
 architecture of the system. Additionally it shows the offset to the program
@@ -171,7 +173,7 @@ typedef struct {
 } Elf32_Phdr;
 ```
 
-Here is a brief breakdown of the fields in the program header:
+Here is a brief breakdown of the fields we care about in the program header:
 
 - `p_type`: This field tells us what type of segment we are looking at. For our
   purposes this will be either `PT_NOTE` or `PT_LOAD`.
@@ -193,7 +195,7 @@ the layout of a `PT_NOTE` segment.
 The first two fields of the segment are fairly self explanatory, they represent
 the size of both the name and the descriptor. The `name` field is a string that
 represents the type of note. The `desc` field is a structure that contains the
-actual data of the note. The type field tells us what type of note we are
+actual data of the note. The `type` field tells us what type of note we are
 looking at. It is an unsigned integer that represents the type of note. It's
 worth noting that the `name` field works as a kind of namespace for the type
 field. Two notes with the same type field can be differentiated by their name
