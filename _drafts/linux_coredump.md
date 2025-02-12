@@ -1,6 +1,8 @@
 ---
 title: Coredumps at Memfault Part 1 - Introduction to Linux Coredumps
-description: Post Description (~140 words, used for discoverability and SEO)
+description:
+  "The basics of Linux coredumps, how they're used at Memfault, and how they're
+  captured."
 author: blake
 ---
 
@@ -25,10 +27,11 @@ formatted, how you capture them, and how we use them at Memfault.
 
 ## What is a Linux Coredump
 
-A linux coredump represents a snapshot of the crashing process' memory. It is
-written as an ELF[^elf_format] file. The entirety of the ELF format is outside
-the scope of this article, but we will touch on a few of the more important bits
-when looking at an ELF core file.
+A linux coredump represents a snapshot of the crashing process' memory. It can
+be loaded into programs like GDB to inspect the state of the process at the time
+of crash. It is written as an ELF[^elf_format] file. The entirety of the ELF
+format is outside the scope of this article, but we will touch on a few of the
+more important bits when looking at an ELF core file.
 
 ## What triggers a cordump
 
@@ -96,6 +99,20 @@ program via `stdin`. The configuration is similar to saving directly to a file
 except the first character must be a `|`. This is how we capture coredumps in
 the Memfault SDK, and will be covered more in depth later in the article.
 
+#### `procfs` Shallow Dive
+
+An additional benefit to the `core_pattern` pipe interface is that until the
+program that is being piped to exits, we have access to the `procfs` of the
+crashing process. But what is `procfs`, and how does it help us with a coredump?
+
+`procfs` gives us direct, usually read-only, access to some of the kernel's data
+structures[^man_proc]. This can be system wide information, or information about
+individual processes. For our purposes we are interested mostly in the
+information about the process that is currently crashing. We can get direct read
+only access to all mapped memory by address through
+`/proc/<pid>/mem`[^man_proc_pid_mem], or look at the command line arguments of
+the process through `/proc/<pid>/cmdline`[^man_proc_pid_cmdline].
+
 ## Elf Core File Layout
 
 Linux coredumps use a subset of the ELF format. The coredump itself is a
@@ -110,10 +127,10 @@ Format[^elf_format] is a great resource.
 
 ### ELF Header
 
-The above image gives us a very high level view of the layout of a coredump. To start, the
-ELF header outlines the layout of the file and source of the file. We can see if
-the producing system was 32-bit or 64-bit, little or big endian, and the
-architecture of the system. Additionally it shows the offset to the program
+The above image gives us a very high level view of the layout of a coredump. To
+start, the ELF header outlines the layout of the file and source of the file. We
+can see if the producing system was 32-bit or 64-bit, little or big endian, and
+the architecture of the system. Additionally it shows the offset to the program
 headers. Here is the layout of the ELF header[^elf_format]:
 
 ```c
@@ -206,20 +223,6 @@ of memory that was loaded into the process at the time of crash. These can
 represent either the stack, heap, or any other segment of memory that was loaded
 into the process.
 
-## `procfs` Shallow Dive
-
-An additional benefit to the `core_pattern` pipe interface is that until the
-program that is being piped to exits, we have access to the `procfs` of the
-crashing process. But what is `procfs`, and how does it help us with a coredump?
-
-`procfs` gives us direct, usually read-only, access to some of the kernel's data
-structures[^man_proc]. This can be system wide information, or information about
-individual processes. For our purposes we are interested mostly in the
-information about the process that is currently crashing. We can get direct read
-only access to all mapped memory by address through
-`/proc/<pid>/mem`[^man_proc_pid_mem], or look at the command line arguments of
-the process through `/proc/<pid>/cmdline`[^man_proc_pid_cmdline].
-
 ## Coredumps at Memfault: Rev. 1
 
 Our first crack at coredumps at Memfault had one goal: leveraging existing tools
@@ -290,6 +293,10 @@ can be quite large for processes that have many threads, or do a large amount of
 memory allocation. This can be a large problem for embedded devices that may not
 have a lot of room to store large files. In the next article we'll take a look
 at the steps we've taken to reduce the size of coredumps.
+
+In the meantime, if you'd like to poke around the source code for the coredump
+handler you can find it
+[here](https://github.com/memfault/memfaultd/tree/main/memfaultd/src/cli/memfault_core_handler).
 
 <!-- Interrupt Keep START -->
 
