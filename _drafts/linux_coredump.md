@@ -226,8 +226,7 @@ into the process.
 ## Coredumps at Memfault: Rev. 1
 
 Our first crack at coredumps at Memfault had one goal: leveraging existing tools
-to capture info about a crashing process. To have feature parity with our
-existing offerings we needed a few basic things:
+to capture info about a crashing process. To have feature parity with our offering on MCU and Android, we needed a few basic things:
 
 - A symbolicated backtrace for each running thread in the crashing process
 - The values of registers at the time of crash
@@ -259,8 +258,8 @@ to our handler:
 ```
 
 This tells the kernel to pipe the coredump to our handler, and provides the
-handler with the PID of the crashing process, the name of the crashing process,
-the UID of the crashing process, and the signal that caused the crash.
+handler with the PID of the crashing process (`%P`), the name of the crashing process (%e),
+the UID of the crashing process (`%I`), and the signal that caused the crash (`%s`).
 
 When a crash occurs the kernel will write the coredump to the `stdin` of the
 handler. The handler will then read all the program headers into memory. This
