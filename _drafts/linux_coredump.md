@@ -93,7 +93,7 @@ In this example `%e` expands to the name of the crashing process, and `%p`
 expands to the PID of the crashing process. More information on the available
 expansions can be found in the `man core`[^man_core] page.
 
-We can also write pipe a coredump directly to a program. This is useful when we
+We can also pipe a coredump directly to a program. This is useful when we
 want to modify the coredump in flight. The coredump is streamed to the provided
 program via `stdin`. The configuration is similar to saving directly to a file
 except the first character must be a `|`. This is how we capture coredumps in
