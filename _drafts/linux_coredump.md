@@ -12,7 +12,7 @@ crash capture and analysis capabilities. Starting from the standard ELF
 coredump, we've added support for capturing only the stack memory, and even
 capturing just the stack trace with no registers and locals present. This
 article series will give you a high level overview of that journey, and give you
-a deeper understanding of how coredumps work on Linux.
+a deeper understanding of how coredumps work on Linux.\*\*\*\*
 
 <!-- excerpt start -->
 
@@ -93,8 +93,8 @@ In this example `%e` expands to the name of the crashing process, and `%p`
 expands to the PID of the crashing process. More information on the available
 expansions can be found in the `man core`[^man_core] page.
 
-We can also pipe a coredump directly to a program. This is useful when we
-want to modify the coredump in flight. The coredump is streamed to the provided
+We can also pipe a coredump directly to a program. This is useful when we want
+to modify the coredump in flight. The coredump is streamed to the provided
 program via `stdin`. The configuration is similar to saving directly to a file
 except the first character must be a `|`. This is how we capture coredumps in
 the Memfault SDK, and will be covered more in depth later in the article.
@@ -226,7 +226,8 @@ into the process.
 ## Coredumps at Memfault: Rev. 1
 
 Our first crack at coredumps at Memfault had one goal: leveraging existing tools
-to capture info about a crashing process. To have feature parity with our offering on MCU and Android, we needed a few basic things:
+to capture info about a crashing process. To have feature parity with our
+offering on MCU and Android, we needed a few basic things:
 
 - A symbolicated backtrace for each running thread in the crashing process
 - The values of registers at the time of crash
@@ -258,8 +259,9 @@ to our handler:
 ```
 
 This tells the kernel to pipe the coredump to our handler, and provides the
-handler with the PID of the crashing process (`%P`), the name of the crashing process (%e),
-the UID of the crashing process (`%I`), and the signal that caused the crash (`%s`).
+handler with the PID of the crashing process (`%P`), the name of the crashing
+process (%e), the UID of the crashing process (`%I`), and the signal that caused
+the crash (`%s`).
 
 When a crash occurs the kernel will write the coredump to the `stdin` of the
 handler. The handler will then read all the program headers into memory. This
@@ -276,11 +278,23 @@ reduce the memory footprint of the handler, and prevent any issues where we
 would potentially need to seek backwards in the stream. As mentioned before,
 `stdin` is a one way stream, and we can't seek backwards in it.
 
-Now you're probably wondering, why did we go through all of this trouble to end
-up with a file that's largely the same as what the kernel would have produced?
-Well for one it allows us to add metadata to the coredump, but it also sets the
-stage for more advanced coredump handling in the future that we'll cover in the
-the next article.
+After we've written all of the `PT_LOAD` segments to the output file we should
+have an ELF coredump that is largely the same as what the kernel would have
+written. The only difference is that we've added a note to the coredump, the
+contents of which we won't cover in this article, as it's not particularly
+interesting.
+
+Let's take a quick visual look at everything we've accomplished by annotating
+our previous ELF layout diagram with the changes we've made.
+
+![]({% img_url linux-coredump/elf-core-layout-annotated.png %})
+
+And there we have it! We've copied our coredump over from `stdin` with a few
+minor changes. Now you're probably wondering, why did we go through all of this
+trouble to end up with a file that's largely the same as what the kernel would
+have produced? Well for one it allows us to add metadata to the coredump, but it
+also sets the stage for more advanced coredump handling in the future that we'll
+cover in the the next article.
 
 ## Conclusion
 
