@@ -1,10 +1,10 @@
 ---
-title: Linux Coredumps (Part 1) - Introduction
+title: Linux Coredumps (Part 1) － Introduction
 description:
   "The basics of Linux coredumps, how they're used at Memfault, and how they're
   captured."
 author: blake
-tags: [linux, coredumps, memfault]
+tags: [linux, coredumps, memfault, debugging]
 ---
 
 One of the core features of the Memfault Linux SDK is the ability to capture and
@@ -149,19 +149,19 @@ the program headers. Here is the layout of the ELF header[^elf_format]:
 ```c
 typedef struct {
   unsigned char e_ident[EI_NIDENT];
- Elf32_Half e_type;
- Elf32_Half e_machine;
- Elf32_Word e_version;
- Elf32_Addr e_entry;
- Elf32_Off e_phoff;
- Elf32_Off e_shoff;
- Elf32_Word e_flags;
- Elf32_Half e_ehsize;
- Elf32_Half e_phentsize;
- Elf32_Half e_phnum;
- Elf32_Half e_shentsize;
- Elf32_Half e_shnum;
- Elf32_Half e_shstrndx;
+  Elf32_Half e_type;
+  Elf32_Half e_machine;
+  Elf32_Word e_version;
+  Elf32_Addr e_entry;
+  Elf32_Off e_phoff;
+  Elf32_Off e_shoff;
+  Elf32_Word e_flags;
+  Elf32_Half e_ehsize;
+  Elf32_Half e_phentsize;
+  Elf32_Half e_phnum;
+  Elf32_Half e_shentsize;
+  Elf32_Half e_shnum;
+  Elf32_Half e_shstrndx;
 } Elf32_Ehdr;
 ```
 
