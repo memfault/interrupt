@@ -381,3 +381,9 @@ fabiangraf:
   blurb:
     is a Firmware Engineer at Siemens. Fabian is currently pursuing a PhD in
     low-power wireless communications.
+stevenoonan:
+  name: Steve Noonan
+  linkedin: https://www.linkedin.com/in/embeddeddev/
+  image: /img/author/stevenoonan.png
+  blurb:
+    is Principal Embedded Systems Engineer at Nomo International, Inc.
