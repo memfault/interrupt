@@ -1,7 +1,7 @@
 ---
-title: "Why `std::this_thread::sleep_for()` is broken on ESP32"
+title: "Why std::this_thread::sleep_for() is broken on ESP32"
 description:
-  A deep dive into how `std::this_thread::sleep_for()` is implemented on ESP32,
+  A deep dive into how std::this_thread::sleep_for() is implemented on ESP32,
   and why it is broken in IDF v5.
 author: stevenoonan
 tags: [esp32, freertos, c++, c, idf]
@@ -208,11 +208,11 @@ Let's look at the working side of things first. When calling
 `std::this_thread::sleep_for(10ms)` we first enter here:
 
 ```c++
-    /// sleep_for
-    template<typename _Rep, typename _Period>
-      inline void
-      sleep_for(const chrono::duration<_Rep, _Period>& __rtime)
-      {
+/// sleep_for
+template<typename _Rep, typename _Period>
+inline void
+sleep_for(const chrono::duration<_Rep, _Period>& __rtime)
+{
   if (__rtime <= __rtime.zero())
     return;
   auto __s = chrono::duration_cast<chrono::seconds>(__rtime);
@@ -228,7 +228,7 @@ Let's look at the working side of things first. When calling
 #else
   __sleep_for(__s, __ns);
 #endif
-      }
+}
 ```
 
 If you are following along in your own IDF project, you can find the
@@ -299,7 +299,6 @@ Let's clean it up by taking out the parts not compiled for the ESP32:
         ::usleep(__us);
       }
   }
-}
 ```
 
 Pretty simple: get the number of seconds and call `sleep()`, then get the number
