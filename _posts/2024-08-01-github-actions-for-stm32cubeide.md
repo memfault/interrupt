@@ -23,8 +23,9 @@ environment.
 ![Picture of GitHub Actions calling STM32CubeIDE in a Docker container](/img/stm32cubeide/arch.excalidraw.svg)
 
 The STM32 series of microcontrollers from STMicroelectronics are very popular in
-the embedded industry. ST provides an in-house Eclipse-based IDE, [STM32CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html),
-for developing projects using these chips.
+the embedded industry. ST provides an in-house Eclipse-based IDE,
+[STM32CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html), for
+developing projects using these chips.
 
 The STM32CubeIDE provides an all-in-one starting point for STM32-based projects,
 with example code, drivers, and middleware, and tools for configuring
@@ -84,34 +85,40 @@ With tools of this nature, I like to follow this process to create the image:
 
 ```bash
 # run a container from the base image, interactively
-$ docker run --tty --interactive ubuntu:22.04
+$ docker run --tty --interactive ubuntu:24.04
 ```
 
-I first tried following the
-[installation instructions provided by ST (PDF warning)](https://www.st.com/resource/en/user_manual/um2563-stm32cubeide-installation-guide-stmicroelectronics.pdf),
-which are pretty straightforward; in my case it was running this command after
-downloading the installer:
+As of STM32CubeIDE version `1.17.0`, the unattended install works on Ubuntu
+24.04 out of the box, no need for workarounds! Thanks to
+[Daan Timmer](https://github.com/daantimmer) for pointing this out, and
+providing a fixed up Dockerfile 🥳!
 
-```bash
-sudo sh ./st-stm32cubeide_1.15.0_20695_20240315_1429_amd64.deb_bundle.sh
-```
+> <details><summary>Prior to STM32CubeIDE 1.17.0:</summary>
+>
+> I first tried following the
+> <a href="https://www.st.com/resource/en/user_manual/um2563-stm32cubeide-installation-guide-stmicroelectronics.pdf">installation
+> instructions provided by ST (PDF warning)</a>, which are pretty
+> straightforward; in my case it was running this command after downloading the
+> installer:
+>
+> <pre>
+> sudo sh ./st-stm32cubeide_1.15.0_20695_20240315_1429_amd64.deb_bundle.sh
+> </pre>
+>
+> Unfortunately, the embedded script in that self-extracting installer doesn't
+> fully support an unattended mode (at least in the versions I tested, 1.15 +
+> 1.16).
+>
+> After some experimentation, I found a way to work around this; instead of
+> running the installer as-is, I extracted the installation files from the
+> package, and run them independently with a minor tweak.
+>
+> </details>
 
-Unfortunately, the embedded script in that self-extracting installer doesn't
-fully support an unattended mode (at least in the versions I tested, 1.15 +
-1.16).
-
-After some experimentation, I found a way to work around this; instead of
-running the installer as-is, I extracted the installation files from the
-package, and run them independently with a minor tweak.
-
-Below is the final Dockerfile I used to create the image, with some comments
-explaining the more exotic parts.
+Below is the final Dockerfile I used to create the image
 
 ```dockerfile
-# This is the newest Ubuntu version with simple support for STM32CubeIDE-
-# the Cube .deb has a dependency on the python2.7 package, which is no longer
-# available in the latest Ubuntu LTS 24.04
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Typical dockerfile stuff, try to suppress interactive prompts when installing
 # packages
@@ -130,7 +137,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     # don't clear apt cache, the stm32cubeide installer needs it
     # && rm -rf /var/lib/apt/lists/*
 
-ARG STM32CUBE_VERSION=1.16.0_21983_20240628_1741
+ARG STM32CUBE_VERSION=1.17.0_23558_20241125_2245
 # Copy the installer file into the image. It needs to be downloaded into the
 # directory where the Dockerfile is.
 COPY en.st-stm32cubeide_${STM32CUBE_VERSION}_amd64.deb_bundle.sh.zip /tmp/stm32cubeide.sh.zip
@@ -139,16 +146,7 @@ RUN mkdir -p /tmp/stm32cubeide && \
     cd /tmp/stm32cubeide && \
     unzip stm32cubeide.sh.zip && \
     chmod +x st-stm32cubeide_${STM32CUBE_VERSION}_amd64.deb_bundle.sh && \
-    # run the self-unpacker script, but don't actually install anything
-    ./st-stm32cubeide_${STM32CUBE_VERSION}_amd64.deb_bundle.sh --target ./ --noexec && \
-    # this is required to avoid an error during apt-get install
-    chmod a+r /tmp/stm32cubeide/*.deb && \
-    chmod 777 /tmp/stm32cubeide/*.deb && \
-    # need to set this env var for unattended install. install everything
-    # manually, to avoid issues with the installer script, which does not have
-    # an unattended install mode.
-    LICENSE_ALREADY_ACCEPTED=1 apt-get install -y \
-    /tmp/stm32cubeide/st-st*.deb && \
+    LICENSE_ALREADY_ACCEPTED=1 ./st-stm32cubeide_${STM32CUBE_VERSION}_amd64.deb_bundle.sh && \
     rm -rf /tmp/stm32cubeide
 ```
 
@@ -160,7 +158,7 @@ Once we've created the Dockerfile, we'll build the image as usual:
 # note that I'm tagging the image with the build date and putting it into a
 # GitHub container registry namespace for later uploading to the GitHub
 # container registry
-$ DOCKER_BUILDKIT=1 docker build -t ghcr.io/noahp/stm32wba55-example:2024-08-01 -f Dockerfile .
+$ DOCKER_BUILDKIT=1 docker build -t ghcr.io/noahp/stm32wba55-example:2025-02-24 -f Dockerfile .
 ```
 
 ### Testing the Docker Image
@@ -284,7 +282,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/noahp/stm32wba55-example:2024-08-01
+      image: ghcr.io/noahp/stm32wba55-example:2025-02-24
 
     steps:
       - name: Checkout code
@@ -295,12 +293,12 @@ jobs:
 
       - name: Build project
         run: |
-          /opt/st/stm32cubeide_1.16.0/stm32cubeide --launcher.suppressErrors -nosplash \
+          /opt/st/stm32cubeide_1.17.0/stm32cubeide --launcher.suppressErrors -nosplash \
             -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
             -data /tmp/stm-workspace \
             -import "STM32CubeIDE"
 
-          /opt/st/stm32cubeide_1.16.0/stm32cubeide --launcher.suppressErrors -nosplash \
+          /opt/st/stm32cubeide_1.17.0/stm32cubeide --launcher.suppressErrors -nosplash \
             -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
             -data /tmp/stm-workspace \
             -build BLE_p2pServer/Debug
@@ -353,6 +351,7 @@ Thanks for reading!
 ## References
 
 <!-- prettier-ignore-start -->
+
 - [The example project in this article](https://github.com/noahp/stm32wba55-example)
 - [STM32CubeIDE website](https://www.st.com/en/development-tools/stm32cubeide.html)
 - [MCU on Eclipse article about command-line building Eclipse](https://mcuoneclipse.com/2014/09/12/building-projects-with-eclipse-from-the-command-line/)
