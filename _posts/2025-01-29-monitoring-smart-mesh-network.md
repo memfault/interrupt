@@ -160,6 +160,10 @@ without needing to solder.
 In this section, we highlight the necessary steps to integrate Memfault as a
 monitoring framework into the application chip of our described setup.
 
+> If you are following along, you will need a Memfault account to generate a
+> project key. If you don't yet have one,
+> [reach out to the Memfault team](https://memfault.com/contact/?utm_campaign=Product%20Updates&utm_source=interrupt)!
+
 One major distinction to make between how Memfault was intended to be used and
 how we are going to showcase it here is the data collection interval. Memfault
 is designed to collect pre-aggregated system metrics from devices every hour. In
