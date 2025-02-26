@@ -570,7 +570,7 @@ Did Espressif actually implement `usleep()` wrong? Yes. It needs to be fixed.
 
 For periods at or longer than the system tick, `usleep()` can return before the
 specified time. It shouldn't do that. It must error on the side of sleeping too
-long to ensure it *never* sleeps to little. So yes, it is broken in my view.
+long to ensure it *never* sleeps too little. So yes, it is broken in my view.
 `stdlibc++` isn't to blame.
 
 Since `usleep()` is sometimes short by 1 system tick period, we could just add
