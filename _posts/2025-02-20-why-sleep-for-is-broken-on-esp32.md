@@ -674,7 +674,7 @@ No `malloc()`. No floating point math because there was no FPU. Custom linker
 scripts. Debugging using GPIO pins and an oscilloscope. Using precalculated
 value tables to save a few microseconds in an ISR. We ran at 24 MHz. At that
 time, C was luxurious because the "old" stuff was running at 1 MHz, usually in
-assembler.
+assembly.
 
 Back then common wisdom was that C++ was just not appropriate for
 microcontrollers. Of course, that was a long time ago, before "modern C++" and
