@@ -1,12 +1,12 @@
 ---
-title: Building your own Android hardware observability
-description: 
+title: The Android Developer's Journey into Hardware Observability
+description: An introduction to the technical decisions Android developers will have to make when designing AOSP observability tools for the first time.
 author: victorlai
 ---
 
 <!-- excerpt start -->
 
-In this article, I walk through how the growth of internal observability tooling for your AOSP device might look like, and the variety of pitfalls you might encounter as you scale from 1s to 10s to 1000s of Android devices in the field, based off my experience talking to AOSP developers and teams and personally as an Android app developer for AOSP hardware.
+In this article, I walk through how the growth of internal observability tooling for an AOSP device might look like, and the variety of pitfalls one might encounter as they scale from 1s to 10s to 1000s of Android devices in the field, based off my experience talking to AOSP developers and teams, and personally as an Android app developer working on AOSP hardware.
 
 <!-- excerpt end -->
 
@@ -26,19 +26,24 @@ To make things even more complicated, if that Android hardware was ordered from 
 
 This web of complexity might not seem like a big issue, but it is the nature of all software and hardware today that there are bugs, and the more complicated the system, the more complicated the bugs that can arise. It's unrealistic to expect to catch all bugs during development, and so what we need are a variety of tools to help diagnose and fix problems when the hardware is in the field and in our customer's hands.
 
-## A journey in collecting device data from the field
+## Evolution of observability
 
-If you're developing Android hardware, it's likely the core of your device is likely several standard Android mobile apps, and you can use the mature ecosystem of Android app observability tools like Crashlytics, Bugsnag, Instabug, etc to maintain the quality of those apps.
+If you're developing Android hardware, it's likely the core of your device is likely several standard Android mobile apps, and you can start by using the mature ecosystem of Android app observability tools like Crashlytics, Bugsnag, Instabug, or others, to maintain the quality of those apps.
 
 ### User error reports
 
 The first hiccup in development often arises when a user encounters a bug that isn't captured by existing app observability tools. User error reports can be quite vague (e.g., "the screen just went black!"), making it essential to gather more information from the affected device. Early in the process of Android development, many developers come across [Android bugreports](https://developer.android.com/studio/debug/bug-report), which often leads to establishing a process for users to generate and share these reports. In some cases, users can be guided through creating a bugreport and then emailing it to the engineering team.
 
-![Telescope]({% img_url aosp-observability/telescope.gif  %})
+<figure>
+    <a href="https://github.com/mattprecious/telescope" align="center">
+        <img width="400" src="{% img_url aosp-observability/telescope.gif %}" alt="Telescope GitHub library" />
+    </a>
+    <figcaption>Telescope GitHub library</figcaption>
+</figure>
 
 There are many obvious problems with this approach: they might already be unhappy with the experience and unwilling to cooperate; they might have returned the product already; they might be busy and miss the message. But if there are a low number of devices in the field, this can feel somewhat sustainable with only minimal engineering effort.
 
-### Automatically uploaded error reports
+### Automatic error reports
 
 Of course, as there more users, we can improve the process here by spending more engineering time to reduce the time the customer needs to spend. We can first focus on automating the bugreport collection to avoid having the customer do the work &mdash; when they call in with an issue, we can remotely trigger a bugreport for them, and then write code to asynchronously upload the report in the background. To trigger the upload, we can develop a new native service in our AOSP build to listen for a push notification. This might be a big feature in itself, if push notifications are not supported.
 
@@ -46,7 +51,7 @@ Then, we'll have to find a sustainable, secure location to upload the bugreports
 
 ### Capturing device logs
 
-It's likely we start encountering situations where the bugreports might not be enough. So we get the idea to upload the device logs as well. We'll quickly discover the different types of [logcat buffers](https://developer.android.com/tools/logcat) on the device: like main, system, or crash, and see that some kernel errors showed up in the system buffer in the past. The size of the buffers are quite small, so you might have to find ways to increase the size of the buffers to persist them for longer. And it could make sense to append these device logs onto the same bugreport system as before.
+It's likely we start encountering situations where the bugreports might not be enough. So we get the idea to upload the device logs as well. We'll quickly discover the different types of [logcat buffers](https://developer.android.com/tools/logcat) on the device: like `main`, `system`, or `crash`, and see that some kernel errors showed up in the system buffer in the past. The size of the buffers are quite small, so you might have to find ways to increase the size of the buffers to persist them for longer. And it could make sense to append these device logs onto the same bugreport system as before.
 
 ### Reactive improvements
 
@@ -56,13 +61,13 @@ Over time, this process could improve iteratively, as it's kind of generally goo
 
 There are many decisions to make at each step of the observability journey that can either lead the developer astray technically, or work well for a good amount of time, but fail to scale as the number of devices observed increases. Each decision can result in a large amount of engineering time designing, building out, and testing the changes, but also maintaining the system over time as it gets more complex.
 
-### Push vs Pull
+### Push vs pull
 
 While a push notification may trigger the collection of a report, the system as a whole is still pull-based, because they still require someone to request the data from the device. A symptom of this, is that sometimes when a bug happens, the affected user might take several days to reach out to customer support, and by that time, the data is not in the buffer anymore. Or in another case, there might be a delay in customer support that causes the data to be lost. Pull-based systems also make it awkward to pro-actively check how often an issue is happening across every device, because it means randomly choosing a number of devices to pull data from, on the off-chance it experienced the issue.
 
 Converting an existing pull-based push system to automatically push data when it detects an issue can be difficult: the push system took some work and now needs to be spun down, the backend might not be designed for uploading a higher volume of data, the device will need to manage its cache of data and dedupe any uploaded information, and more.
 
-When I initially went through this process, our AOSP device didn't actually have an existing push notification system via Google Mobile Services, so we spent loads of time investigating and then re-building push notifications on Android using MQTT, and re-purposing an existing frontend to allow customer support to send a push trigger for the error report. But there were so many times where the error report just didn't contain any information from around the time of the incident because it was requested too late.
+When we initially discussed pulling error reports at a previous company, our AOSP device didn't have push notifications (since it didn't use Google Mobile Services), so we spent loads of time investigating and then re-building push notifications on Android using MQTT, and re-purposing an existing frontend to allow customer support to send a push trigger for the error report. But there were so many times where the error report just didn't contain any information from around the time of the incident because it was requested too late.
 
 ### Data analysis fatigue
 
@@ -82,11 +87,11 @@ If the team has a way to: trigger data upload automatically, parse that data int
 
 In my experience from the device developer side, a lot of progress can be made on the device-side so that the error reports can be uploaded to the right place. But when the data operations move from CRUD (create, read, update, delete) to actual data processing, the amount of cross-functional buy-in and expertise involved is an order of magnitude more difficult for a company to commit to.
 
-### Building the team with the right expertise
+### Building a team with the right expertise
 
 The reality is that all the work in designing, building, and then maintaining these systems, will require a team of engineers with diverse skillsets across the entire stack: AOSP developers are needed to collect and upload the data from the device and provide domain expertise, backend developers are needed to maintain and scale pipelines as more and different information is processed, frontend engineers might be needed to create a nicer way to download the data, data scientists will need to be involved to ingest the metrics and help set up charts, alerting, and design how to store and query the data efficiently. Staffing a full team just to maintain a hodgepodge observability solution is a tall ask, especially for many AOSP engineers who would rather be solving customer pain points.
 
-## Summary
+## Conclusion
 
 There's a ton of content on what observability means for Android apps, but content and tooling for AOSP device observability is sparse in comparison, leading many AOSP developers to build their own internal tools. And most AOSP developers end on a similar journey: they discover the limits of the their apps observability tools, then they figure out they want to pull Android bugreports and [logcat device logs](https://interrupt.memfault.com/blog/device-logging), then they find a way to push the logs from the device instead of pull, and then they discover even more Android data they want to include, but would rather parse the data automatically, and do it for every device, not just the one they're working on, and then they fight to build a team that could do all of this sustainably.
 
