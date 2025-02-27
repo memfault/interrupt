@@ -19,8 +19,9 @@ performance, but only in the new version of IDF due to an interaction between
 <!-- excerpt end -->
 
 > 🎬
-> _[Listen to Steve on Interrupt Live](https://youtube.com/live/dwL-PI7TuDY?feature=share)
-> talk about the content and motivations behind writing this article._
+> [Listen to Steve on Interrupt Live](https://youtube.com/live/dwL-PI7TuDY?feature=share)
+> at **9AM PT | 12PM ET | 6PM CET on Friday, March 7th** talk about the content
+> and motivations behind writing this article.
 
 {% include newsletter.html %}
 
@@ -160,7 +161,7 @@ hardware timer to do it.
 All of this is to say the following:
 
 1. If you care about precision timing, details matter.
-2. If you *don't care* about precision timing but are using it, you are probably
+2. If you _don't care_ about precision timing but are using it, you are probably
    wasting resources.
 
 ## C++: the Solution to and Cause of All My Problems
@@ -447,9 +448,9 @@ use `usleep()` instead? Well, `usleep()` is just a wrapper to
 consider `usleep()` the "public" exposure of `esp_rom_delay_us()`, but only when
 the specified time is less than a system tick period. As mentioned above, this
 is a busy wait, and since it does not disable the scheduler, it still allows
-other threads *of equal or higher priority* to run. So, the timing represents a
-guaranteed *minimum* only. More importantly, if there are other threads of lower
-priority, it will *not* context switch during this busy time. It will just sit
+other threads _of equal or higher priority_ to run. So, the timing represents a
+guaranteed _minimum_ only. More importantly, if there are other threads of lower
+priority, it will _not_ context switch during this busy time. It will just sit
 in the thread until the wait is over.
 
 This is all good. A guaranteed minimum is how I expect `usleep()` to work.
@@ -463,11 +464,11 @@ say:
 > longer than one FreeRTOS tick period. If the time is shorter, the thread will
 > busy-wait instead of yielding to another RTOS task.
 
-It should say for sleeping *equal to* or longer than one tick period cause
+It should say for sleeping _equal to_ or longer than one tick period cause
 yielding vs. busy waiting. In any case, the yielding is done via `vTaskDelay()`.
 
 There is a problem here though. The ticks to yield calculations often produce
-times yielded *less than* the specified amount.
+times yielded _less than_ the specified amount.
 
 Let's play out an example. If we wanted to sleep for 15 milliseconds, the
 calculations would give us `vTaskDelay(2)`:
@@ -488,7 +489,7 @@ Even though the comment says it is rounding up to compensate for the first tick
 potentially not blocking at all, the compensation does not account for the
 worse-case minimal timing. In the example I gave, a 15-millisecond request will
 sometimes only sleep for 10 milliseconds. Likewise, a 10 millisecond `usleep()`
-will sometimes sleep about 0 milliseconds. The greatest *potential* differential
+will sometimes sleep about 0 milliseconds. The greatest _potential_ differential
 comes with calling `usleep()` with a multiple of the tick period. In that case,
 the time spent may be short by an entire tick period.
 
@@ -500,7 +501,7 @@ a problem.
 
 According to `man 3 sleep` and
 [POSIX](https://pubs.opengroup.org/onlinepubs/009695399/functions/usleep.html),
-`usleep()` should always sleep *at least* the time specified. It is allowed to
+`usleep()` should always sleep _at least_ the time specified. It is allowed to
 sleep more if needed.
 
 > The usleep() function shall cause the calling thread to be suspended from
@@ -523,7 +524,7 @@ the thread will sleep between 0 and 10 milliseconds. It will usually sleep for
 less than the time specified.
 
 In IDF v5, calling `std::this_thread::sleep_for(10ms)` almost always calls
-`usleep()` *twice*. The first time will use `vTaskDelay(1)`, and it will usually
+`usleep()` _twice_. The first time will use `vTaskDelay(1)`, and it will usually
 sleep for less than the time specified. Then, back in `libstdc++`
 `__sleep_for()`, the monotonic clock will be checked and it will be seen that
 some fractional component of 10 milliseconds remains, causing a second call to
@@ -547,7 +548,7 @@ system tick period, so the blocking `esp_rom_delay_us()` is now called.
 
 So what about time slicing? Even if `esp_rom_delay_us()` blocks, the FreeRTOS
 scheduler can switch to another task. Firstly, if this thread is of a higher
-priority, *no lower priorities will ever run*. But even if everything is of the
+priority, _no lower priorities will ever run_. But even if everything is of the
 same priority, the CPU will just switch back to the blocking call on the next
 round robin, continuing the blocking wait. In our current scenario, this is
 horribly inefficient, unnecessary, and unexpected.
@@ -555,12 +556,12 @@ horribly inefficient, unnecessary, and unexpected.
 Any call to `sleep_for()` greater than the tick period has this problem because
 the tick interrupt is asynchronous to the `sleep_for()` call. This means when
 the scheduler returns from `vTaskDelay()` some random remainder of time will be
-done with `esp_rom_delay_us()` in order to sleep for the *precise* amount of
+done with `esp_rom_delay_us()` in order to sleep for the _precise_ amount of
 time requested.
 
 The new version of `sleep_for()` is much more precise, but it is at the cost of
 computing efficiency on the ESP32 because some fraction of the tick period will
-be *busy waited* instead of yielded. That is very bad to do on an MCU.
+be _busy waited_ instead of yielded. That is very bad to do on an MCU.
 
 Of course, none of this is transparent to the application code, and I doubt it
 was something intentional from Espressif. It is just a consequence of upgrading
@@ -572,7 +573,7 @@ Did Espressif actually implement `usleep()` wrong? Yes. It needs to be fixed.
 
 For periods at or longer than the system tick, `usleep()` can return before the
 specified time. It shouldn't do that. It must error on the side of sleeping too
-long to ensure it *never* sleeps too little. So yes, it is broken in my view.
+long to ensure it _never_ sleeps too little. So yes, it is broken in my view.
 `stdlibc++` isn't to blame.
 
 Since `usleep()` is sometimes short by 1 system tick period, we could just add
@@ -671,7 +672,7 @@ while allowing more control over how to perform the sleep when using C++.
 
 ## Conclusion
 
-I cut my teeth on bare metal C code where *everything* was statically allocated.
+I cut my teeth on bare metal C code where _everything_ was statically allocated.
 No `malloc()`. No floating point math because there was no FPU. Custom linker
 scripts. Debugging using GPIO pins and an oscilloscope. Using precalculated
 value tables to save a few microseconds in an ISR. We ran at 24 MHz. At that
@@ -686,7 +687,7 @@ instruction pipelines.
 It seems today that using C++ for firmware brings up a lot of strong reactions.
 A lot of embedded people hate it. A lot of people love it. For myself, I think
 it can be a great tool, but it does have much complexity you need to get right,
-*especially* when using it on an MCU. This seems to be a good example of such.
+_especially_ when using it on an MCU. This seems to be a good example of such.
 
 I sincerely hope `usleep()` is fixed. Until then, don't use
 `std::this_thread::sleep_for()` in your IDF v5 projects. It's a waste of time!
