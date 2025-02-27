@@ -18,7 +18,9 @@ performance, but only in the new version of IDF due to an interaction between
 
 <!-- excerpt end -->
 
-Optional motivation to continue onwards
+> 🎬
+> _[Listen to Steve on Interrupt Live](https://youtube.com/live/dwL-PI7TuDY?feature=share)
+> talk about the content and motivations behind writing this article._
 
 {% include newsletter.html %}
 
