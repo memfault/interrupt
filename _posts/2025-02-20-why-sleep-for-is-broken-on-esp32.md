@@ -20,8 +20,7 @@ performance, but only in the new version of IDF due to an interaction between
 
 > 🎬
 > [Listen to Steve on Interrupt Live](https://youtube.com/live/dwL-PI7TuDY?feature=share)
-> at **9AM PT | 12PM ET | 6PM CET on Friday, March 7th** talk about the content
-> and motivations behind writing this article.
+> talk about the content and motivations behind writing this article.
 
 {% include newsletter.html %}
 
