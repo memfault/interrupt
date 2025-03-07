@@ -50,7 +50,7 @@ Someone actually did it - sqlite on the esp-idf. － Jonathan Beri of Golioth, I
 ## News & Announcements
 
 - [**Release 2.1.1 · raspberrypi/pico-sdk · GitHub**](https://github.com/raspberrypi/pico-sdk/releases/tag/2.1.1)<br>
-The RP2040 now supports a 200MHz clock, up from the previous official maximum of 125MH. － Noah
+The RP2040 now supports a 200MHz clock, up from the previous official maximum of 125Mhz. － Noah
 
 - [**esp-hal 1.0.0 beta announcement · Espressif Developer Portal**](https://developer.espressif.com/blog/2025/02/rust-esp-hal-beta/)<br>
 `esp-hal`, which enables writing rust for ESP32 series chips, releases v1.0 beta. － Noah
