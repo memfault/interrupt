@@ -34,9 +34,10 @@ to complete, so let’s get started.
 
 Rugix consists of multiple tools that are designed to work seamlessly together
 but can also be used independently. For this guide, we will be using two of
-these tools: Rugix Ctrl, a powerful tool for over-the-air system updates and
-system state management, and Rugix Bakery, a flexible and user-friendly build
-system for bespoke Linux distributions.
+these tools: [Rugix Ctrl](https://oss.silitics.com/rugix/docs/ctrl/), a powerful
+tool for over-the-air system updates and system state management, and
+[Rugix Bakery](https://oss.silitics.com/rugix/docs/bakery/), a flexible and
+user-friendly build system for bespoke Linux distributions.
 
 While Rugix Ctrl supports other update scenarios, we will be doing full system
 updates based on a typical A/B setup with two redundant system partitions, A and
@@ -80,7 +81,7 @@ To make sure that everything works, run:
 ```
 
 This will run an ephemeral Docker container with Rugix Bakery and should print
-usage instructions. If you run into any issues, check out
+usage instructions. If you run into any issues, please check out
 [Rugix Bakery's documentation for details](https://oss.silitics.com/rugix/docs/bakery/#setup-and-installation).
 
 ### Systems, Layers, and Recipes
@@ -197,16 +198,6 @@ Raspberry Pi 5 or for EFI-compatible devices using the respective system
 declarations. The images for EFI-compatible devices can be written to an NVMe or
 USB drive from which compatible systems can then boot.
 
-## Device Provisioning
-
-When you first boot a device from one of the images previously built, Rugix Ctrl
-will automatically create additional partitions and grow the existing ones to
-take advantage of the full storage capacity. Furthermore, as Memfault is
-integrated into the image with your project key, the device will also appear
-automatically in your Memfault project.
-
-![Screenshot of the Device List within Memfault](/img/robust-ota-updates-the-easy-way/memfault-devices.jpg)
-
 ### Running a VM
 
 If you don't want to test the images with a physical device, you can also start
@@ -220,6 +211,16 @@ You will then see the VM booting right in your terminal. Note that VMs only work
 for EFI-compatible systems, not for Raspberry Pi.
 
 ![Screenshot of the VM Booting](/img/robust-ota-updates-the-easy-way/vm.jpg)
+
+## Device Provisioning
+
+When you first boot a device from one of the images previously built, Rugix Ctrl
+will automatically create additional partitions and grow the existing ones to
+take advantage of the full storage capacity. Furthermore, as Memfault is
+integrated into the image with your project key, the device will also appear
+automatically in your Memfault project.
+
+![Screenshot of the Device List within Memfault](/img/robust-ota-updates-the-easy-way/memfault-devices.jpg)
 
 ### Connecting via SSH
 
@@ -237,11 +238,11 @@ When invoked with the `run` command, `run-bakery` will forward SSH from the VM
 to your host on port `2222`. So, this command will give you a shell in the VM.
 The SSH command will also set up port forwarding for HTTP so that you can now
 view the webpage that you customized earlier in your browser by navigating to
-http://localhost:8080. If you are running on physical hardware, you can also
+<http://localhost:8080>. If you are running on physical hardware, you can also
 view the webpage served from the device by navigating to the device's IP address
-or http://rugix-template-memfault.local. Should your device or VM not connect to
-Memfault, you can use the SSH connection to debug any issues by inspecting the
-log of the `memfaultd` service.
+or <http://rugix-template-memfault.local>. Should your device or VM not connect
+to Memfault, you can use the SSH connection to debug any issues by inspecting
+the log of the `memfaultd` service.
 
 ## OTA Updates
 
@@ -287,9 +288,7 @@ you can put the credentials for the `memfault` CLI. If you have `just`
 installed, you can alternatively run `just upload <system>` to upload the update
 bundle as an OTA payload to Memfault.
 
-To build update bundles for the other systems, proceed analogously. The hardware
-version for Raspberry Pi 4 and 5 is `rugix-rpi4-arm64` and `rugix-rpi5-arm64`,
-respectively.
+To build update bundles for the other systems, proceed analogously.
 
 To deploy an OTA update to a device or to the VM started earlier, you need to
 activate the respective release within Memfault.
@@ -364,7 +363,7 @@ empirically evaluate different options to find an optimal solution. Furthermore,
 to be effective, builds should be mostly reproducible, thereby reducing changes
 to those parts of a system that are significant for an update. While Rugix can
 not currently build systems fully reproducibly, we are actively working on this
-functionality – which will have the side-effect of making delta updates more
+functionality – which will then also make adaptive delta updates even more
 efficient.
 
 ### Committing an Update
@@ -374,8 +373,9 @@ needs to be _committed_. This is done through the command
 `rugix-ctrl system commit`. The template includes the recipe
 `rugix-extra/rugix-systemd-auto-commit` which installs a systemd service
 automatically committing to the presently booted version. You can add
-_pre-commit_ hooks to Rugix in order to ensure that Rugix will only commit to a
-new version, if this version has been verified to be working.
+[_pre-commit_ hooks](https://oss.silitics.com/rugix/docs/ctrl/hooks) to Rugix in
+order to ensure that Rugix will only commit to a new version, if this version
+has been verified to be working.
 
 ## Conclusion and Outlook
 
