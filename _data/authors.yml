@@ -387,3 +387,14 @@ stevenoonan:
   image: /img/author/stevenoonan.png
   blurb:
     is a Principal Embedded Systems Engineer at Nomo International, Inc.
+koehlma:
+  name: Maximilian Köhl
+  linkedin: https://www.linkedin.com/in/koehlma/
+  github: koehlma
+  image: /img/author/koehlma.jpg
+  email: koehl@silitics.com
+  web: https://koehlma.de
+  blurb:
+    is the the creator of the open-source project <a href="https://rugix.org">Rugix</a>
+    and the founder of <a href="https://silitics.com">Silitics</a>, a software development
+    and consulting firm focused on reliable software for embedded systems.
