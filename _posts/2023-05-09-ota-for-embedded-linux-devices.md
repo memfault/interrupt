@@ -102,7 +102,8 @@ practice.
 > [Memfault Linux SDK example](https://github.com/memfault/memfault-linux-sdk)
 > is one way to quickly get a system with all these components configured and
 > you can use Memfault backend to host and distribute your update file. It’s
-> free under the evaluation license.
+> free under the evaluation license. If you don't yet have an account,
+> [reach out to the Memfault team](https://memfault.com/contact/?utm_campaign=Product%20Updates&utm_source=interrupt).
 >
 > Nothing we show here is specific to Memfault though and you can replicate the
 > system using a different backend. Follow our QEMU Quickstart guide to get
