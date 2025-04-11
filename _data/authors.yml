@@ -398,3 +398,10 @@ koehlma:
     is the the creator of the open-source project <a href="https://rugix.org">Rugix</a>
     and the founder of <a href="https://silitics.com">Silitics</a>, a software development
     and consulting firm focused on reliable software for embedded systems.
+haydenriddeford:
+  name: Hayden Riddiford
+  linkedin: https://www.linkedin.com/in/hayden-riddiford/
+  image: /img/author/haydenriddeford.jpg
+  blurb:
+    is a firmware engineer with experience in consumer products and IoT. He is currently an
+    embedded systems engineer at Terra Kaffe.
