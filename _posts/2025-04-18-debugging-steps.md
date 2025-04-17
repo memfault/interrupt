@@ -89,7 +89,7 @@ on some of the flags he uses and why they're important.
 
 Nearly every MCU I've worked with has some fault-reporting capability. A
 [fantastic Interrupt article](https://interrupt.memfault.com/blog/cortex-m-hardfault-debug)
-Time and time again, I find myself coming back to details on hard fault
+I find myself coming back to details on hard fault handlers time and time again, specifically on Cortex-M platforms.
 handlers, specifically on Cortex-M platforms.
 
 Almost all of the problems I'll describe in my case studies eventually presented
@@ -410,7 +410,7 @@ block placement. Feeling very smart and very accomplished, I coded up the last
 sanity check, where I put the RTT control block in a newly defined linker
 section _at the end of RAM._ All of a sudden, reality started to crumble. Hard
 faults began appearing after a couple of logging statements. Seemingly _what_ I
-logged and _how much_ it affected this program's crashing behavior.
+logged and _how much_ affected this program's crashing behavior.
 
 #### Step 1 - See What Changed
 
@@ -534,7 +534,7 @@ N/A, we weren't using a heap.
 #### Step 7 - Vet Critical Peripherals:  
 Thus, a long and painful slog through our UART driver code started. We were
 using the DMA to automatically transfer received bytes into a memory buffer on
-reception in the UART. Then, we servicing said buffer in an RTOS task whenever
+reception in the UART. Then, we serviced said buffer in an RTOS task whenever
 bytes were available. We couldn't get rid of these bad bytes causing CRC
 failures no matter how closely we examined our peripheral configuration against
 the datasheet. The breakthrough came when I finally remembered something: this
