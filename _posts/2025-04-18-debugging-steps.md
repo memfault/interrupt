@@ -89,8 +89,9 @@ on some of the flags he uses and why they're important.
 
 Nearly every MCU I've worked with has some fault-reporting capability. A
 [fantastic Interrupt article](https://interrupt.memfault.com/blog/cortex-m-hardfault-debug)
-I find myself coming back to details on hard fault handlers time and time again, specifically on Cortex-M platforms.
-handlers, specifically on Cortex-M platforms.
+I find myself coming back to details on hard fault handlers time and time again,
+specifically on Cortex-M platforms. handlers, specifically on Cortex-M
+platforms.
 
 Almost all of the problems I'll describe in my case studies eventually presented
 themselves as triggering a hard fault (and thus ending up in a hard fault
@@ -113,8 +114,7 @@ what's happened can immediately point you in the direction of the problem:
 void HardFault_Handler()   {
   log("A hard fault occurred!");
   asm volatile ("bkpt #0");
-  while(1) {
-  }
+  while(1) {};
 }
 ```
 
@@ -243,8 +243,7 @@ char *_sbrk_r(int incr)
 {
   log("Not so fast!");
   asm volatile ("bkpt #0");
-  while(1) {
-  }
+  while(1) {};
   // Unreachable
   return NULL;
 }
@@ -260,7 +259,7 @@ There's another error worth mentioning when the heap gets involved that is
 pretty specific to bare metal systems like the ones we work with. Oftentimes,
 the heap and stack on a bare metal system are configured like so:
 
-![RAM layout](/img/debugging-steps/ram-layout.png)
+![RAM layout](/img/debugging-steps/stack_heap_diagram.png)
 
 The stack grows _downward_ in address space, while the heap grows _upwards._
 Like two trains rushing towards each other on the same track, one getting large
@@ -531,7 +530,8 @@ We found no evidence of stack overflows.
 
 N/A, we weren't using a heap.
 
-#### Step 7 - Vet Critical Peripherals:  
+#### Step 7 - Vet Critical Peripherals:
+
 Thus, a long and painful slog through our UART driver code started. We were
 using the DMA to automatically transfer received bytes into a memory buffer on
 reception in the UART. Then, we serviced said buffer in an RTOS task whenever
@@ -541,7 +541,8 @@ the datasheet. The breakthrough came when I finally remembered something: this
 MCU has a cache. Turning off caching immediately fixed the problem. No more
 erroneous bytes, and thus no more CRC failures. Which led us to…
 
-#### Step 8 - MCU Errata and Application Notes:  
+#### Step 8 - MCU Errata and Application Notes:
+
 Reading an
 [application note](https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf)
 on caching on our MCU, we quickly realized the DMA does not at all care about
@@ -554,6 +555,8 @@ cache hits/misses. Thus, changing unrelated bits of code changed cache behavior
 and thus changed how often we got bad bytes.
 
 ### Case Study #4 - Memory Faults in the Depths of Hell
+
+![Doom 1 GIF](/img/debugging-steps/doom1.gif)
 
 This last one is the most painful yet satisfying bug I've ever dealt with. To
 set the stage, I was in the process of porting DOOM to the display board on the
@@ -623,8 +626,9 @@ little too high, it masked the MSB, mangling the received data to be
 `0xFFXXXXXX`. This explained the odd engine behavior. If the stars aligned and
 the SDRAM read errors only happened on non-critical textures (and in a way that
 didn't generate an MPU fault) the game would barely get to the splash screen. In
-the end, it was all worth it to
-[rip and tear on the TK-02](https://photos.app.goo.gl/i8WewxVTghhsnXuSA).
+the end, it was all worth it to rip and tear on the TK-02:
+
+![Doom 2 GIF](/img/debugging-steps/doom2.gif)
 
 ## Conclusion
 
