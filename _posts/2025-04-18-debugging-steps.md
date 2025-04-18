@@ -89,9 +89,8 @@ on some of the flags he uses and why they're important.
 
 Nearly every MCU I've worked with has some fault-reporting capability. A
 [fantastic Interrupt article](https://interrupt.memfault.com/blog/cortex-m-hardfault-debug)
-I find myself coming back to details on hard fault handlers time and time again,
-specifically on Cortex-M platforms. handlers, specifically on Cortex-M
-platforms.
+I find myself coming back to time and time again details hard fault handlers,
+specifically on Cortex-M platforms.
 
 Almost all of the problems I'll describe in my case studies eventually presented
 themselves as triggering a hard fault (and thus ending up in a hard fault
@@ -635,7 +634,7 @@ the end, it was all worth it to rip and tear on the TK-02:
 Debugging elusive firmware failures can be incredibly maddening — but also
 deeply rewarding once you find the root cause. With the right strategy, even the
 most mysterious issues can be unraveled step by step. I'd love to hear your
-thoughts on these strategies or debugging stores of your own!
+thoughts on these strategies or debugging stories of your own!
 
 <!-- Interrupt Keep START -->
 
