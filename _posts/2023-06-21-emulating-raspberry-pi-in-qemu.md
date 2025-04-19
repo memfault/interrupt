@@ -27,7 +27,7 @@ This article dives into QEMU, a popular open-source emulator, and how to use it 
 
 ## Environment setup
 
-Since I'm on a Mac, and the purpose is to get a working Docker image, I set up an Ubuntu 20.04 Virtual Machine in Parallels. If you want to follow along, I recommend you to do the same and get onto a fresh Ubuntu 20.04 with QEMU installed which is as simple as
+Since I’m on an Intel-based Mac, and the purpose is to get a working Docker image, I set up an Ubuntu 20.04 Virtual Machine in Parallels. If you want to follow along, I recommend you to do the same and get onto a fresh Ubuntu 20.04 with QEMU installed which is as simple as
 ```bash
 apt-get install -y qemu-system-aarch64
 ```
