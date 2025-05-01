@@ -239,8 +239,8 @@ ls -la --block-size=k /media/memfault/mar/9d51df03-ba86-43aa-a245-a77a7ea33777/c
 ```
 
 That's pretty large! At 2.6MB this could take up a significant amount of space
-on the device on devices with smaller flash parts. Now let's take a look at what
-we get with our changes:
+on devices with smaller flash parts. Now let's take a look at what we get with
+our changes:
 
 ```bash
 ls -la --block-size=k /media/memfault/mar/3bfd1399-659a-4aed-b0d9-540418a6c51d/core-e8afead6-782d-4f22-bb23-8789b4390f1c.elf
