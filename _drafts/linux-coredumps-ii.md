@@ -7,14 +7,14 @@ tags: [linux, coredumps, memfault, debugging]
 
 In our previous article we outlined what a Linux coredump is, and how they work
 under the hood. One common constraint we see in embedded Linux, however, is a
-limited amount of storage space. Whether we're trying to limit flash writes, or
-picked a small flash part to keep our BOM cost down, sometimes we just don't
+limited amount of storage space. Whether we're trying to limit writes to disk, or
+need to reserve most of the disk space available to a device for other data, sometimes we just don't
 have enough space to store coredumps.
 
 <!-- excerpt start -->
 
-In this article we'll go take a look at what makes a coredump, why they can be
-so large, and what we can strip away to make them smaller.
+In this article we'll go take a look at what comprises a coredump, why they can be
+so large, and what we can strip away to make them smaller while retaining critical debugging information.
 
 <!-- excerpt end -->
 
@@ -31,7 +31,7 @@ will consumed by the heap. If we can cut this out we should already see the size
 of our coredump go down quite a bit. Outside of this it's possible for
 individual thread stacks to be quite large. If we could only capture the top N
 bytes of each stack, we would have not only a smaller corecump, but a more
-predictable size.
+predictable size. Finally, to be able to use a coredump effectively in `gdb`, we'll need to provide it some metadata for unpacking the coredump. We'll dive more into this later!
 
 If we condense this down to a list we can see the following requirements for our
 slim coredump:
@@ -40,16 +40,14 @@ slim coredump:
 - Remove heap allocations
 - Capture metadata needed for debuggers.
 
-By fullfilling the above requirements, we'll have a coredump that is of minimal
-size. This does, however, have two major tradeoffs. For one, any heap allocated
+By fullfilling the above requirements, we'll have a coredump that stripped down to just the essentials. This does, however, have two major tradeoffs. For one, any heap allocated
 values on the stack will not be resolved if they're on the stack, and obviously
-we willn not be able to look at heap allocated values at all. We have found this
+we will not be able to look at heap allocated values at all. We have found this
 to be an acceptable tradeoff, however, as most crashes can be debugged with just
 the stacktrace and stack allocated variables.
 
 The second tradeoff is that we're limiting the size of each stack. This does
-limit the depth of the stacktrace, but in general we have observed two things
-with coredumps. Typically the stacks are not that deep, and for those that are,
+limit the depth of the stacktrace, but in general we have observed two important characteristics of most coredumps. Typically the stacks are not that deep, and for those that are,
 only the top few frames are actually of any interest. This allows us to limit
 the size here, without affecting the debugging in the vast majority of cases.
 
@@ -105,11 +103,9 @@ them.
 
 ### `r_debug` - Debug Rendevous Structure
 
-When we write a Linux program, we're typically pulling in more code than what we
-directly compile in. These bits of code are loaded in at runtime, and are
-referred to as dynamically linked. Examples of these are `libc`, `libopenssl`,
+Dynamic linking allows programs to call code from shared libraries on the system. For example. this can allow a single `libopenssl` binary to handle cryptography for a variety of applications without the full library binary needing to be included in each one. 
 and many other common bits of functionality. Since our call stack could
-eventually enter thees linked libraries, we need to have some information on
+eventually enter these linked libraries, we need to have some information on
 them if we want to properly reconstruct our stacktrace.
 
 One of the key bits of information we need to know is the translation between
@@ -203,7 +199,7 @@ stacktrace that may have landed in the dynamic mapped sections of the program.
 
 So how do we find this info? For that we'll have to take a peek into the values
 inside `/proc/pid/maps`[^proc_pid_maps]. This contains all mapped memory for the
-given pid. This contains the mapped addresses of stacks, heaps, and importantly
+given PID (Process Identifier). This contains the mapped addresses of stacks, heaps, and importantly
 for us the address of dynamically linked libraries.
 
 For every mapped ELF file in the list, we can then extract the three bits of
@@ -216,7 +212,7 @@ TODO: Add size comparison
 ## Conclusion
 
 We've now seen that we can trim down the overall size of our ELF coredump by
-stripping it down to the bare minimum needed to construct our stacktrace. This
+stripping it down to the bare minimum needed to construct a human-readable stacktrace. This
 does come with some tradeoffs, but if you're trying to save on disk space they
 are definitely worth it.
 
