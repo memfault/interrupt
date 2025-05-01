@@ -7,14 +7,15 @@ tags: [linux, coredumps, memfault, debugging]
 
 In our previous article we outlined what a Linux coredump is, and how they work
 under the hood. One common constraint we see in embedded Linux, however, is a
-limited amount of storage space. Whether we're trying to limit writes to disk, or
-need to reserve most of the disk space available to a device for other data, sometimes we just don't
-have enough space to store coredumps.
+limited amount of storage space. Whether we're trying to limit writes to disk,
+or need to reserve most of the disk space available to a device for other data,
+sometimes we just don't have enough space to store coredumps.
 
 <!-- excerpt start -->
 
-In this article we'll go take a look at what comprises a coredump, why they can be
-so large, and what we can strip away to make them smaller while retaining critical debugging information.
+In this article we'll go take a look at what comprises a coredump, why they can
+be so large, and what we can strip away to make them smaller while retaining
+critical debugging information.
 
 <!-- excerpt end -->
 
@@ -31,7 +32,9 @@ will consumed by the heap. If we can cut this out we should already see the size
 of our coredump go down quite a bit. Outside of this it's possible for
 individual thread stacks to be quite large. If we could only capture the top N
 bytes of each stack, we would have not only a smaller corecump, but a more
-predictable size. Finally, to be able to use a coredump effectively in `gdb`, we'll need to provide it some metadata for unpacking the coredump. We'll dive more into this later!
+predictable size. Finally, to be able to use a coredump effectively in `gdb`,
+we'll need to provide it some metadata for unpacking the coredump. We'll dive
+more into this later!
 
 If we condense this down to a list we can see the following requirements for our
 slim coredump:
@@ -40,16 +43,19 @@ slim coredump:
 - Remove heap allocations
 - Capture metadata needed for debuggers.
 
-By fullfilling the above requirements, we'll have a coredump that stripped down to just the essentials. This does, however, have two major tradeoffs. For one, any heap allocated
-values on the stack will not be resolved if they're on the stack, and obviously
-we will not be able to look at heap allocated values at all. We have found this
-to be an acceptable tradeoff, however, as most crashes can be debugged with just
-the stacktrace and stack allocated variables.
+By fullfilling the above requirements, we'll have a coredump that stripped down
+to just the essentials. This does, however, have two major tradeoffs. For one,
+any heap allocated values on the stack will not be resolved if they're on the
+stack, and obviously we will not be able to look at heap allocated values at
+all. We have found this to be an acceptable tradeoff, however, as most crashes
+can be debugged with just the stacktrace and stack allocated variables.
 
 The second tradeoff is that we're limiting the size of each stack. This does
-limit the depth of the stacktrace, but in general we have observed two important characteristics of most coredumps. Typically the stacks are not that deep, and for those that are,
-only the top few frames are actually of any interest. This allows us to limit
-the size here, without affecting the debugging in the vast majority of cases.
+limit the depth of the stacktrace, but in general we have observed two important
+characteristics of most coredumps. Typically the stacks are not that deep, and
+for those that are, only the top few frames are actually of any interest. This
+allows us to limit the size here, without affecting the debugging in the vast
+majority of cases.
 
 ### Finding The Stacks
 
@@ -93,8 +99,19 @@ struct elf_prstatus
 
 Of interest here is the `pr_reg` struct memmber. This has all of the general
 purpose registers at the time of the crash. From here we can grab the PC of the
-thread, and search through all of the mapped memory regions. Once we find the
-mapped memory region in question we can grab the last N bytes before the PC.
+thread, and search through all of the mapped memory regions.
+
+To search through all mapped memory regions we can look at every entry in
+`/proc/<pid>/maps`[^proc_pid_maps]. Looking at a single entry we can see there
+is a start and end:
+
+```bash
+77837a402000-77837a404000 rw-p 00000000 00:00 0
+```
+
+If the PC is inside the range, we've found our stack region! Now we simply copy
+from the PC down to either the start of our stack, or until we've reached the
+max N bytes we wish to copy!
 
 Now we have just the memory from each thread! If we tried to load this into GDB,
 however it wouldn't work. That's because we're missing some vital bits of debug
@@ -103,10 +120,12 @@ them.
 
 ### `r_debug` - Debug Rendevous Structure
 
-Dynamic linking allows programs to call code from shared libraries on the system. For example. this can allow a single `libopenssl` binary to handle cryptography for a variety of applications without the full library binary needing to be included in each one. 
-and many other common bits of functionality. Since our call stack could
-eventually enter these linked libraries, we need to have some information on
-them if we want to properly reconstruct our stacktrace.
+Dynamic linking allows programs to call code from shared libraries on the
+system. For example. this can allow a single `libopenssl` binary to handle
+cryptography for a variety of applications without the full library binary
+needing to be included in each one. and many other common bits of functionality.
+Since our call stack could eventually enter these linked libraries, we need to
+have some information on them if we want to properly reconstruct our stacktrace.
 
 One of the key bits of information we need to know is the translation between
 the compile time address, and the addresses at runtime. As a security feature
@@ -184,10 +203,10 @@ The `r_debug` structure is in this list of dynamic tags[^dynamic_entries]. It
 can be found under the `DT_DEBUG` tag. We can iterate through all the tags,
 extract the `r_debug` struct memory range for each, and add it to our coredump.
 
-### Finding Mapped Build IDs and Headers
+### Finding Build IDs and Headers For Dynamic Libs
 
 To be able to properly fetch the needed symbols for both our main executable,
-and all mapped libraries we need to collect some metadata on them. We need to
+and all dynamic libraries we need to collect some metadata on them. We need to
 get three things for each mapped file:
 
 1. The ELF header
@@ -199,22 +218,46 @@ stacktrace that may have landed in the dynamic mapped sections of the program.
 
 So how do we find this info? For that we'll have to take a peek into the values
 inside `/proc/pid/maps`[^proc_pid_maps]. This contains all mapped memory for the
-given PID (Process Identifier). This contains the mapped addresses of stacks, heaps, and importantly
-for us the address of dynamically linked libraries.
+given PID (Process Identifier). This contains the mapped addresses of stacks,
+heaps, and importantly for us the address of dynamically linked libraries.
 
 For every mapped ELF file in the list, we can then extract the three bits of
 information we mentioned above.
 
 ## Overall Size Savings
 
-TODO: Add size comparison
+Now that we've done all this work, what's the payoff? Let's take a look at a
+coredump produced by
+`memfaultctl trigger-coredump`[^memfaulctl_trigger_coredump].
+
+For a default coredump, with none of the modifications we see the folowing
+decompressed size:
+
+```bash
+ls -la --block-size=k /media/memfault/mar/9d51df03-ba86-43aa-a245-a77a7ea33777/core-fdedc559-3b92-4a39-9156-fe575104b947.elf
+-rw-r--r-- 1 root root 2625K May  1 14:59 /media/memfault/mar/9d51df03-ba86-43aa-a245-a77a7ea33777/core-fdedc559-3b92-4a39-9156-fe575104b947.elf
+```
+
+That's pretty large! At 2.6MB this could take up a significant amount of space
+on the device on devices with smaller flash parts. Now let's take a look at what
+we get with our changes:
+
+```bash
+ls -la --block-size=k /media/memfault/mar/3bfd1399-659a-4aed-b0d9-540418a6c51d/core-e8afead6-782d-4f22-bb23-8789b4390f1c.elf
+-rw-r--r-- 1 root root 75K May  1 14:56 /media/memfault/mar/3bfd1399-659a-4aed-b0d9-540418a6c51d/core-e8afead6-782d-4f22-bb23-8789b4390f1c.elf
+```
+
+Only 75k! That's a 35x size reduction! While it will vary from program to
+program, this is a pretty huge storage savings! For older and more constrained
+devices this opens up a world where we could save several coredumps, and still
+be under the size of a single unmodified coredump.
 
 ## Conclusion
 
 We've now seen that we can trim down the overall size of our ELF coredump by
-stripping it down to the bare minimum needed to construct a human-readable stacktrace. This
-does come with some tradeoffs, but if you're trying to save on disk space they
-are definitely worth it.
+stripping it down to the bare minimum needed to construct a human-readable
+stacktrace. This does come with some tradeoffs, but if you're trying to save on
+disk space they are definitely worth it.
 
 In the next, and final, part of this article series we'll cover a further
 evolution of the coredump handler. We'll look at doing on device stack unwinding
@@ -236,7 +279,8 @@ providing a list of PCs and any related debug info.
 
 <!-- prettier-ignore-start -->
 [^r_debug]: [`r_debug`](https://sourceware.org/git/?p=glibc.git;a=blob;f=elf/link.h;h=3b5954d9818e8ea9f35638c55961f861f6ae6057)
-[^prstatus]: [`prstatus](https://elixir.bootlin.com/linux/v6.14.4/source/include/linux/elfcore.h#L48)
+[^prstatus]: [`prstatus`](https://elixir.bootlin.com/linux/v6.14.4/source/include/linux/elfcore.h#L48)
 [^proc_pid_maps]: [`proc_pid_maps`](https://man7.org/linux/man-pages/man5/proc_pid_maps.5.html)
 [^dynamic_entries]: [`dynamic_entries`](https://refspecs.linuxfoundation.org/LSB_1.2.0/gLSB/dynamicsection.html)
+[^memfaulctl_trigger_coredump]: [`memfaultctl_trigger_coredump](https://github.com/memfault/memfault-linux-sdk/blob/kirkstone/meta-memfault/recipes-memfault/memfaultd/files/memfaultd/src/cli/memfaultctl/coredump.rs#L28)
 <!-- prettier-ignore-end -->
