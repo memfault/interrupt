@@ -317,10 +317,10 @@ the hood. While the baseline coredumps are useful and a known commodity, there
 are a few things that aren't great about them. The biggest issue is that they
 can be quite large for processes with many threads or do a large amount of
 memory allocation. This can be a significant problem for embedded devices that
-may not have a lot of room to store large files. In the next article, we'll take
+may not have a lot of room to store large files. In the [next article]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}), we take
 a look at the steps we've taken to reduce the size of coredumps.
 
-In the meantime, if you'd like to poke around the source code for the coredump
+If you'd like to poke around the source code for the coredump
 handler, you can find it
 [here](https://github.com/memfault/memfaultd/tree/main/memfaultd/src/cli/memfault_core_handler).
 
