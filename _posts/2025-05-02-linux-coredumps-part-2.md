@@ -23,6 +23,12 @@ critical debugging information.
 
 <!-- excerpt end -->
 
+> 📢 If you're attending Open Source Summit North America 2025, don’t miss
+> Blake's talk,
+> ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](https://sched.co/1zfib)
+> on Tuesday, June 24th at 9:00am MDT in Bluebird Ballroom 2B. He’ll dive even
+> deeper into the techniques explored in this series.
+
 {% include newsletter.html %}
 
 {% include toc.html %}
