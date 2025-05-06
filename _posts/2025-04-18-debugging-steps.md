@@ -32,6 +32,10 @@ errors that on their face appear to be intangible.
 
 <!-- excerpt end -->
 
+> 🎬
+> _[Listen to Hayden on Interrupt Live](https://www.youtube.com/watch?v=bgx4p-Voqkg)
+> talk about the content and motivations behind writing this article._
+
 {% include newsletter.html %}
 
 {% include toc.html %}
