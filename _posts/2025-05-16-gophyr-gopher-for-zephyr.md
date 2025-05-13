@@ -6,33 +6,31 @@ author: jrsharp
 tags: [zephyr, ai, claude, gopher, retrocomputing]
 ---
 
-# Gophyr: Building a Gopher Client for Zephyr with Claude
-
 What happens when an AI-skeptical embedded engineer and a large language model walk into a codebase?  In my case, a delightful journey back to 1991.  This article chronicles my unexpected adventure with Claude (3.7) as we bring the Gopher protocol to modern MCU silicon, creating a fully functional client for the Zephyr RTOS serial shell.
 
 ## Introduction
 
 You know how it is -- you're logged into your Zephyr serial shell and suddenly feel the need to surf gopherspace...  Eh?  "What's gopherspace?", you ask?
 
-Well, I hope to answer the "What?" and the "Why?" for you as I walk through:
+Well, I hope to answer _both_ the "What?" _and_ the "Why?" for you as I walk through:
 
-- A (brief) Gopher history lesson
-- The process of developing a functional Gopher client for Zephyr using an AI coding agent
-- A tour of the working client and notable Gopher destinations
-- What we can learn from embracing simplicity in modern embedded systems
+ - A (brief) Gopher history lesson
+ - The process of developing a functional Gopher client for Zephyr using an AI coding agent
+ - A tour of the working client and notable Gopher destinations
+ - What we can learn from embracing simplicity in modern embedded systems
 
 ## History Lesson: The Gopher Protocol
 
-About the time Sir Berners-Lee was [doing his thing](https://en.wikipedia.org/wiki/Tim_Berners-Lee), some folks at the University of Minnesota brought us a more _spartan_ [vision of hypertext](https://en.wikipedia.org/wiki/Gopher_(protocol)#Origins).  Gopher, as defined in RFC1436, offers a simple menu-oriented interface for navigating content (resources) across servers.
+About the time Sir Berners-Lee was [doing his thing](https://en.wikipedia.org/wiki/Tim_Berners-Lee) [^tbl], some folks at the University of Minnesota brought us a more _spartan_ [vision of hypertext](https://en.wikipedia.org/wiki/Gopher_(protocol)#Origins) [^gopher_wikipedia].  Gopher, as defined in RFC1436 [^rfc1436], offers a simple menu-oriented interface for navigating content (resources) across servers.
 
 ![Firefox 1.5 displaying a gopher menu](https://upload.wikimedia.org/wikipedia/commons/1/15/Gopher_in_Firefox_1.5.png)
 Figure 1: An example gopher menu displayed in Firefox 1.5
 
 What makes Gopher particularly interesting for embedded systems:
-- Minimal protocol overhead
-- Text-based responses ideal for serial terminals
-- Simple parsing requirements
-- Low memory footprint
+ 1. Minimal protocol overhead
+ 2. Text-based responses ideal for serial terminals
+ 3. Simple parsing requirements
+ 4. Low memory footprint
 
 This simplicity makes it a perfect candidate for implementation on resource-constrained systems like modern microcontrollers running Zephyr.
 
@@ -82,7 +80,7 @@ The inspiration for this project struck one evening after working with my nRF700
 
 First, I directed Claude to study RFC1436. The Gopher protocol is refreshingly straightforward - TCP-based client-server communication with a simple line-oriented text format. Each menu item is marked with a single-character code, and server responses need minimal parsing.
 
-Next, I made sure Claude understood the Zephyr environment. The serial shell provides a constrained but perfectly suitable interface for a Gopher client. I regularly use CLI-driven Gopher clients on desktop systems, ([cgo](https://github.com/kieselsteini/cgo) is a favorite) so I knew the paradigm would work. To ensure proper implementation, I directed Claude to the relevant Zephyr documentation for shell commands and networking.
+Next, I made sure Claude understood the Zephyr environment. [^zephyr_shell]  The serial shell provides a constrained but perfectly suitable interface for a Gopher client. I regularly use CLI-driven Gopher clients on desktop systems, ([cgo](https://github.com/kieselsteini/cgo) is a favorite) so I knew the paradigm would work. To ensure proper implementation, I directed Claude to the relevant Zephyr documentation for shell commands and networking.
 
 ### Iterative Development (So _this_ is "vibe coding"...)
 
@@ -92,7 +90,7 @@ The only hiccups came from API changes. Claude wasn't familiar with the latest Z
 
 What struck me most was how implementation details faded into the background. Instead of syntax and API minutiae, our conversation focused on capabilities and features. I found myself thinking at a higher level of abstraction - "we need a menu rendering system" rather than "let's loop through these structs." This shift created a fluid creative process where technical constraints didn't dominate. The unexpected benefit wasn't just productivity, but a more enjoyable, conceptual approach to problem-solving.
 
-After about three hours, I had a very serviceable gopher client tha was capable of rendering gopher menus and displaying ASCII text resources.  Oh, there are bugs aplenty, (responses being truncated, mostly) but it works!
+After about three hours, I had a very serviceable gopher client that was capable of rendering gopher menus and displaying ASCII text resources.  Oh, there are bugs aplenty, (responses being truncated, mostly) but it works!
 
 ## Navigating Gopherspace in style
 
@@ -127,7 +125,8 @@ Figure 3: sdf.org in full-color Gophyr, running on an nRF7002-DK
 
 Beyond SDF, we can navigate to several interesting Gopher servers still operational today:
 
-1. **Floodgap Systems** (gopher.floodgap.com)
+#### **Floodgap Systems** (gopher.floodgap.com)
+
    ```
    shell> gopher connect gopher.floodgap.com
    shell> gopher get
@@ -156,7 +155,8 @@ Beyond SDF, we can navigate to several interesting Gopher servers still operatio
    ...
    ```
 
-2. **HN Gopher - A Hacker News Mirror**
+#### **HN Gopher - A Hacker News Mirror**
+
    ```
    shell> gopher connect hngopher.com
    shell> gopher get
@@ -257,4 +257,8 @@ Oh, and did Claude help write this article?  Let's just say I'm confident that y
 ## References
 
 <!-- prettier-ignore-start -->
+[^rfc1436]: [`rfc1436`](https://www.rfc-editor.org/rfc/rfc1436.html)
+[^tbl]: [`tbl`](https://en.wikipedia.org/wiki/Tim_Berners-Lee)
+[^gopher_wikipedia]: [`gopher_wikipedia`](https://en.wikipedia.org/wiki/Gopher_(protocol))
+[^zephyr_shell]: [`zephyr_shell`](https://docs.zephyrproject.org/latest/services/shell/index.html)
 <!-- prettier-ignore-end -->
