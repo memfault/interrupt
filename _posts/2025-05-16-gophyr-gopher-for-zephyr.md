@@ -8,16 +8,16 @@ tags: [zephyr, ai, claude, gopher, retrocomputing]
 
 # Gophyr: Building a Gopher Client for Zephyr with Claude
 
-What happens when an AI-skeptical embedded engineer and a large language model walk into a codebase? In my case, a delightful journey back to 1991. (or, Tuesday) This article chronicles my unexpected adventure with Claude (3.7) as we bring the Gopher protocol to modern MCU silicon, creating a fully functional client for the Zephyr RTOS serial shell.
+What happens when an AI-skeptical embedded engineer and a large language model walk into a codebase?  In my case, a delightful journey back to 1991.  This article chronicles my unexpected adventure with Claude (3.7) as we bring the Gopher protocol to modern MCU silicon, creating a fully functional client for the Zephyr RTOS serial shell.
 
 ## Introduction
 
 You know how it is -- you're logged into your Zephyr serial shell and suddenly feel the need to surf gopherspace...  Eh?  "What's gopherspace?", you ask?
 
-If you really are new to Gopher, I hope to answer that for you as I walk through:
+Well, I hope to answer the "What?" and the "Why?" for you as I walk through:
 
 - A (brief) Gopher history lesson
-- The process of developing a functional Gopher client for a microcontroller using an AI coding agent
+- The process of developing a functional Gopher client for Zephyr using an AI coding agent
 - A tour of the working client and notable Gopher destinations
 - What we can learn from embracing simplicity in modern embedded systems
 
