@@ -6,7 +6,11 @@ author: jrsharp
 tags: [zephyr, ai, claude, gopher, retrocomputing]
 ---
 
-This article chronicles my unexpected 3-hour adventure using Claude to create a fully functional gopher client for the Zephyr RTOS' serial CLI.
+<!-- excerpt start -->
+
+This article chronicles my unexpected 3-hour adventure using Claude to create Gophyr: a fully functional gopher client for Zephyr's serial CLI.
+
+<!-- excerpt end -->
 
 [![asciicast](https://asciinema.org/a/719343.svg)](https://asciinema.org/a/719343)
 
@@ -76,11 +80,11 @@ That's it - no cookies, no sessions, no headers, no complex state management.  J
 
 ## The Development Process
 
-The inspiration for this project struck one evening after working with my [nRF7002-DK](https://www.nordicsemi.com/Products/Development-hardware/nRF7002-DK).  It dawned on me that building a Gopher client for Zephyr would be a great test for my new acquaintance, Claude (3.7).  Now, I understand the mention of AI may illicit a certain negative response, and frankly, that may be entirely deserved.  I don't know that my own thoughts are even now resolved on this topic, but I'd been encouraged by my employer to give it chance, I figured I should take the opportunity to learn about agent-assisted coding as applied to retrocomputing and embedded systems.
+The inspiration for this project struck one evening after working with my [nRF7002-DK](https://www.nordicsemi.com/Products/Development-hardware/nRF7002-DK).  It dawned on me that building a Gopher client for Zephyr would be a great test for my new acquaintance, Claude (3.7).  Now, I understand the mention of AI may illicit a certain negative response, and frankly, that may be entirely deserved.  I don't know that my own thoughts are even now resolved on this topic, but I'd been encouraged by my coworkers to give it chance, so I figured I should take the opportunity to learn about agent-assisted coding as applied to retrocomputing and embedded systems.
 
 ### An efficient project kick-off
 
-I began by asking Claude to create a new Zephyr shell application project, creating the essential build files according to convention.  Claude understood the assignment.  The serial shell [^zephyr_shell] provides a constrained but perfectly suitable CLI interface for a Gopher client.  I regularly use CLI-driven Gopher clients on desktop systems, ([cgo](https://github.com/kieselsteini/cgo) is a favorite) so I knew the paradigm would work.
+I began by asking Claude to create a new Zephyr shell application project, creating the essential build files according to convention.  Claude understood the assignment.  The serial shell [^zephyr_shell] provides a constrained but perfectly suitable CLI interface for a Gopher client.  I regularly use CLI-driven Gopher clients on desktop systems, ([cgo](https://github.com/kieselsteini/cgo) is a favorite) and in this case, we have to engage our gopher client functions through the 'gopher' command prefix.  (I later improved the ergonomics slightly by introducitng 'g' as an alias)
 
 Once I had confirmed a working project template, I simply asked Claude to add a gopher (RFC1436-compliant) client to the project.  The Gopher protocol is refreshingly straightforward - TCP-based client-server communication with a simple line-oriented text format.  Each menu item is marked with a single-character code, and server responses need minimal parsing.  Claude was able to grok the standard immediately.
 
@@ -96,7 +100,9 @@ What struck me most from this initial session was how implementation details fad
 
 After about three hours, (and only 15 prompts!) I had a very serviceable gopher client that was capable of rendering gopher menus and displaying ASCII text resources.  Oh, there were bugs aplenty, (responses being truncated, mostly) but it worked!  I've since fixed a number of bugs and begun work on new functionality, testing it on my ESP32-S3 hardware along the way.  Maybe this will become my preferred gopher client as I chip away at the TODO list one credit at a time?
 
-### Claude's own recollection of our conversation:
+### Claude's own recollection of that initial conversation:
+
+In preparing this article, I went back and found this open tab and asked Claude about the conversation.  This was the response:
 
 ```
 In this chat, you've sent 16 prompts/messages:
@@ -120,6 +126,8 @@ Current message asking how many prompts were used
 
 This has been a detailed troubleshooting and development conversation with multiple iterations to get everything working correctly.
 ```
+
+Yeah, this sounds right.  I didn't experience any hallucinations, really, or any of the kinds of circular thinking I've encountered in later sessions.
 
 ## Navigating Gopherspace in style
 
