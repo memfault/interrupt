@@ -12,7 +12,7 @@ This article chronicles my unexpected 3-hour adventure using Claude to create a 
 
 ## Introduction
 
-You know how it is -- you're logged into your Zephyr serial shell and suddenly feel the need to surf gopherspace...  Eh?  "What's gopherspace?", you ask?
+You know how it is -- you're logged into your Zephyr shell and suddenly feel the need to surf gopherspace...  Eh?  "What's gopherspace?", you ask?
 
 Well, I hope to answer _both_ the "What?" _and_ the "Why?" for you as I walk through:
 
