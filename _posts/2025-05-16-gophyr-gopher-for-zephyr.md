@@ -6,11 +6,9 @@ author: jrsharp
 tags: [zephyr, ai, claude, gopher, retrocomputing]
 ---
 
-An AI-skeptical embedded engineer and a large language model walk into a coffee shop ... yada yada ... Gopher client for Zephyr!
+This article chronicles my unexpected 3-hour adventure using Claude to create a fully functional gopher client for the Zephyr RTOS' serial CLI.
 
 [![asciicast](https://asciinema.org/a/719343.svg)](https://asciinema.org/a/719343)
-
-This article chronicles my unexpected 3-hour adventure using Claude to create a fully functional gopher client for the Zephyr RTOS' serial CLI.
 
 ## Introduction
 
@@ -25,7 +23,7 @@ Well, I hope to answer _both_ the "What?" _and_ the "Why?" for you as I walk thr
 
 ## History Lesson: The Gopher Protocol
 
-About the time Sir Berners-Lee was [doing his thing](https://en.wikipedia.org/wiki/Tim_Berners-Lee), some folks at the University of Minnesota brought us a more _spartan_ [vision of hypertext](https://en.wikipedia.org/wiki/Gopher_(protocol)#Origins) [^gopher_wikipedia].  Gopher, as defined in RFC1436 [^rfc1436], offers a simple menu-oriented interface for navigating content (resources) across servers.
+About the time Sir Berners-Lee was [doing his thing](https://en.wikipedia.org/wiki/Tim_Berners-Lee), some folks at the University of Minnesota brought us a more _spartan_ [vision of hypertext](https://en.wikipedia.org/wiki/Gopher_(protocol)#Origins).  Gopher, as defined in RFC1436 [^rfc1436], offers a simple menu-oriented interface for navigating content (resources) across servers.
 
 ![Firefox 1.5 displaying a gopher menu](https://upload.wikimedia.org/wikipedia/commons/1/15/Gopher_in_Firefox_1.5.png)
 Figure 1: An example gopher menu displayed in Firefox 1.5
@@ -80,23 +78,48 @@ That's it - no cookies, no sessions, no headers, no complex state management.  J
 
 The inspiration for this project struck one evening after working with my nRF7002-DK board.  It dawned on me that building a Gopher client for Zephyr would be a great test for my new acquaintance, Claude (3.7).  Now, I understand the mention of AI may illicit a certain negative response, and frankly, that may be entirely deserved.  I don't know that my own thoughts are even now resolved on this topic, but I'd been encouraged by my employer to give it chance, so that's what I did -- and what follows is what I learned about agent-assisted coding as applied to retrocomputing and embedded systems.
 
-### Initial Learnings
+### An efficient project kick-off
 
-First, I directed Claude to study RFC1436. The Gopher protocol is refreshingly straightforward - TCP-based client-server communication with a simple line-oriented text format. Each menu item is marked with a single-character code, and server responses need minimal parsing.
+I began by asking Claude to create a new Zephyr shell application project, creating the essential build files according to convention.  Claude understood the assignment.  The serial shell [^zephyr_shell] provides a constrained but perfectly suitable CLI interface for a Gopher client.  I regularly use CLI-driven Gopher clients on desktop systems, ([cgo](https://github.com/kieselsteini/cgo) is a favorite) so I knew the paradigm would work.
 
-Next, I made sure Claude understood the Zephyr environment. [^zephyr_shell]  The serial shell provides a constrained but perfectly suitable interface for a Gopher client. I regularly use CLI-driven Gopher clients on desktop systems, ([cgo](https://github.com/kieselsteini/cgo) is a favorite) so I knew the paradigm would work. To ensure proper implementation, I directed Claude to the relevant Zephyr documentation for shell commands and networking.
+Once I had confirmed a working project template, I simply asked Claude to add a gopher (RFC1436-compliant) client to the project.  The Gopher protocol is refreshingly straightforward - TCP-based client-server communication with a simple line-oriented text format.  Each menu item is marked with a single-character code, and server responses need minimal parsing.  Claude was able to grok the standard immediately.
 
 ### Iterative Development (So _this_ is "vibe coding"...)
 
-This turned out to be my first "vibe coding" session (cringe-worthy term notwithstanding), and I found myself falling naturally into a collaborative rhythm with Claude. Despite initial skepticism, I was impressed by how quickly it grasped the task from minimal prompts, delivering immediately useful code. Claude even showed surprising initiative - when I vaguely suggested "improve the rendering output," it implemented a series of enhancements including ANSI color codes I hadn't considered.
+This turned out to be my first "vibe coding" session (cringe-worthy term notwithstanding), and I found myself falling naturally into a collaborative rhythm with Claude.  Despite initial skepticism, I was impressed by how quickly it grasped the task from minimal prompts, delivering immediately useful code.  Claude even showed surprising initiative - when I vaguely suggested "improve the rendering output," it implemented a series of enhancements including ANSI color codes I hadn't considered.
 
 For this initial session I just used Anthropic's Claude web UI (this seemed like a good place to start) and developed a simple file-copy flow for the outputs from the browser.  This was only slightly cumbersome and allowed me to maintain a greater sense of control over the flow of information from the AI into my new codebase.  (I have since let my guard down and discovered the benefits (and frustrations) of tighter agent integration ala Cursor -- and more recently using Anthropic's new Claude CLI)
 
-The only real hiccups came from API changes.  Claude wasn't familiar with the latest Zephyr APIs in my pre-release branch, requiring updates to networking calls and shell command registration patterns.  With minimal redirection, the compiler was eventually satisfied.
+The only real hiccups came from API changes.  Claude wasn't familiar with the latest Zephyr APIs in my pre-release branch, requiring updates to networking calls and shell command registration patterns.  I took a bit of a daft approach, feeding compiler errors back directly, but the compiler was eventually satisfied -- the familiar edit-compile-run loop is preserved.
 
 What struck me most from this initial session was how implementation details faded into the background. Instead of syntax and API minutiae, our conversation focused on capabilities and features. I found myself thinking at a higher level of abstraction - "we need a menu rendering system" rather than "let's loop through these structs." This shift created a fluid creative process where technical constraints didn't dominate. The unexpected benefit wasn't just productivity, but a more enjoyable, conceptual approach to problem-solving.
 
-After about three hours, I had a very serviceable gopher client that was capable of rendering gopher menus and displaying ASCII text resources.  Oh, there are bugs aplenty, (responses being truncated, mostly) but it worked!  I've since fixed a number of bugs and begun work on new functionality, testing it on my ESP32-S3 hardware along the way.  Maybe this will become my preferred gopher client as I chip away at the TODO list one credit at a time?
+After about three hours, (and only 15 prompts!) I had a very serviceable gopher client that was capable of rendering gopher menus and displaying ASCII text resources.  Oh, there are bugs aplenty, (responses being truncated, mostly) but it worked!  I've since fixed a number of bugs and begun work on new functionality, testing it on my ESP32-S3 hardware along the way.  Maybe this will become my preferred gopher client as I chip away at the TODO list one credit at a time?
+
+### Claude's own recollection of our conversation:
+
+```
+In this chat, you've sent 16 prompts/messages:
+
+Initial request to create a Zephyr RTOS application with serial shell interface
+Feedback about compilation failure
+Message saying "awesome, thanks!" and request to add WiFi connectivity
+Report about compilation failure with specific error
+Message about code compiling and request to add a Gopher client
+Message about compilation issues with struct fields
+Message with errors from paste.txt
+Feedback about display functions not connecting properly
+Message with the paste.txt document about gopher_shell.c failing to compile
+Message with new compiler errors
+Note that the latest changes weren't in the file
+Message with compiler errors about "size_t" and other issues
+Message with more errors about "struct net_if_addr_ipv4"
+Message with link error for "net_if_ipv4_addr_get"
+Message saying "That did the trick!" and request to add support for non-canonical Gopher item types
+Current message asking how many prompts were used
+
+This has been a detailed troubleshooting and development conversation with multiple iterations to get everything working correctly.
+```
 
 ## Navigating Gopherspace in style
 
@@ -203,15 +226,15 @@ Beyond SDF, we can navigate to several interesting Gopher servers still operatio
 
    ```
 
-## Conclusion
+## Learnings
 
 ### Assessing Utility
 
-Gophyr might seem like a "because we can" project, but it reveals several powerful insights. Simple, well-defined protocols shine in constrained environments. Modern embedded systems and early personal computers share surprising similarities. And minimalist design principles prove their enduring relevance.
+Gophyr might seem like just a fun project, (and it _is_ fun, to be sure) but it reveals several truths.  Simple, well-defined protocols shine in constrained environments.  Modern embedded systems and early personal computers share surprising similarities.  And minimalist design principles prove their enduring relevance.
 
-That a fully functional Gopher client can be developed in a single evening and run on a microcontroller testifies to both the protocol's elegance and modern embedded capabilities. Sometimes less really is more.
+That a fully functional Gopher client can be developed in a single evening and run on a microcontroller testifies to both the protocol's elegance and modern embedded capabilities.
 
-Practically speaking, Gophyr serves as an advanced Zephyr diagnostic tool during system bring-up. After all, 'net ping' only confirms basic connectivity - wouldn't you rather know if your network stack can handle complete application-layer protocols?
+Perhaps even more practically, Gophyr serves as an advanced Zephyr diagnostic tool.  And you can always just use this thing as your gopher daily driver -- reading phlogs, news, etc. without distraction.
 
 ### Reflections on AI-Assisted Development
 
@@ -231,7 +254,7 @@ What might the future hold for Gophyr?  I have some ridiculous ideas I'm only ha
 
 3. **Microcontroller Personal Computer** - Implementing Gophyr on a custom microcontroller-based personal computing device with its own keyboard and display.  Who needs a Raspberry Pi when you can browse gopherspace on purpose-built hardware?  (TTGO T-Deck?)
 
-4. **Other Zephyr shell backends?** - Gopher over MQTT, anyone?
+4. **Other Zephyr shell backends?** - Gopher over MQTT, [^mqtt_shell] anyone?
 
 5. **Ancient RFC Series?** - Look for a future interrupt article on another ancient-but-relevant RFC implementation.
 
@@ -263,6 +286,6 @@ The complete source code for Gophyr is available at [GitHub](https://github.com/
 
 <!-- prettier-ignore-start -->
 [^rfc1436]: [`rfc1436`](https://www.rfc-editor.org/rfc/rfc1436.html)
-[^gopher_wikipedia]: [`gopher_wikipedia`](https://en.wikipedia.org/wiki/Gopher_(protocol))
 [^zephyr_shell]: [`zephyr_shell`](https://docs.zephyrproject.org/latest/services/shell/index.html)
+[^mqtt_shell]: [`mqtt_shell`](https://docs.zephyrproject.org/apidoc/latest/shell__mqtt_8h.html)
 <!-- prettier-ignore-end -->
