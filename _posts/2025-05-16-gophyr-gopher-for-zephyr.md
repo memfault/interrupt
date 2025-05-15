@@ -1,12 +1,16 @@
 ---
-title: "Gophyr: Building a Gopher Client for Zephyr with Claude"
+title: "Gophyr: Building a Gopher Client for Zephyr CLI with Claude"
 description:
     "AI-skeptical engineer builds Gopher client for Zephyr using AI"
 author: jrsharp
 tags: [zephyr, ai, claude, gopher, retrocomputing]
 ---
 
-What happens when an AI-skeptical embedded engineer and a large language model walk into a codebase?  In my case, a delightful journey back to 1991.  This article chronicles my unexpected adventure with Claude (3.7) as we bring the Gopher protocol to modern MCU silicon, creating a fully functional client for the Zephyr RTOS serial shell.
+An AI-skeptical embedded engineer and a large language model walk into a coffee shop ... yada yada ... Gopher client for Zephyr!
+
+[![asciicast](https://asciinema.org/a/719343.svg)](https://asciinema.org/a/719343)
+
+This article chronicles my unexpected 3-hour adventure using Claude to create a fully functional gopher client for the Zephyr RTOS' serial CLI.
 
 ## Introduction
 
@@ -21,7 +25,7 @@ Well, I hope to answer _both_ the "What?" _and_ the "Why?" for you as I walk thr
 
 ## History Lesson: The Gopher Protocol
 
-About the time Sir Berners-Lee was [doing his thing](https://en.wikipedia.org/wiki/Tim_Berners-Lee) [^tbl], some folks at the University of Minnesota brought us a more _spartan_ [vision of hypertext](https://en.wikipedia.org/wiki/Gopher_(protocol)#Origins) [^gopher_wikipedia].  Gopher, as defined in RFC1436 [^rfc1436], offers a simple menu-oriented interface for navigating content (resources) across servers.
+About the time Sir Berners-Lee was [doing his thing](https://en.wikipedia.org/wiki/Tim_Berners-Lee), some folks at the University of Minnesota brought us a more _spartan_ [vision of hypertext](https://en.wikipedia.org/wiki/Gopher_(protocol)#Origins) [^gopher_wikipedia].  Gopher, as defined in RFC1436 [^rfc1436], offers a simple menu-oriented interface for navigating content (resources) across servers.
 
 ![Firefox 1.5 displaying a gopher menu](https://upload.wikimedia.org/wikipedia/commons/1/15/Gopher_in_Firefox_1.5.png)
 Figure 1: An example gopher menu displayed in Firefox 1.5
@@ -74,7 +78,7 @@ That's it - no cookies, no sessions, no headers, no complex state management.  J
 
 ## The Development Process
 
-The inspiration for this project struck one evening after working with my nRF7002-DK board.  It dawned on me that building an RFC1436-compliant client for Zephyr would be a great test for my new acquaintance, Claude.  Now, I understand the mention of AI may illicit a certain negative response, and frankly, that may be entirely deserved.  I don't know that my own thoughts are even now resolved on this topic, but I'd been encouraged by my employer to give it chance, so that's what I did -- and what follows is what I learned about agent-assisted coding as applied to retrocomputing and embedded systems.
+The inspiration for this project struck one evening after working with my nRF7002-DK board.  It dawned on me that building a Gopher client for Zephyr would be a great test for my new acquaintance, Claude (3.7).  Now, I understand the mention of AI may illicit a certain negative response, and frankly, that may be entirely deserved.  I don't know that my own thoughts are even now resolved on this topic, but I'd been encouraged by my employer to give it chance, so that's what I did -- and what follows is what I learned about agent-assisted coding as applied to retrocomputing and embedded systems.
 
 ### Initial Learnings
 
@@ -86,11 +90,13 @@ Next, I made sure Claude understood the Zephyr environment. [^zephyr_shell]  The
 
 This turned out to be my first "vibe coding" session (cringe-worthy term notwithstanding), and I found myself falling naturally into a collaborative rhythm with Claude. Despite initial skepticism, I was impressed by how quickly it grasped the task from minimal prompts, delivering immediately useful code. Claude even showed surprising initiative - when I vaguely suggested "improve the rendering output," it implemented a series of enhancements including ANSI color codes I hadn't considered.
 
-The only hiccups came from API changes. Claude wasn't familiar with the latest Zephyr APIs in my pre-release branch, requiring updates to networking calls and shell command registration patterns. With minimal redirection, the compiler was eventually satisfied.
+For this initial session I just used Anthropic's Claude web UI (this seemed like a good place to start) and developed a simple file-copy flow for the outputs from the browser.  This was only slightly cumbersome and allowed me to maintain a greater sense of control over the flow of information from the AI into my new codebase.  (I have since let my guard down and discovered the benefits (and frustrations) of tighter agent integration ala Cursor -- and more recently using Anthropic's new Claude CLI)
 
-What struck me most was how implementation details faded into the background. Instead of syntax and API minutiae, our conversation focused on capabilities and features. I found myself thinking at a higher level of abstraction - "we need a menu rendering system" rather than "let's loop through these structs." This shift created a fluid creative process where technical constraints didn't dominate. The unexpected benefit wasn't just productivity, but a more enjoyable, conceptual approach to problem-solving.
+The only real hiccups came from API changes.  Claude wasn't familiar with the latest Zephyr APIs in my pre-release branch, requiring updates to networking calls and shell command registration patterns.  With minimal redirection, the compiler was eventually satisfied.
 
-After about three hours, I had a very serviceable gopher client that was capable of rendering gopher menus and displaying ASCII text resources.  Oh, there are bugs aplenty, (responses being truncated, mostly) but it works!
+What struck me most from this initial session was how implementation details faded into the background. Instead of syntax and API minutiae, our conversation focused on capabilities and features. I found myself thinking at a higher level of abstraction - "we need a menu rendering system" rather than "let's loop through these structs." This shift created a fluid creative process where technical constraints didn't dominate. The unexpected benefit wasn't just productivity, but a more enjoyable, conceptual approach to problem-solving.
+
+After about three hours, I had a very serviceable gopher client that was capable of rendering gopher menus and displaying ASCII text resources.  Oh, there are bugs aplenty, (responses being truncated, mostly) but it worked!  I've since fixed a number of bugs and begun work on new functionality, testing it on my ESP32-S3 hardware along the way.  Maybe this will become my preferred gopher client as I chip away at the TODO list one credit at a time?
 
 ## Navigating Gopherspace in style
 
@@ -104,7 +110,6 @@ With Gophyr running on our shiny MCU board, we can use the following gopher clie
 uart:~$ gopher
 Gopher Client Commands:
 ----------------------
-gopher init - Initialize the Gopher client
 gopher ip - Display network information
 gopher connect <host> [port] - Connect to a Gopher server
 gopher get [selector] - Request a document or directory
@@ -129,7 +134,6 @@ Beyond SDF, we can navigate to several interesting Gopher servers still operatio
 
    ```
    shell> gopher connect gopher.floodgap.com
-   shell> gopher get
 
    Welcome to Floodgap Systems' official gopher server.
    Floodgap has served the gopher community since 1999
@@ -159,7 +163,6 @@ Beyond SDF, we can navigate to several interesting Gopher servers still operatio
 
    ```
    shell> gopher connect hngopher.com
-   shell> gopher get
         _    _            _               _   _
        | |  | |          | |             | \ | |  hngopher.com:70
        | |__| | __ _  ___| | _____ _ __  |  \| | _____      _____
@@ -212,7 +215,7 @@ Practically speaking, Gophyr serves as an advanced Zephyr diagnostic tool during
 
 ### Reflections on AI-Assisted Development
 
-Remember my initial skepticism about AI coding assistants? I've had to reconsider those biases. Working with Claude wasn't the superficial experience I'd feared, nor did it diminish the engineering thought process. Instead, it shifted focus from syntax to semantics, from implementation details to architectural choices.
+So about my AI-skepticism...  You see, I had used ChatGPT a total of one time -- uno. (and only then because I was lured in by a novel integration with another, now defunct retro protocol!)  And now?  Well, working with Claude wasn't the soul-sucking experience I'd feared, nor did it diminish the engineering thought process.  Instead, it shifted focus from syntax to semantics, from implementation details to architectural choices.
 
 For well-defined problems like implementing a simple protocol, an AI assistant accelerates development while still requiring human expertise and judgment. I found myself in a directorial role, focusing on the "why" and "what" while collaborating on the "how."
 
@@ -222,13 +225,15 @@ This doesn't invalidate concerns about AI in software development, but suggests 
 
 What might the future hold for Gophyr?  I have some ridiculous ideas I'm only half-joking about:
 
-1. **Enhanced Media Support** - Adding simple image rendering ala [aalib](https://en.wikipedia.org/wiki/AAlib)
+1. **Enhanced Media Support** - Adding simple image rendering ala [aalib](https://en.wikipedia.org/wiki/AAlib) (Working on it!)
 
 2. **Local Caching** - Storing frequently visited menus to reduce network usage -- perfect for those times when you're browsing gopherspace on a battery-powered device in the wilderness
 
 3. **Microcontroller Personal Computer** - Implementing Gophyr on a custom microcontroller-based personal computing device with its own keyboard and display.  Who needs a Raspberry Pi when you can browse gopherspace on purpose-built hardware?  (TTGO T-Deck?)
 
-4. **Ancient RFC Series?** - Look for a future interrupt article on another ancient-but-relevant RFC implementation.
+4. **Other Zephyr shell backends?** - Gopher over MQTT, anyone?
+
+5. **Ancient RFC Series?** - Look for a future interrupt article on another ancient-but-relevant RFC implementation.
 
 ### Final Thoughts
 
@@ -242,7 +247,7 @@ Oh, and did Claude help write this article?  Let's just say I'm confident that y
 
 ---
 
-*The complete source code for Gophyr is available at [GitHub link].  If you're interested in trying it out on your own Zephyr device, follow the setup instructions in the repository README.*
+The complete source code for Gophyr is available at [GitHub](https://github.com/jrsharp/gophyr).  If you're interested in trying it out on your own Zephyr device, follow the setup instructions in the repository README. YMMV.
 
 <!-- Interrupt Keep START -->
 
@@ -258,7 +263,6 @@ Oh, and did Claude help write this article?  Let's just say I'm confident that y
 
 <!-- prettier-ignore-start -->
 [^rfc1436]: [`rfc1436`](https://www.rfc-editor.org/rfc/rfc1436.html)
-[^tbl]: [`tbl`](https://en.wikipedia.org/wiki/Tim_Berners-Lee)
 [^gopher_wikipedia]: [`gopher_wikipedia`](https://en.wikipedia.org/wiki/Gopher_(protocol))
 [^zephyr_shell]: [`zephyr_shell`](https://docs.zephyrproject.org/latest/services/shell/index.html)
 <!-- prettier-ignore-end -->
