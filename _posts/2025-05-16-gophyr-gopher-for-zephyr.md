@@ -76,7 +76,7 @@ That's it - no cookies, no sessions, no headers, no complex state management.  J
 
 ## The Development Process
 
-The inspiration for this project struck one evening after working with my nRF7002-DK board.  It dawned on me that building a Gopher client for Zephyr would be a great test for my new acquaintance, Claude (3.7).  Now, I understand the mention of AI may illicit a certain negative response, and frankly, that may be entirely deserved.  I don't know that my own thoughts are even now resolved on this topic, but I'd been encouraged by my employer to give it chance, I figured I should take the opportunity to learn about agent-assisted coding as applied to retrocomputing and embedded systems.
+The inspiration for this project struck one evening after working with my [nRF7002-DK](https://www.nordicsemi.com/Products/Development-hardware/nRF7002-DK).  It dawned on me that building a Gopher client for Zephyr would be a great test for my new acquaintance, Claude (3.7).  Now, I understand the mention of AI may illicit a certain negative response, and frankly, that may be entirely deserved.  I don't know that my own thoughts are even now resolved on this topic, but I'd been encouraged by my employer to give it chance, I figured I should take the opportunity to learn about agent-assisted coding as applied to retrocomputing and embedded systems.
 
 ### An efficient project kick-off
 
