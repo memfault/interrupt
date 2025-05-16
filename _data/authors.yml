@@ -406,3 +406,12 @@ haydenriddeford:
   blurb:
     is a firmware engineer with experience in consumer products and IoT. He is currently an
     embedded systems engineer at Terra Kaffe.
+jrsharp:
+  name: Jon Sharp
+  linkedin: https://www.linkedin.com/in/jonsharp1/
+  github: jrsharp
+  image: /img/author/jrsharp.jpg
+  blurb:
+    is a right-brained embedded engineer that enjoys designing and building new
+    and novel things.  He is a Field Engineer at Memfault and he's running out
+    of space for new devkits.
