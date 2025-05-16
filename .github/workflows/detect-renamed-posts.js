@@ -50,5 +50,8 @@ renamedFiles.forEach((file) => {
       .replace(/^\d{4}-\d{2}-\d{2}-/, "")
   );
 
-  updateRedirects(originalName, newName);
+  // Only update redirects if the slug (excluding the date) changed
+  if (originalName !== newName) {
+    updateRedirects(originalName, newName);
+  }
 });
