@@ -26,6 +26,10 @@ to complete, so let’s get started.
 
 <!-- excerpt end -->
 
+> 🎬
+> [Listen to Maximilian on Interrupt Live](https://www.youtube.com/watch?v=S2t2iAYmfuE?feature=share)
+> talk about the content and motivations behind writing this article.
+
 {% include newsletter.html %}
 
 {% include toc.html %}
