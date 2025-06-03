@@ -15,6 +15,10 @@ Using a practical example, we'll see that our deep dive into Devicetree was real
 
 👉 Find the other parts of the *Practical Zephyr* series [here](/tags#practical-zephyr-series).
 
+> 🎬
+> [Listen to Martin on Interrupt Live](https://www.youtube.com/watch?v=ls_Y45WsTiA?feature=share)
+> talk about the content and motivations behind writing this series.
+
 {% include newsletter.html %}
 
 {% include toc.html %}

@@ -29,6 +29,10 @@ After this series, you should understand Zephyr's build and configuration tools.
 
 > **Note:** This series is **not** for you if you're not interested in details and how things work but instead want to _use_ Zephyr. We'll go through _generated code and configuration files and learn _devicetree_ from first principles! Also, if you're experienced with Linux and already know how _Kconfig_ and _devicetree_ work, the articles of this series are just not for you.
 
+> 🎬
+> [Listen to Martin on Interrupt Live](https://www.youtube.com/watch?v=ls_Y45WsTiA?feature=share)
+> talk about the content and motivations behind writing this article.
+
 {% include newsletter.html %}
 
 {% include toc.html %}

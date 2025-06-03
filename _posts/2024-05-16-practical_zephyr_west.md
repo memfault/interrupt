@@ -15,6 +15,10 @@ After this article, you should know _West_ not as a meta-tool for `build` and `f
 
 👉 Find the other parts of the *Practical Zephyr* series [here](/tags#practical-zephyr-series).
 
+> 🎬
+> [Listen to Martin on Interrupt Live](https://www.youtube.com/watch?v=ls_Y45WsTiA?feature=share)
+> talk about the content and motivations behind writing this series.
+
 {% include newsletter.html %}
 
 {% include toc.html %}
