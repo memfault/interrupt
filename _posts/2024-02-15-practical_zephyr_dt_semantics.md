@@ -15,6 +15,10 @@ Having covered the *Devicetree basics* in the [previous article]({% post_url 202
 
 Notice that we'll only look at Zephyr's _basic_ Devicetree API and won't analyze specific subsystems such as `gpio` in detail. We're saving this for a practice round in the next article of this _Practical Zephyr_ series.
 
+> 🎬
+> [Listen to Martin on Interrupt Live](https://www.youtube.com/watch?v=ls_Y45WsTiA?feature=share)
+> talk about the content and motivations behind writing this series.
+
 {% include newsletter.html %}
 
 {% include toc.html %}

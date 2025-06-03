@@ -20,6 +20,10 @@ In contrast to _Kconfig_, the *Devicetree* syntax and its use are more intricate
 
 > **Disclaimer:** This article covers Devicetree in _detail_ and from first principles. If you're already familiar with Devicetree or don't want to know how it works in detail, this article may not be for you. Instead, consider tuning in for the next article!
 
+> 🎬
+> [Listen to Martin on Interrupt Live](https://www.youtube.com/watch?v=ls_Y45WsTiA?feature=share)
+> talk about the content and motivations behind writing this series.
+
 {% include newsletter.html %}
 
 {% include toc.html %}
