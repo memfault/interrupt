@@ -12,7 +12,7 @@ This series of articles discusses the development of a SOTA Open Smart Ring - a 
 
 ## Introduction
 
-In this first article, we’ll look at the first typical stage of new product development for a hardware project - research and prototype. Let’s first start with the idea, though. In early 2020, my friend and I had an idea to build a Smart Ring to control music. Back then, the only known Smart Ring was Oura, and they were at their second generation, still off Kickstarter (after a very successful first generation Kickstarter). It seemed the wearable market was finally booming, and consumers were seeking new electronic gadgets. We thought it would be really cool to build a Smart Ring that acts as a remote control for music, offering typical functions like pause/play, volume up/down, and next/previous track, all in a form that fits on the finger. The use case (not particularly strong in hindsight, but more on that later) was to provide the ability to control music at times when it’s inconvenient to do so, such as when cycling or at the gym (who wants to touch their phone with sweaty hands, right?). Ultimately, the problem we were solving wasn’t substantial enough from a business standpoint, but we had a great deal of fun building this. At the end of this article series, this work will be released as Open Ring on Github, with open source hardware and firmware components!
+In this first article, we’ll look at the first typical stage of new product development for a hardware project - research and prototype. Let’s first start with the idea, though. In early 2020, my friend and I had an idea to build a Smart Ring to control music. Back then, the only known Smart Ring was Oura, and they were at their second generation, still off Kickstarter (after a very successful first generation Kickstarter). It seemed the wearable market was finally booming, and consumers were seeking new electronic gadgets. We thought it would be really cool to build a Smart Ring that acts as a remote control for music, offering typical functions like pause/play, volume up/down, and next/previous track, all in a form that fits on the finger. The use case (not particularly strong in hindsight, but more on that later) was to provide the ability to control music at times when it’s inconvenient to do so, such as when cycling or at the gym (who wants to touch their phone with sweaty hands, right?). Ultimately, the problem we were solving wasn’t substantial enough from a business standpoint, but we had a great deal of fun building this. Now this work is released with open source hardware and firmware components as [Open Ring on Giithub](https://github.com/stawiski/open-ring), and we hope it will inspire others to build their own Smart Rings.
 
 When starting a new project in a space that already has some products, it is a natural course of action to thoroughly research existing products for inspiration. In firmware and software development, this is even more pronounced; we do not build anything from scratch but instead try to use as many freely available libraries as possible (provided the license allows). We don’t want to rewrite a JSON parsing library or a unit testing framework from the ground up: who has time for that?
 
@@ -20,7 +20,7 @@ For hardware projects, things are not so straightforward. There are some reusabl
 
 Despite this, it is common in new product development (NPD) to tear down other products to see how they work. While there were no “remote control” Smart Rings on the market at that time, there were “other Smart Rings, " and this family of wearables had faced the same challenges we were about to encounter: how do you fit all the necessary electronics in there?
 
-![A sneak peek of the Open Ring hardware!]({% img_url smart-ring/image3.jpg %})
+![A sneak peek of the Open Ring hardware!]({% img_url smart-ring/open-ring-pcba-final.jpg %})
 
 When starting a new project in a space that already has some products, it is a natural course of action to thoroughly research existing products for inspiration. In firmware and software development, this is even more pronounced; we do not build anything from scratch but instead try to use as many freely available libraries as possible (provided the license allows). We don’t want to rewrite a JSON parsing library or a unit testing framework from the ground up: who has time for that?
 
@@ -71,7 +71,7 @@ From iFixit teardown, we got more crucial information:
 
 A big part of Oura’s design is, of course, the whole LED and photodetector setup for heart measurement, which included optical lenses made out of the ring’s housing.
 
-![Oura ring teardown]({% img_url smart-ring/image5.jpg %})
+![Oura ring teardown]({% img_url smart-ring/oura-ring-gen3-teardown.jpg %})
 
 From our own teardown, we additionally learned that:
 - Induction charger used 6.8 MHz (half of 13.56 MHz, known for RFID)
@@ -84,12 +84,12 @@ This ring from Amazon was shortly discontinued after launch. It was a really coo
 
 Here’s an exploded photo of the ring from Amazon itself:
 
-![Exploded Amazon Echo Loop]({% img_url smart-ring/image7.jpg %})
+![Exploded Amazon Echo Loop]({% img_url smart-ring/amazon-echo-loop-assembly-exploded.jpg %})
 
 There were no known teardowns of this ring at the time, so we did our own: 
 
-![Amazon Echo Loop Teardown - main board]({% img_url smart-ring/image4.jpg %})
-![Amazon Echo Loop Teardown - battery]({% img_url smart-ring/image6.jpg %})
+![Amazon Echo Loop Teardown - main board]({% img_url smart-ring/amazon-echo-loop-pcba.jpg %})
+![Amazon Echo Loop Teardown - battery]({% img_url smart-ring/amazon-echo-loop-battery.jpg %})
 
 Learnings:
 - Realtek RTL8763B0A SoC
@@ -118,15 +118,15 @@ Haptic feedback turned out to be the trickiest of them all. We couldn’t do a p
 
 Fitting all these components in a Smart Ring factor seemed impossible until we came up with a clever idea to 3D print all the PCB components from their STLs and play with them like LEGO bricks to make it fit, which you can see in the pictures below:
 
-![3D printed components]({% img_url smart-ring/image2.jpg %})
+![3D printed components]({% img_url smart-ring/open-ring-3d-printed-components.jpg %})
 
-![3D printed ring housing]({% img_url smart-ring/image1.jpg %})
+![3D printed ring housing]({% img_url smart-ring/open-ring-3d-printed-housing.jpg %})
 
 ## Conclusion
 
 Building a Smart Ring isn’t an easy task due to space requirements and tight coupling between electronics, mechanical design, and usability. In many ways, it’s similar to building a smartphone, where everything is carefully picked to fit together. It was the first project I worked on, where every single chip had to be WLCSP or BGA, there was no space for legs sticking out of a package, and even QFN with no leads was too big! The PCB required a complex rigid-flex design with laser microvias, and every bit of it was routed with traces to get this product to work.
 
-In the next article, we will dive into the hardware design of Open Ring, so stick around and read on!
+In the next article, we will dive into the hardware design of [Open Ring](https://github.com/stawiski/open-ring), so stick around and read on!
 
 <!-- Interrupt Keep START -->
 
@@ -141,6 +141,7 @@ In the next article, we will dive into the hardware design of Open Ring, so stic
 ## References
 
 <!-- prettier-ignore-start -->
+- <https://github.com/stawiski/open-ring>
 - <https://www.ifixit.com/Teardown/Oura+Ring+2+Teardown/135207>
 - <https://fcc.report/FCC-ID/2AD7V-OURA2101#:~:text=FCC%20ID%202AD7V%2DOURA2101>
 - <https://ouraring.com/>
