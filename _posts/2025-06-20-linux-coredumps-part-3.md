@@ -5,9 +5,11 @@ author: blake
 tags: [linux, coredumps, memfault, debugging]
 ---
 
-In our previous posts ([Part 1]({% link _posts/2025-02-14-linux-coredumps-part-1.md %}) & [Part 2]({% link _posts/2025-05-02-linux-coredumps-part-2.md %})), we covered how Linux coredumps are structured, how
-they're collected, and how we could reduce the size of them to fit on systems
-with less memory.
+In our previous posts ([Part
+1]({% link _posts/2025-02-14-linux-coredumps-part-1.md %}) & [Part
+2]({% link _posts/2025-05-02-linux-coredumps-part-2.md %})), we covered how
+Linux coredumps are structured, how they're collected, and how we could reduce
+the size of them to fit on systems with less memory.
 
 <!-- excerpt start -->
 
@@ -122,13 +124,13 @@ An unwound stack can now be represented with the following JSON structure:
 }
 ```
 
-Using the above, we can create our stacktrace by doing the following for each `PC`
-in a thread:
+Using the above, we can create our stacktrace by doing the following for each
+`PC` in a thread:
 
 - Find the associated symbols by checking each `PC` range
 - Fetch the symbol file by either build ID or path
-- Shift the `PC` by subtracting the runtime offset and adding the compiled offset
- to account for `ASLR`
+- Shift the `PC` by subtracting the runtime offset and adding the compiled
+  offset to account for `ASLR`
 - Run the shifted address and associated symbol file through
   `addr2line`[^addr2line]
 
@@ -138,11 +140,11 @@ our end goal, how do we get all of this from a Linux core handler?
 
 ## Understanding GNU Unwind Info
 
-To answer the above question, we need to look at how programs like GDB
-and perf traverse the stack. The first thing to note is that there are actually
-two parts to backtrace creation. Obviously, we need to convert raw addresses to
-function names and local variable names, but we also need to know how each frame
-is constructed.
+To answer the above question, we need to look at how programs like GDB and perf
+traverse the stack. The first thing to note is that there are actually two parts
+to backtrace creation. Obviously, we need to convert raw addresses to function
+names and local variable names, but we also need to know how each frame is
+constructed.
 
 When unwinding a stack, there is information about the previous frame that a
 debugger, profiler, or any other program needs to know:
@@ -155,12 +157,13 @@ theory, tells us where the previous frame starts, but there are a few problems
 here. For one, not every platform has a frame pointer, `x86-64` being the
 obvious example. Additionally, some recent compilers have taken the step of
 turning the frame pointer register into a general purpose register as a
-performance improvement[^fomit]. Even if we could depend on the frame
-pointer, how do we know where the registers are relative to it?
+performance improvement[^fomit]. Even if we could depend on the frame pointer,
+how do we know where the registers are relative to it?
 
-Luckily, modern compilers have a built-in mechanism to solve all
-these problems! The `.eh_frame`[^eh_frame] section and its sibling the
-`.eh_frame_hdr`[^eh_frame_hdr] section together gives us the ability to get the previous frame's structure when providing the current `PC` value. We'll dive
+Luckily, modern compilers have a built-in mechanism to solve all these problems!
+The `.eh_frame`[^eh_frame] section and its sibling the
+`.eh_frame_hdr`[^eh_frame_hdr] section together gives us the ability to get the
+previous frame's structure when providing the current `PC` value. We'll dive
 deeper into the structure of these sections in a moment, but they satisfy both
 of the requirements we previously laid out. When handling a crash, we can take
 the first `PC` and derive the structure of the previous frame, then repeat that
@@ -176,7 +179,6 @@ records, and there is at least one per `.eh_frame`.
 
 Let's use the trusty `readelf` utility to take a peek at the contents
 `.eh_frame`[^.eh_frame] section:
-
 
 ```bash
 $ readelf --debug-dump=frames memfaultd
@@ -224,8 +226,8 @@ agencies? Let's peel this back layer by layer and try to understand it.
 Let's look at the first three terms here: `CFI`, `CIE`, and `FDE`. All of these
 relate to the structure of each frame. The first term, `CFI`, expands to Common
 Frame Information. The `CFI` represents a grouping of multiple bits of frame
-information and is at the highest level of the information hierarchy. Every `CFI`
-will contain one or more `CIE` and `FDE`.
+information and is at the highest level of the information hierarchy. Every
+`CFI` will contain one or more `CIE` and `FDE`.
 
 Peeling back one more layer, we can start to look at the `CIE` and `FDE`. `CIE`
 is an acronym for Common Information Entry and represents a shared set of
@@ -249,18 +251,18 @@ at the `CIE` in our above example.
 ```
 
 We're not going to cover everything here, but there are a few interesting bits
-to note. First, this is `CIE` entry 0, noted by the preceding 0s before the `CIE`
-marker. This will be interesting later as we look at how `FDE`'s relate to `CIE`.
-Next, we see some version and alignment information. For our purposes, let's skip
-over those few lines and get to the meat of this ELF. We see a few lines
-starting with `DW_*`. These lines tell us information about how we can find our
-registers, as well as our `CFA`. We're finally starting to see how we can
-fulfill one of our earlier requirements: finding the register
-locations on each stack.
+to note. First, this is `CIE` entry 0, noted by the preceding 0s before the
+`CIE` marker. This will be interesting later as we look at how `FDE`'s relate to
+`CIE`. Next, we see some version and alignment information. For our purposes,
+let's skip over those few lines and get to the meat of this ELF. We see a few
+lines starting with `DW_*`. These lines tell us information about how we can
+find our registers, as well as our `CFA`. We're finally starting to see how we
+can fulfill one of our earlier requirements: finding the register locations on
+each stack.
 
-We're about three acronyms deep now, only 20-30 left to get through! Next up is the
-`FDE` we've mentioned 4-5 times now. `FDE` stands for Frame Description Entry.
-It is similar to the `CIE` but more specific in that it represents all
+We're about three acronyms deep now, only 20-30 left to get through! Next up is
+the `FDE` we've mentioned 4-5 times now. `FDE` stands for Frame Description
+Entry. It is similar to the `CIE` but more specific in that it represents all
 instructions needed to recreate a frame's structure. Let's comb through an `FDE`
 to get a better understanding.
 
@@ -372,17 +374,17 @@ general purpose registers at the time of crash for each thread!
 
 After extracting the state of the GP registers from the note defined above, we
 can now use that as the starting point for the unwind logic mentioned above. One
-question remains open, though. How do we get a mapping of main binary and dynamic
-libs to grab both our unwind info, as well as all the rendezvous information our
-debugger needs?
+question remains open, though. How do we get a mapping of main binary and
+dynamic libs to grab both our unwind info, as well as all the rendezvous
+information our debugger needs?
 
 ## Mapping Our Way to Stacks
 
 We now need to grab the following info: what binaries and dynamic libs are
-loaded by the program that is crashing, and what are their build IDs and
-paths. In our previous articles, we talked about taking advantage of the fact
-that `procfs` is still mounted for a `PID` that is currently dumping into a pipe
-core handler. We'll do that again here by looking at
+loaded by the program that is crashing, and what are their build IDs and paths.
+In our previous articles, we talked about taking advantage of the fact that
+`procfs` is still mounted for a `PID` that is currently dumping into a pipe core
+handler. We'll do that again here by looking at
 `/proc/<pid>/maps`[^proc_pid_maps]!
 
 ```bash
