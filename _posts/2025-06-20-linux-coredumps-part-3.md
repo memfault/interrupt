@@ -140,7 +140,7 @@ our end goal, how do we get all of this from a Linux core handler?
 
 ## Understanding GNU Unwind Info
 
-To answer the above question, we need to look at how programs like GDB and perf
+To answer the above question, we need to look at how programs like GDB and `perf`
 traverse the stack. The first thing to note is that there are actually two parts
 to backtrace creation. Obviously, we need to convert raw addresses to function
 names and local variable names, but we also need to know how each frame is
