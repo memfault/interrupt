@@ -22,7 +22,7 @@ the size needed to store them.
 <!-- excerpt end -->
 
 By unwinding the stack locally on the device, we don't need to push any sections
-of memory out to another device/server and can just push the PC of each frame to
+of memory out to another device/server and can just push the `PC` of each frame to
 be symbolicated separately. In this post, we'll cover the mechanism by which
 programs compiled with GCC/LLVM handle stack unwinding, and how we can leverage
 that to do local stack unwinding.
