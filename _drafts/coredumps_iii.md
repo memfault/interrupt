@@ -3,9 +3,10 @@ title: Linux Coredumps (Part 3) - On Device Unwinding
 description:
   "Unwinding coredumps on device using `.eh_frame` and `addr2line`.
 author: blake
+tags: [linux, coredumps, memfault, debugging]
 ---
 
-In our previous posts we covered an introduction of how Linux coredumps are
+In our previous posts we covered how Linux coredumps are
 structured, how they're collected, and how we could reduce the size of them to
 fit on systems with less memory.
 
@@ -13,12 +14,12 @@ fit on systems with less memory.
 
 In this post we'll go over a method of coredump collection that does the stack
 unwinding on device. This allows devices that may be sensitive to leaking
-PII(Personally Identifiable Info) that may exist on the stack or in the heap to
-collect coredumps, and also greatly reduce the size needed to store them.
+PII (Personally Identifiable Information) that may be stored in memory on the stack or heap to safely
+collect coredumps in addition to greatly reducing the size needed to store them.
 
 <!-- excerpt end -->
 
-By doing the stack unwinding on device, we don't need to push any sections of
+By unwinding the stack locally on the device, we don't need to push any sections of
 memory out to another device/server, and can just push the PC of each frame to
 be symbolicated separately. In this post we'll cover the mechanism by which
 programs compiled with GCC/LLVM handle stack unwinding, and how we can leverage
@@ -46,7 +47,7 @@ we'll need to capture information that will allow us to symbolicate each `PC`
 into the actual function name/location.
 
 First we need to know which file contains the symbols we're using. Recall that a
-single Linux program can contain not only the main binary, but any dynamically
+single Linux program can execute not only the code in main binary, but any dynamically
 linked code that might be used as well. To do this debuggers typically use a
 combination of GNU build ID and path, so we'll need to capture both.
 
@@ -58,7 +59,7 @@ where the program is loaded into memory so that attackers cannot observe a
 program and attempt to intercept program execution by changing values on the
 stack.
 
-So we now have a list of things we need to capture to get a full stacktrace:
+So we now have a minimal set of information we need to capture to get a complete backtrace:
 
 - `PC` for each frame on every thread
 - For the main binary and all dynamic libs
@@ -67,7 +68,7 @@ So we now have a list of things we need to capture to get a full stacktrace:
   - Compile time and runtime offset
   - Path
 
-If we put this together in a JSON structure we get the following:
+An unwound stack can now be represented with the following JSON structure:
 
 ```json
 {
@@ -121,7 +122,7 @@ in a thread:
   `addr2line`[^addr2line]
 
 After running through all of the above steps we should have a fully symbolicated
-stacktrace for each thread in our program. Now that we know what our end goal
+stacktrace for each thread in our program at the time of crash. Now that we know what our end goal
 is, how do we get all of this from a Linux core handler?
 
 ## Understanding GNU Unwind Info
@@ -316,7 +317,8 @@ our general purpose registers, as well information to help our
 debugger/`addr2line`. Let's take a look first at how we'll get the state of the
 general purpose registers for each thread.
 
-In our previous article we touched a bit on the `prstatus`[^prstatus] ELF note.
+In [our previous
+article]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}) we touched a bit on the `prstatus`[^prstatus] ELF note
 This note contains the current status of the process, and there is one for each
 of our threads. Recall the layout of the `prstatus`[^prstatus] note from our
 previous article:
