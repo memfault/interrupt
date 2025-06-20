@@ -1,27 +1,27 @@
 ---
 title: Linux Coredumps (Part 3) - On Device Unwinding
-description:
-  "Unwinding coredumps on device using `.eh_frame` and `addr2line`.
+description: "Unwinding coredumps on device using `.eh_frame` and `addr2line`."
 author: blake
 tags: [linux, coredumps, memfault, debugging]
 ---
 
-In our previous posts we covered how Linux coredumps are
-structured, how they're collected, and how we could reduce the size of them to
-fit on systems with less memory.
+In our previous posts we covered how Linux coredumps are structured, how they're
+collected, and how we could reduce the size of them to fit on systems with less
+memory.
 
 <!-- excerpt start -->
 
 In this post we'll go over a method of coredump collection that does the stack
-unwinding on device. This allows devices that may be sensitive to leaking
-PII (Personally Identifiable Information) that may be stored in memory on the stack or heap to safely
-collect coredumps in addition to greatly reducing the size needed to store them.
+unwinding on device. This allows devices that may be sensitive to leaking PII
+(Personally Identifiable Information) that may be stored in memory on the stack
+or heap to safely collect coredumps in addition to greatly reducing the size
+needed to store them.
 
 <!-- excerpt end -->
 
-By unwinding the stack locally on the device, we don't need to push any sections of
-memory out to another device/server, and can just push the PC of each frame to
-be symbolicated separately. In this post we'll cover the mechanism by which
+By unwinding the stack locally on the device, we don't need to push any sections
+of memory out to another device/server, and can just push the PC of each frame
+to be symbolicated separately. In this post we'll cover the mechanism by which
 programs compiled with GCC/LLVM handle stack unwinding, and how we can leverage
 that to do local stack unwinding.
 
@@ -47,9 +47,12 @@ we'll need to capture information that will allow us to symbolicate each `PC`
 into the actual function name/location.
 
 First we need to know which file contains the symbols we're using. Recall that a
-single Linux program can execute not only the code in main binary, but any dynamically
-linked code that might be used as well. To do this debuggers typically use a
-combination of GNU build ID and path, so we'll need to capture both.
+single Linux program can execute not only the code in main binary, but any
+dynamically linked code that might be used as well. To do this debuggers
+typically use a combination of GNU build ID and path, so we'll need to capture
+both. Check out our previous articl on
+[GNU build IDs](https://interrupt.memfault.com/blog/gnu-build-id-for-firmware)
+for more info!
 
 An interesting wrinkle here though, is that address range present in the
 compiled binary and the address range used when the program is executing is
@@ -57,9 +60,11 @@ different and random. This is a security feature of Linux called ASLR(Address
 Space Load Randomization)[^ASLR]. At a high level it randomizes the base address
 where the program is loaded into memory so that attackers cannot observe a
 program and attempt to intercept program execution by changing values on the
-stack.
+stack. Therefore, to be able to decode addresses properly, we will need the PC
+range in addition to the compile time and run time offset.
 
-So we now have a minimal set of information we need to capture to get a complete backtrace:
+So we now have a minimal set of information we need to capture to get a complete
+backtrace:
 
 - `PC` for each frame on every thread
 - For the main binary and all dynamic libs
@@ -122,8 +127,8 @@ in a thread:
   `addr2line`[^addr2line]
 
 After running through all of the above steps we should have a fully symbolicated
-stacktrace for each thread in our program at the time of crash. Now that we know what our end goal
-is, how do we get all of this from a Linux core handler?
+stacktrace for each thread in our program at the time of crash. Now that we know
+what our end goal is, how do we get all of this from a Linux core handler?
 
 ## Understanding GNU Unwind Info
 
@@ -161,7 +166,8 @@ process until we hit the bottom of the stack!
 As mentioned above, the `.eh_frame`[^.eh_frame] is a an ELF section included in
 most programs compiled with a modern compiler. It contains a list of rules that
 allow us to rebuild the frame info that is implicitly encoded into the generated
-assembly of our program.
+assembly of our program. These rules are called Call Frame Information (CFI)
+records, and there is at least one per `.eh_frame`.
 
 Let's use the trusty `readelf` utility to take a peek at the contents
 `.eh_frame`[^.eh_frame] section:
@@ -220,6 +226,8 @@ is an acronym for Common Information Entry, and represents a shared set of
 instructions that can be used by any `FDE` in a given `CFI`. Let's take a gander
 at the `CIE` in our above example.
 
+#### Common Information (CIE) Record
+
 ```bash
 00000000 0000000000000014 00000000 CIE
   Version:               1
@@ -250,6 +258,8 @@ It is similar to the `CIE`, but more specific in that it represents all
 instructions needed to recreate a frame's structure. Let's comb through an `FDE`
 to get a better understanding.
 
+#### Frame Description Entry (FDE) Record
+
 ```bash
 00000018 0000000000000014 0000001c FDE cie=00000000 pc=00000000001c1180..00000000001c11a6
   DW_CFA_advance_loc: 4 to 00000000001c1184
@@ -262,12 +272,15 @@ to get a better understanding.
 
 Stepping through this bit by bit, we can see that we're using `CIE` 0 that we
 just took a look at. The next, bit of interesting information the `PC` range.
-This makes sense as the function you're going into generally dictates what
-registers you need to push onto the stack. If you don't touch any of them in the
-current function, the previous would not need to be saved! After that we have
-the same instructions we previously saw in our `CIE`. Note that our total set of
+Each `PC` range here represents the range of possible `PC` for a whole function.
+This is important, as the function that you're in dictates how registers are
+pushed onto the stack. If you don't touch any of them in the current function,
+the previous would not need to be saved! After that we have the same
+instructions we previously saw in our `CIE`. Note that our total set of
 instructions are the ones present in the `CIE` in addition to those defined in
 the `FDE`.
+
+#### Cannonical Frame Address (CFA)
 
 Alright, we're almost done defining acronyms, I promise! You may have noticed
 `CFA` mentioned in all of our unwind rules defined in both the `CIE` and `FDE`.
@@ -288,7 +301,7 @@ stack frame! Artisanal! Compiler to table! Let's decode the next line in our
 DW_CFA_offset: r16 (rip) at cfa-8
 ```
 
-Here we can see that `rip` (x86-64 return register) can be computed by
+Here we can see that `rip` (x86-64 program counter) can be computed by
 subtracting 8 from our previously calculated `CFA`. A visual representation of
 this can be seen below:
 
@@ -318,10 +331,10 @@ debugger/`addr2line`. Let's take a look first at how we'll get the state of the
 general purpose registers for each thread.
 
 In [our previous
-article]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}) we touched a bit on the `prstatus`[^prstatus] ELF note
-This note contains the current status of the process, and there is one for each
-of our threads. Recall the layout of the `prstatus`[^prstatus] note from our
-previous article:
+article]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}) we touched a
+bit on the `prstatus`[^prstatus] ELF note This note contains the current status
+of the process, and there is one for each of our threads. Recall the layout of
+the `prstatus`[^prstatus] note from our previous article:
 
 ```c
 struct elf_prstatus_common
@@ -443,18 +456,8 @@ Let's look at a full example generated from a crash caused by
         "0x55ea82cff77c",
         "0x55ea82cff4a7",
         "0x55ea82cff46f",
-        "0x55ea82e2e73f",
-        "0x55ea82cc9952",
-        "0x55ea82cc8286",
-        "0x55ea82cc837a",
-        "0x55ea82cc82bd",
-        "0x55ea82cc8330",
-        "0x55ea8398bc8a",
-        "0x55ea82cc8309",
-        "0x55ea82cc82ad",
-        "0x789a8e829d8f",
-        "0x789a8e829e3f",
-        "0x55ea82cc81a4"
+        "0x55ea82e2e73f"
+        ...
       ]
     }
   ]
@@ -499,8 +502,25 @@ process will be repeated for each function in the call stack!
 
 We made it! We got through the densest wall of acryonyms ever created, and
 arrived at a method of capturing crashes on device that preserves privacy of end
-users while also shrinking size requirements considerably. If you'd like to dive
-deeper into the full implementation you can find it
+users while also shrinking size requirements considerably.
+
+Let's recap what we've learned in this series of articles.
+
+In [Part 1]({% link _posts/2025-02-14-linux-coredumps-part-1.md %}) we covered
+the basics for how Linux coredumps work. This set the stage for the rest of our
+articles as we learned about the general structure of an ELF core file.
+
+In [Part 2]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}) we tackled
+one of the biggest problems we see with coredumps in Linux, the size. Using
+information from the coredump itself we captured only the stacks while
+discarding all heap values.
+
+Finally, in this article, we addressed another problem, privacy. Coredumps can
+potentially contain customer data, after all they are just snapshots of memory.
+Our final implementation gets rid of all stack and heap memory. The downside
+here is that we no longer get to inspect local variables. For most crashes this
+is an acceptable tradeoff. If you'd like to dive deeper into the full
+implementation of the on-device unwinding you can find it
 [here](https://github.com/memfault/memfaultd/tree/main/memfaultd/src/cli/memfault_core_handler/stack_unwinder).
 
 <!-- Interrupt Keep START -->
