@@ -232,7 +232,7 @@ is an acronym for Common Information Entry and represents a shared set of
 instructions that can be used by any `FDE` in a given `CFI`. Let's take a gander
 at the `CIE` in our above example.
 
-#### Common Information (CIE) Record
+#### Common Information (`CIE`) Record
 
 ```bash
 00000000 0000000000000014 00000000 CIE
@@ -264,7 +264,7 @@ It is similar to the `CIE` but more specific in that it represents all
 instructions needed to recreate a frame's structure. Let's comb through an `FDE`
 to get a better understanding.
 
-#### Frame Description Entry (FDE) Record
+#### Frame Description Entry (`FDE`) Record
 
 ```bash
 00000018 0000000000000014 0000001c FDE cie=00000000 pc=00000000001c1180..00000000001c11a6
@@ -307,7 +307,7 @@ stack frame! Artisanal! Compiler to table! Let's decode the next line in our
 DW_CFA_offset: r16 (rip) at cfa-8
 ```
 
-Here we can see that `rip` (x86-64 program counter) can be computed by
+Here we can see that `rip` (`x86-64` program counter) can be computed by
 subtracting 8 from our previously calculated `CFA`. A visual representation of
 this can be seen below:
 
