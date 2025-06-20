@@ -5,7 +5,7 @@ author: blake
 tags: [linux, coredumps, memfault, debugging]
 ---
 
-In our previous posts, we covered how Linux coredumps are structured, how
+In our previous posts ([Part 1]({% link _posts/2025-02-14-linux-coredumps-part-1.md %}) & [Part 2]({% link _posts/2025-05-02-linux-coredumps-part-2.md %})), we covered how Linux coredumps are structured, how
 they're collected, and how we could reduce the size of them to fit on systems
 with less memory.
 
@@ -62,11 +62,11 @@ for more info!
 
 An interesting wrinkle here is that the address range present in the compiled
 binary and the address range used when the program is executing is different and
-random. This is a security feature of Linux called ASLR(Address Space Load
+random. This is a security feature of Linux called `ASLR` (Address Space Load
 Randomization)[^ASLR]. At a high level, it randomizes the base address where the
 program is loaded into memory so that attackers cannot observe a program and
 attempt to intercept program execution by changing values on the stack.
-Therefore, to decode addresses properly, we will need the PC range in addition
+Therefore, to decode addresses properly, we will need the `PC` range in addition
 to the compile time and run time offset.
 
 So we now have a minimal set of information we need to capture to get a complete
@@ -122,13 +122,13 @@ An unwound stack can now be represented with the following JSON structure:
 }
 ```
 
-Using the above, we can create our stacktrace by doing the following for each PC
+Using the above, we can create our stacktrace by doing the following for each `PC`
 in a thread:
 
 - Find the associated symbols by checking each `PC` range
 - Fetch the symbol file by either build ID or path
-- Shift the PC by subtracting the runtime offset and adding the compiled offset
- to account for ASLR
+- Shift the `PC` by subtracting the runtime offset and adding the compiled offset
+ to account for `ASLR`
 - Run the shifted address and associated symbol file through
   `addr2line`[^addr2line]
 
@@ -152,7 +152,7 @@ debugger, profiler, or any other program needs to know:
 
 Our first instinct is probably to reach to the frame pointer register. This, in
 theory, tells us where the previous frame starts, but there are a few problems
-here. For one, not every platform has a frame pointer. `x86-64` being the
+here. For one, not every platform has a frame pointer, `x86-64` being the
 obvious example. Additionally, some recent compilers have taken the step of
 turning the frame pointer register into a general purpose register as a
 performance improvement[^fomit]. Even if we could depend on the frame
@@ -168,10 +168,10 @@ process until we hit the bottom of the stack!
 
 ### `.eh_frame` Contents
 
-As mentioned above, the `.eh_frame`[^.eh_frame] is an ELF section included in
+As mentioned above, the `.eh_frame`[^eh_frame] is an ELF section included in
 most programs compiled with a modern compiler. It contains a list of rules that
 allow us to rebuild the frame info that is implicitly encoded into the generated
-assembly of our program. These rules are called Call Frame Information (CFI)
+assembly of our program. These rules are called Call Frame Information (`CFI`)
 records, and there is at least one per `.eh_frame`.
 
 Let's use the trusty `readelf` utility to take a peek at the contents
@@ -223,8 +223,8 @@ agencies? Let's peel this back layer by layer and try to understand it.
 
 Let's look at the first three terms here: `CFI`, `CIE`, and `FDE`. All of these
 relate to the structure of each frame. The first term, `CFI`, expands to Common
-Frame Information. The CFI represents a grouping of multiple bits of frame
-information and is at the highest level of the information hierarchy. Every CFI
+Frame Information. The `CFI` represents a grouping of multiple bits of frame
+information and is at the highest level of the information hierarchy. Every `CFI`
 will contain one or more `CIE` and `FDE`.
 
 Peeling back one more layer, we can start to look at the `CIE` and `FDE`. `CIE`
@@ -286,7 +286,7 @@ the same instructions we previously saw in our `CIE`. Note that our total set of
 instructions are the ones present in the `CIE` in addition to those defined in
 the `FDE`.
 
-#### Cannonical Frame Address (CFA)
+#### Cannonical Frame Address (`CFA`)
 
 Alright, we're almost done defining acronyms, I promise! You may have noticed
 `CFA` mentioned in all of our unwind rules defined in both the `CIE` and `FDE`.
@@ -298,7 +298,7 @@ reconstruct. Looking out our `CIE` again, you may recall this line:
 DW_CFA_def_cfa: r7 (rsp) ofs 8
 ```
 
-This tells us that our `CFA` is equal to the `rsp`(x86-64 stack pointer) + 8.
+This tells us that our `CFA` is equal to the `rsp`(`x86-64` stack pointer) + 8.
 Neat! A picture may be starting to form in your mind; we're hand-crafting a
 stack frame! Artisanal! Compiler to table! Let's decode the next line in our
 `CIE` to understand how we can get individual registers.
@@ -402,7 +402,7 @@ b6d0f000-b6d10000 rw-p 0006f000 b3:02 3494       /usr/lib/libzstd.so.1.5.2
 ```
 
 There is a ton of good information here! First looking at the address range,
-this gives us the runtime address we need to calculate our ASLR shift!
+this gives us the runtime address we need to calculate our `ASLR` shift!
 
 To the right of the address range, we see the permission flags for each mapped
 segment. These are useful because we want to find the range in which our
@@ -482,7 +482,7 @@ look at the address range for `memfaultd`, we see the following:
 
 Our address of `0x55ea82cff77c` fits in this range, so we know it's in that
 binary. To be able to feed this into `addr2line`[^addr2line], we need to first
-account for our ASLR[^ASLR] shift. Note these members of our stacktrace:
+account for our `ASLR`[^ASLR] shift. Note these members of our stacktrace:
 
 ```json
 "compiled_offset": "0x1bd000",
@@ -501,7 +501,7 @@ core::ptr::write
 ```
 
 From the above you can see we're in the suspect line that caused our crash! Just
-as expected, it's a NULL pointer write! To get the full stacktrace, the above
+as expected, it's a `NULL` pointer write! To get the full stacktrace, the above
 process will be repeated for each function in the call stack!
 
 ## Conclusion
@@ -544,7 +544,7 @@ implementation of the on-device unwinding, you can find it
 <!-- prettier-ignore-start -->
 [^ASLR]: [`ASLR`](https://en.wikipedia.org/wiki/Address_space_layout_randomization)
 [^addr2line]: [`addr2line`](https://linux.die.net/man/1/addr2line)
-[^fomit]: [`-fomit`](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#index-fomit-frame-pointer)
+[^fomit]: [`-fomit-frame-pointer`](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#index-fomit-frame-pointer)
 [^eh_frame]: [`.eh_frame`](https://refspecs.linuxfoundation.org/LSB_3.0.0/LSB-Core-generic/LSB-Core-generic/ehframechpt.html)
 [^eh_frame_hdr]: [`.eh_frame_hdr`](https://refspecs.linuxfoundation.org/LSB_1.3.0/gLSB/gLSB/ehframehdr.html)
 [^proc_pid_maps]: [`proc_pid_maps`](https://man7.org/linux/man-pages/man5/proc_pid_maps.5.html)
