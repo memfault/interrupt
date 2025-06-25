@@ -22,16 +22,15 @@ the size needed to store them.
 <!-- excerpt end -->
 
 By unwinding the stack locally on the device, we don't need to push any sections
-of memory out to another device/server and can just push the `PC` of each frame to
-be symbolicated separately. In this post, we'll cover the mechanism by which
+of memory out to another device/server and can just push the `PC` of each frame
+to be symbolicated separately. In this post, we'll cover the mechanism by which
 programs compiled with GCC/LLVM handle stack unwinding, and how we can leverage
 that to do local stack unwinding.
 
-> 📢 If you're attending Open Source Summit North America 2025, don’t miss
-> Blake's talk,
-> ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](https://sched.co/1zfib)
-> on Tuesday, June 24th at 9:00am MDT in Bluebird Ballroom 2B. He’ll dive even
-> deeper into the techniques explored in this series.
+<!-- TODO: Update with recording link when available -->
+<!-- > Listen to a recording of Blake's talk from Open Source Summit North America 2025,
+> ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](UPDATE)
+> for an even deeper diver into the techniques explored in this series. -->
 
 {% include newsletter.html %}
 
@@ -140,11 +139,11 @@ our end goal, how do we get all of this from a Linux core handler?
 
 ## Understanding GNU Unwind Info
 
-To answer the above question, we need to look at how programs like GDB and `perf`
-traverse the stack. The first thing to note is that there are actually two parts
-to backtrace creation. Obviously, we need to convert raw addresses to function
-names and local variable names, but we also need to know how each frame is
-constructed.
+To answer the above question, we need to look at how programs like GDB and
+`perf` traverse the stack. The first thing to note is that there are actually
+two parts to backtrace creation. Obviously, we need to convert raw addresses to
+function names and local variable names, but we also need to know how each frame
+is constructed.
 
 When unwinding a stack, there is information about the previous frame that a
 debugger, profiler, or any other program needs to know:
