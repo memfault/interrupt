@@ -22,11 +22,10 @@ formatted, how you capture them, and how we use them at Memfault.
 
 <!-- excerpt end -->
 
-> 📢 If you're attending Open Source Summit North America 2025, don’t miss
-> Blake's talk,
-> ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](https://sched.co/1zfib)
-> on Tuesday, June 24th at 9:00am MDT in Bluebird Ballroom 2B. He’ll dive even
-> deeper into the techniques explored in this series.
+<!-- TODO: Update with recording link when available -->
+<!-- > Listen to a recording of Blake's talk from Open Source Summit North America 2025,
+> ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](UPDATE)
+> for an even deeper diver into the techniques explored in this series. -->
 
 {% include newsletter.html %}
 
@@ -323,11 +322,12 @@ the hood. While the baseline coredumps are useful and a known commodity, there
 are a few things that aren't great about them. The biggest issue is that they
 can be quite large for processes with many threads or do a large amount of
 memory allocation. This can be a significant problem for embedded devices that
-may not have a lot of room to store large files. In the [next article]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}), we take
-a look at the steps we've taken to reduce the size of coredumps.
+may not have a lot of room to store large files. In the [next
+article]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}), we take a look
+at the steps we've taken to reduce the size of coredumps.
 
-If you'd like to poke around the source code for the coredump
-handler, you can find it
+If you'd like to poke around the source code for the coredump handler, you can
+find it
 [here](https://github.com/memfault/memfaultd/tree/main/memfaultd/src/cli/memfault_core_handler).
 
 <!-- Interrupt Keep START -->
