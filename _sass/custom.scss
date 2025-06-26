@@ -9,12 +9,12 @@
 
 %colored-links {
   a {
-    color: $link-color;
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 700;
     &:hover,
     &:focus {
-      color: darken($link-color, 5%);
+      color: var(--primary-hover);
     }
   }
 }
@@ -28,7 +28,7 @@
     width: 5rem;
     height: 1px;
     margin: 23px auto;
-    background-color: lighten($text-color, 70%);
+    background-color: var(--border-color);
   }
 
   ul, ol {

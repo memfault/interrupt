@@ -1,37 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 {% include head.html %}
 
 <body>
+	<!-- Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PDMNKRX"
+		height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<!-- End Google Tag Manager (noscript) -->
+
 	<div id="wrap">
 
-	  	<!-- Navigation -->
-	  	{% include menu.html %}
+		<!-- Navigation -->
+		{% include menu.html %}
 
 		<!-- Top banner -->
 		{% include notification-banner.html %}
 
-    	<!-- Icon menu -->
+		<!-- Modern Theme Toggle -->
+		<button id="theme-toggle" aria-label="Toggle dark mode">
+			<svg id="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<circle cx="12" cy="12" r="5"></circle>
+				<line x1="12" y1="1" x2="12" y2="3"></line>
+				<line x1="12" y1="21" x2="12" y2="23"></line>
+				<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+				<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+				<line x1="1" y1="12" x2="3" y2="12"></line>
+				<line x1="21" y1="12" x2="23" y2="12"></line>
+				<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+				<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+			</svg>
+			<svg id="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+			</svg>
+		</button>
+
+		<!-- Ultra-modern hamburger menu -->
 		<a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
 			<div id="menu"></div>
 		</a>
 
-		<div id="header">
-			<img id='logo' src="{% img_url interrupt-logo.svg %}" alt="Interrupt Logo">
-			<h1 class="header">Interrupt</h1>
-			<h3 class="header">by <a href="https://memfault.com">Memfault</a></h3>
+		<!-- Hero Section with Modern Design -->
+		<div id="header" class="hero-section">
+			<div class="hero-content">
+				<div class="logo-container">
+					<img id='logo' src="{% img_url interrupt-logo.svg %}" alt="Interrupt Logo">
+				</div>
+				<h1 class="hero-title">Interrupt</h1>
+				<p class="hero-subtitle">by <a href="https://memfault.com">Memfault</a></p>
+				<div class="hero-description">
+					<p>The ultimate community for embedded software engineers, hobbyists, and hardware enthusiasts</p>
+				</div>
+			</div>
+
+			<!-- Modern floating elements -->
+			<div class="floating-elements">
+				<div class="float-element float-1"></div>
+				<div class="float-element float-2"></div>
+				<div class="float-element float-3"></div>
+			</div>
 		</div>
 
-		<!-- Main content -->
+		<!-- Main content with modern layout -->
 		<div id="split-container-wrapper" class="home-split-container">
 			<div id="split-container">
-				<main>
-
+				<main class="main-content">
 					{{ content }}
-
 				</main>
-				<aside>
+				<aside class="sidebar">
 					{% include search.html %}
 					{% include subscribe.html %}
 					{% include share-buttons.html %}
@@ -40,14 +76,16 @@
 
 			<!-- Pagination links -->
 			{% include pagination.html %}
-
 		</div>
 
-	    <!-- Footer -->
-	    {% include footer.html %}
+		<!-- Footer -->
+		{% include footer.html %}
 
-	    <!-- Script -->
+		<!-- Script -->
 		{% include script.html %}
+	</div>
+</body>
+</html>
 
 	</div>
 </body>

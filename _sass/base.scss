@@ -1,77 +1,246 @@
 /*
- * Emerald is a simple blog theme built for Jekyll.
+ * Interrupt - Modern Static Site Design
+ * Ultra-modern design with cutting-edge aesthetics
  */
 
-/*- Base reset -*/
+/*- Modern CSS Reset -*/
 
-* {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
-html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, img {
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  border: 0;
 }
-
-$baseline-height: 2rem;
-
-/*- Base color -*/
-
-$main-color: #141845;
-$background-color: #FDFDFD;
-$text-color: #222222;
-
-$link-color: $main-color;
-
-$theme-color: $main-color;
-
-// Dark theme (not used)
-$main-color-dark: #FDFDFD;
-$background-color-dark: #141845;
-$text-color-dark: #FDFDFD;
-
-
-// Addition colors
-$light-grey: #CBD6E2;
-$disabled-color: rgba(103, 113, 144, 1.0);
-$background-color2: #F5F8FA;
-$dark-grey: #33475b;
-
-/*- Base settings -*/
 
 html {
-        background-color: $background-color;
-        @media (min-width: 940px) {
-                font-size: 18px;
-        }
-        line-height: $baseline-height;
-        color: $text-color;
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
-/*- Link -*/
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+$baseline-height: 1.75rem;
+
+/*- Modern Color System with CSS Custom Properties -*/
+
+:root {
+  /* Light theme */
+  --primary-color: #0066FF;
+  --primary-hover: #0052CC;
+  --secondary-color: #6366F1;
+  --accent-color: #10B981;
+  --warning-color: #F59E0B;
+  --error-color: #EF4444;
+
+  --background-color: #FFFFFF;
+  --surface-color: #F8FAFC;
+  --surface-elevated: #FFFFFF;
+  --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  --text-color: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-inverse: #FFFFFF;
+
+  --border-color: #E5E7EB;
+  --border-focus: #3B82F6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Typography scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #3B82F6;
+    --primary-hover: #2563EB;
+    --secondary-color: #8B5CF6;
+    --accent-color: #10B981;
+
+    --background-color: #0F172A;
+    --surface-color: #1E293B;
+    --surface-elevated: #334155;
+    --background-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+
+    --text-color: #F1F5F9;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+    --text-inverse: #0F172A;
+
+    --border-color: #334155;
+    --border-focus: #3B82F6;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --shadow-hover: rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Force dark theme class */
+[data-theme="dark"] {
+  --primary-color: #3B82F6;
+  --primary-hover: #2563EB;
+  --secondary-color: #8B5CF6;
+  --accent-color: #10B981;
+
+  --background-color: #0F172A;
+  --surface-color: #1E293B;
+  --surface-elevated: #334155;
+  --background-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+
+  --text-color: #F1F5F9;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-inverse: #0F172A;
+
+  --border-color: #334155;
+  --border-focus: #3B82F6;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+}
+
+/* Legacy variable mappings */
+$main-color: var(--primary-color);
+$background-color: var(--background-color);
+$text-color: var(--text-color);
+$link-color: var(--primary-color);
+$theme-color: var(--primary-color);
+$light-grey: var(--border-color);
+$disabled-color: var(--text-muted);
+$background-color2: var(--surface-color);
+$dark-grey: var(--text-secondary);
+
+/*- Modern Base Styles -*/
+
+html {
+  background: var(--background-color);
+  font-size: 16px;
+  @media (min-width: 768px) {
+    font-size: 17px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 18px;
+  }
+  line-height: $baseline-height;
+  color: var(--text-color);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background-color);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-variation-settings: 'slnt' 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Modern link styles */
 a {
-        color: $link-color;
-        text-decoration: none;
-        font-weight: 700;
-        &:hover,
-        &:focus {
-                color: darken($link-color, 5%);
-        }
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  position: relative;
+
+  &:hover,
+  &:focus {
+    color: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: 2px solid var(--border-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
 }
 
-article .content a:not(.footnote):not(.anchorjs-link) {
-        font-weight: normal;
-        border-bottom: 1px solid rgba($link-color, 0.35);
+/* Enhanced article links with modern underline */
+article .content a:not(.footnote):not(.anchorjs-link):not(.btn) {
+  font-weight: 500;
+  color: var(--primary-color);
+  text-decoration: none;
+  background-image: linear-gradient(120deg, var(--primary-color) 0%, var(--primary-color) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 0.125rem;
+  background-position: 0 88%;
+  transition: all var(--transition-base);
 
-        &:hover, &:focus {
-                border-bottom-color: $link-color;
-        }
+  &:hover, &:focus {
+    background-size: 100% 100%;
+    color: var(--text-inverse);
+    text-shadow: none;
+    padding: 0.125rem 0.25rem;
+    margin: -0.125rem -0.25rem;
+    border-radius: var(--radius-sm);
+  }
 }
 
+/* Modern footnote styling */
 article .content .footnote {
-        color: #4280E6;
-        font-weight: normal;
+  color: var(--secondary-color);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  padding: 0.125rem 0.25rem;
+  background: var(--surface-color);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: var(--secondary-color);
+    color: var(--text-inverse);
+    transform: translateY(-1px);
+  }
 }

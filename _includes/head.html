@@ -7,6 +7,12 @@
   <meta property="og:title" content="{{ page.title | site.title }}">
   <meta property="og:description" content="{{ site.description }}">
 
+  <!-- Modern performance optimizations -->
+  <meta name="theme-color" content="#0066FF">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   {% seo %}
 
   <!-- Google Tag Manager -->
@@ -20,13 +26,44 @@
   <title>{%if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
   <link rel="icon" href="{% img_url favicon.png %}" type="image/png" />
 
-  <!-- CSS & fonts -->
+  <!-- Modern favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="{% img_url favicon.png %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% img_url favicon.png %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% img_url favicon.png %}">
+
+  <!-- CSS & Modern Fonts -->
   <link rel="stylesheet" href="{{ "/css/main.css" | relative_url }}">
-  <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400%7CSource+Sans+Pro:300,400,700,900,400italic%7CSignika:700,300,400,600' rel='stylesheet' type='text/css'>
+
+  <!-- Modern font loading with Inter -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap"></noscript>
+
+  <!-- JetBrains Mono for code -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300..800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300..800&display=swap"></noscript>
+
+  <!-- Fallback for older browsers -->
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
   <!-- RSS -->
   <link href="{{ '/feed.xml' | absolute_url }}" type="application/rss+xml" rel="alternate" title="RSS 2.0 Feed" />
 
+  <!-- Dark mode detection script -->
+  <script>
+    // Dark mode detection and initialization
+    (function() {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const storedTheme = localStorage.getItem('theme');
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+
+      // Prevent flash of unstyled content
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
 </head>
 
 {% if page.mermaid %}

@@ -1,8 +1,13 @@
-/*- Typography -*/
+/*- Modern Typography System -*/
 //
-// Based on the typographic scale: 12, 14, 16, 18, 21, 24, 36, 48, 60, 72.
+// Ultra-modern typography with variable fonts and advanced features
 //
 
+/* Modern Font Loading with Inter Variable Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300..800&display=swap');
+
+/* Fallback Custom Fonts */
 @font-face {
     font-family: 'CircularStd';
     src: url('../assets/fonts/CircularStd-Book.woff2') format('woff2');
@@ -27,98 +32,304 @@
     font-display: swap;
 }
 
-
+/* Modern Typography Base */
 body {
-	font-family: 'Source Sans Pro', sans-serif;
-	// letter-spacing: 0.01em;
+  font-family: 'Inter', 'CircularStd', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-variation-settings: 'slnt' 0;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
 }
 
-pre, code {
-	font-family: 'Source Code Pro', monospace;
+/* Modern Code Typography */
+pre, code, kbd, samp {
+  font-family: 'JetBrains Mono', 'Source Code Pro', 'SF Mono', Monaco, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-variant-ligatures: common-ligatures;
 }
 
 pre {
-	font-size: 0.9rem;
-	line-height: 1.2rem;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  padding: var(--space-lg);
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  }
 }
 
-p code {
-	margin: 0 0.25ex;
-	font-size: 90%;
+/* Inline code with modern styling */
+p code, li code, td code {
+  margin: 0 0.125em;
+  padding: 0.125em 0.375em;
+  font-size: 0.875em;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--primary-color);
+  font-weight: 500;
 }
 
-/*- Typography for medium and small screen, based on 16px font-size -*/
+/* Keyboard keys styling */
+kbd {
+  padding: 0.125em 0.375em;
+  font-size: 0.875em;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 0 var(--shadow-color);
+  color: var(--text-color);
+  font-weight: 500;
+}
 
+/*- Modern Typography Scale -*/
+
+/* Modern text elements */
 p, ul, ol {
-	margin-bottom: 0.5 * $baseline-height;
+  margin-bottom: calc(var(--space-lg) * 0.75);
+  color: var(--text-color);
+  line-height: 1.7;
 }
 
+/* Ultra-modern heading hierarchy */
 h1 {
-	font-size: 2rem;
-	line-height: 4.5rem;
+  font-family: 'Inter', 'CircularStd', sans-serif;
+  font-weight: 800;
+  font-size: 1.875rem;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--text-color);
+  margin-bottom: var(--space-xl);
 
-	article .content & {
-		padding-bottom: $baseline-height;
-	}
+  @media (min-width: 768px) {
+    font-size: 2.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 3rem;
+  }
+
+  /* Gradient text effect */
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  article .content & {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border-color);
+  }
 }
 
 h2 {
-	font-family: 'CircularStd', sans-serif;
-	font-weight: 700;
-	font-size: 1.5rem;
-	line-height: 3rem;
-	article .content & {
-		padding-bottom: 0.5 * $baseline-height;
-	}
+  font-family: 'Inter', 'CircularStd', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-color);
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-lg);
+
+  @media (min-width: 768px) {
+    font-size: 1.875rem;
+  }
+
+  article .content & {
+    position: relative;
+    padding-left: var(--space-md);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+      border-radius: var(--radius-full);
+    }
+  }
 }
 
 h3 {
-	font-family: 'CircularStd', sans-serif;
-	font-weight: 700;
-	font-size: 1.25rem;
-	line-height: 2rem;
-	article .content & {
-		padding-bottom: 0.5 * $baseline-height;
-	}
+  font-family: 'Inter', 'CircularStd', sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--text-color);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-md);
+
+  @media (min-width: 768px) {
+    font-size: 1.5rem;
+  }
+
+  article .content & {
+    position: relative;
+
+    &::before {
+      content: '#';
+      position: absolute;
+      left: -1.5em;
+      color: var(--primary-color);
+      font-weight: 300;
+      opacity: 0.5;
+    }
+  }
 }
 
 h4, h5, h6 {
-	font-family: 'CircularStd', sans-serif;
-	font-weight: 700;
-	font-size: 1.10rem;
-	line-height: 1.75rem;
+  font-family: 'Inter', 'CircularStd', sans-serif;
+  font-weight: 600;
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--text-color);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
 
-	article .content & {
-		// Using padding to avoid collapse with previous element margin
-		padding-top: 0.25 * $baseline-height;
-		margin-bottom: 0.25 * $baseline-height;
-	}
+  article .content & {
+    position: relative;
+  }
 }
 
+/* Modern blockquote styling */
 blockquote {
-	font-style: italic;
-	margin: 1.5em; /* 24px/18px */
-	-webkit-border-radius: 4px;
-	   -moz-border-radius: 4px;
-	    -ms-border-radius: 4px;
-          border-radius: 4px;
-	background-color: darken($background-color, 5%);
-	padding: 0 1.5em; /* 24px/18px */
-	p, ul, ol {
-		padding: 1.5em 0; /* 24px/18px */
-	}
+  font-style: italic;
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  margin: var(--space-2xl) 0;
+  padding: var(--space-xl) var(--space-2xl);
+  background: var(--surface-color);
+  border-left: 4px solid var(--primary-color);
+  border-radius: var(--radius-lg);
+  position: relative;
+
+  &::before {
+    content: '"';
+    position: absolute;
+    top: -0.5rem;
+    left: var(--space-lg);
+    font-size: 4rem;
+    color: var(--primary-color);
+    opacity: 0.3;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  p, ul, ol {
+    margin: 0;
+    color: var(--text-secondary);
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
-// Indent lists so they are inside the section
-li, ul {
-    margin-left: 1.5em;
+/* Modern list styling */
+ul, ol {
+  padding-left: var(--space-xl);
+
+  li {
+    margin-bottom: var(--space-sm);
+    line-height: 1.6;
+
+    &::marker {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+  }
+
+  ul, ol {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
 }
 
-li > li, ul > ul {
-    margin-left: 1.5em;
+/* Custom bullet points for unordered lists */
+ul {
+  list-style: none;
+
+  li {
+    position: relative;
+    padding-left: var(--space-md);
+
+    &::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--primary-color);
+      font-weight: 600;
+      transition: transform var(--transition-fast);
+    }
+
+    &:hover::before {
+      transform: translateX(2px);
+    }
+  }
 }
 
-// Make sure that our footnote markers don't affect line-height
+/* Ordered lists with modern numbering */
+ol {
+  counter-reset: custom-counter;
+
+  li {
+    counter-increment: custom-counter;
+    position: relative;
+    padding-left: var(--space-lg);
+
+    &::before {
+      content: counter(custom-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: var(--primary-color);
+      color: var(--text-inverse);
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+  }
+}
+
+/* Modern footnote styling */
 sup {
   line-height: 0;
+  font-size: 0.75em;
+
+  a {
+    background: var(--primary-color);
+    color: var(--text-inverse);
+    padding: 0.125em 0.375em;
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background: var(--primary-hover);
+      transform: scale(1.1);
+    }
+  }
 }
