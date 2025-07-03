@@ -23,10 +23,10 @@ critical debugging information.
 
 <!-- excerpt end -->
 
-<!-- TODO: Update with recording link when available -->
-<!-- > Listen to a recording of Blake's talk from Open Source Summit North America 2025,
-> ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](UPDATE)
-> for an even deeper diver into the techniques explored in this series. -->
+> 🎥 Listen to a recording of Blake's talk from Open Source Summit North America
+> 2025,
+> ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](https://www.youtube.com/watch?v=fDwDXg7T4K8)
+> for an even deeper diver into the techniques explored in this series.
 
 {% include newsletter.html %}
 
