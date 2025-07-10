@@ -1,5 +1,5 @@
 ---
-title: "Smart Ring Development (Part 2) － Hardware design"
+title: "Smart Ring Development (Part 2) － Hardware Design"
 description: "Diving into the hardware design of an  Open Smart Ring project"
 author: stawiski
 tags:
@@ -26,7 +26,7 @@ to bring this project to life!
 
 ## PCB stackup
 
-If we want to keep the smart ring as thin as possible (e.g., Oura gen 4 is at
+If we want to keep the smart ring as thin as possible (e.g., Oura Gen 4 is at
 2.9mm), our PCB needs to be as thin as possible. The PCB will have to bend and
 follow a ring shape, so we’re definitely looking at a flexible PCB. However, not
 every component can be soldered onto a flexible PCB, and survive the stresses
@@ -110,7 +110,7 @@ certificates, including those for emitted radiation. A poor antenna design not
 only comes with low effectiveness but can also cause interference to other radio
 devices.
 
-From the teardown of the Oura ring gen 3, we learned that their antenna was
+From the teardown of the Oura Ring Gen 3, we learned that their antenna was
 designed as a microstrip antenna directly on the PCB. This is probably the best
 way to go, and offers full flexibility, but is also the most expensive in terms
 of development effort.
@@ -263,7 +263,7 @@ mutual capacitance circuit will measure the difference in capacitance between
 two wires. A mutual capacitance circuit is more complicated, but yields better
 results, lower noise, and better resistance to environmental factors.
 
-It’s worth mentioning here an interesting find in Oura gen 3 X-ray teardown
+It’s worth mentioning here an interesting find in Oura Gen 3 X-ray teardown
 photos. The PCB hosts two large copper pads, which are most likely
 self-capacitance wear detection circuitry, especially due to Oura using a
 Cypress chip known for CapSense technology.
