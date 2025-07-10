@@ -12,7 +12,7 @@ This series of articles discusses the development of a SOTA Open Smart Ring － 
 
 <!-- excerpt end -->
 
-In [the first part of this series](https://interrupt.memfault.com/blog/smart-ring-development-part-1), we looked on a higher level at what is inside a smart ring. We’ve also researched some of the available smart rings on the market and looked at prototyping one. In this article we’ll dive deeper into the hardware of Open Ring - an open source smart ring project. By the end of this article we’ll have looked at all the aspects of the hardware design and you will learn all the tricks we used to bring this project to life!
+In [the first part of this series]({% link _posts/2025-06-13-smart-ring-development-part-1.md %}), we looked on a higher level at what is inside a smart ring. We’ve also researched some of the available smart rings on the market and looked at prototyping one. In this article we’ll dive deeper into the hardware of Open Ring - an open source smart ring project. By the end of this article we’ll have looked at all the aspects of the hardware design and you will learn all the tricks we used to bring this project to life!
 
 ## PCB stackup
 
@@ -23,17 +23,17 @@ That leaves us with a rigid-flex board, where parts of the PCB are flex and othe
 The total stackup that would satisfy high density component requirements is shown below:
 ![Open Ring PCB stackup](https://raw.githubusercontent.com/stawiski/open-ring/main/images/ring-pcb-stackup.png)
 
-The flex part has 0.22mm and the flex-rigid part sits at 0.48mm. Thinking of the component budget, if the aim is 2.9mm thickness, and assuming we need a minimum of 0.2mm silicon outer layer, that leaves us at (2.9mm-0.48mm-(0.2mm*2))/2 = 1mm of max component height on each side if the components bent along the ring curve. Since they don't bend, we're working with some extremely tight spaces here. Chips in BGA and WLCP packages under 3mm width shouldn’t be a problem, but some capacitors and inductors might get troublesome due to their height, so we’ll be extra careful when selecting those. General rule of thumb is that we want to keep components as flat as possible, and put all tall components in the middle of the rigid parts to compensate for the ring curvature.
+The flex part has 0.22mm and the flex-rigid part sits at 0.48mm. Thinking of the component budget, if the aim is 2.9mm thickness, and assuming we need a minimum of 0.2mm silicon outer layer, that leaves us at <span align="center"><img src="{% img_url smart-ring/ring-height-latex-equation.svg %}" /></span> of max component height on each side **if the components bent along the ring curve**. Since they don't bend, we're working with some extremely tight spaces here. Square chips in BGA and WLCP packages under 3mm width shouldn’t be a problem, but some capacitors and inductors might get troublesome due to their height, so we’ll be extra careful when selecting those. General rule of thumb is that we want to keep components as flat as possible, and put all tall components in the middle of the rigid parts to **compensate for the ring curvature.**
 
 ## BLE processor
 
-The heart of the smart ring, and the centre of communication with the outside world, will be the BLE MCU you choose. Even with Low Energy in the BLE acronym, Bluetooth communication can still take up a significant part of your energy budget, depending on the application. Health tracking smart rings such as Oura can generally store up the measurements and sync them later, reducing this worry. However, if the solution needs to perform an action in real time (such as gestures on the ring controlling music on the phone), the BLE needs to be always ready to send requests through. Fortunately, many of the BLE SoCs have advanced sleep capabilities, allowing to achieve this in a smart way with minimal power usage.
+The heart of the smart ring, and the centre of communication with the outside world, will be the BLE MCU you choose. Even with Low Energy in the BLE acronym, Bluetooth communication can still take up a significant part of your energy budget, depending on the application. Health tracking smart rings such as Oura can generally store up the measurements and sync them later, reducing this worry. However, if the solution needs to perform an action in real time (such as gestures on the ring controlling music on the phone), the BLE needs to be always ready to send requests through. Fortunately, many of the BLE SoCs have advanced sleep capabilities, allowing a solution to achieve this in a smart way with minimal power usage.
 
 We’ve settled on Dialog’s [DA14531](https://www.renesas.com/en/products/wireless-connectivity/bluetooth-low-energy/da14531-smartbond-tiny-ultra-low-power-bluetooth-51-system-chip). It was ahead of its time due to very low cost at high quantities, very clean SDK, and very high efficiency of BLE transmission. It didn’t come with all-advantages though. This chip has the old school one-time-programmable memory for bootloader (you can’t go wrong programming that), external FLASH requiring a separate chip on board, and it generally runs code from system RAM which is limiting. Another great option that was considered were Nordic MCUs such as [nRF52805](https://www.nordicsemi.com/Products/nRF52805) in 2.5x2.5mm WLCSP package. Generally, it’s better to get more FLASH and RAM and not worry about the firmware upgrades (as well as security updates, which in the BLE world are common).
 
 ![Dialog DA14531]({% img_url smart-ring/DA14531-00000FX2.avif %})
 
-An important consideration around the BLE chip is the crystal. A typical BLE crystal will be 32MHz and it will provide the base for the high frequency radio signal. Care must be taken when selecting such a crystal, as due to aging, the frequency of the crystal can shift and render the product useless. Dialog’s recommendation around this is 10ppm base frequency tolerance and only 2ppm aging per year. Such crystals will often be marked as “BLE application”.
+An important consideration around the BLE chip is the crystal. A typical BLE crystal will be 32MHz and it will provide the base for the high frequency radio signal. Care must be taken when selecting such a crystal, as due to aging, the frequency of the crystal can shift and render the product useless. Dialog’s recommendation around this is 10ppm base frequency tolerance and only 2ppm aging per year. Such crystals will often be marked as “BLE application”. You can find datasheets of crystals that adhere to this requirement [here](https://github.com/stawiski/open-ring/tree/main/docs-ring/bluetooth-crystal). Notably, the one we ultimately chose was Abracon's ABM12W (low height and RoHS compliant BLE crystal).
 
 ## BLE antenna
 
@@ -95,11 +95,11 @@ The design around ring sizes needs to be based on the balance between manufactur
 
 ![Oura gen 3 sizing kit]({% img_url smart-ring/oura-gen3-sizing-kit.jpg %})
 
-The way [Open Ring](https://github.com/stawiski/open-ring) was designed was to accommodate multiple ring sizes. The PCB needs to be flat (component-free) at the part where the battery goes, so we reuse that part for the touch sensor on the other side. This part can be cut at different lengths as it exposes the copper pads to connect both the vibration motor and the charging coil. This was a cheap way for us to support different ring sizes, however had the original product been a success, we would have made a PCB for each ring size and embedded the charging coil directly into the main ring PCB.
+The way Open Ring was designed was to accommodate multiple ring sizes. The PCB needs to be flat (component-free) at the part where the battery goes, so we reuse that part for the touch sensor on the other side. This part can be cut at different lengths as it exposes the copper pads to connect both the vibration motor and the charging coil. This was a cheap way for us to support different ring sizes, however had the original product been a success, we would have made a PCB for each ring size and embedded the charging coil directly into the main ring PCB.
 
 ## Touch and gestures
 
-The main feature of [Open Ring](https://github.com/stawiski/open-ring) is the touch sensor, as it captures user input. The original idea was to use taps and swipes to control music (e.g. on a user's smartphone), but these gestures can generally map to any allowed Bluetooth action.
+The main feature of Open Ring is the touch sensor, as it captures user input. The original idea was to use taps and swipes to control music (e.g. on a user's smartphone), but these gestures can generally map to any allowed Bluetooth action.
 
 There are few ways to detect gestures like this, with the most popular one being capacitive sensing. Capacitive sensing detects changes in capacitance that is caused by the human body. There are two main techniques to measure capacitance for touch: self capacitance and mutual capacitance. In very simplified terms, a self capacitance measurement circuit will measure the capacitance of a touch pad (along with all the parasitic capacitance), while a mutual capacitance circuit will measure the difference in capacitance between two wires. A mutual capacitance circuit is more complicated, but yields better results, lower noise and better resistance to environmental factors.
 
@@ -134,12 +134,13 @@ From our experiments we’ve had good results with a capacitor bank of 940uF tot
 
 ## Conclusions
 
-We’ve looked at the main aspects of the smart ring design based on [Open Ring](https://github.com/stawiski/open-ring). Building such an integrated piece of electronics is very challenging due to user experience requirements. No one wants to wear a heavy and bulky ring, so the product needs to feel like it’s not there at all. It also needs to look fashionable, regardless of how hi-tech the insides are!
+We’ve looked at the main aspects of the smart ring design based on Open Ring. Building such an integrated piece of electronics is very challenging due to user experience requirements. No one wants to wear a heavy and bulky ring, so the product needs to feel like it’s not there at all. It also needs to look fashionable, regardless of how hi-tech the insides are!
 
-Please go to the [Github repo](https://github.com/stawiski/open-ring) and take a look at the PCB design as well as schematics:
+Feel free to take a look the PCB design and schematics, available in the [Open Ring Github repo](https://github.com/stawiski/open-ring):
 - [Ring schematic](https://github.com/stawiski/open-ring/blob/main/hardware/schematic_ring.pdf)
 - [Charger schematic](https://github.com/stawiski/open-ring/blob/main/hardware/schematic_charger.pdf)
 - [PCB files](https://github.com/stawiski/open-ring/tree/main/hardware)
+- [Ring BOM and pick & place](https://github.com/stawiski/open-ring/raw/refs/heads/main/hardware/ring/PCBA/BOM%20and%20P&P.xlsx)
 
 In the final article of the series, we’ll dive into the firmware development for Open Ring. Stay tuned!
 
