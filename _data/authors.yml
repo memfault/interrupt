@@ -415,3 +415,12 @@ jrsharp:
     is a right-brained embedded engineer that enjoys designing and building new
     and novel things.  He is a Field Engineer at Memfault and he's running out
     of space for new devkits.
+meysam:
+  name: Meysam Parvizi
+  linkedin: https://www.linkedin.com/in/meysamparvizi/
+  github: m3y54m
+  image: /img/author/meysam.jpg
+  blurb:
+    is an embedded systems engineer who enjoys the freedom to manipulate every
+    single bit and byte in a digital system, enabling him to do amazing things.
+    He is currently working at Tractive.
