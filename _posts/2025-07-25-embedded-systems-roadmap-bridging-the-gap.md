@@ -7,8 +7,8 @@ description:
 author: meysam
 ---
 
-It was around mid-2023 that I realized, despite working as a developer in
-the field, my knowledge of embedded systems needed a significant refresh. It was
+It was around mid-2023 that I realized, despite working as a developer in the
+field, my knowledge of embedded systems needed a significant refresh. It was
 time to revisit some of the fundamentals and catch up on the latest technologies
 and best practices. As I began listing topics to review, I searched for existing
 embedded systems roadmaps online. However, none perfectly matched my specific
@@ -35,9 +35,9 @@ or software—rarely both.
 For instance, I entered the field with a degree in Electrical and Electronics
 Engineering. I had a solid understanding of hardware circuits, sensors, and
 microcontrollers. But when I started working on embedded systems, I quickly
-realized that I lacked key software development concepts, such as efficient coding, data
-structures, and design patterns. This made me feel like an important piece of
-the puzzle was missing.
+realized that I lacked key software development concepts, such as efficient
+coding, data structures, and design patterns. This made me feel like an
+important piece of the puzzle was missing.
 
 Conversely, I’ve spoken with individuals who transitioned from software
 engineering or computer science backgrounds into embedded systems. They had a
@@ -62,14 +62,14 @@ resources for **self-study**. Countless books, courses, and tutorials exist on
 programming and electronics, but for someone new to embedded systems, it’s hard
 to know which ones are most helpful.
 
-Should you focus on advanced programming or spend more time on hardware concepts,
-such as circuit design and microcontrollers? Without clear guidance, it’s easy to
-feel lost or invest time in resources that aren’t the best fit. While a
-**mentor** can be invaluable, they aren’t always available. This is precisely
-where a roadmap becomes valuable. It offers a structured learning path,
-providing clear direction on what to focus on and helping you choose the most
-useful resources for both software and hardware, making the learning process
-more manageable.
+Should you focus on advanced programming or spend more time on hardware
+concepts, such as circuit design and microcontrollers? Without clear guidance,
+it’s easy to feel lost or invest time in resources that aren’t the best fit.
+While a **mentor** can be invaluable, they aren’t always available. This is
+precisely where a roadmap becomes valuable. It offers a structured learning
+path, providing clear direction on what to focus on and helping you choose the
+most useful resources for both software and hardware, making the learning
+process more manageable.
 
 ## Building the Roadmap: Challenges and Design Choices
 
@@ -85,15 +85,15 @@ decided to use that roadmap as a foundation and began adding key topics I felt
 were missing.
 
 Developing this roadmap presented its own challenges, particularly in organizing
-the vast field of embedded systems. One of the main problems was
-**dividing the roadmap between embedded hardware and embedded software**, as
-many skills in these areas are closely related. A skill that seems primarily
-software-focused might require a good understanding of the underlying hardware,
-and vice versa. Finding a good balance to clearly show these connections, while
-still offering separate learning paths, was a significant consideration. To
-address this, I decided to separate hardware-focused and software-focused topics
-structurally. For areas that overlapped, I created an intersection section
-to highlight those connections.
+the vast field of embedded systems. One of the main problems was **dividing the
+roadmap between embedded hardware and embedded software**, as many skills in
+these areas are closely related. A skill that seems primarily software-focused
+might require a good understanding of the underlying hardware, and vice versa.
+Finding a good balance to clearly show these connections, while still offering
+separate learning paths, was a significant consideration. To address this, I
+decided to separate hardware-focused and software-focused topics structurally.
+For areas that overlapped, I created an intersection section to highlight those
+connections.
 
 Once I had a more complete version, I shared it with the
 [Reddit embedded community](https://www.reddit.com/r/embedded/) to get feedback
@@ -146,10 +146,10 @@ systematic way to navigate them:
 ### Start with the 'Why' and Core Concepts
 
 Before diving into specific tools or frameworks, prioritize resources that
-explain the fundamental principles and the rationale behind a technique. For TDD,
-this means looking for materials that clarify "why write tests before code?" or
-"what problems does TDD solve?" Short articles and videos can be particularly
-beneficial at this stage. However, well-written books like
+explain the fundamental principles and the rationale behind a technique. For
+TDD, this means looking for materials that clarify "why write tests before
+code?" or "what problems does TDD solve?" Short articles and videos can be
+particularly beneficial at this stage. However, well-written books like
 [Test Driven Development for Embedded C by James W. Grenning](https://www.amazon.com/Driven-Development-Embedded-Pragmatic-Programmers/dp/193435662X)
 can also provide a solid conceptual foundation.
 
@@ -180,8 +180,8 @@ the limits of unit testing can lead you to investigate Hardware-in-the-Loop
 
 ### Seek Specialized and Deep-Dive Resources
 
-For advanced topics, such as HIL, you'll need more specialized resources. Look for
-whitepapers, conference presentations, or dedicated courses from industry
+For advanced topics, such as HIL, you'll need more specialized resources. Look
+for whitepapers, conference presentations, or dedicated courses from industry
 leaders. These resources provide the depth needed to understand complex setups
 and comprehensive system validation.
 
@@ -221,9 +221,9 @@ beginners."_**
 
 I understand the roadmap might feel overwhelming, especially for beginners. I
 included a wide range of topics to cover the full spectrum of embedded systems,
-but it can seem like a lot. To help with this, I added a section in the
-README encouraging beginners to start with simple, manageable hands-on projects
-and use the roadmap as a reference when needed.
+but it can seem like a lot. To help with this, I added a section in the README
+encouraging beginners to start with simple, manageable hands-on projects and use
+the roadmap as a reference when needed.
 
 **_"It doesn’t go deep enough into certain areas, like application-specific
 fields (automotive, aerospace, agriculture, etc.)."_**
