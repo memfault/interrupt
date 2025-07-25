@@ -5,6 +5,7 @@ description:
   path for hardware and software engineers. It guides you in selecting
   resources, boosting career growth, and staying current with industry trends.
 author: meysam
+tags: [embedded, mcu, career]
 ---
 
 It was around mid-2023 that I realized, despite working as a developer in the
