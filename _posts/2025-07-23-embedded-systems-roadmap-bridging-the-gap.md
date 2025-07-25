@@ -7,7 +7,7 @@ description:
 author: meysam
 ---
 
-It was around mid-2023 when I realized that, despite working as a developer in
+It was around mid-2023 that I realized, despite working as a developer in
 the field, my knowledge of embedded systems needed a significant refresh. It was
 time to revisit some of the fundamentals and catch up on the latest technologies
 and best practices. As I began listing topics to review, I searched for existing
@@ -35,7 +35,7 @@ or software—rarely both.
 For instance, I entered the field with a degree in Electrical and Electronics
 Engineering. I had a solid understanding of hardware circuits, sensors, and
 microcontrollers. But when I started working on embedded systems, I quickly
-realized I lacked key software development concepts like efficient coding, data
+realized that I lacked key software development concepts, such as efficient coding, data
 structures, and design patterns. This made me feel like an important piece of
 the puzzle was missing.
 
@@ -62,8 +62,8 @@ resources for **self-study**. Countless books, courses, and tutorials exist on
 programming and electronics, but for someone new to embedded systems, it’s hard
 to know which ones are most helpful.
 
-Should you focus on advanced programming or spend more time on hardware concepts
-like circuit design and microcontrollers? Without clear guidance, it’s easy to
+Should you focus on advanced programming or spend more time on hardware concepts,
+such as circuit design and microcontrollers? Without clear guidance, it’s easy to
 feel lost or invest time in resources that aren’t the best fit. While a
 **mentor** can be invaluable, they aren’t always available. This is precisely
 where a roadmap becomes valuable. It offers a structured learning path,
@@ -85,14 +85,14 @@ decided to use that roadmap as a foundation and began adding key topics I felt
 were missing.
 
 Developing this roadmap presented its own challenges, particularly in organizing
-the vast field of embedded systems. One of the main problems was clearly
+the vast field of embedded systems. One of the main problems was
 **dividing the roadmap between embedded hardware and embedded software**, as
 many skills in these areas are closely related. A skill that seems primarily
 software-focused might require a good understanding of the underlying hardware,
-and vice versa. Finding a good balance to show these connections clearly, while
+and vice versa. Finding a good balance to clearly show these connections, while
 still offering separate learning paths, was a significant consideration. To
 address this, I decided to separate hardware-focused and software-focused topics
-structurally, and for areas that overlapped, I created an intersection section
+structurally. For areas that overlapped, I created an intersection section
 to highlight those connections.
 
 Once I had a more complete version, I shared it with the
@@ -116,7 +116,7 @@ The aim was to provide a broad overview of the embedded field, making it a
 detailed resource for different learning stages. However, I also needed to
 **ensure that newcomers wouldn’t feel overwhelmed**. The goal was to provide
 enough detail to be helpful, but organize it in a way that guides rather than
-intimidates, so beginners can take their first steps with confidence.
+intimidates, so that beginners can take their first steps with confidence.
 
 Fortunately, the roadmap has gained considerable attention online, with new
 contributors helping to expand
@@ -131,7 +131,7 @@ learning resources on the GitHub page.
 
 This roadmap is designed to guide you through complex embedded systems topics,
 but with so many resources available, how do you choose where to start or which
-resource fits your needs best? Let's walk through an example using the crucial
+resource best fits your needs? Let's walk through an example using the crucial
 topic of embedded systems:
 [**Testing**](https://github.com/m3y54m/Embedded-Engineering-Roadmap/tree/master?tab=readme-ov-file#%EF%B8%8F-testing).
 
@@ -146,7 +146,7 @@ systematic way to navigate them:
 ### Start with the 'Why' and Core Concepts
 
 Before diving into specific tools or frameworks, prioritize resources that
-explain the fundamental principles and the reason a technique exists. For TDD,
+explain the fundamental principles and the rationale behind a technique. For TDD,
 this means looking for materials that clarify "why write tests before code?" or
 "what problems does TDD solve?" Short articles and videos can be particularly
 beneficial at this stage. However, well-written books like
@@ -180,7 +180,7 @@ the limits of unit testing can lead you to investigate Hardware-in-the-Loop
 
 ### Seek Specialized and Deep-Dive Resources
 
-For advanced topics like HIL, you'll need more specialized resources. Look for
+For advanced topics, such as HIL, you'll need more specialized resources. Look for
 whitepapers, conference presentations, or dedicated courses from industry
 leaders. These resources provide the depth needed to understand complex setups
 and comprehensive system validation.
@@ -199,7 +199,7 @@ Throughout this process, continuously filter resources by asking:
   and examples are often key to solidifying understanding.
 
 - **"Is it reputable and well-regarded?"** Consider the author's expertise and
-  community consensus.
+  the consensus of the community.
 
 - **"Does it address specific challenges relevant to embedded systems?"** For
   our field, this means prioritizing resources that acknowledge and provide
@@ -221,7 +221,7 @@ beginners."_**
 
 I understand the roadmap might feel overwhelming, especially for beginners. I
 included a wide range of topics to cover the full spectrum of embedded systems,
-but I agree it can seem like a lot. To help with this, I added a section in the
+but it can seem like a lot. To help with this, I added a section in the
 README encouraging beginners to start with simple, manageable hands-on projects
 and use the roadmap as a reference when needed.
 
@@ -259,7 +259,7 @@ on their own. It's the beginners who truly benefit from a clear,
 easy-to-understand guide. So, let's keep it simple for them.
 
 Regarding the roadmap's future, I've considered adding it to
-[roadmap.sh](http://roadmap.sh) but I have some reservations. A GitHub repo
+[roadmap.sh](http://roadmap.sh), but I have some reservations. A GitHub repo
 offers more freedom, flexibility, and engagement, allowing contributors' work to
 be better recognized by others, compared to how contributions are managed on
 roadmap.sh. However, I'm still considering it and would love to hear thoughts on
