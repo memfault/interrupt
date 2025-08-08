@@ -204,10 +204,24 @@ Given these experiences, I have compiled the following list:
 - [x] Provide a GPIO map in a spreadsheet, with main function after reset,
       intended function, and any additional notes.
 - [x] Are all MCU peripherals used only once?
+- [x] Are all MCU peripherals mapped in manner to avoid any MCU-specific pin 
+      sharing constraints?
+- [x] Are all MCU peripherals requiring other MCU resources, such as DMA 
+      or timers, mapped in a manner that avoids internal MCU sharing conflicts?
+      Example: a particular SPI bus may require exacting transaction timing, 
+      which requires an MCU timer to initiate a DMA transaction on the particular 
+      SPI bus. Is that device's SPI bus mapped in manner that avoids internal MCU 
+      resource sharing constraints?
 - [x] If the MCU is held in reset, are the peripheral devices held in their
       proper state? (Pull-up/pull-downs where needed)
 - [x] Does the reset line have a proper pull-up or pull-down? (This is a common
       failure, so worth noting).
+- [x] If the target microcontroller constraints allow for it, are some GPIO pins 
+      assigned for arbitrary firmware development, measurements and debug 
+      purposes? [6](https://covemountainsoftware.com/2016/12/27/brother-can-you-spare-a-gpio/)
+- [x] Subject to board layout constraints, are the debug GPIOs routed to
+      test points that may be connected to an o-scope or other common
+      tools with minimal risk to the PCB or personnel?
 - [x] Are the debug GPIOs used _only_ for debug purposes?
 
 ### Busses
