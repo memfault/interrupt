@@ -6,6 +6,7 @@ description:
   Ultrahuman's account of doing a complex migration from nRF5 SDK to Zephyr NCS
   on a nRF52 project
 author: gauravsingh
+tags: [zephyr, nordic]
 ---
 
 At [Ultrahuman](https://www.ultrahuman.com/), innovation is at the core of
