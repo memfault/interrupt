@@ -3,7 +3,7 @@ title: Building Nordic nRF-Connect SDK Projects with GitHub Actions
 description:
   Strategies for building nRF-Connect SDK projects using GitHub Actions
 author: noah
-tags: [ci, github-actions]
+tags: [ci, github-actions, nordic]
 ---
 
 <!-- excerpt start -->
