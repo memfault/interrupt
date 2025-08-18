@@ -6,6 +6,7 @@ description:
   environment - the changes required to the Memfault SDK, the required set-up
   and ideas for future integration of Memfault with Thread.
 author: mabe
+tags: [matter, thread, memfault, nordic]
 ---
 
 <!-- excerpt start -->

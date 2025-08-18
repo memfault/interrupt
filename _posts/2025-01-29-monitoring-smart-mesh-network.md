@@ -4,7 +4,7 @@ description:
   Tutorial of Application Performance Monitoring (APM) using Zephyr, nRF52, an
   Analog LTC5800, and Memfault
 author: fabiangraf
-tags: [monitoring, observability, mesh, memfault, zephyr]
+tags: [monitoring, observability, mesh, memfault, zephyr, nordic]
 ---
 
 Monitoring IoT applications is essential due to their operation in dynamic and
