@@ -2,7 +2,7 @@
 title: Practical Zephyr - West workspaces (Part 6)
 description: Article series "Practical Zephyr" the sixth part about West workspaces.
 author: lampacher
-tags: [zephyr, west, practical-zephyr-series]
+tags: [zephyr, west, practical-zephyr-series, nordic]
 ---
 
 <!-- excerpt start -->
