@@ -2,8 +2,9 @@
 title: LTE and IoT - How We Got Here
 description: "A look at LTE technology for IoT"
 author: gminn
-tags: [lte, connectivity]
+tags: [lte, connectivity, nordic]
 image: /img/lte-and-iot/lte-cover.png
+estimated reading time: ~6 min read
 ---
 
 Cellular devices and networks have come a long way, from brick phones and Blackberrys to iPhones and Google Pixels. In addition to being the ubiquitous connectivity protocol that keeps the Internet at our fingertips at all times, LTE is appearing in IoT products across all industries. LTE modems now boast reduced power consumption and a more compact form factor than ever; coupled with the promises of 5G technology's support for millions more connected devices, there is no doubt that this is an exciting time to be working on an LTE-enabled device!
