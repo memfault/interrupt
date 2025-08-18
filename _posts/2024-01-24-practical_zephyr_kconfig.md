@@ -2,7 +2,7 @@
 title: Practical Zephyr - Kconfig (Part 2)
 description: Article series "Practical Zephyr", the second part covering the kernel configuration system Kconfig.
 author: lampacher
-tags: [zephyr, kconfig, practical-zephyr-series]
+tags: [zephyr, kconfig, practical-zephyr-series, nordic]
 ---
 
 <!-- excerpt start -->

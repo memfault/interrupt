@@ -2,7 +2,7 @@
 title: LTE and IoT - How We Got Here
 description: "A look at LTE technology for IoT"
 author: gminn
-tags: [lte, connectivity]
+tags: [lte, connectivity, nordic]
 image: /img/lte-and-iot/lte-cover.png
 ---
 
