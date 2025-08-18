@@ -2,7 +2,7 @@
 title: Practical Zephyr - Devicetree semantics (Part 4)
 description: Article series "Practical Zephyr", the fourth part about Devicetree bindings.
 author: lampacher
-tags: [zephyr, devicetree, practical-zephyr-series]
+tags: [zephyr, devicetree, practical-zephyr-series, nordic]
 ---
 
 <!-- excerpt start -->
