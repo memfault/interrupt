@@ -2,7 +2,7 @@
 title: Practical Zephyr - Devicetree practice (Part 5)
 description: Article series "Practical Zephyr", the fifth part about Devicetree practice.
 author: lampacher
-tags: [zephyr, devicetree, practical-zephyr-series]
+tags: [zephyr, devicetree, practical-zephyr-series, nordic]
 ---
 
 <!-- excerpt start -->
