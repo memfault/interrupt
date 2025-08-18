@@ -212,13 +212,6 @@ Given these experiences, I have compiled the following list:
       proper state? (Pull-up/pull-downs where needed)
 - [x] Does the reset line have a proper pull-up or pull-down? (This is a common
       failure, so worth noting).
-- [x] If the target microcontroller constraints allow for it, are some GPIO pins 
-      assigned for arbitrary firmware development, measurements and debug 
-      purposes? [6](https://covemountainsoftware.com/2016/12/27/brother-can-you-spare-a-gpio/)
-- [x] Subject to board layout constraints, are the debug GPIOs routed to
-      test points that may be connected to an o-scope or other common
-      tools with minimal risk to the PCB or personnel?
-- [x] Are the debug GPIOs used _only_ for debug purposes?
 
 ### Busses
 
@@ -253,6 +246,13 @@ Given these experiences, I have compiled the following list:
 - [x] Are non-essential, but helpful, GPIOs exposed for a debugger, such as SWO
       or ETM?
 - [x] Do test points exist for power rails, analog signals, and buses?
+- [x] If the target microcontroller constraints allow for it, are some GPIO pins
+    assigned for arbitrary firmware development, measurements and debug
+    purposes? [6](https://covemountainsoftware.com/2016/12/27/brother-can-you-spare-a-gpio/)
+- [x] Subject to board layout constraints, are the debug GPIOs routed to
+  test points that may be connected to an o-scope or other common
+  tools with minimal risk to the PCB or personnel?
+- [x] Are the debug GPIOs used _only_ for debug purposes?
 
 ## Conclusion
 
