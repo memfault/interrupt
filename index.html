@@ -110,8 +110,8 @@ layout: homepage
         </li>
     </ul>
 
-    <h2 class="home-header-2">
-        <a href="{{ '/blog' | relative_url }}">
+    <h2 class="home-header-2" id="latest-blog-posts">
+        <a href="{{ '/' | relative_url }}#latest-blog-posts">
             Latest Blog Posts
         </a>
     </h2>
@@ -122,6 +122,13 @@ layout: homepage
 
         {% for post in posts %}
             <li class="post">
+                {% if post.image and post.image != '/img/interrupt-cover-1200px.png' %}
+                <div class="post-image">
+                    <a href="{{ post.url | relative_url }}">
+                        <img src="{{ post.image | relative_url }}" alt="{{ post.title }}">
+                    </a>
+                </div>
+                {% endif %}
                 <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
                 <div class="by-line">
                     <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
@@ -147,13 +154,55 @@ layout: homepage
         <img class="chevron-icon" src="{% img_url chevron-right-white.svg %}" />
     </a>
 
-    <h2 class="home-header-2">
+        <h2 class="home-header-2" id="top-blog-posts">
+        <a href="{{ '/' | relative_url }}#top-blog-posts">
+            Top Blog Posts
+        </a>
+    </h2>
+    <ul id="posts">
+        {% assign top_posts = "" | split: "" %}
+        {% for post in site.posts %}
+            {% assign post_filename = post.path | split: "/" | last | split: "." | first %}
+            {% if site.data.top_posts.posts contains post_filename %}
+                {% assign top_posts = top_posts | push: post %}
+            {% endif %}
+        {% endfor %}
+        {% assign top_posts = top_posts | limit: 6 %}
+        {% for post in top_posts %}
+            <li class="post">
+                {% if post.image and post.image != '/img/interrupt-cover-1200px.png' %}
+                <div class="post-image">
+                    <a href="{{ post.url | relative_url }}">
+                        <img src="{{ post.image | relative_url }}" alt="{{ post.title }}">
+                    </a>
+                </div>
+                {% endif %}
+                <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+                <div class="by-line">
+                    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
+                    {% assign author = site.data.authors[post.author] %}
+                    {% assign author_key = post.author %}
+                    {% if author %}
+                        <span>by <a href="{{ '/authors/' | append:author_key | relative_url }}">{{ author.name }}</a></span>
+                    {% endif %}
+                </div>
+                <p>{{ post.excerpt }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ '/blog' | relative_url }}" class="home-show-more">
+        View all posts
+        <img class="chevron-icon" src="{% img_url chevron-right-white.svg %}" />
+    </a>
+
+    <h2 class="home-header-2" id="about-memfault">
         About Memfault
     </h2>
     <p>
         Memfault is the first cloud-based observability platform for connected device debugging, monitoring, and updating, which brings the efficiencies and innovation of software development to hardware processes. Recognizing that any connected device team could benefit from what they were building, François Baldassari, Chris Coleman, and Tyler Hoffman founded Memfault in 2018 with the help of colleagues from Pebble.
-        <a href="https://memfault.com/signup">
-            Try Memfault
+        <a href="https://demo.memfault.com/demo/start?utm_campaign=Sandbox&utm_source=Interrupt&utm_medium=side%20bar">
+            Explore Memfault
             <svg class="svg-icon slack">
                 <use xlink:href="{% img_url main-icons.svg#arrow-right %}"></use>
             </svg>
