@@ -2,7 +2,7 @@
 title: Practical Zephyr - Zephyr Basics (Part 1)
 description: Article series "Practical Zephyr", the first part about West, CMake, and Zephyr application types.
 author: lampacher
-tags: [zephyr, build-system, practical-zephyr-series]
+tags: [zephyr, build-system, practical-zephyr-series, nordic]
 ---
 
 This is the start of a new article series about _Zephyr's basics_: It will walk you through Zephyr's [build and configuration systems](https://docs.zephyrproject.org/latest/build/index.html) _West_, _Kconfig_ and _devicetree_.
