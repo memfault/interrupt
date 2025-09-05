@@ -22,9 +22,9 @@ What have you been reading? Share in the comments or
 - [**Introduction to Embedded Systems with Rust: A Beginner’s Guide Using ESP32**](https://rust-dd.com/post/introduction-to-embedded-systems-with-rust-a-beginner-s-guide-using-esp32)<br>
   Friendly tutorial for getting started with Rust on the ESP32. – Noah
 
-- [**Reverse-Engineering a Raspberry Pi Zero 2 W SoC**](https://www.hackster.io/news/jonathan-clark-s-rp3a0-pico-is-a-reverse-engineered-raspberry-pi-zero-2-w-in-a-new-form-factor-5080cc2e8864)  
-  Reverse-engineering<br>
-  effort reveals the custom "RP3A0" SoC used only by Raspberry Pi. – Noah
+- [**Reverse-Engineering a Raspberry Pi Zero 2 W SoC**](https://www.hackster.io/news/jonathan-clark-s-rp3a0-pico-is-a-reverse-engineered-raspberry-pi-zero-2-w-in-a-new-form-factor-5080cc2e8864)<br>
+  Reverse-engineering effort reveals the custom "RP3A0" SoC used only by
+  Raspberry Pi. – Noah
 
 - [**State of the Art for Reducing Executable Size (LLVM Discourse Thread)**](https://discourse.llvm.org/t/state-of-the-art-for-reducing-executable-size-with-heavily-optimized-program/87952/18)<br>
   Interesting discussion on shrinking highly optimized executables. – Noah
