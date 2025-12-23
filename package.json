@@ -2,7 +2,7 @@
   "scripts": {
     "lint:prettier": "prettier --check _posts _drafts",
     "lint:typos": "typos _posts _drafts",
-    "lint:prettier:fix": "prettier --write  _posts _drafts"
+    "lint:prettier:fix": "prettier --write _posts _drafts"
   },
   "dependencies": {
     "lefthook": "^1.6.16",
@@ -10,5 +10,6 @@
   },
   "devDependencies": {
     "typos-rs-npm": "dalisoft/typos-rs-npm"
-  }
+  },
+  "packageManager": "yarn@3.6.3"
 }
