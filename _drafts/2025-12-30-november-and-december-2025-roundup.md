@@ -43,7 +43,7 @@ The latest status page of ESP32 support in Zephyr
 ## News & Announcements
 
 - [**Zephyr 4.3 is Here — What’s New**](https://zephyrproject.org/zephyr-4-3-is-here-whats-new/)  
-Zephyr 4.3 released last week! – Gilly
+Zephyr 4.3 is out!
 
 - [**STM32V8: World-First 18 nm Cortex-M85 MCU**](https://www.st.com/content/st_com/en/campaigns/stm32v8-high-performance-cortex-m85-mcu-z11.html)  
 New chip family from ST: 800 MHz Cortex-M85 😮 – Noah
