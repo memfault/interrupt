@@ -22,7 +22,7 @@ What have you been reading? Share in the comments or
 ## Articles & Learning
 
 - [**Reverse Engineering Yaesu FT-70D Firmware Encryption**](https://landaire.net/reversing-yaesu-firmware-encryption/)  
-Some great reverse-engineering FW content on HN last week. – François
+Some great reverse-engineering FW content on HN. – François
 
 - [**How To Build a Smartwatch: Software – Setting Expectations & Roadmap**](https://ericmigi.com/blog/how-to-build-a-smartwatch-software-setting-expectations-and-roadmap)  
 A thoughtful firmware and platform roadmap discussion found on HN. – François
