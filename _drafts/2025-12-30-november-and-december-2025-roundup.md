@@ -30,7 +30,7 @@ A thoughtful firmware and platform roadmap discussion found on HN. – François
 - [**Introducing the Advent of Compiler Optimisations 2025**](https://xania.org/202511/advent-of-compiler-optimisation)  
 Announcing AoCO 2025 – daily December posts about compiler optimisations. – Noah
 
-- [**Practical test of TP-Link TL-PA7027P AV1000 Powerline adapters**](https://www.m0agx.eu/2025/11/practical-test-of-tp-link-tl-pa7027p-av1000-powerline-adapters.html)  
+- [**Practical test of TP-Link TL-PA7027P AV1000 Powerline adapters**](https://m0agx.eu/practical-test-of-powerline-adapters.html)
 I had trouble getting reliable WiFi from my router to my main workstation. All 2.4 GHz channels are totally full in my location. The 5 GHz connection seemed pretty okay but suffered from random dropouts lasting around 20 seconds. Most of the time I can tolerate low speed but it has to be reliable. I just can not tolerate total dropouts. I could not run new wires so I decided to try powerline adapters as a last resort. – Author M0AGX
 
 
