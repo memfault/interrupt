@@ -37,7 +37,7 @@ I had trouble getting reliable WiFi from my router to my main workstation. All 2
 ## Projects & Tools
 
 - [**Zephyr Support Status for ESP32**](https://developer.espressif.com/software/zephyr-support-status/)  
-New-ish page for summary of ESP32 support in Zephyr. – Gilly
+The latest status page of ESP32 support in Zephyr
 
 
 ## News & Announcements
