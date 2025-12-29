@@ -31,7 +31,7 @@ A thoughtful firmware and platform roadmap discussion found on HN. – François
 Announcing AoCO 2025 – daily December posts about compiler optimisations. – Noah
 
 - [**Practical test of TP-Link TL-PA7027P AV1000 Powerline adapters**](https://m0agx.eu/practical-test-of-powerline-adapters.html)
-I had trouble getting reliable WiFi from my router to my main workstation. All 2.4 GHz channels are totally full in my location. The 5 GHz connection seemed pretty okay but suffered from random dropouts lasting around 20 seconds. Most of the time I can tolerate low speed but it has to be reliable. I just can not tolerate total dropouts. I could not run new wires so I decided to try powerline adapters as a last resort. – Author M0AGX
+Short and sweet discussion of using powerline adapters to improve WiFi speeds, plus a few nice reading recommendations on the relevant standards
 
 
 ## Projects & Tools
