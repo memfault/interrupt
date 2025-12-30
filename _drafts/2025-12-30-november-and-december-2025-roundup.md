@@ -19,7 +19,7 @@ What have you been reading? Share in the comments or
 [on the Interrupt Slack](https://interrupt-slack.herokuapp.com/).
 
 
-## Articles & Learning
+## Articles & Learnings
 
 - [**Reverse Engineering Yaesu FT-70D Firmware Encryption**](https://landaire.net/reversing-yaesu-firmware-encryption/)  
 Some great reverse-engineering FW content on HN. – François
