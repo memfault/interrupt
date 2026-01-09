@@ -86,39 +86,51 @@ Whenever relevant, we'll use [Visual Studio Code](https://code.visualstudio.com/
 We won't assume any operating system, but - for the sake of simplicity - we'll be exclusively using _Linux_ shell commands. Windows users should have a "`bash`-compatible" environment - or _WSL_ - installed. We won't jump through the hoops of creating Windows-compatible shell scripts, batch files, or other atrocities.
 
 
+## Disclaimer
+
+Several years have passed since this article series was first published. In an effort to keep things at least somewhat up to date, this article series has been updated to reflect more recent versions of Zephyr and the _nRF Connect SDK_, as well as the corresponding tools. Even though I tried really hard to update _everything_, you might still stumble upon some paths that might have been moved or files that are now named differently. If you happen to find mistakes, don't hesitate to make a pull request for the [Interrupt blog](https://interrupt.memfault.com/).
+
 
 ## Installation
 
-Let's get started - with a shortcut. Installation and toolchain management is - and probably always will be - a very biased topic. This article series is about something other than solving that problem. Therefore, I'm deliberately choosing a shortcut: We'll download "all things Zephyr" using Nordic's [toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager) instead of following the complete installation procedure. This is optional but convenient.
+Let's get started - with a shortcut. Installation and toolchain management is - and probably always will be - a very biased topic. This article series is about something other than solving that problem. Therefore, I'm deliberately choosing a shortcut: We'll download "all things Zephyr" using Nordic's [`nrfutil`](https://docs.nordicsemi.com/bundle/nrfutil/page/README.html) command line tool instead of following the complete installation procedure. This is optional but convenient.
 
-Instead of using Nordic's full-blown IDE solution, we'll create our shell script to set up our terminal. This demonstrates some of the environment variables used by Zephyr and allows you to use a plain terminal to follow along.
+> **Note:** Those of you who are coming back to this series might notice that I'm no longer referring to Nordic's [toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager). The toolchain manager is deprecated and is replaced by `nrfutil`. Also, Zephyr's _West_ tool got a brand new `sdk-install` extension command to install the Zephyr SDK toolchain. This extension command, however, is not available in Nordic's _nRF Connect SDK_. Refer to [Zephyr's Getting Started][[zephyr-getting-started](https://docs.zephyrproject.org/latest/develop/getting_started/index.html)] guide for details.
+
+Instead of using Nordic's full-blown IDE solution, we'll create a shell script to set up our terminal. This demonstrates some of the environment variables used by Zephyr and allows you to use a plain terminal to follow along.
 
 > **Note:** In case you want a "Zephyr only" installation without downloading Nordic's software, feel free to follow the installation procedure in the [official documentation](https://docs.zephyrproject.org/latest/develop/getting_started/index.html) - and I'll meet you again in the [next section](#creating-an-empty-application-skeleton)!
 
 As mentioned in the introduction, later in this series, we'll see a much better approach where Zephyr's sources will be pulled into our _workspace_ rather than separately installed: The only thing you'll need are the host tools documented in Zephyr's [getting started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies). For now, I'm using Nordic's toolchain installer simply to have a running setup that we can use to explore Zephyr's sources and tools.
 
 
-### Setup using Nordic's toolchain manager
+### Setup using Nordic's `nrfutil`
 
-Nordic provides the [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk) for its microcontrollers. This SDK is based on Zephyr and, therefore, its version of it (plus some vendor-specific extras). Still, instead of having to go through all the installation steps of the [getting started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html), it comes with a very handy [toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager) to manage different versions of the SDK and thus also Zephyr. We'll also use it as a reference when checking the necessary steps to set up a Zephyr environment.
+Nordic provides the [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk) for its microcontrollers. This SDK is based on Zephyr and, therefore, its version of it (plus some vendor-specific extras). Still, instead of having to go through all the installation steps of the [getting started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html), it comes with its own very handy command line tool [`nrfutil`](https://docs.nordicsemi.com/bundle/nrfutil/page/README.html) to manage different versions of the SDK and thus also Zephyr. We'll also use it as a reference when checking the necessary steps to set up a Zephyr environment.
 
 The nRF Connect SDK also comes with a [`VS Code` extension pack](https://nrfconnect.github.io/vscode-nrf-connect/): We'll see several of the extensions throughout this series but won't use the fully integrated solution since we want to understand what's going on underneath the hood. Go ahead and:
 
-- Follow the [toolchain manager's instructions](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager) to install the current toolchain,
+- Follow [`nrfutil`'s instructions](https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html) to install the current toolchain,
 - _[optional]_ install the [nRF Kconfig extension for `VS Code`](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig),
 - _[optional]_ install the [nRF DeviceTree extension for `VS Code`](https://marketplace.visualstudio.com/items?itemName=nordic-semiconductor.nrf-kconfig).
-- If you plan to follow along using a board from Nordic, install the [command line tools](https://www.nordicsemi.com/Products/Development-tools/nrf-command-line-tools).
 
-> **Note:** If you like Nordic's [nRF Connect for `VS Code` extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), you can now also skip the _toolchain manager_ installation step and install the toolchain straight from within `VS Code`.
+> **Note:** If you like Nordic's [nRF Connect for `VS Code` extension pack](https://nrfconnect.github.io/vscode-nrf-connect/), you can now also skip the _nrfutil_ installation step and install the toolchain straight from within `VS Code`.
 
 If you're not convinced and want to install the SDK manually, you can also have a look at the steps performed in the [Dockerfile](https://github.com/lmapii/practical-zephyr/blob/main/builder.Dockerfile) in the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr). Notice that this _Dockerfile_ is tailored to the needs of this article series and is _not_ a generic solution. If you want something more generic, look at [Zephyr's docker-image repository](https://github.com/zephyrproject-rtos/docker-image).
 
 
 ### Loading the development environment
 
-After installing the toolchain manager, you can install different versions of the nRF Connect SDK. E.g. my current list of installations looks as follows:
+After installing `nrfutil` and its `sdk-manager` extension command (see below), you can install different versions of the nRF Connect SDK. E.g., to install the version 3.2.1 of the _nRF Connect SDK_, use the following commands.
 
-![]({% img_url practical-zephyr/nrf-toolchain-mgr.png %})
+```bash
+$ nrfutil install sdk-manager
+$ nrfutil sdk-manager install v3.2.1
+
+$ nrfutil sdk-manager list
+SDK Type  SDK Version  SDK Status  Toolchain Status
+nrf       v3.2.1       Installed   Installed
+```
 
 However, when using Zephyr's tools in your normal command line, you should notice that the commands cannot be located yet. E.g., this is the output of my `zsh` terminal when trying to execute [Zephyr's meta-tool _West_](https://docs.zephyrproject.org/latest/develop/west/index.html) (we'll see the tool later):
 
@@ -127,37 +139,56 @@ $ west --version
 zsh: command not found: west
 ```
 
-As you can see in the above screenshot of the [toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager), Nordic gives you several options to launch your development environment with all paths set up correctly:
+Nordic gives you several options to launch your development environment with all paths set up correctly using `nrfutil`:
 
-- Open a terminal,
-- generate your own `env.sh`, which you can then `source` in your terminal of choice,
-- open a dedicated `VS Code` instance for the chosen SDK version.
+```bash
+# the following prints all environment variables used by the
+# toolchain installation for the nRF Connect SDK version 3.2.1
+$ nrfutil sdk-manager toolchain env --ncs-version v3.2.1
 
-Since we want a better idea of what's happening underneath it all, we'll use *none* of the above options. Instead, we create our own `setup.sh` script based on the `env.sh` the toolchain manager generates for you.
+# the same command with the --as-script generates an output
+# that can be used as a shell script
+$ nrfutil sdk-manager toolchain env --ncs-version v3.2.1 --as-script
+
+# the following opens a new terminal with the environment set up correctly
+$ nrfutil sdk-manager toolchain launch --ncs-version v3.2.1 --terminal
+
+# ... or you can launch within your existing shell
+$ nrfutil sdk-manager toolchain launch --ncs-version v3.2.1 --shell
+```
+
+Since we want a better idea of what's happening underneath it all, we'll use *none* of the above options. Instead, we create our own `setup.sh` script based on what `nrfutil` generates when using `env --as-script`.
 
 
-### Analyzing the `env.sh` script provided by Nordic
+### Analyzing the script generated by Nordic
 
-First, generate an `env.sh` script using the toolchain manager. At the time of writing, the script configures the following variables when `source`d:
+First, generate an `env.sh` script using `nrfutil`, e.g., using the following command
+
+```bash
+$ nrfutil sdk-manager toolchain env --ncs-version v3.2.1 --as-script > env.sh
+```
+
+At the time of writing, the script configures the following variables when `source`d:
 
 - `PATH` is extended by several `bin` folders containing executables used by the nRF Connect SDK (and Zephyr).
 - `GIT_EXEC_PATH` and `GIT_TEMPLATE_DIR` are set to the versions used by the SDK. Git uses these environment variables for [sub-commands](https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables) and the default repository setup when using [templates](https://git-scm.com/docs/git-init#_template_directory), e.g., for the initial content of your `.gitignore.`
+- `NRFUTIL_HOME` is set to the version of `nrfutil` that comes with the toolchain. Yep, installing the _nRF Connect SDK_ using `nrfutil` also provides an installation of itself. This is due to some extension commands that are needed for handling targets that you'd otherwise need to install globally.
 - `ZEPHYR_TOOLCHAIN_VARIANT`, `ZEPHYR_SDK_INSTALL_DIR`, and `ZEPHYR_BASE` are Zephyr-specific environment variables which we'll explain just now.
 
 
 ### Creating a setup script
 
-Instead of using the provided `env.sh` script, we'll use a stripped-down version to explore the ecosystem and get to know the most important environment variables. You can find the complete [setup script](https://github.com/lmapii/practical-zephyr/blob/main/setup.sh) in the root folder of the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr).
+Instead of using the provided launch options, we'll use our own minimalistic shell script to explore the ecosystem and get to know the most important environment variables. You can find the complete [setup script](https://github.com/lmapii/practical-zephyr/blob/main/setup.sh) in the root folder of the [accompanying GitHub repository](https://github.com/lmapii/practical-zephyr).
 
-After installing a toolchain with the [toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager) you should see a tree similar to the following in your installation directory, in my case `/opt/nordic/ncs`:
+After installing a toolchain with `nrfutil` you should see a tree similar to the following in your installation directory, in my case `/opt/nordic/ncs`:
 
 ```bash
 tree /opt/nordic/ncs --dirsfirst -L 2 -I downloads -I tmp
 /opt/nordic/ncs
 ├── toolchains
-│   ├── 4ef6631da0
+│   ├── 322ac893fe
 │   └── toolchains.json
-└── v2.4.0
+└── v3.2.1
     ├── bootloader
     ├── modules
     ├── nrf
@@ -171,8 +202,8 @@ The toolchain - and therefore **all** required host tools - are installed in a s
 
 ```sh
 ncs_install_dir=/opt/nordic/ncs
-ncs_sdk_version=v2.4.0
-ncs_bin_version=4ef6631da0
+ncs_sdk_version=v3.2.1
+ncs_bin_version=322ac893fe
 shell_name=$(basename "$SHELL")
 
 paths=(
@@ -192,9 +223,9 @@ After sourcing this script, you should now have, e.g., [Zephyr's meta-tool _West
 ```bash
 $ source setup.sh
 $ which cmake
-/opt/nordic/ncs/toolchains/4ef6631da0/bin/cmake
+/opt/nordic/ncs/toolchains/322ac893fe/bin/cmake
 $ which west
-/opt/nordic/ncs/toolchains/4ef6631da0/bin/west
+/opt/nordic/ncs/toolchains/322ac893fe/bin/west
 ```
 
 Only [two environment variables are significant](https://docs.zephyrproject.org/latest/develop/env_vars.html#important-environment-variables) when configuring the toolchain:
@@ -207,13 +238,18 @@ Once those environment variables are set, we can source the `zephyr-env.sh` that
 
 ```sh
 # continuing setup.sh from the previous snippet
+
+# for the sake of completeness, also show that we use the version of `nrfutil`
+# that comes with Nordic's toolchain installation.
+export NRFUTIL_HOME=$ncs_install_dir/toolchains/$ncs_bin_version/nrfutil/home
+
 export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
 export ZEPHYR_SDK_INSTALL_DIR=$ncs_install_dir/toolchains/$ncs_bin_version/opt/zephyr-sdk
 source $ncs_install_dir/$ncs_sdk_version/zephyr/zephyr-env.sh
 west zephyr-export
 ```
 
-Instead of setting `ZEPHYR_BASE` manually as, e.g., done by the `env.sh` script generated via the Nordic toolchain manager, `ZEPHYR_BASE` is now set by the `zephyr-env.sh` script (we'll see how `ZEPHYR_BASE` is used when building our application). In addition, this also allows [using `.zephyrrc` files](https://docs.zephyrproject.org/latest/develop/env_vars.html#option-3-using-zephyrrc-files) in your application root directory - a feature we won't cover in this series.
+Instead of setting `ZEPHYR_BASE` manually as, e.g., done `nrfutil`, `ZEPHYR_BASE` is now set by the `zephyr-env.sh` script (we'll see how `ZEPHYR_BASE` is used when building our application). In addition, this also allows [using `.zephyrrc` files](https://docs.zephyrproject.org/latest/develop/env_vars.html#option-3-using-zephyrrc-files) in your application root directory - a feature we won't cover in this series.
 
 The final command, `west zephyr-export`, is a ["Zephyr extension command"](https://docs.zephyrproject.org/latest/develop/west/zephyr-cmds.html#installing-cmake-packages-west-zephyr-export) that installs the required _CMake_ packages that we'll need in the next steps when using `find_package` to locate Zephyr's sources in a `CMakeLists.txt` file.
 
@@ -283,7 +319,7 @@ Our `main.c` file contains our application code. We'll just provide a dummy appl
 ```c
 #include <zephyr/kernel.h>
 
-void main(void)
+int main(void)
 {
     while (1)
     {
@@ -303,12 +339,12 @@ Let's go through the steps to create our `CMakeLists.txt` for this empty applica
 ```cmake
 cmake_minimum_required(VERSION 3.20.0)
 
-set(BOARD nrf52840dk_nrf52840)
+set(BOARD nrf52840dk/nrf52840)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 ```
 
 - `cmake_minimum_required` just indicates the allowed CMake versions. Zephyr has its requirements and maintains its minimal required CMake version in `zephyr/cmake/modules/zephyr_default.cmake`.
-- The `set` function writes the board we're building our application for to the variable `BOARD`. This step is optional and can be specified during the build step as a parameter. `nrf52840dk_nrf52840` is Zephyr's name for the [nRF52840 development kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk).
+- The `set` function writes the board we're building our application for to the variable `BOARD`. This step is optional and can be specified during the build step as a parameter. `nrf52840dk/nrf52840` is Zephyr's name for the [nRF52840 development kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk).
 - Then, we load Zephyr using the `find_package` function. In our [setup script](#creating-a-setup-script), we've exported the `ZEPHYR_BASE` environment variable, which is now passed as a hint to the `find_package` function to locate the correct Zephyr installation.
 
 > **Note:** There are several ways to use the Zephyr CMake package, each of which is described in detail in [Zephyr's CMake package documentation](https://docs.zephyrproject.org/latest/build/zephyr_cmake_package.html). You can also have a look at the [Zephyr CMake package source code](https://docs.zephyrproject.org/latest/build/zephyr_cmake_package.html#zephyr-cmake-package-source-code) for details.
@@ -397,15 +433,17 @@ As mentioned, _West_ needs an indication of which board is being used by your pr
 
 ```bash
 # pass the board as argument
-$ west build --board nrf52840dk_nrf52840 -d ../build
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build
 # or using an environment variable
-$ export BOARD=nrf52840dk_nrf52840
+$ export BOARD=nrf52840dk/nrf52840
 $ west build -d ../build
 ```
 
 Underneath, _West_ sets up the build directory and then simply invokes CMake. Thus, everything build-related is still plain old CMake. The above builds run without warning.
 
 > **Note:** The `build` command is actually a so-called [_West_ extension command](https://docs.zephyrproject.org/latest/develop/west/zephyr-cmds.html) and is not built into _West_ by default. You could thus, e.g., use _West_ without Zephyr as a repository manager in a different context. Zephyr provides extension commands such as [`build`, `flash`, and `debug`](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html) in its own _West_ extension such that applications can be built, flashed, and debugged in the same way, independent of, e.g., the debugger or programmer that is used. If you're interested in how Zephyr's extensions work, have a look at `zephyr/scripts/west-commands.yml` and the corresponding _West_ extension scripts.
+
+> **Note:** Zephyr uses so called [system builds](https://docs.zephyrproject.org/latest/build/sysbuild/index.html) by default. In simple words, system builds combine one or more builds into a hierarchical build, e.g., if you're using a bootloader like `mcuboot` then you can build the application and the bootloader together using system build. For the remainder of this article series you'll find that we _disable_ system builds using `--no-sysbuild`. We need to do this since we'll be looking through files in our build folder and using system builds changes these paths significantly.
 
 Once the build folder has been created using any of the above commands, it is no longer necessary to pass the board to _West_:
 
@@ -414,7 +452,7 @@ Once the build folder has been created using any of the above commands, it is no
 $ if test -d ../build; then echo "build directory exists!"; fi
 build directory exists!
 # ... it is no longer necessary to specify the board:
-$ west build -d ../build
+$ west build --no-sysbuild -d ../build
 ```
 
 Alternatively, we can use [West's build configuration options](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#configuration-options) to fix the board in the executing terminal. These options are similar to environment variables but are configuration options _only_ relevant to West. We can list the current West configuration options using `west config -l`:
@@ -429,12 +467,12 @@ zephyr.base=zephyr
 The listed configuration options are part of [West's built-in configuration options](https://docs.zephyrproject.org/latest/develop/west/config.html#built-in-configuration-options) and come from the West workspace configuration. Since we're using a freestanding application, we'll ignore these options and focus on our build settings. We can add a default board configuration to our settings as follows:
 
 ```bash
-$ west config build.board nrf52840dk_nrf52840
+$ west config build.board nrf52840dk/nrf52840
 $ west config -l
 manifest.path=nrf
 manifest.file=west.yml
 zephyr.base=zephyr
-build.board=nrf52840dk_nrf52840
+build.board=nrf52840dk/nrf52840
 # It is also possible to delete an option
 #, e.g., using `west config -d build.board`
 ```
@@ -444,13 +482,13 @@ build.board=nrf52840dk_nrf52840
 Now, we can run `west build` in our current terminal without specifying a board.
 
 ```bash
-$ west build -d ../build
+$ west build --no-sysbuild -d ../build
 ```
 
 Notice that CMake does not pick up _West_'s configuration options, so executing `cmake -B ../build` would fail. One last parameter for `west build` that is worth mentioning is `--pristine`: Just like the `--pristine` option for `CMake`, instead of deleting the `build` folder, you can also use the `--pristine` to generate a new build:
 
 ```bash
-$ west build -d ../build --pristine
+$ west build --no-sysbuild -d ../build --pristine
 ```
 
 
@@ -575,7 +613,7 @@ Setting up debugging in `VS Code` is explained in the [official documentation](h
       "type": "cortex-debug",
       "runToEntryPoint": "main",
       "servertype": "jlink",
-      "gdbPath": "/opt/nordic/ncs/toolchains/4ef6631da0/opt/zephyr-sdk/arm-zephyr-eabi/bin/arm-zephyr-eabi-gdb"
+      "gdbPath": "/opt/nordic/ncs/toolchains/322ac893fe/opt/zephyr-sdk/arm-zephyr-eabi/bin/arm-zephyr-eabi-gdb"
     }
   ]
 }
@@ -593,7 +631,7 @@ Another great resource about `VS Code` with Zephyr is [Jonathan Beri's presentat
 
 ## Conclusion
 
-In this article, we installed Zephyr and its tools using Nordic's [toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager), and with it have a base environment that we'll use in this series. Since your preference for development environments and installation for sure greatly varies, finding the matching solution will always be your own task. With the contents of the `setup.sh` script that we created in this article, you should have a good idea about what's involved when creating your own setup.
+In this article, we installed Zephyr and its tools using Nordic's [`nrfutil`](https://docs.nordicsemi.com/bundle/nrfutil/page/README.html), and with it have a base environment that we'll use in this series. Since your preference for development environments and installation for sure greatly varies, finding the matching solution will always be your own task. With the contents of the `setup.sh` script that we created in this article, you should have a good idea about what's involved when creating your own setup.
 
 > **Note:** The example application skeleton created throughout this article is available in the [`00_basics` folder of the accompanying GitHub repository](https://github.com/lmapii/practical-zephyr/tree/main/00_basics).
 

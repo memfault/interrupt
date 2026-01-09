@@ -75,7 +75,7 @@ name = "pypi"
 [dev-packages]
 autopep8 = "*"
 pylint = "*"
-west = "1.2"
+west = "1.5"
 
 [requires]
 python_version = "3.11"
@@ -88,7 +88,7 @@ workspace $ pip install pipenv
 workspace $ pipenv install --dev
 workspace $ pipenv shell
 (workspace) workspace $ west --version
-West version: v1.2.0
+West version: v1.5.0
 ```
 
 In the remainder of this article, I won't explicitly refer to the `python` environment or _West_ installation anymore. It is up to you to decide which approach to use, e.g., installing _West_ globally, using [`pipenv`](https://pipenv.pypa.io/), [`venv`](https://docs.python.org/3/library/venv.html), [`poetry`](https://python-poetry.org/), or maybe you're using one Zephyr's [docker images](https://github.com/zephyrproject-rtos/docker-image) - whatever works best for you!
@@ -123,7 +123,7 @@ The minimal content of our _manifest_ file is the following:
 ```yaml
 manifest:
   # lowest version of the manifest file schema that can parse this file’s data
-  version: 0.8
+  version: 1.2
 ```
 
 Zephyr's [official documentation on West basics](https://docs.zephyrproject.org/latest/develop/west/basics.html) calls the `workspace` folder the "_topdir_" and our `app` folder the _manifest **repository**_: In an idiomatic workspace, the folder containing the manifest file is a direct sibling of the "topdir" or workspace root directory, and it is a `git` repository. The folder name `app` is just a personal preference.
@@ -192,12 +192,12 @@ file = west.yml
 
 The location of the `.west` folder "marks" the _topdir_ and thus the _West_ workspace root directory. Within this file, we can see that _West_ stores the location and name of the manifest file. Modifying this file - or any file within the `.west` folder -  is not recommended, since some of _West's_ commands might no longer work as expected.
 
-_"west/config"_ sounds familiar, doesn't it? If you've been following this article series, you might remember that we already encountered the `west config` command in the very [first article]({% post_url 2024-01-10-practical_zephyr_basics %}): We used the command "`west config build.board nrf52840dk_nrf52840`" to configure the _board_ for our build so that we didn't have to pass it as an argument to `west build` anymore. This does sound suspiciously similar to _"west/config"_!
+_"west/config"_ sounds familiar, doesn't it? If you've been following this article series, you might remember that we already encountered the `west config` command in the very [first article]({% post_url 2024-01-10-practical_zephyr_basics %}): We used the command "`west config build.board nrf52840dk/nrf52840`" to configure the _board_ for our build so that we didn't have to pass it as an argument to `west build` anymore. This does sound suspiciously similar to _"west/config"_!
 
 Let's try and see how `west config` affects our workspace and `.west/config`:
 
 ```bash
-workspace/app $ west config build.board nrf52840dk_nrf52840
+workspace/app $ west config build.board nrf52840dk/nrf52840
 workspace/app $ cat ../.west/config
 ```
 
@@ -207,7 +207,7 @@ path = app
 file = west.yml
 
 [build]
-board = nrf52840dk_nrf52840
+board = nrf52840dk/nrf52840
 ```
 
 Having initialized a _West workspace_, we can now see that `west config` by default uses this _local_ configuration file to store its configuration options. _West_ also supports storing configuration options globally or even system-wide. Have a look at the  [official documentation](https://docs.zephyrproject.org/latest/develop/west/config.html) in case you need to know more.
@@ -232,7 +232,7 @@ In your manifest file, you can use the `manifest.projects` key to define all Git
 
 ```yaml
 manifest:
-  version: 0.8
+  version: 1.2
 
   projects:
     - name: doxygen-awesome
@@ -288,7 +288,7 @@ At the time of writing, the tag `v2.2.1` was the latest release available for `d
 
 ```yaml
 manifest:
-  version: 0.8
+  version: 1.2
 
   projects:
     - name: doxygen-awesome
@@ -375,7 +375,7 @@ Let's update the `west.yml` file in the folder that `west init` cloned for us as
 
 ```yaml
 manifest:
-  version: 0.8
+  version: 1.2
 
   # Entries in the `self` key are only applied to the _manifest repository_
   self:
@@ -514,7 +514,7 @@ As an application, we're using a modified version of the *Blinky* sample, where 
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
 
-void main(void)
+int main(void)
 {
     int err   = 0;
     bool tick = true;
@@ -522,14 +522,14 @@ void main(void)
     if (!gpio_is_ready_dt(&led))
     {
         printk("Error: LED pin is not available.\n");
-        return;
+        return -EIO;
     }
 
     err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
     if (err != 0)
     {
         printk("Error %d: failed to configure LED pin.\n", err);
-        return;
+        return -EIO;
     }
 
     while (1)
@@ -630,28 +630,28 @@ Before running `west update`, let's add Zephyr as a project in `manifest.project
 
 ```yaml
 manifest:
-  version: 0.8
+  version: 1.2
 
   self:
     path: app
 
   projects:
     - name: zephyr
-      revision: v3.4.0
+      revision: v4.3.0
       url: https://github.com/zephyrproject-rtos/zephyr
       path: deps/zephyr
 ```
 
-Running `west update` clones the Zephyr repository into `deps/zephyr` and checks out the commit with the tag `v3.4.0`:
+Running `west update` clones the Zephyr repository into `deps/zephyr` and checks out the commit with the tag `v4.3.0`:
 
 ```bash
 $ west update
 === updating zephyr (deps/zephyr):
 --- zephyr: initializing
 Initialized empty Git repository in /path/to/workspace/deps/zephyr/.git/
---- zephyr: fetching, need revision v3.4.0
+--- zephyr: fetching, need revision v4.3.0
 ...
-HEAD is now at 356c8cbe63 release: Zephyr 3.4.0 release
+HEAD is now at 3568e1b6 release: Zephyr 4.3.0 release
 ```
 
 Now, we have a complete "T2 star topology" workspace, where the Zephyr dependency is placed in a separate `deps` folder in the _topdir_ (again following the convention presented by Mike Szczys in his talk ["Manifests: Project Sanity in the Ever-Changing Zephyr World"](https://www.youtube.com/watch?v=PVhu5rg_SGY)):
@@ -678,7 +678,7 @@ tree --dirsfirst -a -L 3
 Since we've used this application already in the previous article, we're pretty sure that it should build. However, building still fails since we didn't tell _West_ about Zephyr's extension commands yet:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 app
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 app
 usage: west [-h] [-z ZEPHYR_BASE] [-v] [-V] <command> ...
 west: unknown command "build"; workspace /path/to/workspace does not define this extension command -- try "west help"
 ```
@@ -689,14 +689,14 @@ We can fix this by adding the `west-commands` key to the `zephyr` project: Zephy
 
 ```yaml
 manifest:
-  version: 0.8
+  version: 1.2
 
   self:
     path: app
 
   projects:
     - name: zephyr
-      revision: v3.4.0
+      revision: v4.3.0
       url: https://github.com/zephyrproject-rtos/zephyr
       path: deps/zephyr
       # explicitly add Zephyr-specific West extensions
@@ -706,7 +706,7 @@ manifest:
 With the `west-commands` in place we can re-run `west update` to try and build our application. Several things can go wrong at this point. Best case, you'll see the error message below. Otherwise, the build might fail, e.g., because you don't have [_CMake_](https://cmake.org/) installed or because the _Zephyr SDK_ doesn't match the target:
 
 ```bash
-west build --board nrf52840dk_nrf52840 app
+west build --no-sysbuild --board nrf52840dk/nrf52840 app
 -- west build: generating a build system
 Loading Zephyr default modules (Zephyr base).
 ...
@@ -728,7 +728,9 @@ The error message is quite clear: Zephyr builds require that a toolchain is eith
 
 > **Note:** The `west-commands` is only needed since we've not seen the `import` key yet. I've added it explicitly so that you know about this key and how the West extension commands are handled in a manifest file, but you typically don't need to specify this in your `west.yml`.
 
-The term ["Zephyr SDK"](https://docs.zephyrproject.org/latest/develop/toolchains/zephyr_sdk.html) refers to the toolchains that must be provided for each of Zephyr’s supported architectures. With our manifest, we only add Zephyr's _sources_ to our workspace. The required tools, however, e.g., the GCC compiler for ARM Cortex-M, are **not** included.
+The term ["Zephyr SDK"](https://docs.zephyrproject.org/latest/develop/toolchains/zephyr_sdk.html) refers to the `zephyr` toolchain variant that must be provided for each of Zephyr’s supported architectures. With our manifest, we only add Zephyr's _sources_ to our workspace. The required tools, however, e.g., the GCC compiler for ARM Cortex-M, are **not** included.
+
+> **Note:** Yes, the inconsistent use of the term "SDK" is quite annoying. While Zephyr uses _SDK_ exclusively for referring to the toolchain, I'd claim that an SDK typically also includes source code.
 
 
 ### Adding a toolchain
@@ -745,11 +747,17 @@ Toolchain management is always a highly opinionated topic, so I'll try to keep t
 - Host dependencies such as `python`, `cmake`, `ninja`, etc., as explained in Zephyr's [Getting Started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies)
 - An installation of the _Zephyr SDK_, containing the architecture specific toolchain. Zephyr's official documentation includes a dedicated section on the [Zephyr SDK](https://docs.zephyrproject.org/latest/develop/toolchains/zephyr_sdk.html) and its installation instructions. The _Zephyr SDK_ does **not** contain Zephyr's _sources_!
 
-> **Note:** Yes, the inconsistent use of the term "SDK" is quite annoying. While Zephyr uses _SDK_ exclusively for referring to the toolchain, I'd claim that an SDK typically also includes source code.
+Thankfully, Zephyr now made it easy to install the "Zephyr SDK" using a dedicated _West_ extension command, which is also explained in Zephyr's [Getting Started guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies). E.g., to install the Zephyr SDK for `arm-zephyr-eabi` I could run the following command _in my West workspace_:
+
+```bash
+$ west sdk install --toolchains arm-zephyr-eabi
+```
+
+> **Note:** Running this command outside of a _West workspace_ fails ... unless you have an environment variable `ZEPHYR_BASE` pointing to [Zephyr's main repository](https://github.com/zephyrproject-rtos/zephyr/) on your filesystem.
 
 The host tools are typically in your `$PATH` - at least for the executing terminal. For pointing Zephyr's build process to your installed SDK you can use the two environment variables [`ZEPHYR_TOOLCHAIN_VARIANT`](https://docs.zephyrproject.org/latest/develop/env_vars.html#envvar-ZEPHYR_TOOLCHAIN_VARIANT) and [`ZEPHYR_SDK_INSTALL_DIR`](https://docs.zephyrproject.org/latest/develop/env_vars.html#envvar-ZEPHYR_SDK_INSTALL_DIR).
 
-In the first article of this series, we installed the correct SDK for the [nRF52840 Development Kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) using [Nordic's toolchain manager](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/installation/assistant.html#install-toolchain-manager). This installation contains not only the Zephyr SDK but also the host dependencies that I need for building Zephyr applications for nRF devices.
+In the first article of this series, we installed the correct SDK for the [nRF52840 Development Kit](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) using Nordic's [`nrfutil`](https://docs.nordicsemi.com/bundle/nrfutil/page/README.html) command line tool. This installation contains not only the Zephyr SDK but also the host dependencies that I need for building Zephyr applications for nRF devices.
 
 Since both, the STM32 and the nRF52840, are ARM MCUs, the installed Zephyr SDK already also contains the toolchain for building for the [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-f411re.html). All I need to do is provide the required environment variables.
 
@@ -761,7 +769,7 @@ For that, I could, e.g., use a _shell_ script similar to what we've seen in the 
 #!/bin/sh
 
 ncs_install_dir="${ncs_install_dir:-/opt/nordic/ncs}"
-ncs_bin_version="${ncs_bin_version:-4ef6631da0}"
+ncs_bin_version="${ncs_bin_version:-322ac893fe}"
 
 paths=(
     $ncs_install_dir/toolchains/$ncs_bin_version/bin
@@ -774,6 +782,9 @@ paths=(
 for entry in ${paths[@]}; do
     export PATH=$PATH:$entry
 done
+
+# use the nrfutil installation from the toolchain installation
+export NRFUTIL_HOME=$ncs_install_dir/toolchains/$ncs_bin_version/nrfutil/home
 
 # only export the paths to the SDK, no longer export the path to the zephyr installation.
 export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
@@ -796,13 +807,13 @@ Having all tools installed, the build should now pass, or shouldn't it? Worth a 
 
 ```bash
 $ source app/setup-sdk-nrf.sh
-$ west build --board nrf52840dk_nrf52840 app
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 app
 -- west build: generating a build system
 Loading Zephyr default modules (Zephyr base (cached)).
 -- Application: /path/to/workspace/app
 ...
--- Found host-tools: zephyr 0.16.0 (/opt/nordic/ncs/toolchains/4ef6631da0/opt/zephyr-sdk)
--- Found toolchain: zephyr 0.16.0 (/opt/nordic/ncs/toolchains/4ef6631da0/opt/zephyr-sdk)
+-- Found host-tools: zephyr 0.17.0 (/opt/nordic/ncs/toolchains/322ac893fe/opt/zephyr-sdk)
+-- Found toolchain: zephyr 0.17.0 (/opt/nordic/ncs/toolchains/322ac893fe/opt/zephyr-sdk)
 ...
 -- Including generated dts.cmake file: /path/to/workspace/build/zephyr/dts.cmake
 
@@ -839,14 +850,14 @@ The build fails since we're only adding the _Zephyr_ repository as a dependency.
 
 ```yaml
 manifest:
-  version: 0.8
+  version: 1.2
 
   self:
     path: app
 
   projects:
     - name: zephyr
-      revision: v3.4.0
+      revision: v4.3.0
       url: https://github.com/zephyrproject-rtos/zephyr
       # the path is no longer needed since we're now using `path-prefix`
       # path: deps/zephyr
@@ -860,6 +871,7 @@ manifest:
         file: west.yml
         name-allowlist:
           - cmsis
+          - cmsis_6
           - hal_nordic
 ```
 
@@ -901,7 +913,7 @@ Now, our `west build` indeed succeeds:
 
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 app
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 app
 ...
 
 [163/163] Linking C executable zephyr/zephyr.elf
@@ -933,7 +945,7 @@ Knowing that we're still missing the STM32 HAL, we can look it up in Zephyr's `w
 ```bash
 $ grep stm32 deps/zephyr/west.yml -A 2 --ignore-case
     - name: hal_stm32
-      revision: c865374fc83d93416c0f380e6310368ff55d6ce2
+      revision: 286dd285b5bb4fddafdfff27b5405264e5a61bfe
       path: modules/hal/stm32
       groups:
         - hal
@@ -945,19 +957,20 @@ The STM32 HAL is part of the project `hal_stm32`, which we can now add to our al
 
 ```yaml
 manifest:
-  version: 0.8
+  version: 1.2
 
   self:
     path: app
 
   projects:
     - name: zephyr
-      revision: v3.4.0
+      revision: v4.3.0
       url: https://github.com/zephyrproject-rtos/zephyr
       import:
         path-prefix: deps
         name-allowlist:
           - cmsis
+          - cmsis_6
           - hal_nordic
           - hal_stm32 # <-- added STM32 HAL
 ```
@@ -983,7 +996,7 @@ $ tree --dirsfirst -a -L 5
 Building the application for the STM32 development kit now succeeds as expected:
 
 ```bash
-$ west build --board nucleo_f411re app --pristine
+$ west build --no-sysbuild --board nucleo_f411re app --pristine
 ...
 
 [159/159] Linking C executable zephyr/zephyr.elf
@@ -1045,6 +1058,8 @@ manifest:
       url: https://github.com/zephyrproject-rtos/zephyr
       import: true
 ```
+
+> **Note:** The _Golioth Zephyr SDK_ is now deprecated in favor of the [Golioth Firmware SDK](https://github.com/golioth/golioth-firmware-sdk), which is a Zephyr _module_ - something we won't discuss in this article series.
 
 These dependencies are something that you need to handle yourself since [_West_ ignores projects that have already been defined in other files](https://docs.zephyrproject.org/latest/develop/west/manifest.html#manifest-imports). E.g., if you define _Zephyr_ as a project in your manifest file, and _after_ add [Golioth's Zephyr SDK](https://docs.golioth.io/firmware/zephyr-device-sdk/), then the _Zephyr_ project in the `west-zephyr.yml` file of the Golioth SDK is _ignored_.
 

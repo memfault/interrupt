@@ -54,7 +54,7 @@ The `prj.conf` remains empty for now, and the `CMakeLists.txt` only includes the
 #include <zephyr/kernel.h>
 #define SLEEP_TIME_MS 100U
 
-void main(void)
+int main(void)
 {
     printk("Message in a bottle.\n");
     while (1)
@@ -67,7 +67,7 @@ void main(void)
 As usual, I'll build the application for my [nRF52840 Development Kit from Nordic](https://www.nordicsemi.com/), but you can use any of [Zephyr's long list of supported boards](https://docs.zephyrproject.org/latest/boards/index.html) - or an emulation target.
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build
 ```
 
 
@@ -87,7 +87,7 @@ Straight from the documentation, we follow the _"Open in GitHub"_ link to find t
 
 The *Blinky* example chooses the LED Devicetree node using the _alias_ `led0`. Zephyr keeps its Devicetrees clean and we've seen that aliases, including `led0` are usually consistent throughout supported boards. Thus, if there's a board supported by Zephyr that has at least one light on it that works like LED, you can be sure that there's also a matching `led0` alias:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 / {
@@ -140,14 +140,14 @@ In the example application, we use `DT_CHOSEN(app_led)` instead of `DT_ALIAS(led
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
 
-void main(void)
+int main(void)
 {
     int err = 0;
 
-    if (!gpio_is_ready_dt(&led)) { return; }
+    if (!gpio_is_ready_dt(&led)) { return -EIO; }
 
     err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-    if (err < 0) { return; }
+    if (err < 0) { return -EIO; }
 
     while (1)
     {
@@ -160,7 +160,7 @@ void main(void)
 Building and flashing the application we indeed end up with a blinking LED.
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build
 $ west flash --build-dir ../build
 ```
 
@@ -236,7 +236,7 @@ Ignoring the `.port` field (we'll get to that, don't worry), `GPIO_DT_SPEC_GET` 
 
 Properties of type `phandle-array` are heavily used in Devicetrees. Since we now have one at hand with our *Blinky* example, let's use it to review what we've learned about `phandle-array`s - practice and repetition is the key to learning new concepts! The `/leds/led0` is defined in the board's DTS file as follows:
 
-`(reduced) zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`(reduced) zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 / {
@@ -498,7 +498,7 @@ For now, it is enough to know that Zephyr creates symbols for each device instan
  *   /path/to/build/zephyr/zephyr.dts.pre
  *
  * Directories with bindings:
- *   /opt/nordic/ncs/v2.4.0/nrf/dts/bindings, /path/to/dts/bindings, $ZEPHYR_BASE/dts/bindings
+ *   /opt/nordic/ncs/v3.2.1/nrf/dts/bindings, /path/to/dts/bindings, $ZEPHYR_BASE/dts/bindings
  *
  * Node dependency ordering (ordinal and path):
  *   0   /
@@ -737,7 +737,7 @@ One important property that we've touched already is the `status` property. Whil
 
 In the nRF52840 development kit's DTS file, the `status` property is overwritten with `"okay"`:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 &gpio0 { status = "okay"; };
@@ -759,7 +759,7 @@ This matches with what we've seen for the `DT_INST_FOREACH_STATUS_OKAY` macro in
 Trying to recompile the project leads to the linker error that we've seen in the documentation of `DEVICE_NAME_GET`:
 
 ```
-/opt/nordic/ncs/v2.4.0/zephyr/include/zephyr/device.h:84:41: error:
+/opt/nordic/ncs/v3.2.1/zephyr/include/zephyr/device.h:84:41: error:
 '__device_dts_ord_11' undeclared here (not in a function);
 did you mean '__device_dts_ord_15'?
    84 | #define DEVICE_NAME_GET(dev_id) _CONCAT(__device_, dev_id)
@@ -806,6 +806,8 @@ What's the use of the `status`, then? You can and should use `status` to _disabl
 
 > **Note:** In case you're wondering what the difference between the `status` property and the `is_ready_dt` function call is - you're not alone, so let's clarify this briefly. The `status` property is used to _remove_ instances altogether, whereas the `is_ready_dt` ensures that the driver is ready to be used. You can't call `is_ready_dt` with a specification for a disabled node - as we've seen, the compilation or linking fails entirely for disabled nodes.
 
+> **Note:** The dreaded `'__device_dts_ord_<n>' undeclared` linker error can now also be investigated using [Zephyr's devicetree doctor](https://docs.zephyrproject.org/latest/develop/sca/dtdoctor.html). This devicetree doctor is a static analysis tool and can be run using `west build <your arguments> -- -DZEPHYR_SCA_VARIANT=dtdoctor`.
+
 
 ### Intermezzo: Power profiling
 
@@ -841,7 +843,6 @@ In case of doubt another good location to look for a node's `status` is the `zep
 &radio {status = "disabled"; };
 &uart0 {status = "disabled"; };
 &uart1 {status = "disabled"; };
-&gpiote {status = "disabled"; };
 ```
 
 > **Note:** We're also disabling `uart0` and therefore the `/chosen` node for our console output - the boot banner `*** Booting Zephyr OS build v3.3.99-ncs1 ***` will no longer be output.
@@ -922,7 +923,7 @@ With `&led0` we've seen that it's quite straightforward to use GPIOs in Zephyr. 
 We've learned that UART is used for the console output and thus for `printk`, so let's use some `printk` calls to make use of it. We'll output `"tick"` each time the LED is turned on, and `"tock"` each time it is turned off:
 
 ```c
-void main(void)
+int main(void)
 {
     int err   = 0;
     bool tick = true;
@@ -930,14 +931,14 @@ void main(void)
     if (!gpio_is_ready_dt(&led))
     {
         printk("Error: LED pin is not available.\n");
-        return;
+        return -EIO;
     }
 
     err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
     if (err != 0)
     {
         printk("Error %d: failed to configure LED pin.\n", err);
-        return;
+        return -EIO;
     }
 
     while (1)
@@ -959,7 +960,7 @@ void main(void)
 
 To see how pins are assigned to our UART peripheral, we need to look into our board's DTS file. There, we find `pinctrl-<x>` properties for the `&uart0` node:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 &uart0 {
@@ -1008,7 +1009,7 @@ Let's bring up the `&uart0` node in the nRF52840 development kit's DTS file to s
 
 #### Pin control basics
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 &uart0 {
@@ -1037,7 +1038,7 @@ Except for a list of pre-defined properties that we'll see in just a bit, this i
 
 We can find the referenced nodes `&uart0_default` and `&uart0_sleep` in the matching `-pinctrl.dtsi` DTS include file of the board:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840-pinctrl.dtsi`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840-pinctrl.dtsi`
 
 ```dts
 &pinctrl {
@@ -1114,7 +1115,7 @@ The property `psels` is specific to Nordic MCUs and - as documented - you're sup
 
 Other vendors use an entirely different set of properties and macros for their Devicetree nodes and values. E.g., _Espressif_ uses the property `pinmux` instead of `psels` for the ESP32, as specified by `espressif,esp32-pinctrl.yaml`:
 
-`zephyr/boards/xtensa/esp_wrover_kit/esp_wrover_kit-pinctrl.dtsi`
+`zephyr/boards/espressif/esp_wrover_kit/esp_wrover_kit-pinctrl.dtsi`
 
 ```dts
 &pinctrl {
@@ -1179,7 +1180,7 @@ child-binding:
 Having seen the _grouped approach_, let's see how the _node approach_ is applied for the STM32 by looking at the
 [STM32 Nucleo-64 development board](https://www.st.com/en/evaluation-tools/nucleo-c031c6.html)'s DTS file:
 
-`zephyr/boards/arm/nucleo_c031c6/nucleo_c031c6.dts`
+`zephyr/boards/st/nucleo_c031c6/nucleo_c031c6.dts`
 
 ```dts
 &usart2 {
@@ -1304,12 +1305,12 @@ Since I have a spare [STM32 Nucleo-64 development board](https://www.st.com/en/e
 
 ```bash
 $ rm -rf ../build
-$ west build --board nucleo_c031c6 --build-dir ../build
+$ west build --no-sysbuild --board nucleo_c031c6 --build-dir ../build
 ```
 
 ```
 In file included from <command-line>:
-/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nucleo_c031c6/nucleo_c031c6.dts:9:10: fatal error: st/c0/stm32c031c(4-6)tx-pinctrl.dtsi: No such file or directory
+/opt/nordic/ncs/v3.2.1/zephyr/boards/st/nucleo_c031c6/nucleo_c031c6.dts:9:10: fatal error: st/c0/stm32c031c(4-6)tx-pinctrl.dtsi: No such file or directory
     9 | #include <st/c0/stm32c031c(4-6)tx-pinctrl.dtsi>
       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 compilation terminated.
