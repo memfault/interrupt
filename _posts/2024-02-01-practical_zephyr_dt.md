@@ -101,7 +101,7 @@ The `prj.conf` can remain empty for now, and the `CMakeLists.txt` only includes 
 #include <zephyr/kernel.h>
 #define SLEEP_TIME_MS 100U
 
-void main(void)
+int main(void)
 {
     printk("Message in a bottle.\n");
     while (1)
@@ -114,14 +114,14 @@ void main(void)
 As usual, we can now build this application for the development kit of choice, in my case, the [nRF52840 Development Kit from Nordic](https://www.nordicsemi.com/).
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build
 ```
 
 But wait, we didn't "do anything Devicetree" yet, did we? That's right, someone else already did it for us! After our first look into Zephyr and exploring Kconfig, we're familiar with the build output of our Zephyr application, so let's have a look! You should find a similar output right at the start of your build:
 
 ```
--- Found Dtc: /opt/nordic/ncs/toolchains/4ef6631da0/bin/dtc (found suitable version "1.6.1", minimum required is "1.4.6")
--- Found BOARD.dts: /opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts
+-- Found Dtc: /opt/nordic/ncs/toolchains/322ac893fe/bin/dtc (found suitable version "1.6.1", minimum required is "1.4.6")
+-- Found BOARD.dts: /opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts
 -- Generated zephyr.dts: /path/to/build/zephyr/zephyr.dts
 -- Generated devicetree_generated.h: /path/to/build/zephyr/include/generated/devicetree_generated.h
 -- Including generated dts.cmake file: /path/to/build/zephyr/dts.cmake
@@ -133,10 +133,10 @@ The build output shows us that Devicetree - just like Kconfig - is a central par
 
 ```bash
 $ where dtc
-/opt/nordic/ncs/toolchains/4ef6631da0/bin/dtc
+/opt/nordic/ncs/toolchains/322ac893fe/bin/dtc
 ```
 
-Since we didn't specify any so-called _Devicetree overlay file_ (bear with me for now, we'll see how to modify our Devicetree using _overlay_ files in a later section), Zephyr then looks for a Devicetree source file that matches the specified _board_. In my case, that's the nRF52840 development kit, which is supported in the current Zephyr version: The board and thus its Devicetree is fully described by the file `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`.
+Since we didn't specify any so-called _Devicetree overlay file_ (bear with me for now, we'll see how to modify our Devicetree using _overlay_ files in a later section), Zephyr then looks for a Devicetree source file that matches the specified _board_. In my case, that's the nRF52840 development kit, which is supported in the current Zephyr version: The board and thus its Devicetree is fully described by the file `zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`.
 
 > **Note:** If you're using a custom board not supported by Zephyr, you'd have to provide your own DTS file for it. We won't go into details about adding support for a custom board in this article (and maybe the next one), but at the end of it, you should have all the knowledge to do that - or to understand any other article showing you how to do it.
 
@@ -204,7 +204,7 @@ This type of include graph is very common for Devicetrees in Zephyr: You start w
 
 Each Devicetree source file can _reference_ nodes to add, remove, or modify properties for each included file. E.g., for our console output we can find the following parts (the below snippets are incomplete!) in the Devicetree source file of the development kit:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 / {
@@ -576,15 +576,15 @@ We'll practice using a Devicetree _overlay_ file. In the next article, we'll go 
 $ mkdir -p dts/playground
 $ touch dts/playground/props-phandles.overlay
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build -- \
   -DEXTRA_DTC_OVERLAY_FILE=dts/playground/props-phandles.overlay
 ```
 
 The build system's output now announces that it encountered the newly created overlay file with the message `Found devicetree overlay`:
 
 ```
--- Found Dtc: /opt/nordic/ncs/toolchains/4ef6631da0/bin/dtc (found suitable version "1.6.1", minimum required is "1.4.6")
--- Found BOARD.dts: /opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts
+-- Found Dtc: /opt/nordic/ncs/toolchains/322ac893fe/bin/dtc (found suitable version "1.6.1", minimum required is "1.4.6")
+-- Found BOARD.dts: /opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts
 -- Found devicetree overlay: playground/test.overlay
 -- Generated zephyr.dts: /path/to/build/zephyr/zephyr.dts
 ```
@@ -619,7 +619,7 @@ Thus, in our Devicetree overlay file, we can create the properties as shown belo
 Let's run a build to ensure that our overlay is sent through the preprocessor so that we can have a look at the generated `zephyr.dts`:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build -- \
   -DEXTRA_DTC_OVERLAY_FILE=dts/playground/props-phandles.overlay
 ```
 
@@ -903,7 +903,7 @@ With this structure it is clear that we cannot just reference the entire `gpio` 
 
 The nRF52840 development kit connects LEDs to the nRF52840 MCU, which are described using the node `leds` in the board's DTS file. Within this Devicetree, we now see how the `led` instances reference to the nRF52840's GPIOs: E.g., `gpio0` is used in `led0`'s property `gpios` using a `phandle-array`:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 / {
@@ -1014,7 +1014,7 @@ Why the emphasis on "_the application_" and what exactly doesn't work? It's impo
 
 Still wondering why you'd need an _alias_ if you already have labels? Let's have a look at how aliases are used in Zephyr's DTS files. Say, we want to build an application that reads the state of a button. If we look at the nRF52840 development kit, we find the following nodes for the board's buttons:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 / {
@@ -1030,7 +1030,7 @@ Still wondering why you'd need an _alias_ if you already have labels? Let's have
 
 In our application, we could refer to `button_0` via its full path `/buttons/button_0`, or using its label `button0`. Let's say we want to run the same application on a different board, e.g., STM's Nucleo-C031C6. After all, Zephyr's promise is that switching boards should be easily doable, right? Let's have a look at its board's DTS file:
 
-`zephyr/boards/arm/nucleo_c031c6/nucleo_c031c6.dts`
+`zephyr/boards/st/nucleo_c031c6/nucleo_c031c6.dts`
 
 ```dts
 / {
@@ -1045,7 +1045,7 @@ So, our STM board has only one button, which has the path `/gpio_keys/button` an
 
 However, if we'd like to use this button in our application, we'd now have to change our sources - or even worse - adapt the DTS files. Instead of doing this, we can use _aliases_ - and since buttons are commonly used throughout Zephyr's example applications, the corresponding alias, in our case `sw0`, already exists:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 / {
@@ -1059,7 +1059,7 @@ However, if we'd like to use this button in our application, we'd now have to ch
 };
 ```
 
-`zephyr/boards/arm/nucleo_c031c6/nucleo_c031c6.dts`
+`zephyr/boards/st/nucleo_c031c6/nucleo_c031c6.dts`
 
 ```dts
 / {
@@ -1081,7 +1081,7 @@ As you can see, there are also other examples where labels are not consistent. I
 
 Now what about the `/chosen` node? If you've been following along, or if you've just had another look at the DTS file of the nRF52840 development kit, then you might find that some of the `/chosen` nodes look an awful lot like what you find in `/aliases`, just with a different property name format:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 
 ```dts
 / {
@@ -1267,7 +1267,7 @@ The second overlay file shows the use of `path`s, `phandle`, `phandle`s, and `ph
 You can add those files to your own sources and provide both files using the `EXTRA_DTC_OVERLAY_FILE` option by separating the paths using a semicolon:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build -- \
   -DEXTRA_DTC_OVERLAY_FILE="dts/playground/props-basics.overlay;dts/playground/props-phandles.overlay"
 ```
 
@@ -1407,7 +1407,7 @@ In the _board_ DTS file, we find which I2C peripherals are actually hooked up to
 - the `BH1749` ambient light sensor uses the I2C address `0x38`,
 - and the `BME688` gas sensor the address `0x76`.
 
-`zephyr/boards/arm/thingy53_nrf5340/thingy53_nrf5340_common.dts`
+`zephyr/boards/nordic/thingy53/thingy53_nrf5340_common.dtsi`
 
 ```dts
 &i2c1 {

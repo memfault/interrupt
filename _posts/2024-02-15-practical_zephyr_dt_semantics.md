@@ -52,7 +52,7 @@ The `CMakeLists.txt` only includes the necessary boilerplate to create a freesta
 #include <zephyr/kernel.h>
 #define SLEEP_TIME_MS 100U
 
-void main(void)
+int main(void)
 {
     printk("Message in a bottle.\n");
     while (1)
@@ -65,12 +65,12 @@ void main(void)
 The following command builds this application for the [nRF52840 Development Kit from Nordic](https://www.nordicsemi.com/) that we're using as a reference. As usual, you can follow along with any board (or emulation target) and you should see a similar output.
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build
 ```
 
-Using the `--board` parameter, Zephyr selects the matching Devicetree source file `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`, which specifies the properties `status` and `current-speed` for the node with the label `uart0`, as follows:
+Using the `--board` parameter, Zephyr selects the matching Devicetree source file `zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`, which specifies the properties `status` and `current-speed` for the node with the label `uart0`, as follows:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 ```dts
 &uart0 {
   compatible = "nordic,nrf-uarte";
@@ -142,7 +142,7 @@ $ tree --charset=utf-8 --dirsfirst.
 Let's assume we would use the following command that doesn't include the CMake variable `DTC_OVERLAY_FILE`:
 
 ```bash
-$ west build --board dummy_board@123 -- \
+$ west build --no-sysbuild --board dummy_board@123 -- \
   -DEXTRA_DTC_OVERLAY_FILE="dts/extra/extra_0.overlay;dts/extra/extra_1.overlay"
 ```
 
@@ -160,7 +160,7 @@ The overlay files would be detected and added as follows, depending on whether o
 If, instead, we specify the CMake variable `DTC_OVERLAY_FILE` as `app.overlay` in our command as follows, the automatic detection is skipped and the build process only picks the selected DTC overlay files:
 
 ```bash
-$ west build --board dummy_board@123 -- \
+$ west build --no-sysbuild --board dummy_board@123 -- \
   -DTC_OVERLAY_FILE="app.overlay" \
   -DEXTRA_DTC_OVERLAY_FILE="dts/extra/extra_0.overlay;dts/extra/extra_1.overlay"
 ```
@@ -209,12 +209,12 @@ In the development kit's Devicetree source file `nrf52840dk_nrf52840.dts`, the `
 When running a build whilst specifying the path to the overlay using the CMake variable `EXTRA_DTC_OVERLAY_FILE`, we can verify that the overlay is indeed picked up by the build system, since it informs us about the overlays it found using the output `Found devicetree overlay`:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build -- \
   -DEXTRA_DTC_OVERLAY_FILE="dts/playground/props-basics.overlay"
 ```
 ```
--- Found Dtc: /opt/nordic/ncs/toolchains/4ef6631da0/bin/dtc (found suitable version "1.6.1", minimum required is "1.4.6")
--- Found BOARD.dts: /opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts
+-- Found Dtc: /opt/nordic/ncs/toolchains/322ac893fe/bin/dtc (found suitable version "1.6.1", minimum required is "1.4.6")
+-- Found BOARD.dts: /opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts
 -- Found devicetree overlay: dts/playground/props-basics.overlay
 -- Generated zephyr.dts: /path/to/build/zephyr/zephyr.dts
 -- Generated devicetree_generated.h: /path/to/build/zephyr/include/generated/devicetree_generated.h
@@ -287,7 +287,7 @@ Let's look at our favorite `/soc/uart@40002000` node, specified in the nRF52840'
 };
 ```
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 ```dts
 &uart0 {
   compatible = "nordic,nrf-uarte";
@@ -600,7 +600,7 @@ Finally, we create a new property `compatible = "custom,props-basic"` for our ex
 
 ```bash
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build -- \
   -DEXTRA_DTC_OVERLAY_FILE="dts/playground/props-basics.overlay"
 ```
 ```
@@ -708,7 +708,7 @@ After recompiling ...
 
 ```bash
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build -- \
   -DEXTRA_DTC_OVERLAY_FILE="dts/playground/props-basics.overlay"
 ```
 
@@ -776,7 +776,7 @@ Unsurprisingly, for properties of type `int` the value of the macro is an _integ
 ```
 ...
 -- Found devicetree overlay: dts/playground/props-basics.overlay
-devicetree error: 'int' is marked as required in 'properties:' in /path/to/dts/bindings/custom-props-basics.yaml, but does not appear in <Node /node_with_props in '/opt/nordic/ncs/v2.4.0/zephyr/misc/empty_file.c'>
+devicetree error: 'int' is marked as required in 'properties:' in /path/to/dts/bindings/custom-props-basics.yaml, but does not appear in <Node /node_with_props in '/opt/nordic/ncs/v3.2.1/zephyr/misc/empty_file.c'>
 ```
 
 If we'd remove `required: true` from the binding file _and_ delete the node's property in the overlay, _both_ macros would indeed be removed from `devicetree_generated.h`; any search for `N_S_node_with_props_P_int` would fail.
@@ -1088,7 +1088,7 @@ In the build, we could just switch out our overlay and ignore `props-basics.over
 
 ```bash
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build -- \
   -DDTC_OVERLAY_FILE="dts/playground/props-basics.overlay;dts/playground/props-phandles.overlay"
 ```
 
@@ -1184,7 +1184,7 @@ Let's briefly recall why we need a `phandle-array`: In the previous article, we'
 
 Each instance handles _all_ pins in the corresponding port. However, some other Devicetree node, e.g., an LED, needs a way to control and configure a single pin of a given port. We can't do this using a normal _phandle_, e.g., `<&gpio0>`, we need a mechanism to pass some _parameters_ or _metadata_ along with the _phandle_. `phandle-array`s implement this exact use case, allowing to pass a predefined number of cells with the _phandle_, e.g., as we can see in the nRF52840's development kit DTS file for `/leds/led_0`:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 ```dts
 / {
   leds {
@@ -1266,7 +1266,7 @@ For now, let's revert the name change and use `phandle-array-of-refs` as the pro
 
 ```
 -- Found devicetree overlay: dts/playground/props-phandles.overlay
-devicetree error: <Node /node_a in '/opt/nordic/ncs/v2.4.0/zephyr/misc/empty_file.c'>
+devicetree error: <Node /node_a in '/opt/nordic/ncs/v3.2.1/zephyr/misc/empty_file.c'>
 lacks #phandle-array-of-ref-cells
 ```
 
@@ -1289,8 +1289,8 @@ Now the Devicetree compiler knows, that any reference to `/node_a` in a property
 ```
 -- Found devicetree overlay: dts/playground/props-phandles.overlay
 devicetree error: phandle-array-of-ref controller
-<Node /node_a in '/opt/nordic/ncs/v2.4.0/zephyr/misc/empty_file.c'>
-for <Node /node_refs in '/opt/nordic/ncs/v2.4.0/zephyr/misc/empty_file.c'>
+<Node /node_a in '/opt/nordic/ncs/v3.2.1/zephyr/misc/empty_file.c'>
+for <Node /node_refs in '/opt/nordic/ncs/v3.2.1/zephyr/misc/empty_file.c'>
 lacks binding
 ```
 
@@ -1868,7 +1868,7 @@ As we can see, the _names_ of the specifier cells must be known by the applicati
 
 We'll see how this works in detail in the next article, where we'll retrieve the associated `gpio` using `GPIO_DT_SPEC_GET`, and pass the specification to the matching `gpio_pin_configure_dt` function. We could, e.g., imagine writing a driver for a board's LEDs:
 
-`zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840.dts`
+`zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts`
 ```dts
 / {
   leds {

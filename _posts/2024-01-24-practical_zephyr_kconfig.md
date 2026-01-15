@@ -46,7 +46,7 @@ The simplest way to log text in Zephyr is the `printk` function. `printk` can ta
 #include <zephyr/kernel.h>
 #define SLEEP_TIME_MS 100U
 
-void main(void)
+int main(void)
 {
     printk("Message in a bottle.\n");
     while (1)
@@ -67,7 +67,7 @@ As mentioned in the previous article, we're using a development kit from [Nordic
 The connection settings for the UART interface are configured using [devicetree](https://docs.zephyrproject.org/latest/build/dts/index.html) - which we'll explore in a later article. Since these default settings are all we need for now, let's focus on Kconfig. We build and flash the project as follows:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build
 $ west flash --build-dir ../build
 ```
 
@@ -157,7 +157,7 @@ In the header file `zephyr/lib/os/printk.h` we can see that `printk` is replaced
 With `printk` disabled in our application configuration file, let's try to rerun our application to verify that the output is indeed disabled:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 --build-dir ../build --pristine
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 --build-dir ../build --pristine
 $ west flash --build-dir ../build
 ```
 
@@ -202,7 +202,7 @@ Zephyr contains _hundreds_ of so-called Kconfig _fragments_. It is therefore alm
 For the `build` command, _West_ has some builtin _targets_, two of which are used for _Kconfig_:
 
 ```bash
-$ west build --build-dir ../build -t usage
+$ west build --no-sysbuild --build-dir ../build -t usage
 -- west build: running target usage
 ...
 Kconfig targets:
@@ -276,7 +276,7 @@ The downside of saving the configuration to `zephyr/.config` in the build direct
 The people at [Golioth](https://golioth.io/) published a [short article](https://blog.golioth.io/zephyr-quick-tip-show-what-menuconfig-changed-and-make-changes-persistent/) that shows how to leverage the `diff` command to find out which configuration options have changed when using the normal _Save_ operation: Before writing the changes to the `zephyr/.config` file, Kconfig stores the old configuration in `build/zephyr/.config.old`. Thus, all changes that you make between a _Save_ operation are reflected by the differences between `zephyr/.config` and `build/zephyr/.config.old`:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 -d ../build --pristine
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build --pristine
 $ west build -d ../build -t menuconfig
 # Within menuconfig:
 # - Disable BOOT_BANNER and PRINTK.
@@ -306,7 +306,7 @@ Both `menuconfig` and `guiconfig` have the _Save minimal config_ option. As the 
 Let's try this out with our settings for the `BOOT_BANNER` and `PRINTK` symbols.
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 -d ../build --pristine
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build --pristine
 $ west build -d ../build -t menuconfig
 # Within menuconfig:
 # - Disable BOOT_BANNER and PRINTK.
@@ -331,7 +331,7 @@ CONFIG_UART_CONSOLE=y
 CONFIG_EARLY_CONSOLE=y
 ```
 
-As you can see, this minimal configuration contains a lot more options than we changed within `menuconfig`. Some of these options come from the selected board, in my case `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig`, but are still listed since they do not use default values. However, the two changes to `PRINTK` and `BOOT_BANNER` are still visible. We can just take those options and write them to our application configuration file:
+As you can see, this minimal configuration contains a lot more options than we changed within `menuconfig`. Some of these options come from the selected board, in my case `zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig`, but are still listed since they do not use default values. However, the two changes to `PRINTK` and `BOOT_BANNER` are still visible. We can just take those options and write them to our application configuration file:
 
 ```bash
 $ cat prj.conf
@@ -359,9 +359,9 @@ At the time of writing and for this repository, the following configuration opti
 
 ```json
 {
-  "nrf-connect.toolchain.path": "${nrf-connect.toolchain:2.4.0}",
-  "nrf-connect.topdir": "${nrf-connect.sdk:2.4.0}",
-  "kconfig.zephyr.base": "${nrf-connect.sdk:2.4.0}",
+  "nrf-connect.toolchain.path": "${nrf-connect.toolchain:3.2.1}",
+  "nrf-connect.topdir": "${nrf-connect.sdk:3.2.1}",
+  "kconfig.zephyr.base": "${nrf-connect.sdk:3.2.1}",
   "nrf-connect.applications": ["${workspaceFolder}/path/to/app"]
 }
 ```
@@ -425,14 +425,14 @@ We can now instruct _West_ to use this `prj_release.conf` _instead_ of our `prj.
 
 ```bash
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 -d ../build -- -DCONF_FILE=prj_release.conf
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build -- -DCONF_FILE=prj_release.conf
 ```
 
 If you scroll through the output of the `west build` command, you'll notice that _Kconfig_ merged `prj_release.conf` into our final configuration:
 
 ```
-Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
-Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
+Parsing /opt/nordic/ncs/v3.2.1/zephyr/Kconfig
+Loaded configuration '/opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
 Merged configuration '/path/to/01_kconfig/prj_release.conf'
 Configuration saved to '/path/to/zephyr_practical/build/zephyr/.config'
 ```
@@ -447,7 +447,7 @@ Aside from the application configuration file [prj.conf](https://github.com/lmap
 
 E.g., throughout this guide, we're using the nRF52840 development kit, which has the board name `nrf52840dk_nrf52840`. Thus, the file `boards/nrf52840dk_nrf52840.conf` is automatically merged into the `Kconfig` configuration during the build, if present.
 
-Let's try this by disabling UART as console output using a new fragment `boards/nrf52840dk_nrf52840.conf`. For the nRF52840 development kit, this symbol is enabled by default. You can go ahead and verify this by checking the default configuration `zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig` - or take my word for it:
+Let's try this by disabling UART as console output using a new fragment `boards/nrf52840dk_nrf52840.conf`. For the nRF52840 development kit, this symbol is enabled by default. You can go ahead and verify this by checking the default configuration `zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig` - or take my word for it:
 
 ```bash
 tree --charset=utf-8 --dirsfirst
@@ -470,19 +470,19 @@ CONFIG_UART_CONSOLE=n
 Then, we perform a _pristine_ build of the project. Notice that a `--pristine` build is required at this point because otherwise, the build system does not pick up our newly added `.conf` file. This is one of the very few occasions where a pristine build is actually required.
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 -d ../build --pristine
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build --pristine
 ```
 
 In the output of `west build` shown below you can see that the new file `boards/nrf52840dk_nrf52840.conf` is indeed merged into the `Kconfig` configuration. You can also see a warning that the Zephyr library `drivers__console` is excluded from the build since it now has no `SOURCES`:
 
 ```
-Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
-Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
+Parsing /opt/nordic/ncs/v3.2.1/zephyr/Kconfig
+Loaded configuration '/opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
 Merged configuration '/path/to/01_kconfig/prj.conf'
 Merged configuration '/path/to/01_kconfig/boards/nrf52840dk_nrf52840.conf'
 Configuration saved to '/path/to/build/zephyr/.config'
 ...
-CMake Warning at /opt/nordic/ncs/v2.4.0/zephyr/CMakeLists.txt:838 (message):
+CMake Warning at /opt/nordic/ncs/v3.2.1/zephyr/CMakeLists.txt:838 (message):
   No SOURCES given to Zephyr library: drivers__console
   Excluding target from build.
 ```
@@ -495,12 +495,12 @@ How are board fragments used by our previously created `release` build type? Let
 
 ```bash
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 -d ../build -- -DCONF_FILE=prj_release.conf
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build -- -DCONF_FILE=prj_release.conf
 ```
 
 ```
-Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
-Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
+Parsing /opt/nordic/ncs/v3.2.1/zephyr/Kconfig
+Loaded configuration '/opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
 Merged configuration '/path/to/01_kconfig/prj_release.conf'
 Configuration saved to '/path/to/build/zephyr/.config'
 ```
@@ -533,12 +533,12 @@ Now, when we rebuild the project, we see that our board fragment is merged into 
 
 ```bash
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 -d ../build -- -DCONF_FILE=prj_release.conf
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build -- -DCONF_FILE=prj_release.conf
 ```
 
 ```
-Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
-Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
+Parsing /opt/nordic/ncs/v3.2.1/zephyr/Kconfig
+Loaded configuration '/opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
 Merged configuration '/path/to/01_kconfig/prj_release.conf'
 Merged configuration '/path/to/01_kconfig/boards/nrf52840dk_nrf52840_release.conf'
 Configuration saved to '/path/to/build/zephyr/.config'
@@ -579,13 +579,13 @@ We can now pass the two extra configuration fragments to the build system using 
 
 ```bash
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 -d ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build -- \
   -DEXTRA_CONF_FILE="extra0.conf;extra1.conf"
 ```
 
 ```
-Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
-Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
+Parsing /opt/nordic/ncs/v3.2.1/zephyr/Kconfig
+Loaded configuration '/opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
 Merged configuration '/path/to/01_kconfig/prj.conf'
 Merged configuration '/path/to/01_kconfig/boards/nrf52840dk_nrf52840.conf'
 Merged configuration '/path/to/01_kconfig/extra0.conf'
@@ -597,14 +597,14 @@ The fragments specified using the `EXTRA_CONF_FILE` variable are merged into the
 
 ```bash
 $ rm -rf ../build
-$ west build --board nrf52840dk_nrf52840 -d ../build -- \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build -- \
   -DCONF_FILE="prj_release.conf" \
   -DEXTRA_CONF_FILE="extra1.conf;extra0.conf"
 ```
 
 ```
-Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
-Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
+Parsing /opt/nordic/ncs/v3.2.1/zephyr/Kconfig
+Loaded configuration '/opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
 Merged configuration '/path/to/01_kconfig/prj_release.conf'
 Merged configuration '/path/to/01_kconfig/boards/nrf52840dk_nrf52840_release.conf'
 Merged configuration '/path/to/01_kconfig/extra1.conf'
@@ -620,13 +620,13 @@ We can use this tool to check our normal and _release_ configurations:
 
 ```bash
 $ # test normal build
-$ west build --board nrf52840dk_nrf52840 \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 \
   -d ../build \
   --pristine \
   -t hardenconfig
 
 $ # test release build
-$ west build --board nrf52840dk_nrf52840 \
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 \
   -d ../build \
   --pristine \
   -t hardenconfig \
@@ -637,7 +637,7 @@ For the normal build using `prj.conf`, the hardening tool displays a table of al
 
 ```
 -- west build: running target hardenconfig
-[0/1] cd /path/to/zephyr/kconfig/hardenconfig.py /opt/nordic/ncs/v2.4.0/zephyr/Kconfig
+[0/1] cd /path/to/zephyr/kconfig/hardenconfig.py /opt/nordic/ncs/v3.2.1/zephyr/Kconfig
                  name                 | current | recommended || check result
 ==============================================================================
 CONFIG_OVERRIDE_FRAME_POINTER_DEFAULT |    n    |      y      ||     FAIL
@@ -707,12 +707,12 @@ By sourcing the `Kconfig.zephr` file, we're loading all _Kconfig_ menus and symb
 Let's rebuild our application without configuring `USR_FUN` and have a look at the build output. A `--pristine` build is required to pick up the new `Kconfig` file:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 -d ../build --pristine
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build --pristine
 ```
 
 ```
 Parsing /path/to/01_kconfig/Kconfig
-Loaded configuration '/opt/nordic/ncs/v2.4.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840_defconfig'
+Loaded configuration '/opt/nordic/ncs/v3.2.1/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840_defconfig'
 Merged configuration '/path/to/01_kconfig/prj.conf'
 Merged configuration '/path/to/01_kconfig/boards/nrf52840dk_nrf52840.conf'
 Configuration saved to '/path/to/build/zephyr/.config'
@@ -721,7 +721,7 @@ Kconfig
 
 Have a good look at the very first line of the _Kconfig_-related output:
 * In our previous builds, this line indicated the use of Zephyr's default `Kconfig` file as follows:
-  `Parsing /opt/nordic/ncs/v2.4.0/zephyr/Kconfig`,
+  `Parsing /opt/nordic/ncs/v3.2.1/zephyr/Kconfig`,
 * Whereas now it uses our newly created `Kconfig` file:
   `Parsing /path/to/01_kconfig/Kconfig`.
 
@@ -813,7 +813,7 @@ Let's first extend our `main.c` file to use `usr_fun` regardless of any configur
 
 #define SLEEP_TIME_MS 100U
 
-void main(void)
+int main(void)
 {
     printk("Message in a bottle.\n");
     usr_fun();
@@ -828,7 +828,7 @@ void main(void)
 Unsurprisingly, building this application fails since `usr_fun.c` is not included in the build:
 
 ```bash
-$ west build --board nrf52840dk_nrf52840 -d ../build --pristine
+$ west build --no-sysbuild --board nrf52840dk/nrf52840 -d ../build --pristine
 ```
 
 ```
@@ -860,7 +860,7 @@ This, however, defeats the purpose of having a configurable build: The build wou
 
 #define SLEEP_TIME_MS 100U
 
-void main(void)
+int main(void)
 {
     printk("Message in a bottle.\n");
 
