@@ -1,34 +1,35 @@
 ---
-title: "The Hidden Cost of #pragma pack(1) on Embedded Targets"
+title: "The Hidden Cost of Misalignment"
 description:
   "Most embedded developers use #pragma pack(1) to create portable binary
   record formats. But pack(1) forces the compiler to byte-decompose every
   field access -- even perfectly aligned fields -- resulting in 7x more
-  instructions on RISC-V, ARM, and Xtensa. This post shows the problem,
+  operations on RISC-V, ARM, and Xtensa. This post shows the problem,
   the fix (packed + aligned), and how to lint struct alignment as part of
   your development workflow."
 author: chrismerck
 tags: [c, toolchain, performance]
 ---
 
-You're building a sensor that logs readings to flash. Temperature, salinity,
-a timestamp, some status flags. The struct *is* your binary record format --
-every field at a fixed byte offset, so you can read it back on any system
-that knows the layout.
+Let's suppose you're building an even smarter
+[fishtank]({% post_url 2024-07-24-choosing-or-building-an-embedded-db %}).
+You're adding temperature and salinity sensors, logging timestamped readings
+to flash. The struct *is* your binary record format -- every field at a fixed
+byte offset, so you can read it back on any system that knows the layout.
 
 You use fixed-width types from `stdint.h` and `#pragma pack(1)` to strip out
-compiler-inserted padding. This is the standard advice, and it's correct --
-as far as it goes.
+compiler-inserted padding. This is the advice I had always received and
+given, and it's correct -- as far as it goes.
 
 <!-- excerpt start -->
 
-But `pack(1)` costs more than you think. It doesn't just control layout -- it
-destroys the compiler's ability to generate efficient code for *every* field
-access, including fields that are perfectly aligned. On RISC-V, a single
-32-bit store to an aligned field in a `pack(1)` struct compiles to 7
-instructions instead of 1. The fix is straightforward: use
-`__attribute__((packed, aligned(4)))` instead. But keeping your structs
-well-aligned as they evolve over time -- that's the harder part.
+But `pack(1)` costs more than you think. It **destroys the compiler's ability to generate efficient code for *every* field access**, including fields that are perfectly aligned.
+
+On RISC-V, a single 32-bit store to an aligned field in a `pack(1)` struct
+compiles to 7 instructions instead of 1! 
+
+In this post, we show how to fix using the `packed` and `aligned` attributes,
+and how to avoid byte-decomposition even as the struct grows in the future.
 
 <!-- excerpt end -->
 
@@ -53,31 +54,34 @@ typedef struct {
 #pragma pack(pop)
 ```
 
-Nineteen bytes per reading, fields at predictable offsets. Exactly what you
-wanted.
+The structure is packed to preserve offsets between platforms (so the same C
+code can read it out on a PC, for example), and secondarily to eliminate
+padding bytes that would waste space. This is reasonable and very common in
+embedded code.
 
 > **Why pack structs at all?** Without packing, the compiler inserts padding
-> bytes between fields to satisfy alignment requirements. The size and
-> placement of that padding depends on the target architecture -- the same
-> struct compiled for a 32-bit MCU may have a different layout than on a
-> 64-bit server parsing the same data. Packing removes this instability:
-> you get a fixed, deterministic byte layout regardless of where the code
-> is compiled.
+> bytes between fields to satisfy alignment requirements. Historically, the
+> size and placement of that padding differed quite a bit across
+> architectures[^endianness] -- modern compilers are somewhat more
+> consistent, but the
+> padding bytes still waste space and can surprise you when designing a wire
+> or storage format. Packing removes this instability: you get a fixed,
+> deterministic byte layout regardless of where the code is compiled.
 
 Here's what that looks like. The unpacked version of this struct is 24 bytes --
-5 bytes of padding that shift depending on the platform:
+5 bytes of hidden padding:
 
 <img src="{% img_url packed-aligned/padding-waste.svg %}" />
 
-Endianness is another portability concern when designing binary formats, but
-that's a topic for another post. Here we'll focus on what `pack(1)` does to
-your generated code.
+But you will see that we labeled most of the entries in the packed structure
+as "byte-decomposed", even for fields that are aligned relative to the start
+of the struct! This is a hidden performance bomb.
 
 ## What the Compiler Actually Emits
 
 Look at `temperature_mc` at offset 8. It's a 4-byte integer sitting at a
-4-byte-aligned offset. The compiler should emit a single store instruction
-for this.
+4-byte-aligned offset. One would think the compiler would emit a single store
+instruction for this, but take a look at what actually happens.
 
 Here's the RISC-V disassembly (compiled with `riscv64-elf-gcc` at `-O2`):
 
@@ -94,40 +98,16 @@ sb      a4, 10(a0)        ; store byte 2
 sb      a5, 11(a0)        ; store byte 3
 ```
 
-Seven instructions -- 3 shifts and 4 byte-stores -- to write a single
-`int32_t` to a perfectly aligned offset.
-
-Without `pack(1)`:
+Seven ops! Three shifts and 4 byte-stores -- to write a single `int32_t` to
+a perfectly aligned offset. Without `pack(1)`:
 
 ```asm
-sw      a1, 8(a0)         ; one instruction
+sw      a1, 8(a0)         ; one op
 ```
 
-Writing the `int64_t timestamp` at offset 0 is worse. That's 14 instructions
--- 6 shifts and 8 byte-stores -- instead of 2:
-
-```asm
-;; entry->timestamp = ts;
-;; ts split across a1 (low) and a2 (high), entry pointer in a0
-
-srli    t1, a1, 0x8       ; extract low byte 1
-srli    a7, a1, 0x10      ; extract low byte 2
-srli    a6, a1, 0x18      ; extract low byte 3
-srli    a3, a2, 0x8       ; extract high byte 1
-srli    a4, a2, 0x10      ; extract high byte 2
-srli    a5, a2, 0x18      ; extract high byte 3
-sb      a1, 0(a0)         ; store low byte 0
-sb      a2, 4(a0)         ; store high byte 0
-sb      t1, 1(a0)         ; store low byte 1
-sb      a7, 2(a0)         ; store low byte 2
-sb      a6, 3(a0)         ; store low byte 3
-sb      a3, 5(a0)         ; store high byte 1
-sb      a4, 6(a0)         ; store high byte 2
-sb      a5, 7(a0)         ; store high byte 3
-```
-
-Every field in the struct gets this treatment. Not just the misaligned ones.
-All of them.
+Every field in the struct gets this treatment. Writing the 64-bit
+`timestamp` at offset 0 is even worse -- 14 ops instead of 2. Not just the
+misaligned fields. All of them.
 
 ## Why This Happens
 
@@ -165,8 +145,8 @@ base pointer is always 4-byte aligned.
 
 That lets the compiler do the math:
 
-- `timestamp` at offset 0: 4-aligned base + 0 = aligned. **Native store (2 instructions).**
-- `temperature_mc` at offset 8: 4-aligned + 8 = aligned. **Native store (1 instruction).**
+- `timestamp` at offset 0: 4-aligned base + 0 = aligned. **Native store (2 ops).**[^aligned8]
+- `temperature_mc` at offset 8: 4-aligned + 8 = aligned. **Native store (1 op).**
 - `salinity_ppt` at offset 12: 4-aligned + 12 = aligned. **Native store.**
 - `status_flags` at offset 16: byte access regardless. **No change.**
 - `battery_mv` at offset 17: 4-aligned + 17 is odd. **Still byte-decomposed** -- correctly.
@@ -175,28 +155,34 @@ That lets the compiler do the math:
 
 The genuinely misaligned field (`battery_mv` at offset 17) is still handled
 safely. But the aligned fields -- which are the majority of this struct -- go
-from 7 instructions to 1.
+from 7 ops to 1.
 
 There's a bonus, too. When *reading* the misaligned `battery_mv`, the
-compiler gets creative. With `pack(1)`, it does two byte-loads:
+compiler gets creative. With `pack(1)`, it does two byte-loads and
+reassembles the value:
 
 ```asm
 ;; pack(1): read battery_mv at offset 17
 lbu     a5, 18(a0)        ; load high byte
 lbu     a0, 17(a0)        ; load low byte
+slli    a5, a5, 8         ; shift high byte into place
+or      a0, a5, a0        ; combine
 ```
 
 With `packed, aligned(4)`, the compiler knows offset 16 is 4-aligned, so it
-loads a full 32-bit word from there and lets the caller extract the bytes it
-needs:
+loads a full 32-bit word from there and shifts out the uint16\_t:
 
 ```asm
 ;; packed+aligned(4): read battery_mv at offset 17
 lw      a0, 16(a0)        ; load full word from aligned offset 16
+slli    a5, a0, 8         ; shift left to discard upper bytes
+srli    a0, a5, 16        ; shift right to extract uint16_t
 ```
 
-One instruction instead of two. The compiler can find a nearby aligned
-address and use a wider load because it knows where aligned boundaries are.
+Three ops instead of four. The key difference is the load strategy: one
+aligned word-load versus two byte-loads. The compiler can find a nearby
+aligned address and use a wider load because it knows where aligned
+boundaries are.
 
 > **When you can't switch: arrays of packed structs.** If your packed struct
 > is already used in a contiguous array -- in flash, in a file format, over
@@ -207,6 +193,14 @@ address and use a wider load because it knows where aligned boundaries are.
 > For existing formats with arrays of packed structs, you're stuck with
 > `pack(1)` unless you can migrate the data. For *new* formats, use
 > `packed, aligned(4)` from the start.
+
+Here's what that looks like in practice. With `pack(1)`, elements pack
+tightly at 19-byte intervals. With `packed, aligned(4)`, each element is
+padded to 20 bytes so the next element starts at a 4-byte-aligned offset:
+
+<img src="{% img_url packed-aligned/array-stride.svg %}" />
+
+The stride difference has a second cost: address computation.[^stride]
 
 ## Struct Evolution
 
@@ -242,15 +236,18 @@ sb      a4, 21(a0)
 sb      a5, 22(a0)
 ```
 
-Seven instructions for what should be one.
+Seven ops for what should be one.
 
 <img src="{% img_url packed-aligned/struct-evolution.svg %}" />
 
-> **The bigger risk.** Appending fields to a packed struct also breaks binary
+> **The bigger risk.** *Inserting* fields into a packed struct breaks binary
 > compatibility with anything already using the old layout -- devices in the
-> field, stored records, protocol peers. Catching that requires saved test
-> fixtures from previous format versions. But catching the *alignment* issue
-> at PR time is a cheap first line of defense.
+> field, stored records, protocol peers. Appending fields is safe (old
+> readers simply ignore the extra bytes), but insertion shifts every
+> subsequent offset. I recommend using defense in depth where CI rejects
+> field insertion (by comparing struct layouts against a baseline) *and*
+> integration tests decode packets or records from old firmware versions.
+> That's a topic for a future post.
 
 The fix for this particular struct would be to insert explicit padding before
 `error_code` so it lands at offset 20:
@@ -261,8 +258,8 @@ The fix for this particular struct would be to insert explicit padding before
     uint32_t error_code;      // now at offset 20 -- native access
 ```
 
-But nobody thinks about that in a typical code review. The diff looks
-innocuous -- just one new field. This is why you lint.
+This is easy to miss in code review, whether human or automated. This is
+why you lint.
 
 ## Catching Misalignment with struct-lint
 
@@ -273,48 +270,42 @@ within packed structs:
 ```
 $ struct-lint firmware.elf
 
-sensor_reading_t.battery_mv (uint16_t, 2 bytes) at offset 17 not naturally aligned (needs 2)
-sensor_reading_t.error_code (uint32_t, 4 bytes) at offset 19 not naturally aligned (needs 4)
+sensor_reading_evolved_t.battery_mv (uint16_t, 2 bytes) at offset 17 not naturally aligned (needs 2)
+sensor_reading_evolved_t.error_code (uint32_t, 4 bytes) at offset 19 not naturally aligned (needs 4)
 
-2 issues in 1 struct across 1 file (2 alignment, 0 missing pack)
+2 issues in 1 structs across 1 file (2 alignment, 0 missing pack)
 ```
 
 It catches exactly the kind of silent misalignment that happens when structs
 evolve over time. Run it against your build artifacts and you'll know which
 fields are paying the byte-decomposition penalty.
 
-## Measured Results
+## Not Just RISC-V
 
-Here's the full comparison across packing strategies, compiled for RISC-V
-32-bit at `-O2`:
-
-| Packing strategy | Write `int64_t` @ 0 | Write `int32_t` @ 8 | Write `uint16_t` @ 17 | Read `uint16_t` @ 17 |
-|---|---|---|---|---|
-| `pack(1)` | 14 insns | 7 insns | 3 insns | 2 insns |
-| `packed, aligned(4)` | 2 insns | 1 insn | 3 insns | 1 insn |
-| Unpacked | 2 insns | 1 insn | 1 insn (offset 18) | 1 insn (offset 18) |
-
-For the aligned fields (`timestamp`, `temperature_mc`), `packed, aligned(4)`
-matches the unpacked performance exactly. For the genuinely misaligned field
-(`battery_mv` at offset 17), writes are the same as `pack(1)`, but reads are
-actually *better* -- the compiler exploits the known base alignment to use a
-wider aligned load.
-
-## This Isn't Platform-Specific
-
-We've shown RISC-V, but the same pattern appears on every architecture where
-unaligned access is expensive. Here's the same 32-bit write
-(`temperature_mc` at offset 8) across three architectures:
+The examples above are RISC-V, but this affects all embedded architectures.
+Here's the same 32-bit write (`temperature_mc` at offset 8) across seven
+targets:
 
 | Architecture | `pack(1)` | `packed, aligned(4)` | Ratio |
 |---|---|---|---|
-| **RISC-V 32** (rv32imac) | 7 insns (3 `srli` + 4 `sb`) | 1 insn (`sw`) | 7x |
-| **Xtensa** (ESP32) | 7 insns (3 `extui` + 4 `s8i`) | 1 insn (`s32i.n`) | 7x |
-| **ARM Cortex-M0** | 8 insns (3 `lsrs` + `lsls` + 4 `strb`) | 1 insn (`str`) | 8x |
+| **RISC-V 32** (rv32imac) | 7 ops (3 `srli` + 4 `sb`) | 1 op (`sw`) | 7x |
+| **Xtensa** (ESP32) | 7 ops (3 `extui` + 4 `s8i`) | 1 op (`s32i.n`) | 7x |
+| **ARM Cortex-M0** | 7 ops (2 `lsrs` + `lsls` + 4 `strb`) | 1 op (`str`) | 7x |
+| **MIPS32** | 2 ops (`swl` + `swr`) | 1 op (`sw`) | 2x |
+| **macOS arm64** | 1 op (`str`) | 1 op (`str`) | 1x |
+| **i686** | 1 op (`movl`) | 1 op (`movl`) | 1x |
+| **x86_64** | 1 op (`movl`) | 1 op (`movl`) | 1x |
 
-Different instruction sets, same pattern. 7-8x more instructions for a
-32-bit store to a perfectly aligned offset. The compiler has no choice --
-when alignment is 1, every store must be byte-decomposed.
+Most embedded targets we tested show the same 7× byte-decomposition
+overhead -- different ISAs, different compilers, same pattern. The
+exception is MIPS32, which has dedicated unaligned store instructions
+(`swl` / `swr`) that reduce the overhead to 2×.
+
+Desktop architectures (arm64, x86) produce identical code regardless of
+packing. They handle unaligned access in hardware and may pay a
+microarchitectural penalty (cache line split, extra cycles) -- but
+thankfully on embedded targets we can just inspect the disassembly to know
+exactly what we're paying.
 
 ## Conclusion
 
@@ -330,7 +321,7 @@ Your code gets smaller and faster, and the compiler still correctly
 byte-decomposes the fields that genuinely need it.
 
 As your structs evolve, alignment can silently degrade. A new field appended
-at the wrong offset, and you're back to 7x the instructions with no warning
+at the wrong offset, and you're back to 7x the ops with no warning
 from the compiler. Lint it like you lint everything else.
 
 Individually, these are small wins -- single-digit percent improvements in
@@ -349,6 +340,12 @@ you build systems that are fast, small, and correct.
 ## References
 
 <!-- prettier-ignore-start -->
+[^endianness]: Endianness is another portability concern when designing binary formats -- see the [portability aside]({% post_url 2024-07-24-choosing-or-building-an-embedded-db %}#aside-portability-of-records) in the embedded database post. Here we'll focus on what `pack(1)` does to your generated code.
+
+[^aligned8]: On a 32-bit ISA there is no single 64-bit store instruction, so two 32-bit stores is already optimal and `aligned(4)` is sufficient. If you target a 64-bit core (e.g. RV64, AArch64) and want a single `sd` or `str`, use `aligned(8)`.
+
+[^stride]: To access `arr[i].temperature_mc`, the compiler needs `base + i*stride + 8`. Multiplying by 19 requires the compiler to synthesize `(i*5*4) - i` -- five dependent ops on RISC-V (`slli, add, slli, sub, add`). Multiplying by 20 decomposes more favorably as `i*4*5` -- four ops (`slli, add, slli, add`), eliminating the subtraction. Whether this matters in practice depends on the architecture and how aggressively the compiler can fold the multiplication into addressing modes.
+
 - [struct-lint: DWARF-based struct alignment linter](https://github.com/chrismerck/struct-lint)
 - [GCC Type Attributes: packed, aligned](https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html)
 - [ARM Cortex-M0 Technical Reference Manual: Unaligned Access](https://developer.arm.com/documentation/ddi0432/c/programmers-model/unaligned-access-support)
