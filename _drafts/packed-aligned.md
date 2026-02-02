@@ -109,17 +109,14 @@ Every field in the struct gets this treatment. Writing the 64-bit
 `timestamp` at offset 0 is even worse -- 14 ops instead of 2. Not just the
 misaligned fields. All of them.
 
-## Why This Happens
-
-`#pragma pack(1)` sets the *type's* maximum alignment to 1. That means a
-pointer to this struct could legally point to any byte address. The compiler
-can't look at your code and determine that in practice, these structs always
-live in `malloc`'d memory (aligned), on the stack (aligned), or in larger
-aligned structures. The type system says alignment is 1, so every access gets
-byte-decomposed.
-
-This isn't a bug. You told the compiler "trust nothing about this struct's
-alignment." The compiler took you at your word.
+> **Why this happens.** `#pragma pack(1)` sets the *type's* maximum alignment
+> to 1. That means a pointer to this struct could legally point to any byte
+> address. The compiler can't look at your code and determine that in practice,
+> these structs always live in `malloc`'d memory (aligned), on the stack
+> (aligned), or in larger aligned structures. The type system says alignment is
+> 1, so every access gets byte-decomposed. This isn't a bug. You told the
+> compiler "trust nothing about this struct's alignment." The compiler took you
+> at your word.
 
 ## The Fix: `packed` + `aligned`
 
@@ -154,35 +151,8 @@ That lets the compiler do the math:
 <img src="{% img_url packed-aligned/field-access.svg %}" />
 
 The genuinely misaligned field (`battery_mv` at offset 17) is still handled
-safely. But the aligned fields -- which are the majority of this struct -- go
+safely.[^bonus] But the aligned fields -- which are the majority of this struct -- go
 from 7 ops to 1.
-
-There's a bonus, too. When *reading* the misaligned `battery_mv`, the
-compiler gets creative. With `pack(1)`, it does two byte-loads and
-reassembles the value:
-
-```asm
-;; pack(1): read battery_mv at offset 17
-lbu     a5, 18(a0)        ; load high byte
-lbu     a0, 17(a0)        ; load low byte
-slli    a5, a5, 8         ; shift high byte into place
-or      a0, a5, a0        ; combine
-```
-
-With `packed, aligned(4)`, the compiler knows offset 16 is 4-aligned, so it
-loads a full 32-bit word from there and shifts out the uint16\_t:
-
-```asm
-;; packed+aligned(4): read battery_mv at offset 17
-lw      a0, 16(a0)        ; load full word from aligned offset 16
-slli    a5, a0, 8         ; shift left to discard upper bytes
-srli    a0, a5, 16        ; shift right to extract uint16_t
-```
-
-Three ops instead of four. The key difference is the load strategy: one
-aligned word-load versus two byte-loads. The compiler can find a nearby
-aligned address and use a wider load because it knows where aligned
-boundaries are.
 
 > **When you can't switch: arrays of packed structs.** If your packed struct
 > is already used in a contiguous array -- in flash, in a file format, over
@@ -196,11 +166,9 @@ boundaries are.
 
 Here's what that looks like in practice. With `pack(1)`, elements pack
 tightly at 19-byte intervals. With `packed, aligned(4)`, each element is
-padded to 20 bytes so the next element starts at a 4-byte-aligned offset:
+padded to 20 bytes[^stride] so the next element starts at a 4-byte-aligned offset:
 
 <img src="{% img_url packed-aligned/array-stride.svg %}" />
-
-The stride difference has a second cost: address computation.[^stride]
 
 ## Struct Evolution
 
@@ -261,24 +229,23 @@ The fix for this particular struct would be to insert explicit padding before
 This is easy to miss in code review, whether human or automated. This is
 why you lint.
 
-## Catching Misalignment with struct-lint
-
-[struct-lint](https://github.com/chrismerck/struct-lint) reads DWARF debug
-info from ELF binaries and reports fields that aren't naturally aligned
-within packed structs:
-
-```
-$ struct-lint firmware.elf
-
-sensor_reading_evolved_t.battery_mv (uint16_t, 2 bytes) at offset 17 not naturally aligned (needs 2)
-sensor_reading_evolved_t.error_code (uint32_t, 4 bytes) at offset 19 not naturally aligned (needs 4)
-
-2 issues in 1 structs across 1 file (2 alignment, 0 missing pack)
-```
-
-It catches exactly the kind of silent misalignment that happens when structs
-evolve over time. Run it against your build artifacts and you'll know which
-fields are paying the byte-decomposition penalty.
+> **Catching misalignment with struct-lint.**
+> [struct-lint](https://github.com/chrismerck/struct-lint) reads DWARF debug
+> info from ELF binaries and reports fields that aren't naturally aligned
+> within packed structs:
+>
+> ```
+> $ struct-lint firmware.elf
+>
+> sensor_reading_evolved_t.battery_mv (uint16_t, 2 bytes) at offset 17 not naturally aligned (needs 2)
+> sensor_reading_evolved_t.error_code (uint32_t, 4 bytes) at offset 19 not naturally aligned (needs 4)
+>
+> 2 issues in 1 structs across 1 file (2 alignment, 0 missing pack)
+> ```
+>
+> It catches exactly the kind of silent misalignment that happens when structs
+> evolve over time. Run it against your build artifacts and you'll know which
+> fields are paying the byte-decomposition penalty.
 
 ## Not Just RISC-V
 
@@ -344,7 +311,9 @@ you build systems that are fast, small, and correct.
 
 [^aligned8]: On a 32-bit ISA there is no single 64-bit store instruction, so two 32-bit stores is already optimal and `aligned(4)` is sufficient. If you target a 64-bit core (e.g. RV64, AArch64) and want a single `sd` or `str`, use `aligned(8)`.
 
-[^stride]: To access `arr[i].temperature_mc`, the compiler needs `base + i*stride + 8`. Multiplying by 19 requires the compiler to synthesize `(i*5*4) - i` -- five dependent ops on RISC-V (`slli, add, slli, sub, add`). Multiplying by 20 decomposes more favorably as `i*4*5` -- four ops (`slli, add, slli, add`), eliminating the subtraction. Whether this matters in practice depends on the architecture and how aggressively the compiler can fold the multiplication into addressing modes.
+[^stride]: A small bonus: array indexing is faster with a 20-byte stride than a 19-byte stride. Multiplying by 20 decomposes into simple shifts and adds, while multiplying by 19 requires an extra subtraction. The difference is minor but it's free.
+
+[^bonus]: There's a bonus for misaligned reads, too. With `pack(1)`, reading `battery_mv` requires two byte-loads and a reassembly (4 ops). With `packed, aligned(4)`, the compiler knows offset 16 is 4-aligned, so it does a single word-load from there and shifts out the uint16\_t (3 ops). Knowing where aligned boundaries are lets the compiler use wider loads even for misaligned fields.
 
 - [struct-lint: DWARF-based struct alignment linter](https://github.com/chrismerck/struct-lint)
 - [GCC Type Attributes: packed, aligned](https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html)
