@@ -47,6 +47,15 @@ RUN mkdir -p /tmp && \
 RUN mcopy /tmp/ssh x:/ && \
     mcopy /tmp/userconf x:/
 
+# Unmount the image
+RUN sudo umount /mnt/image
+
+# Comment specifying the type of Mac CPU architecture used
+# This Dockerfile is designed for an Intel-based Mac
+
+# Add support for M1-based silicon
+RUN apt-get install -y qemu-system-arm
+
 EXPOSE 2222
 
 # Start qemu with SSH port forwarding
