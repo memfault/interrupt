@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="658" height="518" font-family="monospace" font-size="12">
+<style>
+  .field { stroke: #333; stroke-width: 1; }
+  .pad { fill: #e74c3c; opacity: 0.3; stroke: #c0392b; stroke-width: 1; stroke-dasharray: 4,2; }
+  .label { text-anchor: end; dominant-baseline: middle; fill: #333; }
+  .offset { text-anchor: end; dominant-baseline: middle; fill: #666; font-size: 10; }
+  .caption { font-size: 14; font-weight: bold; fill: #333; }
+</style>
+<rect x="44" y="486" width="14" height="14" fill="#27ae60" />
+<text x="64" y="496" font-size="11" fill="#333">native access</text>
+<rect x="164" y="486" width="14" height="14" fill="#e67e22" />
+<text x="184" y="496" font-size="11" fill="#333">byte-decomposed</text>
+<rect x="324" y="486" width="14" height="14" class="pad" />
+<text x="344" y="496" font-size="11" fill="#333">padding</text>
+<text x="124" y="34" text-anchor="middle" class="caption">unpacked (24B)</text>
+<rect x="44" y="44" width="160" height="144" fill="#27ae60" class="field" />
+<text x="124" y="116" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">timestamp</text>
+<text x="40" y="53" text-anchor="end" dominant-baseline="middle" class="offset">0</text>
+<text x="210" y="116" dominant-baseline="middle" fill="#333" font-size="10">int64_t (8B)</text>
+<rect x="44" y="188" width="160" height="72" fill="#27ae60" class="field" />
+<text x="124" y="224" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">temperature_mc</text>
+<text x="40" y="197" text-anchor="end" dominant-baseline="middle" class="offset">8</text>
+<text x="210" y="224" dominant-baseline="middle" fill="#333" font-size="10">int32_t (4B)</text>
+<rect x="44" y="260" width="160" height="72" fill="#27ae60" class="field" />
+<text x="124" y="296" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">salinity_ppt</text>
+<text x="40" y="269" text-anchor="end" dominant-baseline="middle" class="offset">12</text>
+<text x="210" y="296" dominant-baseline="middle" fill="#333" font-size="10">int32_t (4B)</text>
+<rect x="44" y="332" width="160" height="18" fill="#27ae60" class="field" />
+<text x="124" y="341" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">status_flags</text>
+<text x="40" y="341" text-anchor="end" dominant-baseline="middle" class="offset">16</text>
+<text x="210" y="341" dominant-baseline="middle" fill="#333" font-size="10">uint8_t (1B)</text>
+<rect x="44" y="350" width="160" height="18" class="pad" />
+<text x="40" y="359" text-anchor="end" dominant-baseline="middle" class="offset">17</text>
+<text x="210" y="359" dominant-baseline="middle" fill="#999" font-size="10">pad</text>
+<rect x="44" y="368" width="160" height="36" fill="#27ae60" class="field" />
+<text x="124" y="386" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">battery_mv</text>
+<text x="40" y="377" text-anchor="end" dominant-baseline="middle" class="offset">18</text>
+<text x="210" y="386" dominant-baseline="middle" fill="#333" font-size="10">uint16_t (2B)</text>
+<rect x="44" y="404" width="160" height="18" class="pad" />
+<text x="40" y="413" text-anchor="end" dominant-baseline="middle" class="offset">20</text>
+<text x="210" y="413" dominant-baseline="middle" fill="#999" font-size="10">pad</text>
+<rect x="44" y="422" width="160" height="18" class="pad" />
+<text x="40" y="431" text-anchor="end" dominant-baseline="middle" class="offset">21</text>
+<text x="210" y="431" dominant-baseline="middle" fill="#999" font-size="10">pad</text>
+<rect x="44" y="440" width="160" height="18" class="pad" />
+<text x="40" y="449" text-anchor="end" dominant-baseline="middle" class="offset">22</text>
+<text x="210" y="449" dominant-baseline="middle" fill="#999" font-size="10">pad</text>
+<rect x="44" y="458" width="160" height="18" class="pad" />
+<text x="40" y="467" text-anchor="end" dominant-baseline="middle" class="offset">23</text>
+<text x="210" y="467" dominant-baseline="middle" fill="#999" font-size="10">pad</text>
+<text x="40" y="476" text-anchor="end" dominant-baseline="middle" class="offset">24</text>
+<text x="461" y="34" text-anchor="middle" class="caption">pack(1) (19B)</text>
+<rect x="381" y="44" width="160" height="144" fill="#e67e22" class="field" />
+<text x="461" y="116" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">timestamp</text>
+<text x="377" y="53" text-anchor="end" dominant-baseline="middle" class="offset">0</text>
+<text x="547" y="116" dominant-baseline="middle" fill="#333" font-size="10">int64_t (8B)</text>
+<rect x="381" y="188" width="160" height="72" fill="#e67e22" class="field" />
+<text x="461" y="224" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">temperature_mc</text>
+<text x="377" y="197" text-anchor="end" dominant-baseline="middle" class="offset">8</text>
+<text x="547" y="224" dominant-baseline="middle" fill="#333" font-size="10">int32_t (4B)</text>
+<rect x="381" y="260" width="160" height="72" fill="#e67e22" class="field" />
+<text x="461" y="296" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">salinity_ppt</text>
+<text x="377" y="269" text-anchor="end" dominant-baseline="middle" class="offset">12</text>
+<text x="547" y="296" dominant-baseline="middle" fill="#333" font-size="10">int32_t (4B)</text>
+<rect x="381" y="332" width="160" height="18" fill="#27ae60" class="field" />
+<text x="461" y="341" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">status_flags</text>
+<text x="377" y="341" text-anchor="end" dominant-baseline="middle" class="offset">16</text>
+<text x="547" y="341" dominant-baseline="middle" fill="#333" font-size="10">uint8_t (1B)</text>
+<rect x="381" y="350" width="160" height="36" fill="#e67e22" class="field" />
+<text x="461" y="368" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="11">battery_mv</text>
+<text x="377" y="359" text-anchor="end" dominant-baseline="middle" class="offset">17</text>
+<text x="547" y="368" dominant-baseline="middle" fill="#333" font-size="10">uint16_t (2B)</text>
+<text x="377" y="386" text-anchor="end" dominant-baseline="middle" class="offset">19</text>
+</svg>

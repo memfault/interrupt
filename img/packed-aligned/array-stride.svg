@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="658" height="1166" font-family="monospace" font-size="12">
+<style>
+  .field { stroke: #333; stroke-width: 1; }
+  .pad { fill: #e74c3c; opacity: 0.3; stroke: #c0392b; stroke-width: 1; stroke-dasharray: 4,2; }
+  .label { text-anchor: end; dominant-baseline: middle; fill: #333; }
+  .offset { text-anchor: end; dominant-baseline: middle; fill: #666; font-size: 10; }
+  .caption { font-size: 14; font-weight: bold; fill: #333; }
+</style>
+<text x="124" y="34" text-anchor="middle" class="caption" font-size="11">pack(1) [3] (stride=19, total=57B)</text>
+<text x="40" y="48" text-anchor="end" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#333">0</text>
+<text x="210" y="215" dominant-baseline="middle" fill="#666" font-size="10">[0]</text>
+<rect x="44" y="44" width="160" height="144" fill="#e67e22" class="field" />
+<text x="124" y="116" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">timestamp</text>
+<rect x="44" y="188" width="160" height="72" fill="#e67e22" class="field" />
+<text x="124" y="224" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">temperature_mc</text>
+<rect x="44" y="260" width="160" height="72" fill="#e67e22" class="field" />
+<text x="124" y="296" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">salinity_ppt</text>
+<rect x="44" y="332" width="160" height="18" fill="#27ae60" class="field" />
+<text x="124" y="341" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">status_flags</text>
+<rect x="44" y="350" width="160" height="36" fill="#e67e22" class="field" />
+<text x="124" y="368" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">battery_mv</text>
+<line x1="36" y1="386" x2="208" y2="386" stroke="#333" stroke-width="1.5" />
+<text x="40" y="390" text-anchor="end" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#333">19</text>
+<text x="210" y="557" dominant-baseline="middle" fill="#666" font-size="10">[1]</text>
+<rect x="44" y="386" width="160" height="144" fill="#e67e22" class="field" />
+<text x="124" y="458" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">timestamp</text>
+<rect x="44" y="530" width="160" height="72" fill="#e67e22" class="field" />
+<text x="124" y="566" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">temperature_mc</text>
+<rect x="44" y="602" width="160" height="72" fill="#e67e22" class="field" />
+<text x="124" y="638" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">salinity_ppt</text>
+<rect x="44" y="674" width="160" height="18" fill="#27ae60" class="field" />
+<text x="124" y="683" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">status_flags</text>
+<rect x="44" y="692" width="160" height="36" fill="#e67e22" class="field" />
+<text x="124" y="710" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">battery_mv</text>
+<line x1="36" y1="728" x2="208" y2="728" stroke="#333" stroke-width="1.5" />
+<text x="40" y="732" text-anchor="end" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#333">38</text>
+<text x="210" y="899" dominant-baseline="middle" fill="#666" font-size="10">[2]</text>
+<rect x="44" y="728" width="160" height="144" fill="#e67e22" class="field" />
+<text x="124" y="800" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">timestamp</text>
+<rect x="44" y="872" width="160" height="72" fill="#e67e22" class="field" />
+<text x="124" y="908" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">temperature_mc</text>
+<rect x="44" y="944" width="160" height="72" fill="#e67e22" class="field" />
+<text x="124" y="980" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">salinity_ppt</text>
+<rect x="44" y="1016" width="160" height="18" fill="#27ae60" class="field" />
+<text x="124" y="1025" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">status_flags</text>
+<rect x="44" y="1034" width="160" height="36" fill="#e67e22" class="field" />
+<text x="124" y="1052" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">battery_mv</text>
+<text x="40" y="1074" text-anchor="end" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#333">57</text>
+<text x="461" y="34" text-anchor="middle" class="caption" font-size="11">pa4 [3] (stride=20, total=60B)</text>
+<text x="377" y="48" text-anchor="end" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#333">0</text>
+<text x="547" y="224" dominant-baseline="middle" fill="#666" font-size="10">[0]</text>
+<rect x="381" y="44" width="160" height="144" fill="#27ae60" class="field" />
+<text x="461" y="116" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">timestamp</text>
+<rect x="381" y="188" width="160" height="72" fill="#27ae60" class="field" />
+<text x="461" y="224" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">temperature_mc</text>
+<rect x="381" y="260" width="160" height="72" fill="#27ae60" class="field" />
+<text x="461" y="296" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">salinity_ppt</text>
+<rect x="381" y="332" width="160" height="18" fill="#27ae60" class="field" />
+<text x="461" y="341" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">status_flags</text>
+<rect x="381" y="350" width="160" height="36" fill="#e67e22" class="field" />
+<text x="461" y="368" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">battery_mv</text>
+<rect x="381" y="386" width="160" height="18" class="pad" />
+<line x1="373" y1="404" x2="545" y2="404" stroke="#333" stroke-width="1.5" />
+<text x="377" y="408" text-anchor="end" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#333">20</text>
+<text x="547" y="584" dominant-baseline="middle" fill="#666" font-size="10">[1]</text>
+<rect x="381" y="404" width="160" height="144" fill="#27ae60" class="field" />
+<text x="461" y="476" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">timestamp</text>
+<rect x="381" y="548" width="160" height="72" fill="#27ae60" class="field" />
+<text x="461" y="584" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">temperature_mc</text>
+<rect x="381" y="620" width="160" height="72" fill="#27ae60" class="field" />
+<text x="461" y="656" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">salinity_ppt</text>
+<rect x="381" y="692" width="160" height="18" fill="#27ae60" class="field" />
+<text x="461" y="701" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">status_flags</text>
+<rect x="381" y="710" width="160" height="36" fill="#e67e22" class="field" />
+<text x="461" y="728" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">battery_mv</text>
+<rect x="381" y="746" width="160" height="18" class="pad" />
+<line x1="373" y1="764" x2="545" y2="764" stroke="#333" stroke-width="1.5" />
+<text x="377" y="768" text-anchor="end" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#333">40</text>
+<text x="547" y="944" dominant-baseline="middle" fill="#666" font-size="10">[2]</text>
+<rect x="381" y="764" width="160" height="144" fill="#27ae60" class="field" />
+<text x="461" y="836" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">timestamp</text>
+<rect x="381" y="908" width="160" height="72" fill="#27ae60" class="field" />
+<text x="461" y="944" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">temperature_mc</text>
+<rect x="381" y="980" width="160" height="72" fill="#27ae60" class="field" />
+<text x="461" y="1016" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">salinity_ppt</text>
+<rect x="381" y="1052" width="160" height="18" fill="#27ae60" class="field" />
+<text x="461" y="1061" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">status_flags</text>
+<rect x="381" y="1070" width="160" height="36" fill="#e67e22" class="field" />
+<text x="461" y="1088" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="9">battery_mv</text>
+<rect x="381" y="1106" width="160" height="18" class="pad" />
+<text x="377" y="1128" text-anchor="end" dominant-baseline="middle" font-size="10" font-weight="bold" fill="#333">60</text>
+<rect x="44" y="1134" width="14" height="14" fill="#27ae60" />
+<text x="64" y="1144" font-size="11" fill="#333">aligned</text>
+<rect x="144" y="1134" width="14" height="14" fill="#e67e22" />
+<text x="164" y="1144" font-size="11" fill="#333">byte-decomposed</text>
+<rect x="304" y="1134" width="14" height="14" class="pad" />
+<text x="324" y="1144" font-size="11" fill="#333">tail padding</text>
+</svg>
