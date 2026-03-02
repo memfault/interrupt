@@ -177,12 +177,10 @@ recommend for its stability and signature verification.
 
 Recently, I've been contributing to Niccolò Betto's
 [WSL USB Manager](https://github.com/nickbeth/wsl-usb-manager), and I use it
-instead of WSL USB GUI because it's faster, smaller, has a simpler code base. I
-prefer the user interface, too. Particularly on
-[my branch](https://github.com/nickbeth/wsl-usb-manager/pull/6) that adds
-attach/detach capability to the system tray context menu. We don't have signing
-and release on Winget or the Microsoft Store yet, but it's on the roadmap, and
-we'd welcome more users and contributors!
+instead of WSL USB GUI because it's faster, smaller, has a simpler code base,
+and a better user interface. We don't have signing and release on Winget or the
+Microsoft Store yet, but it's on the roadmap, and we'd welcome more users and
+contributors!
 
 > While it is possible to forward all USB devices to WSL2, it does not
 > necessarily mean that they will "just work". In the firmware development
@@ -306,6 +304,58 @@ experience.
   - [Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?platform=linux)
   - [BitBucket](https://support.atlassian.com/bitbucket-cloud/docs/set-up-personal-ssh-keys-on-linux/)
 
+### Test USB Device Forwarding
+
+To test USB device forwarding, you can use the `lsusb` command to list USB
+devices in WSL2. First, install the `usbutils` package:
+
+```bash
+sudo apt install usbutils
+```
+
+Then, run `lsusb` to see the list of USB devices:
+
+```bash
+lsusb
+```
+
+You should see USB root hubs:
+
+```txt
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+```
+
+From Windows, use the `usbipd` CLI, WSL USB GUI, or WSL USB Manager, to attach a
+USB device to WSL2. Then, run `lsusb` again in WSL2 and you should see the
+attached device in the list.
+
+> If you do not see the USB root hubs in `lsusb`, then you may be on a version
+> of the WSL2 kernel that does not enable USBIP support by default.
+>
+> Run this command to load the kernel module:
+>
+> ```bash
+> sudo modprobe vhci-hcd
+> ```
+>
+> Then check `lsusb` again and you should see the root hubs.
+>
+> To enable `vhci-hcd` on every boot of WSL2, add the following to
+> `/etc/wsl.conf` under the `[boot]` section:
+>
+> ```ini
+> command = modprobe vhci-hcd
+> ```
+>
+> For example, it might look like this:
+>
+> ```ini
+> [boot]
+> systemd = true
+> command = modprobe vhci-hcd
+> ```
+
 ### Install Segger J-Link Software
 
 You may not use Segger J-Link, and in that case you can skip this section.
@@ -346,14 +396,14 @@ JLinkExe
 ## Summary
 
 I hope that this has demystified the process of setting up WSL2 for embedded
-systems firmware development. This guide was originally a tutorial maintained by
+systems firmware development. This guide is based on a tutorial maintained by
 [Intercreate](https://www.intercreate.io/)
-[here](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md), with
-contributions from Michael Brust, Alden Haase, JP Hutchins, and Ishani Raha. If
-you're running through first-time setup, the step-by-step format of that page
-may provide further assistance. Also, if you're starting to dig into some more
-complicated use cases, I highly recommend reviewing Craig Buckler's
-[Complete Tutorial at sitepoint](https://www.sitepoint.com/wsl2/).
+[on GitHub](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md), with
+contributions from Michael Brust, Alden Haase, JP Hutchins, Ishani Raha, and
+Gabriel Tétar. If you're running through first-time setup, the step-by-step
+format of that page may provide further assistance. Also, if you're starting to
+dig into some more complicated use cases, I highly recommend reviewing Craig
+Buckler's [Complete Tutorial at sitepoint](https://www.sitepoint.com/wsl2/).
 
 We'd love to hear from you! Do you have any tips or tricks for improving WSL2?
 
