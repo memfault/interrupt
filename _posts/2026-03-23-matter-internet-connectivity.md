@@ -10,14 +10,13 @@ author: francois
 tags: [matter, thread, iot, nrf54]
 ---
 
-Matter is increasingly popular for home automation. Most of a Matter device's
-functionality (commissioning, control, software updates) happens within the
-local network and does not require any custom networking code. But it is often
-useful to send messages out to the internet, whether for collecting telemetry,
-pushing data to a cloud backend, or enabling some custom functionality that does
-not fit within the Matter specification.
+While it has taken longer than some people expected, Matter is finally going mainstream. Brands including Ikea, Kwikset, and Bosch have shipped matter devices, and matter hubs can increasingly be found in people's homes.
 
-<!-- excerpt start -->
+Many dev kits out there that are matter compatible, and if you want to build a simple application you can find good example code and get started quickly.
+
+However, things get hairy as soon as you get off the beaten path. For example,Matter devices are generally expected to communicate mostly on the local network via predefined Matter clusters. This is fine when your application fits neatly within the spec. But if you need your device to communicate with a server directly you need to do a bit more work.
+
+ <!-- excerpt start -->
 
 In this post, we look at how a Matter-over-Thread device can reach the internet
 through a Thread Border Router. We will cover the key networking concepts (Thread, NAT64, and UDP) and walk through a working example that sends a UDP
@@ -38,8 +37,7 @@ bulb works with any Matter controller, regardless of the ecosystem.
 
 Matter defines a data model (clusters, attributes, commands) and the
 networking stack to carry it. Devices are commissioned into a fabric (a logical
-network of controllers and devices), and from that point on, controllers can read
-attributes, send commands, and subscribe to changes.
+network of controllers and devices), and from that point on, controllers can read attributes, send commands, and subscribe to changes.
 
 ### Matter's Networking Stack
 
@@ -53,9 +51,7 @@ Border Router, a device that bridges traffic between the Thread mesh and the
 wider IP network (typically your home Wi-Fi/Ethernet).
 
 Matter does not use TCP. Instead, it runs on UDP and adds its own reliability and encryption on top through the Matter Reliable Protocol (MRP) and a custom
-security layer (CASE/PASE sessions with AES-CCM encryption). This is an
-important detail: the transport available to a Matter-over-Thread device is raw
-UDP over IPv6.
+security layer (CASE/PASE sessions with AES-CCM encryption).
 
 ## The Hub Does Most of the Work
 
@@ -64,7 +60,7 @@ Instead, internet-facing communication is delegated to the controller (the hub).
 
 A good example is firmware updates. The Matter specification includes an OTA
 Software Update cluster. When an update is available, the controller checks the
-Distributed Compliance Ledger (DCL)[^dcl], an on-chain registry of certified
+Distributed Compliance Ledger (DCL)[^dcl], a blockchain (yes! blockchain!) registry of certified
 Matter devices and their firmware metadata, downloads the update binary, and
 pushes it down to the device over the local network. The device never reaches out to the internet on its own.
 
@@ -77,18 +73,33 @@ voice assistant bridges, and remote access.
 But sometimes local-only communication is not enough. You may want to:
 
 - Send telemetry data to a cloud backend
-- Report diagnostics or crash data to a monitoring service
+- Pull a firmware update directly from your backend rather than the DCL
 - Reach a custom server for functionality outside the Matter spec
 
 The good news is that Matter hubs are full-fledged Thread Border Routers, and
 most can bridge traffic from the Thread mesh to the internet.
 
-### NAT64
+### One does not simply send IPv6 packets
 
-Thread networks are IPv6-only. Most servers on the internet still have IPv4
-addresses (or both). To reach an IPv4 server from a Thread device, you need
-NAT64, a translation mechanism that lets an IPv6-only client communicate with
-IPv4 servers.
+Since Thread is an IPv6 network, you might wonder: why not just send packets to
+the server's IPv6 address directly?
+
+The short answer is that Thread devices typically do not have globally routable
+IPv6 addresses. The addresses assigned within a Thread mesh are either
+link-local (`fe80::`) or mesh-local (`fd::`), neither of which is routable on
+the public internet. For a device to send IPv6 traffic directly to an internet
+server, it would need a Global Unicast Address (GUA), and the Border Router
+would need to route that prefix into the mesh.
+
+Most Thread Border Routers do not enable this. Apple's HomePod, for example,
+does not assign GUAs to Thread devices. Some other Border Router implementations
+might, but it is not common today.
+
+We need a different solution.
+
+### Enter NAT64
+
+Thread 1.4 introduced NAT64, a network address translation mechanism that allows IPv6-only clients to communicate with IPv4-only servers.
 
 Here is how it works:
 
@@ -109,28 +120,7 @@ translation is transparent.
 > specification[^thread_1_4], so support will improve as more hubs receive
 > updates.
 
-### What About Using IPv6 Directly?
-
-Since Thread is an IPv6 network, you might wonder: why not just send packets to
-the server's IPv6 address directly, without NAT64?
-
-The short answer is that Thread devices typically do not have globally routable
-IPv6 addresses. The addresses assigned within a Thread mesh are either
-link-local (`fe80::`) or mesh-local (`fd::`), neither of which is routable on
-the public internet. For a device to send IPv6 traffic directly to an internet
-server, it would need a Global Unicast Address (GUA), and the Border Router
-would need to route that prefix into the mesh.
-
-Most Thread Border Routers do not enable this. Apple's HomePod, for example,
-does not assign GUAs to Thread devices. Some other Border Router implementations
-might, but it is not common today. In practice, NAT64 is the reliable path for
-reaching internet servers from a Thread device.
-
-If your Border Router does provide GUA prefixes, direct IPv6 works and is
-simpler: resolve the AAAA record and send. No NAT64 needed. But you should not
-count on it being available across all deployments.
-
-### The Constraints
+### Sending data over UDP
 
 Since Matter runs on UDP over Thread, there are a few constraints to keep in
 mind:
@@ -142,15 +132,13 @@ mind:
 - **No TLS.** TLS requires TCP. For encrypted communication, you need DTLS
   (Datagram TLS), which is the UDP equivalent.
 
-This makes **DTLS + CoAP** a natural fit. CoAP (Constrained Application
-Protocol)[^coap_rfc] is a lightweight request/response protocol designed for
-constrained devices. It runs over UDP, supports confirmable messages with
-retransmission, and pairs well with DTLS for security. Many IoT cloud platforms
-support CoAP natively.
+This complicates our life a bit, as it means we cannot simply talk to our backend over HTTP (which typically depends on UDP). We'll get to that in a bit.
 
-### The Data Path, End to End
+To start, let's consider how we would go about sending raw UDP packets over the thread network.
 
-Let's trace a UDP packet from a Matter device to a server on the internet:
+### End-to-end data path
+
+Putting everything we've learned together, here's how a UDP packet from a Matter device gets to a server on the internet:
 
 ```
 ┌─────────────┐    802.15.4    ┌───────────────────┐    Wi-Fi/Ethernet  ┌──────────┐
@@ -171,8 +159,7 @@ Let's trace a UDP packet from a Matter device to a server on the internet:
 
 ## nRF54LM20 Example: UDP Echo
 
-Let's put this into practice. We will send a UDP message from an nRF54LM20 DK
-through a HomePod Border Router to Nordic Semiconductor's public echo server,
+Let's put this into practice. We will send a UDP message from an nRF54LM20 DK through a HomePod Border Router to Nordic Semiconductor's public echo server,
 and receive the response.
 
 The nRF54LM20[^nrf54lm20] is a good fit for Matter. It has an ARM Cortex-M33
@@ -274,8 +261,9 @@ that embeds the server's IPv4 address with the Border Router's NAT64 prefix.
 ### Sending and Receiving UDP
 
 With the address resolved, we can open a UDP socket and send a message. We use
-the OpenThread native UDP API rather than Zephyr's socket API, since it
-integrates directly with the Thread stack:
+the OpenThread native UDP API rather than Zephyr's socket API. The OpenThread stack is already quite large, so we save some code space by not having to pull the full Zephyr networking stack alongside it.
+
+Here's what it looks like:
 
 ```c
 #include <openthread/udp.h>
