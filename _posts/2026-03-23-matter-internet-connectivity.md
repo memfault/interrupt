@@ -156,9 +156,7 @@ Putting everything we've learned together, here's how a UDP packet from a Matter
 Let's put this into practice. We will send a UDP message from an nRF54LM20 DK through a HomePod Border Router to Nordic Semiconductor's public echo server found at `udp-echo.nordicsemi.academy:2444`, and receive the response.
 
 The nRF54LM20[^nrf54lm20] is a good fit for Matter. It has an ARM Cortex-M33
-at 128 MHz, 1.5 MB of Flash and 256 KB of RAM, which is plenty of headroom for the
-Matter stack, OpenThread, and application code. It supports both BLE (for
-commissioning) and 802.15.4 (for Thread).
+at 128 MHz, 2 MB of NVM (it's actually RRAM, not flash, which is pretty cool) and 512 KB of RAM, which is plenty of headroom for the Matter stack, OpenThread, and application code. It supports both BLE (for commissioning) and 802.15.4 (for Thread).
 
 Let's grab a nRF54LM20 Dev Kit[^lm20dk], the latest of the nRF Connect SDK[^ncs] and start writing some code!
 
