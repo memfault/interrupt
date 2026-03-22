@@ -153,7 +153,7 @@ Putting everything we've learned together, here's how a UDP packet from a Matter
 
 ## nRF54LM20 Example: UDP Echo
 
-Let's put this into practice. We will send a UDP message from an nRF54LM20 DK through a HomePod Border Router to Nordic Semiconductor's public echo server found at udp-echo.nordicsemi.academy:2444, and receive the response.
+Let's put this into practice. We will send a UDP message from an nRF54LM20 DK through a HomePod Border Router to Nordic Semiconductor's public echo server found at `udp-echo.nordicsemi.academy:2444`, and receive the response.
 
 The nRF54LM20[^nrf54lm20] is a good fit for Matter. It has an ARM Cortex-M33
 at 128 MHz, 1.5 MB of Flash and 256 KB of RAM, which is plenty of headroom for the
