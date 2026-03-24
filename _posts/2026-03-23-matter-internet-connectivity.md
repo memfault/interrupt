@@ -16,7 +16,7 @@ Many dev kits out there are matter compatible, and if you want to build a simple
 
 However, things get hairy as soon as you get off the beaten path. For example Matter devices are generally expected to communicate only on the local network, via predefined Matter clusters. This is fine when your application fits neatly within the spec. But if you need your device to communicate with a server directly you need to do a bit more work.
 
- <!-- excerpt start -->
+<!-- excerpt start -->
 
 In this post, we look at how a Matter-over-Thread device can reach the internet
 through a Thread Border Router. We will cover the key networking concepts (Thread, NAT64, and UDP) and walk through a working example that sends a UDP
@@ -58,7 +58,7 @@ security layer (CASE/PASE sessions with AES-CCM encryption).
 Matter is designed so that devices rarely need to talk directly to the internet.
 Instead, internet-facing communication is delegated to the controller (the hub).
 
-A good example is firmware updates. Matter devices do not check a server directly for updates. Instead, manufacturers publish their update on the Distributed Compliance Ledger (DCL)[^dcl], a blockchain (yes! blockchain!) managed by the CSA. Devices regularly ask their hub for updates, and the hub in turn goes and checks the DCL. If a new update is found on the DCL, the hub downloads it and send it to the device using a standardized Matter cluster (i.e. message format).
+A good example is firmware updates. Matter devices do not check a server directly for updates. Instead, manufacturers publish their update on the Distributed Compliance Ledger (DCL)[^dcl], a blockchain (yes! blockchain!) managed by the CSA. Devices regularly ask their hub for updates, and the hub in turn goes and checks the DCL. If a new update is found on the DCL, the hub downloads it and sends it to the device using a standardized Matter cluster (i.e. message format).
 
 This is true for most Matter operations: device control, event reporting, and
 scene management all happen locally. The controller handles cloud integration,
@@ -73,7 +73,7 @@ But sometimes local-only communication is not enough. You may want to:
 - Reach a custom server for functionality outside the Matter spec
 
 In theory, Matter hubs are full-fledged Thread Border Routers and
-should be able toc bridge traffic from the Thread mesh to the internet.
+should be able to bridge traffic from the Thread mesh to the internet.
 
 ### One does not simply send IPv6 packets
 
@@ -123,8 +123,11 @@ mind:
 
 - **UDP only.** TCP is not available on the Thread transport. This means no HTTP,
   no HTTPS, no WebSockets.
-- **Small MTU.** Thread has a maximum frame size of 1280 bytes (the IPv6 minimum
-  MTU). After headers, your payload budget is around 1200 bytes.
+- **Small effective payload.** Thread runs IPv6 over IEEE 802.15.4, which has
+  very small MAC frames (127 bytes) and relies on 6LoWPAN fragmentation to carry
+  the IPv6 minimum MTU of 1280 bytes. In practice, after headers and considering
+  fragmentation overhead, you should assume your reliable UDP payload budget per
+  message is well under 1200 bytes.
 - **No TLS.** TLS requires TCP. For encrypted communication, you need DTLS
   (Datagram TLS), which is the UDP equivalent.
 
