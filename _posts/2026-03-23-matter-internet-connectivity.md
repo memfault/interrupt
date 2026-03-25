@@ -12,9 +12,7 @@ tags: [matter, thread, iot, nrf54]
 
 While it has taken longer than some people expected, Matter is finally going mainstream. Brands including Ikea, Kwikset, and Bosch have shipped matter devices, and matter hubs can increasingly be found in people's homes.
 
-Many dev kits out there are matter compatible, and if you want to build a simple application you can find good example code and get started quickly.
-
-However, things get hairy as soon as you get off the beaten path. For example Matter devices are generally expected to communicate only on the local network, via predefined Matter clusters. This is fine when your application fits neatly within the spec. But if you need your device to communicate with a server directly you need to do a bit more work.
+Many dev kits out there are matter compatible, and if you want to build a simple application you can find good example code and get started quickly. This is fine if your use case fits neatly within existing Matter clusters, but direct internet communication is not straightforward.
 
 <!-- excerpt start -->
 
@@ -35,6 +33,8 @@ was developed by the Connectivity Standards Alliance (CSA), with backing from
 Apple, Google, Amazon, and others. The goal is interoperability: a Matter light
 bulb works with any Matter controller, regardless of the ecosystem.
 
+![Matter data model components](/img/matter-internet-connectivity/matter_components_DM.svg)
+
 Matter defines a data model (clusters, attributes, commands) and the
 networking stack to carry it. Devices are commissioned into a fabric (a logical
 network of controllers and devices), and from that point on, controllers can read attributes, send commands, and subscribe to changes.
@@ -50,8 +50,12 @@ mesh routing, and secure commissioning. Crucially, Thread networks include a
 Border Router, a device that bridges traffic between the Thread mesh and the
 wider IP network (typically your home Wi-Fi/Ethernet).
 
+![Matter network topologies](/img/matter-internet-connectivity/matter_network_topologies.svg)
+
 Matter does not use TCP. Instead, it runs on UDP and adds its own reliability and encryption on top through the Matter Reliable Protocol (MRP) and a custom
 security layer (CASE/PASE sessions with AES-CCM encryption).
+
+> **Note**: Matter 1.5 adds TCP support to the standard, but it remains to be seen how this will be implemented in practice.
 
 ## The Hub Does Most of the Work
 
@@ -59,6 +63,8 @@ Matter is designed so that devices rarely need to talk directly to the internet.
 Instead, internet-facing communication is delegated to the controller (the hub).
 
 A good example is firmware updates. Matter devices do not check a server directly for updates. Instead, manufacturers publish their update on the Distributed Compliance Ledger (DCL)[^dcl], a blockchain (yes! blockchain!) managed by the CSA. Devices regularly ask their hub for updates, and the hub in turn goes and checks the DCL. If a new update is found on the DCL, the hub downloads it and sends it to the device using a standardized Matter cluster (i.e. message format).
+
+![Matter data model for a door lock](/img/matter-internet-connectivity/matter_components_DM_doorlock.svg)
 
 This is true for most Matter operations: device control, event reporting, and
 scene management all happen locally. The controller handles cloud integration,
@@ -121,7 +127,7 @@ translation is transparent.
 Since Matter runs on UDP over Thread, there are a few constraints to keep in
 mind:
 
-- **UDP only.** TCP is not available on the Thread transport. This means no HTTP,
+- **UDP only.** Since TCP is not compatible with Matter, we get no HTTP,
   no HTTPS, no WebSockets.
 - **Small effective payload.** Thread runs IPv6 over IEEE 802.15.4, which has
   very small MAC frames (127 bytes) and relies on 6LoWPAN fragmentation to carry
@@ -146,8 +152,8 @@ Putting everything we've learned together, here's how a UDP packet from a Matter
 ```
 
 1. The application builds a UDP packet and hands it to the OpenThread stack.
-2. OpenThread encrypts it at the mesh layer (Thread MLE) and transmits it over
-   802.15.4.
+2. OpenThread encapsulates it for 802.15.4, which encrypts each frame at the
+   MAC layer (AES-128-CCM) before transmitting over the air.
 3. The Border Router receives the 802.15.4 frame, decapsulates it, and sees a
    UDP/IPv6 packet destined for a NAT64 address.
 4. The Border Router performs NAT64 translation and forwards the packet as
@@ -183,7 +189,7 @@ CONFIG_CHIP_LIB_SHELL=y
 CONFIG_OPENTHREAD_SHELL=y
 ```
 
-`CONFIG_OPENTHREAD_DNS_CLIENT` is the important one. It enables the DNS client
+`CONFIG_OPENTHREAD_DNS_CLIENT=y` is the important one. It enables the DNS client
 in the OpenThread stack, which allows us to resolve hostnames using the Border
 Router's DNS proxy. Without it, you would have to hardcode IP addresses.
 
@@ -364,8 +370,7 @@ A few things to note about the OpenThread UDP API:
 
 ### Trying It Out
 
-After building and flashing, commission the device into your Thread network
-using a Matter controller. Look for this log line:
+After building and flashing with `west`, commission the device into your Thread network using a Matter controller. Look for this log line:
 
 ```
 00:00:00.140,606] <inf> chip: [SVR]https://project-chip.github.io/connectedhomeip/qrcode.html?data=xxxxxx
