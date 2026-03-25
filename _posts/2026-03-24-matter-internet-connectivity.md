@@ -64,11 +64,11 @@ Instead, internet-facing communication is delegated to the controller (the hub).
 
 A good example is firmware updates. Matter devices do not check a server directly for updates. Instead, manufacturers publish their update on the Distributed Compliance Ledger (DCL)[^dcl], a blockchain (yes! blockchain!) managed by the CSA. Devices regularly ask their hub for updates, and the hub in turn goes and checks the DCL. If a new update is found on the DCL, the hub downloads it and sends it to the device using a standardized Matter cluster (i.e. message format).
 
-![Matter data model for a door lock](/img/matter-internet-connectivity/matter_components_DM_doorlock.svg)
-
 This is true for most Matter operations: device control, event reporting, and
 scene management all happen locally. The controller handles cloud integration,
 voice assistant bridges, and remote access.
+
+![Matter data model for a door lock](/img/matter-internet-connectivity/matter_components_DM_doorlock.svg)
 
 ## Reaching the Internet
 
