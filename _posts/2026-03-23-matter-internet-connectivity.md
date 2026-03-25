@@ -33,7 +33,7 @@ was developed by the Connectivity Standards Alliance (CSA), with backing from
 Apple, Google, Amazon, and others. The goal is interoperability: a Matter light
 bulb works with any Matter controller, regardless of the ecosystem.
 
-![Matter data model components](/img/matter-internet-connectivity/matter_components_DM.svg)
+![Matter components](/img/matter-internet-connectivity/matter_components.svg)
 
 Matter defines a data model (clusters, attributes, commands) and the
 networking stack to carry it. Devices are commissioned into a fabric (a logical
