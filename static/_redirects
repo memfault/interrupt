@@ -1,0 +1,17 @@
+/blog/feed.xml /feed.xml
+/blog/code-of-conduct /code-of-conduct
+/blog/code-of-conduct /code-of-conduct
+/blog/cortex-m-fault-debug /blog/cortex-m-hardfault-debug
+/blog/swig-for-c-and-lua-copy /blog/swig-for-c-and-lua
+/blog/drafting-a-c-dev-environment /blog/a-modern-c-dev-env
+/blog/mcu-periphral-forwarding /blog/mcu-peripheral-forwarding
+
+/blog/authors/* /authors/:splat
+
+# Stable redirect for subscribing to Interrupt's Event calendar.
+# Here in case we switch to Google Calendar or another provider in the future
+/events-calendar https://airtable.com/shrPIHX3y3gQ0WlRd/iCal?timeZone=America%2FLos_Angeles&userLocale=en
+
+# Custom 404 page
+# https://docs.netlify.com/routing/redirects/redirect-options/#custom-404-page-handling
+/* /404.html 404

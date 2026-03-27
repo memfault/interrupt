@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /home/noah/dev/memfault/interrupt-worktree/*.html)",
+      "Bash(ls /home/noah/dev/memfault/interrupt-worktree/*.md)",
+      "Bash(xargs -I{} grep -n 'post_url' {})",
+      "Bash(sort -t: -k2 -rn)"
+    ]
+  }
+}

@@ -4,6 +4,11 @@ _site/
 .jekyll-cache/
 .jekyll-metadata
 
+# Gatsby
+.cache/
+public/
+_posts_processed/
+
 .DS_Store
 /vendor
 /example/*/build

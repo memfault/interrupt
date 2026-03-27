@@ -1,15 +1,38 @@
 {
+  "name": "interrupt",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
+    "develop": "node scripts/preprocess-posts.js && gatsby develop",
+    "build": "node scripts/preprocess-posts.js && gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
     "lint:prettier": "prettier --check _posts _drafts",
     "lint:typos": "typos _posts _drafts",
     "lint:prettier:fix": "prettier --write _posts _drafts"
   },
   "dependencies": {
-    "lefthook": "^1.6.16",
-    "prettier": "^3.3.2"
+    "gatsby": "^5.13.7",
+    "gatsby-plugin-feed": "^5.13.1",
+    "gatsby-plugin-image": "^3.13.1",
+    "gatsby-plugin-manifest": "^5.13.1",
+    "gatsby-plugin-sass": "^6.13.1",
+    "gatsby-plugin-sharp": "^5.13.1",
+    "gatsby-plugin-sitemap": "^6.13.1",
+    "gatsby-remark-autolink-headers": "^6.13.1",
+    "gatsby-remark-prismjs": "^7.13.1",
+    "gatsby-source-filesystem": "^5.13.1",
+    "gatsby-transformer-remark": "^6.13.1",
+    "gatsby-transformer-sharp": "^5.13.1",
+    "js-yaml": "^4.1.0",
+    "prismjs": "^1.29.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sass": "^1.70.0"
   },
   "devDependencies": {
+    "lefthook": "^1.6.16",
+    "prettier": "^3.3.2",
     "typos-rs-npm": "dalisoft/typos-rs-npm"
-  },
-  "packageManager": "yarn@3.6.3"
+  }
 }

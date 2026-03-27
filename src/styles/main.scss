@@ -1,0 +1,36 @@
+// Site styles — imports from _sass/ (loaded via gatsby-plugin-sass includePaths)
+// Note: syntax highlighting is handled by Prism (imported in gatsby-browser.js)
+// The .highlight Rouge classes in syntax.scss are not used with Prism, so we skip it.
+
+@import "base";
+@import "mixin";
+@import "typography";
+@import "tag";
+@import "layout";
+@import "custom";
+@import "modules/toc";
+@import "modules/newsletter";
+@import "modules/submit_pr";
+@import "modules/dark-mode";
+
+// Override code block styles to work with Prism
+// Prism adds language-* class to <code> inside <pre>
+pre[class*="language-"] {
+  background-color: #272822;
+  padding: 20px;
+  overflow-y: hidden;
+  overflow-x: auto;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+
+code[class*="language-"] {
+  color: #e5e5e0;
+}
+
+// Inline code (non-highlighted)
+:not(pre) > code {
+  background-color: rgba(0, 0, 0, 0.06);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
