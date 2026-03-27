@@ -156,7 +156,30 @@ html[data-theme="dark"] {
   @include dark-theme;
 }
 
-// Theme toggle button
+// Theme toggle button — lives in the nav sidebar footer
+#nav footer #theme-toggle,
+#nav-left footer #theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95em;
+  padding: 4px 0;
+  margin: 0 auto;
+
+  &:hover {
+    color: white;
+  }
+
+  i {
+    font-size: 1.1em;
+    pointer-events: none;
+  }
+}
+
 #theme-toggle {
   background: none;
   border: none;

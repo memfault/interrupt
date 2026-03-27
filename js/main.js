@@ -4,27 +4,23 @@ var html = document.documentElement;
 
 var icon = normal !== null ? normal : reverse;
 
-// Toggle the "menu-open" % "menu-opn-left" classes
+// Toggle the "menu-open" % "menu-open-left" classes
 function toggle() {
   var navRight = document.getElementById("nav");
   var navLeft = document.getElementById("nav-left");
   var nav = navRight !== null ? navRight : navLeft;
 
   var button = document.getElementById("menu");
-  var site = document.getElementById("wrap");
 
   if (nav.className == "menu-open" || nav.className == "menu-open-left") {
     nav.className = "";
     button.className = "";
-    site.className = "";
   } else if (reverse !== null) {
     nav.className += "menu-open-left";
     button.className += "btn-close";
-    site.className += "fixed";
   } else {
     nav.className += "menu-open";
     button.className += "btn-close";
-    site.className += "fixed";
   }
 }
 
@@ -81,16 +77,20 @@ function updateThemeToggle(btn) {
 
   var theme = document.documentElement.getAttribute("data-theme");
   var icon = btn.querySelector("i");
+  var label = btn.querySelector("#theme-toggle-label");
 
   if (theme === "dark") {
     icon.className = "fa fa-moon-o";
     btn.title = "Dark mode (click for light)";
+    if (label) label.textContent = "Dark mode";
   } else if (theme === "light") {
     icon.className = "fa fa-sun-o";
     btn.title = "Light mode (click for system)";
+    if (label) label.textContent = "Light mode";
   } else {
     icon.className = "fa fa-adjust";
     btn.title = "System theme (click for dark)";
+    if (label) label.textContent = "System theme";
   }
 }
 
@@ -121,9 +121,7 @@ function checkAndDisplayBanner() {
   const banner = document.querySelector(".banner-notifications");
 
   if (banner && hideBannerCookie === "true") {
-    banner.style.display = "none"; // Hide the banner if cookie is set to true
-  } else {
-    banner.style.display = "block"; // Show the banner otherwise
+    banner.style.display = "none";
   }
 
   notificationBannerClose();
@@ -149,6 +147,5 @@ function notificationBannerClose() {
 
 darkModeSetup();
 menuClick();
-searchScroll();
 
 window.addEventListener("load", checkAndDisplayBanner);
