@@ -4,27 +4,23 @@ var html = document.documentElement;
 
 var icon = normal !== null ? normal : reverse;
 
-// Toggle the "menu-open" % "menu-opn-left" classes
+// Toggle the "menu-open" % "menu-open-left" classes
 function toggle() {
   var navRight = document.getElementById("nav");
   var navLeft = document.getElementById("nav-left");
   var nav = navRight !== null ? navRight : navLeft;
 
   var button = document.getElementById("menu");
-  var site = document.getElementById("wrap");
 
   if (nav.className == "menu-open" || nav.className == "menu-open-left") {
     nav.className = "";
     button.className = "";
-    site.className = "";
   } else if (reverse !== null) {
     nav.className += "menu-open-left";
     button.className += "btn-close";
-    site.className += "fixed";
   } else {
     nav.className += "menu-open";
     button.className += "btn-close";
-    site.className += "fixed";
   }
 }
 
@@ -125,9 +121,7 @@ function checkAndDisplayBanner() {
   const banner = document.querySelector(".banner-notifications");
 
   if (banner && hideBannerCookie === "true") {
-    banner.style.display = "none"; // Hide the banner if cookie is set to true
-  } else {
-    banner.style.display = "block"; // Show the banner otherwise
+    banner.style.display = "none";
   }
 
   notificationBannerClose();
@@ -153,6 +147,5 @@ function notificationBannerClose() {
 
 darkModeSetup();
 menuClick();
-searchScroll();
 
 window.addEventListener("load", checkAndDisplayBanner);
