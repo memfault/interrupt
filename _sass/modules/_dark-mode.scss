@@ -1,0 +1,179 @@
+// Dark mode styles.
+// Applied when data-theme="dark" is set on <html>, or when the user's
+// system preference is dark and no explicit theme has been chosen.
+
+@mixin dark-theme {
+  background-color: #1a1b2e;
+  color: #e0e0ea;
+
+  a {
+    color: #7eb8f7;
+    &:hover,
+    &:focus {
+      color: #a8d0ff;
+    }
+  }
+
+  article .content a:not(.footnote):not(.anchorjs-link) {
+    border-bottom-color: rgba(#7eb8f7, 0.35);
+    &:hover,
+    &:focus {
+      border-bottom-color: #7eb8f7;
+    }
+  }
+
+  article .content .footnote {
+    color: #7eb8f7;
+  }
+
+  code {
+    color: #b8b8cc;
+  }
+
+  // Header
+  #header {
+    a {
+      color: #e0e0ea;
+    }
+    &:after {
+      background-color: rgba(#e0e0ea, 0.18);
+    }
+  }
+
+  // Post dividers
+  .post + .post:before,
+  .content:after {
+    background-color: rgba(#e0e0ea, 0.18);
+  }
+
+  .by-line {
+    color: rgba(#e0e0ea, 0.58);
+  }
+
+  // Search
+  #search-input {
+    background-color: #252641;
+    color: #e0e0ea;
+    border-color: rgba(#e0e0ea, 0.22);
+  }
+
+  #search-results {
+    &:after {
+      background: linear-gradient(to bottom, rgba(26, 27, 46, 0) 0%, rgba(26, 27, 46, 1) 50%);
+      filter: none;
+      color: #9090a8;
+    }
+  }
+
+  // Tables
+  table {
+    border-color: rgba(#e0e0ea, 0.2);
+  }
+
+  thead th {
+    background-color: #252641;
+    color: #e0e0ea;
+    border-color: rgba(#e0e0ea, 0.2);
+  }
+
+  tbody td {
+    border-color: rgba(#e0e0ea, 0.2);
+    color: #e0e0ea;
+    text-shadow: none;
+    background-color: #1a1b2e;
+  }
+
+  // Table of contents
+  #markdown-toc {
+    background-color: rgba(#e0e0ea, 0.07);
+    color: #e0e0ea;
+  }
+
+  // Pagination
+  .pagination span {
+    background-color: #252641;
+    color: #e0e0ea;
+  }
+
+  // Blockquote
+  blockquote {
+    background-color: #252641 !important;
+    border-left-color: rgba(#e0e0ea, 0.25);
+    color: rgba(#e0e0ea, 0.75);
+  }
+
+  // Sidebar headings (explicit color: $dark-grey in light mode is nearly invisible on dark bg)
+  // !important needed to beat ID-selector rules like #search-form label h3
+  h3 {
+    color: #e0e0ea !important;
+  }
+
+  // Google CSE widget containers
+  .gsc-control-cse,
+  .gsc-input-box,
+  .gsc-input-box-hover,
+  .gsc-input-box-focus,
+  table.gsc-search-box,
+  td.gsc-input {
+    background-color: #252641 !important;
+    border-color: rgba(#e0e0ea, 0.22) !important;
+  }
+
+  input.gsc-input,
+  .gsc-input input {
+    background-color: #252641 !important;
+    color: #e0e0ea !important;
+  }
+
+  // HubSpot subscribe form input
+  .hbspt-form .hs-input {
+    background-color: #252641 !important;
+    color: #e0e0ea !important;
+    border-color: rgba(#e0e0ea, 0.22) !important;
+  }
+
+  .hbspt-form .hs_email label {
+    color: rgba(#e0e0ea, 0.7) !important;
+  }
+
+  // Memfault logo — has a transparent bg, looks invisible on dark
+  .mf-icon {
+    background-color: white;
+    border-radius: 4px;
+    padding: 2px;
+  }
+}
+
+// System preference: apply dark theme only when no explicit choice is saved.
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    @include dark-theme;
+  }
+}
+
+// Explicit dark mode (saved preference).
+html[data-theme="dark"] {
+  @include dark-theme;
+}
+
+// Theme toggle button
+#theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 1.05em;
+  color: inherit;
+  vertical-align: middle;
+  border-radius: 4px;
+  line-height: 1;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  i {
+    font-size: 1em;
+    pointer-events: none;
+  }
+}
