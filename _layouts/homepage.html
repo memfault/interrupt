@@ -1,56 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+  {% include head.html %}
 
-{% include head.html %}
+  <body>
+    <div id="wrap">
+      <!-- Navigation -->
+      {% include menu.html %}
 
-<body>
-	<div id="wrap">
+      <!-- Top banner -->
+      {% include notification-banner.html %}
 
-	  	<!-- Navigation -->
-	  	{% include menu.html %}
+      <!-- Icon menu -->
+      <a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
+        <div id="menu"></div>
+      </a>
 
-		<!-- Top banner -->
-		{% include notification-banner.html %}
+      <div id="header">
+        <img
+          id="logo"
+          src="{% img_url interrupt-logo.svg %}"
+          alt="Interrupt Logo"
+        />
+        <h1 class="header">Interrupt</h1>
+        <h3 class="header">by <a href="https://memfault.com">Memfault</a></h3>
+      </div>
 
-    	<!-- Icon menu -->
-		<a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
-			<div id="menu"></div>
-		</a>
+      <!-- Main content -->
+      <div id="split-container-wrapper" class="home-split-container">
+        <div id="split-container">
+          <main>{{ content }}</main>
+          <aside>
+            {% include search.html %} {% include subscribe.html %} {% include
+            posts-nav.html %} {% include by-memfault.html %} {% include
+            share-buttons.html %}
+          </aside>
+        </div>
 
-		<div id="header">
-			<img id='logo' src="{% img_url interrupt-logo.svg %}" alt="Interrupt Logo">
-			<h1 class="header">Interrupt</h1>
-			<h3 class="header">by <a href="https://memfault.com">Memfault</a></h3>
-		</div>
+        <!-- Pagination links -->
+        {% include pagination.html %}
+      </div>
 
-		<!-- Main content -->
-		<div id="split-container-wrapper" class="home-split-container">
-			<div id="split-container">
-				<main>
+      <!-- Footer -->
+      {% include footer.html %}
 
-					{{ content }}
-
-				</main>
-				<aside>
-					{% include search.html %}
-					{% include subscribe.html %}
-					{% include posts-nav.html %}
-					{% include by-memfault.html %}
-					{% include share-buttons.html %}
-				</aside>
-			</div>
-
-			<!-- Pagination links -->
-			{% include pagination.html %}
-
-		</div>
-
-	    <!-- Footer -->
-	    {% include footer.html %}
-
-	    <!-- Script -->
-		{% include script.html %}
-
-	</div>
-</body>
+      <!-- Script -->
+      {% include script.html %}
+    </div>
+  </body>
 </html>

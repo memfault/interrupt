@@ -81,16 +81,20 @@ function updateThemeToggle(btn) {
 
   var theme = document.documentElement.getAttribute("data-theme");
   var icon = btn.querySelector("i");
+  var label = btn.querySelector("#theme-toggle-label");
 
   if (theme === "dark") {
     icon.className = "fa fa-moon-o";
     btn.title = "Dark mode (click for light)";
+    if (label) label.textContent = "Dark mode";
   } else if (theme === "light") {
     icon.className = "fa fa-sun-o";
     btn.title = "Light mode (click for system)";
+    if (label) label.textContent = "Light mode";
   } else {
     icon.className = "fa fa-adjust";
     btn.title = "System theme (click for dark)";
+    if (label) label.textContent = "System theme";
   }
 }
 

@@ -1,49 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+  {% include head.html %}
 
-{% include head.html %}
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-PDMNKRX"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <div id="wrap">
+      <!-- Navigation -->
+      {% include menu.html %}
 
-<body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PDMNKRX"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-	<div id="wrap">
+      <!-- Top banner -->
+      {% include notification-banner.html %}
 
-		<!-- Navigation -->
-	  	{% include menu.html %}
+      <!-- Icon menu -->
+      <a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
+        <div id="menu"></div>
+      </a>
 
-		<!-- Top banner -->
-		{% include notification-banner.html %}
+      <!-- Header -->
+      {% include header-custom.html %}
 
-    	<!-- Icon menu -->
-		<a {% if site.reverse == true %}id="nav-menu-left"{% else %}id="nav-menu"{% endif %}>
-			<div id="menu"></div>
-		</a>
+      <!-- Main content -->
+      <div id="container">
+        <main>{{ content }}</main>
 
-    	<!-- Header -->
-      	{% include header-custom.html %}
+        <!-- Pagination links -->
+        {% include pagination.html %}
+      </div>
 
-    	<!-- Main content -->
-	  	<div id="container">
+      <!-- Footer -->
+      {% include footer.html %}
 
-			<main>
-
-				{{ content }}
-
-	  		</main>
-
-		  	<!-- Pagination links -->
-      		{% include pagination.html %}
-
-		</div>
-
-	    <!-- Footer -->
-	    {% include footer.html %}
-
-	    <!-- Script -->
-      	{% include script.html %}
-
-	</div>
-</body>
+      <!-- Script -->
+      {% include script.html %}
+    </div>
+  </body>
 </html>
