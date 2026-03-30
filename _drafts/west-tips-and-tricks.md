@@ -1,5 +1,5 @@
 ---
-title: "Pocket article: Zephyr West tips and tricks"
+title: "Zephyr West tips and tricks"
 description:
   A handful of useful west tricks for managing Zephyr workspaces more
   effectively.
