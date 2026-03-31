@@ -1,16 +1,18 @@
 ---
 title: "Zephyr West tips and tricks"
 description:
-  A handful of useful west tricks for managing Zephyr workspaces more
-  effectively.
+  Some useful west tricks for managing Zephyr workspaces more effectively.
 author: noah
 tags: [zephyr, west]
 ---
 
 <!-- excerpt start -->
 
-A few handy `west` tips I've found useful that aren't always covered in the
-getting-started guides.
+The Zephyr `west` tool is a powerful workspace manager, but it is admittedly
+pretty feature-rich: there's a lot of functionality buried inside that tool!
+
+I thought it would be interesting to share a few tips and tricks that I use with
+`west` to make my Zephyr development workflow a little smoother.
 
 <!-- excerpt end -->
 
@@ -155,20 +157,160 @@ examples:
 
 West extensions let projects (or your own local tooling) add custom subcommands
 to west. This is useful when you want project-specific tooling to feel like a
-first-class citizen in your workflow rather than a separate script.
+first-class citizen in your workflow rather than a separate script (it's
+especially nice for discoverability, since everything is available from
+`west --help`).
 
-One practical example: the `memfault-cli` package provides a west extension for
-uploading symbol files, so you can do something like:
+It's useful when the commands you need don't fit into the normal
+build/flash/debug/attach workflow provided by the Zephyr SDK's own extension
+commands, and aliases are insufficient.
 
-```bash
-west memfault upload-mcu-symbols
+A quick example: we add the following files/snippets to our manifest repo:
+
+**`west.yml`:**
+
+```yaml
+manifest:
+  self:
+    # register this repo's west extensions
+    west-commands: scripts/west-commands.yml
 ```
 
-...without any extra path wrangling.
+**`scripts/west-commands.yml`:**
 
-The extension mechanism is straightforward to implement if you want to wrap your
-own tooling. Reference:
+```yaml
+west-commands:
+  - file: scripts/west_extensions.py
+    commands:
+      - name: project-hello
+        class: ProjectHello
+        help: sample Project west extension command
+```
+
+**`scripts/west_extensions.py`:**
+
+```python
+from textwrap import dedent
+
+from west.commands import WestCommand
+
+
+class ProjectHello(WestCommand):
+    def __init__(self):
+        super().__init__(
+            "project-hello",  # gets stored as self.name
+            "",  # ignored self.help, will not be required by future west versions
+            description=dedent(
+                """
+            Sample Project west extension command.
+            """
+            ),
+        )
+
+    def do_add_parser(self, parser_adder):
+        parser = parser_adder.add_parser(self.name, description=self.description)
+
+        levels = ["dbg", "inf", "wrn", "err"]
+        parser.add_argument(
+            "-l",
+            "--level",
+            default="inf",
+            choices=levels,
+            help="log level for the message (default: %(default)s)",
+        )
+        parser.add_argument("message", help="message to print")
+
+        return parser  # gets stored as self.parser
+
+    def do_run(self, args, unknown):
+        log_fn = {
+            "dbg": self.dbg,
+            "inf": self.inf,
+            "wrn": self.wrn,
+            "err": self.err,
+        }[args.level]
+
+        self.inf(f"[{self.name}] log level: {args.level}")
+        log_fn(f"[{self.name}] message: {args.message}")
+```
+
+Now the new extension shows up in `west --help`:
+
+```plaintext
+extension commands from project manifest (path: blahblah):
+  project-hello:        sample Project west extension command
+```
+
+And we can run it:
+
+```bash
+❯ west project-hello --level err 'Hello!'
+[project-hello] log level: err
+ERROR: [project-hello] message: Hello!
+```
+
+The Zephyr reference goes through the details of how to do this:
 <https://docs.zephyrproject.org/latest/develop/west/extensions.html#west-extensions>
+
+## Reducing what `west update` fetches
+
+For day-to-day development you often don't need the full history of every
+dependency. You can speed up `west update` significantly with a couple of flags:
+
+```bash
+west update --narrow --fetch-opt=--depth=1
+```
+
+- `--narrow` tells west to only fetch the specific revision referenced in the
+  manifest, rather than fetching all refs from the remote.
+- `--fetch-opt=--depth=1` passes `--depth=1` to the underlying `git fetch`,
+  giving you a shallow clone with just the tip commit.
+
+Together these can dramatically cut down network traffic and disk usage,
+especially on first initialization of a large workspace.
+
+Use `git fetch --unshallow` on a module to convert a shallow clone to a full one
+later- this is useful if you need the full history (eg bisecting) or want to
+make a contribution upstream!
+
+## Resolving the manifest to exact SHAs
+
+West manifests typically reference branches or tags, which can drift over time.
+To capture a fully-resolved snapshot with exact commit SHAs — useful for
+reproducible builds or auditing — use:
+
+```bash
+west manifest --resolve
+```
+
+The output is a valid west manifest with every project pinned to a specific
+revision:
+
+```yaml
+manifest:
+  group-filter:
+    - -babblesim
+    - -optional
+    - -testing
+  projects:
+    - name: canopennode
+      url: https://github.com/zephyrproject-rtos/canopennode
+      revision: dec12fa3f0d790cafa8414a4c2930ea71ab72ffd
+      path: modules/lib/canopennode
+      groups:
+        - optional
+    - name: chre
+      url: https://github.com/zephyrproject-rtos/chre
+      revision: c4c2f49fdcaa2fed49eb1db027696a5734a010d2
+      path: modules/lib/chre
+      groups:
+        - optional
+  # ...
+```
+
+You can redirect this into a `west.lock.yml` (or similar) and commit it
+alongside your manifest so that anyone cloning the workspace gets exactly the
+same tree.
 
 <!-- Interrupt Keep START -->
 
@@ -188,4 +330,6 @@ own tooling. Reference:
 [^west-config]: [West built-in configuration options](https://docs.zephyrproject.org/latest/develop/west/config.html#built-in-configuration-options)
 [^west-alias]: [West aliases](https://docs.zephyrproject.org/latest/develop/west/alias.html#examples)
 [^west-extensions]: [West extensions](https://docs.zephyrproject.org/latest/develop/west/extensions.html#west-extensions)
+[^west-update]: [West update command](https://docs.zephyrproject.org/latest/develop/west/basics.html#west-init-and-west-update)
+[^west-manifest-resolve]: [West manifest --resolve](https://docs.zephyrproject.org/latest/develop/west/manifest.html#resolving-manifests)
 <!-- prettier-ignore-end -->
