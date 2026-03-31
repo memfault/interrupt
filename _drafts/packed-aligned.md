@@ -246,6 +246,37 @@ why you lint.
 > It catches exactly the kind of silent misalignment that happens when structs
 > evolve over time. Run it against your build artifacts and you'll know which
 > fields are paying the byte-decomposition penalty.
+>
+> ---
+> 
+> There is also a tool called [pahole](https://linux.die.net/man/1/pahole) which 
+> can inspect structs based on the DWARF info.
+> Pahole has been around for almost 20 years and is even integrated into the
+> Linux kernel build system. Output from `pahole` for the same example `sensor_reading_evolved_t`
+> struct is:
+>
+> ```c
+> type`def struct {
+>       int64_t                    timestamp;            /*     0     8 */
+>       int32_t                    temperature_mc;       /*     8     4 */
+>       int32_t                    salinity_ppt;         /*    12     4 */
+>       uint8_t                    status_flags;         /*    16     1 */
+>       uint16_t                   battery_mv;           /*    17     2 */
+>       uint32_t                   error_code;           /*    19     4 */
+>
+>       /* size: 24, cachelines: 1, members: 6 */
+>       /* padding: 1 */
+>       /* last cacheline: 24 bytes */
+> } sensor_reading_evolved_t __attribute__((__aligned__(4)));>
+> ```
+>
+> where you can see the offsets and sizes of each member of the structure.
+> This output may be helpful for debugging and manual inspection of structures.
+> `pahole` also offers flags
+> where it can recommend restructuring for performance.
+> `struct-lint` on the other hand is intended as a linter for your CI pipeline,
+> and to provide feedback on stdout that looks like compiler errors
+> so that it's maximally actionable for devs and coding agents.
 
 ## Not Just RISC-V
 
