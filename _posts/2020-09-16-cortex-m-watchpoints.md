@@ -1,37 +1,69 @@
 ---
+date: "2020-09-16"
 title: "Faster Debugging with Watchpoints"
-description: "A step by step guide on how to use watchpoints for faster debugging and a deep dive into how watchpoints are implemented in ARM Cortex-M MCUs"
+description:
+  "A step by step guide on how to use watchpoints for faster debugging and a
+  deep dive into how watchpoints are implemented in ARM Cortex-M MCUs"
 image: /img/watchpoint/cortex-m-watchpoint-gdb.png
 tag: [cortex-m, arm, mcu, debugging, gdb]
 author: chris
 ---
 
-One of the most challenging types of issues to debug is memory corruption! Memory corruption can be caused for a variety of reasons including when data is used after it has been freed, a read or write goes past the end of a buffer, thread safety constructs are missing, or a linker script is misconfigured. By the time the system finally faults or encounters an error, the original operation which spiraled the system into the bad state is often lost!
+One of the most challenging types of issues to debug is memory corruption!
+Memory corruption can be caused for a variety of reasons including when data is
+used after it has been freed, a read or write goes past the end of a buffer,
+thread safety constructs are missing, or a linker script is misconfigured. By
+the time the system finally faults or encounters an error, the original
+operation which spiraled the system into the bad state is often lost!
 
-Data breakpoints ("Watchpoints") can be used to catch memory corruption at the source and have personally saved me a tremendous amount of time debugging nefarious issues over the years. Whether you are a watchpoint power user or haven't used them before, I hope this article can teach you something new!
+Data breakpoints ("Watchpoints") can be used to catch memory corruption at the
+source and have personally saved me a tremendous amount of time debugging
+nefarious issues over the years. Whether you are a watchpoint power user or
+haven't used them before, I hope this article can teach you something new!
 
 <!-- excerpt start -->
 
-In this post we will explore how to save time debugging by making the most of watchpoints. We will walk through a few classic use cases of watchpoints by debugging an example application with GDB. Then, we will dive into how watchpoints are implemented for ARM Cortex-M based MCUs with the Data Watchpoint & Trace (**DWT**) unit and explore some advanced features.
+In this post we will explore how to save time debugging by making the most of
+watchpoints. We will walk through a few classic use cases of watchpoints by
+debugging an example application with GDB. Then, we will dive into how
+watchpoints are implemented for ARM Cortex-M based MCUs with the Data Watchpoint
+& Trace (**DWT**) unit and explore some advanced features.
 
 <!-- excerpt end -->
 
 > Note: While the examples in this article will use ARM Cortex-M hardware, the
-> general ideas presented about watchpoints can be applied to any compiled language and debugger.
+> general ideas presented about watchpoints can be applied to any compiled
+> language and debugger.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Basic Terminology
 
-Watchpoints are very similar to breakpoints and are often referred to as "data breakpoints". Where breakpoints allow you to halt program flow based on a certain instruction being executed, watchpoints allow you to halt flow based on a particular data access. Watchpoints can be used to monitor "write", "read" or "read/write" accesses. For example, a watchpoint might be configured to trip when a variable gets updated, a region of the stack is written to, or a particular buffer is read from.
+Watchpoints are very similar to breakpoints and are often referred to as "data
+breakpoints". Where breakpoints allow you to halt program flow based on a
+certain instruction being executed, watchpoints allow you to halt flow based on
+a particular data access. Watchpoints can be used to monitor "write", "read" or
+"read/write" accesses. For example, a watchpoint might be configured to trip
+when a variable gets updated, a region of the stack is written to, or a
+particular buffer is read from.
 
-In order for watchpoints to work and system execution to not grind to a halt, native hardware support for this functionality is required. This is implemented at the silicon level with a comparator. Every time a data access is made, the address accessed is compared against the value in the watchpoint comparator which can be done in parallel to the normal execution flow. If the value of the comparator matches the address being accessed, the system emits an event and the MCU is halted. If they do not match, the system keeps running as normal and there is no overhead to the operation!
+In order for watchpoints to work and system execution to not grind to a halt,
+native hardware support for this functionality is required. This is implemented
+at the silicon level with a comparator. Every time a data access is made, the
+address accessed is compared against the value in the watchpoint comparator
+which can be done in parallel to the normal execution flow. If the value of the
+comparator matches the address being accessed, the system emits an event and the
+MCU is halted. If they do not match, the system keeps running as normal and
+there is no overhead to the operation!
 
 ## Example Project Setup
 
-In the following sections, we will explore how watchpoints work by building on top of the bare-metal application running on a nRF52 that we used to investigate [how breakpoints work]({% post_url 2020-06-17-cortex-m-breakpoints %}) and [how to debug without a debugger]({% post_url 2020-07-29-cortex-m-debug-monitor %}).
+In the following sections, we will explore how watchpoints work by building on
+top of the bare-metal application running on a nRF52 that we used to investigate
+[how breakpoints work](/blog/cortex-m-breakpoints) and
+[how to debug without a debugger](/blog/cortex-m-debug-monitor).
 
 We will make use of the following setup:
 
@@ -39,8 +71,9 @@ We will make use of the following setup:
 - SEGGER JLinkGDBServer[^2] as our gdbserver (V6.84a)
 - GCC 9.3.1 / GNU Arm Embedded Toolchain as our compiler[^3]
 - GNU Make as our build system
-- the simple CLI shell [we built up in a previous post]({% post_url 2020-06-09-firmware-shell %}).
-- PySerial's `miniterm.py`[^miniterm] to connect to the serial console on the nRF52.
+- the simple CLI shell [we built up in a previous post](/blog/firmware-shell).
+- PySerial's `miniterm.py`[^miniterm] to connect to the serial console on the
+  nRF52.
 
 ### Compiling and Flashing Project
 
@@ -93,9 +126,14 @@ shell>
 
 ## Watchpoints with GDB
 
-Almost all debuggers expose some way to configure watchpoints via their interface. For GDB, this is done through the `watch <expr>` command, which will configure a watchpoint for the address described in `<expr>`. GDB also exposes a `rwatch` command (for data breakpoints on read accesses) and `awatch` (for data breakpoints on read or write accesses).
+Almost all debuggers expose some way to configure watchpoints via their
+interface. For GDB, this is done through the `watch <expr>` command, which will
+configure a watchpoint for the address described in `<expr>`. GDB also exposes a
+`rwatch` command (for data breakpoints on read accesses) and `awatch` (for data
+breakpoints on read or write accesses).
 
-In the following sections we will walk through configurations and examples for monitoring changes to the following C variable.
+In the following sections we will walk through configurations and examples for
+monitoring changes to the following C variable.
 
 ```c
 uint8_t g_array[17]
@@ -114,13 +152,15 @@ $1 = (volatile uint8_t (*)[17]) 0x200029a0 <g_array>
 (gdb) watch g_array
 ```
 
-The above _should_ trigger a watchpoint when a write takes place anywhere in `g_array`.
+The above _should_ trigger a watchpoint when a write takes place anywhere in
+`g_array`.
 
-> Tip: Watchpoint tracing is dependent on the functionality supported by the hardware. Watching
-> data of completely arbitrary sizes is typically not supported by hardware. For best reliability
-> on embedded systems, I recommend using watchpoints with sizes of native types (byte, half-word,
-> and word). We will walk through these limitations for ARM Cortex-M in the sections below or you
-> can find more details in the architecture reference manual. [^10]
+> Tip: Watchpoint tracing is dependent on the functionality supported by the
+> hardware. Watching data of completely arbitrary sizes is typically not
+> supported by hardware. For best reliability on embedded systems, I recommend
+> using watchpoints with sizes of native types (byte, half-word, and word). We
+> will walk through these limitations for ARM Cortex-M in the sections below or
+> you can find more details in the architecture reference manual. [^10]
 
 #### Watch for writes to an address
 
@@ -128,7 +168,8 @@ The above _should_ trigger a watchpoint when a write takes place anywhere in `g_
 (gdb) watch *(uint32_t *)0x200029a0
 ```
 
-The above will trigger a watchpoint when a write takes place anywhere between `0x200029a0` & `0x200029a4`.
+The above will trigger a watchpoint when a write takes place anywhere between
+`0x200029a0` & `0x200029a4`.
 
 #### Watch for writes to an array
 
@@ -136,8 +177,8 @@ The above will trigger a watchpoint when a write takes place anywhere between `0
 (gdb) watch *(uint8_t[2] *)0x200029a0
 ```
 
-The above will trigger a watchpoint when a write takes place anywhere between `0x200029a0` & `0x200029a2`.
-
+The above will trigger a watchpoint when a write takes place anywhere between
+`0x200029a0` & `0x200029a2`.
 
 #### Watch for reads to an array
 
@@ -145,9 +186,8 @@ The above will trigger a watchpoint when a write takes place anywhere between `0
 (gdb) rwatch *(uint8_t[2] *)0x200029a0
 ```
 
-The above will trigger a watchpoint when a read takes place anywhere between `0x200029a0` &
-`0x200029a2`.
-
+The above will trigger a watchpoint when a read takes place anywhere between
+`0x200029a0` & `0x200029a2`.
 
 ### Example
 
@@ -158,7 +198,8 @@ The example app has two CLI commands we can use to test configuring watchpoints:
 
 #### Write Watchpoint Example
 
-Let's start by configuring a write watchpoint on the first two bytes of `g_array`:
+Let's start by configuring a write watchpoint on the first two bytes of
+`g_array`:
 
 ```
 (gdb) watch *(uint8_t[2] *)0x200029a0
@@ -182,7 +223,8 @@ Write - Addr: 0x200029a0, Index: 0, Value: 0x00000001
 # Debugger should have halted
 ```
 
-In the last command we changed the value at array index 1 which should have triggered a halt:
+In the last command we changed the value at array index 1 which should have
+triggered a halt:
 
 ```
 (gdb) c
@@ -198,7 +240,8 @@ New value = "\001"
 
 #### Read Watchpoint Example
 
-We can also add a watchpoint that will only trigger on a read access using `rwatch`. Let's try it out:
+We can also add a watchpoint that will only trigger on a read access using
+`rwatch`. Let's try it out:
 
 ```
 (gdb) rwatch *(uint8_t[4] *)0x200029a0
@@ -224,12 +267,19 @@ Value = "\001\000\000"
 
 #### GDB Watchpoint Implementation Quirk
 
-When you install a watchpoint with GDB it will immediately do a read of the current values for that range. Every time a hardware watchpoint event is generated it will re-read the region so it can show you the "New value" alongside the "Old value". If both values are equal, GDB will suppress the debug event generated and auto-resume the processor[^12]. This is generally not a problem but can be confusing if you are testing watchpoint functionality or actually want to track every access.
+When you install a watchpoint with GDB it will immediately do a read of the
+current values for that range. Every time a hardware watchpoint event is
+generated it will re-read the region so it can show you the "New value"
+alongside the "Old value". If both values are equal, GDB will suppress the debug
+event generated and auto-resume the processor[^12]. This is generally not a
+problem but can be confusing if you are testing watchpoint functionality or
+actually want to track every access.
 
 ## When should I leverage watchpoints?
 
-There's a variety of scenarios where watchpoints can be used creatively for debug.
-Let's walk through a couple of the most common use-cases through examples!
+There's a variety of scenarios where watchpoints can be used creatively for
+debug. Let's walk through a couple of the most common use-cases through
+examples!
 
 ### Memory Corruption
 
@@ -250,7 +300,8 @@ void accel_register_watcher(
     AccelSampleProcessedCallback data_processed_cb);
 ```
 
-On boot, we register a watcher that gets notified as new accel samples are processed:
+On boot, we register a watcher that gets notified as new accel samples are
+processed:
 
 ```c
 // main.c
@@ -292,7 +343,8 @@ void accel_process_reading(int x, int y, int z) {
 }
 ```
 
-I've wired up the `accel_example` CLI command to call `accel_process_reading()` so we can test it out:
+I've wired up the `accel_example` CLI command to call `accel_process_reading()`
+so we can test it out:
 
 ```bash
 shell> accel_example
@@ -310,7 +362,8 @@ Program received signal SIGTRAP, Trace/breakpoint trap.
 0x00000950 in HardFault_Handler ()
 ```
 
-That's strange, this code is extremely simple. What happened?! Let's add some breakpoints in the accel driver code to investigate.
+That's strange, this code is extremely simple. What happened?! Let's add some
+breakpoints in the accel driver code to investigate.
 
 ```
 (gdb) mon reset
@@ -325,7 +378,9 @@ Breakpoint 1, accel_register_watcher (data_processed_cb=0x469 <accel_data_proces
 (gdb)
 ```
 
-It looks like we are registering the handler, `accel_data_processed`, as expected. Let's continue and call accel_example again and we should hit our second breakpoint:
+It looks like we are registering the handler, `accel_data_processed`, as
+expected. Let's continue and call accel_example again and we should hit our
+second breakpoint:
 
 ```bash
 shell> accel_example
@@ -340,7 +395,9 @@ Breakpoint 2, accel_process_reading (x=x@entry=7, y=y@entry=1, z=z@entry=1) at .
 $3 = (AccelSampleProcessedCallback) 0xffeeffee
 ```
 
-We see `s_data_processed_cb` looks like a bogus address, `0xffeeffee`, but we verified it was set correctly on boot. Confusing! Let's add a watchpoint to track down when the variable is getting set:
+We see `s_data_processed_cb` looks like a bogus address, `0xffeeffee`, but we
+verified it was set correctly on boot. Confusing! Let's add a watchpoint to
+track down when the variable is getting set:
 
 ```
 (gdb) watch *(uint32_t*)&s_data_processed_cb
@@ -356,7 +413,8 @@ New value = 0
 33    for (uint32_t *dst = &_sbss; dst < &_ebss;) {
 ```
 
-This makes sense, `s_data_processed_cb` is getting set to zero when we initialize BSS. Onward ...
+This makes sense, `s_data_processed_cb` is getting set to zero when we
+initialize BSS. Onward ...
 
 ```
 (gdb) continue
@@ -382,7 +440,8 @@ New value = 65518
 5     for (size_t i = 0; i < len; i++) {
 ```
 
-This is suspicious! `s_data_processed_cb` is getting updated from our graphics stack?! Let's examine the code
+This is suspicious! `s_data_processed_cb` is getting updated from our graphics
+stack?! Let's examine the code
 
 ```
 (gdb) list graphics_boot
@@ -393,9 +452,8 @@ This is suspicious! `s_data_processed_cb` is getting updated from our graphics s
 7     }
 ```
 
-The fact that we are writing over `s_data_processed_cb` suggests the `len` parameter above may be
-incorrect and we are writing past the end of the array.
-
+The fact that we are writing over `s_data_processed_cb` suggests the `len`
+parameter above may be incorrect and we are writing past the end of the array.
 
 ```
 (gdb) list s_graphics_buf
@@ -406,19 +464,21 @@ incorrect and we are writing past the end of the array.
 
 Now we can see the issue!
 
-
-`s_graphics_buf` is `uint16_t` array with two entries. The for loop in `graphics_boot` is
-setting each entry in the array to `0xffee`. However, when we review the call to `graphics_boot`,
-we see the size of the buffer,`sizeof(s_graphics_buf)`, was passed instead of the array length,
+`s_graphics_buf` is `uint16_t` array with two entries. The for loop in
+`graphics_boot` is setting each entry in the array to `0xffee`. However, when we
+review the call to `graphics_boot`, we see the size of the
+buffer,`sizeof(s_graphics_buf)`, was passed instead of the array length,
 `sizeof(s_graphics_buf) / sizeof(s_graphics_buf[0])`:
 
 ```c
   graphics_boot(s_graphics_buf, sizeof(s_graphics_buf));
 ```
 
-This means the for loop is writing at indexes 2 & 3 which is past the end of the array and we are clobbering memory!
+This means the for loop is writing at indexes 2 & 3 which is past the end of the
+array and we are clobbering memory!
 
-We can confirm in GDB that `s_registered_handler` has been allocated right after `s_graphics_buf` and is getting corrupted:
+We can confirm in GDB that `s_registered_handler` has been allocated right after
+`s_graphics_buf` and is getting corrupted:
 
 ```
 (gdb) x/a s_graphics_buf
@@ -427,11 +487,13 @@ We can confirm in GDB that `s_registered_handler` has been allocated right after
 0x20002084 <s_registered_handler>:	0xffee
 ```
 
-Sweet, using a watchpoint just saved a bunch of time traipsing through code to find this bug!
+Sweet, using a watchpoint just saved a bunch of time traipsing through code to
+find this bug!
 
 ### Stack Overflows
 
-Watchpoints can also aid in halting execution before a stack overflow occurs. Let's run a different command in the app, `math_example`, and investigate:
+Watchpoints can also aid in halting execution before a stack overflow occurs.
+Let's run a different command in the app, `math_example`, and investigate:
 
 ```bash
 shell> math_example
@@ -446,12 +508,17 @@ Program received signal SIGTRAP, Trace/breakpoint trap.
 0x1fffffd0:	0x0 <g_pfnVectors>
 ```
 
-Yikes, we have hit another hardfault. What's interesting here is our stack pointer, `$sp`, ran off the end of RAM, `0x2000.0000`. This suggests a stack overflow took place. It's hard to see what happened because we ran off valid RAM and so not all the register state will be on the stack.
+Yikes, we have hit another hardfault. What's interesting here is our stack
+pointer, `$sp`, ran off the end of RAM, `0x2000.0000`. This suggests a stack
+overflow took place. It's hard to see what happened because we ran off valid RAM
+and so not all the register state will be on the stack.
 
-> Note: For a deeper dive into debugging Cortex-M faults in general, check out [our post on the topic]({% post_url 2019-11-20-cortex-m-hardfault-debug %}).
+> Note: For a deeper dive into debugging Cortex-M faults in general, check out
+> [our post on the topic](/blog/cortex-m-hardfault-debug).
 
-Since the overflow is reproducible, let's see if we can intercept before the overflow and get a stack trace.
-We will install a watchpoint near the bottom of the stack:
+Since the overflow is reproducible, let's see if we can intercept before the
+overflow and get a stack trace. We will install a watchpoint near the bottom of
+the stack:
 
 ```
 (gdb) mon reset
@@ -483,23 +550,36 @@ New value = 536870936
 #206 0x00000462 in main () at ./src/main.c:51
 ```
 
-So we have a recursive function in this case that's blowing through our stack! Using the watchpoint made it much easier to root cause the code path triggering the overflow.
+So we have a recursive function in this case that's blowing through our stack!
+Using the watchpoint made it much easier to root cause the code path triggering
+the overflow.
 
 ## How do watchpoints work?
 
-Now that we have a good idea of what watchpoints do and how they can help us out, let's examine what is actually happening under the hood!
+Now that we have a good idea of what watchpoints do and how they can help us
+out, let's examine what is actually happening under the hood!
 
 ### GDB Watchpoint Handling
 
-Let's start by taking a look at how watchpoints are handled with GDB. We'll employ a similar strategy to what we used investigating [how breakpoints work]({% post_url 2020-06-17-cortex-m-breakpoints %}#gdb-breakpoint-handling). We'll briefly recap the important parts here.
+Let's start by taking a look at how watchpoints are handled with GDB. We'll
+employ a similar strategy to what we used investigating
+[how breakpoints work](/blog/cortex-m-breakpoints#gdb-breakpoint-handling).
+We'll briefly recap the important parts here.
 
-At a high level, `gdb` (the "client") interfaces with the embedded MCU via a `gdbserver` (in our case SEGGER's JLinkGDBServer). The protocol talked between the gdb "client" and the gdb "server" is referred to as "GDB Remote Serial Protocol" (**GDB RSP**)[^4].
+At a high level, `gdb` (the "client") interfaces with the embedded MCU via a
+`gdbserver` (in our case SEGGER's JLinkGDBServer). The protocol talked between
+the gdb "client" and the gdb "server" is referred to as "GDB Remote Serial
+Protocol" (**GDB RSP**)[^4].
 
-If we take a look at the GDB RSP docs we will find that the ['z' packets](https://sourceware.org/gdb/onlinedocs/gdb/Packets.html#index-z-packet) are used to configure watchpoints.
+If we take a look at the GDB RSP docs we will find that the
+['z' packets](https://sourceware.org/gdb/onlinedocs/gdb/Packets.html#index-z-packet)
+are used to configure watchpoints.
 
 #### GDB RSP Watchpoint Command
 
-The format for enabling and disabling watchpoints is `‘Z/z addr,kind’`. `kind` specifies the number of bytes after `addr` that will be watched and we have the following options:
+The format for enabling and disabling watchpoints is `‘Z/z addr,kind’`. `kind`
+specifies the number of bytes after `addr` that will be watched and we have the
+following options:
 
 | GDB Remote Serial Packet | Operation                                       |
 | ------------------------ | ----------------------------------------------- |
@@ -512,11 +592,15 @@ The format for enabling and disabling watchpoints is `‘Z/z addr,kind’`. `kin
 
 #### Debugging GDB Remote Serial Protocol
 
-Now we can take a look at the actual **GDB RSP** commands that get sent over the wire when we install a watchpoint and compare against the table above. GDB has a builtin debug command, `set debug remote 1`, which can be used to dump this trace.
+Now we can take a look at the actual **GDB RSP** commands that get sent over the
+wire when we install a watchpoint and compare against the table above. GDB has a
+builtin debug command, `set debug remote 1`, which can be used to dump this
+trace.
 
 #### GDB RSP while Setting Watchpoints
 
-Let's flip on **GDB RSP** debug tracing, install a watchpoint, and see what happens!
+Let's flip on **GDB RSP** debug tracing, install a watchpoint, and see what
+happens!
 
 ```
 (gdb) set debug remote 1
@@ -526,9 +610,12 @@ Sending packet: $m200029a0,4#8b...Packet received: 00000000
 Hardware watchpoint 2: *(uint8_t[4] *)&g_array
 ```
 
-We see some [`m` packets](https://sourceware.org/gdb/onlinedocs/gdb/Packets.html#index-m-packet)
-(`m addr,length`). These are used for requesting reads of memory but no watchpoint set commands yet.
-These reads are used to cache the "old value" for the data range being watched that we discussed [above](#gdb-implementation-quirks).
+We see some
+[`m` packets](https://sourceware.org/gdb/onlinedocs/gdb/Packets.html#index-m-packet)
+(`m addr,length`). These are used for requesting reads of memory but no
+watchpoint set commands yet. These reads are used to cache the "old value" for
+the data range being watched that we discussed
+[above](#gdb-implementation-quirks).
 
 Let's `continue` and see what happens:
 
@@ -541,11 +628,15 @@ Packet Z2 (write-watchpoint) is supported
 Sending packet: $c#63...
 ```
 
-We see a `$Z2,200029a0,4` request issued which means "install a software watchpoint for writes between address 0x200029a0 - 0x200029a4". This matches the address of `g_array` so that's what we'd expect! It looks like watchpoints are only installed when we resume just like breakpoints.
+We see a `$Z2,200029a0,4` request issued which means "install a software
+watchpoint for writes between address 0x200029a0 - 0x200029a4". This matches the
+address of `g_array` so that's what we'd expect! It looks like watchpoints are
+only installed when we resume just like breakpoints.
 
 #### GDB RSP when a Watchpoint Triggers
 
-Now let's actually cause the watchpoint to be triggered by using the same `arr_write` command from above to write a new value into the array:
+Now let's actually cause the watchpoint to be triggered by using the same
+`arr_write` command from above to write a new value into the array:
 
 ```
 shell> arr_write 0 1
@@ -575,16 +666,24 @@ argc=<optimized out>, argv=<optimized out>) at ./src/shell_commands.c:140
 140   return 0;
 ```
 
-We can see from the trace above that a watchpoint debug event took place. This is conveyed by the
+We can see from the trace above that a watchpoint debug event took place. This
+is conveyed by the
 [`T AA n1:r1;n2:r2;…`](https://sourceware.org/gdb/onlinedocs/gdb/Stop-Reply-Packets.html#Stop-Reply-Packets)
-Stop Reply Packet where `T` indicates a signal was received and `watch` indicates a hardware
-watchpoint was the event type.
+Stop Reply Packet where `T` indicates a signal was received and `watch`
+indicates a hardware watchpoint was the event type.
 
-There's also a single step (the `s` instruction). For Cortex-M's this doesn't serve any real purpose but watchpoints take a similar code path to breakpoints. For breakpoints, the single step _is_ necessary so we are likely just picking up the behavior for that.
+There's also a single step (the `s` instruction). For Cortex-M's this doesn't
+serve any real purpose but watchpoints take a similar code path to breakpoints.
+For breakpoints, the single step _is_ necessary so we are likely just picking up
+the behavior for that.
 
 ##### Recovering Instruction Triggering Watchpoint
 
-> TIP: When a watchpoint event is triggered the `$pc` has already advanced to the next instruction. With the additional single step we saw above, it means by the time the system halts we are two instructions past where the load or store occurred. In this particular example we can see it was a `strb` instruction that triggered the watchpoint by looking at the assembly in GDB:
+> TIP: When a watchpoint event is triggered the `$pc` has already advanced to
+> the next instruction. With the additional single step we saw above, it means
+> by the time the system halts we are two instructions past where the load or
+> store occurred. In this particular example we can see it was a `strb`
+> instruction that triggered the watchpoint by looking at the assembly in GDB:
 >
 > ```
 > (gdb) disassemble $pc
@@ -594,8 +693,9 @@ There's also a single step (the `s` instruction). For Cortex-M's this doesn't se
 > => 0x000008f6 <+74>:	b.n	0x8be <prv_arr_write+18>
 > ```
 
-Finally, we see a request to remove the watchpoints was sent (`$z2,240,2`). Removing watchpoints
-reduces the probability of the debugger getting killed and leaving the system in a state where watchpoints are left installed.
+Finally, we see a request to remove the watchpoints was sent (`$z2,240,2`).
+Removing watchpoints reduces the probability of the debugger getting killed and
+leaving the system in a state where watchpoints are left installed.
 
 #### GDB RSP when Continuing After a Watchpoint Trigger
 
@@ -608,11 +708,14 @@ Sending packet: $Hc0#db...Packet received: OK
 Sending packet: $c#63...
 ```
 
-Nothing too exciting here. We see that the watchpoint is re-enabled with the `Z2` command and the system is resumed.
+Nothing too exciting here. We see that the watchpoint is re-enabled with the
+`Z2` command and the system is resumed.
 
 #### Setting the same value
 
-We can write the same value again and confirm the system does **not halt**. We can however see that there is GDB RSP traffic between the server and client handling the auto resumption:
+We can write the same value again and confirm the system does **not halt**. We
+can however see that there is GDB RSP traffic between the server and client
+handling the auto resumption:
 
 ```
 shell> arr_write 0 1
@@ -638,48 +741,69 @@ Sending packet: $c#63...
 
 ### Cortex-M Hardware Watchpoints
 
-Now that we have a pretty good idea of how GDB sets and removes watchpoints, let's examine how they are implemented in hardware for Cortex-M targets. For our debug setup, it's SEGGER's JLinkGDBServer that will be responsible for this programming.
+Now that we have a pretty good idea of how GDB sets and removes watchpoints,
+let's examine how they are implemented in hardware for Cortex-M targets. For our
+debug setup, it's SEGGER's JLinkGDBServer that will be responsible for this
+programming.
 
 #### Data Watchpoint and Trace Unit
 
-For ARM Cortex-M MCUs, hardware watchpoint functionality is exposed via the "Data Watchpoint and Trace Unit" (**DWT**)[^10].
+For ARM Cortex-M MCUs, hardware watchpoint functionality is exposed via the
+"Data Watchpoint and Trace Unit" (**DWT**)[^10].
 
-The DWT implements many tracing features and there are many articles to write on the topic. Today we will focus exclusively on the watchpoints and the registers needed to configure them.
+The DWT implements many tracing features and there are many articles to write on
+the topic. Today we will focus exclusively on the watchpoints and the registers
+needed to configure them.
 
 #### DWT Control register, DWT_CTRL, 0xE0001000
 
-![]({% img_url watchpoint/dwt-ctrl.png %})
+![](/img/watchpoint/dwt-ctrl.png)
 
-The `DWT_CTRL` is where you can find out information about how many hardware watchpoints are supported. Notably,
+The `DWT_CTRL` is where you can find out information about how many hardware
+watchpoints are supported. Notably,
 
-- `NUMCOMP`: The number of watchpoint comparators implemented or 0 in the case the DWT is not included in the hardware.
+- `NUMCOMP`: The number of watchpoint comparators implemented or 0 in the case
+  the DWT is not included in the hardware.
 
-Provided the Cortex-M supports at least one watchpoint, we can configure them using three registers, `DWT_FUNCTIONn`,`DWT_COMPn` & `DWT_MASKn`. We will explore the configuration setting for these registers in more detail below.
+Provided the Cortex-M supports at least one watchpoint, we can configure them
+using three registers, `DWT_FUNCTIONn`,`DWT_COMPn` & `DWT_MASKn`. We will
+explore the configuration setting for these registers in more detail below.
 
 #### Comparator Function register DWT_FUNCTIONn, 0xE0001028 + 16n
 
-The function register controls the type of memory to watch and what will happen when a watchpoint event occurs. We can configure a "watchpoint event" which either triggers a halting event or a DebugMonitor exception.
+The function register controls the type of memory to watch and what will happen
+when a watchpoint event occurs. We can configure a "watchpoint event" which
+either triggers a halting event or a DebugMonitor exception.
 
-> Note: One can also configure the peripheral to emit events out via the tracing subsystem (i.e ITM, ETM) but that is outside the scope of this article.
+> Note: One can also configure the peripheral to emit events out via the tracing
+> subsystem (i.e ITM, ETM) but that is outside the scope of this article.
 
 The `DWT_FUNCTION` register definition looks like this:
 
-![]({% img_url watchpoint/dwt-function.png %})
+![](/img/watchpoint/dwt-function.png)
 
 where,
 
-- `MATCHED` Indicates if there was a match since the last time the register was read. This can be used by a debugger to determine if this was the source of the debug event emitted. It's cleared on read so you will likely never see it set when using a debugger.
-- `DATAVADDR1`, `DATAVADDR0`, `DATAVSIZE`, `LNK1ENA` We won't go into too many details but these
-  registers can be used to trigger a watchpoint event when a certain "data value" pattern is
-  written over an address range. I'm not aware of an easy way to configure this with most
-  debuggers, but the feature is really neat! For example, you can use it to to halt at a specific
-  index in a for loop or if a certain data pattern is written anywhere in RAM! This type of watchpoint is only implemented in comparator 1 for most Cortex-M targets.
-- `CYCMATCH` Only implemented for comparator 0. This can be used to trigger a watchpoint after a certain number of CPU cycles have passed.
-- `FUNCTION` - Controls the type of comparison which is performed. When this field is set to 0, the comparator is disabled.
+- `MATCHED` Indicates if there was a match since the last time the register was
+  read. This can be used by a debugger to determine if this was the source of
+  the debug event emitted. It's cleared on read so you will likely never see it
+  set when using a debugger.
+- `DATAVADDR1`, `DATAVADDR0`, `DATAVSIZE`, `LNK1ENA` We won't go into too many
+  details but these registers can be used to trigger a watchpoint event when a
+  certain "data value" pattern is written over an address range. I'm not aware
+  of an easy way to configure this with most debuggers, but the feature is
+  really neat! For example, you can use it to to halt at a specific index in a
+  for loop or if a certain data pattern is written anywhere in RAM! This type of
+  watchpoint is only implemented in comparator 1 for most Cortex-M targets.
+- `CYCMATCH` Only implemented for comparator 0. This can be used to trigger a
+  watchpoint after a certain number of CPU cycles have passed.
+- `FUNCTION` - Controls the type of comparison which is performed. When this
+  field is set to 0, the comparator is disabled.
 
 ##### FUNCTION values for typical watchpoint
 
-For the typical, "data address" watchpoint we have talked about so far in the article, the following configurations can be used to generate watchpoint events:
+For the typical, "data address" watchpoint we have talked about so far in the
+article, the following configurations can be used to generate watchpoint events:
 
 | FUNCTION       | Evaluation Performed      | Event Generated           |
 | -------------- | ------------------------- | ------------------------- |
@@ -691,11 +815,15 @@ For the typical, "data address" watchpoint we have talked about so far in the ar
 
 #### Comparator registers, DWT_COMPn, 0xE0001020 + 16n
 
-If we have configured the `DWT_FUNCTION` register to look for a data address access, this register simply holds that address.
+If we have configured the `DWT_FUNCTION` register to look for a data address
+access, this register simply holds that address.
 
 #### Comparator Mask registers, DWT_MASK, 0xE0001024 + 16n
 
-The setting in the `MASK` defines the number of bits to ignore when performing a comparison. The maximum mask size is implementation defined but you can easily figure out the max size by writing 0x1F to the field and seeing which bits remain set. For example, on the NRF52:
+The setting in the `MASK` defines the number of bits to ignore when performing a
+comparison. The maximum mask size is implementation defined but you can easily
+figure out the max size by writing 0x1F to the field and seeing which bits
+remain set. For example, on the NRF52:
 
 ```
 (gdb) set *(uint32_t*)0xE0001024=0x1f
@@ -703,13 +831,15 @@ The setting in the `MASK` defines the number of bits to ignore when performing a
 $3 = 0xf
 ```
 
-This means we can mask out up to 15 bits and that a single watchpoint can be used to monitor a data access over a 32kB aligned RAM region!
+This means we can mask out up to 15 bits and that a single watchpoint can be
+used to monitor a data access over a 32kB aligned RAM region!
 
 {: #dwt-cortex-m-examples}
 
 ### Cortex-M Example DWT Configurations
 
-Now that we have a basic understanding let's look at a few practical configurations made via GDB and what we would expect the settings to look like:
+Now that we have a basic understanding let's look at a few practical
+configurations made via GDB and what we would expect the settings to look like:
 
 |                         GDB Command <br/> Trigger Condition                         | DWT_FUNCTION | DWT_COMP   | DWT_MASK |
 | :---------------------------------------------------------------------------------: | ------------ | ---------- | -------- |
@@ -719,15 +849,19 @@ Now that we have a basic understanding let's look at a few practical configurati
 | `rwatch *(uint8_t[16] *)0x20000020` <br /> (Any read between 0x20000020-0x2000002F) | 0x5          | 0x20000020 | 0x4      |
 
 {: #watchpoint-limitations}
-> Note: An important observation here is it is only possible to watch ranges of addresses that are
-> aligned on the size being watched. For example, if you wanted to watch 4 bytes starting at
-> 0x20000002, you would need two watchpoints (`DWT_COMP=0x20000002`, `DWT_MASK=1` &
-> `DWT_COMP=0x20000004`, `DWT_MASK=1`). GDB does not manage this for you so care should be taken to
-> install watchpoints on aligned boundaries.
+
+> Note: An important observation here is it is only possible to watch ranges of
+> addresses that are aligned on the size being watched. For example, if you
+> wanted to watch 4 bytes starting at 0x20000002, you would need two watchpoints
+> (`DWT_COMP=0x20000002`, `DWT_MASK=1` & `DWT_COMP=0x20000004`, `DWT_MASK=1`).
+> GDB does not manage this for you so care should be taken to install
+> watchpoints on aligned boundaries.
 
 ##### Examining DWT Configuration
 
-Since watchpoints are disabled when GDB is halted, it will be useful to be able to inspect the watchpoint config from the CLI. I've added two commands to assist with this:
+Since watchpoints are disabled when GDB is halted, it will be useful to be able
+to inspect the watchpoint config from the CLI. I've added two commands to assist
+with this:
 
 - `dwt_dump` Displays the current watchpoint configuration in the DWT
 - `dwt_reset` Resets the DWT configuration
@@ -794,7 +928,8 @@ void dwt_reset(void) {
 
 ###### Inspecting watchpoints configured with GDB
 
-Let's configure the watchpoints from [above](#dwt-cortex-m-examples) and examine the watchpoint configuration:
+Let's configure the watchpoints from [above](#dwt-cortex-m-examples) and examine
+the watchpoint configuration:
 
 ```
 (gdb) watch *(uint8_t *)0x20000001
@@ -815,11 +950,14 @@ Sending packet: $Z3,20000020,10#ca...Packet received: OK
 Sending packet: $c#63...
 ```
 
-We see three `Z2` commands to install write watchpoints and one `Z3` command to install a read watchpoint. The `kind` values of 0x2, 0x1, 0x4, 0x10 line up with the sizes we requested as well.
+We see three `Z2` commands to install write watchpoints and one `Z3` command to
+install a read watchpoint. The `kind` values of 0x2, 0x1, 0x4, 0x10 line up with
+the sizes we requested as well.
 
 ###### Examining SEGGER JLinkGDBServer Configuration
 
-Let's dump the config from the CLI and see how SEGGER's JLinkGDBServer did configuring our requests!
+Let's dump the config from the CLI and see how SEGGER's JLinkGDBServer did
+configuring our requests!
 
 ```bash
 shell> dwt_dump
@@ -848,15 +986,23 @@ DWT Dump:
   0xe0001054 DWT_MASK3: 0x00000001
 ```
 
-For the most part, things look like they line up with expectations. For the read watchpoint at `0x20000020`, we expect to see `0x00000006` for `DWT_FUNC1` but some extra bits were left set. These bits map to `DATAVSIZE` which is not used in our current config and `LNK1ENA` which is a read only bit so these settings are fine.
+For the most part, things look like they line up with expectations. For the read
+watchpoint at `0x20000020`, we expect to see `0x00000006` for `DWT_FUNC1` but
+some extra bits were left set. These bits map to `DATAVSIZE` which is not used
+in our current config and `LNK1ENA` which is a read only bit so these settings
+are fine.
 
-What is more problematic is the `DWT_MASK2` setting. It should be `4` to watch the 16 bytes that were requested. However, it was set to 2. It appears there is a limitation in the SEGGER watchpoint implementation and only 1, 2, and 4-byte watchpoints work!
+What is more problematic is the `DWT_MASK2` setting. It should be `4` to watch
+the 16 bytes that were requested. However, it was set to 2. It appears there is
+a limitation in the SEGGER watchpoint implementation and only 1, 2, and 4-byte
+watchpoints work!
 
 ## Advanced Topics
 
 ### Configuring Watchpoints in C Code
 
-It's also possible to generate watchpoints from C code. Here's a function that does just that:
+It's also possible to generate watchpoints from C code. Here's a function that
+does just that:
 
 ```c
 void dwt_install_watchpoint(
@@ -875,7 +1021,8 @@ void dwt_install_watchpoint(
 }
 ```
 
-For example, we can enable one over the first 16 bytes of the `g_array` at address `0x200029a0` that we were examining earlier:
+For example, we can enable one over the first 16 bytes of the `g_array` at
+address `0x200029a0` that we were examining earlier:
 
 ```bash
 shell> watchpoint_set 0 6 0x200029a0 4
@@ -898,13 +1045,22 @@ prv_arr_write () at ./src/shell_commands.c:146
 (gdb)
 ```
 
-One useful thing here is since the watchpoint is not registered through GDB or the gdbserver, the system will always halt when a watchpoint event is emitted by hardware. This means you can use watchpoint features not supported by the debugger (such as watchpoints of larger sizes).
+One useful thing here is since the watchpoint is not registered through GDB or
+the gdbserver, the system will always halt when a watchpoint event is emitted by
+hardware. This means you can use watchpoint features not supported by the
+debugger (such as watchpoints of larger sizes).
 
 ### Extending Watchpoint Functionality with GDB Python
 
-Since the DWT peripheral has some interesting configurations not natively supported with GDB, there's also an opportunity for us to extend the current behavior by making use of [GDB's Python API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %})!
+Since the DWT peripheral has some interesting configurations not natively
+supported with GDB, there's also an opportunity for us to extend the current
+behavior by making use of
+[GDB's Python API](/blog/automate-debugging-with-gdb-python-api)!
 
-We'll add support for regular watchpoints with some extra validation to make sure we have requested a valid region and an example of a "data value" watchpoint under a `watch_ext` GDB CLI command. Below you can find the code needed in it's entirety:
+We'll add support for regular watchpoints with some extra validation to make
+sure we have requested a valid region and an example of a "data value"
+watchpoint under a `watch_ext` GDB CLI command. Below you can find the code
+needed in it's entirety:
 
 ```python
 # gdb_watchpoint_ext.py
@@ -1060,20 +1216,25 @@ The commands can be added to a GDB session by sourcing the script:
 
 This script implements two utilities:
 
-- `watch_ext -c <address_to_watch> -s <size>`: This is equivalent to GDB's `watch *(uint8_t[<size>]
-  *)<address_to_watch>` except that a helpful error is raised if the configuration requested is
-  invalid due to the [limitations we discussed above](#watchpoint-limitations) and that the system
-  will always halt on the write access rather than [only halting when a value changes](#gdb-implementation-quirks).
-- `watch_ext -c <pattern_to_watch> -s <size> --compare-value`: This command will halt anytime
-  `<pattern_to_watch>` is stored somewhere in RAM. The `size` is the size of the pattern and must
-  be 1, 2, or 4 bytes. There's no way to configure something like this with GDB directly!
+- `watch_ext -c <address_to_watch> -s <size>`: This is equivalent to GDB's
+  `watch *(uint8_t[<size>] *)<address_to_watch>` except that a helpful error is
+  raised if the configuration requested is invalid due to the
+  [limitations we discussed above](#watchpoint-limitations) and that the system
+  will always halt on the write access rather than
+  [only halting when a value changes](#gdb-implementation-quirks).
+- `watch_ext -c <pattern_to_watch> -s <size> --compare-value`: This command will
+  halt anytime `<pattern_to_watch>` is stored somewhere in RAM. The `size` is
+  the size of the pattern and must be 1, 2, or 4 bytes. There's no way to
+  configure something like this with GDB directly!
 
-At the moment there is no command to disable the watchpoints once enabled or track "Old Value" and
-"New Value" like GDB does natively. Both are do-able in GDB python and are left as an exercise to the reader.
+At the moment there is no command to disable the watchpoints once enabled or
+track "Old Value" and "New Value" like GDB does natively. Both are do-able in
+GDB python and are left as an exercise to the reader.
 
 ### Data Value Watchpoint Example Using GDB Python
 
-Inside the `math_example` CLI command, I've hidden a write of a special pattern when the recursion level is 10:
+Inside the `math_example` CLI command, I've hidden a write of a special pattern
+when the recursion level is 10:
 
 ```c
   if (n == 10) {
@@ -1081,7 +1242,9 @@ Inside the `math_example` CLI command, I've hidden a write of a special pattern 
   }
 ```
 
-Let's see if we can use the Cortex-M "data value" watchpoint functionality we added to the `watch_ext` command to halt when the `0xbadcafe` pattern is written:
+Let's see if we can use the Cortex-M "data value" watchpoint functionality we
+added to the `watch_ext` command to halt when the `0xbadcafe` pattern is
+written:
 
 #### Source the GDB Script
 
@@ -1128,17 +1291,22 @@ Neat, we can see the system has halted on the write of the `0xbadcafe` pattern!
 
 ## Final Thoughts
 
-I hope this post taught you something new about watchpoints or got you thinking about how to use them to speed up debug the next time you face a weird memory corruption bug!
+I hope this post taught you something new about watchpoints or got you thinking
+about how to use them to speed up debug the next time you face a weird memory
+corruption bug!
 
-I'd be curious to hear if you are making use of the watchpoints in interesting ways for your product or if there are other items you would have liked to see covered on the topic. Either way, let us know in the discussion area below!
+I'd be curious to hear if you are making use of the watchpoints in interesting
+ways for your product or if there are other items you would have liked to see
+covered on the topic. Either way, let us know in the discussion area below!
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 
 ## Further Reading
 
-I haven't found too many resources about watchpoints on the web, but here's a few other articles on the topic I've enjoyed:
+I haven't found too many resources about watchpoints on the web, but here's a
+few other articles on the topic I've enjoyed:
 
 - [Examining The Stack For Fun And Profit](https://www.embeddedrelated.com/showarticle/1330.php)
 - [Making use of Cortex-M watchpoints at Runtime](https://m0agx.eu/2018/08/25/cortex-m-debugging-runtime-memory-corruption/)
@@ -1146,15 +1314,39 @@ I haven't found too many resources about watchpoints on the web, but here's a fe
 
 ## References
 
-[^1]: [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
-[^2]: [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
-[^3]: [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
-[^4]: [Official GDB Remote Serial Protocol Docs](https://sourceware.org/gdb/onlinedocs/gdb/Remote-Protocol.html) & [Informative Unofficial Doc](https://www.embecosm.com/appnotes/ean4/embecosm-howto-rsp-server-ean4-issue-2.html)
-[^6]: [GDB Internals Breakpoint Handling](https://sourceware.org/gdb/wiki/Internals/Breakpoint%20Handling)
-[^7]: https://www.embecosm.com/appnotes/ean4/embecosm-howto-rsp-server-ean4-issue-2.html
+[^1]:
+    [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
+
+[^2]:
+    [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
+
+[^3]:
+    [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+
+[^4]:
+    [Official GDB Remote Serial Protocol Docs](https://sourceware.org/gdb/onlinedocs/gdb/Remote-Protocol.html)
+    &
+    [Informative Unofficial Doc](https://www.embecosm.com/appnotes/ean4/embecosm-howto-rsp-server-ean4-issue-2.html)
+
+[^6]:
+    [GDB Internals Breakpoint Handling](https://sourceware.org/gdb/wiki/Internals/Breakpoint%20Handling)
+
+[^7]:
+    https://www.embecosm.com/appnotes/ean4/embecosm-howto-rsp-server-ean4-issue-2.html
+
 [^8]: [Origin of Breakpoints](https://en.wikipedia.org/wiki/Breakpoint)
-[^9]: [GDB Breakpoint `kind`](https://sourceware.org/gdb/current/onlinedocs/gdb/ARM-Breakpoint-Kinds.html#ARM-Breakpoint-Kinds)
-[^miniterm]: [PySerial Miniterm](https://pyserial.readthedocs.io/en/latest/tools.html#module-serial.tools.miniterm)
-[^10]: [See "C1.8 The Data Watchpoint and Trace unit" in ARMv7-M Specification](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf)
-[^11]: [SEGGER Flash Breakpoint](https://www.segger.com/products/debug-probes/j-link/technology/flash-breakpoints/)
-[^12]: [Commentary about GDB Watchpoint Handling](https://github.com/bminor/binutils-gdb/blob/7a4e8e7/gdb/breakpoint.c#L1645-L1653)
+
+[^9]:
+    [GDB Breakpoint `kind`](https://sourceware.org/gdb/current/onlinedocs/gdb/ARM-Breakpoint-Kinds.html#ARM-Breakpoint-Kinds)
+
+[^miniterm]:
+    [PySerial Miniterm](https://pyserial.readthedocs.io/en/latest/tools.html#module-serial.tools.miniterm)
+
+[^10]:
+    [See "C1.8 The Data Watchpoint and Trace unit" in ARMv7-M Specification](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf)
+
+[^11]:
+    [SEGGER Flash Breakpoint](https://www.segger.com/products/debug-probes/j-link/technology/flash-breakpoints/)
+
+[^12]:
+    [Commentary about GDB Watchpoint Handling](https://github.com/bminor/binutils-gdb/blob/7a4e8e7/gdb/breakpoint.c#L1645-L1653)

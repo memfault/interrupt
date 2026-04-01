@@ -1,7 +1,9 @@
 ---
+date: "2021-05-19"
 title: Firmware Static Analysis with CodeChecker
 description:
-  A step-by-step guide on how to use CodeChecker to run static analysis on your firmware
+  A step-by-step guide on how to use CodeChecker to run static analysis on your
+  firmware
 author: francois
 tags: [c, c++, toolchain]
 ---
@@ -10,9 +12,9 @@ The pitfalls of C programming are well known: undefined behavior abounds,
 uninitialized variables lie in wait, memory leaks, and buffers overflow.
 
 While we wait for the utopia of memory-safe languages, our best bet is to rely
-on tools to catch some of the more egregious errors in our code for us.
-Compiler warnings are a great place to start, but today I want to take it one
-step further and talk about static analysis.
+on tools to catch some of the more egregious errors in our code for us. Compiler
+warnings are a great place to start, but today I want to take it one step
+further and talk about static analysis.
 
 Static analysis is simply the analysis of a piece of software while it is not
 executing. Some static analyzers are very simple, while other rely on symbolic
@@ -30,13 +32,14 @@ easy, and is a quick way to catch a wide array of bugs in your code before they
 reach your customers.
 
 <!-- excerpt start --> In this post, I go over how to set up CodeChecker on a
+
 firmware project to reap the benefits of static analysis. I’ll also cover ways
 to deal with false positives, and configure your assert functions to be
-analysis-friendly.  <!-- excerpt end -->
+analysis-friendly. <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Setting up CodeChecker CodeChecker is a combination of two tools:
 
@@ -47,15 +50,15 @@ analysis-friendly.  <!-- excerpt end -->
 
 That last piece is crucial: static analyzers often generate loads of issues as
 well as some false positives when you first start using them. By tracking them
-in a database, you can look at what **new** issues are discovered in new
-changes and pull requests, and you can mute false positives rather than
-continuously see them in your results.
+in a database, you can look at what **new** issues are discovered in new changes
+and pull requests, and you can mute false positives rather than continuously see
+them in your results.
 
 We’ll first install the command-line tool, and run it on our project.
 
 ### Linux CLI Installation
 
-`CodeChecker` is currently available on Linux and MacOSX.  Windows is not
+`CodeChecker` is currently available on Linux and MacOSX. Windows is not
 officially supported, though your mileage may vary.
 
 > Note: on Mac, CodeChecker requires disabling SIP, as it uses a
@@ -95,8 +98,8 @@ export PATH="$PWD/build/CodeChecker/bin:$PATH"
 cd ..
 ```
 
-> Note: CodeChecker depends on Node 12.x, which is why you cannot simply
-> install the latest node package from default repositories.
+> Note: CodeChecker depends on Node 12.x, which is why you cannot simply install
+> the latest node package from default repositories.
 
 You should now be able to run `CodeChecker` from the command line:
 
@@ -127,9 +130,9 @@ In this post, we will use ChibiOS as our example project. ChibiOS is a popular
 RTOS with support for a wide variety of chips. Most importantly, it is
 relatively straightforward to set up and comes with lots of examples.
 
-You can download the latest ChibiOS release from [their
-website](https://osdn.net/projects/chibios/releases), though I simply `clone`-d
-it from [GitHub](https://github.com/ChibiOS/ChibiOS):
+You can download the latest ChibiOS release from
+[their website](https://osdn.net/projects/chibios/releases), though I simply
+`clone`-d it from [GitHub](https://github.com/ChibiOS/ChibiOS):
 
 ```bash
 $ git clone https://github.com/ChibiOS/ChibiOS/
@@ -174,8 +177,8 @@ Alright, we’ve got a project to statically analyze!
 ## Running the analysis
 
 CodeChecker uses a very neat technique to instrument your builds: it wraps your
-existing compiler and keeps track of what files are compiled in what order.
-This means that you do not need to setup a separate compiler or build target.
+existing compiler and keeps track of what files are compiled in what order. This
+means that you do not need to setup a separate compiler or build target.
 
 To get started, make sure you’ve sourced the virtual env:
 
@@ -190,7 +193,7 @@ know that `arm-none-eabi-gcc` is just another GCC build.
 $ export CC_LOGGER_GCC_LIKE=arm-none-eabi-gcc
 ```
 
-You can now run the  `CodeChecker log`  command and pass it our standard build
+You can now run the `CodeChecker log` command and pass it our standard build
 invocation as an argument. Make sure you clean your build first, as any file
 skipped in the rebuild will be ignored by CodeChecker:
 
@@ -207,14 +210,15 @@ commands you’ve just executed.
 
 Next, we must run the analysis itself. This is done with the `analyze` command,
 which can be configured in a number of way. I will cover two of them:
+
 1. `--enable [default | sensitive | extreme]` selects the sensitivity of the
    analysis. What it does under the hood is enable/disable individual checkers
    based on their false-positive rate. I recommend `sensitive`.
-2. `--ctu`  enables cross-translation-unit analysis. A translation unit is a
-   single C file, so without this flag the analysis only consider files one at
-   a time. It is therefore not able to trace bugs that happen when functions
-   from different files are used together. Enable CTU solves this issue, at the
-   cost of a slower analysis run.
+2. `--ctu` enables cross-translation-unit analysis. A translation unit is a
+   single C file, so without this flag the analysis only consider files one at a
+   time. It is therefore not able to trace bugs that happen when functions from
+   different files are used together. Enable CTU solves this issue, at the cost
+   of a slower analysis run.
 
 Putting those together, we get:
 
@@ -228,9 +232,9 @@ slow!
 This command will create the `reports` folder with the output from your
 analysis.
 
-Note that CodeChecker can be run incrementally. For example, if we make a
-change in a single file, we can re-run the `log` and `analyze` commands, they
-will analyze that file only and update the data in `reports`.
+Note that CodeChecker can be run incrementally. For example, if we make a change
+in a single file, we can re-run the `log` and `analyze` commands, they will
+analyze that file only and update the data in `reports`.
 
 ### Inspecting the results
 
@@ -258,8 +262,8 @@ As you can see, we’ve found 145 issues in our project, including 24 high
 severity issues (mostly uninitialized variables being used and null pointer
 dereferences).
 
-With `--print-steps` we told the tool to print-out the execution steps to get
-to the error. Inspecting this output, we can immediately see some real issues!
+With `--print-steps` we told the tool to print-out the execution steps to get to
+the error. Inspecting this output, we can immediately see some real issues!
 
 ```
 [HIGH] /root/ChibiOS/demos/STM32/RT-STM32-LWIP-FATFS-USB/source/web.c:57:15: The left operand of '>=' is a garbage value [core.UndefinedBinaryOperatorResult]
@@ -282,8 +286,7 @@ Found 1 defect(s) in web.c
 ```
 
 Let’s take a look at this code in more detail. You can find it on Github at
-[ChibiOS/web.c at master · ChibiOS/ChibiOS ·
-GitHub](https://github.com/ChibiOS/ChibiOS/blob/master/demos/STM32/RT-STM32-LWIP-FATFS-USB/source/web.c#L57).
+[ChibiOS/web.c at master · ChibiOS/ChibiOS · GitHub](https://github.com/ChibiOS/ChibiOS/blob/master/demos/STM32/RT-STM32-LWIP-FATFS-USB/source/web.c#L57).
 
 ```c
 static void http_server_serve(struct netconn *conn) {
@@ -311,8 +314,8 @@ static void http_server_serve(struct netconn *conn) {
 ```
 
 Indeed we can see that the code does not check the return value of
-`netbuf_data`, and in the event that function returns an error, `buflen` ends
-up uninitialized. The fix is simple:
+`netbuf_data`, and in the event that function returns an error, `buflen` ends up
+uninitialized. The fix is simple:
 
 ```diff
 diff --git a/demos/STM32/RT-STM32-LWIP-FATFS-USB/source/web.c b/demos/STM32/RT-STM32-LWIP-FATFS-USB/source/web.c
@@ -371,9 +374,9 @@ Found no defects in web.c
 
 ### HTML Export
 
-Wading through reports on the command line is not very ergonomic, so I
-recommend you export the reports to HTML. This can be achieved with the
-`--export html` flag within the `parse` command:
+Wading through reports on the command line is not very ergonomic, so I recommend
+you export the reports to HTML. This can be achieved with the `--export html`
+flag within the `parse` command:
 
 ```
 $ CodeChecker parse --export html --output ./reports_html ./reports
@@ -383,7 +386,7 @@ You can then open the resulting `reports_html/index.html` with your browser of
 choice. This will give you a nice HTML UI with a list of all the defects, and
 detailed views such as this one:
 
-![]({% img_url codechecker/codechecker-html-screenshot.png  %})
+![](/img/codechecker/codechecker-html-screenshot.png)
 
 ## Dealing with false positives
 
@@ -400,7 +403,7 @@ comments.
 First, you should try adding `assert` calls to your code. Most projects have an
 `assert` function which can be used to crash the program if an assumption is
 violated (i.e. something that should never happen, happens). ChibiOS has such a
-function, which it calls  `osalDbgAssert`.
+function, which it calls `osalDbgAssert`.
 
 By adding assertions to your code, you tell the static analyzer that those code
 paths are invalid and it will not exercise them. For example, if you have:
@@ -415,8 +418,8 @@ CodeChecker will thereafter assume `p` is non-null and won’t report the
 following line as a null pointer dereference.
 
 For CodeChecker to identify a function as being an assertion, you need to
-annotate it with the `noreturn` attribute. This is done with the
-`__attribute__` keyword:
+annotate it with the `noreturn` attribute. This is done with the `__attribute__`
+keyword:
 
 ```c
 void foo(void) __attribute__((noreturn));
@@ -456,16 +459,16 @@ great tool to add to your toolbelt. While false positives can be daunting, they
 can be managed with a few annotations and they should not discourage you from
 finding real errors with CodeChecker.
 
-Next time, I will write about running static analysis in CI and I will
-introduce the CodeChecker database which can be used to track error state.
+Next time, I will write about running static analysis in CI and I will introduce
+the CodeChecker database which can be used to track error state.
 
 What do you think of CodeChecker? Do you use another static analysis tool you
 like? Tell us in the comments!
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}

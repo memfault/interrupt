@@ -1,4 +1,5 @@
 ---
+date: "2019-06-25"
 title: "From Zero to main(): Demystifying Firmware Linker Scripts"
 description: "An in depth tutorial on how to write linker scripts for firmware
 projects"
@@ -6,15 +7,15 @@ author: francois
 tags: [zero-to-main]
 ---
 
-This is the second post in our [Zero to main() series]({% tag_url zero-to-main %}).
+This is the second post in our [Zero to main() series](/tag/zero-to-main).
 
 <!-- excerpt start -->
 
-[Last time]({% post_url 2019-05-14-zero-to-main-1 %}), we talked about
-bootstrapping a C environment on an MCU before invoking our `main` function. One
-thing we took for granted was the fact that functions and data end up in the
-right place in our binary. Today, we're going to dig into how that happens by
-learning about memory regions and linker scripts.
+[Last time](/blog/zero-to-main-1), we talked about bootstrapping a C environment
+on an MCU before invoking our `main` function. One thing we took for granted was
+the fact that functions and data end up in the right place in our binary. Today,
+we're going to dig into how that happens by learning about memory regions and
+linker scripts.
 
 <!-- excerpt end -->
 
@@ -34,19 +35,19 @@ Since they are not standardized, those things need to be specified somewhere in
 our project. In the case of projects linked with a Unix-`ld`-like tool, that
 somewhere is the linker script.
 
-Once again, we will use our simple "minimal" program, available [on
-Github](https://github.com/memfault/zero-to-main/blob/master/minimal).
+Once again, we will use our simple "minimal" program, available
+[on Github](https://github.com/memfault/zero-to-main/blob/master/minimal).
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 ## Brief Primer on Linking
 
 Linking is the last stage in compiling a program. It takes a number of compiled
-object files and merges them into a single program, filling in addresses so
-that everything is in the right place.
+object files and merges them into a single program, filling in addresses so that
+everything is in the right place.
 
-Prior to linking, the compiler will have taken your source files one by one and compiled
-them into machine code. In the process, it leaves placeholders for
+Prior to linking, the compiler will have taken your source files one by one and
+compiled them into machine code. In the process, it leaves placeholders for
 addresses as (1) it does not know where the code will end up within the broader
 structure of the program and (2) it knows nothing about symbols outside of the
 current file or compilation unit.
@@ -56,9 +57,9 @@ external dependencies like the C Standard Library into your program. To figure
 out which bits go where, the linker relies on a linker script - a blueprint for
 your program. Lastly, all placeholders are replaced by addresses.
 
-We can see this at play in our minimal program. Let's follow what happens to
-our `main` function in `minimal.c` for example. The compiler builds it into
-an object file with:
+We can see this at play in our minimal program. Let's follow what happens to our
+`main` function in `minimal.c` for example. The compiler builds it into an
+object file with:
 
 ```
 $ arm-none-eabi-gcc -c -o build/objs/a/b/c/minimal.o minimal.c <CFLAGS>
@@ -95,8 +96,8 @@ information, garbage collect unused sections of code, or run whole-program
 optimization (also known as Link-Time Optimization, or LTO). For the sake of
 this conversation, we will not cover these topics.
 
-For more information on the linker, there's a great thread on [Stack
-Overflow](https://stackoverflow.com/questions/3322911/what-do-linkers-do).
+For more information on the linker, there's a great thread on
+[Stack Overflow](https://stackoverflow.com/questions/3322911/what-do-linkers-do).
 
 ## Anatomy of a Linker Script
 
@@ -113,8 +114,9 @@ In order to allocate program space, the linker needs to know how much memory is
 available, and at what addresses that memory exists. This is what the `MEMORY`
 definition in the linker script is for.
 
-The syntax for MEMORY is defined in the [binutils
-docs](https://sourceware.org/binutils/docs/ld/MEMORY.html#MEMORY) and is as follow:
+The syntax for MEMORY is defined in the
+[binutils docs](https://sourceware.org/binutils/docs/ld/MEMORY.html#MEMORY) and
+is as follow:
 
 ```
 MEMORY
@@ -131,9 +133,9 @@ Where
   as region names.
 - `(attr)` are optional attributes for the region, like whether it's writable
   (`w`), readable (`r`), or executable (`x`). Flash memory is usually `(rx)`,
-  while ram is `rwx`. Marking a region as non-writable does not magically make it
-  write protected: these attributes are meant to describe the properties of the
-  memory, not set it.
+  while ram is `rwx`. Marking a region as non-writable does not magically make
+  it write protected: these attributes are meant to describe the properties of
+  the memory, not set it.
 - `origin` is the start address of the memory region.
 - `len` is the size of the memory region, in bytes.
 
@@ -294,16 +296,16 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, RELOC, READONLY, CODE
 ```
 
-We see that each of our symbol has a section. This is due to the fact
-that we compiled our firmware with the `-ffunction-sections` and `-fdata-sections` flags.
-Had we not included them, the compiler would have been free to merge several
-functions into a single `text.<some identifier>` section.
+We see that each of our symbol has a section. This is due to the fact that we
+compiled our firmware with the `-ffunction-sections` and `-fdata-sections`
+flags. Had we not included them, the compiler would have been free to merge
+several functions into a single `text.<some identifier>` section.
 
 To put all of our functions in the `.text` section in our linker script, we use
-the following syntax: `<filename>(<section>)`, where `filename` is the
-name of the input files whose symbols we want to include, and `section` is the
-name of the input sections. Since we want all `.text...` sections in all files,
-we use the wildcard `*`:
+the following syntax: `<filename>(<section>)`, where `filename` is the name of
+the input files whose symbols we want to include, and `section` is the name of
+the input sections. Since we want all `.text...` sections in all files, we use
+the wildcard `*`:
 
 ```
 .text :
@@ -314,8 +316,9 @@ we use the wildcard `*`:
 ```
 
 Note the `.vector` input section, which contains functions we want to keep at
-the very start of our `.text` section. This is so the `Reset_Handler` is where the MCU
-expects it to be. We'll talk more about the vector table in a future post.
+the very start of our `.text` section. This is so the `Reset_Handler` is where
+the MCU expects it to be. We'll talk more about the vector table in a future
+post.
 
 Dumping our elf file, we now see all of our functions (but no data)!
 
@@ -348,9 +351,9 @@ SYMBOL TABLE:
 ### `.bss` Section
 
 Now, let's take care of our `.bss`. Remember, this is the section we put
-uninitialized static memory in. `.bss` must be reserved in the memory map, but there
-is nothing to load, as all variables are initialized to zero. As such, this is
-what it should look like:
+uninitialized static memory in. `.bss` must be reserved in the memory map, but
+there is nothing to load, as all variables are initialized to zero. As such,
+this is what it should look like:
 
 ```
 SECTION {
@@ -363,11 +366,11 @@ SECTION {
 }
 ```
 
-You'll note that the `.bss` section also includes `*(COMMON)`. This is a
-special input section where the compiler puts global uninitialized variables that
-go beyond file scope. `int foo;` goes there, while `static int foo;` does not.
-This allows the linker to merge multiple definitions into one symbol if they
-have the same name.
+You'll note that the `.bss` section also includes `*(COMMON)`. This is a special
+input section where the compiler puts global uninitialized variables that go
+beyond file scope. `int foo;` goes there, while `static int foo;` does not. This
+allows the linker to merge multiple definitions into one symbol if they have the
+same name.
 
 We indicate that this section is not loaded with the `NOLOAD` property. This is
 the only section property used in modern linker scripts.
@@ -409,22 +412,22 @@ Only one more section to go!
 
 ### `.data` Section
 
-The `.data` section contains static variables which have an
-initial value at boot. You will remember from our previous article that since RAM
-isn't persisted while power is off, those sections need to be loaded from flash.
-At boot, the `Reset_Handler` copies the data from flash to RAM before the `main`
-function is called.
+The `.data` section contains static variables which have an initial value at
+boot. You will remember from our previous article that since RAM isn't persisted
+while power is off, those sections need to be loaded from flash. At boot, the
+`Reset_Handler` copies the data from flash to RAM before the `main` function is
+called.
 
-To make this possible, every section in our linker script has two addresses,
-its _load_ address (LMA) and its _virtual_ address (VMA). In a firmware context,
-the LMA is where your JTAG loader needs to place the section and the VMA is
-where the section is found during execution.
+To make this possible, every section in our linker script has two addresses, its
+_load_ address (LMA) and its _virtual_ address (VMA). In a firmware context, the
+LMA is where your JTAG loader needs to place the section and the VMA is where
+the section is found during execution.
 
 You can think of the LMA as the address "at rest" and the VMA the address during
 execution i.e. when the device is on and the program is running.
 
-The syntax to specify the LMA and VMA is relatively straightforward: every address is
-two part: <VMA> AT <LMA>. In our case it looks like this:
+The syntax to specify the LMA and VMA is relatively straightforward: every
+address is two part: <VMA> AT <LMA>. In our case it looks like this:
 
 ```
 .data :
@@ -433,8 +436,8 @@ two part: <VMA> AT <LMA>. In our case it looks like this:
 } > ram AT > rom  /* "> ram" is the VMA, "> rom" is the LMA */
 ```
 
-Note that instead of appending a section to a memory region, you could also explicitly
-specify an address like so:
+Note that instead of appending a section to a memory region, you could also
+explicitly specify an address like so:
 
 ```
 .data ORIGIN(ram) /* VMA */ : AT(ORIGIN(rom)) /* LMA */
@@ -498,19 +501,19 @@ SECTIONS
 ```
 
 You can find the full details on linker script sections syntax in the
-[ld
-manual](https://sourceware.org/binutils/docs/ld/SECTIONS.html#SECTIONS).
+[ld manual](https://sourceware.org/binutils/docs/ld/SECTIONS.html#SECTIONS).
 
 ## Variables
 
-In the first post, our `ResetHandler` relied on seemingly magic variables to know
-the address of each of our sections of memory. It turns out, those variable came
+In the first post, our `ResetHandler` relied on seemingly magic variables to
+know the address of each of our sections of memory. It turns out, those variable
+came
 
-In order to make section addresses available to code, the linker is able
-to generate symbols and add them to the program.
+In order to make section addresses available to code, the linker is able to
+generate symbols and add them to the program.
 
-You can find the syntax in the [linker
-documentation](https://sourceware.org/binutils/docs/ld/Simple-Assignments.html#Simple-Assignments),
+You can find the syntax in the
+[linker documentation](https://sourceware.org/binutils/docs/ld/Simple-Assignments.html#Simple-Assignments),
 it looks exactly like a C assignment: `symbol = expression;`
 
 Here, we need:
@@ -552,16 +555,16 @@ The code is below:
     } > ram AT >rom
 ```
 
-One quirk of these linker-provided symbols: you must use a reference to
-them, never the variable themselves. For example, the following gets us a
-pointer to the start of the `.data` section:
+One quirk of these linker-provided symbols: you must use a reference to them,
+never the variable themselves. For example, the following gets us a pointer to
+the start of the `.data` section:
 
 ```c
 uint8_t *data_byte = &_sdata;
 ```
 
-You can read more details about this in the [binutils
-docs](https://sourceware.org/binutils/docs/ld/Source-Code-Reference.html).
+You can read more details about this in the
+[binutils docs](https://sourceware.org/binutils/docs/ld/Source-Code-Reference.html).
 
 ## Closing
 
@@ -570,12 +573,12 @@ I hope this post gave you confidence in writing your own linker scripts.
 In my next post, we'll talk about writing a bootloader to assist with loading
 and starting your application.
 
-_EDIT: Post written!_ - [Writing a Bootloader from Scratch]({% post_url 2019-08-13-how-to-write-a-bootloader-from-scratch %})
+_EDIT: Post written!_ -
+[Writing a Bootloader from Scratch](/blog/how-to-write-a-bootloader-from-scratch)
 
-As with previous posts, code examples are available on Github in the [zero to main
-repository](https://github.com/memfault/zero-to-main)
+As with previous posts, code examples are available on Github in the
+[zero to main repository](https://github.com/memfault/zero-to-main)
 
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
-{% include submit-pr.html %}
-
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>

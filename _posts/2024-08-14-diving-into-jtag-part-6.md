@@ -1,4 +1,5 @@
 ---
+date: "2024-08-14"
 title: Diving into JTAG — Security (Part 6)
 description: "Overview of security and hacking of JTAG"
 author: zamuhrishka
@@ -16,9 +17,9 @@ Debug Port.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 > **Disclaimer 1**: I am not a cyber-security expert and not deeply immersed in
 > this topic, so this article does not aim to uncover any secrets or provide an
@@ -43,7 +44,7 @@ production, as shown in this picture, where you can see that the JTAG connector
 was removed:
 
 <p align="center">
- <img width="80%" src="{% img_url jtag-part6/board-level-protection-1.png %}" alt="The Board-level protection example 1" />
+ <img width="80%" src="/img/jtag-part6/board-level-protection-1.png" alt="The Board-level protection example 1" />
 </p>
 
 Another protection option is suitable when there is no JTAG connector on the
@@ -52,7 +53,7 @@ For example, in the next picture, you can see that the board contains JTAG pins
 as separate pads.
 
 <p align="center">
- <img width="80%" src="{% img_url jtag-part6/board-level-protection-2.png %}" alt="The Board-level protection example 2" />
+ <img width="80%" src="/img/jtag-part6/board-level-protection-2.png" alt="The Board-level protection example 2" />
 </p>
 
 However, as you well understand, these methods provide only the most basic
@@ -81,7 +82,7 @@ microcontroller's embedded flash memory from being read through the debug
 interface.
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part6/rdp-levels.png %}" alt="The RDP Levels" />
+ <img width="100%" src="/img/jtag-part6/rdp-levels.png" alt="The RDP Levels" />
 </p>
 
 RDP has three levels of protection (0, 1, and 2):
@@ -384,9 +385,9 @@ dive into the topic of JTAG protocol. Thanks to all who read it.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

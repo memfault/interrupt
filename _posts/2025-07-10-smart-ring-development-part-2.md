@@ -1,4 +1,5 @@
 ---
+date: "2025-07-10"
 title: "Smart Ring Development (Part 2) － Hardware Design"
 description: "Diving into the hardware design of an  Open Smart Ring project"
 author: stawiski
@@ -15,8 +16,7 @@ challenges, and ultimately, how to make it a manufacturable and usable piece.
 
 <!-- excerpt end -->
 
-In [the first part of this
-series]({% link _posts/2025-06-13-smart-ring-development-part-1.md %}), we
+In [the first part of this series](/blog/smart-ring-development-part-1), we
 looked at a higher level at what is inside a smart ring. We’ve also researched
 some of the available smart rings on the market and looked at prototyping one.
 In this article, we’ll dive deeper into the hardware of Open Ring - an
@@ -49,7 +49,7 @@ shown below:
 The flex part has 0.22mm, and the flex-rigid part sits at 0.48mm. Thinking of
 the component budget, if the aim is 2.9mm thickness, and assuming we need a
 minimum of 0.2mm silicon outer layer, that leaves us at
-<span align="center"><img src="{% img_url smart-ring/ring-height-latex-equation.svg %}" /></span>
+<span align="center"><img src="/img/smart-ring/ring-height-latex-equation.svg" /></span>
 of max component height on each side **if the components bent along the ring
 curve**. Since they don't bend, we're working with some extremely tight spaces
 here. Square chips in BGA and WLCP packages under 3mm width shouldn’t be a
@@ -85,7 +85,7 @@ package. Generally, it’s better to get more FLASH and RAM and not worry about
 the firmware upgrades (as well as security updates, which in the BLE world are
 common).
 
-![Dialog DA14531]({% img_url smart-ring/DA14531-00000FX2.avif %})
+![Dialog DA14531](/img/smart-ring/DA14531-00000FX2.avif)
 
 An important consideration around the BLE chip is the crystal. A typical BLE
 crystal will be 32MHz, and it will provide the base for the high-frequency radio
@@ -235,7 +235,7 @@ manufacturability and user experience. It will affect managing physical product
 stock, the whole mechanical design, battery life, automated test equipment, and
 other things.
 
-![Oura gen 3 sizing kit]({% img_url smart-ring/oura-gen3-sizing-kit.jpg %})
+![Oura gen 3 sizing kit](/img/smart-ring/oura-gen3-sizing-kit.jpg)
 
 The way Open Ring was designed was to accommodate multiple ring sizes. The PCB
 needs to be flat (component-free) at the part where the battery goes, so we
@@ -373,9 +373,9 @@ Open Ring. Stay tuned!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

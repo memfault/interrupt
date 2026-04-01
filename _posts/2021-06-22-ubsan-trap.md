@@ -1,6 +1,8 @@
 ---
+date: "2021-06-22"
 title: "Pocket article: Undefined Behavior Sanitizer Trap on Error"
-description: Using Undefined Behavior Sanitizer on small embedded programs without libubsan
+description:
+  Using Undefined Behavior Sanitizer on small embedded programs without libubsan
 author: noah
 image: img/ubsan-trap/sigill.png
 tags: [toolchain, gdb]
@@ -15,9 +17,9 @@ embedded programs!
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## The Undefined Behavior Sanitizer
 
@@ -30,13 +32,14 @@ runtime checks on C family software. You can read more here:
 
 The other sanitizers in the family include
 [AddressSanitizer](https://releases.llvm.org/15.0.0/tools/clang/docs/AddressSanitizer.html),
-[LeakSanitizer](https://releases.llvm.org/15.0.0/tools/clang/docs/LeakSanitizer.html), and others.
+[LeakSanitizer](https://releases.llvm.org/15.0.0/tools/clang/docs/LeakSanitizer.html),
+and others.
 
 > Note: **_AddressSanitizer_** is a very powerful tool for detecting memory
-> out-of-bounds errors, and I highly recommend enabling it in your unit tests. It
-> is worthy of a dedicated post so we won't go into too much detail here, other
-> than it needs to be carefully integrated with the host platform- it works best
-> on Linux (though it is available on some other platforms)
+> out-of-bounds errors, and I highly recommend enabling it in your unit tests.
+> It is worthy of a dedicated post so we won't go into too much detail here,
+> other than it needs to be carefully integrated with the host platform- it
+> works best on Linux (though it is available on some other platforms)
 
 UBSan can catch several types of undefined behavior, for example:
 
@@ -145,8 +148,8 @@ We can see that the runtime was linked in:
 ```
 
 If we run that program with problematic input, UBSan prints a warning, and the
-printf was modified to print a `(null)` value instead of the possibly problematic
-fetch.
+printf was modified to print a `(null)` value instead of the possibly
+problematic fetch.
 
 [![img/ubsan-trap/ubsan-basic.png](/img/ubsan-trap/ubsan-basic.png)](/img/ubsan-trap/ubsan-basic.png)
 
@@ -245,9 +248,9 @@ is worth a look!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

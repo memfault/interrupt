@@ -1,6 +1,9 @@
 ---
+date: "2023-05-24"
 title: "Zephyr Deep Dive: Ring Buffers"
-description: "Overview of Zephyr ring buffers covering how they work and when to use them in your design"
+description:
+  "Overview of Zephyr ring buffers covering how they work and when to use them
+  in your design"
 author: ericj
 tags: [zephyr, rtos]
 ---
@@ -13,16 +16,16 @@ bringing Zephyr to my teams.
 
 <!-- excerpt start -->
 
-This post covers Zephyr's built-in ring buffer API, a component
-commonly used in producer-consumer scenarios. We will cover how ring buffers
-in Zephyr work, when to use them, and their strengths and weaknesses. This post
-will close with an example of augmenting ring buffers with waiting capabilities.
+This post covers Zephyr's built-in ring buffer API, a component commonly used in
+producer-consumer scenarios. We will cover how ring buffers in Zephyr work, when
+to use them, and their strengths and weaknesses. This post will close with an
+example of augmenting ring buffers with waiting capabilities.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Zephyr Ring Buffers
 
@@ -154,16 +157,16 @@ static int eswifi_uart_get_resp(struct eswifi_uart_data *uart)
 ```
 
 Two things stand out compared to the code that wrote data to the ring buffer.
-The first is the usage of `ring_buf_get` instead of the claim-based API. When the
-interrupt handler receives UART data, the handler does not immediately know how
-much to write into the ring buffer. The claim-based function allows the handler
-to use the buffer directly, minimizing copying operations. However, the driver
-function, `eswifi_uart_get_resp`, must copy the data for later processing. There
-is a bit of an asymmetry by design here. The interrupt handler does not do any
-processing on the data. It simply hands the data off to the workqueue and moves
-on to the next read. The workqueue, on the other hand, does need to keep this
-data around to complete processing the response! The utility of the ring buffer
-is that it supports both cases and allows for clear code.
+The first is the usage of `ring_buf_get` instead of the claim-based API. When
+the interrupt handler receives UART data, the handler does not immediately know
+how much to write into the ring buffer. The claim-based function allows the
+handler to use the buffer directly, minimizing copying operations. However, the
+driver function, `eswifi_uart_get_resp`, must copy the data for later
+processing. There is a bit of an asymmetry by design here. The interrupt handler
+does not do any processing on the data. It simply hands the data off to the
+workqueue and moves on to the next read. The workqueue, on the other hand, does
+need to keep this data around to complete processing the response! The utility
+of the ring buffer is that it supports both cases and allows for clear code.
 
 The second thing to note is that the interrupt handler writes in variable
 lengths while read operations are a constant length. The ring buffer offers
@@ -171,9 +174,9 @@ flexibility in the amount of data being written to or read from the buffer.
 
 ### Items API
 
-In addition to the standard bytes-based API, there is the ring buffer items
-API. In this version, data is written to and read from the ring buffer as an
-item with three components:
+In addition to the standard bytes-based API, there is the ring buffer items API.
+In this version, data is written to and read from the ring buffer as an item
+with three components:
 
 1. An application-defined type
 2. An application-defined integer value
@@ -318,9 +321,9 @@ and subsystems like RTIO and zbus. Please feel free to leave feedback, comments,
 and Zephyr topic suggestions below!
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}
@@ -330,6 +333,6 @@ and Zephyr topic suggestions below!
 <!-- prettier-ignore-start -->
 [^1]: [Zephyr Ring Buffer API](https://docs.zephyrproject.org/3.3.0/kernel/data_structures/ring_buffers.html)
 [^2]: [eswifi driver](https://github.com/zephyrproject-rtos/zephyr/blob/zephyr-v3.3.0/drivers/wifi/eswifi/eswifi_bus_uart.c)
-[^3]: [Offensive Programming]({% post_url 2020-12-15-defensive-and-offensive-programming %})
+[^3]: [Offensive Programming](/blog/defensive-and-offensive-programming)
 [^4]: [Zephyr Semaphore API](https://docs.zephyrproject.org/3.3.0/kernel/services/synchronization/semaphores.html)
 <!-- prettier-ignore-end -->

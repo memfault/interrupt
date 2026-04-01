@@ -1,75 +1,97 @@
 ---
+date: "2020-05-20"
 title: "Better Firmware with LLVM/Clang"
-description: "An overview of how to compile an ARM Cortex-M based project with LLVM/Clang and an exploration of the neat features available in the toolchain such as static analysis to identify memory leaks and deadlocks"
+description:
+  "An overview of how to compile an ARM Cortex-M based project with LLVM/Clang
+  and an exploration of the neat features available in the toolchain such as
+  static analysis to identify memory leaks and deadlocks"
 image: /img/llvm/example_llvm_malloc_analysis.png
 tags: [cortex-m, better-firmware, toolchain, mcu]
 author: chris
 ---
 
-If you have ever done software development that involves Apple products, FreeBSD, WebAssembly, or Rust, you have used the wildly popular compiler toolchain known as LLVM. However, LLVM and the open source C-language compiler built on top of it (Clang) do not get a lot of attention in the embedded world.
+If you have ever done software development that involves Apple products,
+FreeBSD, WebAssembly, or Rust, you have used the wildly popular compiler
+toolchain known as LLVM. However, LLVM and the open source C-language compiler
+built on top of it (Clang) do not get a lot of attention in the embedded world.
 
 <!-- excerpt start -->
 
-In this article, I hope I can convince you that adding a Clang build target to your project can be
-a relatively simple and useful endeavor. We will cover how to take advantage of some of the
-rich features shipped with the toolchain and identify some memory leaks and mutex deadlocks in an
-example project at compile time! We will also walk through a step-by-step example of updating a GCC
-based ARM Cortex-M project to cross-compile with LLVM/Clang.
+In this article, I hope I can convince you that adding a Clang build target to
+your project can be a relatively simple and useful endeavor. We will cover how
+to take advantage of some of the rich features shipped with the toolchain and
+identify some memory leaks and mutex deadlocks in an example project at compile
+time! We will also walk through a step-by-step example of updating a GCC based
+ARM Cortex-M project to cross-compile with LLVM/Clang.
 
 <!-- excerpt end -->
 
-> Note: While the focus of the article will be using LLVM/Clang with ARM Cortex-M embedded devices, the
-> general overview of LLVM as well as the features leveraged can be applied to any architecture
-> supported by the toolchain.
+> Note: While the focus of the article will be using LLVM/Clang with ARM
+> Cortex-M embedded devices, the general overview of LLVM as well as the
+> features leveraged can be applied to any architecture supported by the
+> toolchain.
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Background of GCC and Clang
 
-The advent of open source compilers and toolchains traces back over 30 years to 1987 and the
-release of GCC 1.0. Originally, GCC was meant to compile GNU open source
-software written in C. The toolchain grew organically over time to target numerous architectures and support a
-variety of different languages. As a consequence, many aspects of the codebase have become complex to extend and work with.
+The advent of open source compilers and toolchains traces back over 30 years to
+1987 and the release of GCC 1.0. Originally, GCC was meant to compile GNU open
+source software written in C. The toolchain grew organically over time to target
+numerous architectures and support a variety of different languages. As a
+consequence, many aspects of the codebase have become complex to extend and work
+with.
 
-The LLVM project is the "new" open source compiler on the block. It began as a research project at the
-University of Illinois at Urbana–Champaign in 2000[^12]. The early goals of the project were to create a
-more modular compiler toolchain by designing a collection of standalone libraries. The LLVM project really took root in 2005 when Apple hired one of the original designers, Chris
-Lattner, and invested heavily in making LLVM the default used for its own developer ecosystem. This
-bore Clang, the C, C++, and objective-C frontend to LLVM and modern day GNU GCC competitor.
+The LLVM project is the "new" open source compiler on the block. It began as a
+research project at the University of Illinois at Urbana–Champaign in 2000[^12].
+The early goals of the project were to create a more modular compiler toolchain
+by designing a collection of standalone libraries. The LLVM project really took
+root in 2005 when Apple hired one of the original designers, Chris Lattner, and
+invested heavily in making LLVM the default used for its own developer
+ecosystem. This bore Clang, the C, C++, and objective-C frontend to LLVM and
+modern day GNU GCC competitor.
 
-Today, the LLVM toolchain has become ubiquitous in the software world and, in recent years, it has seen
-adoption in the embedded world as well. Its favorable license in comparison to the GNU
-toolchain (Apache 2 vs GPL3) along with its more modular architecture has made the LLVM toolchain a
-default choice in the proprietary embedded compiler market. ARM scrapped their original compiler in
-favor of an LLVM/Clang based one with the release of ARM Compiler 6 (`armclang`) and, more recently,
-SEGGER built an ARM compiler based on the LLVM/Clang toolchain as
-well[^11].
+Today, the LLVM toolchain has become ubiquitous in the software world and, in
+recent years, it has seen adoption in the embedded world as well. Its favorable
+license in comparison to the GNU toolchain (Apache 2 vs GPL3) along with its
+more modular architecture has made the LLVM toolchain a default choice in the
+proprietary embedded compiler market. ARM scrapped their original compiler in
+favor of an LLVM/Clang based one with the release of ARM Compiler 6 (`armclang`)
+and, more recently, SEGGER built an ARM compiler based on the LLVM/Clang
+toolchain as well[^11].
 
 ## Benefits of Adding a Clang Build
 
-Many embedded projects use GCC, or one of other proprietary compilers such as IAR or the ARM
-Compiler. You _do not_ have to stop using your current compiler for builds to start benefiting from
-LLVM/Clang.
+Many embedded projects use GCC, or one of other proprietary compilers such as
+IAR or the ARM Compiler. You _do not_ have to stop using your current compiler
+for builds to start benefiting from LLVM/Clang.
 
-Adding a Clang build target to your pre-existing project has the following benefits:
+Adding a Clang build target to your pre-existing project has the following
+benefits:
 
 - Static analysis! (More on this in the following sections)
-- Makes your codebase less dependent on a single compiler feature set and makes it easier to transition from one compiler to another in the future (for example, a proprietary one to a free one).
-- Two sets of error flags is better than one. You can use both compilers `-Werror` equivalent to maximize the issues you
-  find before needing to do any debug on target.
-- By compiling with Clang, you are setting yourself up nicely for running unit tests and simulated
-  builds on host platforms.
+- Makes your codebase less dependent on a single compiler feature set and makes
+  it easier to transition from one compiler to another in the future (for
+  example, a proprietary one to a free one).
+- Two sets of error flags is better than one. You can use both compilers
+  `-Werror` equivalent to maximize the issues you find before needing to do any
+  debug on target.
+- By compiling with Clang, you are setting yourself up nicely for running unit
+  tests and simulated builds on host platforms.
 
 ## Example Project
 
-Throughout the article we will use a simple example project that runs FreeRTOS and can be
-run on the NRF52840. If you would like to follow along locally all of the code can be found on [GitHub](https://github.com/memfault/interrupt/tree/master/example/freertos-example-llvm/).
+Throughout the article we will use a simple example project that runs FreeRTOS
+and can be run on the NRF52840. If you would like to follow along locally all of
+the code can be found on
+[GitHub](https://github.com/memfault/interrupt/tree/master/example/freertos-example-llvm/).
 
 ## Installing LLVM/Clang
 
-The easiest way to get your hands on the latest release of the LLVM/Clang toolchain is to download
-the release for your OS from the
-["Pre-Built Binaries" section](https://releases.llvm.org/download.html) on the official website.
+The easiest way to get your hands on the latest release of the LLVM/Clang
+toolchain is to download the release for your OS from the
+["Pre-Built Binaries" section](https://releases.llvm.org/download.html) on the
+official website.
 
 In this article, we use LLVM 10.0.0:
 
@@ -105,22 +127,28 @@ InstalledDir: <SHOULD MATCH PATH YOU JUST ADDED ABOVE>
 
 ## Static Analysis With Clang and scan-build
 
-[Further down in this post](#porting-gcc-to-clang), we will dive into how to migrate a project using GCC to Clang, but
-first, let’s take a look at some of the awesome static analysis passes and checkers we can run on
-our example project with LLVM/Clang!
+[Further down in this post](#porting-gcc-to-clang), we will dive into how to
+migrate a project using GCC to Clang, but first, let’s take a look at some of
+the awesome static analysis passes and checkers we can run on our example
+project with LLVM/Clang!
 
 ### Overview of scan-build
 
-`scan-build` is a static analyzer included as part of the LLVM toolchain. It works by intercepting calls to `gcc` or `clang` and making a static analysis pass.
+`scan-build` is a static analyzer included as part of the LLVM toolchain. It
+works by intercepting calls to `gcc` or `clang` and making a static analysis
+pass.
 
-`scan-build` works by overriding the `CC` and `CXX` used by `CMake` and `Make`. If you aren't doing anything tricky in your project, invoking the tool is as simple as:
+`scan-build` works by overriding the `CC` and `CXX` used by `CMake` and `Make`.
+If you aren't doing anything tricky in your project, invoking the tool is as
+simple as:
 
 ```bash
 $ scan-build make
 $ scan-build cmake ..
 ```
 
-`scan-build` has a number of "Checkers"[^7] enabled by default. You can view them by running `scan-build --help`:
+`scan-build` has a number of "Checkers"[^7] enabled by default. You can view
+them by running `scan-build --help`:
 
 ```bash
 $ scan-build --help
@@ -145,25 +173,30 @@ AVAILABLE CHECKERS:
 NOTE: "+" indicates that an analysis is enabled by default.
 ```
 
-The default set is a good starting point, and you can easily enable non-default ones or
-disable individual defaults. You can even implement your own custom pugins but these topics are outside the scope of this article.
+The default set is a good starting point, and you can easily enable non-default
+ones or disable individual defaults. You can even implement your own custom
+pugins but these topics are outside the scope of this article.
 
-Let's run scan-build on our example project. We'll see it finds a few interesting potential issues that neither Clang or GCC noticed during compilation.
+Let's run scan-build on our example project. We'll see it finds a few
+interesting potential issues that neither Clang or GCC noticed during
+compilation.
 
-Results will be emitted directly to the console but you can also browse them using the `scan-view`
-command bundled with LLVM. `scan-view` will open an html representation of all the issues
-discovered. From this view, you can easily filter by issue type and dig into the specifics of an analysis pass.
+Results will be emitted directly to the console but you can also browse them
+using the `scan-view` command bundled with LLVM. `scan-view` will open an html
+representation of all the issues discovered. From this view, you can easily
+filter by issue type and dig into the specifics of an analysis pass.
 
-I've included [the full output for the example project here](/misc/llvm_scan_build_report) but here's an
-example of the type of information you will see:
+I've included
+[the full output for the example project here](/misc/llvm_scan_build_report) but
+here's an example of the type of information you will see:
 
 #### Report Overview
 
-![]({% img_url llvm/example_llvm_scanbuild_report.png %})
+![](/img/llvm/example_llvm_scanbuild_report.png)
 
 #### Report Analysis Example
 
-![]({% img_url llvm/example_llvm_scanbuild_analysis.png %})
+![](/img/llvm/example_llvm_scanbuild_analysis.png)
 
 #### Running scan-build
 
@@ -179,9 +212,11 @@ scan-build: 8 bugs found.
 scan-build: Run 'scan-view /var/folders/dm/b0yt' to examine bug reports.
 ```
 
-`scan-build` uses `gcc` by default on some platforms.
-If this happens, you may see error messages related to unrecognized command line options and the `===GCC Compiler Detected===` message.
-Set the compiler for `scan-build` to clang with the `--use-cc` and `--use-c++` options:
+`scan-build` uses `gcc` by default on some platforms. If this happens, you may
+see error messages related to unrecognized command line options and the
+`===GCC Compiler Detected===` message. Set the compiler for `scan-build` to
+clang with the `--use-cc` and `--use-c++` options:
+
 ```bash
 $ scan-build --use-cc=clang --use-c++=clang make
 ```
@@ -205,7 +240,9 @@ src/builtin_scanbuild_examples.c:13:13:
   result += *pointer;
 ```
 
-> NOTE: The NullDereference Checker only looks for null pointer accesses _after_ there has already been a nullability check. This helps prevent the generation of false positives for functions that never get passed a NULL pointer.
+> NOTE: The NullDereference Checker only looks for null pointer accesses _after_
+> there has already been a nullability check. This helps prevent the generation
+> of false positives for functions that never get passed a NULL pointer.
 
 #### core.DivideZero Checker
 
@@ -226,18 +263,23 @@ src/builtin_scanbuild_examples.c:20:11: warning: Division by zero
 
 ### Enabling "Malloc" Static Analysis Checkers
 
-`scan-build` also includes a sophisticated suite of dynamic memory checkers to catch bugs such as
-memory leaks, use-after-free and double free errors (These are mostly run as part of the `unix.Malloc` checker). If you use the C standard library calls (i.e
-`calloc`, `malloc`, `free`, etc) in your embedded project, these checks will work out of the box.
+`scan-build` also includes a sophisticated suite of dynamic memory checkers to
+catch bugs such as memory leaks, use-after-free and double free errors (These
+are mostly run as part of the `unix.Malloc` checker). If you use the C standard
+library calls (i.e `calloc`, `malloc`, `free`, etc) in your embedded project,
+these checks will work out of the box.
 
-However, for many embedded projects this is not the case. It's typical to have a heap (or "byte
-pool") per subsystem (i.e network stack, graphics, sensor data, etc). This can help prevent
-one subsystem from taking down the other. In other embedded systems, RAM speed may not be heterogeneous, and it may
-be desirable to partition RAM into pools by access speed. This way subsystems requiring the
-fastest RAM (i.e graphics) can use one heap and subsystems which do not care can use slower RAM.
+However, for many embedded projects this is not the case. It's typical to have a
+heap (or "byte pool") per subsystem (i.e network stack, graphics, sensor data,
+etc). This can help prevent one subsystem from taking down the other. In other
+embedded systems, RAM speed may not be heterogeneous, and it may be desirable to
+partition RAM into pools by access speed. This way subsystems requiring the
+fastest RAM (i.e graphics) can use one heap and subsystems which do not care can
+use slower RAM.
 
-Conveniently, you can use compiler attributes to flag functions that behave like "malloc" and enable the
-`unix.Malloc` checkers on them. Let's set this up for the `memory_pool.h` file in our example project:
+Conveniently, you can use compiler attributes to flag functions that behave like
+"malloc" and enable the `unix.Malloc` checkers on them. Let's set this up for
+the `memory_pool.h` file in our example project:
 
 ```c
 #pragma once
@@ -275,11 +317,12 @@ __attribute__((ownership_takes(malloc, 1)))
 
 ##### Aside: Prefix Project Macros!
 
-Due to the C language's lack of namespacing, it's a good idea to prefix your macros to avoid collisions with
-other libraries. (i.e `MY_PROJECT_MIN()` instead of `MIN()`).
+Due to the C language's lack of namespacing, it's a good idea to prefix your
+macros to avoid collisions with other libraries. (i.e `MY_PROJECT_MIN()` instead
+of `MIN()`).
 
-This helps avoid define collisions with poorly structured libraries and prevents the use of the
-`#ifndef`-`#define`-`#endif` anti-pattern:
+This helps avoid define collisions with poorly structured libraries and prevents
+the use of the `#ifndef`-`#define`-`#endif` anti-pattern:
 
 ```c
 #ifndef MIN
@@ -289,8 +332,8 @@ This helps avoid define collisions with poorly structured libraries and prevents
 
 #### Instrument Custom Malloc Implementation
 
-We'll update `memory_pool.h` to use the attributes defined above and apply one small workaround so the checker
-works with our custom functions:
+We'll update `memory_pool.h` to use the attributes defined above and apply one
+small workaround so the checker works with our custom functions:
 
 ```c
 #pragma once
@@ -381,14 +424,16 @@ src/memory_leak_examples.c:47:12:
 ### Using Clangs Thread Safety Analysis for RTOS Mutexes
 
 Clang also supports a Thread Safety Analyzer which can catch deadlocks and race
-conditions that arise when writing multi-threaded applications (or using multiple tasks in a RTOS). The checkers are enabled at
-compile time by using the `-Wthread-safety` compiler flag so there is zero runtime overhead!
+conditions that arise when writing multi-threaded applications (or using
+multiple tasks in a RTOS). The checkers are enabled at compile time by using the
+`-Wthread-safety` compiler flag so there is zero runtime overhead!
 
-The analyzer was contributed and is maintained by Google and is used "extensively in Google's
-internal code base".[^8] There is pretty good documentation about
-how to leverage the feature for C++. However, the analyzers can be used for C code as well via compiler attributes.
-It's pretty common in an embedded system with an RTOS to have mutexes for subsystems such as
-an accelerometer or flash driver. In our example project we have:
+The analyzer was contributed and is maintained by Google and is used
+"extensively in Google's internal code base".[^8] There is pretty good
+documentation about how to leverage the feature for C++. However, the analyzers
+can be used for C code as well via compiler attributes. It's pretty common in an
+embedded system with an RTOS to have mutexes for subsystems such as an
+accelerometer or flash driver. In our example project we have:
 
 ```c
 //! @file mutex.h
@@ -399,8 +444,9 @@ void accel_lock(void);
 void accel_unlock(void);
 ```
 
-To use the analyzer we need to annotate where locks are given and released. We can also
-flag if certain functions require a lock. We can wrap all of these behind macros in `compiler.h`:
+To use the analyzer we need to annotate where locks are given and released. We
+can also flag if certain functions require a lock. We can wrap all of these
+behind macros in `compiler.h`:
 
 #### Macros helpers for utilizing -Wthread-safety in C
 
@@ -511,15 +557,21 @@ src/mutex_examples.c:17:3:
 
 Pretty neat, right?!
 
-Some additional checkers can be enabled via annotations as well to enforce certain locks are acquired
-before/after others. Take a look at the official documentation for more ideas![^8].
+Some additional checkers can be enabled via annotations as well to enforce
+certain locks are acquired before/after others. Take a look at the official
+documentation for more ideas![^8].
 
 ### Additional Clang Specific Compiler Warnings
 
-Once you can compile your project with Clang, there are other compiler warnings not
-supported by other compilers that you can enable. These can be helpful for catching potential bugs or issues.
+Once you can compile your project with Clang, there are other compiler warnings
+not supported by other compilers that you can enable. These can be helpful for
+catching potential bugs or issues.
 
-The exhaustive list of "Diagnostic Warnings" supported by Clang can be found in the official documentation online[^5]. However, I find it easiest to run a build with all the possible Clang warnings enabled by using `-Weverything`, disabling all errors (`-Wno-error`) and piping the compilation output to a file I can grep after the fact. Let's try it out on the example project:
+The exhaustive list of "Diagnostic Warnings" supported by Clang can be found in
+the official documentation online[^5]. However, I find it easiest to run a build
+with all the possible Clang warnings enabled by using `-Weverything`, disabling
+all errors (`-Wno-error`) and piping the compilation output to a file I can grep
+after the fact. Let's try it out on the example project:
 
 ```bash
 $ make clean && CLI_CFLAG_OVERRIDES="-Weverything -Wno-error" \
@@ -540,33 +592,41 @@ $ grep -o "\[\-W.*\].*" compilation_results.txt | sort -u
 [-Wunused-parameter]
 ```
 
-Sweet! We have discovered quite a few warnings we can go and investigate as to whether we want to enable or not.
+Sweet! We have discovered quite a few warnings we can go and investigate as to
+whether we want to enable or not.
 
-> Tip: For a production project, I actually like to leave
-> `-Weverything` enabled. You can use a tool such as [Conda]({% post_url 2020-01-07-conda-developer-environments %}) to ensure all developers are on the same version of
-> LLVM/Clang and see the exact same errors and `-Wno-<warning>` (i.e `-Wno-pedantic`) to disable
-> any warnings that are not useful for your application.
+> Tip: For a production project, I actually like to leave `-Weverything`
+> enabled. You can use a tool such as
+> [Conda](/blog/conda-developer-environments) to ensure all developers are on
+> the same version of LLVM/Clang and see the exact same errors and
+> `-Wno-<warning>` (i.e `-Wno-pedantic`) to disable any warnings that are not
+> useful for your application.
 
-> Note: I haven't had a chance to try it out yet but it's worth noting that GCC is catching up on
-> the static analysis front. In GCC 10, a bunch of new static analyzers
-> were added via the `-fanalyzer` option.[^13]
+> Note: I haven't had a chance to try it out yet but it's worth noting that GCC
+> is catching up on the static analysis front. In GCC 10, a bunch of new static
+> analyzers were added via the `-fanalyzer` option.[^13]
 
 {: #porting-gcc-to-clang}
 
 ## Setting up your project to compile with GCC & Clang
 
-Now that we have seen a small sampling of what we can do with LLVM/Clang, let's walk through the
-steps involved to update a GCC based project to compile with it!
+Now that we have seen a small sampling of what we can do with LLVM/Clang, let's
+walk through the steps involved to update a GCC based project to compile with
+it!
 
-Fortunately, the LLVM/Clang project has made every effort to support GNU GCC assembly,
-attributes, compiler flags & GNU linker script syntax, so a majority of the code in your project
-should already be compatible and the migration effort should be quite minimal.
+Fortunately, the LLVM/Clang project has made every effort to support GNU GCC
+assembly, attributes, compiler flags & GNU linker script syntax, so a majority
+of the code in your project should already be compatible and the migration
+effort should be quite minimal.
 
 ### Make Build System Compiler Aware
 
-There will be a few system updates we will want to make depending on the compiler we are using. For example, Clang has a number of flags that GCC does not support so we will only want to enable those when Clang is in use.
+There will be a few system updates we will want to make depending on the
+compiler we are using. For example, Clang has a number of flags that GCC does
+not support so we will only want to enable those when Clang is in use.
 
-Here is a template of what a makefile supporting both Clang and GCC targets can look like:
+Here is a template of what a makefile supporting both Clang and GCC targets can
+look like:
 
 ```bash
 # Set things up to use the arm-none-eabi-gcc that is on
@@ -602,10 +662,11 @@ LDFLAGS += $(COMPILER_SPECIFIC_LDFLAGS)
 
 ### Create a "compiler.h" header
 
-You'll probably encounter some code in your project that is compatible with GCC but not Clang. For
-any project supporting multiple compilers you will find a "compiler.h" style header that wraps
-compiler specifics behind a common macro. For example, for Clang you need to use a different
-attribute to disable optimizations on a function.
+You'll probably encounter some code in your project that is compatible with GCC
+but not Clang. For any project supporting multiple compilers you will find a
+"compiler.h" style header that wraps compiler specifics behind a common macro.
+For example, for Clang you need to use a different attribute to disable
+optimizations on a function.
 
 ```c
 //! @file example_project/compiler.h
@@ -625,9 +686,10 @@ attribute to disable optimizations on a function.
 
 ## Cross Compiling With Clang
 
-Unlike GCC, a default build of Clang is multi-target capable. To cross compile all you have to do
-is specify the appropriate `--target` argument into Clang. If no `--target` is specified it falls
-back to its default behavior of targeting the native host architecture.
+Unlike GCC, a default build of Clang is multi-target capable. To cross compile
+all you have to do is specify the appropriate `--target` argument into Clang. If
+no `--target` is specified it falls back to its default behavior of targeting
+the native host architecture.
 
 You can dump a list of the architectures supported by running `llc --version`:
 
@@ -650,11 +712,11 @@ LLVM (http://llvm.org/):
 
 #### The Clang Target Triple
 
-The value passed to `--target` itself is a bit complicated. The good thing is for ARM Cortex-M, you
-can always pass the same value: `--target=arm-none-eabi`.
+The value passed to `--target` itself is a bit complicated. The good thing is
+for ARM Cortex-M, you can always pass the same value: `--target=arm-none-eabi`.
 
-> Feel free to skip to the [next section](#update-clang-baremetal) if you aren't interested in
-> learning more about the `--target` argument internals.
+> Feel free to skip to the [next section](#update-clang-baremetal) if you aren't
+> interested in learning more about the `--target` argument internals.
 
 ##### Clang Target Triple Internals
 
@@ -664,27 +726,36 @@ The makeup of a `--target` value is actually:
 
 A rough breakdown of what is expected for ARM targets is:
 
-- `arch`: One of the "registered targets" that was output from `llc --version` so for ARM it is `arm`.
-- `sub` : When left blank the value is inferred from other flags specified as part of the
-  compilation. For ARM Cortex-M, `v6m`, `v7m`, `v7em`, `v8m`, etc are all be legal values.
-- `vendor`: For ARM this can be left blank or you can specify `unknown` explicitly.
-- `sys`: For embedded targets this will be `none`. If you are compiling code targeting an OS, the
-  name of the OS will be used. For example, `linux` or `darwin`.
-- `abi`: For Embedded ARM this will always be `eabi` ("embedded-application binary interface")
+- `arch`: One of the "registered targets" that was output from `llc --version`
+  so for ARM it is `arm`.
+- `sub` : When left blank the value is inferred from other flags specified as
+  part of the compilation. For ARM Cortex-M, `v6m`, `v7m`, `v7em`, `v8m`, etc
+  are all be legal values.
+- `vendor`: For ARM this can be left blank or you can specify `unknown`
+  explicitly.
+- `sys`: For embedded targets this will be `none`. If you are compiling code
+  targeting an OS, the name of the OS will be used. For example, `linux` or
+  `darwin`.
+- `abi`: For Embedded ARM this will always be `eabi` ("embedded-application
+  binary interface")
 
-If you stick with the `--target=arm-none-eabi` option suggested, the architecture will be resolved from the GCC compiler flags. (i.e Notably `-mcpu` or `-march`)
+If you stick with the `--target=arm-none-eabi` option suggested, the
+architecture will be resolved from the GCC compiler flags. (i.e Notably `-mcpu`
+or `-march`)
 
-Confusingly, unspecified or invalid fields will be filled in or replaced under the hood by the
-LLVM toolchain. This can make it hard to determine if you have specified a legal target or not:
+Confusingly, unspecified or invalid fields will be filled in or replaced under
+the hood by the LLVM toolchain. This can make it hard to determine if you have
+specified a legal target or not:
 
 ```bash
 $ clang --target=armv7notrealsub-none-eabi --print-target-triple
 armv7notrealsub-none-unknown-eabi
 ```
 
-If you want to sanity check that the target being targeted is correct, the most reliable way I
-have found to do this is by compiling an empty file and emitting LLVM Intermediate Representation (IR). The "target triple" line will inform
-you what architecture code is actually being generated for:
+If you want to sanity check that the target being targeted is correct, the most
+reliable way I have found to do this is by compiling an empty file and emitting
+LLVM Intermediate Representation (IR). The "target triple" line will inform you
+what architecture code is actually being generated for:
 
 ##### Checking Target Triple By Dumping LLVM IR
 
@@ -701,44 +772,55 @@ $ cat test.ll | grep "target triple"
 
 #### ARM Cortex-M "bare-metal" targets
 
-When you compile an application to run on an operating system (i.e `darwin` or `linux` instead of `none`),
-the C standard libraries will be picked up automatically for you. Code not targeting an OS is
-often referred to as running on a "bare-metal" environment. With LLVM/Clang you
-are responsible for providing locations of the standard libraries in this scenario, which is comprised of:
+When you compile an application to run on an operating system (i.e `darwin` or
+`linux` instead of `none`), the C standard libraries will be picked up
+automatically for you. Code not targeting an OS is often referred to as running
+on a "bare-metal" environment. With LLVM/Clang you are responsible for providing
+locations of the standard libraries in this scenario, which is comprised of:
 
 - The C standard library[^2] -- `libc.a`
-- Mathematical Functions of C standard library -- Often, this is exported in a separate library, `libm.a`.
-- Compiler Built-Ins -- Most compilers include a set of built-in functions. The compiler will
-  opportunistically replace parts of your code with builtins for better performance or to save code
-  space. With GNU GCC these builtins are exposed via `libgcc.a`[^3]. With clang they are exposed
-  via `libclang_rt.builtins.*.a`. There is no formal specification for what builtins need to be
-  implemented but Clang makes every effort to match the exact subset required by GCC.
+- Mathematical Functions of C standard library -- Often, this is exported in a
+  separate library, `libm.a`.
+- Compiler Built-Ins -- Most compilers include a set of built-in functions. The
+  compiler will opportunistically replace parts of your code with builtins for
+  better performance or to save code space. With GNU GCC these builtins are
+  exposed via `libgcc.a`[^3]. With clang they are exposed via
+  `libclang_rt.builtins.*.a`. There is no formal specification for what builtins
+  need to be implemented but Clang makes every effort to match the exact subset
+  required by GCC.
 
-Fortunately, for ARM Cortex-M development, the official GNU Arm toolchain[^1] bundles pre-compiled
-variants of [Newlib's libc and libm]({% post_url 2019-11-12-boostrapping-libc-with-newlib %}).
+Fortunately, for ARM Cortex-M development, the official GNU Arm toolchain[^1]
+bundles pre-compiled variants of
+[Newlib's libc and libm](/blog/boostrapping-libc-with-newlib).
 
-When you compile a project with the GNU Arm toolchain, `libc.a` & `libm.a` from the pre-compiled
-Newlib as well as GCC's `libgcc.a` will be linked into your project automatically.
+When you compile a project with the GNU Arm toolchain, `libc.a` & `libm.a` from
+the pre-compiled Newlib as well as GCC's `libgcc.a` will be linked into your
+project automatically.
 
-I would suggest instead using the compiler flag `--nostdlib` to disable this behavior. This will force you
-to manually specify these targets (by adding `-lc`, `-lm`, & `-lgcc` to your LDFLAGS). It makes it
-more explicit when library dependencies are pulled into your project and easier to experiment with
-swapping in alternative versions of the standard library.
+I would suggest instead using the compiler flag `--nostdlib` to disable this
+behavior. This will force you to manually specify these targets (by adding
+`-lc`, `-lm`, & `-lgcc` to your LDFLAGS). It makes it more explicit when library
+dependencies are pulled into your project and easier to experiment with swapping
+in alternative versions of the standard library.
 
 #### Adding standard libraries to Clang "bare-metal" compilation
 
-Clang does not bundle a C standard library for "bare-metal" ARM Cortex-M targets, so the
-recommendation in this scenario is to use the libraries included with the GNU Arm toolchain.
+Clang does not bundle a C standard library for "bare-metal" ARM Cortex-M
+targets, so the recommendation in this scenario is to use the libraries included
+with the GNU Arm toolchain.
 
-GCC and Clang expose some useful compiler arguments to make this straightforward to accomplish. Notably, with
-Clang we can use `--sysroot` to change the default search path Clang uses for standard includes.
+GCC and Clang expose some useful compiler arguments to make this straightforward
+to accomplish. Notably, with Clang we can use `--sysroot` to change the default
+search path Clang uses for standard includes.
 
-In our Makefile we can use the following `arm-none-eabi-gcc` compiler commands to programmatically
-build the paths we need to provide to Clang.
+In our Makefile we can use the following `arm-none-eabi-gcc` compiler commands
+to programmatically build the paths we need to provide to Clang.
 
 - `-print-sysroot` for the path to pass to Clangs `--sysroot` option
-- `-print-multi-directory` this will display where libc.a and libm.a within the gcc toolchain are located relative to `$SYS_ROOT/lib`
-- `-print-libgcc-file-name` will dump the complete path to GCC builtin functions (`libgcc.a`)
+- `-print-multi-directory` this will display where libc.a and libm.a within the
+  gcc toolchain are located relative to `$SYS_ROOT/lib`
+- `-print-libgcc-file-name` will dump the complete path to GCC builtin functions
+  (`libgcc.a`)
 
 ##### Makefile Modifications
 
@@ -784,10 +866,11 @@ endif
 
 ### Use Clang's `-Oz` instead of `-Os`
 
-For embedded projects, the quality of a compiler is often evaluated by how small of a binary it can
-create. With GCC, the smallest code is emitted when compiling with the `-Os` option. With Clang,
-you will want to use `-Oz` instead which enables additional space optimizations beyond those
-enabled by Clang's version of `-Os`.
+For embedded projects, the quality of a compiler is often evaluated by how small
+of a binary it can create. With GCC, the smallest code is emitted when compiling
+with the `-Os` option. With Clang, you will want to use `-Oz` instead which
+enables additional space optimizations beyond those enabled by Clang's version
+of `-Os`.
 
 ```bash
 ifneq '' '$(findstring clang,$(CC_VERSION_INFO))'
@@ -809,23 +892,24 @@ endif
 
 ### Compiling libclang_rt.builtins\*.a for ARM Cortex-M
 
-If you are interested in taking the road less traveled, it _is_ possible to compile LLVMs builtin
-library for ARM Cortex-M though I would not recommend it.
+If you are interested in taking the road less traveled, it _is_ possible to
+compile LLVMs builtin library for ARM Cortex-M though I would not recommend it.
 
-> At this point we can compile our project with either GCC and Clang! [Skip ahead](#using-gcc-and-clang)
-> to the next section to try that out instead!
+> At this point we can compile our project with either GCC and Clang!
+> [Skip ahead](#using-gcc-and-clang) to the next section to try that out
+> instead!
 
-You can even find some documentation
-about the endeavor [here](https://llvm.org/docs/HowToCrossCompileBuiltinsOnArm.html).
+You can even find some documentation about the endeavor
+[here](https://llvm.org/docs/HowToCrossCompileBuiltinsOnArm.html).
 
 Disclaimers: At the time of writing this article,
 
-- Some of the official documentation, such as the instructions for "Alternative using a cmake cache" no
-  longer work.
-- It does not appear possible to compile a builtin targeting the Cortex-M hard float ABI (i.e
-  `armv7em` target).
-- It does not appear possible to compile `libclang_rt` for ARM Cortex-M on OSX. You need to use
-  Docker or be running on Linux natively.
+- Some of the official documentation, such as the instructions for "Alternative
+  using a cmake cache" no longer work.
+- It does not appear possible to compile a builtin targeting the Cortex-M hard
+  float ABI (i.e `armv7em` target).
+- It does not appear possible to compile `libclang_rt` for ARM Cortex-M on OSX.
+  You need to use Docker or be running on Linux natively.
 
 #### Setting up environment for libclang_rt build
 
@@ -849,7 +933,8 @@ $ export NONE_EABI_TARGET_FLAGS="-mthumb -mfloat-abi=soft -mfpu=none"
 
 #### Configuring and Compiling libclang_rt for baremetal
 
-Once you have set up the env you will need to checkout the compiler-rt project and compiler:
+Once you have set up the env you will need to checkout the compiler-rt project
+and compiler:
 
 ```bash
 $ git clone https://github.com/llvm/llvm-project.git llvm-project
@@ -891,10 +976,11 @@ Scanning dependencies of target compiler-rt
 [100%] Built target compiler-rt
 ```
 
-At the end of the build, the Clang `libgcc.a` equivalent will be emitted to `./lib/baremetal/libclang_rt.builtins-armv7m.a`
+At the end of the build, the Clang `libgcc.a` equivalent will be emitted to
+`./lib/baremetal/libclang_rt.builtins-armv7m.a`
 
-You can swap `libgcc` with the generated `libclang_rt`in our example project by overrding
-`ARM_CORTEXM_BUILTINS` when invoking make:
+You can swap `libgcc` with the generated `libclang_rt`in our example project by
+overrding `ARM_CORTEXM_BUILTINS` when invoking make:
 
 ##### Swapping libgcc with libclang_rt.builtins-armv7m
 
@@ -909,7 +995,8 @@ $ ARM_CORTEXM_BUILTINS=\
 
 ## Compile Example Project with Both Clang and GCC!
 
-At this point, we can compile our example project with either GCC or Clang! Let's take a look at the results:
+At this point, we can compile our example project with either GCC or Clang!
+Let's take a look at the results:
 
 #### Clang Build
 
@@ -942,19 +1029,23 @@ Generated build/nrf52.elf
 
 #### Observations
 
-We can see for our simple example app the sizes are within about 1% of each other (25,510 bytes for Clang vs 25,286 bytes for GCC).
+We can see for our simple example app the sizes are within about 1% of each
+other (25,510 bytes for Clang vs 25,286 bytes for GCC).
 
 ## Linking GCC Objects with LLVMs Linker
 
-The LLVM linker (ld.lld) [^9] strives to be a drop-in replacement for the GNU linkers and has come a long way in
-recent years in terms of compatibility.
+The LLVM linker (ld.lld) [^9] strives to be a drop-in replacement for the GNU
+linkers and has come a long way in recent years in terms of compatibility.
 
-There's some pretty bold claims made on the official docs that may make you want to try it out:
+There's some pretty bold claims made on the official docs that may make you want
+to try it out:
 
-> LLD is very fast. When you link a large program on a multicore machine, you can expect that LLD runs more than twice as fast as the GNU gold linker. Your mileage may vary, though.
+> LLD is very fast. When you link a large program on a multicore machine, you
+> can expect that LLD runs more than twice as fast as the GNU gold linker. Your
+> mileage may vary, though.
 
-As of GCC9[^6], it is even possible to tell GCC to use it instead of the GNU linker with the
-`-fuse-ld=lld` option:
+As of GCC9[^6], it is even possible to tell GCC to use it instead of the GNU
+linker with the `-fuse-ld=lld` option:
 
 ```bash
 $ export LLVM_BIN_PATH=$(dirname $(which ld.lld))
@@ -967,32 +1058,60 @@ $ CLI_LDFLAG_OVERRIDES="-B${LLVM_ROOT} -Wl,-fuse-ld=lld" \
 
 ## Final Thoughts
 
-I first experimented with Clang for Cortex-M in 2013 and at the time the backend for code-size
-optimization for ARM just didn't compete with other compilers like GCC. These days it seems like
-things are getting pretty close, and I'm quite impressed at how the toolchain has progressed overall.
+I first experimented with Clang for Cortex-M in 2013 and at the time the backend
+for code-size optimization for ARM just didn't compete with other compilers like
+GCC. These days it seems like things are getting pretty close, and I'm quite
+impressed at how the toolchain has progressed overall.
 
-I hope this post gave you a useful overview of how to cross-compile your embedded ARM project with
-LLVM/Clang and some of the neat things you can do once you have that working.
+I hope this post gave you a useful overview of how to cross-compile your
+embedded ARM project with LLVM/Clang and some of the neat things you can do once
+you have that working.
 
-I'd love to hear if you already using LLVM/Clang in your embedded project today and if so, whether
-it is for static analysis or for generating actual binaries. Either way, let us know in the discussion area below!
+I'd love to hear if you already using LLVM/Clang in your embedded project today
+and if so, whether it is for static analysis or for generating actual binaries.
+Either way, let us know in the discussion area below!
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 
 ## References
 
-[^1]: [GNU Arm Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
-[^2]: [See Chapter 7 "Library"](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf)
-[^3]: [`libgcc` documentation](https://gcc.gnu.org/onlinedocs/gccint/Libgcc.html)
+[^1]:
+    [GNU Arm Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+
+[^2]:
+    [See Chapter 7 "Library"](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf)
+
+[^3]:
+    [`libgcc` documentation](https://gcc.gnu.org/onlinedocs/gccint/Libgcc.html)
+
 [^4]: [Official LLVM `compiler-rt` docs](https://compiler-rt.llvm.org/)
-[^5]: [Available Diagnostics with Clang](https://releases.llvm.org/15.0.0/tools/clang/docs/DiagnosticsReference.html)
-[^6]: [Commentary about `-fuse-ld=lld`](https://bugzilla.redhat.com/show_bug.cgi?id=1687790#c1)
-[^7]: [Available Clang Static Analysis Checkers](https://releases.llvm.org/15.0.0/tools/clang/docs/analyzer/checkers.html)
-[^8]: [`-Wthread-safety` docs and examples](https://releases.llvm.org/15.0.0/tools/clang/docs/ThreadSafetyAnalysis.html)
+
+[^5]:
+    [Available Diagnostics with Clang](https://releases.llvm.org/15.0.0/tools/clang/docs/DiagnosticsReference.html)
+
+[^6]:
+    [Commentary about `-fuse-ld=lld`](https://bugzilla.redhat.com/show_bug.cgi?id=1687790#c1)
+
+[^7]:
+    [Available Clang Static Analysis Checkers](https://releases.llvm.org/15.0.0/tools/clang/docs/analyzer/checkers.html)
+
+[^8]:
+    [`-Wthread-safety` docs and examples](https://releases.llvm.org/15.0.0/tools/clang/docs/ThreadSafetyAnalysis.html)
+
 [^9]: [Official LLVM Linker docs](https://lld.llvm.org/)
-[^10]: [ARM Compiler 6 docs](https://developer.arm.com/tools-and-software/embedded/arm-compiler/downloads/version-6)
-[^11]: [SEGGER Compiler Announcement](https://blog.segger.com/the-segger-compiler/)
-[^12]: If a deep dive into the history of GCC and LLVM is your thing, [this article](https://medium.com/@alitech_2017/gcc-vs-clang-llvm-an-in-depth-comparison-of-c-c-compilers-899ede2be378) is great!
-[^13]: [GCC10 Static Analysis](https://developers.redhat.com/blog/2020/03/26/static-analysis-in-gcc-10/)
+
+[^10]:
+    [ARM Compiler 6 docs](https://developer.arm.com/tools-and-software/embedded/arm-compiler/downloads/version-6)
+
+[^11]:
+    [SEGGER Compiler Announcement](https://blog.segger.com/the-segger-compiler/)
+
+[^12]:
+    If a deep dive into the history of GCC and LLVM is your thing,
+    [this article](https://medium.com/@alitech_2017/gcc-vs-clang-llvm-an-in-depth-comparison-of-c-c-compilers-899ede2be378)
+    is great!
+
+[^13]:
+    [GCC10 Static Analysis](https://developers.redhat.com/blog/2020/03/26/static-analysis-in-gcc-10/)

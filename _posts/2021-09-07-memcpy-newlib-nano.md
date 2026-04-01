@@ -1,4 +1,5 @@
 ---
+date: "2021-09-07"
 title: "Profiling newlib-nano's memcpy"
 description:
   Quick look at performance of the memcpy implementation in newlib-nano
@@ -7,8 +8,8 @@ tags: [toolchain, mcu, better-firmware]
 ---
 
 [Newlib](http://www.sourceware.org/newlib/) is a very popular libc targeting
-embedded systems. It's the libc that ships with the [GNU Arm Embedded
-Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
+embedded systems. It's the libc that ships with the
+[GNU Arm Embedded Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
 published by ARM.
 
 <!-- excerpt start -->
@@ -20,9 +21,9 @@ implementation.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Source for `memcpy` in Newlib-nano
 
@@ -74,9 +75,10 @@ looking at the source tarball, where the build script sets these CFLAGS (see
     saveenvvar CFLAGS_FOR_TARGET '-g -Os -ffunction-sections -fdata-sections'
 ```
 
-When compiling with optimization level `-Os`, the GCC compiler will set `#define
-__OPTIMIZE_SIZE__ 1` as a built-in define. You can see this by running the
-following command, which dumps the built-in preprocessor definitions to stdout:
+When compiling with optimization level `-Os`, the GCC compiler will set
+`#define __OPTIMIZE_SIZE__ 1` as a built-in define. You can see this by running
+the following command, which dumps the built-in preprocessor definitions to
+stdout:
 
 ```bash
 arm-none-eabi-gcc -Os -dM -E - < /dev/null
@@ -155,8 +157,8 @@ Let's first take a look at the performance of this implementation by measuring
 the number of cycles it takes to copy different amounts of data. We're going to
 do our experiment on a Cortex-M4F processor (specific chip was an STM32F407),
 using the Cortex-M CYCCNT register (for more information, and the implementation
-of the cycle-counting functions, see [this post on profiling]({% post_url
-2020-06-02-profiling-firmware-on-cortex-m %})).
+of the cycle-counting functions, see
+[this post on profiling](/blog/profiling-firmware-on-cortex-m)).
 
 ```c
   struct test_struct {
@@ -318,9 +320,9 @@ You can see the example project here:
 [https://github.com/noahp/pico-c-cortex-m/tree/c7e9a3178ff7b11828482af989e216c75cd696a2](https://github.com/noahp/pico-c-cortex-m/tree/c7e9a3178ff7b11828482af989e216c75cd696a2)
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}

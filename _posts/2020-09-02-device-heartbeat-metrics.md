@@ -1,4 +1,5 @@
 ---
+date: "2020-09-02"
 title: Monitoring Fleet Health with Heartbeat Metrics
 description:
   Monitoring and tracking embedded devices using heartbeat metrics, an
@@ -39,15 +40,15 @@ product decisions.
 
 <!-- excerpt end -->
 
-> This post is guaranteed to be the tip of the iceberg in a series of posts about how to do
-> device monitoring properly at scale. With this in mind, this post will be slightly more
-> high-level than a typical “Interrupt” post. And if you'd rather listen to me present this
-> information and see some demos in action, watch [this webinar recording](https://hubs.la/H0KPqpw0).
+> This post is guaranteed to be the tip of the iceberg in a series of posts
+> about how to do device monitoring properly at scale. With this in mind, this
+> post will be slightly more high-level than a typical “Interrupt” post. And if
+> you'd rather listen to me present this information and see some demos in
+> action, watch [this webinar recording](https://hubs.la/H0KPqpw0).
 
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include newsletter.html %}
-
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Fleet Monitoring Overview
 
@@ -59,6 +60,7 @@ I'd like to talk about a few different variations of monitoring and how they
 relate to us in the world of embedded systems.
 
 {:.no_toc}
+
 ### Application Performance Monitoring (APM)
 
 Application performance monitoring services collect and aggregate different
@@ -88,6 +90,7 @@ ScoutAPM[^scout_apm]<br> **Open Source Libraries**: StatsD[^statsd],
 CollectD[^collectd], Prometheus[^prometheus]
 
 {:.no_toc}
+
 ### Tracing and Logging
 
 I've grouped these into a single group because they accomplish the same goal.
@@ -112,6 +115,7 @@ when developers **know** there is an issue with a specific device.
 services:** Percepio[^percepio]
 
 {:.no_toc}
+
 ### Crash Reporting
 
 How nice would it be to have in-depth analysis and alerts for every unique
@@ -129,9 +133,9 @@ services must build and support an SDK that is written in the same language and
 for the same framework as the application they monitor.
 
 For firmware, they would likely install hooks into the
-[assert]({% post_url 2019-11-05-asserts-in-embedded-systems %}),
-[fault]({% post_url 2019-11-20-cortex-m-hardfault-debug %}), and
-[logging]({% post_url 2020-08-04-firmware-logs-stack-trace %}) handlers.
+[assert](/blog/asserts-in-embedded-systems),
+[fault](/blog/cortex-m-hardfault-debug), and
+[logging](/blog/firmware-logs-stack-trace) handlers.
 
 The beautiful thing about crash reporting tools is they are relatively easy to
 integrate because the entry-points they hook into are standardized by the
@@ -142,6 +146,7 @@ Software services: Sentry[^sentry], Rollbar[^rollbar], Bugsnag[^bugsnag]<br>
 Firmware services: Memfault[^memfault]
 
 {:.no_toc}
+
 ### Instantaneous State Monitoring
 
 This is the category that most of today's "IoT monitoring solutions" fall into.
@@ -164,6 +169,7 @@ The statistic of time-active is a critical measurement for embedded devices, and
 is one of the best predictors of battery-life drain and performance.
 
 {:.no_toc}
+
 ### What About Embedded Systems?
 
 Most of the above services or strategies listed above do not apply to
@@ -181,6 +187,7 @@ I want to quickly cover the difference and use-cases for two common forms of
 data collected from systems: logs and metrics.
 
 {:.no_toc}
+
 ### Logs
 
 Logs are immutable events that happened over time to a single device. They are
@@ -197,6 +204,7 @@ customer support request, but that requires a `pull-logs-from-s3.py` script and
 a decent amount of time to determine where the device behaved unexpectedly.
 
 {:.no_toc}
+
 ### Metrics
 
 Metrics are a set of numbers that give information about a particular process or
@@ -213,6 +221,7 @@ that matter most. For many hardware makers, these metrics might be:
 - Wi-Fi/BLE connected time per hour
 
 {:.no_toc}
+
 ### Transforming Logs into Metrics
 
 Logs can be transformed, processed, and aggregated into metrics, but this
@@ -258,6 +267,7 @@ hour.
 We can do better.
 
 {:.no_toc}
+
 ### Do We Need Both?
 
 Logs and metrics ultimately serve different purposes. You need logs to debug
@@ -293,6 +303,7 @@ We will go through each common approach to gathering monitoring data from
 devices and assess them on the above requirements.
 
 {:.no_toc}
+
 ### Plain Text Logging
 
 The first solution that most companies deploy for remote device monitoring is to
@@ -325,6 +336,7 @@ more CPU and power, require more storage, cause more flash wear, and use more
 bandwidth to send the data.
 
 {:.no_toc}
+
 ### Structured Logging
 
 A close cousin to logging is structured logging. It is essentially a more-easily
@@ -348,6 +360,7 @@ aggregator, but that is about it. It carries with it all of the cons of plain
 text logging described above.
 
 {:.no_toc}
+
 ### Binary Logging
 
 If more structure is desired, the next evolution is typically in the form of
@@ -416,6 +429,7 @@ developer can no longer just connect to a UART and understand the logs.
 **Scripts are required**.
 
 {:.no_toc}
+
 ### Heartbeats
 
 A device heartbeat can be thought of as a periodic "pulse" sent from a device to
@@ -505,6 +519,7 @@ However, they are more compact and easier to ultimate store and process once
 they are pushed to the cloud.
 
 {:.no_toc}
+
 ### Raw Data Types Summary
 
 In summary, let's compare the methods of collecting data for use as metrics.
@@ -525,6 +540,7 @@ Where ✅ is a benefit, ⚠️ is neutral, and ❌ is not a benefit.
 I have a few tips on how to use heartbeats, and the best practices to follow.
 
 {:.no_toc}
+
 ### Heartbeat Timestamps
 
 In my experience, heartbeats serve three primary purposes.
@@ -560,6 +576,7 @@ timestamp. It should work well enough given the device sends these logs to a
 server every so often
 
 {:.no_toc}
+
 ### Resetting Data for Each Heartbeat
 
 Once the heartbeat interval has finished and the metrics have been flushed, each
@@ -577,7 +594,7 @@ Below is a chart of a single device recording its time connected to Wi-Fi
 measured in both ways.
 
 <p align="center">
-  <img width="600" src="{% img_url device-heartbeat-metrics/wifi-time-connected.svg %}" />
+  <img width="600" src="/img/device-heartbeat-metrics/wifi-time-connected.svg" />
 </p>
 
 When looking at this chart, it is clear by looking at the heartbeat metric (red
@@ -628,6 +645,7 @@ In summary, if you ever imagine aggregating a metric across multiple devices, be
 sure to reset your metrics at the beginning of each interval.
 
 {:.no_toc}
+
 ### Extra Metadata to Include
 
 Metrics are only useful if you can tie them back to a specific device, firmware
@@ -637,8 +655,7 @@ Therefore, the following are what I suggest to capture and send up with every
 heartbeat or each batch of heartbeats.
 
 - **Firmware Version**: This should tie to one and only one firmware. Ideally a
-  semantic version or a [build
-  id]({% post_url 2019-05-29-gnu-build-id-for-firmware%}).
+  semantic version or a [build id](/blog/gnu-build-id-for-firmware).
 - **Device Serial Number**: You want to be able to type back heartbeats to the
   device they came from to do more fine-grained queries.
 - **Timestamp**: The timestamp interval the heartbeat relates to (when
@@ -660,6 +677,7 @@ you, the reader, as to what you could collect.
 [Skip ahead to the code if you like](#heartbeat-library-example).
 
 {:.no_toc}
+
 ### Counters
 
 Counters are the most basic type. They store an accumulated value for the
@@ -695,6 +713,7 @@ void ble_send(void *buf, size_t len) {
 ```
 
 {:.no_toc}
+
 ### Timed Counters
 
 Timed Counters (or Timers in StatsD[^statsd]) are essentially counters
@@ -738,6 +757,7 @@ void wifi_off(void) {
 > RAM per aggregate (except for the 90th percentile).
 
 {:.no_toc}
+
 ### Gauges
 
 Gauges are constant values and are not aggregated by the metrics system. In the
@@ -797,6 +817,7 @@ Given how critical this information is to detect issues, it is a fantastic use
 of a couple of regions in your external flash chip.
 
 {:.no_toc}
+
 ### Heartbeat Library Design
 
 I want to use this section to convince you that implementing heartbeats is a
@@ -852,12 +873,13 @@ void device_metrics_reset_all(void);
 ```
 
 {:.no_toc}
+
 ### Running the Example
 
-I'm primarily using [Renode]({% post_url 2020-03-23-intro-to-renode %}) to do
-most firmware development these days, especially because Renode released support
-for the nRF52[^renode_nrf52]. With this in mind, the FreeRTOS example code works
-with an nRF52 device and with Renode.
+I'm primarily using [Renode](/blog/intro-to-renode) to do most firmware
+development these days, especially because Renode released support for the
+nRF52[^renode_nrf52]. With this in mind, the FreeRTOS example code works with an
+nRF52 device and with Renode.
 
 ```
 $ git clone https://github.com/memfault/interrupt.git
@@ -872,7 +894,7 @@ various counters, counted timers, and gauges from the system for this 15 second
 interval.
 
 <p align="center">
-  <img width="600" src="{% img_url device-heartbeat-metrics/freertos-example-output.png %}" alt="freertos-example-output" />
+  <img width="600" src="/img/device-heartbeat-metrics/freertos-example-output.png" alt="freertos-example-output" />
 </p>
 
 ## Go/No-Go Metrics for Deploying Firmware Updates
@@ -892,6 +914,7 @@ these calculations, you can compare metrics across firmware versions and
 validate or reject the latest release candidate.
 
 {:.no_toc}
+
 ### Crash Free Hours (or Days)
 
 As mentioned above, gauges make it incredibly simple to detect the prevalence
@@ -908,19 +931,20 @@ Let's imagine that we have 1,000 devices, and of the 24,000 heartbeats from all
 devices in the last 24 hours, 2,000 of those reported a `1` (crashed).
 
 <span align="center">
-  <img src="{% img_url device-heartbeat-metrics/crash-free-hours-latex-1.svg %}" />
+  <img src="/img/device-heartbeat-metrics/crash-free-hours-latex-1.svg" />
 </span>
 
 <hr>
 
 <span align="center">
-  <img src="{% img_url device-heartbeat-metrics/crash-free-hours-latex-2.svg %}" />
+  <img src="/img/device-heartbeat-metrics/crash-free-hours-latex-2.svg" />
 </span>
 
 This is a very good metric to use to gauge stability between releases, and it's
 incredibly simple to calculate once the data is in a database table.
 
 {:.no_toc}
+
 ### Battery Life Trends
 
 If each device records the percentage or mV
@@ -937,10 +961,10 @@ release.
 
 <div>
 <span align="center">
-  <img src="{% img_url device-heartbeat-metrics/battery-life-latex-1.svg %}" />
+  <img src="/img/device-heartbeat-metrics/battery-life-latex-1.svg" />
 </span>
 <span align="center">
-  <img src="{% img_url device-heartbeat-metrics/battery-life-latex-2.svg %}" />
+  <img src="/img/device-heartbeat-metrics/battery-life-latex-2.svg" />
 </span>
 </div>
 
@@ -949,6 +973,7 @@ release.
 > heartbeat.
 
 {:.no_toc}
+
 ### Wi-Fi / BLE Connected Hours
 
 This is a crucial metric to track for devices that connect to a plethora of
@@ -962,10 +987,10 @@ hourly heartbeat.
 
 <div>
 <span align="center">
-  <img src="{% img_url device-heartbeat-metrics/wifi-ble-hours-latex-1.svg %}" />
+  <img src="/img/device-heartbeat-metrics/wifi-ble-hours-latex-1.svg" />
 </span>
 <span align="center">
-  <img src="{% img_url device-heartbeat-metrics/wifi-ble-hours-latex-2.svg %}" />
+  <img src="/img/device-heartbeat-metrics/wifi-ble-hours-latex-2.svg" />
 </span>
 </div>
 
@@ -1013,9 +1038,9 @@ you or your organization has built to tackle these problems in the comments.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

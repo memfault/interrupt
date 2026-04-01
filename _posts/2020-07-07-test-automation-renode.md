@@ -1,4 +1,5 @@
 ---
+date: "2020-07-07"
 title: Firmware Testing with Renode and GitHub Actions
 description:
   Automated embedded firmware testing with Renode, Robot Framework, and the
@@ -31,9 +32,9 @@ these tests within GitHub's continuous integration system.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Automation Testing for Firmware
 
@@ -77,8 +78,8 @@ Whether tests are being run within Renode or on real hardware, there should be a
 way to easily run tests on a device.
 
 A common approach is to use a CLI-based shell over serial, which we wrote about
-in our post [Building a Tiny CLI Shell for Tiny
-Firmware]({% post_url 2020-06-09-firmware-shell %}#integration--automated-tests).
+in our post
+[Building a Tiny CLI Shell for Tiny Firmware](/blog/firmware-shell#integration--automated-tests).
 
 The idea is relatively simple.
 
@@ -129,7 +130,8 @@ $ which arm-none-eabi-gcc
 
 Perfect, I now have `arm-none-eabi-gcc` and `python2.7` in my path.
 
-> Want to learn more about Conda? Check out my previous post on using [Conda environments for embedded development]({% post_url 2020-01-07-conda-developer-environments %}).
+> Want to learn more about Conda? Check out my previous post on using
+> [Conda environments for embedded development](/blog/conda-developer-environments).
 
 It turns out the Renode team packages the application in a
 [Renode Conda package](https://anaconda.org/antmicro/renode), but at the time of
@@ -175,10 +177,8 @@ tests. If you haven't already, you'll want to install
 This post builds upon previous ideas and examples written on Interrupt. If you
 find yourself missing some context, the following posts would be useful:
 
-- [Cortex-M MCU Emulation with
-  Renode]({% post_url 2020-03-23-intro-to-renode %})
-- [Building a Tiny CLI Shell for Tiny Firmware]({% post_url
-  2020-06-09-firmware-shell %})
+- [Cortex-M MCU Emulation with Renode](/blog/intro-to-renode)
+- [Building a Tiny CLI Shell for Tiny Firmware](/blog/firmware-shell)
 
 Rather than the STM32Cube HAL, I used an open-source MCU HAL called `libopencm3`
 with excellent support for the STM32. It is included as a submodule in the repo.
@@ -237,13 +237,13 @@ $ ./start.sh
 And then we see our firmware's shell in the UART window of Renode.
 
 <p align="center">
-  <img width="700" src="{% img_url test-automation-renode/renode-start.png %}"/>
+  <img width="700" src="/img/test-automation-renode/renode-start.png"/>
 </p>
 
 We can interact with it exactly as if it was connected to our computer over USB
-serial! This would have made writing and testing the firmware for my [Tiny
-Shell]({% post_url 2020-06-09-firmware-shell %}) post **much** easier. I'm glad
-I took the time now to learn Renode for the next time.
+serial! This would have made writing and testing the firmware for my
+[Tiny Shell](/blog/firmware-shell) post **much** easier. I'm glad I took the
+time now to learn Renode for the next time.
 
 ## Anatomy of a Robot Framework Test
 
@@ -502,7 +502,7 @@ Command
 ```
 
 <p align="center">
-  <img width="700" src="{% img_url test-automation-renode/robot-docs.png %}"/>
+  <img width="700" src="/img/test-automation-renode/robot-docs.png"/>
 </p>
 
 > Adding the tag `non_critical` or `skipped` on a test will allow the test to
@@ -512,8 +512,8 @@ Command
 ## GitHub Actions CI & Renode
 
 It's now time to plug things into a continuous integration system for automated
-testing! In a previous post, we wrote about [building firmware in
-CircleCI]({% post_url 2019-09-17-continuous-integration-for-firmware %}). This
+testing! In a previous post, we wrote about
+[building firmware in CircleCI](/blog/continuous-integration-for-firmware). This
 time, we are going to use GitHub Actions to build and test our firmware, as it's
 likely the easiest for most people to get up and running.
 
@@ -698,7 +698,7 @@ Now, when we publish a pull-request on GitHub, we'll immediately see that the
 build is triggered and our job starts.
 
 <p align="center">
-  <img width="700" src="{% img_url test-automation-renode/github-pr-building.png %}"/>
+  <img width="700" src="/img/test-automation-renode/github-pr-building.png"/>
 </p>
 
 If we click on "Details", we can watch each job complete in real time! Below we
@@ -707,12 +707,12 @@ file that was built during the job, and the other is a ZIP archive of the Robot
 Framework test results.
 
 <p align="center">
-  <img width="700" src="{% img_url test-automation-renode/github-pr-build.png %}"/>
+  <img width="700" src="/img/test-automation-renode/github-pr-build.png"/>
 </p>
 
 The best part about using the Robot Framework integration of Renode is that it
-generates pretty HTML-based reports, as we saw in the [Introduction to Renode
-post]({% post_url 2020-03-23-intro-to-renode %}#renode--integration-tests).
+generates pretty HTML-based reports, as we saw in the
+[Introduction to Renode post](/blog/intro-to-renode#renode--integration-tests).
 
 > I've included the HTML report for the above test.
 > [Click here to view it](/misc/test-automation-renode/log.html).
@@ -891,9 +891,9 @@ shell> help
 ...
 ```
 
-Taking inspiration from my previous post, [Building a CLI for Firmware
-Projects]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}), I
-wrote a quick and hacky `tasks.py` Invoke file to improve this flow.
+Taking inspiration from my previous post,
+[Building a CLI for Firmware Projects](/blog/building-a-cli-for-firmware-projects),
+I wrote a quick and hacky `tasks.py` Invoke file to improve this flow.
 
 ```python
 import time
@@ -990,7 +990,7 @@ using Renode to test all aspects of the Memfault Firmware SDK[^memfault_sdk].
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt-renode-test-automation).
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 

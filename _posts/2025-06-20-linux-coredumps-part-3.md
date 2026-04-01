@@ -1,15 +1,15 @@
 ---
+date: "2025-06-20"
 title: Linux Coredumps (Part 3) － On Device Unwinding
 description: "Unwinding coredumps on-device using `.eh_frame` and `addr2line`."
 author: blake
 tags: [linux, coredumps, memfault, debugging]
 ---
 
-In our previous posts ([Part
-1]({% link _posts/2025-02-14-linux-coredumps-part-1.md %}) & [Part
-2]({% link _posts/2025-05-02-linux-coredumps-part-2.md %})), we covered how
-Linux coredumps are structured, how they're collected, and how we could reduce
-the size of them to fit on systems with less memory.
+In our previous posts ([Part 1](/blog/linux-coredumps-part-1) &
+[Part 2](/blog/linux-coredumps-part-2)), we covered how Linux coredumps are
+structured, how they're collected, and how we could reduce the size of them to
+fit on systems with less memory.
 
 <!-- excerpt start -->
 
@@ -32,9 +32,9 @@ that to do local stack unwinding.
 > ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](https://www.youtube.com/watch?v=fDwDXg7T4K8)
 > for an even deeper diver into the techniques explored in this series.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What are we trying to build?
 
@@ -312,12 +312,12 @@ Here we can see that `rip` (`x86-64` program counter) can be computed by
 subtracting 8 from our previously calculated `CFA`. A visual representation of
 this can be seen below:
 
-![]({% img_url linux-coredump-3/x86-stack.png %})
+![](/img/linux-coredump-3/x86-stack.png)
 
 This acts as a kind of base case that we'll build rules on top of for our future
 FDEs. Here's what those unwind rules look like in a more general sense.
 
-![]({% img_url linux-coredump-3/general_stack.png %})
+![](/img/linux-coredump-3/general_stack.png)
 
 Since I've already been trying my hardest to make you stop reading, I won't do
 anymore of these individual register unwinds, but you can see the pattern we
@@ -337,11 +337,10 @@ general purpose registers, as well information to help our debugger/`addr2line`.
 Let's take a look first at how we'll get the state of the general purpose
 registers for each thread.
 
-In [our previous
-article]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}) we touched a
-bit on the `prstatus`[^prstatus] ELF note This note contains the current status
-of the process, and there is one for each of our threads. Recall the layout of
-the `prstatus`[^prstatus] note from our previous article:
+In [our previous article](/blog/linux-coredumps-part-2) we touched a bit on the
+`prstatus`[^prstatus] ELF note This note contains the current status of the
+process, and there is one for each of our threads. Recall the layout of the
+`prstatus`[^prstatus] note from our previous article:
 
 ```c
 struct elf_prstatus_common
@@ -513,14 +512,13 @@ end users while also shrinking size requirements considerably.
 
 Let's recap what we've learned in this series of articles.
 
-In [Part 1]({% link _posts/2025-02-14-linux-coredumps-part-1.md %}) we covered
-the basics of how Linux coredumps work. This set the stage for the rest of our
-articles as we learned about the general structure of an ELF core file.
+In [Part 1](/blog/linux-coredumps-part-1) we covered the basics of how Linux
+coredumps work. This set the stage for the rest of our articles as we learned
+about the general structure of an ELF core file.
 
-In [Part 2]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}), we tackled
-one of the biggest problems we see with coredumps in Linux, the size. Using
-information from the coredump itself, we captured only the stacks while
-discarding all heap values.
+In [Part 2](/blog/linux-coredumps-part-2), we tackled one of the biggest
+problems we see with coredumps in Linux, the size. Using information from the
+coredump itself, we captured only the stacks while discarding all heap values.
 
 Finally, in this article, we addressed another problem, privacy. Coredumps can
 potentially contain customer data; after all, they are just snapshots of memory.
@@ -532,9 +530,9 @@ implementation of the on-device unwinding, you can find it
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

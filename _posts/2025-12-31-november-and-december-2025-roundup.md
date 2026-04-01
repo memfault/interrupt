@@ -1,4 +1,5 @@
 ---
+date: "2025-12-31"
 title: "What we've been reading in November & December (2025)"
 description:
   Here are the articles, videos, and announcements we've been excited about to

@@ -1,4 +1,5 @@
 ---
+date: "2020-01-22"
 title: "I2C in a Nutshell"
 description:
   "An in-depth explanation of the I2C protocol, followed by common bugs and how
@@ -16,37 +17,40 @@ div[id^="WaveDrom_"] {
 </style>
 
 <!-- excerpt start -->
+
 I2C is perhaps the most commonly used bus to connect ICs together. As such,
-firmware engineers encounter it on most projects. In this post, we explain how I2C
-works, explore common bugs and investigate how to debug these issues.
+firmware engineers encounter it on most projects. In this post, we explain how
+I2C works, explore common bugs and investigate how to debug these issues.
+
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
-
+<div id="toc"></div>
 
 ## Why use I2C
 
 I2C has many advantages:
+
 1. It is cheaper to implement than comparable low-power buses, with fewer pins
    than SPI[^5], and a simpler physical layer than CAN[^6] (no differential
-signalling).
+   signalling).
 2. It supports up to 127 devices on a bus with only two pins.
 3. It has transfer rates up to 400Kbps, which is fast enough for many human
    interfaces as well as fan control, temperature sensing and other low-speed
-contol loops.
+   contol loops.
 4. Historically, it has been less onerous for manufacturers to include than
    competing protocols like Maxim's 1-wire protocol[^4].
 
-Many of the sensors and actuators in devices all around us use I2C:
-temperature sensors, accelerometers, gyroscopes, fans, video bridging chips,
-GPIO expanders, EEPROMs, ...etc.
+Many of the sensors and actuators in devices all around us use I2C: temperature
+sensors, accelerometers, gyroscopes, fans, video bridging chips, GPIO expanders,
+EEPROMs, ...etc.
 
 I2C is not appropriate for all applications however:
-1. When higher bandwidth is required, SPI may be the right choice and can be found
-   in many NOR-flash chips. MIPI can go even faster, and is often used in
-displays and cameras.
+
+1. When higher bandwidth is required, SPI may be the right choice and can be
+   found in many NOR-flash chips. MIPI can go even faster, and is often used in
+   displays and cameras.
 2. If reliability is a must, CAN is the bus of choice. It is found in cars and
    other vehicles.
 3. When a single device is on the bus, UART may work just as well.
@@ -89,8 +93,8 @@ To send a START, an I2C master must pull the SDA line low while the SCL line is
 high. After a START condition, the I2C master must pull the SCL line low and
 start the clock.
 
-To send a STOP, an I2C master releases the SDA line to high while the SCL
-line is high.
+To send a STOP, an I2C master releases the SDA line to high while the SCL line
+is high.
 
 In the diagram below, we indicate the START and STOP condition with "S" and "P"
 respectively.
@@ -109,9 +113,9 @@ respectively.
 
 I2C is a multi-slave bus, so we must have a way to indicate which slave we would
 like to send a given command to. This is accomplished with addresses. I2C
-addresses are 7 bits, a few addresses are reserved and the rest are allocated
-by the I2C-bus committee. Note that a 10-bit address extension does exist, but
-is extremely uncommon[^1].
+addresses are 7 bits, a few addresses are reserved and the rest are allocated by
+the I2C-bus committee. Note that a 10-bit address extension does exist, but is
+extremely uncommon[^1].
 
 To communicate with a slave device, an I2C master simply needs to write its
 7-bit address on the bus after the START condition. For example, the waveform
@@ -128,21 +132,19 @@ below captures an I2C transaction to a slave with address 0x66:
 }
 </script>
 
-
 > **Address Conflicts**: Since the I2C address space is so limited, address
 > conflicts are not uncommon. For example, you may want to include multiple
-> instances of the same sensor on a single I2C bus.
-> <br />To enable this use case IC designers typically allow their customers to set a
-> few bits of a device's I2C address, either by tying pins high or low, or by
-> writing a register. If all else fails, you may use an I2C multiplexer to
-> resolve addressing conflicts.
-
+> instances of the same sensor on a single I2C bus. <br />To enable this use
+> case IC designers typically allow their customers to set a few bits of a
+> device's I2C address, either by tying pins high or low, or by writing a
+> register. If all else fails, you may use an I2C multiplexer to resolve
+> addressing conflicts.
 
 ### Reading and Writing
 
 I2C masters may read or write to slave devices. This is indicated with a single
-bit transmitted after the address bits. A `1` means the command is a read, and
-a `0` means it is a write.
+bit transmitted after the address bits. A `1` means the command is a read, and a
+`0` means it is a write.
 
 The example below shows a read sent to the slave device at address `0x66`.
 
@@ -190,14 +192,15 @@ from the slave device at address `0x66` would look like:
 
 The I2C protocol specifies that every byte sent must be acknowledged by the
 receiver. This is implemented with a single bit: `0` for ACK and `1` for NACK.
-At the end of every byte, the transmitter releases the SDA line, and on the
-next clock cycle the receiver must pull the line low to acklowledged the byte.
+At the end of every byte, the transmitter releases the SDA line, and on the next
+clock cycle the receiver must pull the line low to acklowledged the byte.
 
 When the line remains high during the next clock cycle, it is considered a NACK.
 This can mean one of several things:
+
 1. A NACK after an address is sent means no slave responded to that address
-2. A NACK after write data means the slave either did not recognize the command, or
-   that it cannot accept any more data
+2. A NACK after write data means the slave either did not recognize the command,
+   or that it cannot accept any more data
 3. A NACK during read data means the master does not want the slave to send any
    more bytes.
 
@@ -218,13 +221,13 @@ writes `0x9C` to the slave at address `0x66`.
 </script>
 -->
 
-![]({% img_url i2c-in-a-nutshell/full-i2c-command-narrow.png %})
+![](/img/i2c-in-a-nutshell/full-i2c-command-narrow.png)
 
-> Note: A NACK is not necessarily an error condition, it sometimes can be used to end
-> a read. For example, reading 8 bytes from an I2C EEPROM would be implemented
-> by sending a write command to set the EEPROM address offset we want to read from,
-> followed by command which would NACK the 8th byte to signal to the EEPROM
-> device that no more bytes are needed.
+> Note: A NACK is not necessarily an error condition, it sometimes can be used
+> to end a read. For example, reading 8 bytes from an I2C EEPROM would be
+> implemented by sending a write command to set the EEPROM address offset we
+> want to read from, followed by command which would NACK the 8th byte to signal
+> to the EEPROM device that no more bytes are needed.
 
 ### Clock Stretching
 
@@ -258,10 +261,11 @@ with each other. While I2C is a standard, there are a couple of extensions to it
 which are not always implemented by every device on the bus.
 
 Specifically, we've seen two optional features which can lead to problems:
-1. 400Kbps bus speed: the original I2C standard specified a bus speed of 100Kbps,
-   but many modern devices support the optional 400Kbps mode. If your master
-device clocks data in at 400Kbps but your slave only supports 100Kbps, the slave
-may not respond.
+
+1. 400Kbps bus speed: the original I2C standard specified a bus speed of
+   100Kbps, but many modern devices support the optional 400Kbps mode. If your
+   master device clocks data in at 400Kbps but your slave only supports 100Kbps,
+   the slave may not respond.
 2. Clock stretching: clock stretching is an optional feature of the standard,
    and some slave devices do not support it.
 
@@ -280,18 +284,19 @@ data is being sent. You can set a trigger on a high to low transition of the
 clock line if that is easier.
 
 If the line stays permanently low, time to check the pull-ups (see the "Line
-Pull-Up" section below).
-If the lines stay high, the I2C peripheral in your MCU is likely misconfigured. Check the
-code again:
+Pull-Up" section below). If the lines stay high, the I2C peripheral in your MCU
+is likely misconfigured. Check the code again:
+
 1. Are you checking the return value of the I2C initialization and read/write
    functions? Some peripheral configurations are invalid and will emit errors.
-For example, a specific I2C peripheral may only be able to map to specific pins.
-Initializing it with the wrong pins will lead to an error.
+   For example, a specific I2C peripheral may only be able to map to specific
+   pins. Initializing it with the wrong pins will lead to an error.
 2. Is your I2C init function being called? Connect your debugger and set a
    breakpoint in it. Make sure it completes properly.
 3. Are all the necessary clocks enabled? I2C peripherals rely on specific PLLs
    or other clocks to generate their signal. Check your silicon vendor's
-application notes and make sure you've got the right set of peripherals enabled.
+   application notes and make sure you've got the right set of peripherals
+   enabled.
 
 If your logic analyzer trace looks like I2C traffic, time to dig deeper into
 addresses.
@@ -335,12 +340,13 @@ with the slave device. Go to "Slave device disabled or not working".
 If the address is correct but the slave device does not ACK it, it is likely not
 working properly. More often than not, this is because it is not powered or held
 in reset. Grab your voltmeter and start checking pins:
-* Is the power supply of your slave device enabled? You may need to turn on a
+
+- Is the power supply of your slave device enabled? You may need to turn on a
   regulator or toggle a MOSFET.
-* Is the chip power the correct voltage?
-* Does your slave device have a reset pin? Check that pin and make sure reset is
+- Is the chip power the correct voltage?
+- Does your slave device have a reset pin? Check that pin and make sure reset is
   not asserted.
-* Does it have an I2C-enable pin? Is that in the correct state?
+- Does it have an I2C-enable pin? Is that in the correct state?
 
 If all the voltages are correct, test another board or replace the IC. Perhaps
 an electrostatic discharge damaged your device. If that does not resolve your
@@ -348,46 +354,48 @@ issue, go to "Line Pull-Up".
 
 ### Line Pull-Up
 
-I2C relies on resistors to pull the lines up to the logic HIGH voltage.
-These resistors may be missing, have too high a resistance, or be connected to a
-rail at the wrong voltage.
+I2C relies on resistors to pull the lines up to the logic HIGH voltage. These
+resistors may be missing, have too high a resistance, or be connected to a rail
+at the wrong voltage.
 
 To find it, grab an oscilloscope and probe both the SDA and SCL lines. First,
 set the oscilloscope in free-running mode and check the voltage:
-* If it is consistently 0, pull-up resistors either are missing, or a device is
+
+- If it is consistently 0, pull-up resistors either are missing, or a device is
   holding the bus low. Check the layout, and verify the pullups are on the
-board. If they are, start removing I2C devices from the bus by depopulating
-them until the line rises back to high.
-* If it is consistently high, devices are not attempting to communicate over
+  board. If they are, start removing I2C devices from the bus by depopulating
+  them until the line rises back to high.
+- If it is consistently high, devices are not attempting to communicate over
   I2C. See the "Misconfigured I2C Peripherals" section.
-* Is the voltage correct? Some devices operate at 5V, some at 3.3V, and some
-  even at 1.8V. If a device is expecting a different voltage, it will need to
-be connected to the bus through a level translator.
+- Is the voltage correct? Some devices operate at 5V, some at 3.3V, and some
+  even at 1.8V. If a device is expecting a different voltage, it will need to be
+  connected to the bus through a level translator.
 
 If it is toggling, set your oscilloscope to trigger on an edge, and look at the
 signal. It will likely look like one of these two scope shots shared on
 StackExchange [^3]:
 
-![]({% img_url i2c-in-a-nutshell/weak-pull-ups.png %})
-![]({% img_url i2c-in-a-nutshell/strong-pull-ups.png %})
+![](/img/i2c-in-a-nutshell/weak-pull-ups.png)
+![](/img/i2c-in-a-nutshell/strong-pull-ups.png)
 
 Notice how the second image has sharp, square pulses while the first image has
 rounded ones? This is your tell. Round pulses are an indications that your
 pull-ups are too weak. Your logic analyzer might decode them just fine, but an
 I2C device may have trouble with them.
 
-I2C buses accumulate capacitances when traces are long and devices are
-added to the bus. You may need stronger pull-ups to overcome it. Counter intuitively, a stronger pull-up is a weaker resistor. In doubt, go to 2K
-resistors. You will waste a bit of power, but your I2C signal will look great.
+I2C buses accumulate capacitances when traces are long and devices are added to
+the bus. You may need stronger pull-ups to overcome it. Counter intuitively, a
+stronger pull-up is a weaker resistor. In doubt, go to 2K resistors. You will
+waste a bit of power, but your I2C signal will look great.
 
 ### Flowchart
 
 To make the process easier, we've put together a flowchart summarizing the I2C
 debugging process. You can find it below, or download it
-[here]({% img_url i2c-in-a-nutshell/i2c-debugging-flowchart.svg %}).
+[here](/img/i2c-in-a-nutshell/i2c-debugging-flowchart.svg).
 
 <div>
-  <img src="{% img_url i2c-in-a-nutshell/i2c-debugging-flowchart.svg %}" width="400px" style="border:5px solid black">
+  <img src="/img/i2c-in-a-nutshell/i2c-debugging-flowchart.svg" width="400px" style="border:5px solid black">
 </div>
 
 ## Closing
@@ -399,18 +407,28 @@ Did I miss any obscure part of the standard, or forget to mention a debugging
 technique you find particularly useful? Let us know in the discussion area
 below!
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 {:.no_toc}
+
 ## Reference
 
-[^1]: [TotalPhase: 10-bit vs 7-bit I2C](https://www.totalphase.com/support/articles/200349176)
-[^2]: [Salae: How to Analyze I2C](https://support.saleae.com/tutorials/example-projects/how-to-analyze-i2c)
-[^3]: [StackExchange: What happens if I omit the pullup resitors?](https://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-line://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-lines)
+[^1]:
+    [TotalPhase: 10-bit vs 7-bit I2C](https://www.totalphase.com/support/articles/200349176)
+
+[^2]:
+    [Salae: How to Analyze I2C](https://support.saleae.com/tutorials/example-projects/how-to-analyze-i2c)
+
+[^3]:
+    [StackExchange: What happens if I omit the pullup resitors?](https://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-line://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-lines)
+
 [^4]: [Wikipedia: 1-Wire](https://en.wikipedia.org/wiki/1-Wire)
-[^5]: [Wikipedia: SPI](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
+
+[^5]:
+    [Wikipedia: SPI](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
+
 [^6]: [Wikipedia: CAN](https://en.wikipedia.org/wiki/Controller_area_network)
 
 <!-- Wavedrom code to convert WaveDrom data to diagrams -->

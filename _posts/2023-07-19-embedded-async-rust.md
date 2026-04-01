@@ -1,16 +1,17 @@
 ---
+date: "2023-07-19"
 title: Asynchronous Rust on Cortex-M Microcontrollers
 description:
   An overview of how async Rust works, and how it can be used on embedded
-    systems. Additionally, we'll take a look at the Rust Embassy project, and
-    work through some examples of how to use it.
+  systems. Additionally, we'll take a look at the Rust Embassy project, and work
+  through some examples of how to use it.
 author: blake
 tags: [rust, mcu, cortex-m]
 ---
 
 In the realm of embedded software, the demand for efficient and responsive
-applications is ever-increasing. Asynchronous programming, with its ability
-to handle concurrent tasks effectively, holds immense potential in this domain.
+applications is ever-increasing. Asynchronous programming, with its ability to
+handle concurrent tasks effectively, holds immense potential in this domain.
 Let's delve into the world of asynchronous Rust specifically tailored for
 microcontrollers.
 
@@ -29,26 +30,25 @@ programming on microcontrollers.
 > reading [The Rust Book](https://doc.rust-lang.org/book/). For a good
 > understanding of embedded Rust,
 > [The Embedded Rust Book](https://docs.rust-embedded.org/book/) is a great
-> resource, as well as our
-> [Zero to Main: Rust]({% post_url 2019-12-17-zero-to-main-rust-1 %}) article
-> covering how Rust runs on Cortex-M based microcontrollers.
+> resource, as well as our [Zero to Main: Rust](/blog/zero-to-main-rust-1)
+> article covering how Rust runs on Cortex-M based microcontrollers.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What is Asynchronous Programming?
 
-Asynchronous programming is a type of concurrent programming where the
-execution of a task can be paused if it does not have work to do. This is
-especially useful for tasks that are waiting for some external event to occur,
-such as a network packet arriving, or a button being pressed. In a synchronous
-system, the task would have to wait for the event to occur before it could
-continue execution. In an asynchronous system, the task can be paused, and
-another task can be executed until the event occurs. This allows for more
-efficient use of resources, as the thread this task is running on can be used
-for other tasks while it is waiting. Additionally, all resources for the thread,
-such as the stack, can be used by other tasks while it is waiting.
+Asynchronous programming is a type of concurrent programming where the execution
+of a task can be paused if it does not have work to do. This is especially
+useful for tasks that are waiting for some external event to occur, such as a
+network packet arriving, or a button being pressed. In a synchronous system, the
+task would have to wait for the event to occur before it could continue
+execution. In an asynchronous system, the task can be paused, and another task
+can be executed until the event occurs. This allows for more efficient use of
+resources, as the thread this task is running on can be used for other tasks
+while it is waiting. Additionally, all resources for the thread, such as the
+stack, can be used by other tasks while it is waiting.
 
 ## How Does Async Rust Work?
 
@@ -78,11 +78,11 @@ fn foo() -> impl Future<Output = u32>
 ```
 
 The `await` keyword is important, as it signals for the underlying future to
-make progress. Futures in Rust are considered "lazy", meaning they will
-not make any progress until they are polled. We'll cover polling in more detail
-later, but for now, just think of it as a way to advance the state of the future.
-The `await` keyword is what calls `poll` on the future, and returns the
-result of the future.
+make progress. Futures in Rust are considered "lazy", meaning they will not make
+any progress until they are polled. We'll cover polling in more detail later,
+but for now, just think of it as a way to advance the state of the future. The
+`await` keyword is what calls `poll` on the future, and returns the result of
+the future.
 
 Now that we have a good idea of how async functions generate futures, let's look
 in depth into how futures work.
@@ -122,8 +122,8 @@ is not yet complete, and has more work that needs to be done. Generally, this
 means we're waiting for some I/O to complete, say a packet from a network stack,
 or a message over a SPI bus.
 
-To advance the state of our future we could call `poll` repeatedly until we
-get a `Ready` status, but that seems rather inefficient. If our `Future` is
+To advance the state of our future we could call `poll` repeatedly until we get
+a `Ready` status, but that seems rather inefficient. If our `Future` is
 dependent on an external I/O event, looping over calls to `poll` keeps our
 processor awake and wastes precious power. This observation brings us to the
 only argument passed into the `poll` function, the future
@@ -140,17 +140,17 @@ a button. We'll go over this exact example later in the article!
 Now that we understand how futures work, we can plot out the lifetime of one
 like so:
 
-![]({% img_url embedded-rust-async/future-lifetime.excalidraw.png %})
+![](/img/embedded-rust-async/future-lifetime.excalidraw.png)
 
-The last part of the poll function we haven't covered is a fairly spicy bit.
-The `self` reference here is a little strange. Let's take a deeper look:
+The last part of the poll function we haven't covered is a fairly spicy bit. The
+`self` reference here is a little strange. Let's take a deeper look:
 
 ```rust
 self: Pin<&mut Self>
 ```
 
-This is one of the stranger variants of self we can see on a trait.
-The `&mut self` is pretty standard, but what is this `Pin` thing? The
+This is one of the stranger variants of self we can see on a trait. The
+`&mut self` is pretty standard, but what is this `Pin` thing? The
 [`Pin`](https://doc.rust-lang.org/std/pin/struct.Pin.html) struct acts as a
 marker that tells the compiler that the memory of the wrapped type will not be
 moved. This is important when we're dealing with futures, as we need to ensure
@@ -164,19 +164,19 @@ invalid state, as it would attempt to access memory that is no longer valid.[^1]
 Now that we have a good understanding of Rust futures work we need to look at
 the core of any async system, the executor. Unlike its contemporaries in other
 languages like Go or Javascript, Rust does not have a built-in executor. This
-means that we need to provide our executor implementation. While this may
-add a bit of complexity, it also gives us a lot of flexibility. We can choose
-the executor that best fits our needs, and we can even write our own if we need
-to. This is what allows us to run async Rust on embedded systems, as well as
-giant servers in the cloud.
+means that we need to provide our executor implementation. While this may add a
+bit of complexity, it also gives us a lot of flexibility. We can choose the
+executor that best fits our needs, and we can even write our own if we need to.
+This is what allows us to run async Rust on embedded systems, as well as giant
+servers in the cloud.
 
 Any executor implementation needs to fulfill a few requirements:
 
 1. Keep track of all running tasks
 1. Provide the ability to spawn new tasks
 1. Provide a mechanism for
-[`Waker`](https://doc.rust-lang.org/core/future/index.html)s to notify the
-executor there is work to be done for a given task.
+   [`Waker`](https://doc.rust-lang.org/core/future/index.html)s to notify the
+   executor there is work to be done for a given task.
 1. Poll all tasks when they have work to complete
 
 Since Rust futures are state machines that expect to run to completion, we can't
@@ -194,11 +194,10 @@ of a task at any time it sees fit. Generally, there is a concept of priority,
 and the OS kernel will favor higher-priority threads when determining which
 threads to run while attempting to allow all tasks to run.
 
-![]({% img_url embedded-rust-async/preemptive.excalidraw.png %})
+![](/img/embedded-rust-async/preemptive.excalidraw.png)
 
 If you're looking for a deeper dive into RTOS context switching, check out our
-post on
-[Cortex-M Task Switching]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}).
+post on [Cortex-M Task Switching](/blog/cortex-m-rtos-context-switching).
 Additionally, check out this great article doing a
 [Comparison of FreeRTOS and Embassy](https://tweedegolf.nl/en/blog/65/async-rust-vs-rtos-showdown).
 
@@ -208,20 +207,20 @@ Cooperative scheduling is quite different. There is no priority, and tasks are
 run until they return (yield) control back to the caller. It is the
 responsibility of the task to be a good neighbor, and not run for too long.
 Compare the preemptive scheduling diagram above with the cooperative scheduling
-diagram below. Notice how the tasks can run to completion before
-switching to the next task.
+diagram below. Notice how the tasks can run to completion before switching to
+the next task.
 
-![]({% img_url embedded-rust-async/cooperative.excalidraw.png %})
+![](/img/embedded-rust-async/cooperative.excalidraw.png)
 
 On its own, this cooperative scheduling doesn't seem to provide much value. Why
-would we want to move the cognitive load of ensuring all tasks run from the
-OS scheduler to the writer of the tasks? Doesn't this also start to resemble a
+would we want to move the cognitive load of ensuring all tasks run from the OS
+scheduler to the writer of the tasks? Doesn't this also start to resemble a
 super loop? I thought we moved to an RTOS to get away from having to worry about
 these things?! If we combine cooperative scheduling with our understanding of
 Rust futures, we start to see the value. Whenever a future yields, the next
 future can be polled. This means that we can run multiple futures on a single
-thread! That means concurrent execution without the overhead of context
-switches or a separate stack for each task!
+thread! That means concurrent execution without the overhead of context switches
+or a separate stack for each task!
 
 ## Embassy
 
@@ -231,8 +230,8 @@ very small footprint. Additionally, it provides fully implemented HALs for many
 popular microcontrollers.
 
 So far we've done a lot of gabbing about how async executors work, but we
-haven't written any code! Let's change that by looking at a simple
-blinky example using Embassy.
+haven't written any code! Let's change that by looking at a simple blinky
+example using Embassy.
 
 > **Note:** The examples below are written for the
 > [STM32U5 Discovery Kit](https://www.st.com/en/evaluation-tools/b-u585i-iot02a.html#overview)
@@ -275,20 +274,19 @@ async fn main(spawner: Spawner) {
 The `#[embassy_executor::main]` attribute macro has a few responsibilities[^3].
 First, it provides an
 [entry point](https://docs.rs/cortex-m-rt/latest/cortex_m_rt/attr.entry.html)
-for our program. This is the function that will be called by the Cortex-M
-reset handler on boot. If you want to learn more about this check out our
-[Zero to Main: Bare Metal C]({% post_url 2019-05-14-zero-to-main-1 %})
-article.
+for our program. This is the function that will be called by the Cortex-M reset
+handler on boot. If you want to learn more about this check out our
+[Zero to Main: Bare Metal C](/blog/zero-to-main-1) article.
 
 Secondly, it creates a new
 [`Executor`](https://docs.rs/embassy-executor/latest/embassy_executor/struct.Executor.html)
-for us. In our configuration, this executor  is expected to have a `'static`
+for us. In our configuration, this executor is expected to have a `'static`
 lifetime, meaning that it's expected to live for the entire lifetime of the
 program. This makes sense, as we need our executor to live at least as long as
 all of our tasks.
 
-Lastly, it spawns a task that will run our `main` function and passes a copy
-of the internal
+Lastly, it spawns a task that will run our `main` function and passes a copy of
+the internal
 [`Spawner`](https://docs.rs/embassy-executor/latest/embassy_executor/struct.Spawner.html)
 handle for our executor. This handle allows us to spawn new tasks and send them
 over to our executor. The `Spawner` implements
@@ -300,10 +298,10 @@ let p = embassy_stm32::init(Default::default());
 let led = Output::new(p.PH7, Level::Low, Speed::Medium);
 ```
 
-This section sets up the LED that we'll be blinking. Since we're using an
-stm32 dev kit, we're using the
+This section sets up the LED that we'll be blinking. Since we're using an stm32
+dev kit, we're using the
 [`embassy_stm32`](https://docs.embassy.dev/embassy-stm32/git/stm32c011d6/index.html)
-crate.  The call to `embassy_stm32::init` is responsible for setting up all of
+crate. The call to `embassy_stm32::init` is responsible for setting up all of
 our peripherals. The `Output` struct provides us with a safe interface for
 interacting with the GPIO that our LED is connected to PH7[^4].
 
@@ -320,10 +318,10 @@ work to do.
 async fn blinky(mut led: Output<'static, PH7>) -> ! {
 ```
 
-Now we're on to the fun part! The `#[embassy_executor::task]` attribute macro
-is responsible for turning our `blinky` function into a task. The underpinnings
-of this macro are a bit beyond the scope of this article, but if you're
-interested you can check out the
+Now we're on to the fun part! The `#[embassy_executor::task]` attribute macro is
+responsible for turning our `blinky` function into a task. The underpinnings of
+this macro are a bit beyond the scope of this article, but if you're interested
+you can check out the
 [`embassy-macro`](https://docs.rs/embassy-macro/latest/embassy_macro/) crate.
 For now, we can just think of this macro as a special wrapper that turns the
 future generated by our `blinky` function into a task that can be polled by the
@@ -345,8 +343,8 @@ toggles our LED every 200ms. The `Ticker` struct is provided by the
 and provides a simple interface for waiting for a given duration. The
 [`next`](https://docs.rs/embassy/latest/embassy/time/struct.Ticker.html#method.next)
 method returns a future that will resolve once the given duration has elapsed.
-I'm sure you've guessed what the last bit does, but just in case, it toggles
-the GPIO pin that our LED is connected to.
+I'm sure you've guessed what the last bit does, but just in case, it toggles the
+GPIO pin that our LED is connected to.
 
 This is a pretty simple example, but it demonstrates the basics of how to write
 an async program using Embassy. Let's modify the example to be a bit more
@@ -354,9 +352,9 @@ complex, and see how we can extract some more interesting value.
 
 ### Button Example
 
-Our button example will be largely the same as our blinky example, but we'll
-add a button to the mix. When the button is pressed we'll toggle the blinking
-of the LED. Let's take a look at the code.
+Our button example will be largely the same as our blinky example, but we'll add
+a button to the mix. When the button is pressed we'll toggle the blinking of the
+LED. Let's take a look at the code.
 
 ```rust
 static LED_BLINK_ACTIVE: AtomicBool = AtomicBool::new(true);
@@ -464,8 +462,8 @@ That's a lot of pins! All of these calls to pin are a result of a few layers of
 abstraction here that we won't touch on. The important thing to note is that
 this is the pin we initially assigned to the `EXTI` interrupt. In our case this
 `PC13` and its associated port. The other arguments are the edge we're waiting
-on. One other note is that the `pin`s here are GPIO pins and not the Rust
-future `Pin` type we discussed earlier.
+on. One other note is that the `pin`s here are GPIO pins and not the Rust future
+`Pin` type we discussed earlier.
 
 It looks like the core of this function is in another castle! Let's take a look
 at the
@@ -506,29 +504,29 @@ impl<'a> ExtiInputFuture<'a> {
 }
 ```
 
-The members of this struct are mostly what we'd expect. The `pin` member is
-the GPIO attached to our button. The
+The members of this struct are mostly what we'd expect. The `pin` member is the
+GPIO attached to our button. The
 [`PhantomData`](https://doc.rust-lang.org/std/marker/struct.PhantomData.html)
 member is a bit of a distraction here. We won't cover it in detail, but it's a
-way to preserve the lifetime needed for the future even though we don't
-use the lifetime anywhere.
+way to preserve the lifetime needed for the future even though we don't use the
+lifetime anywhere.
 
 The `new` method is where we set up our interrupt. We won't cover all of the
 individual bit manipulations here. If you want to get a complete understanding
-of what's going on, check out section 23 of the STM32U5 reference manual[^5].
-At a high level here's what's going on:
+of what's going on, check out section 23 of the STM32U5 reference manual[^5]. At
+a high level here's what's going on:
 
 - First, we enter a critical section. This ensures that we aren't interrupted
-    while we're setting up our interrupt.
+  while we're setting up our interrupt.
 - Next, we set the `EXTI` interrupt to use the pin we're waiting on.
 - Then we set the edge we're waiting on. In our case, we're waiting for a rising
-    edge.
+  edge.
 - Then we clear the pending bits of any interrupts on this line
 - Finally, we enable the interrupt to wake up the CPU when it's triggered.
 
-This is all pretty standard peripheral configuration. What we're
-interested in is how this future is driven to completion. Let's take a look at
-the [`Future`](https://doc.rust-lang.org/core/future/trait.Future.html)
+This is all pretty standard peripheral configuration. What we're interested in
+is how this future is driven to completion. Let's take a look at the
+[`Future`](https://doc.rust-lang.org/core/future/trait.Future.html)
 implementation for
 [`ExtiInputFuture`](https://github.com/embassy-rs/embassy/blob/c7ec45a004750f590c1d9ea4a721972efe133b8e/embassy-stm32/src/exti.rs#L243).
 
@@ -642,8 +640,8 @@ While async Rust feels ergonomic, there is still a lot of complexity under the
 hood. This can make it difficult to debug issues when they arise. An overloaded
 task that is starving others in the runtime can be difficult to diagnose. This
 isn't helped by the fact that debug symbols can get a little weird when using
-async Rust. This is because stack unwinding isn't quite what you'd
-expect when looking because of the way futures are polled and scheduled.
+async Rust. This is because stack unwinding isn't quite what you'd expect when
+looking because of the way futures are polled and scheduled.
 
 Another downside is the lack of priorities introduced by the cooperative
 scheduler. To its credit, Embassy has a pretty cool solution to this problem.
@@ -671,9 +669,9 @@ on embedded systems. I hope you have fun writing concurrent code in this
 paradigm!
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}
@@ -681,11 +679,11 @@ paradigm!
 ## Further reading
 
 - [lilos](https://github.com/cbiffle/lilos): A lightweight async executor for
-cortex-m devices.
+  cortex-m devices.
 - [Making the Tokio scheduler 10x Faster](https://tokio.rs/blog/2019-10-scheduler):
-An interesting blog post about a rewrite of the Tokio scheduler.
+  An interesting blog post about a rewrite of the Tokio scheduler.
 - [The Rust Async Book](https://rust-lang.github.io/async-book/): The official
-documentation for async Rust.
+  documentation for async Rust.
 
 ## References
 

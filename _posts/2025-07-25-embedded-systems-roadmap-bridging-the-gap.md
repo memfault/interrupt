@@ -1,4 +1,5 @@
 ---
+date: "2025-07-25"
 title: "Embedded Systems Roadmap: Bridging the Gap"
 description:
   Discover the story behind this embedded systems roadmap—a structured learning

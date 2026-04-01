@@ -1,4 +1,5 @@
 ---
+date: "2024-07-18"
 title: A Schematic Review Checklist for Firmware Engineers
 description:
   A checklist with supporting stories for firmware engineers to review when
@@ -32,9 +33,9 @@ concerns. Or if the reader is responsible for both the electrical and firmware
 design of a project. With either of these assumptions broken, feel free to put
 on your firmware engineer hat and read! Hopefully, this will be helpful for you.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Schematic Review - What's Your Role as a Firmware Engineer
 
@@ -202,11 +203,10 @@ Given these experiences, I have compiled the following list:
 ### GPIOs
 
 - [x] Provide a GPIO map in a spreadsheet, with main function after reset,
-      intended function, and any additional notes.
-      - [x] Include configuration of peripherals -> GPIOs to ensure any MCU-specific
-              pin sharing constraints are met.
-      - [x] Include other associated MCU resources, such as DMA or timers, to ensure
-              that each of those resources are used only once.
+      intended function, and any additional notes. - [x] Include configuration
+      of peripherals -> GPIOs to ensure any MCU-specific pin sharing constraints
+      are met. - [x] Include other associated MCU resources, such as DMA or
+      timers, to ensure that each of those resources are used only once.
 - [x] Are all MCU peripherals used only once?
 - [x] If the MCU is held in reset, are the peripheral devices held in their
       proper state? (Pull-up/pull-downs where needed)
@@ -247,11 +247,12 @@ Given these experiences, I have compiled the following list:
       or ETM?
 - [x] Do test points exist for power rails, analog signals, and buses?
 - [x] If the target microcontroller constraints allow for it, are some GPIO pins
-    assigned for arbitrary firmware development, measurements and debug
-    purposes? [6](https://covemountainsoftware.com/2016/12/27/brother-can-you-spare-a-gpio/)
-- [x] Subject to board layout constraints, are the debug GPIOs routed to
-  test points that may be connected to an o-scope or other common
-  tools with minimal risk to the PCB or personnel?
+      assigned for arbitrary firmware development, measurements and debug
+      purposes?
+      [6](https://covemountainsoftware.com/2016/12/27/brother-can-you-spare-a-gpio/)
+- [x] Subject to board layout constraints, are the debug GPIOs routed to test
+      points that may be connected to an o-scope or other common tools with
+      minimal risk to the PCB or personnel?
 - [x] Are the debug GPIOs used _only_ for debug purposes?
 
 ## Conclusion
@@ -268,9 +269,9 @@ to our schedule and get devices shipped on time!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

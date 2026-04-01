@@ -1,37 +1,61 @@
 ---
+date: "2022-11-29"
 title: "Using SWIG to generate bindings between C and Lua"
-description: Trying out SWIG to automate generation of binding layer between Lua and C worlds
+description:
+  Trying out SWIG to automate generation of binding layer between Lua and C
+  worlds
 author: stawiski
 tags: [c]
 ---
 
-Lua is one of the many great interpreters that can be run on embedded devices. It's fast, uses little memory, is written in ANSI C, and is known by plenty of developers. For these reasons, many great teams are choosing to include a Lua interpreter in their embedded project (e.g. Panic with [their Playdate device](https://play.date/dev/)). You can think of Lua as an alternative to the MicroPython (Python) or JerryScript (Javascript) interpreters. However, there's a problem. Many of the libraries today for embedded devices are written in C, not Lua!
+Lua is one of the many great interpreters that can be run on embedded devices.
+It's fast, uses little memory, is written in ANSI C, and is known by plenty of
+developers. For these reasons, many great teams are choosing to include a Lua
+interpreter in their embedded project (e.g. Panic with
+[their Playdate device](https://play.date/dev/)). You can think of Lua as an
+alternative to the MicroPython (Python) or JerryScript (Javascript)
+interpreters. However, there's a problem. Many of the libraries today for
+embedded devices are written in C, not Lua!
 
-There are ways to make Lua and C work together and share data structures, but it requires a lot of boilerplate and complex code. The result is writing a lot of wrapper code integrating the two languages together that then must be maintained as the application evolves.
+There are ways to make Lua and C work together and share data structures, but it
+requires a lot of boilerplate and complex code. The result is writing a lot of
+wrapper code integrating the two languages together that then must be maintained
+as the application evolves.
 
-Thankfully, there is a project which helps automate the generation of this boilerplate code called SWIG.
+Thankfully, there is a project which helps automate the generation of this
+boilerplate code called SWIG.
 
 <!-- excerpt start -->
 
-This article covers how to write a C program that launches a Lua interpreter and then how to use SWIG to generate the necessary wrapper code to allow Lua scripts to access the functions and data inside of the C runtime.
+This article covers how to write a C program that launches a Lua interpreter and
+then how to use SWIG to generate the necessary wrapper code to allow Lua scripts
+to access the functions and data inside of the C runtime.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What is SWIG?
 
-[SWIG](https://www.swig.org/) is a tool that generates a binding layer between C/C++ and higher-level programming languages. The promise of SWIG is simple: write an interface file that annotates C/C++ headers with custom SWIG markers, and generates bindings to a given language, so that you can expose whatever functionality you want from C/C++ and use it in that language.
+[SWIG](https://www.swig.org/) is a tool that generates a binding layer between
+C/C++ and higher-level programming languages. The promise of SWIG is simple:
+write an interface file that annotates C/C++ headers with custom SWIG markers,
+and generates bindings to a given language, so that you can expose whatever
+functionality you want from C/C++ and use it in that language.
 
-Let's explore generating bindings between applications written in C targeted for embedded hardware and Lua.
+Let's explore generating bindings between applications written in C targeted for
+embedded hardware and Lua.
 
 ## Setting up
 
-> To follow along, I've provided all example code on [GitHub in the Interrupt repo under `example/swig-for-c-and-lua`](https://github.com/memfault/interrupt/tree/master/example/swig-for-c-and-lua).
+> To follow along, I've provided all example code on
+> [GitHub in the Interrupt repo under `example/swig-for-c-and-lua`](https://github.com/memfault/interrupt/tree/master/example/swig-for-c-and-lua).
 
-We’ll start by writing a Dockerfile that will host our desktop environment including Lua, SWIG, CMake, and GCC. Let’s build on top of `alpine:3.16` image for a smaller size.
+We’ll start by writing a Dockerfile that will host our desktop environment
+including Lua, SWIG, CMake, and GCC. Let’s build on top of `alpine:3.16` image
+for a smaller size.
 
 First, let’s get Lua 5.4.4 in:
 
@@ -65,14 +89,16 @@ RUN cd swig && make install
 RUN apk add cmake
 ```
 
-And finally, check if both Lua and SWIG programs are available (if any of these commands fails the Docker image build will fail too):
+And finally, check if both Lua and SWIG programs are available (if any of these
+commands fails the Docker image build will fail too):
 
 ```dockerfile
 RUN luac -v
 RUN swig -version
 ```
 
-Here is the whole resulting Dockerfile for reference ([link](https://github.com/memfault/interrupt/tree/master/example/swig-for-c-and-lua/Dockerfile)):
+Here is the whole resulting Dockerfile for reference
+([link](https://github.com/memfault/interrupt/tree/master/example/swig-for-c-and-lua/Dockerfile)):
 
 ```dockerfile
 FROM alpine:3.16
@@ -119,21 +145,27 @@ $ docker build -t swig . && docker run -v $PWD:/app -it swig
 Dockerfile   example1     ...
 ```
 
-Now, using this Docker image we can parse Lua scripts, compile Lua to bytecode, generate bindings with SWIG, and compile C/C++ programs using CMake!
+Now, using this Docker image we can parse Lua scripts, compile Lua to bytecode,
+generate bindings with SWIG, and compile C/C++ programs using CMake!
 
-To make things as easy for you to replicate what I'm doing in this post, I've created shell scripts for each example, such as `example1.sh`, that can be run from your host machine with Docker installed.
+To make things as easy for you to replicate what I'm doing in this post, I've
+created shell scripts for each example, such as `example1.sh`, that can be run
+from your host machine with Docker installed.
 
 ## First binding between C and Lua
 
-Time to get our hands dirty with SWIG. Let’s get something simple running. For reference this is `example1`.
+Time to get our hands dirty with SWIG. Let’s get something simple running. For
+reference this is `example1`.
 
-Imagine that we have a function that we want to use from Lua that multiplies two fixed-size integers in C with this signature:
+Imagine that we have a function that we want to use from Lua that multiplies two
+fixed-size integers in C with this signature:
 
 ```c
 int32_t multiply(int32_t x, int32_t y);
 ```
 
-Let’s write a SWIG interface file, `bindings.i` and annotate the above function for SWIG:
+Let’s write a SWIG interface file, `bindings.i` and annotate the above function
+for SWIG:
 
 ```
 %module bindings
@@ -145,14 +177,17 @@ extern int32_t multiply(int32_t x, int32_t y);
 %}
 ```
 
-We declared `multiply` as `extern` introducing a linkage dependency. Now we’ll run SWIG and let it work its magic:
+We declared `multiply` as `extern` introducing a linkage dependency. Now we’ll
+run SWIG and let it work its magic:
 
 ```
 /app # cd example1
 /app/example1 # swig -lua -o swig.c bindings.i
 ```
 
-SWIG generated a huge C file we called `swig.c`, which consists of all the boilerplate code. Looking into it for `multiply` we can find this auto-generated code:
+SWIG generated a huge C file we called `swig.c`, which consists of all the
+boilerplate code. Looking into it for `multiply` we can find this auto-generated
+code:
 
 ```c
 extern int32_t multiply(int32_t x, int32_t y);
@@ -181,9 +216,13 @@ static int _wrap_multiply(lua_State* L) {
 }
 ```
 
-It’s a neat wrapper for our `multiply` C function! This module contains a library that we need to load into our Lua instance to be able to access this functionality. Since we named our module `bindings`, we’ll need to call `luaopen_bindings` .
+It’s a neat wrapper for our `multiply` C function! This module contains a
+library that we need to load into our Lua instance to be able to access this
+functionality. Since we named our module `bindings`, we’ll need to call
+`luaopen_bindings` .
 
-Now let’s shift focus to our C code. Here are the rough steps that we need to take to be able to call the `multiply` function from within Lua:
+Now let’s shift focus to our C code. Here are the rough steps that we need to
+take to be able to call the `multiply` function from within Lua:
 
 - Define our `multiply` function that Lua will call
 - Create a new Lua instance
@@ -227,19 +266,24 @@ int main(void)
 }
 ```
 
-Let's now write our Lua script. From this script, we want to call `multiply` from C world. To do that we will use a `bindings` library that we generated and loaded, which exposes `multiply` as `bindings.multiply`. The call will be as simple as:
+Let's now write our Lua script. From this script, we want to call `multiply`
+from C world. To do that we will use a `bindings` library that we generated and
+loaded, which exposes `multiply` as `bindings.multiply`. The call will be as
+simple as:
 
 ```lua
 print("[Lua] Result of multiply -2 * 5 = " .. bindings.multiply(-2, 5))
 ```
 
-We can also add a check if the `bindings` module is indeed loaded in Lua by adding an `assert`:
+We can also add a check if the `bindings` module is indeed loaded in Lua by
+adding an `assert`:
 
 ```lua
 assert(type(bindings) == 'table', "Binding module not loaded")
 ```
 
-Time to compile and run our first binding. Remember to do that from a directory that contains `example1.lua` so that the program can find this file.
+Time to compile and run our first binding. Remember to do that from a directory
+that contains `example1.lua` so that the program can find this file.
 
 ```
 /app # cd example1
@@ -253,13 +297,18 @@ Time to compile and run our first binding. Remember to do that from a directory 
 [C] Finished
 ```
 
-Our first binding between Lua and C worked! However, this is a trivial hello-world type of example.
+Our first binding between Lua and C worked! However, this is a trivial
+hello-world type of example.
 
 Time to try something more complicated.
 
 ## Passing a custom C struct to Lua
 
-We have called a simple C function from Lua, but what about passing struct data? As our application evolves, we’ll most likely add custom types and complicated data structures - the source of the massive amount of wrapper code that exists in many repositories that use Lua from C host program. For reference this is `example2`.
+We have called a simple C function from Lua, but what about passing struct data?
+As our application evolves, we’ll most likely add custom types and complicated
+data structures - the source of the massive amount of wrapper code that exists
+in many repositories that use Lua from C host program. For reference this is
+`example2`.
 
 Let’s start with defining our data types in C header `types.h`:
 
@@ -294,9 +343,12 @@ And a SWIG interface, `bindings.i`, that will include the above C header:
 %include "types.h"
 ```
 
-If we look into the generated C file from SWIG, we’ll see setters and getters for each of the fields of the structure, as well as a constructor and destructor for the struct.
+If we look into the generated C file from SWIG, we’ll see setters and getters
+for each of the fields of the structure, as well as a constructor and destructor
+for the struct.
 
-Assuming we’d not only like to receive a structure passed from C in Lua but also modify it, we’ll write a Lua script that will drive our C implementation:
+Assuming we’d not only like to receive a structure passed from C in Lua but also
+modify it, we’ll write a Lua script that will drive our C implementation:
 
 ```lua
 function processStruct(struct)
@@ -314,9 +366,11 @@ function processStruct(struct)
 end
 ```
 
-We introduced `processStruct` function, which we will call from C and pass a C structure to it, and expect the structure to be modified by Lua.
+We introduced `processStruct` function, which we will call from C and pass a C
+structure to it, and expect the structure to be modified by Lua.
 
-To call this Lua function from C we need to write a piece of C code using APIs from SWIG runtime header. First, we will generate the runtime header:
+To call this Lua function from C we need to write a piece of C code using APIs
+from SWIG runtime header. First, we will generate the runtime header:
 
 ```
 /app/example2 # swig -lua -external-runtime swig_runtime.h
@@ -339,9 +393,14 @@ void callProcessStruct(lua_State *L, my_struct_t *my_struct)
 }
 ```
 
-Here, in `callProcessStruct` we first grab Lua’s `processStruct` function on top of the stack. Then, we get type info for our C structure using `SWIG_TypeQuery` , followed by pushing the pointer on the stack with `SWIG_NewPointerObj`. That call creates a userdata on Lua’s stack containing our C structure. Finally, we call our Lua function.
+Here, in `callProcessStruct` we first grab Lua’s `processStruct` function on top
+of the stack. Then, we get type info for our C structure using `SWIG_TypeQuery`
+, followed by pushing the pointer on the stack with `SWIG_NewPointerObj`. That
+call creates a userdata on Lua’s stack containing our C structure. Finally, we
+call our Lua function.
 
-The rest of the application is just setting up the C structure with initial values, and printing the structure after the call to Lua:
+The rest of the application is just setting up the C structure with initial
+values, and printing the structure after the call to Lua:
 
 ```c
 my_struct_t my_struct;
@@ -378,7 +437,10 @@ Here’s the output:
 [C] Finished
 ```
 
-It worked! Lua was able to modify our enum, integer, string, and boolean. To get a peek under the hood, let’s use a well-known Lua [inspect](https://github.com/kikito/inspect.lua) library, which gives us information about objects.
+It worked! Lua was able to modify our enum, integer, string, and boolean. To get
+a peek under the hood, let’s use a well-known Lua
+[inspect](https://github.com/kikito/inspect.lua) library, which gives us
+information about objects.
 
 After importing the library with `require`, we add two lines to `processStruct`:
 
@@ -408,11 +470,20 @@ And get the following print (truncated):
 ...
 ```
 
-You can see from Lua's point of view, the object is Lua’s [userdata](https://www.lua.org/pil/28.1.html), which means it’s raw memory. Normally userdata is managed by Lua meaning it will be garbage collected. However, SWIG gives us flexibility here with its `SWIG_NewPointerObj` API. The last argument to that function specified the owner of the object, and since we decided to own the object the garbage collector won’t affect it.
+You can see from Lua's point of view, the object is Lua’s
+[userdata](https://www.lua.org/pil/28.1.html), which means it’s raw memory.
+Normally userdata is managed by Lua meaning it will be garbage collected.
+However, SWIG gives us flexibility here with its `SWIG_NewPointerObj` API. The
+last argument to that function specified the owner of the object, and since we
+decided to own the object the garbage collector won’t affect it.
 
-The interesting bit is our struct’s metatable. As you can see from the print, the metatable contains function pointers including getters and setters. This is the main part SWIG took care of for us.
+The interesting bit is our struct’s metatable. As you can see from the print,
+the metatable contains function pointers including getters and setters. This is
+the main part SWIG took care of for us.
 
-And if you’re wondering whether a known sized buffer, like the string buffer `char message[64];` can overflow, SWIG handles that and would just truncate the string as seen in the generated `swig.c`:
+And if you’re wondering whether a known sized buffer, like the string buffer
+`char message[64];` can overflow, SWIG handles that and would just truncate the
+string as seen in the generated `swig.c`:
 
 ```c
 strncpy((char*)arg1->message, (const char *)arg2, 64-1);
@@ -421,7 +492,9 @@ arg1->message[64-1] = 0;
 
 ## SWIG shortfalls - what it doesn’t automate
 
-Ok, that’s great so far! But what about arrays? We passed a string, an array of `char`s but what about an array of numbers or custom types? Here’s where things don’t sail as smoothly.
+Ok, that’s great so far! But what about arrays? We passed a string, an array of
+`char`s but what about an array of numbers or custom types? Here’s where things
+don’t sail as smoothly.
 
 Consider a modification to our structure:
 
@@ -433,7 +506,8 @@ typedef struct
 } my_struct_t;
 ```
 
-Now the structure contains a known size array of numbers. Following the previous example, let’s inspect `struct.priorities` from Lua using:
+Now the structure contains a known size array of numbers. Following the previous
+example, let’s inspect `struct.priorities` from Lua using:
 
 ```lua
 print("[Lua] struct.priorities: " .. inspect(struct.priorities))
@@ -447,14 +521,19 @@ Output:
 [Lua] struct.priorities metatable: nil
 ```
 
-Our array `priorities` is userdata and it doesn’t have an assigned metatable. Therefore Lua cannot do anything with it! That’s not something we expected from a generator tool, after all we’re talking about handling the simplest possible array.
+Our array `priorities` is userdata and it doesn’t have an assigned metatable.
+Therefore Lua cannot do anything with it! That’s not something we expected from
+a generator tool, after all we’re talking about handling the simplest possible
+array.
 
 And it is a common problem, even SWIG documentation states:
 
-> Arrays present a challenge for SWIG, because like pointers SWIG does not know whether these are input or output values, nor does SWIG have any indication of how large an array should be.
->
+> Arrays present a challenge for SWIG, because like pointers SWIG does not know
+> whether these are input or output values, nor does SWIG have any indication of
+> how large an array should be.
 
-To address this problem we can write a typemap in our SWIG interface file, which will include our custom code to push the array onto Lua stack:
+To address this problem we can write a typemap in our SWIG interface file, which
+will include our custom code to push the array onto Lua stack:
 
 ```
 %typemap(out) uint8_t my_struct_t::priorities[3]
@@ -470,7 +549,8 @@ To address this problem we can write a typemap in our SWIG interface file, which
 }
 ```
 
-However, this becomes tedious as now we’re writing the exact boilerplate code we were trying to avoid!
+However, this becomes tedious as now we’re writing the exact boilerplate code we
+were trying to avoid!
 
 This time, inspection of `priorities` array gives:
 
@@ -479,23 +559,45 @@ This time, inspection of `priorities` array gives:
 [Lua] struct.priorities metatable: nil
 ```
 
-Now Lua knows it’s a table, but we’re limited to read-only access. To have the ability to modify the array members we’d, unfortunately, need to write a custom modifier code.
+Now Lua knows it’s a table, but we’re limited to read-only access. To have the
+ability to modify the array members we’d, unfortunately, need to write a custom
+modifier code.
 
 ## Closing thoughts
 
-After choosing Lua for an embedded project it quickly became clear how much time we’ll need to spend binding two different worlds of Lua and C together. Looking at an inspiring example of [nodemcu firmware](https://github.com/nodemcu/nodemcu-firmware), which provides a Lua-based firmware for Espressif processors, it became clear we’ll have lots of code that glues functions and data structures for both languages to understand each other.
+After choosing Lua for an embedded project it quickly became clear how much time
+we’ll need to spend binding two different worlds of Lua and C together. Looking
+at an inspiring example of
+[nodemcu firmware](https://github.com/nodemcu/nodemcu-firmware), which provides
+a Lua-based firmware for Espressif processors, it became clear we’ll have lots
+of code that glues functions and data structures for both languages to
+understand each other.
 
-As we started to write wrapper code, translating C arrays into Lua tables and naming structure fields manually, we found out about SWIG which promised to help with this task. At first, things were smooth as we were learning how to write a SWIG interface file, and getting simple examples to work. However, foreseeing what we’ll need to do in our application in the future and demoing passing of structures with arrays of custom types, the magic of SWIG quickly disappeared and we realized we’ll still have to write all that boilerplate code anyways, just in a SWIG interface file.
+As we started to write wrapper code, translating C arrays into Lua tables and
+naming structure fields manually, we found out about SWIG which promised to help
+with this task. At first, things were smooth as we were learning how to write a
+SWIG interface file, and getting simple examples to work. However, foreseeing
+what we’ll need to do in our application in the future and demoing passing of
+structures with arrays of custom types, the magic of SWIG quickly disappeared
+and we realized we’ll still have to write all that boilerplate code anyways,
+just in a SWIG interface file.
 
-We also noticed that SWIG sneakily added dynamic memory allocation like `calloc` calls, which we want to have full control over in the embedded domain. To address this issue the solution is, again, to extend the interface file and take control of the object creation. Instead, we would have hoped one could just specify a custom memory allocator to configure SWIG with.
+We also noticed that SWIG sneakily added dynamic memory allocation like `calloc`
+calls, which we want to have full control over in the embedded domain. To
+address this issue the solution is, again, to extend the interface file and take
+control of the object creation. Instead, we would have hoped one could just
+specify a custom memory allocator to configure SWIG with.
 
-To sum up, there’s no doubt SWIG is a useful tool that aids with code generation, but it didn’t fill our needs in an embedded application, and we would rather take control over the whole boilerplate code than use a tool that still needs to be helped with.
+To sum up, there’s no doubt SWIG is a useful tool that aids with code
+generation, but it didn’t fill our needs in an embedded application, and we
+would rather take control over the whole boilerplate code than use a tool that
+still needs to be helped with.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

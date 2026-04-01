@@ -1,4 +1,5 @@
 ---
+date: "2025-03-20"
 title: Robust OTA Updates For Linux Devices, the Easy Way
 description:
   Learn how to build a custom Debian-based OS ready for OTA updates via
@@ -30,9 +31,9 @@ to complete, so let’s get started.
 > [Listen to Maximilian on Interrupt Live](https://www.youtube.com/watch?v=TlqWnUiUYmY?feature=share)
 > talk about the content and motivations behind writing this article.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Overview
 
@@ -407,9 +408,9 @@ comparison to other tools such as RAUC or SWUpdate.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

@@ -1,6 +1,9 @@
 ---
+date: "2019-09-17"
 title: Building Better Firmware with Continuous Integration
-description: A step by step guide on how to use continuous integration for firmware projects with CircleCI.
+description:
+  A step by step guide on how to use continuous integration for firmware
+  projects with CircleCI.
 author: francois
 tags: [better-firmware, best-practices]
 ---
@@ -24,11 +27,11 @@ CircleCI on a firmware project step by step.
 
 <!-- excerpt end -->
 
-This is the first post in our [Building Better Firmware series]({% tag_url better-firmware %}). Future posts will
-cover testing techniques, test driven development, fuzzing, and continuous
-deployment.
+This is the first post in our
+[Building Better Firmware series](/tag/better-firmware). Future posts will cover
+testing techniques, test driven development, fuzzing, and continuous deployment.
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What is Continuous Integration?
 
@@ -50,8 +53,8 @@ techniques:
 
 3. Automated Tests: Engineers do not always anticipate the impact their change
    can have on other part of the codebase. As the pace of changes increase,
-   testing everything manually becomes intractable and automated tests must be put
-   in place.
+   testing everything manually becomes intractable and automated tests must be
+   put in place.
 
 These techniques have become synonymous with Continuous Integration, as they are
 universally implemented by teams who want to integrate code regularly. In this
@@ -60,22 +63,23 @@ techniques to integrate code on an ongoing basis.
 
 ## Why Continuous Integration
 
-Continuous Integration requires efforts, rigor, and infrastructure. It can
-even be very expensive! So why do it at all? In my opinion, there is a
-scale at which there are no alternatives.
+Continuous Integration requires efforts, rigor, and infrastructure. It can even
+be very expensive! So why do it at all? In my opinion, there is a scale at which
+there are no alternatives.
 
 First and foremost, CI enforces the level of discipline required to keep a
 codebase working at scale. As complexity and velocity grow:
-* Finding when and where an issue was introduced gets more difficult
-* Side effects are less well understood, making it more likely that a change in
-   one part of the codebase will break a feature in another.
-* Testing every feature and hardware configuration takes more and more time.
+
+- Finding when and where an issue was introduced gets more difficult
+- Side effects are less well understood, making it more likely that a change in
+  one part of the codebase will break a feature in another.
+- Testing every feature and hardware configuration takes more and more time.
 
 Additionally, CI infrastructure serves as a reference environment which can be
-used to reproduce builds and generate shipping images. No more "it works on
-my machine". If it fails in CI, it must be considered broken.
+used to reproduce builds and generate shipping images. No more "it works on my
+machine". If it fails in CI, it must be considered broken.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 ## Continuous Integration Systems
 
@@ -84,6 +88,7 @@ may have heard of Jenkins, a popular open source tool, but many others exist:
 TravisCI, CircleCI, TeamCity, Bamboo, Build Bot, …
 
 Fundamentally, continuous integration systems all do roughly the same thing:
+
 1. Monitor your repository for changesets (either pull requests, or merges)
 2. For each changeset, execute a set of build & test steps
 3. Report the success or failure of build & test steps
@@ -92,23 +97,23 @@ Fundamentally, continuous integration systems all do roughly the same thing:
 A good continuous integration system for firmware development should have the
 following features:
 
-* **Windows support**: many firmware engineers work on Windows, so it is important
-   that this platform be supported by your CI system.
+- **Windows support**: many firmware engineers work on Windows, so it is
+  important that this platform be supported by your CI system.
 
-* **Configuration-as-code**: the build and test steps should be declared in files
-   checked-in alongside your code. Imagine the case where multiple branches
-   require slightly different build instructions: a build system that saves
-   configuration in a database separate from the code would not be able to build
-   every branch.
+- **Configuration-as-code**: the build and test steps should be declared in
+  files checked-in alongside your code. Imagine the case where multiple branches
+  require slightly different build instructions: a build system that saves
+  configuration in a database separate from the code would not be able to build
+  every branch.
 
-* **A hosted solution**: so you don’t have to set up and maintain your own servers,
-   with the ability to go on-premise in the future.
+- **A hosted solution**: so you don’t have to set up and maintain your own
+  servers, with the ability to go on-premise in the future.
 
-* **VCS Integration**
+- **VCS Integration**
 
-At Memfault, we use CircleCI[^2] for continuous integration. It ticks all 4 of the
-above requirements, has a generous free plan, and in our limited testing runs
-much faster than the competition.
+At Memfault, we use CircleCI[^2] for continuous integration. It ticks all 4 of
+the above requirements, has a generous free plan, and in our limited testing
+runs much faster than the competition.
 
 ## Setting up CircleCI for a Firmware project
 
@@ -120,8 +125,8 @@ CircleCI to build and test your firmware project.
 We will be using the ChibiOS project as our example. ChibiOS is an open source
 real time operating system available for a wide range of microcontrollers. More
 specifically, we will be using one of the example projects contained within the
-ChibiOS project: [FATFS + USB Example on
-STM32F103](https://github.com/ChibiOS/ChibiOS/tree/master/demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB).
+ChibiOS project:
+[FATFS + USB Example on STM32F103](https://github.com/ChibiOS/ChibiOS/tree/master/demos/STM32/RT-STM32F103-STM3210E_EVAL-FATFS-USB).
 
 Before we go and set up CI, we must make sure we can build the project locally.
 
@@ -137,6 +142,7 @@ $ make -j
 ```
 
 Which should give us:
+
 ```shell
 [...]
 Linking build/ch.elf
@@ -151,7 +157,8 @@ Creating build/ch.list
 Done
 ```
 
-> Note: `7za` is the command line utility for 7zip, which is available for all platforms.
+> Note: `7za` is the command line utility for 7zip, which is available for all
+> platforms.
 
 We need administrative access to the project on Github to setup CI on it, so
 you’ll want to fork the ChibiOS repository under your profile or organization.
@@ -160,16 +167,17 @@ You can find our fork at
 
 ### Creating a CircleCI Project
 
-We’re now ready to set up CircleCI. Head to [https://circleci.com](https://circleci.com), create an account,
-select “Add Projects” in the sidebar, and search for your ChibiOS repository.
+We’re now ready to set up CircleCI. Head to
+[https://circleci.com](https://circleci.com), create an account, select “Add
+Projects” in the sidebar, and search for your ChibiOS repository.
 
-![]({% img_url circle-ci/search_chibios.png %})
+![](/img/circle-ci/search_chibios.png)
 
 Click “Set Up Project” and follow the instructions. ChibiOS is a C project with
 robust tooling to build it on Linux, so we recommend you select “Linux” as the
 operating system, and “Other” as the language.
 
-![]({% img_url circle-ci/setup_project.png %})
+![](/img/circle-ci/setup_project.png)
 
 ### CircleCI Hello World
 
@@ -177,7 +185,7 @@ Now that we have a project set up, we need to tell our CI system how to build
 and test our firmware. In Circle CI this is done by defining a set of **Steps**,
 **Jobs**, and **Workflows**.
 
-![]({% img_url circle-ci/Diagram-v3--Default.png %})
+![](/img/circle-ci/Diagram-v3--Default.png)
 
 Simply stated, a **Step** is a single command to be run as part of your build
 and test process. It is the unit of work of our CI system. A **Job** is a
@@ -188,12 +196,15 @@ based on more complex logic.
 You can read more about Steps, Jobs, and Workflows in CircleCI’s
 documentation[^3]
 
-For our hello world example, we will have a single job, with the following steps:
+For our hello world example, we will have a single job, with the following
+steps:
+
 1. Check out the code repository
 2. Print “Hello, world”
 3. Print the current date and time
 
 This is a trivial thing to do with a bash script:
+
 ```bash
 $ git clone git@github.com:memfault/ChibiOS.git
 $ git checkout <commit-to-build>
@@ -206,6 +217,7 @@ workflows via a custom YAML file which should be placed at the root of your
 repository under `.circleci/config.yml`.
 
 The subset of the syntax we’ll need here is pretty simple:
+
 ```yaml
 version: 2
 jobs:
@@ -315,19 +327,21 @@ To github.com:memfault/ChibiOS.git
    fd444de36..c347b244e  master -> master
 ```
 
-Now head to [https://circleci.com](https://circleci.com) and observe that a new job has started:
+Now head to [https://circleci.com](https://circleci.com) and observe that a new
+job has started:
 
-![]({% img_url circle-ci/sample_build_started.png %})
+![](/img/circle-ci/sample_build_started.png)
 
 Wait a bit, and you can look at the build result:
 
-![]({% img_url circle-ci/sample_build_ended.png %})
+![](/img/circle-ci/sample_build_ended.png)
 
 You should see the output of your two commands, and a successful result.
 
 ### Testing CircleCI Configs Locally
 
-When adding to a Circle CI config, it's often useful to test things out locally. This can easily be done using command line tool[^6]. For example:
+When adding to a Circle CI config, it's often useful to test things out locally.
+This can easily be done using command line tool[^6]. For example:
 
 ```shell
 $ brew install circleci
@@ -343,7 +357,7 @@ Our hello world job is instructive, but not all that useful. Let’s modify it t
 compile our project.
 
 First, we must choose an environment. The `debian:stretch` image is very bare
-bones,  so to avoid having to install many common packages, we instead use the
+bones, so to avoid having to install many common packages, we instead use the
 `circleci/python:3.6.9-stretch` image which comes with batteries included.
 
 Next, we’ll want to install some firmware specific tools such as our compiler.
@@ -352,7 +366,8 @@ This is easily done with a **Step**.
 ```yaml
 - run:
     name: Install apt dependencies
-    command: sudo apt install p7zip-full gcc-arm-none-eabi binutils-arm-none-eabi
+    command:
+      sudo apt install p7zip-full gcc-arm-none-eabi binutils-arm-none-eabi
 ```
 
 > Note: once your build system stabilizes, you’ll likely want to set up your own
@@ -398,7 +413,9 @@ jobs:
       - checkout
       - run:
           name: Install apt packages
-          command: 'sudo apt install p7zip-full gcc-arm-none-eabi binutils-arm-none-eabi'
+          command:
+            "sudo apt install p7zip-full gcc-arm-none-eabi
+            binutils-arm-none-eabi"
       - run:
           name: Build Demo
           command: |
@@ -423,16 +440,16 @@ CircleCI will notice the pull request, pick up the new `config.yml` file and
 start running our build. If all goes well, we will see “All checks have passed”
 in Github:
 
-![]({% img_url circle-ci/github_pull_request_success.png %})
+![](/img/circle-ci/github_pull_request_success.png)
 
 Clicking through the check information in GitHub links us back to our CircleCI
 job page:
 
-![]({% img_url circle-ci/real_build_ended.png %})
+![](/img/circle-ci/real_build_ended.png)
 
 Where we can now find our artifacts!
 
-![]({% img_url circle-ci/chibios_artifact.png %})
+![](/img/circle-ci/chibios_artifact.png)
 
 ### Automated Tests
 
@@ -466,9 +483,11 @@ int main(int argc, char **argv) {
 }
 ```
 
-Building this file alongside your `inet_addr` implementation with GCC and running it on a POSIX host will effectively exercise your code.
+Building this file alongside your `inet_addr` implementation with GCC and
+running it on a POSIX host will effectively exercise your code.
 
-ChibiOS comes with many such tests. For example, the RT kernel tests can be found under `ChibiOS/test/rt`. Running them is simple:
+ChibiOS comes with many such tests. For example, the RT kernel tests can be
+found under `ChibiOS/test/rt`. Running them is simple:
 
 ```shell
 ~/ChibiOS $ cd test/rt/testbuild
@@ -507,16 +526,16 @@ jobs:
       - checkout
       - run:
           name: Install apt packages
-          command: 'sudo apt install libc6-dev-i386'
+          command: "sudo apt install libc6-dev-i386"
       - run:
           name: Build Unit Tests
           command: |
-              cd test/rt/testbuild
-              make
+            cd test/rt/testbuild
+            make
       - run:
           name: Run Unit Tests
           command: |
-              ./test/rt/testbuild/build/ch
+            ./test/rt/testbuild/build/ch
 ```
 
 By default, CircleCI will only execute the `build` job. To execute multiple
@@ -539,7 +558,7 @@ workflows:
 Once again, we open a pull request with our changes, and watch CircleCI run our
 tests.
 
-![]({% img_url circle-ci/github_build_and_test_pass.png %})
+![](/img/circle-ci/github_build_and_test_pass.png)
 
 ## Final Thoughts
 
@@ -548,9 +567,9 @@ I hope reading this post has inspired you to use CI for your next project.
 You can find our final CircleCI config on
 [Github](https://github.com/memfault/ChibiOS/blob/master/.circleci/config.yml)
 
-Of course, setting up CI is the easy part. Writing good tests, managing cost, and
-keeping build time low are all challenges you will face along the way. Future
-posts will cover those topics.
+Of course, setting up CI is the easy part. Writing good tests, managing cost,
+and keeping build time low are all challenges you will face along the way.
+Future posts will cover those topics.
 
 What other techniques do you use to improve your team's productivity? Tell us
 all about it in the comments, or at
@@ -560,9 +579,21 @@ all about it in the comments, or at
 
 ## Reference & Links
 
-[^1]: For example, see [this post](http://www.cyrilfougeray.com/2020/10/03/firmware-qa-ci-cd.html) by an Equisense team member.
+[^1]:
+    For example, see
+    [this post](http://www.cyrilfougeray.com/2020/10/03/firmware-qa-ci-cd.html)
+    by an Equisense team member.
+
 [^2]: [Circle CI](https://circleci.com)
-[^3]: [Circle CI Documentation - Jobs, Steps, Workflows](https://circleci.com/docs/2.0/jobs-steps/#section=getting-started)
-[^4]: [Checkout Step - CircleCI](https://circleci.com/docs/2.0/configuration-reference/#checkout)
-[^5]: [Storing Build Artifacts - CircleCI](https://circleci.com/docs/2.0/artifacts/)
-[^6]: [CircleCI's command-line application](https://github.com/CircleCI-Public/circleci-cli)
+
+[^3]:
+    [Circle CI Documentation - Jobs, Steps, Workflows](https://circleci.com/docs/2.0/jobs-steps/#section=getting-started)
+
+[^4]:
+    [Checkout Step - CircleCI](https://circleci.com/docs/2.0/configuration-reference/#checkout)
+
+[^5]:
+    [Storing Build Artifacts - CircleCI](https://circleci.com/docs/2.0/artifacts/)
+
+[^6]:
+    [CircleCI's command-line application](https://github.com/CircleCI-Public/circleci-cli)

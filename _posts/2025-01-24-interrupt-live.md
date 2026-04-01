@@ -1,4 +1,5 @@
 ---
+date: "2025-01-24"
 title: Introducing Interrupt Live － Meet the Minds Behind Interrupt
 description:
   Announcement for a Interrupt Live, a live interview of Interrupt authors
@@ -7,7 +8,7 @@ image: /img/interrupt-live/publishing-esp-idf-component.png
 ---
 
 <p align="center">
- <img width="80%" src="{% img_url interrupt-live/publishing-esp-idf-component.png %}" alt="Memory layout diagram" />
+ <img width="80%" src="/img/interrupt-live/publishing-esp-idf-component.png" alt="Memory layout diagram" />
 </p>
 
 The Interrupt community was developed by Memfault as a meeting place for
@@ -50,8 +51,8 @@ approved, we’ll work closely with you to get published._
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->

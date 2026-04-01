@@ -1,4 +1,5 @@
 ---
+date: "2022-03-01"
 title: C Structure Padding Initialization
 description: Details on initialization of padding bits in C language structures
 author: noah
@@ -17,9 +18,9 @@ of things in Clang and GCC, recommendations, and the ✨ future ✨.
 Time to dive into this very niche, but occasionally hazardous corner of the C
 language!
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## C Structure Padding
 
@@ -446,10 +447,10 @@ Another approach is to avoid structure holes entirely!
 
 For example, you can use the `-Wpadded` compiler warning in
 [GCC](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wpadded) and
-[Clang](https://releases.llvm.org/15.0.0/tools/clang/docs/DiagnosticsReference.html#wpadded) to detect
-padding, and with `-Werror` or `-Werror=padded`, you can trigger compilation
-errors if padding is detected. To address the warnings, you can add placeholders
-to fill unused space:
+[Clang](https://releases.llvm.org/15.0.0/tools/clang/docs/DiagnosticsReference.html#wpadded)
+to detect padding, and with `-Werror` or `-Werror=padded`, you can trigger
+compilation errors if padding is detected. To address the warnings, you can add
+placeholders to fill unused space:
 
 ```c
 struct foo {
@@ -543,9 +544,9 @@ library). Definitely an interesting compiler feature!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

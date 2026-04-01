@@ -1,4 +1,5 @@
 ---
+date: "2025-03-07"
 title: "What we've been reading in February (2025)"
 description:
   Here are the articles, videos, and tools we've been excited about in February
@@ -105,7 +106,6 @@ What have you been reading? Share in the comments or
   offensive programming can help you track down elusive firmware bugs, improve
   security, and debug efficiently in production. Memfault will also hold demos
   at the Zephyr Booth (#4-170) - come say hi! Demo schedule:
-
   - Tuesday, March 11, 12:00 - 15:00
   - Wednesday, March 12, 15:00 - 18:00
   - Thursday, March 13, 9:00 - 12:00

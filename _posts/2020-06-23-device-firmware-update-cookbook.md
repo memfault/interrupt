@@ -1,4 +1,5 @@
 ---
+date: "2020-06-23"
 title: "Device Firmware Update Cookbook"
 description: "A guide on how to build OTA DFU for your projects, as well as some
 common design pattern that are useful for implementing firmware update."
@@ -13,26 +14,28 @@ projects. Often, it is also one of the more complicated components.
 I have worked on multiple firmware update systems over the year, and every time
 I have learned something new. How do I package my images? How do I make sure I
 don't brick the device? How do I share information between my bootloader and my
-application? Little by little all firmware engineers accumulate answers to
-those questions and develop favored design patterns.
+application? Little by little all firmware engineers accumulate answers to those
+questions and develop favored design patterns.
 
 <!-- excerpt start -->
+
 In this post, I share the device firmware update architecture I would implement
 knowing everything I know now. I also highlight a few design patterns that are
 particularly useful. The example comes with a fully functional example of a
 multi-stage bootloader with DFU functionality.
+
 <!-- excerpt end -->
 
-I learned some of these lessons in this post the hard way, and I hope I can spare
-you and your colleagues a few sleepless nights spent debugging firmware update
-problems in the wild!
+I learned some of these lessons in this post the hard way, and I hope I can
+spare you and your colleagues a few sleepless nights spent debugging firmware
+update problems in the wild!
 
-> If you'd rather listen to me present this information and see some demos in action, watch
-> [this webinar recording](https://hubs.la/Q02hgRrk0)
+> If you'd rather listen to me present this information and see some demos in
+> action, watch [this webinar recording](https://hubs.la/Q02hgRrk0)
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Setup
 
@@ -40,24 +43,24 @@ All the code in this post was written for the STM32F429 MCU by ST Micro. While
 the examples run fine on the STM32F429i discovery board they were developed in
 Renode, a popular MCU emulation platform.
 
-You can find the complete code example for this blog post in the [Interrupt
-Github repository](https://github.com/memfault/interrupt/tree/master/example/fwup-architecture)
+You can find the complete code example for this blog post in the
+[Interrupt Github repository](https://github.com/memfault/interrupt/tree/master/example/fwup-architecture)
 
 ### Renode
 
 Since writing about Renode for Interrupt, I’ve been looking for an opportunity
 to use it for another project. This blog post was the perfect pretext. If you
-are not familiar with Renode, I recommend reading [my previous blog post]({% post_url 2020-03-23-intro-to-renode %}) on
-the topic.
+are not familiar with Renode, I recommend reading
+[my previous blog post](/blog/intro-to-renode) on the topic.
 
-Because we use true firmware images `.bin`'s rather than `elf` files in this post, I had to make two
-change to the Renode configuration:
+Because we use true firmware images `.bin`'s rather than `elf` files in this
+post, I had to make two change to the Renode configuration:
 
 1. I used `sysbus LoadBinary $bin 0x8000000` rather than `LoadELF` to load the
    firmware.
-2. I manually set the Vector Table Offset with `sysbus.cpu VectorTableOffset
-   0x8000000`. By default, Renode looks for the vector table at `0x0` which
-different from the default behavior of the STM32.
+2. I manually set the Vector Table Offset with
+   `sysbus.cpu VectorTableOffset    0x8000000`. By default, Renode looks for the
+   vector table at `0x0` which different from the default behavior of the STM32.
 
 **Update: As of July 2020, Renode has merged our updates to implement the AICR
 register so you can run our code on a standard Renode built**
@@ -66,12 +69,12 @@ register so you can run our code on a standard Renode built**
 resets. Cortex-M microcontrollers can be reset by writing to the AICR register,
 which was not fully implemented in the emulator. As of this writing, this change
 is still in review and not yet merged into the emulator. You can find the pull
-request [on
-Github](https://github.com/renode/renode-infrastructure/pull/15/files).~~
+request
+[on Github](https://github.com/renode/renode-infrastructure/pull/15/files).~~
 
-~~Thankfully, building our own version of Renode is relatively
-straightforward using [their
-instructions](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html).~~
+~~Thankfully, building our own version of Renode is relatively straightforward
+using
+[their instructions](https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html).~~
 
 I updated my `start.sh` script to run my home-built Renode instance rather than
 the installed binary:
@@ -89,8 +92,9 @@ You will have to update this script to point at your own `Renode.exe`.
 ### Toolchain
 
 I used the following tools to build my firmware:
-* GNU Make 4.2.1 as the build system
-* `arm-none-eabi-gcc` version 9.2.1 20191025 (release) as compiler
+
+- GNU Make 4.2.1 as the build system
+- `arm-none-eabi-gcc` version 9.2.1 20191025 (release) as compiler
 
 Rather than the STM32Cube HAL, I used an open source MCU HAL called `libopencm3`
 with excellent support for the STM32. I find it easier to use, and like that it
@@ -117,7 +121,7 @@ $ make
 After which you can call `./start.sh` to start Renode. You will need to type the
 `start` command in the Renode window to get the emulation going.
 
-![]({% img_url fwup-architecture/renode-running.png %})
+![](/img/fwup-architecture/renode-running.png)
 
 ## High-Level Architecture
 
@@ -135,23 +139,17 @@ DFU: an application that updates itself.
     margin-right: auto;
 }
 </style>
-{% blockdiag size:120x40 %}
-blockdiag {
-   // Set labels to nodes.
-   A [label = "Application"];
-   A -> A [label = "Updates", fontsize=8];
-}
-{% endblockdiag %}{:.diag1}
+<!-- blockdiag diagram removed -->{:.diag1}
 
-This is not a practical design. For one, self-modifying code is easy
-to mess up. Let's see how we might modify this architecture to get to something
-we're happy with.
+This is not a practical design. For one, self-modifying code is easy to mess up.
+Let's see how we might modify this architecture to get to something we're happy
+with.
 
 ### DFU should be separate from the application
 
 The only time I ever broke DFU on a device, I did it without changing a line of
-code related to DFU. Unbeknownst to me, our DFU processes accidentally depended on an
-uninitialized variable which up until then had always ended up being `0`.
+code related to DFU. Unbeknownst to me, our DFU processes accidentally depended
+on an uninitialized variable which up until then had always ended up being `0`.
 Inevitably a new version reshuffled the content of the stack, and all of a
 sudden our uninitialized variable held a "1". This prevented DFU from taking
 place.[^chris-dfu-debug]
@@ -172,20 +170,12 @@ application, runs it, and can update it.
     margin-right: auto;
 }
 </style>
-{% blockdiag %}
-blockdiag {
-    span_width = 100;
-    // Set labels to nodes.
-    A [label = "App Loader"];
-    B [label = "Application"];
-    A -> B [label = "Loads, Updates", fontsize=8];
-}
-{% endblockdiag %}{:.diag2}
+<!-- blockdiag diagram removed -->{:.diag2}
 
 ### DFU code should be updatable
 
 While we want to update our DFU code as little as possible, updating it should
-still be *possible*. Inevitably we will find a bug in our firmware update code
+still be _possible_. Inevitably we will find a bug in our firmware update code
 which we must fix. We may want to change our memory map to allocate more code
 space to our app, or to rotate a security key baked into our Loader.
 
@@ -204,19 +194,7 @@ All it knows how to do is update the Loader.
     margin-right: auto;
 }
 </style>
-{% blockdiag %}
-blockdiag {
-    span_width = 100;
-    // Set labels to nodes.
-    A [label = "App Loader"];
-    B [label = "Application"];
-    A -> B [label = "Loads, Updates", fontsize=8];
-
-    E [label = "Updater"];
-    A -> E [label = "Loads, Updates", fontsize=8];
-    E -> A [label = "Updates", fontsize=8];
-}
-{% endblockdiag %}{:.diag3}
+<!-- blockdiag diagram removed -->{:.diag3}
 
 ### DFU should use minimal code space
 
@@ -236,42 +214,19 @@ is that our Loader update flow becomes more complicated as we need to do a DFU
 to get the Updater, then another to update the loader, then a third to load the
 application back. In other words:
 
-Go to Loader → DFU Updater in the Application's place → Load Updater →
-DFU the new Loader → Reboot into Loader → DFU the Application back in its slot
+Go to Loader → DFU Updater in the Application's place → Load Updater → DFU the
+new Loader → Reboot into Loader → DFU the Application back in its slot
 
 We can tolerate this complexity because it should not be used often.
 
-{% blockdiag %}
-blockdiag {
-    span_width = 100;
-    // Set labels to nodes.
-    A [label = "App Loader"];
-    B [label = "Application"];
-    A -> B [label = "Loads, Updates", fontsize=8];
-
-    E [label = "Updater"];
-    A -> E [label = "Loads, Updates", fontsize=8];
-    E -> A [label = "Updates", fontsize=8];
-
-    group {
-        label = "Slot 1";
-        color = "LightPink";
-        A;
-    }
-    group {
-        label = "Slot 2";
-        color = "LemonChiffon";
-        B; E;
-    }
-}
-{% endblockdiag %}{:.diag3}
+<!-- blockdiag diagram removed -->{:.diag3}
 
 ### DFU failures should not brick the device
 
-This one should be obvious. Whether there is a bug in our DFU process, or a power loss event while we are
-writing firmware, the device should be able to recover. It may operate in a
-degraded mode for a bit, but it should at least be able to update itself back to
-a good state.
+This one should be obvious. Whether there is a bug in our DFU process, or a
+power loss event while we are writing firmware, the device should be able to
+recover. It may operate in a degraded mode for a bit, but it should at least be
+able to update itself back to a good state.
 
 Our design already does a reasonable job of this: if we lose power in the middle
 of an Application update, we can reboot into our Loader and start our update
@@ -295,38 +250,7 @@ is found in the "Application" slot.
     margin-right: auto;
 }
 </style>
-{% blockdiag size:120x40 %}
-blockdiag {
-    span_width = 100;
-    // Set labels to nodes.
-    C [label = "Bootloader"];
-    A [label = "App Loader"];
-    B [label = "Application"];
-    C -> A [label = "Loads", fontsize=8];
-    A -> B [label = "Ld, Updt", fontsize=8];
-
-    E [label = "Updater"];
-    A -> E [label = "Ld, Updt", fontsize=8];
-    E -> A [label = "Updates", fontsize=8];
-    C -> E [label = "Loads", style=dashed, fontsize=8];
-
-    group {
-        label = "Slot 0";
-        color = "PaleGreen";
-        C;
-    }
-    group {
-        label = "Slot 1";
-        color = "LightPink";
-        A;
-    }
-    group {
-        label = "Slot 2";
-        color = "LemonChiffon";
-        B; E;
-    }
-}
-{% endblockdiag %}{:.diag4}
+<!-- blockdiag diagram removed -->{:.diag4}
 
 In summary, we end up with four programs:
 
@@ -343,9 +267,8 @@ the pitfalls of DFU without consuming too much code space.
 ## Design Patterns & Recipes
 
 I have put together a full implementation of the Bootloader, the Loader, and the
-Application in the [Interrupt
-Github
-repository](https://github.com/memfault/interrupt/tree/master/example/fwup-architecture).
+Application in the
+[Interrupt Github repository](https://github.com/memfault/interrupt/tree/master/example/fwup-architecture).
 While discussing every line in detail is outside of the scope of this
 conversation, I want to highlight a few patterns I have learned over the years.
 These include ways to package firmware images, write them to flash, share data
@@ -353,14 +276,11 @@ between programs, and more!
 
 This post builds upon many ideas previously written about on Interrupt. If you
 haven't read them already, I recommend the following:
-* [How to Write a Bootloader from Scratch]({% post_url
-  2019-08-13-how-to-write-a-bootloader-from-scratch %})
-* [How to Write Linker Scripts for Firmware]({% post_url
-  2019-06-25-how-to-write-linker-scripts-for-firmware %})
-* [GNU Build IDs for Firmware]({% post_url 2019-05-29-gnu-build-id-for-firmware
-  %})
-* [Building a Tiny CLI Shell for Tiny Firmware]({% post_url
-  2020-06-09-firmware-shell %})
+
+- [How to Write a Bootloader from Scratch](/blog/how-to-write-a-bootloader-from-scratch)
+- [How to Write Linker Scripts for Firmware](/blog/how-to-write-linker-scripts-for-firmware)
+- [GNU Build IDs for Firmware](/blog/gnu-build-id-for-firmware)
+- [Building a Tiny CLI Shell for Tiny Firmware](/blog/firmware-shell)
 
 ### Image Metadata
 
@@ -396,7 +316,7 @@ typedef struct __attribute__((packed)) {
 The contents of that header will vary per application, but you must include:
 
 1. A way to indicate that the header is valid (here we used a constant in
-`image_magic`)
+   `image_magic`)
 2. A version for the header, and
 3. The address of the start of your vector table.
 
@@ -468,14 +388,14 @@ CFLAGS += $(foreach d,$(DEFINES),-D$(d))
 The `GIT_SHA` macro can then be called in our code to get the short (7-char)
 hash as a string.
 
-Some header information can only be calculated *after* the firmware has been
+Some header information can only be calculated _after_ the firmware has been
 compiled and linked. For example, the length of the binary, its CRC, or its
 cryptographic signature. To add it to the header, we must edit the binary
 directly.
 
 This is best done with a simple Python script. Chris whipped one up for my
-example which you can find [alongside the
-code](https://github.com/memfault/interrupt/blob/master/example/fwup-architecture/patch_image_header.py).
+example which you can find
+[alongside the code](https://github.com/memfault/interrupt/blob/master/example/fwup-architecture/patch_image_header.py).
 The code calculates the size and CRC for the binary and adds those values to the
 header.
 
@@ -606,8 +526,8 @@ void image_start(const image_hdr_t *hdr) {
 }
 ```
 
-If no image is found, the loader should go into DFU mode and waits for a new image to
-be transferred.
+If no image is found, the loader should go into DFU mode and waits for a new
+image to be transferred.
 
 > Note: The `VTOR` register is available on the Cortex-M0+,M3,M4,M7, but not on
 > the older M0. Unfortunately, this makes building a bootloader much more
@@ -616,9 +536,9 @@ be transferred.
 ### Writing & Committing Images
 
 Writing a new firmware image is the whole purpose of this exercise, so how do we
-do the deed? We won't cover *transferring* the image over to your firmware,
-that varies greatly depending on your use, but once the transfer has occurred
-we must:
+do the deed? We won't cover _transferring_ the image over to your firmware, that
+varies greatly depending on your use, but once the transfer has occurred we
+must:
 
 1. Write the image
 2. Verify it, and
@@ -661,9 +581,9 @@ We've covered how to verify an image in the previous section. Here again, we may
 check the CRC, or verify a cryptographic signature.
 
 If at any point the update is interrupted, the header will be missing and our
-Loader will refuse to load the image. Once everything checks out, we *commit* the
-image by writing the header. This marks the image as valid and allows it to be
-loaded.
+Loader will refuse to load the image. Once everything checks out, we _commit_
+the image by writing the header. This marks the image as valid and allows it to
+be loaded.
 
 Here is my implementation of the `commit` step, it's nothing too complicated:
 
@@ -681,10 +601,10 @@ int dfu_commit_image(image_slot_t slot, const image_hdr_t *hdr) {
 }
 ```
 
-Just as writing the header marks an image as valid, we can invalidate an
-image simply by zeroing it out. This is much faster than erasing the whole
-flash, and won't leave us in a half-working state (e.g. having erased only half
-of the image).
+Just as writing the header marks an image as valid, we can invalidate an image
+simply by zeroing it out. This is much faster than erasing the whole flash, and
+won't leave us in a half-working state (e.g. having erased only half of the
+image).
 
 ```c
 int dfu_invalidate_image(image_slot_t slot) {
@@ -712,8 +632,8 @@ remains powered, the SRAM will hold its state. For short durations, you can
 treat it as non-volatile storage.
 
 The simplest way to carve out an area of RAM to be shared across our programs is
-to declare it in a shared linker script. We've [covered linker scripts on
-Interrupt]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %}),
+to declare it in a shared linker script. We've
+[covered linker scripts on Interrupt](/blog/how-to-write-linker-scripts-for-firmware),
 so I won't detail the syntax again. This is what it looks like:
 
 ```
@@ -738,7 +658,8 @@ linker script with the `INCLUDE` directive.
 Now that we have a region of RAM defined, we can define a structure for it. You
 will want that structure to be packed to guard against alignment mismatches
 across your programs as you update compiler flags and versions. Here again, we
-use the `section` attribute to assign our symbol to the `.shared_memory` section.
+use the `section` attribute to assign our symbol to the `.shared_memory`
+section.
 
 ```c
 // shared_memory.c
@@ -752,12 +673,13 @@ volatile shared_memory_t shared_memory __attribute__((section(".shared_memory"))
 
 In the event of power loss, RAM will be left in an indeterminate state. We'll
 need to detect this and reset the shared memory when it happens. On the STM32,
-the RCC peripheral can tell us whether or not we lost power. When power is
-lost, we'll erase the magic value at the beginning of our struct so that the
-rest of our code knows not to trust the shared memory region. Stick the
-following code somewhere in your early init sequence.
+the RCC peripheral can tell us whether or not we lost power. When power is lost,
+we'll erase the magic value at the beginning of our struct so that the rest of
+our code knows not to trust the shared memory region. Stick the following code
+somewhere in your early init sequence.
 
 (thank you to interrupt reader dreiss for sending us this code snippet)
+
 ```
 if (RCC->CSR & RCC_CSR_PORRSTF) {
     // Power loss has occurred.
@@ -796,7 +718,7 @@ void shared_memory_set_dfu_requested(bool yes) {
 }
 ```
 
-Using the shell from [Tyler's last post on CLI's]({% post_url 2020-06-09-firmware-shell %}), I
+Using the shell from [Tyler's last post on CLI's](/blog/firmware-shell), I
 created a shell command in the Application to set that flag and reboot:
 
 ```c
@@ -917,12 +839,20 @@ firmware update that we did not cover? Let us know! And if you see anything
 you'd like to change, don't hesitate to submit a pull request or open an issue
 on [Github](https://github.com/memfault/interrupt)
 
-> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
+> Interested in learning more device firmware update best practices?
+> [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 {:.no_toc}
+
 ## References
 
-[^chris-dfu-debug]: This is not the end to this story. My cofounder Chris eventually found a set of inputs to provide to the device which would set the stack just so and allow us to update out of that state. Phew!
-[^pebble-3]: At the time, we wrote a blog post about it. You can still read it on the [Internet Archive](https://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/)
+[^chris-dfu-debug]:
+    This is not the end to this story. My cofounder Chris eventually found a set
+    of inputs to provide to the device which would set the stack just so and
+    allow us to update out of that state. Phew!
+
+[^pebble-3]:
+    At the time, we wrote a blog post about it. You can still read it on the
+    [Internet Archive](https://web.archive.org/web/20160308073714/https://blog.getpebble.com/2015/12/09/3ontintin/)

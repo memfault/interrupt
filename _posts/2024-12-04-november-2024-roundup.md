@@ -1,4 +1,5 @@
 ---
+date: "2024-12-04"
 title: "What we've been reading in November (2024)"
 description:
   Here are the articles, videos, and tools we've been excited about in November

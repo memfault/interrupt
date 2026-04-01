@@ -1,4 +1,5 @@
 ---
+date: "2024-10-24"
 title: Publishing the Memfault SDK as an ESP-IDF Component
 description: How we shipped our SDK as an ESP-IDF component
 author: noah
@@ -19,9 +20,9 @@ projects.
 > _[Listen to Noah on Interrupt Live](https://www.youtube.com/watch?v=UPFhUrQa1bs)
 > talk about the content and motivations behind writing this article._
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What are we talking about here
 
@@ -385,9 +386,9 @@ Thanks for reading!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

@@ -1,4 +1,5 @@
 ---
+date: "2025-01-29"
 title: Monitoring a Low-Power Wireless Network Based on Smart Mesh IP
 description:
   Tutorial of Application Performance Monitoring (APM) using Zephyr, nRF52, an
@@ -44,9 +45,9 @@ scalable and allows the creation of a customized group of metrics.
 > 👉 A full white paper[^1] was written on this topic -- take a look if you are
 > interested in diving into the details!
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Technical Background
 
@@ -65,7 +66,7 @@ exchange frames, they send subsequent frames at different frequencies, resulting
 in channel hopping. Therefore, the 2.4 GHz band is cut into 16 channels [^4]:
 
 <p align="center">
- <img width="80%" src="{% img_url monitoring-low-power-smart-mesh/802.15.4-channel-spectra.png %}" alt="Channel spectra for 802.15.4" />
+ <img width="80%" src="/img/monitoring-low-power-smart-mesh/802.15.4-channel-spectra.png" alt="Channel spectra for 802.15.4" />
 </p>
 
 The idea is that if external interference or multi-path fading causes the
@@ -95,7 +96,7 @@ be the major KPI of our system, the 6TiSCH architecture is demonstrated as the
 underlying model in this blog post.
 
 <p align="center">
- <img width="80%" src="{% img_url monitoring-low-power-smart-mesh/smart-mesh-network-layers.png %}" alt="Diagram of smart mesh layers" />
+ <img width="80%" src="/img/monitoring-low-power-smart-mesh/smart-mesh-network-layers.png" alt="Diagram of smart mesh layers" />
 </p>
 
 ## Hardware Setup
@@ -105,7 +106,7 @@ with internet connection, and a number of motes forming a wireless network based
 on a mesh topology [^5]:
 
 <p align="center">
- <img width="60%" src="{% img_url monitoring-low-power-smart-mesh/smart-mesh-ip-starter-kit-diagram.png %}" alt="Mesh architecture diagram" />
+ <img width="60%" src="/img/monitoring-low-power-smart-mesh/smart-mesh-ip-starter-kit-diagram.png" alt="Mesh architecture diagram" />
 </p>
 
 The motes consist of a networking chip (LTC5800) and an application chip.
@@ -121,7 +122,7 @@ battery voltage supply, and size.
 ### Option 1: nRF52840DK + DC9003A-B
 
 <p align="center">
- <img width="50%" src="{% img_url monitoring-low-power-smart-mesh/nrf52840-and-dc9003a-b.png %}" alt="nRF52840 plus DC9003A-B board" />
+ <img width="50%" src="/img/monitoring-low-power-smart-mesh/nrf52840-and-dc9003a-b.png" alt="nRF52840 plus DC9003A-B board" />
 </p>
 
 The motes in Option 1 consist of an nRF52840-DK and a SmartMesh IP mote
@@ -139,7 +140,7 @@ this hardware setup is large, fragile, and cumbersome.
 ### Option 2: AIOT Play
 
 <p align="center">
- <img width="50%" src="{% img_url monitoring-low-power-smart-mesh/aiot-play-board.png %}" alt="AIOT play board" />
+ <img width="50%" src="/img/monitoring-low-power-smart-mesh/aiot-play-board.png" alt="AIOT play board" />
 </p>
 
 The Inria-AIO team has therefore designed the “AIOT Play” board [^6]. The two
@@ -260,7 +261,7 @@ in 7 B. In total, the Memfault chunk then has a payload size of 43 B, from which
 39 B is the actual payload.
 
 <p align="center">
- <img width="80%" src="{% img_url monitoring-low-power-smart-mesh/memfault-chunk-payload.png %}" alt="Diagram breaking down a Memfault chunk payload" />
+ <img width="80%" src="/img/monitoring-low-power-smart-mesh/memfault-chunk-payload.png" alt="Diagram breaking down a Memfault chunk payload" />
 </p>
 
 Besides the metrics, Metadata and Heartbeat Information fill the payload block.
@@ -296,7 +297,7 @@ with the heartbeat rate and that the application payload is already part of the
 simulated payload.
 
 <p align="center">
- <img width="60%" src="{% img_url monitoring-low-power-smart-mesh/current-v-time-v-hops.png %}" alt="Graph of current vs. time (with # of hops graphed via different lines)" />
+ <img width="60%" src="/img/monitoring-low-power-smart-mesh/current-v-time-v-hops.png" alt="Graph of current vs. time (with # of hops graphed via different lines)" />
 </p>
 
 We observe that the motes consume less when having a larger hop-depth.
@@ -320,7 +321,7 @@ increasing with growing packet size. We now fix the heartbeat reporting interval
 length to 20s and vary the transmitted payload size.
 
 <p align="center">
- <img width="60%" src="{% img_url monitoring-low-power-smart-mesh/current-v-payload-size.png %}" alt="Graph of current vs. payload size (with # of hops graphed via different lines)" />
+ <img width="60%" src="/img/monitoring-low-power-smart-mesh/current-v-payload-size.png" alt="Graph of current vs. payload size (with # of hops graphed via different lines)" />
 </p>
 
 Obviously, the energy saved by choosing smaller heartbeat interval lengths is an
@@ -344,9 +345,9 @@ seems well suited for monitoring these kinds of networks.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

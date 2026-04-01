@@ -1,4 +1,5 @@
 ---
+date: "2024-12-18"
 title: WSL2 for Firmware Development
 description: Tutorial for setting up embedded firmware development in WSL2.
 author: jphutchins
@@ -15,20 +16,20 @@ for Linux (WSL2).
 
 WSL2 provides a convenient and stable Linux development environment for working
 on embedded systems firmware. If you're curious about toolchain performance,
-check out [this comparison of firmware development
-environments]({% link _posts/2024-10-10-comparing-fw-dev-envs.md %}), but the
-summary is that WSL2 is about 2x the speed of Windows and similar to "bare
-metal" Linux. Setup time for WSL2 will vary based on your Windows configuration,
-typically taking 10 to 30 minutes.
+check out
+[this comparison of firmware development environments](/blog/comparing-fw-dev-envs),
+but the summary is that WSL2 is about 2x the speed of Windows and similar to
+"bare metal" Linux. Setup time for WSL2 will vary based on your Windows
+configuration, typically taking 10 to 30 minutes.
 
 > This article is based on a living document maintained by
 > [Intercreate](https://www.intercreate.io/) and we would welcome feedback and
 > contributions at
 > [GitHub](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md)!
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Enabling Virtualization Technology
 
@@ -409,9 +410,9 @@ We'd love to hear from you! Do you have any tips or tricks for improving WSL2?
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

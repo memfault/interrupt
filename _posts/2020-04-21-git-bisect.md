@@ -1,59 +1,62 @@
 ---
+date: "2020-04-21"
 title: "Hunting Bugs with Git Bisect"
-description: "An introduction to using git bisect against a set of changes as a bug-hunting tool, followed by some deeper techniques to speed up the process of tracking down when unintended behavior is introduced"
+description:
+  "An introduction to using git bisect against a set of changes as a bug-hunting
+  tool, followed by some deeper techniques to speed up the process of tracking
+  down when unintended behavior is introduced"
 author: shiva
 image: /img/git-bisect/git-bisect.png
 tags: [debugging, git]
 ---
 
-It’s one of those nights- your project has been moving along at breakneck
-pace, with all of its contributors committing refactors, improvements, and
-bugfixes. You’ve been using git commands so much recently that you
-can rely on your fingers’ muscle memory to do all of your git operations for
-you. All of a sudden, you get that dreaded message from a teammate:
+It’s one of those nights- your project has been moving along at breakneck pace,
+with all of its contributors committing refactors, improvements, and bugfixes.
+You’ve been using git commands so much recently that you can rely on your
+fingers’ muscle memory to do all of your git operations for you. All of a
+sudden, you get that dreaded message from a teammate:
 
 > The firmware flasher is broken, and we don’t know when it broke
 
 If you’re anything like me, your reaction looks something like this.
 
 <figure>
-  <img src="{% img_url git-bisect/gambino.gif %}" />
+  <img src="/img/git-bisect/gambino.gif" />
   <figcaption>Donald Glover hates bugs too, probably (Source: Tenor Gif)</figcaption>
 </figure>
 
 Your brain starts swirling. “How did this break? What could’ve possibly caused
 that? Am I that far off my game that I somehow goofed this?”
 
-You start to look around at the codebase, and nothing’s popping out to you as
-an obvious cause of the bug. You run `git log --oneline` to look through the
-recent commit history, but your heart starts to sink because you actually don’t
-know when the bug might’ve been introduced. You ask your team in Slack “Does
-anyone know when this broke?” You get more desperate and start checking out
-random commits to see if it works. No luck.
+You start to look around at the codebase, and nothing’s popping out to you as an
+obvious cause of the bug. You run `git log --oneline` to look through the recent
+commit history, but your heart starts to sink because you actually don’t know
+when the bug might’ve been introduced. You ask your team in Slack “Does anyone
+know when this broke?” You get more desperate and start checking out random
+commits to see if it works. No luck.
 
 What do you do now? If only there was a tool you could use to find where things
 broke in an organized fashion...
 
-This is where the concept of bisecting comes to the rescue. Regardless of
-what version control system you are using there are options for
-bisecting. In this article, we will be using git, since it has a bisect
-feature built-in. If you use a different system, check the References section
-for bisecting solutions for Mercurial[^mercurial_bisect], CVS[^cvs_bisect], or
-SVN[^svn_bisect].
+This is where the concept of bisecting comes to the rescue. Regardless of what
+version control system you are using there are options for bisecting. In this
+article, we will be using git, since it has a bisect feature built-in. If you
+use a different system, check the References section for bisecting solutions for
+Mercurial[^mercurial_bisect], CVS[^cvs_bisect], or SVN[^svn_bisect].
 
 <!-- excerpt start -->
 
-This article is a personal story of a time I had to run a bisect on a repository,
-and the thoughts that went through my mind as it happened.
-I touch on how to find a bug using git’s bisect feature and go over some easy strategies
-to narrow your search space as much as possible. Lastly, I detail some ways of speeding up that
-search through git bisect’s automation options.
+This article is a personal story of a time I had to run a bisect on a
+repository, and the thoughts that went through my mind as it happened. I touch
+on how to find a bug using git’s bisect feature and go over some easy strategies
+to narrow your search space as much as possible. Lastly, I detail some ways of
+speeding up that search through git bisect’s automation options.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Setting the Scene
 
@@ -64,10 +67,10 @@ To start, let’s introduce the system we’re using:
 - A microcontroller with internal RAM
 - A NOR flash chip with 4MiB of memory
 
-In this particular instance, I was trying to bring up a new system where the
-NOR flash would be the boot medium. I could not memory map it, and
-therefore I needed to create a way of passing data through the system’s
-internal RAM into NOR flash.
+In this particular instance, I was trying to bring up a new system where the NOR
+flash would be the boot medium. I could not memory map it, and therefore I
+needed to create a way of passing data through the system’s internal RAM into
+NOR flash.
 
 Doesn’t sound hard, right? I could use a debugger to write internal RAM, and
 then use a small bit of firmware to write out data chunks to the flash chip.
@@ -75,8 +78,8 @@ Sounds reasonable enough. So the system would look something like this:
 
 - A small firmware binary that can receive commands, and use various locations
   in memory for the data to be read/written, as well as any relevant metadata
-- A python script that could interface with the debugger to read and write
-  these memory locations in the chip.
+- A python script that could interface with the debugger to read and write these
+  memory locations in the chip.
 
 Using this system involves 5 main steps:
 
@@ -89,14 +92,14 @@ Using this system involves 5 main steps:
 ### The Problem
 
 Somewhere between version 1.0 and the current head of the repository, my
-teammates started reporting that the verify step (Step 5) from above was
-failing unexpectedly. The python script was reporting failures where there was
-no issue before. Although there were few commits, such issues can be very
-difficult to find if not approached methodically. Trying to
-find issues by testing commits one by one tends to look like this:
+teammates started reporting that the verify step (Step 5) from above was failing
+unexpectedly. The python script was reporting failures where there was no issue
+before. Although there were few commits, such issues can be very difficult to
+find if not approached methodically. Trying to find issues by testing commits
+one by one tends to look like this:
 
 <figure>
-  <img src="{% img_url git-bisect/divide_and_conquer.gif %}" />
+  <img src="/img/git-bisect/divide_and_conquer.gif" />
   <figcaption>Your life without git bisect (Source: Giphy)</figcaption>
 </figure>
 
@@ -111,18 +114,18 @@ times when the search space is large and the root cause of a change in behavior
 is not clear.
 
 <figure>
-  <img src="{% img_url git-bisect/gordon_ramsay.gif %}" />
+  <img src="/img/git-bisect/gordon_ramsay.gif" />
   <figcaption>Gordon Ramsay’s advice doesn’t just apply to the kitchen (Source:
 Giphy)</figcaption>
 </figure>
 
 ### What's the Idea?
 
-I’ll start by explaining the concept theoretically, and later on, we’ll apply
-it to a real-world example of bisecting my flasher example further down in this
+I’ll start by explaining the concept theoretically, and later on, we’ll apply it
+to a real-world example of bisecting my flasher example further down in this
 article. This is one of those concepts that I found far easier to learn and
-understand by example, so if my theoretical description is lackluster,
-hopefully going through a real-life example will help
+understand by example, so if my theoretical description is lackluster, hopefully
+going through a real-life example will help
 
 Git bisect works by taking in the two most important pieces of information that
 you might have in such a situation: when did you know things were good, and
@@ -132,14 +135,14 @@ between, starting with the midpoint between the “good” and “bad” commits
 concept of a binary search is nothing new:
 
 <figure>
-  <img src="{% img_url git-bisect/binary_search.jpg %}" />
+  <img src="/img/git-bisect/binary_search.jpg" />
   <figcaption>Finding a G using a binary search (Source: TutorialsPoint)</figcaption>
 </figure>
 
 A git bisect is very similar to this visual, if you imagine letter A is your
 good commit, and letter R is your bad commit. At each point in the binary
-search, git will checkout the commit, and wait for you to run whatever tests
-you need to run. In this case, we checkout commit "I" and test it. Once you have
+search, git will checkout the commit, and wait for you to run whatever tests you
+need to run. In this case, we checkout commit "I" and test it. Once you have
 determined if the commit is good or bad, you tell git as such. Now, git knows
 the following:
 
@@ -152,8 +155,7 @@ As a result, you have now effectively cut the whole search space in half, and
 can continue to the midpoint of the remaining search space. This procedure
 repeats on to commit E, to commit G, and finally to either F or H depending on
 whether G is good or bad. Once you’ve finished searching, you have isolated the
-commit that introduced the undesired behavior and can finally see what
-happened.
+commit that introduced the undesired behavior and can finally see what happened.
 
 ### Typical/Important Commands
 
@@ -162,8 +164,8 @@ minimum you would need for a bisect.
 
 - `git bisect start`: puts git into bisect mode, awaiting further bisect
   commands
-- `git bisect bad <commit hash or tag>`: Informs bisect which commit is known
-  to be bad
+- `git bisect bad <commit hash or tag>`: Informs bisect which commit is known to
+  be bad
 - `git bisect good <commit hash or tag>`: Informs bisect which commit is known
   to be good
 - `git bisect reset`: exits bisect mode, returns you to normal git mode.
@@ -176,8 +178,7 @@ isn’t working. Let’s go through this bisect and see what happened.
 ### Setting Up the Bisect
 
 Let’s look at my commit history first. I know this was good at v1.0, and bad at
-HEAD (AKA, my latest commit), so let’s get a shortlist of everything in
-between.
+HEAD (AKA, my latest commit), so let’s get a shortlist of everything in between.
 
 ```
 >>> git log --pretty=oneline v1.0~1..HEAD
@@ -378,8 +379,8 @@ Flashing successful!
 e0c258c05343202c53a294ba59704bb02565c9d5 is the first bad commit
 ```
 
-Cool, we found the bad commit, and if we look at our world one last time, we
-see exactly where things went bad.
+Cool, we found the bad commit, and if we look at our world one last time, we see
+exactly where things went bad.
 
 <div class='highlighter-rouge'>
 <div class='highlight'>
@@ -428,12 +429,12 @@ Ah, of course! This is an improper checking of `memcmp`’s return code. No wond
 the verification was failing. Looking at the reference for `memcmp`, we should
 get 0 as the return code if the contents are the same. We capture this, but
 instead of returning that directly, we return a boolean. The boolean value
-`true` is usually nonzero under the hood, and thus, this function would return
-a nonzero value if the memory matched. Our python script only considers our
+`true` is usually nonzero under the hood, and thus, this function would return a
+nonzero value if the memory matched. Our python script only considers our
 verification successful if we return a zero return code.
 
 <figure>
-  <img src="{% img_url git-bisect/colbert.gif %}" />
+  <img src="/img/git-bisect/colbert.gif" />
   <figcaption>There is not enough facepalm for a bug like this (Source: Giphy)</figcaption>
 </figure>
 
@@ -488,8 +489,8 @@ now only bisect commits that affected that folder.
 git bisect start -- c_flasher/
 ```
 
-You can also specify specific files to investigate if you have an idea where
-the bug might be.
+You can also specify specific files to investigate if you have an idea where the
+bug might be.
 
 #### Choosing the Correct Types of Commits
 
@@ -503,13 +504,13 @@ bisect, it can be a bit problematic. Your master branch could look something
 like the following:
 
 <figure>
-  <img src="{% img_url git-bisect/merge_commit.png %}" />
+  <img src="/img/git-bisect/merge_commit.png" />
   <figcaption>(Source: Medium- @haydar_ai)</figcaption>
 </figure>
 
-Unfortunately, if you’re trying to track down when the main branch (develop,
-in this case) went bad, you’re in for a world of hurt here. Git bisect sees all
-of these commits, including those on the feature branches, as fair game for a
+Unfortunately, if you’re trying to track down when the main branch (develop, in
+this case) went bad, you’re in for a world of hurt here. Git bisect sees all of
+these commits, including those on the feature branches, as fair game for a
 bisect. If you’re just looking for when develop broke, these extraneous commits
 are only going to cause you pain, as you only want to see the “merge commits”,
 which are what git creates whenever develop is changed.
@@ -536,7 +537,7 @@ just running the same script every time, looking for a success or failure
 message, telling git, and then repeating the procedure until we were done.
 
 <figure>
-  <img src="{% img_url git-bisect/forrest.gif %}" />
+  <img src="/img/git-bisect/forrest.gif" />
   <figcaption>Automation can help you find bugs at the speed of Forrest
 (Source: Giphy)</figcaption>
 </figure>

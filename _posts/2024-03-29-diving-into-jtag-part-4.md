@@ -1,4 +1,5 @@
 ---
+date: "2024-03-29"
 title: Diving into JTAG — BSDL (Part 4)
 description: "An overview of BSDL files"
 author: zamuhrishka
@@ -10,14 +11,14 @@ tags: [arm, cortex-m, mcu, debugging, debugger]
 In the previous article of this series, we briefly touched on how `.bsd` files
 written in Boundary Scan Description Language (BSDL) describe the structure of
 the boundary scan chain and the instruction set. In this article, we will
-examine this language's syntax more closely before seeing how `.bsd` files are leveraged
-in JTAG testing in the next article.
+examine this language's syntax more closely before seeing how `.bsd` files are
+leveraged in JTAG testing in the next article.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 > **Note**: In this series of articles, I discuss JTAG from the firmware
 > engineer's point of view and to the extent necessary for the firmware
@@ -365,9 +366,9 @@ for firmware engineers.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

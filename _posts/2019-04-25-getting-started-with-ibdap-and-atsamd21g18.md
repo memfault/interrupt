@@ -1,4 +1,5 @@
 ---
+date: "2019-04-25"
 title: "Programming the ATSAMD21 with IBDAP"
 description: "How to flash the Atmel SAM D21 using the IBDAP programmer"
 author: francois
@@ -6,11 +7,13 @@ tags: [cortex-m]
 ---
 
 <!-- excerpt start -->
-In the process of porting a blog post from the retired [Arduino M0
-Pro](https://store.arduino.cc/usa/arduino-m0-pro) to Adafruit's excellent
-[Metro M0
-Express](https://www.adafruit.com/product/3505), I ran into a few issues and scant amount of documentation. I'm writing this for
-the next poor soul wrestling with these systems.
+
+In the process of porting a blog post from the retired
+[Arduino M0 Pro](https://store.arduino.cc/usa/arduino-m0-pro) to Adafruit's
+excellent [Metro M0 Express](https://www.adafruit.com/product/3505), I ran into
+a few issues and scant amount of documentation. I'm writing this for the next
+poor soul wrestling with these systems.
+
 <!-- excerpt end -->
 
 Note: I'm a MacOS user, but the procedure below will work fine on Linux /
@@ -23,9 +26,9 @@ programmer from Adafruit. This is a simple CMSIS-DAP device based on the
 LPC11u35 chipset.
 
 In order to work as a CMSIS-DAP device, the dongle needs to be flashed with a
-firmware from the supplier. Unfortunately, the company behind the dongle seems to have gone out of business.
-Its documentation, firmware binaries, and github repositories have all vanished
-from the internet.
+firmware from the supplier. Unfortunately, the company behind the dongle seems
+to have gone out of business. Its documentation, firmware binaries, and github
+repositories have all vanished from the internet.
 
 I found out via a forum post that mbed's
 [SWDAP](https://os.mbed.com/platforms/SWDAP-LPC11U35/) firmware precompiled for
@@ -33,22 +36,26 @@ LPC1768 works fine on this board. From there, the steps were relatively
 straightforward:
 
 1. Download the pre-built firmware.
+
 ```terminal
 $ wget https://os.mbed.com/media/uploads/chris/lpc11u35_swdap_lpc1768_if_crc.bin
 ```
+
 2. Connect the dongle over USB.
 3. Put the dongle in DFU mode by pressing both the RESET and ISP buttons. It
    should now appear as a USB drive named "CRP DISABLD".
-3. Copy the firmware over to the drive. On my Mac this was best achieved with
+4. Copy the firmware over to the drive. On my Mac this was best achieved with
    `dd`.
+
 ```terminal
 $ dd if=lpc11u35_swdap_lpc1768_if_crc.bin of=/Volumes/CRP\ DISABLD/firmware.bin
 conv=notrunc
 ```
+
 Note that simply dragging the firmware over did not work because it fits exactly
-within the flash and OSX wants some overhead, erroring out with "not enough space".
-4. Reset the dongle by pressing the RESET button.
-5. Verify that it now enumerates as a USB drive named "DAPLINK".
+within the flash and OSX wants some overhead, erroring out with "not enough
+space". 4. Reset the dongle by pressing the RESET button. 5. Verify that it now
+enumerates as a USB drive named "DAPLINK".
 
 You are now the proud owner of a functional IBDAP programmer!
 
@@ -67,13 +74,14 @@ Licensed under GNU GPL v2
 For bug reports, read
         http://openocd.org/doc/doxygen/bugs.html
 ```
+
 Huzzah!
 
 ## Flashing the atsamd21g18
 
 Both the Arduino M0 pro and the Metro M0 Express boards come with fancy
-bootloaders that let you [update your firmware over
-USB](https://learn.adafruit.com/adafruit-metro-m0-express-designed-for-circuitpython/uf2-bootloader-details).
+bootloaders that let you
+[update your firmware over USB](https://learn.adafruit.com/adafruit-metro-m0-express-designed-for-circuitpython/uf2-bootloader-details).
 Most people will be thrilled to use that.
 
 If - like me - you're trying to build your own bootloader, things get a bit more
@@ -123,8 +131,8 @@ reset
 shutdow
 ```
 
-These are all general openocd command documented [on their
-website](http://openocd.org/doc/html/General-Commands.html).
+These are all general openocd command documented
+[on their website](http://openocd.org/doc/html/General-Commands.html).
 
 Not so fast...
 
@@ -143,11 +151,12 @@ It turns out our MCU can write protect bootloader pages, so that a firmware bug
 does not overwrite the bootloader and brick the device. You can read all about
 it in section 9.4 of the
 [SAMD20 family datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/60001504B.pdf).
-Typically, boot protection can be overcome with a chip erase, but that did not do the trick
-here.
+Typically, boot protection can be overcome with a chip erase, but that did not
+do the trick here.
 
-To disable it, we need to zero out the `BOOTPROT` bits (0:2) in the NVM User Row,
-which is a fancy name for a non-volatile, 64-bit register at address `0x804000`.
+To disable it, we need to zero out the `BOOTPROT` bits (0:2) in the NVM User
+Row, which is a fancy name for a non-volatile, 64-bit register at address
+`0x804000`.
 
 Conveniently, openOCD has a MCU specific command just for this, documented
 [here](http://openocd.org/doc-release/html/Flash-Commands.html)! Let's add it to
@@ -190,5 +199,3 @@ verified 1252 bytes in 0.207606s (5.889 KiB/s)
 ** Resetting Target **
 shutdown command invoked
 ```
-
-

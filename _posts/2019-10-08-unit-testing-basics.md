@@ -1,4 +1,5 @@
 ---
+date: "2019-10-08"
 title: Embedded C/C++ Unit Testing Basics
 description:
   An overview of unit testing embedded software and firmware. Topics covered
@@ -30,12 +31,12 @@ framework.
 
 <!-- excerpt end -->
 
-This is the second post in our [Building Better Firmware series]({% tag_url better-firmware %}),
-following the [post]({% post_url 2019-09-17-continuous-integration-for-firmware %})
-about Continuous Integration for firmware projects, which is a wonderful pre-cursor
-to this post.
+This is the second post in our
+[Building Better Firmware series](/tag/better-firmware), following the
+[post](/blog/continuous-integration-for-firmware) about Continuous Integration
+for firmware projects, which is a wonderful pre-cursor to this post.
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Unit Testing Overview
 
@@ -105,7 +106,7 @@ set up expectations up front.
    leave software stability to unit tests. If time allows, then build these
    types of tests.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 ## Framework-less Unit Tests
 
@@ -454,8 +455,8 @@ We are not going to cover examples of mocks and how to implement them (the topic
 is big enough for another post), but some pseudo code is shown below to give an
 understanding:
 
-> Learn more about mocks in our separate post, [Unit Testing with
-> Mocks]({% post_url 2020-05-12-unit-test-mocking %}).
+> Learn more about mocks in our separate post,
+> [Unit Testing with Mocks](/blog/unit-test-mocking).
 
 ```c++
 
@@ -1138,7 +1139,8 @@ tests, so you can be sure that the piece of code was tested in some capacity.
 Note that code coverage doesn't measure the different behaviors a code path
 **could take**, but only that a particular code path **was taken**.
 
-To generate a coverage report for our minimal example, let's first install `lcov`.
+To generate a coverage report for our minimal example, let's first install
+`lcov`.
 
 ```
 # macOS
@@ -1180,13 +1182,14 @@ $ open build/test_coverage/index.html
 $ firefox build/test_coverage/index.html
 ```
 
-Below is the coverage report for our minimal example. It's quite basic because there isn't much code being tested. 
+Below is the coverage report for our minimal example. It's quite basic because
+there isn't much code being tested.
 
-![]({% img_url unit-testing-basics/code_coverage_minimal.png %})
+![](/img/unit-testing-basics/code_coverage_minimal.png)
 
 Below is a more realistic report from the Memfault Public SDK[^5].
 
-![]({% img_url unit-testing-basics/code_coverage.png %})
+![](/img/unit-testing-basics/code_coverage.png)
 
 {:.no_toc}
 
@@ -1282,23 +1285,32 @@ mine.
 I hope this post has been useful and that it has inspired you to consider
 writing a unit test for your next new embedded software module.
 
-> Want to keep reading? Check out our next post about unit testing, [Unit
-> Testing with Mocks]({% post_url 2020-05-12-unit-test-mocking %}).
+> Want to keep reading? Check out our next post about unit testing,
+> [Unit Testing with Mocks](/blog/unit-test-mocking).
 
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt/tree/master/example/unit-testing).
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 {:.no_toc}
 
 ## Reference & Links
 
-[^0]: [Test Driven Development](https://en.wikipedia.org/wiki/Test-driven_development)
-[^1]: [2017 Embedded/EETimes Embedded Markets Study](https://www.embedded.com/electronics-blogs/embedded-market-surveys/4458724/2017-Embedded-Market-Survey)
-[^2]: [Atlassian Code Coverage Overview](https://www.atlassian.com/continuous-delivery/software-testing/code-coverage)
-[^4]: [littlefs Github page](https://github.com/ARMmbed/littlefs)
-[^5]: [Memfault Public SDK](https://github.com/memfault/memfault-firmware-sdk)
-[^6]: [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer)
+[^0]:
+    [Test Driven Development](https://en.wikipedia.org/wiki/Test-driven_development)
 
-{% include submit-pr.html %}
+[^1]:
+    [2017 Embedded/EETimes Embedded Markets Study](https://www.embedded.com/electronics-blogs/embedded-market-surveys/4458724/2017-Embedded-Market-Survey)
+
+[^2]:
+    [Atlassian Code Coverage Overview](https://www.atlassian.com/continuous-delivery/software-testing/code-coverage)
+
+[^4]: [littlefs Github page](https://github.com/ARMmbed/littlefs)
+
+[^5]: [Memfault Public SDK](https://github.com/memfault/memfault-firmware-sdk)
+
+[^6]:
+    [AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer)
+
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>

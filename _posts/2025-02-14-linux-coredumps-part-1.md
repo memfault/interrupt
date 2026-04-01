@@ -1,4 +1,5 @@
 ---
+date: "2025-02-14"
 title: Linux Coredumps (Part 1) － Introduction
 description:
   "The basics of Linux coredumps, how they're used at Memfault, and how they're
@@ -27,9 +28,9 @@ formatted, how you capture them, and how we use them at Memfault.
 > ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](https://www.youtube.com/watch?v=fDwDXg7T4K8)
 > for an even deeper diver into the techniques explored in this series.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What is a Linux Coredump
 
@@ -141,7 +142,7 @@ not be doing an exhaustive dive into the ELF format; however, if you are
 interested in learning more about the ELF format, the ELF File
 Format[^elf_format] is a great resource.
 
-![]({% img_url linux-coredump/elf-core-layout.png %})
+![](/img/linux-coredump/elf-core-layout.png)
 
 ### ELF Header
 
@@ -225,7 +226,7 @@ Here is a brief breakdown of the fields we care about in the program header:
 We'll start by looking at the format of the `PT_NOTE` segments. Below is the
 layout of a `PT_NOTE` segment.
 
-![]({% img_url linux-coredump/elf-note-layout.png %})
+![](/img/linux-coredump/elf-note-layout.png)
 
 The first two fields of the segment are fairly self-explanatory, they represent
 the size of both the name and the descriptor. The `name` field is a string
@@ -305,7 +306,7 @@ interesting.
 Let's take a quick visual look at everything we've accomplished by annotating
 our previous ELF layout diagram with the changes we've made.
 
-![]({% img_url linux-coredump/elf-core-layout-annotated.png %})
+![](/img/linux-coredump/elf-core-layout-annotated.png)
 
 And there we have it! We've copied our coredump over from `stdin` with a few
 minor changes. Now, you're probably wondering: why did we go through all of this
@@ -322,9 +323,9 @@ the hood. While the baseline coredumps are useful and a known commodity, there
 are a few things that aren't great about them. The biggest issue is that they
 can be quite large for processes with many threads or do a large amount of
 memory allocation. This can be a significant problem for embedded devices that
-may not have a lot of room to store large files. In the [next
-article]({% link _posts/2025-05-02-linux-coredumps-part-2.md %}), we take a look
-at the steps we've taken to reduce the size of coredumps.
+may not have a lot of room to store large files. In the
+[next article](/blog/linux-coredumps-part-2), we take a look at the steps we've
+taken to reduce the size of coredumps.
 
 If you'd like to poke around the source code for the coredump handler, you can
 find it
@@ -332,9 +333,9 @@ find it
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

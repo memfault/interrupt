@@ -1,4 +1,5 @@
 ---
+date: "2025-05-02"
 title: Linux Coredumps (Part 2) － Shrinking the Core
 description:
   "Limiting the size of Linux coredumps by collecting stacks and metadata for
@@ -7,11 +8,10 @@ author: blake
 tags: [linux, coredumps, memfault, debugging]
 ---
 
-In [our previous
-article]({% link _posts/2025-02-14-linux-coredumps-part-1.md %}), we outlined
-what a Linux coredump is and how they work under the hood. One common constraint
-we see in embedded Linux, however, is a limited amount of storage space. Whether
-we're trying to limit writes to disk, or need to reserve most of the disk space
+In [our previous article](/blog/linux-coredumps-part-1), we outlined what a
+Linux coredump is and how they work under the hood. One common constraint we see
+in embedded Linux, however, is a limited amount of storage space. Whether we're
+trying to limit writes to disk, or need to reserve most of the disk space
 available to a device for other data, sometimes we just don't have enough space
 to store coredumps.
 
@@ -28,9 +28,9 @@ critical debugging information.
 > ["Efficient On-Device Core Dump Processing for IoT: A Rusty Implementation,"](https://www.youtube.com/watch?v=fDwDXg7T4K8)
 > for an even deeper diver into the techniques explored in this series.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Defining The Minimum Coredump
 
@@ -275,9 +275,9 @@ only providing a list of PCs and any related debug info.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

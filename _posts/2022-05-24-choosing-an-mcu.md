@@ -1,4 +1,5 @@
 ---
+date: "2022-05-24"
 title: Selecting Your Next Project's MCU
 description:
   Choosing the best microcontroller is an important decision given the chip
@@ -24,9 +25,9 @@ If you want to create a professional product that might be built thousands of
 times with reasonable effort to be sold at a reasonable price point, then read
 on.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## The Best MCU for an EE
 
@@ -43,11 +44,11 @@ firmware's responsibility.
 Often the EE will use the parametric search to find the microcontroller to use.
 The parametric search is provided by the big distributors (Digikey, Farnell,
 Mouser to name a few). It allows you to filter all available chips according to
-their features. The EE can filter out all chips with the wrong voltage requirements,
-unpractical packages (DIL, SMD, BGA), or improper operating temperature ranges
-that the product needs to endure. These and many other filters are provided. In
-the end, the EE sorts by price and selects the cheapest. Maybe they select a
-handful and let the firmware engineer choose.
+their features. The EE can filter out all chips with the wrong voltage
+requirements, unpractical packages (DIL, SMD, BGA), or improper operating
+temperature ranges that the product needs to endure. These and many other
+filters are provided. In the end, the EE sorts by price and selects the
+cheapest. Maybe they select a handful and let the firmware engineer choose.
 
 Easy right? Not exactly. The cheapest chip that meets the _hardware_ criteria is
 usually one of the most painful chips to bring up and write firmware on. We've
@@ -190,9 +191,9 @@ on, and get started with a new microcontroller.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

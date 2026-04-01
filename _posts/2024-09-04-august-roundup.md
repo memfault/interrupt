@@ -1,4 +1,5 @@
 ---
+date: "2024-09-04"
 title: "What we've been reading in August (2024)"
 description:
   Here are the articles, videos, and tools we've been excited about in August

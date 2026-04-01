@@ -1,4 +1,5 @@
 ---
+date: "2025-05-16"
 title: "Gophyr: Building a Gopher Client for Zephyr with Claude"
 description: "AI-skeptical engineer builds Gopher client for Zephyr using AI"
 author: jrsharp
@@ -397,9 +398,9 @@ README. YMMV.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

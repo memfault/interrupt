@@ -1,4 +1,5 @@
 ---
+date: "2024-10-10"
 title:
   Comparing Firmware Development Environments — Linux, Windows, WSL2, and VMWare
 description:
@@ -36,9 +37,9 @@ option for your firmware development needs. This is by no means exhaustive, and
 I'd welcome further feedback in the comments! Some Zephyr benchmarks were
 devised in order to quantify performance of common Zephyr toolchains.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Features and Limitations
 
@@ -256,7 +257,7 @@ and I2C. This project's executable could be as big as 900kB.
 | Duration of a 40s build | 40.000s    | -                         |
 
 ![Screenshot of the native Ubuntu benchmark
-run]({% img_url zephyr-development-environments/ubuntu-twister-run.png %})
+run](/img/zephyr-development-environments/ubuntu-twister-run.png)
 
 ### WSL2 Ubuntu 24.04
 
@@ -275,7 +276,7 @@ Operating System: Ubuntu 24.04 LTS
 | Duration of a 40s build | 40.000s \* 1.136 = 45.440s | + 5.440s                  |
 
 ![Screenshot of the WSL2 5.15 benchmark
-run]({% img_url zephyr-development-environments/wsl2-twister-run-2.png %})
+run](/img/zephyr-development-environments/wsl2-twister-run-2.png)
 
 I also compiled Kernel 6.1 and 6.6 for WSL2 and saw that Kernel 6.1 shrank the
 performance gap by about 4%. In my opinion, that's not worth it, but it shows
@@ -291,7 +292,7 @@ Operating System: Ubuntu 24.04 LTS
 ```
 
 ![Screenshot of the WSL2 6.1 benchmark
-run]({% img_url zephyr-development-environments/wsl2-twister-run-kernel6.1.png %})
+run](/img/zephyr-development-environments/wsl2-twister-run-kernel6.1.png)
 
 ### Windows 11
 
@@ -315,7 +316,7 @@ run]({% img_url zephyr-development-environments/wsl2-twister-run-kernel6.1.png %
 | Duration of a 40s build | 40.000 \* 2.098 = 83.920s                                   | + 43.920s                 |
 
 ![Screenshot of the Windows benchmark
-run]({% img_url zephyr-development-environments/windows-twister-run-without-defender.png %})
+run](/img/zephyr-development-environments/windows-twister-run-without-defender.png)
 
 ### VMWare Workstation Pro 17 (no AMD-V)
 
@@ -340,25 +341,24 @@ benchmark be a reminder that you shouldn't take configuration and compatibility
 for granted!
 
 ![Screenshot of the Windows benchmark
-run]({% img_url zephyr-development-environments/vmware-workstation-17-ubuntu-server-24-twister.png %})
+run](/img/zephyr-development-environments/vmware-workstation-17-ubuntu-server-24-twister.png)
 
 ### Results Compared
 
 The Zephyr Benchmark duration in seconds of all of the tests described above are
 graphed below.
 
-<div class="mermaid">
+## <div class="mermaid">
+
+config: xyChart: xAxis: labelFontSize: 12
+
 ---
-config:
-    xyChart:
-        xAxis:
-            labelFontSize: 12
----
-xychart-beta
-    title "Zephyr Benchmark"
-    x-axis "Platform" ["Ubuntu 24.04 6.8", "WSL2 24.04 5.15", "WSL2 24.04 6.1", "macOS Sonoma*", "Windows 11", "VMWare (no AMD-V)" ]
-    y-axis "Duration in seconds (lower is better)" 0 --> 1680
-    bar [664.44, 754.642, 723.323, 741.547, 1393.901, 1655.560]
+
+xychart-beta title "Zephyr Benchmark" x-axis "Platform" ["Ubuntu 24.04 6.8",
+"WSL2 24.04 5.15", "WSL2 24.04 6.1", "macOS Sonoma*", "Windows 11", "VMWare (no
+AMD-V)" ] y-axis "Duration in seconds (lower is better)" 0 --> 1680 bar [664.44,
+754.642, 723.323, 741.547, 1393.901, 1655.560]
+
 </div>
 
 > \* macOS Sonoma had the fastest result of 595.620s, but the value in the
@@ -459,7 +459,6 @@ Cons:
 - Zephyr performance is half the speed of Linux.
 
 - Security:
-
   - Developer mode removes warnings about unsigned scripts and applications.
   - Microsoft requires yearly payment — previously, to an approved certificate
     authority, now you have the option of paying MS directly — in order to sign
@@ -531,10 +530,6 @@ If you’re interested in trying out WSL2 for firmware development, check out th
 or
 [subscribe to the Interrupt blog](https://go.memfault.com/interrupt-subscribe)
 to receive the follow-up to this post as soon as it’s published.
-
-{% comment %} TODO: replace the link to WSL2 tutorial when published [complete
-tutorial]({{ site.baseurl }}{% link _posts/wsl2-firmware-development-setup.md %})
-{% endcomment %}
 
 ## Acknowledgements
 

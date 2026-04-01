@@ -1,4 +1,5 @@
 ---
+date: "2020-05-12"
 title: Embedded C/C++ Unit Testing with Mocks
 description:
   An overview of unit test mocking and integration tests for embedded software
@@ -31,15 +32,15 @@ briefly talk about integration tests.
 
 <!-- excerpt end -->
 
-This post builds upon [Unit Testing Basics
-post]({% post_url 2019-10-08-unit-testing-basics %}), where we covered
-everything you would need to know to get started writing unit tests for your
-embedded software project in C or C++ using CppUTest. We are going to jump
-quickly into the content so it's best to have read that post first.
+This post builds upon [Unit Testing Basics post](/blog/unit-testing-basics),
+where we covered everything you would need to know to get started writing unit
+tests for your embedded software project in C or C++ using CppUTest. We are
+going to jump quickly into the content so it's best to have read that post
+first.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Stubs, Mocks, and Fakes Review
 
@@ -205,11 +206,11 @@ mocks using Ruby, CppUMock mocks are just normal functions with some extra
 book-keeping done using `expectCall` and `actualCall`.
 
 When using CppUMock, if you have a few functions you are trying to mock out,
-it's probably best to keep them defined in the test file, especially if you think
-it's an isolated case. If you are mocking out a large number of functions, or
-think it might be used by other teammates or in future tests, go ahead and move
-it to its own file. Mocks can be easily generated for CppUMock using any of the
-following tools: [CppUMockGen](https://github.com/jgonzalezdr/CppUMockGen),
+it's probably best to keep them defined in the test file, especially if you
+think it's an isolated case. If you are mocking out a large number of functions,
+or think it might be used by other teammates or in future tests, go ahead and
+move it to its own file. Mocks can be easily generated for CppUMock using any of
+the following tools: [CppUMockGen](https://github.com/jgonzalezdr/CppUMockGen),
 [mockify](https://github.com/marco-m/mockify), or
 [cpputest_mockify](https://github.com/kesyog/cpputest_mockify).
 
@@ -306,7 +307,7 @@ with.
 Below is a diagram of our unit test stack, which looks similar to a real
 device's end-to-end stack except for the fake NOR flash at the bottom.
 
-![]({% img_url unit-testing-mocking/diagram.png %})
+![](/img/unit-testing-mocking/diagram.png)
 
 Even though each module is linked to one another, they can be tested
 individually and that's what we'll be doing today.
@@ -333,8 +334,8 @@ testing a single module and the test is as simple as possible.
 With this in mind, we can start building some new modules and unit tests using
 mocks.
 
-We'll be building upon the [Unit Testing
-Basics]({% post_url 2019-10-08-unit-testing-basics %}#real-world-unit-test-example)
+We'll be building upon the
+[Unit Testing Basics](/blog/unit-testing-basics#real-world-unit-test-example)
 example code. The green boxes shown above are modules we've already implemented
 in the previous post, and the blue ones are the ones we'll be implementing
 today.
@@ -343,8 +344,8 @@ Let's get started!
 
 ### Example Project Setup
 
-If you want to follow along yourself, please reference the [Project CppUTest
-Harness]({% post_url 2019-10-08-unit-testing-basics %}#project-cpputest-harness)
+If you want to follow along yourself, please reference the
+[Project CppUTest Harness](/blog/unit-testing-basics#project-cpputest-harness)
 section from the previous post to get everything set up.
 
 ### Protocol Parser Background
@@ -352,7 +353,7 @@ section from the previous post to get everything set up.
 The protocol we are going to make a parser for is very simple. Each message has
 a **Command**, a payload **Size**, and a **Payload**.
 
-![]({% img_url unit-testing-mocking/protocol.png %})
+![](/img/unit-testing-mocking/protocol.png)
 
 We added the **command** field because we want to build a flexible protocol that
 can tell the device to do more things than just read and write key/value ("kv")
@@ -864,7 +865,7 @@ the modules will correctly work linked together.
 The type of test that tests many modules as a group for interoperability is
 called an **integration test**. These tests are usually left to QA or developer
 self-testing. Another approach would be to do automated testing with an emulator
-like [Renode]({% post_url 2020-03-23-intro-to-renode %}).
+like [Renode](/blog/intro-to-renode).
 
 However, wouldn't it be nice if we could do similar tests within our unit test
 infrastructure? Yes it would!
@@ -872,12 +873,12 @@ infrastructure? Yes it would!
 Recall our protocol diagram which takes data from a remote device, writes
 key/value pairs to flash, and provides responses.
 
-![]({% img_url unit-testing-mocking/integration-diagram.png %})
+![](/img/unit-testing-mocking/integration-diagram.png)
 
 Let's try to create a test that tests this end-to-end within a unit test
 environment. Since we've already written unit tests for the Key/Value store with
-LittleFS in our [previous post]({% post_url 2019-10-08-unit-testing-basics %}),
-we can use the same initialization routines and copy them into a new test.
+LittleFS in our [previous post](/blog/unit-testing-basics), we can use the same
+initialization routines and copy them into a new test.
 
 The way I usually go about writing these tests is I first include all of the
 source files in the Makefile that I think I'll need to include. In our
@@ -987,8 +988,8 @@ bang for our buck, but also cause frustration.
 
 #### Benefits
 
-- A large amount of code and logic can be tested using [continuous
-  integration]({% post_url 2019-09-17-continuous-integration-for-firmware %})
+- A large amount of code and logic can be tested using
+  [continuous integration](/blog/continuous-integration-for-firmware)
 - Ensuring correctness after a large refactor of a module that resides in the
   middle of an integration test becomes trivial.
 - Enables short-staffed and budget-conscious teams to push out building a
@@ -1026,7 +1027,7 @@ them in the comments!
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt/tree/master/example/unit-testing).
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 

@@ -1,4 +1,5 @@
 ---
+date: "2025-04-18"
 title: Beyond Error Codes - Debugging Ill-Defined Problems
 description:
   Steps to debug embedded systems, including several case studies involving
@@ -36,9 +37,9 @@ errors that on their face appear to be intangible.
 > _[Listen to Hayden on Interrupt Live](https://www.youtube.com/watch?v=bgx4p-Voqkg)
 > talk about the content and motivations behind writing this article._
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Steps
 
@@ -642,9 +643,9 @@ thoughts on these strategies or debugging stories of your own!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

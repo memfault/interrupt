@@ -1,4 +1,5 @@
 ---
+date: "2019-08-13"
 title: "From Zero to main(): How to Write a Bootloader from Scratch"
 description: "An in-depth tutorial on how to write a bootloader from scratch for
 ARM cortex-m series microcontrollers."
@@ -6,33 +7,36 @@ author: francois
 tags: [zero-to-main, bootloader, arm, cortex-m]
 ---
 
-This is the third post in our [Zero to main() series]({% tag_url zero-to-main %}),
-where we bootstrap a working firmware from zero code on a
-cortex-M series microcontroller.
+This is the third post in our [Zero to main() series](/tag/zero-to-main), where
+we bootstrap a working firmware from zero code on a cortex-M series
+microcontroller.
 
-Previously, [we wrote a startup file to bootstrap our C environment]({% post_url
-2019-05-14-zero-to-main-1 %}), and [a linker
-script to get the right data at the right addresses]({% post_url
-2019-06-25-how-to-write-linker-scripts-for-firmware %}). These two will allow us to
-write a monolithic firmware which we can load and run on our microcontrollers.
+Previously,
+[we wrote a startup file to bootstrap our C environment](/blog/zero-to-main-1),
+and
+[a linker script to get the right data at the right addresses](/blog/how-to-write-linker-scripts-for-firmware).
+These two will allow us to write a monolithic firmware which we can load and run
+on our microcontrollers.
 
 In practice, this is not how most firmware is structured. Digging through vendor
-SDKs, you’ll notice that they all recommend using a *bootloader* to load your
+SDKs, you’ll notice that they all recommend using a _bootloader_ to load your
 applications. A bootloader is a small program which is responsible for loading
 and starting your application.
 
 <!-- excerpt start -->
-In this post, we will explain why you may want a
-bootloader, how to implement one, and cover a few advanced techniques you may
-use to make your bootloader more useful.
+
+In this post, we will explain why you may want a bootloader, how to implement
+one, and cover a few advanced techniques you may use to make your bootloader
+more useful.
+
 <!-- excerpt end -->
 
-> If you'd rather listen to me present this information and see some demos in action, watch
-> [this webinar recording](https://hubs.la/Q02hgRrk0)
+> If you'd rather listen to me present this information and see some demos in
+> action, watch [this webinar recording](https://hubs.la/Q02hgRrk0)
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Why you may need a bootloader
 
@@ -48,16 +52,17 @@ executed from, such as RAM.
 
 Bootloaders also allow you to decouple parts of the program that are mission
 critical, or that have security implications, from application code which
-changes regularly.  For example, your bootloader may contain firmware update
+changes regularly. For example, your bootloader may contain firmware update
 logic so your device can recover no matter how bad a bug ships in your
 application firmware.
 
 Last but certainly not least, bootloaders are an essential component of a
-trusted boot architecture.  Your bootloader can, for example, verify a
+trusted boot architecture. Your bootloader can, for example, verify a
 cryptographic signature to make sure the application has not been replaced or
 tampered with.
 
 ## A minimal bootloader
+
 Let’s build a simple bootloader together. To start, our bootloader must do two
 things:
 
@@ -71,18 +76,19 @@ application to make it bootload-able.
 
 For this example, we’ll be using the same setup as we did in our previous Zero
 to Main posts:
-* Adafruit's [Metro M0 Express](https://www.adafruit.com/product/3505) as our
+
+- Adafruit's [Metro M0 Express](https://www.adafruit.com/product/3505) as our
   development board,
-* a simple [CMSIS-DAP Adapter](https://www.adafruit.com/product/2764)
-* OpenOCD (the [Arduino fork](https://github.com/arduino/OpenOCD)) for
+- a simple [CMSIS-DAP Adapter](https://www.adafruit.com/product/2764)
+- OpenOCD (the [Arduino fork](https://github.com/arduino/OpenOCD)) for
   programming
 
 ### Deciding on a memory map
 
 We must first decide on how much space we want to dedicate to our bootloader.
 Code space is precious - your application may come to need more of it - and you
-will not be able to change this without updating your bootloader, so make
-this as small as you possibly can.
+will not be able to change this without updating your bootloader, so make this
+as small as you possibly can.
 
 Another important factor is your flash sector size: you want to make sure you
 can erase app sectors without erasing bootloader data, or vice versa.
@@ -140,13 +146,14 @@ extern int __approm_size__;
 ```
 
 ### Implementing the bootloader itself
+
 Next up, let’s write some bootloader code. Our bootloader needs to start
 executing on boot and then jump to our app.
 
 We know how to do the first part from our previous post: we need a valid stack
-pointer at address `0x0` , and a valid `Reset_Handler`  function setting up our
+pointer at address `0x0` , and a valid `Reset_Handler` function setting up our
 environment at address `0x4`. We can reuse our previous startup file and linker
-script, with one change: we use  `memory_map.ld` rather than define our own
+script, with one change: we use `memory_map.ld` rather than define our own
 `MEMORY` section.
 
 We also need to put our code in the `bootrom` region from our memory rather than
@@ -173,7 +180,7 @@ SECTIONS
 ```
 
 To jump into our application, we need to know where the `Reset_Handler` of the
-app is, and what stack pointer to load.  Again, we know from our previous post
+app is, and what stack pointer to load. Again, we know from our previous post
 that those should be the first two 32-bit words in our binary, so we just need
 to dereference those addresses using the `__approm_start__` variable from our
 memory map.
@@ -196,13 +203,13 @@ int main(void) {
 Next we must load that stack pointer and jump to the code. This will require a
 bit of assembly code.
 
-ARM MCUs use the [`msr` instruction
-](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289882044.htm) to
-load immediate or register data into system registers, in this case the MSP
+ARM MCUs use the
+[`msr` instruction ](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289882044.htm)
+to load immediate or register data into system registers, in this case the MSP
 register or “Main Stack Pointer”.
 
-Jumping to an address is done with a branch, in our case with a [`bx`
-instruction](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289866466.htm).
+Jumping to an address is done with a branch, in our case with a
+[`bx` instruction](http://www.keil.com/support/man/docs/armasm/armasm_dom1361289866466.htm).
 
 We wrap those two into a `start_app` function which accepts our `pc` and `sp` as
 arguments, and get our minimal bootloader:
@@ -257,8 +264,8 @@ SECTIONS
 }
 ```
 
-We also need to update the [*vector
-table*](https://developer.arm.com/docs/dui0552/latest/the-cortex-m3-processor/exception-model/vector-table)
+We also need to update the
+[_vector table_](https://developer.arm.com/docs/dui0552/latest/the-cortex-m3-processor/exception-model/vector-table)
 used by the microcontroller. The vector table contains the address of every
 exception and interrupt handler in our system. When an interrupt signal comes
 in, the ARM core will call the address at the corresponding offset in the vector
@@ -269,9 +276,9 @@ fault is hit, the ARM core will jump to the address contained in the table at
 that offset.
 
 By default, the vector table is at address `0x0`, which means that when our chip
-powers up, only the bootloader can handle exceptions or interrupts! Fortunately, ARM
-provides the [Vector Table Offset
-Register](https://developer.arm.com/docs/dui0552/latest/cortex-m3-peripherals/system-control-block/vector-table-offset-register)
+powers up, only the bootloader can handle exceptions or interrupts! Fortunately,
+ARM provides the
+[Vector Table Offset Register](https://developer.arm.com/docs/dui0552/latest/cortex-m3-peripherals/system-control-block/vector-table-offset-register)
 to dynamically change the address of the vector table. The register is at
 address `0xE000ED08` and has a simple layout:
 
@@ -297,14 +304,16 @@ uint32_t *vtor = (uint32_t *)0xE000ED08;
 ```
 
 One quirk of the ARMv7-m architecture is the alignment requirement for the
-vector table, as specified in section B1.5.3 of the [reference
-manual](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf):
+vector table, as specified in section B1.5.3 of the
+[reference manual](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf):
 
-> The Vector table must be naturally aligned to a power of two whose alignment value is greater than or equal
-to (Number of Exceptions supported x 4), with a minimum alignment of 128 bytes.The entry at offset 0 is
-used to initialize the value for SP_main, see The SP registers on page B1-8. All other entries must have bit
-[0] set, as the bit is used to define the EPSR T-bit on exception entry (see Reset behavior on page B1-20 and
-Exception entry behavior on page B1-21 for details).
+> The Vector table must be naturally aligned to a power of two whose alignment
+> value is greater than or equal to (Number of Exceptions supported x 4), with a
+> minimum alignment of 128 bytes.The entry at offset 0 is used to initialize the
+> value for SP_main, see The SP registers on page B1-8. All other entries must
+> have bit [0] set, as the bit is used to define the EPSR T-bit on exception
+> entry (see Reset behavior on page B1-20 and Exception entry behavior on page
+> B1-21 for details).
 
 Our SAMD21 MCU has 28 interrupts on top of the 16 system reserved exceptions,
 for a total of 44 entries in the table. Multiply that by 4 and you get 176. The
@@ -359,20 +368,21 @@ int main() {
 }
 ```
 
-> Note that the bootloader *must* deinitialize the serial peripheral before
+> Note that the bootloader _must_ deinitialize the serial peripheral before
 > starting the app, or you’ll have a hard time trying to initialize it again.
 
- You can compile both these programs and load the resulting elf files with `gdb`
+You can compile both these programs and load the resulting elf files with `gdb`
 which will put them at the correct address. However, the more convenient thing
 to do is to build a single binary which contains both programs.
 
 To do that, you must go through the following steps:
+
 1. Pad the bootloader binary to the full 0x4000 bytes
 2. Create the app binary
 3. Concatenate the two
 
-Creating a binary from an elf file is done with `objcopy` . To
-accommodate our use case, `objcopy` has some handy options:
+Creating a binary from an elf file is done with `objcopy` . To accommodate our
+use case, `objcopy` has some handy options:
 
 ```
 $ arm-none-eabi-objcopy --help | grep -C 2 pad
@@ -422,6 +432,7 @@ useful things you can do with a bootloader.
 
 A common thing to do with a bootloader is monitor stability. This can be done
 with a relatively simple setup:
+
 1. On boot, the bootloader increments a persistent counter
 2. After the app has been stable for a while (e.g. 1 minute), it resets the
    counter to 0
@@ -530,12 +541,12 @@ where we want to copy our program. Our bootloader needs to copy the code from
 `approm` to `eram` before executing it.
 
 We know from our previous blog post that executable code typically ends up in
-the `.text` section so we must tell the linker that this section is **stored** in
-`approm` but executed from `eram` so our program can execute correctly.
+the `.text` section so we must tell the linker that this section is **stored**
+in `approm` but executed from `eram` so our program can execute correctly.
 
 This is similar to our `.data` section, which is stored in `rom` but lives in
 `ram` while the program is running. We use the `AT` linker command to specify
-the storage region and the `>` operator to specify the load region.  This is the
+the storage region and the `>` operator to specify the load region. This is the
 resulting linker script section:
 
 ```
@@ -574,15 +585,14 @@ starting the app:
   start_app(app_start, app_sp);
 ```
 
-
 ### Locking the bootloader with the MPU
 
 Last but not least, we can protect the bootloader using the memory protection
 unit to make it inaccessible from the app. This prevents accidentally erasing
 the bootloader during execution.
 
-If you do not know about the MPU, check out [Chris’s excellent blog post from a few
-weeks ago]({% post_url 2019-07-16-fix-bugs-and-secure-firmware-with-the-mpu %}).
+If you do not know about the MPU, check out
+[Chris’s excellent blog post from a few weeks ago](/blog/fix-bugs-and-secure-firmware-with-the-mpu).
 
 Remember that our MPU regions must be power-of-2 sized. Thankfully, our
 bootloader already is! `0x4000` is 2^14 bytes.
@@ -612,16 +622,18 @@ int main(void) {
 
 We hope reading this post has given you a good idea of how bootloaders work, and
 what you can do with them. As with previous posts, code examples are available
-on Github in the [zero to main
-repository](https://github.com/memfault/zero-to-main).
+on Github in the
+[zero to main repository](https://github.com/memfault/zero-to-main).
 
 What cool things does your bootloader do? Tell us all about it in the comments,
 or at [interrupt@memfault.com](mailto:interrupt@memfault.com).
 
 Next time in the series, we'll talk about bootstrapping the C library!
 
-_EDIT: Post written!_ - [Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
+_EDIT: Post written!_ -
+[Bootstrapping libc with Newlib](/blog/boostrapping-libc-with-newlib)
 
-> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
+> Interested in learning more device firmware update best practices?
+> [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>

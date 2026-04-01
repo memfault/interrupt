@@ -1,4 +1,5 @@
 ---
+date: "2024-08-29"
 title: How Memory Usage Patterns Can Derail Real-time Performance
 description:
   A story about memory usage causing real-time performance issues in an audio
@@ -18,9 +19,9 @@ issues, ending with my solution and lessons learned.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Background
 
@@ -53,7 +54,7 @@ platform, DSP processing needs to be parallelized over multiple CPU cores (the
 SoC in the SSP is a quad-core processor).
 
 <p align="center">
- <img width="80%" src="{% img_url memory-usage-in-audio-system/percussa.png %}" alt="Image of Percussa device" />
+ <img width="80%" src="/img/memory-usage-in-audio-system/percussa.png" alt="Image of Percussa device" />
 </p>
 
 The audio DSP software I developed originally ran on Windows and Mac OSX
@@ -99,7 +100,7 @@ taking too long to return. This happened often enough that it was a real
 problem.
 
 <p align="center">
- <img width="100%" src="{% img_url memory-usage-in-audio-system/trace1.png %}" alt="Image of Tracy (trace 1)" />
+ <img width="100%" src="/img/memory-usage-in-audio-system/trace1.png" alt="Image of Tracy (trace 1)" />
 </p>
 
 At the top of the screen in Tracy, you can see which CPU cores the threads are
@@ -126,7 +127,7 @@ As I dug deeper, I noticed that my audio thread was being pre-empted by kernel
 threads.
 
 <p align="center">
- <img width="100%" src="{% img_url memory-usage-in-audio-system/trace2.png %}" alt="Image of Tracy (trace 2)" />
+ <img width="100%" src="/img/memory-usage-in-audio-system/trace2.png" alt="Image of Tracy (trace 2)" />
 </p>
 
 While I don't have an exact copy of the pre-emption from this instance, I have
@@ -201,9 +202,9 @@ or libraries). 🤓
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

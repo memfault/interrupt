@@ -1,30 +1,37 @@
 ---
+date: "2026-03-24"
 title: Connecting Matter-over-Thread Devices to the Internet
 description:
   Matter devices typically communicate within the local network, but sometimes
-  you need to reach the internet, whether for telemetry, cloud services, or custom
-  functionality. This post explains how to send UDP traffic from a
+  you need to reach the internet, whether for telemetry, cloud services, or
+  custom functionality. This post explains how to send UDP traffic from a
   Matter-over-Thread device through a Thread Border Router using NAT64, with
   working code on the nRF54LM20 DK.
 author: francois
 tags: [matter, thread, iot, nrf54]
 ---
 
-While it has taken longer than some people expected, Matter is finally going mainstream. Brands including Ikea, Kwikset, and Bosch have shipped matter devices, and matter hubs can increasingly be found in people's homes.
+While it has taken longer than some people expected, Matter is finally going
+mainstream. Brands including Ikea, Kwikset, and Bosch have shipped matter
+devices, and matter hubs can increasingly be found in people's homes.
 
-Many dev kits out there are matter compatible, and if you want to build a simple application you can find good example code and get started quickly. This is fine if your use case fits neatly within existing Matter clusters, but direct internet communication is not straightforward.
+Many dev kits out there are matter compatible, and if you want to build a simple
+application you can find good example code and get started quickly. This is fine
+if your use case fits neatly within existing Matter clusters, but direct
+internet communication is not straightforward.
 
 <!-- excerpt start -->
 
 In this post, we look at how a Matter-over-Thread device can reach the internet
-through a Thread Border Router. We will cover the key networking concepts (Thread, NAT64, and UDP) and walk through a working example that sends a UDP
+through a Thread Border Router. We will cover the key networking concepts
+(Thread, NAT64, and UDP) and walk through a working example that sends a UDP
 message from an nRF54LM20 DK to an echo server on the public internet.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## A Brief Introduction to Matter
 
@@ -35,9 +42,10 @@ bulb works with any Matter controller, regardless of the ecosystem.
 
 ![Matter components](/img/matter-internet-connectivity/matter_components.svg)
 
-Matter defines a data model (clusters, attributes, commands) and the
-networking stack to carry it. Devices are commissioned into a fabric (a logical
-network of controllers and devices), and from that point on, controllers can read attributes, send commands, and subscribe to changes.
+Matter defines a data model (clusters, attributes, commands) and the networking
+stack to carry it. Devices are commissioned into a fabric (a logical network of
+controllers and devices), and from that point on, controllers can read
+attributes, send commands, and subscribe to changes.
 
 ### Matter's Networking Stack
 
@@ -52,17 +60,25 @@ wider IP network (typically your home Wi-Fi/Ethernet).
 
 ![Matter network topologies](/img/matter-internet-connectivity/matter_network_topologies.svg)
 
-Matter does not use TCP. Instead, it runs on UDP and adds its own reliability and encryption on top through the Matter Reliable Protocol (MRP) and a custom
+Matter does not use TCP. Instead, it runs on UDP and adds its own reliability
+and encryption on top through the Matter Reliable Protocol (MRP) and a custom
 security layer (CASE/PASE sessions with AES-CCM encryption).
 
-> **Note**: Matter 1.5 adds TCP support to the standard, but it remains to be seen how this will be implemented in practice.
+> **Note**: Matter 1.5 adds TCP support to the standard, but it remains to be
+> seen how this will be implemented in practice.
 
 ## The Hub Does Most of the Work
 
 Matter is designed so that devices rarely need to talk directly to the internet.
 Instead, internet-facing communication is delegated to the controller (the hub).
 
-A good example is firmware updates. Matter devices do not check a server directly for updates. Instead, manufacturers publish their update on the Distributed Compliance Ledger (DCL)[^dcl], a blockchain (yes! blockchain!) managed by the CSA. Devices regularly ask their hub for updates, and the hub in turn goes and checks the DCL. If a new update is found on the DCL, the hub downloads it and sends it to the device using a standardized Matter cluster (i.e. message format).
+A good example is firmware updates. Matter devices do not check a server
+directly for updates. Instead, manufacturers publish their update on the
+Distributed Compliance Ledger (DCL)[^dcl], a blockchain (yes! blockchain!)
+managed by the CSA. Devices regularly ask their hub for updates, and the hub in
+turn goes and checks the DCL. If a new update is found on the DCL, the hub
+downloads it and sends it to the device using a standardized Matter cluster
+(i.e. message format).
 
 This is true for most Matter operations: device control, event reporting, and
 scene management all happen locally. The controller handles cloud integration,
@@ -78,8 +94,8 @@ But sometimes local-only communication is not enough. You may want to:
 - Pull a firmware update directly from your backend rather than the DCL
 - Reach a custom server for functionality outside the Matter spec
 
-In theory, Matter hubs are full-fledged Thread Border Routers and
-should be able to bridge traffic from the Thread mesh to the internet.
+In theory, Matter hubs are full-fledged Thread Border Routers and should be able
+to bridge traffic from the Thread mesh to the internet.
 
 ### One does not simply send IPv6 packets
 
@@ -101,14 +117,15 @@ We need a different solution.
 
 ### Enter NAT64
 
-Thread 1.4 introduced NAT64, a network address translation mechanism that allows IPv6-only clients to communicate with IPv4-only servers.
+Thread 1.4 introduced NAT64, a network address translation mechanism that allows
+IPv6-only clients to communicate with IPv4-only servers.
 
 Here is how it works:
 
-1. The device resolves a hostname using the Thread network's DNS server (provided
-   by the Border Router). When resolving an A record (IPv4), the DNS client
-   synthesizes an IPv6 address by embedding the IPv4 address within a well-known
-   NAT64 prefix.
+1. The device resolves a hostname using the Thread network's DNS server
+   (provided by the Border Router). When resolving an A record (IPv4), the DNS
+   client synthesizes an IPv6 address by embedding the IPv4 address within a
+   well-known NAT64 prefix.
 2. The device sends its UDP packet to that synthesized IPv6 address.
 3. The Border Router recognizes the NAT64 prefix, extracts the IPv4 address, and
    forwards the packet to the IPv4 destination on the internet.
@@ -117,18 +134,18 @@ Here is how it works:
 From the device's perspective, it is sending data to an IPv6 address. The NAT64
 translation is transparent.
 
-> **Note:** Not every Thread Border Router supports NAT64. Apple devices (HomePod
-> mini, Apple TV 4K) do support it. NAT64 is a requirement in the Thread 1.4
-> specification[^thread_1_4], so support will improve as more hubs receive
-> updates.
+> **Note:** Not every Thread Border Router supports NAT64. Apple devices
+> (HomePod mini, Apple TV 4K) do support it. NAT64 is a requirement in the
+> Thread 1.4 specification[^thread_1_4], so support will improve as more hubs
+> receive updates.
 
 ### Sending data over UDP
 
 Since Matter runs on UDP over Thread, there are a few constraints to keep in
 mind:
 
-- **UDP only.** Since TCP is not compatible with Matter, we get no HTTP,
-  no HTTPS, no WebSockets.
+- **UDP only.** Since TCP is not compatible with Matter, we get no HTTP, no
+  HTTPS, no WebSockets.
 - **Small effective payload.** Thread runs IPv6 over IEEE 802.15.4, which has
   very small MAC frames (127 bytes) and relies on 6LoWPAN fragmentation to carry
   the IPv6 minimum MTU of 1280 bytes. In practice, after headers and considering
@@ -137,11 +154,13 @@ mind:
 - **No TLS.** TLS requires TCP. For encrypted communication, you need DTLS
   (Datagram TLS), which is the UDP equivalent.
 
-This complicates our life a bit, as it means we cannot simply talk to our backend over HTTP (which depends on TCP). We'll get to that in a bit.
+This complicates our life a bit, as it means we cannot simply talk to our
+backend over HTTP (which depends on TCP). We'll get to that in a bit.
 
 ### End-to-end data path
 
-Putting everything we've learned together, here's how a UDP packet from a Matter device gets to a server on the internet:
+Putting everything we've learned together, here's how a UDP packet from a Matter
+device gets to a server on the internet:
 
 ```
 ┌─────────────┐    802.15.4    ┌───────────────────┐    Wi-Fi/Ethernet  ┌──────────┐
@@ -152,8 +171,8 @@ Putting everything we've learned together, here's how a UDP packet from a Matter
 ```
 
 1. The application builds a UDP packet and hands it to the OpenThread stack.
-2. OpenThread encapsulates it for 802.15.4, which encrypts each frame at the
-   MAC layer (AES-128-CCM) before transmitting over the air.
+2. OpenThread encapsulates it for 802.15.4, which encrypts each frame at the MAC
+   layer (AES-128-CCM) before transmitting over the air.
 3. The Border Router receives the 802.15.4 frame, decapsulates it, and sees a
    UDP/IPv6 packet destined for a NAT64 address.
 4. The Border Router performs NAT64 translation and forwards the packet as
@@ -162,16 +181,24 @@ Putting everything we've learned together, here's how a UDP packet from a Matter
 
 ## nRF54LM20 Example: UDP Echo
 
-Let's put this into practice. We will send a UDP message from an nRF54LM20 DK through a HomePod Border Router to Nordic Semiconductor's public echo server found at `udp-echo.nordicsemi.academy:2444`, and receive the response.
+Let's put this into practice. We will send a UDP message from an nRF54LM20 DK
+through a HomePod Border Router to Nordic Semiconductor's public echo server
+found at `udp-echo.nordicsemi.academy:2444`, and receive the response.
 
-The nRF54LM20[^nrf54lm20] is a good fit for Matter. It has an ARM Cortex-M33
-at 128 MHz, 2 MB of NVM (it's actually RRAM, not flash, which is pretty cool) and 512 KB of RAM, which is plenty of headroom for the Matter stack, OpenThread, and application code. It supports both BLE (for commissioning) and 802.15.4 (for Thread).
+The nRF54LM20[^nrf54lm20] is a good fit for Matter. It has an ARM Cortex-M33 at
+128 MHz, 2 MB of NVM (it's actually RRAM, not flash, which is pretty cool) and
+512 KB of RAM, which is plenty of headroom for the Matter stack, OpenThread, and
+application code. It supports both BLE (for commissioning) and 802.15.4 (for
+Thread).
 
-Let's grab a nRF54LM20 Dev Kit[^lm20dk], the latest of the nRF Connect SDK[^ncs] and start writing some code!
+Let's grab a nRF54LM20 Dev Kit[^lm20dk], the latest of the nRF Connect SDK[^ncs]
+and start writing some code!
 
 ### Project Setup
 
-We set up NCS and started from the Matter template sample (`samples/matter/template`). You can learn more about setting up NCS in [Nordic's excellent documentation](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/installation/install_ncs.html).
+We set up NCS and started from the Matter template sample
+(`samples/matter/template`). You can learn more about setting up NCS in
+[Nordic's excellent documentation](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/installation/install_ncs.html).
 
 We need to toggle a few KConfig to get things working in our example:
 
@@ -264,7 +291,9 @@ that embeds the server's IPv4 address with the Border Router's NAT64 prefix.
 ### Sending and Receiving UDP
 
 With the address resolved, we can open a UDP socket and send a message. We use
-the OpenThread native UDP API rather than Zephyr's socket API. The OpenThread stack is already quite large, so we save some code space by not having to pull the full Zephyr networking stack alongside it.
+the OpenThread native UDP API rather than Zephyr's socket API. The OpenThread
+stack is already quite large, so we save some code space by not having to pull
+the full Zephyr networking stack alongside it.
 
 Here's what it looks like:
 
@@ -363,23 +392,25 @@ A few things to note about the OpenThread UDP API:
   receive semaphore so the OT thread can process incoming packets.
 - **Message buffers.** OpenThread uses its own message pool (`otMessage`), not
   flat byte arrays. You allocate with `otUdpNewMessage` and append data with
-  `otMessageAppend`. The stack takes ownership of the message on `otUdpSend`,
-  so do not free it yourself.
-- **Bind to Thread.** The `OT_NETIF_THREAD` parameter in `otUdpBind` ensures
-  the socket is bound to the Thread network interface.
+  `otMessageAppend`. The stack takes ownership of the message on `otUdpSend`, so
+  do not free it yourself.
+- **Bind to Thread.** The `OT_NETIF_THREAD` parameter in `otUdpBind` ensures the
+  socket is bound to the Thread network interface.
 
 ### Trying It Out
 
-After building and flashing with `west`, commission the device into your Thread network using a Matter controller. Look for this log line:
+After building and flashing with `west`, commission the device into your Thread
+network using a Matter controller. Look for this log line:
 
 ```
 00:00:00.140,606] <inf> chip: [SVR]https://project-chip.github.io/connectedhomeip/qrcode.html?data=xxxxxx
 ```
 
-Copy the URL in your browser, and scan the resulting QR code with your favorite Matter ecosystem app (I used Apple Home).
+Copy the URL in your browser, and scan the resulting QR code with your favorite
+Matter ecosystem app (I used Apple Home).
 
-
-Once commissioned, connect to the UART console and first check that everything is working as expected:
+Once commissioned, connect to the UART console and first check that everything
+is working as expected:
 
 ```
 uart:~$ echo status
@@ -422,10 +453,12 @@ confirmable messages with built-in retransmission. It also supports observe
 (server push) and block-wise transfers for payloads larger than a single MTU.
 
 **DTLS** (Datagram TLS) handles encryption. It is the UDP equivalent of TLS,
-providing the same authentication and confidentiality guarantees but designed for
-datagram transports. The OpenThread stack already includes mbedTLS, so adding
-DTLS to a Thread application does not require pulling in a new crypto library.
-In most cases, you'll want to use DTLS 1.2 with Connection ID (RFC 9146): it lets you resume sessions without a full handshake, which is useful for devices that send data periodically and sleep in between.
+providing the same authentication and confidentiality guarantees but designed
+for datagram transports. The OpenThread stack already includes mbedTLS, so
+adding DTLS to a Thread application does not require pulling in a new crypto
+library. In most cases, you'll want to use DTLS 1.2 with Connection ID (RFC
+9146): it lets you resume sessions without a full handshake, which is useful for
+devices that send data periodically and sleep in between.
 
 Together, CoAP over DTLS gives you a lightweight, encrypted, request/response
 channel over UDP. This is the same pattern used by LwM2M and other IoT
@@ -433,14 +466,16 @@ protocols, so there is good tooling and server-side support.
 
 We are big fans of CoAP at nRF Cloud[^nrfcloud], and have built support for the
 protocol across our cloud platform. Device-to-cloud message routing,
-observability, and location services all support CoAP over DTLS. If you are looking to connect your Thread devices to the internet and want a backend that speaks their language, check it out.
+observability, and location services all support CoAP over DTLS. If you are
+looking to connect your Thread devices to the internet and want a backend that
+speaks their language, check it out.
 
 ## Conclusion
 
 Matter devices are designed to operate within the local network, and the hub
 handles most internet-facing communication. But when you need to reach the
-internet directly for telemetry, diagnostics, or custom cloud integration,
-the Thread Border Router can bridge your traffic.
+internet directly for telemetry, diagnostics, or custom cloud integration, the
+Thread Border Router can bridge your traffic.
 
 The recipe we came up with is simple: use the OpenThread DNS client to resolve
 hostnames via the Border Router's DNS proxy, NAT64 to reach IPv4 servers, and
@@ -456,9 +491,9 @@ your Matter devices. As always, we would love to hear about your experience in
 the comments.
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}

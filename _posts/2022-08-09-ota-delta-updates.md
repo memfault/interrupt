@@ -1,4 +1,5 @@
 ---
+date: "2022-08-09"
 title: Saving bandwidth with delta firmware updates
 description:
   An introduction to delta device firmware update (Delta DFU) with JanPatch and
@@ -14,20 +15,19 @@ firmware updates gives modern teams the flexibility they need to move fast and
 react to a changing environment.
 
 I've written at length about firmware updates in the past, including on
-Interrupt with a [Firmware Update Cookbook]({% post_url
-2020-06-23-device-firmware-update-cookbook %}) and [a post about code
-signing]({% post_url 2020-09-08-secure-firmware-updates-with-code-signing %}),
-and even recorded a [webinar on the
-topic](https://memfault.com/webinars/device-firmware-update-best-practices/).
+Interrupt with a
+[Firmware Update Cookbook](/blog/device-firmware-update-cookbook) and
+[a post about code signing](/blog/secure-firmware-updates-with-code-signing),
+and even recorded a
+[webinar on the topic](https://memfault.com/webinars/device-firmware-update-best-practices/).
 
 Since then, I've heard from some of you that they've run into roadblocks
 implementing firmware updates on bandwidth-limited devices. Indeed devices
 connected over low bandwidth links like 900MHz wireless or LoRaWAN often
 struggle to download a full firmware image in any reasonable time.
 
-One solution is to implement _delta updates_, a technique that
-allows devices to download only the bits and pieces they need rather than full
-system images.
+One solution is to implement _delta updates_, a technique that allows devices to
+download only the bits and pieces they need rather than full system images.
 
 <!-- excerpt start -->
 
@@ -37,16 +37,15 @@ example implementation from top to bottom.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Delta Updates Explained
 
 > Note: the next few sections provide an overview of delta updates, why it
 > matters, and how it works. If you'd like to skip straight to implementation,
-> click
-> [here](#delta-updates-implementation).
+> click [here](#delta-updates-implementation).
 
 The concept behind delta updates is intuitive. When we put together a new
 version of our firmware, we do not change every single line of code. Instead, we
@@ -56,7 +55,7 @@ introduce a new feature or fix a bug.
 This means that our new firmware is largely made up of the old firmware, plus a
 few changes.
 
-<img width=600px src="{% img_url fwup-delta/new-code-old-image.png %}" />
+<img width=600px src="/img/fwup-delta/new-code-old-image.png" />
 
 Wouldn't it be neat if we could collect only the code changes and send those
 down to the device, rather than the full firmware update? This is exactly what
@@ -65,12 +64,12 @@ delta updates allow us to do.
 The process is broken up into two steps. First, we need to extract the bits that
 have changed from our new image, we'll call it DIFF.
 
-<img width=600px src="{% img_url fwup-delta/new-code-DIFF.png %}" />
+<img width=600px src="/img/fwup-delta/new-code-DIFF.png" />
 
 Then we reconstruct our image from our original firmware and our delta image,
 which we'll call PATCH.
 
-<img width=700px src="{% img_url fwup-delta/new-code-PATCH.png %}" />
+<img width=700px src="/img/fwup-delta/new-code-PATCH.png" />
 
 ### Pros and Cons of Delta Updates
 
@@ -83,9 +82,9 @@ images. The size reduction has multiple beneficial effects:
 1. OTA updates become possible over very low bandwidth links (e.g. LoRaWAN).
 2. Updates are much faster over low bandwidth links. For example, a 10MB image
    may take over 15 minutes to download over a BLE connection to a mobile phone,
-   even at [peak throughput]({% post_url 2019-09-24-ble-throughput-primer %}). A
-   delta update would take less than 1 minute to download, leading to a much
-   better customer experience and less risk of power loss mid-update.
+   even at [peak throughput](/blog/ble-throughput-primer). A delta update would
+   take less than 1 minute to download, leading to a much better customer
+   experience and less risk of power loss mid-update.
 3. The lifetime of flash memory can be extended, as fewer writes are needed to
    install a delta image than a full image.
 4. OTA consumes less power, thanks to the reduced communication and flash
@@ -98,8 +97,8 @@ downsides worth considering:
 
 1. More complexity! Your firmware update code now needs to implement the
    patching algorithm, which creates more opportunities for bugs.
-2. Delta updates require more code space to implement the patching algorithm,
-   so if you are constrained already it may not be appropriate for your project.
+2. Delta updates require more code space to implement the patching algorithm, so
+   if you are constrained already it may not be appropriate for your project.
 3. Managing delta updates creates more complexity on the backend and in the
    release process.
 
@@ -112,9 +111,8 @@ since the combination of things to test is much larger than with a system image.
 
 This also means that your OTA backend needs to be sophisticated enough to
 present delta updates when devices are running compatible versions, and in all
-other cases present a full system update. And each firmware release requires
-you to compile and upload several delta images for your versions in the
-field.
+other cases present a full system update. And each firmware release requires you
+to compile and upload several delta images for your versions in the field.
 
 > Our OTA backend at [Memfault](https://memfault.com) supports delta updates!
 > You can read more about it in our
@@ -130,9 +128,9 @@ Jojodiff[^jojodiff], which has been helpfully reimplemented by Jan
 Jongboom[^jan] in his JanPatch library[^janpatch] optimized for embedded
 systems.
 
-While Jojodiff is neither the fastest nor the most efficient, it requires constant
-space, linear time complexity, and can patch a file in place. These features
-make it well suited to limited environments such as MCU-based devices.
+While Jojodiff is neither the fastest nor the most efficient, it requires
+constant space, linear time complexity, and can patch a file in place. These
+features make it well suited to limited environments such as MCU-based devices.
 
 > Note: we've heard from some teams that they have successfully modified XDelta
 > and BSDiff to do in-place, fixed memory delta patching. This was more effort
@@ -143,10 +141,10 @@ make it well suited to limited environments such as MCU-based devices.
 
 ### Setup
 
-Like we did in our previous posts, we use [Renode]({% post_url
-2020-03-23-intro-to-renode %}) to run the examples in this post. We are using a
-virtualized STM32 on which we are running a complete firmware image. The
-previous post contains detailed instructions, but in short:
+Like we did in our previous posts, we use [Renode](/blog/intro-to-renode) to run
+the examples in this post. We are using a virtualized STM32 on which we are
+running a complete firmware image. The previous post contains detailed
+instructions, but in short:
 
 ```
 # Clone the repository & navigate to the example
@@ -201,43 +199,12 @@ As a reminder, this is what our device firmware update architecture looks like:
     margin-right: auto;
 }
 </style>
-{% blockdiag size:120x40 %}
-blockdiag {
-    span_width = 100;
-    // Set labels to nodes.
-    C [label = "Bootloader"];
-    A [label = "App Loader"];
-    B [label = "Application"];
-    C -> A [label = "Loads", fontsize=8];
-    A -> B [label = "Ld, Updt", fontsize=8];
-
-    E [label = "Updater"];
-    A -> E [label = "Ld, Updt", fontsize=8];
-    E -> A [label = "Updates", fontsize=8];
-    C -> E [label = "Loads", style=dashed, fontsize=8];
-
-    group {
-        label = "Slot 0";
-        color = "PaleGreen";
-        C;
-    }
-    group {
-        label = "Slot 1";
-        color = "LightPink";
-        A;
-    }
-    group {
-        label = "Slot 2";
-        color = "LemonChiffon";
-        B; E;
-    }
-}
-{% endblockdiag %}{:.diag4}
+<!-- blockdiag diagram removed -->{:.diag4}
 
 With the following functionality for each block:
 
-1. Bootloader: a simple program whose sole job is to load the Loader, and fall back
-   to another image if the Loader is invalid.
+1. Bootloader: a simple program whose sole job is to load the Loader, and fall
+   back to another image if the Loader is invalid.
 2. Loader: a program that can verify our Application image, load it, and update
    it.
 3. Application: our main code, which does not do any updates itself
@@ -253,9 +220,9 @@ First things first, let's create a new version of our firmware. As an example, I
 added a print line that says "This application was patched!" at boot when our
 Application runs.
 
-To make things easy, I create a `.patch` file that I can apply and un-apply
-from my codebase. I can then build my new firmware image with the following
-`make` commands:
+To make things easy, I create a `.patch` file that I can apply and un-apply from
+my codebase. I can then build my new firmware image with the following `make`
+commands:
 
 ```
 $(BUILD_DIR)/$(PROJECT)-app-patched.elf: $(SRCS_APP) $(PATCH_FILE) $(OPENCM3_LIB)
@@ -301,7 +268,6 @@ using `objcopy` as we explained in previous posts.
 > Note: C23 which was just finalized will include a new `#embed` preprocessor
 > directive which makes embedded binary and other files inside of a C program
 > much easier. We'll use that instead of objcopy in the future!
-
 
 ### Implementing JanPatch
 
@@ -365,7 +331,8 @@ int do_janpatch() {
 The next four fields are function pointers that expect File I/O functions. On
 POSIX systems you can simply pass `fread`, `fwrite`, and `fseek`, and define
 `JANPATCH_STREAM` as `FILE`. However, we are on a bare metal system and will
-need to implement our own. I'll call this module Simple File I/O or `simple_fileio`.
+need to implement our own. I'll call this module Simple File I/O or
+`simple_fileio`.
 
 We need our `simple_fileio` module to be able to read data from our
 memory-mapped `bin` file, and both read and write data from/to our firmware slot
@@ -396,9 +363,9 @@ typedef struct {
 
 We can then implement `sfio_fread` which reads from RAM or image slot at the
 stored offset and writes it to an output pointer. Note that while the POSIX API
-accepts a `size` and a `count` (for a total number of bytes read of `size *
-count`, Janpatch only ever sets a size of `1` so we made the
-simplifying assumption that it would always be 1.
+accepts a `size` and a `count` (for a total number of bytes read of
+`size * count`, Janpatch only ever sets a size of `1` so we made the simplifying
+assumption that it would always be 1.
 
 ```c
 size_t sfio_fread(void *ptr, size_t size, size_t count, sfio_stream_t *stream) {
@@ -416,8 +383,8 @@ size_t sfio_fread(void *ptr, size_t size, size_t count, sfio_stream_t *stream) {
 }
 ```
 
-Next, our `sfio_fwrite` function needs to write the provided buffer of `count` bytes
-to our RAM or image slot, as follows:
+Next, our `sfio_fwrite` function needs to write the provided buffer of `count`
+bytes to our RAM or image slot, as follows:
 
 ```c
 size_t sfio_fwrite(const void *ptr, size_t size, size_t count, sfio_stream_t *stream) {
@@ -453,9 +420,9 @@ int sfio_fseek(sfio_stream_t *stream, long int offset, int origin) {
 
 Astute readers may have noticed that we introduced new functions: `dfu_read` and
 `dfu_write`, which we use to write to and read from our image slots. Those
-functions convert slot addresses to physical addresses and then use memcpy or flash
-APIs to read/write the data. Here's a simple implementation that does no bounds
-checking;
+functions convert slot addresses to physical addresses and then use memcpy or
+flash APIs to read/write the data. Here's a simple implementation that does no
+bounds checking;
 
 ```c
 int dfu_read(image_slot_t slot, void *ptr, long int offset, size_t count) {
@@ -528,14 +495,14 @@ Here is what the code looks like:
     janpatch(ctx, &source, &patch, &target);
 ```
 
-That's it! The full example is available on Github in [the Interrupt
-repo](https://github.com/memfault/interrupt/tree/master/example/fwup-delta).
+That's it! The full example is available on Github in
+[the Interrupt repo](https://github.com/memfault/interrupt/tree/master/example/fwup-delta).
 
 ### Testing it all in Renode
 
 Once we've built all of our image, we simply need to start Renode by running the
-provided `start.sh` or `mono64 Renode.exe renode-config.resc --port 4444
---disable-xwt`.
+provided `start.sh` or
+`mono64 Renode.exe renode-config.resc --port 4444 --disable-xwt`.
 
 We then perform the update on the USART console:
 
@@ -586,22 +553,23 @@ our Loader turned out to be relatively easy. A huge thanks especially to Jan
 Jongboom for his reverse engineering of the jojodiff format and implementation
 of an embedded-friendly patch library.
 
-A separate post could be written about how to wrangle those updates on the
-cloud side. Getting the right binary to the right device becomes more
-complicated as we roll out features like Delta Updates. Perhaps we will tackle
-this topic next time.
+A separate post could be written about how to wrangle those updates on the cloud
+side. Getting the right binary to the right device becomes more complicated as
+we roll out features like Delta Updates. Perhaps we will tackle this topic next
+time.
 
 As always, we'd love to hear from you. Do you use a different approach to delta
 updates? Let us know! And if you see anything you'd like to change, don't
 hesitate to submit a pull request or open an issue on
 [Github](https://github.com/memfault/interrupt)
 
-> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
+> Interested in learning more device firmware update best practices?
+> [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}

@@ -1,4 +1,5 @@
 ---
+date: "2021-10-07"
 title: "Peeking inside CMSIS-Packs"
 description: Overview of the CMSIS-Pack distribution and some use cases
 author: noah
@@ -15,9 +16,9 @@ useful!
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## CMSIS-Pack Contents
 
@@ -60,8 +61,8 @@ courtesy of one of my favorite tools: **PyOCD**
 
 > PyOCD integrates CMSIS-Pack management as a way of accessing flash algorithms
 > for chips not natively supported by the tool. It's a pretty awesome way to
-> provide flashing support to a LOT of chips!<br>
-> To learn more, check out our [Deep Dive into ARM Cortex-M Debug Interfaces]({% post_url 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}).
+> provide flashing support to a LOT of chips!<br> To learn more, check out our
+> [Deep Dive into ARM Cortex-M Debug Interfaces](/blog/a-deep-dive-into-arm-cortex-m-debug-interfaces).
 
 For example, if I wanted the CMSIS-Pack for an Atmel SAMD21 chip, I can run
 these commands from my terminal:
@@ -127,9 +128,9 @@ file to flash chips) is the flash algorithm, which is specified in the top-level
 
 <https://www.keil.com/pack/doc/CMSIS/Pack/html/packFormat.html>
 
-The file contains many interesting pieces of information. One particularly useful
-one is the Flash Algorithms used to program a piece of hardware. Look for a
-section of the XML with the `<algorithm>` tag, for example:
+The file contains many interesting pieces of information. One particularly
+useful one is the Flash Algorithms used to program a piece of hardware. Look for
+a section of the XML with the `<algorithm>` tag, for example:
 
 _Note: I added the comments explaining each section_
 
@@ -260,17 +261,17 @@ watchpoint and waits for the chip to halt after reset.
 ## SVD File
 
 This is another XML file that contains information about the peripheral
-registers in the chip. Under certain conditions, it's **_invaluable_**; some examples
-I've used before:
+registers in the chip. Under certain conditions, it's **_invaluable_**; some
+examples I've used before:
 
-- using [PyCortexMDebug in gdb]({% post_url 2020-10-20-advanced-gdb
-  %}#svd-files-and-peripheral-registers) to pretty-print register values while
-  debugging 😍
+- using
+  [PyCortexMDebug in gdb](/blog/advanced-gdb#svd-files-and-peripheral-registers)
+  to pretty-print register values while debugging 😍
 - generating language bindings over the memory-mapped peripherals:
   <https://github.com/rust-embedded/svd2rust>
 
-> Tip: always be careful when using these SVD files; they occasionally can
-> have mistakes in them, which can be really confusing. When in doubt, check the
+> Tip: always be careful when using these SVD files; they occasionally can have
+> mistakes in them, which can be really confusing. When in doubt, check the
 > datasheet or reference implementations (eg CMSIS headers) as a separate
 > source.
 
@@ -354,17 +355,16 @@ project to keep an eye on:
 
 - CMSIS Pack official documentation:<br/>
   <https://arm-software.github.io/CMSIS_5/Pack/html/cp_Packs.html>
-- Pack
-  registry:<br/>
+- Pack registry:<br/>
   <https://developer.arm.com/tools-and-software/embedded/cmsis/cmsis-packs>
 - PyOCD documentation on Packs:<br/>
   <https://github.com/pyocd/pyOCD/blob/main/docs/target_support.md#cmsis-packs>
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

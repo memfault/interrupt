@@ -1,4 +1,5 @@
 ---
+date: "2025-02-20"
 title: "Why std::this_thread::sleep_for() is broken on ESP32"
 description:
   A deep dive into how std::this_thread::sleep_for() is implemented on ESP32,
@@ -22,9 +23,9 @@ performance, but only in the new version of IDF due to an interaction between
 > [Listen to Steve on Interrupt Live](https://youtube.com/live/dwL-PI7TuDY?feature=share)
 > talk about the content and motivations behind writing this article.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Why so slow IDF v5?
 
@@ -693,9 +694,9 @@ I sincerely hope `usleep()` is fixed. Until then, don't use
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

@@ -1,8 +1,10 @@
 ---
+date: "2019-05-14"
 title: "From Zero to main(): Bare metal C"
 author: francois
 tags: [zero-to-main, cortex-m, bare-metal]
 ---
+
 Working on embedded software, one quickly develops a quasi-religious respect for
 the axioms of embedded C programming:
 
@@ -12,14 +14,17 @@ the axioms of embedded C programming:
 3. Thou shalt implement The Interrupts. HardFault_Handler chief among them, but
    also SysTick_Handler.
 
-Ask an engineer where those rules come from, and they'll wave towards cryptic startup files implemented in assembly. Often times those files are copy-pasted
+Ask an engineer where those rules come from, and they'll wave towards cryptic
+startup files implemented in assembly. Often times those files are copy-pasted
 from project to project. Seldom are they ever read, let alone modified.
 
 <!-- excerpt start -->
-Throughout the [Zero to main() series]({% tag_url zero-to-main %}) of posts,
-we demystify what happens between when power is applied
-and your main function is called. In the process, we'll learn how to bootstrap a
-C environment, implement a bootloader, relocate code, and more!
+
+Throughout the [Zero to main() series](/tag/zero-to-main) of posts, we demystify
+what happens between when power is applied and your main function is called. In
+the process, we'll learn how to bootstrap a C environment, implement a
+bootloader, relocate code, and more!
+
 <!-- excerpt end -->
 
 ## Setting the stage
@@ -33,7 +38,8 @@ Specifically, we are using:
 - Adafruit's [Metro M0 Express](https://www.adafruit.com/product/3505) as our
   development board,
 - a simple [CMSIS-DAP Adapter](https://www.adafruit.com/product/2764)
-- OpenOCD (the [Arduino fork](https://github.com/arduino/OpenOCD)) for programming
+- OpenOCD (the [Arduino fork](https://github.com/arduino/OpenOCD)) for
+  programming
 
 In each case, we'll implement a simple blinking LED application. It is not
 particularly interesting in itself, but for the sake of completeness you can
@@ -65,17 +71,16 @@ int main() {
 }
 ```
 
-
 ## Power on!
 
 So how did we get to main? All we can tell from observation is that we applied
 power to the board and our code started executing. There must be behavior
 intrinsic to the chip that defines how code is executed.
 
-And indeed, there is! Digging into the [ARMv6-M Technical Reference
-Manual](https://static.docs.arm.com/ddi0419/d/DDI0419D_armv6m_arm.pdf), which is
-the underlying architecture manual for the Cortex-M0+, we can
-find some pseudo-code that describes reset behavior:
+And indeed, there is! Digging into the
+[ARMv6-M Technical Reference Manual](https://static.docs.arm.com/ddi0419/d/DDI0419D_armv6m_arm.pdf),
+which is the underlying architecture manual for the Cortex-M0+, we can find some
+pseudo-code that describes reset behavior:
 
 ```c
 // B1.5.5 TakeReset()
@@ -114,7 +119,8 @@ In short, the chip does the following:
 
 Let us check.
 
-First, we dump our `bin` file to see what address `0x0000000` and `0x00000004` contain:
+First, we dump our `bin` file to see what address `0x0000000` and `0x00000004`
+contain:
 
 ```terminal
 francois-mba:zero-to-main francois$ xxd build/minimal/minimal.bin  | head
@@ -151,8 +157,8 @@ francois-mba:minimal francois$ arm-none-eabi-objdump -t build/minimal.elf | sort
 ...
 ```
 
-That's odd! Our main function is found at `0x000002ac`. No symbol at `0x000000c1`, but a
-`Reset_Handler` symbol at `0x000000c0`.
+That's odd! Our main function is found at `0x000002ac`. No symbol at
+`0x000000c1`, but a `Reset_Handler` symbol at `0x000000c0`.
 
 It turns out that the lowest bit of the PC is used to indicate thumb2
 instructions, which is one of the two instruction sets supported by ARM
@@ -162,16 +168,15 @@ out section A4.1.1 in the ARMv6-M manual).
 ## Writing a Reset_Handler
 
 Unfortunately, the Reset_Handler is often an inscrutable mess of Assembly code.
-See the [nRF52 SDK
-startup](https://github.com/NordicSemiconductor/nrfx/blob/293f553ed9551c1fdfd05eac48e75bbdeb4e7290/mdk/gcc_startup_nrf52.S#L217)
+See the
+[nRF52 SDK startup](https://github.com/NordicSemiconductor/nrfx/blob/293f553ed9551c1fdfd05eac48e75bbdeb4e7290/mdk/gcc_startup_nrf52.S#L217)
 file for example.
 
 Instead of going through this file line-by-line, let's see if we can write a
 minimal Reset_Handler from first principles.
 
-Here again, ARM's Technical Reference Manuals are useful. [Section 5.9.2 of the
-Cortex-M3
-TRM](https://developer.arm.com/docs/ddi0337/e/exceptions/resets/intended-boot-up-sequence)
+Here again, ARM's Technical Reference Manuals are useful.
+[Section 5.9.2 of the Cortex-M3 TRM](https://developer.arm.com/docs/ddi0337/e/exceptions/resets/intended-boot-up-sequence)
 contains the following table:
 
 <table border="0" summary="Reset boot-up behavior">
@@ -217,8 +222,8 @@ static uint32_t foo;
 static uint32_t bar = 2;
 ```
 
-Our `Reset_Handler` needs to make sure that the memory at `&foo` is 0x00000000, and the
-memory at `&bar` is 0x00000002.
+Our `Reset_Handler` needs to make sure that the memory at `&foo` is 0x00000000,
+and the memory at `&bar` is 0x00000002.
 
 We cannot just go and initialize each variable one by one. Instead, we rely on
 the compiler (technically, the linker) to put all those variables in the same
@@ -235,11 +240,13 @@ for (uint32_t *bss_ptr = &_sbss; bss_ptr < &_ebss;) {
 ```
 
 For static variables with an init value, the linker gives us:
-* `_etext` as the address the init values are stored at
-* `_sdata` as the address the static variables live at
-* `_edata` as the end of the static variables memory
+
+- `_etext` as the address the init values are stored at
+- `_sdata` as the address the static variables live at
+- `_edata` as the end of the static variables memory
 
 We then can do:
+
 ```c
 uint32_t *init_values_ptr = &_etext;
 uint32_t *data_ptr = &_sdata;
@@ -305,30 +312,33 @@ void Reset_Handler(void)
 ```
 
 You will note that we added two things:
+
 1. An infinite loop after `main()`, so we do not run off into the weeds if the
    main function returns
 2. Workaround for chip bugs which are best taken care of before our program
    starts. Sometimes these are wrapped in a `SystemInit` function called by the
-   `Reset_Handler` before `main`. This is the approach [taken by
-Nordic](https://github.com/NordicSemiconductor/nrfx/blob/6f54f689e9555ea18f9aca87caf44a3419e5dd7a/mdk/system_nrf52811.c#L60).
+   `Reset_Handler` before `main`. This is the approach
+   [taken by Nordic](https://github.com/NordicSemiconductor/nrfx/blob/6f54f689e9555ea18f9aca87caf44a3419e5dd7a/mdk/system_nrf52811.c#L60).
 
 ## Closing
 
 All the code used in this blog post is available on
 [Github](https://github.com/memfault/zero-to-main/tree/master/minimal).
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 More complex programs often require a more complicated `Reset_Handler`. For
 example:
+
 1. Relocatable code must be copied over
-2. If our program relies on libc, we must initialize it
-  _EDIT: Post written!_ - [From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
+2. If our program relies on libc, we must initialize it _EDIT: Post written!_ -
+   [From Zero to main(): Bootstrapping libc with Newlib](/blog/boostrapping-libc-with-newlib)
 3. More complex memory layouts can add a few copy / zero loops
 
-We'll cover all of them in future posts. But before that,
-we'll talk about how the magical memory region variables come about,
-how our `Reset_Handler`'s address ends up at `0x00000004`, and how to write a
-linker script in our next post!
+We'll cover all of them in future posts. But before that, we'll talk about how
+the magical memory region variables come about, how our `Reset_Handler`'s
+address ends up at `0x00000004`, and how to write a linker script in our next
+post!
 
-_EDIT: Post written!_ - [From Zero to main(): Demystifying Firmware Linker Scripts]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %})
+_EDIT: Post written!_ -
+[From Zero to main(): Demystifying Firmware Linker Scripts](/blog/how-to-write-linker-scripts-for-firmware)

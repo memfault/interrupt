@@ -1,6 +1,9 @@
 ---
+date: "2021-02-16"
 title: "Introduction to ARM Semihosting"
-description: "An introduction to ARM semihosting, followed by an example with OpenOCD and arm-none-eabi toolchain"
+description:
+  "An introduction to ARM semihosting, followed by an example with OpenOCD and
+  arm-none-eabi toolchain"
 tag: [cortex-m, semihosting, arm]
 author: ael-mess
 ---
@@ -23,11 +26,13 @@ microcontrollers. It allows an embedded program to take advantage of the
 capabilities of an attached computer when the debugger is running.
 
 <!-- excerpt start -->
+
 This post introduces semihosting and shows how to use it and integrate it into
 your own embedded projects.
+
 <!-- excerpt end -->
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What Is Semihosting
 
@@ -41,15 +46,15 @@ host computer attached to the device. By doing so, it can benefit from the
 screen, the keyboard, or the disk of the host.
 
 <p align="center">
-  <img width="600" src="{% img_url semihosting/semihosting_overview.png %}"/>
+  <img width="600" src="/img/semihosting/semihosting_overview.png"/>
 </p>
 
 ## How It Works
 
 This is done by halting the CPU target by the debugger agent, either by running
-into a breakpoint instruction (`BKPT 0xAB`  for ARMv6-M or ARMv7-M) or by
-sending a supervisor call instruction (`SVC 0xAB` or `SVC 0x123456`) depending
-on the target architecture or processor.
+into a breakpoint instruction (`BKPT 0xAB` for ARMv6-M or ARMv7-M) or by sending
+a supervisor call instruction (`SVC 0xAB` or `SVC 0x123456`) depending on the
+target architecture or processor.
 
 This indicates to the host that the target is requesting a semihosting
 operation.
@@ -101,20 +106,23 @@ SYS_SYSTEM      EQU 0x12
 In this example, I run the program on an STM32 and use the `arm-none-eabi`
 toolchain along with **openOCD** `gdbserver`. Other tools may be used instead
 depending on your hardware, for more details on which debug interface to use, it
-would be wise to read [this article]({% post_url 2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}).
+would be wise to read
+[this article](/blog/a-deep-dive-into-arm-cortex-m-debug-interfaces).
 
 Once you are all set, we can start coding.
 
 First, to enable semihosting, you need to link:
-* `libc.a`, the standard C library (*newlib*[^3] for `arm-none-eabi-gcc`),
-* and `librdimon.a`, a part of the *libgloss*[^4] library (for platform-specific
+
+- `libc.a`, the standard C library (_newlib_[^3] for `arm-none-eabi-gcc`),
+- and `librdimon.a`, a part of the _libgloss_[^4] library (for platform-specific
   code) to your project.
 
 This is done by adding a few options to the ARM linker:
-* removing `-nostartfiles` flag to allow linking standards libraries,
-* adding `-lc -lrdimon` flags,
-* and changing the *spec strings* file[^5] to `--specs=rdimon.specs` to use the
-  semihosted version of the *syscalls*.
+
+- removing `-nostartfiles` flag to allow linking standards libraries,
+- adding `-lc -lrdimon` flags,
+- and changing the _spec strings_ file[^5] to `--specs=rdimon.specs` to use the
+  semihosted version of the _syscalls_.
 
 The last point essentially means that the system calls can be used when a
 debugger is attached (note that the CPU may crash if a debugger is not present).
@@ -152,7 +160,7 @@ Once you have done this, you can compile and program your microcontroller as
 usual, however, once the microcontroller flashed it should be halted and not run
 yet.
 
-In my case, I launch *OpenOCD* `gdbserver` in one terminal, to flash, reset and
+In my case, I launch _OpenOCD_ `gdbserver` in one terminal, to flash, reset and
 halt the CPU. And run `gdb` from another terminal to connect to the server, and
 enable the semihosting in the server side[^6].
 
@@ -177,9 +185,9 @@ nevertheless, it can be very handy in some cases.
 I look forward to your remarks, tips, and comments.
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}

@@ -1,4 +1,5 @@
 ---
+date: "2025-11-05"
 title: "What we've been reading in September & October (2025)"
 description:
   Here are the articles, videos, and tools we've been excited about in September

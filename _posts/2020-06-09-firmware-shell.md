@@ -1,4 +1,5 @@
 ---
+date: "2020-06-09"
 title: Building a Tiny CLI Shell for Tiny Firmware
 description:
   A command-line shell is a powerful way to interface with embedded devices,
@@ -27,9 +28,9 @@ applicable to most embedded systems.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Why Build a Device Shell?
 
@@ -503,8 +504,8 @@ name.<br>
 
 To further understand how these two arguments work together in our shell, let's
 build a command called `kv_write` that could hook into the Key/Value Store from
-a previous Interrupt post, [Unit Testing
-Basics]({% post_url 2019-10-08-unit-testing-basics %}#basic-implementation-of-keyvalue-store).
+a previous Interrupt post,
+[Unit Testing Basics](/blog/unit-testing-basics#basic-implementation-of-keyvalue-store).
 This command will take two arguments from the user, a key and value, and work in
 the following way:
 
@@ -621,9 +622,9 @@ $ wifi connect
 
 Typing this in every time I change Wi-Fi hotspots will become tedious for me and
 my teammates. In these cases, I suggest taking a few more minutes to productize
-these scripts by adding them to a [project
-CLI]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}) to easily
-share them with others working on the same project.
+these scripts by adding them to a
+[project CLI](/blog/building-a-cli-for-firmware-projects) to easily share them
+with others working on the same project.
 
 This way, I could write a simple command that would accept the Wi-Fi hotspot
 credentials, and the script would handle connecting to the serial port, running
@@ -648,8 +649,8 @@ factory builds. Nobody wants to test 50 shell commands, so let unit tests do it!
 I won't go very deep in this section, but I do want to give a rough idea of how
 one would implement unit tests for a shell.
 
-Using CppUTest and a similar structure to our previous [Unit Testing
-Basics]({% post_url 2019-10-08-unit-testing-basics %}) post, we arrive at the
+Using CppUTest and a similar structure to our previous
+[Unit Testing Basics](/blog/unit-testing-basics) post, we arrive at the
 following structure within our `part2/` example:
 
 ```
@@ -823,18 +824,18 @@ not** change between builds. This is because these systems have parsers on the
 output and those would break if the responses weren't in the correct format.
 
 The simplest way to verify that the input and output do not change between
-builds is to invest in a suite of unit tests with [proper
-mocks]({% post_url 2020-05-12-unit-test-mocking %}) that assert that every
-character being output remains the same. These should then be run within CI for
-every pull request and master branch commit.
+builds is to invest in a suite of unit tests with
+[proper mocks](/blog/unit-test-mocking) that assert that every character being
+output remains the same. These should then be run within CI for every pull
+request and master branch commit.
 
 ### Slimming Down Shell Commands
 
 Every command that you add to the shell will take up a non-trivial amount of
 code space. The command implementations usually contain a lot of strings and
 formatting code, which doesn't optimize well. When the firmware is out of space
-([don't let it]({% post_url 2020-03-18-code-size-deltas %})), these shell
-features are usually some of the first to go.
+([don't let it](/blog/code-size-deltas)), these shell features are usually some
+of the first to go.
 
 You usually want to perform automated tests on a production-like build. These
 builds will have fewer developer-facing bells and whistles and only contain the
@@ -890,9 +891,9 @@ Although its security is questionable, it is a good base-line I would put in
 place to restrict a chunk of hobby hackers from gaining access to the system.
 
 Note that this would be easily thwarted by anyone running
-[`strings`]({% post_url 2020-04-08-gnu-binutils %}#strings) on the firmware, as
-the password will be seen in plain text. So you might want to add a basic cipher
-to the password, such as the following:
+[`strings`](/blog/gnu-binutils#strings) on the firmware, as the password will be
+seen in plain text. So you might want to add a basic cipher to the password,
+such as the following:
 
 ```c
 bool validate_password(const char *attempt) {
@@ -962,11 +963,9 @@ be worth the time to invest in building something else if:
 ## Final Thoughts
 
 As an evangelist for developer productivity, I love finding repeated tasks and
-automating the processes, whether that is in the firmware shell, a [project CLI
-on the host
-machine]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}), or in
-[the
-debugger]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}).
+automating the processes, whether that is in the firmware shell, a
+[project CLI on the host machine](/blog/building-a-cli-for-firmware-projects),
+or in [the debugger](/blog/automate-debugging-with-gdb-python-api).
 
 I hope this post conveyed the reasons why having a developer-focused interface
 into a firmware-based device is helpful. I'd love to hear about how you think
@@ -976,7 +975,7 @@ features and code space usage in your shell.
 You can find the examples shown in this post
 [here](https://github.com/memfault/interrupt/tree/master/example/firmware-shell).
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 

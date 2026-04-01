@@ -1,14 +1,17 @@
 ---
+date: "2021-11-23"
 title: "Pocket article: How to implement and use `.noinit` RAM"
-description: Explanation of a non-initialized memory section for an embedded program, how it impacts application and bootloader, and some sample implementations.
+description:
+  Explanation of a non-initialized memory section for an embedded program, how
+  it impacts application and bootloader, and some sample implementations.
 author: noah
 image: img/noinit/cover.png # 1200x630
 tags: [toolchain, build-system]
 ---
 
 Imagine there's an embedded system that needs to persist some state when the
-processor restarts (either intentionally or due to a [catastrophic error]({%
-post_url 2019-11-20-cortex-m-hardfault-debug %})).
+processor restarts (either intentionally or due to a
+[catastrophic error](/blog/cortex-m-hardfault-debug)).
 
 This could be some external hardware information (what's the position of a motor
 or actuator?) or a method to communicate the reset to the user (display some
@@ -27,18 +30,16 @@ how to implement it, and how it can be used in a typical embedded system.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Typical memory regions in an embedded program
 
 For more background, see these references on linker scripts:
 
-- [From Zero to main(): Demystifying Firmware Linker Scripts]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %})
-- [Stargirl Flower's _outstanding_ "The most thoroughly commented linker script
-  (probably)"
-  post](https://blog.thea.codes/the-most-thoroughly-commented-linker-script/)
+- [From Zero to main(): Demystifying Firmware Linker Scripts](/blog/how-to-write-linker-scripts-for-firmware)
+- [Stargirl Flower's _outstanding_ "The most thoroughly commented linker script (probably)" post](https://blog.thea.codes/the-most-thoroughly-commented-linker-script/)
 - [Elecia White's (of embedded.fm !) excellent Memory Map talk](https://www.youtube.com/watch?v=XRXLUcbJIxY)
 
 A typical small embedded device (running bare-metal or an RTOS) will usually
@@ -173,8 +174,7 @@ section                size         addr
 
 See some background information on bootloader operation here:
 
-- [How to write a bootloader from scratch (The Interrupt)]({% post_url
-  2019-08-13-how-to-write-a-bootloader-from-scratch %})
+- [How to write a bootloader from scratch (The Interrupt)](/blog/how-to-write-a-bootloader-from-scratch)
 
 Since a bootloader usually will use the same RAM regions as the application, we
 need to make sure that the `NOINIT` region in the bootloader is similarly
@@ -199,9 +199,8 @@ be implemented and used
 
 ### No bootloader, just application
 
-(See [How to write a bootloader from scratch (The Interrupt): Message passing to
-catch reboot
-loops](https://interrupt.memfault.com/blog/how-to-write-a-bootloader-from-scratch#message-passing-to-catch-reboot-loops)
+(See
+[How to write a bootloader from scratch (The Interrupt): Message passing to catch reboot loops](https://interrupt.memfault.com/blog/how-to-write-a-bootloader-from-scratch#message-passing-to-catch-reboot-loops)
 for another example of this!)
 
 <!--
@@ -211,11 +210,9 @@ https://jekyllrb.com/docs/liquid/tags/#link
 
 Otherwise we'd do something like this:
 
-{% raw %}
-{% post_url
-  2019-08-13-how-to-write-a-bootloader-from-scratch#message-passing-to-catch-reboot-loops
-  %}
-{% endraw %}
+
+
+
 
 C'est la vie.
 -->
@@ -431,8 +428,8 @@ including stack and heap, from lowest to highest memory address:
 .stack (end of RAM, grows down)
 ```
 
-Of course, if you're lucky, there may be a small reserve of RAM ([backup
-RAM](#backup-ram)) that can be used instead!
+Of course, if you're lucky, there may be a small reserve of RAM
+([backup RAM](#backup-ram)) that can be used instead!
 
 ### Gotchas: Watch out for ROM bootloaders (they use RAM too)
 
@@ -475,8 +472,8 @@ can be done by:
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->

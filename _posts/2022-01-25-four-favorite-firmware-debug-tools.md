@@ -1,4 +1,5 @@
 ---
+date: "2022-01-25"
 title: Nash's Four Favorite Firmware Debug Tools
 description: Find firmware flaws faster with these top notch tools
 author: nash
@@ -23,9 +24,9 @@ firmware flaws.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Fluke Multimeter
 
@@ -39,7 +40,7 @@ resistance, capacitance, diode IV ratings, beep for continuity, and a whole host
 of other features that I can't think of unless I go dig the manual out of a
 drawer. What's not to love?
 
-![The closest you'll ever get to an "action shot" with a Fluke meter]({% img_url debug-tools/fluke.jpg  %})
+![The closest you'll ever get to an "action shot" with a Fluke meter](/img/debug-tools/fluke.jpg)
 
 ### The Good Parts
 
@@ -113,11 +114,11 @@ communications: things like UART, I2C, and SPI transactions. You can view these
 on oscilloscopes, but they are painful to decode by hand. Almost all scope
 vendors offer decoder packages, but they are expensive, and generally not
 bundled together. You have to pay a few hundred dollars a pop to unlock UART,
-then SPI, then I2C, and so forth for the smorgasbord of digital
-signals you need to monitor. On top of that, the UI for many scopes is clunky.
-Digital protocol decoders can be a pain to configure and steer using only the
-rudimentary knobs and buttons common to most scope UIs. Remote desktops aren't
-much better - these tend to be laggy and difficult to drive.
+then SPI, then I2C, and so forth for the smorgasbord of digital signals you need
+to monitor. On top of that, the UI for many scopes is clunky. Digital protocol
+decoders can be a pain to configure and steer using only the rudimentary knobs
+and buttons common to most scope UIs. Remote desktops aren't much better - these
+tend to be laggy and difficult to drive.
 
 What you really need is a logic analyzer - one that plays nicely with your
 development machine.
@@ -127,7 +128,7 @@ Fortunately for you, me, and the rest of us embedded folks, this machine exists.
 The Saleae Logic Pro16 is, without a doubt, the best logic analyzer on the
 market for embedded systems.
 
-![Saleae Logic Pro 16]({% img_url debug-tools/saleae.jpeg  %})
+![Saleae Logic Pro 16](/img/debug-tools/saleae.jpeg)
 
 ### Logic is the Beginning of Wisdom
 
@@ -145,13 +146,13 @@ The Saleae device itself is, quite literally, a black box. (Well, unless you get
 a pink one like I did.) UI and control happen, instead, through a delightful,
 easy-to-use GUI. Logic, Saleae's desktop software, makes it a breeze to navigate
 logic captures, apply protocol analyzers, and find regions of interest.
-Scrolling, zooming, and measuring the time between edges is delightful and simple.
-Surprisingly, this is still true with a touch screen laptop. It was a joy to use
-a Saleae with my touchscreen-enabled daily driver from a few jobs ago. A big
-rewrite of Saleae's firmware and desktop application over the last few years has
-made the system real-time capable, too!
+Scrolling, zooming, and measuring the time between edges is delightful and
+simple. Surprisingly, this is still true with a touch screen laptop. It was a
+joy to use a Saleae with my touchscreen-enabled daily driver from a few jobs
+ago. A big rewrite of Saleae's firmware and desktop application over the last
+few years has made the system real-time capable, too!
 
-![SPI Capture in Logic 2.0]({% img_url debug-tools/saleae-capture.gif  %})
+![SPI Capture in Logic 2.0](/img/debug-tools/saleae-capture.gif)
 
 Saleae also has handy scripting utilities baked into the device.
 [A Socket API with Python and C# bindings](https://support.saleae.com/saleae-api-and-sdk/socket-api)
@@ -172,10 +173,10 @@ more specialized piece of equipment.
 Additionally - being a logic analyzer, you need to take care that you're not
 accidentally degrading the signals you're monitoring. This can be particularly
 tricky on faster signal buses, where edge rates of signals are shrinking into
-single digit nanoseconds. (This author was recently re-educated on this
-matter by a quad SPI bus running at 30MHz.) All is not lost, though! There are a
-few relatively simple things you can do to eke out all the signal bandwidth you
-can out of your Saleae:
+single digit nanoseconds. (This author was recently re-educated on this matter
+by a quad SPI bus running at 30MHz.) All is not lost, though! There are a few
+relatively simple things you can do to eke out all the signal bandwidth you can
+out of your Saleae:
 
 - Be sure to include the paired ground test lead when connecting the Saleae to
   your target board.
@@ -188,7 +189,7 @@ can out of your Saleae:
   interruption of the ground plane and reduces the chance of causing signal
   integrity problems due to your debug probe connection.
 
-![Saleae Logic Pro 16]({% img_url debug-tools/saleae-connected.png  %})
+![Saleae Logic Pro 16](/img/debug-tools/saleae-connected.png)
 
 The picture above shows my Logic Pro 16 attached to the SPI bus of a little open
 source [signal generator board](https://github.com/Cushychicken/bfunc) I
@@ -221,9 +222,9 @@ with your J-Link:
 - Raw API to write your own
 
 One of the areas in which Segger really shines is their documentation. Segger
-distinguishes itself with high quality user manuals and application notes.
-All J-Links come with a 400 page user manual that gives detailed explanations of
-all functionality in associated software. Much as I love free software, it’s a
+distinguishes itself with high quality user manuals and application notes. All
+J-Links come with a 400 page user manual that gives detailed explanations of all
+functionality in associated software. Much as I love free software, it’s a
 lovely reminder of how paid software incentivizes you to do a really good job on
 the hard, not-fun parts of the work, like writing good documentation.
 
@@ -248,10 +249,9 @@ the config files sometimes support multiple processors, while the config file
 naming schemes can be somewhat opaque.
 
 This initial configuration process can feel a bit like searching for the proper
-incantation for a particularly arcane spell. I have struggled with
-getting OpenOCD working several times. Not to worry! After the umpteenth time of
-getting grumpy with setup, I took down some notes on how to do it for the next
-time.
+incantation for a particularly arcane spell. I have struggled with getting
+OpenOCD working several times. Not to worry! After the umpteenth time of getting
+grumpy with setup, I took down some notes on how to do it for the next time.
 [I pass it on to you, friends, that your brain sweat be saved for funner problems!](https://cushychicken.github.io/embedded-openocd-gdb/)
 
 ### Crash Rules Everything Around Me
@@ -274,7 +274,7 @@ you are prohibited from using them for commercial purposes if you get the EDU
 models. No cheating! If you're monetizing your work, you should be ponying up
 for the Base model at a minimum.
 
-![J-Link EDU Model]({% img_url debug-tools/jlink-edu.jpg  %})
+![J-Link EDU Model](/img/debug-tools/jlink-edu.jpg)
 
 The other minor irk I have with J-Links is their hardware interface. J-Link
 designs haven't changed significantly in the decade I've been using them. They
@@ -290,7 +290,7 @@ would recommend, at a minimum, getting something like
 which changes the 20-pin, 0.1" JTAG interface to the more common 10-pin, 0.05"
 SWD interface common to many modern dev boards.
 
-![Olimex SWD Adapter]({% img_url debug-tools/olimex-adapter.jpeg  %})
+![Olimex SWD Adapter](/img/debug-tools/olimex-adapter.jpeg)
 
 ## FTDI Cable
 
@@ -301,7 +301,7 @@ ubiquitous communication medium for embedded systems, and for the last two
 decades, no serial cable has been more ubiquitous than those containing chips by
 Future Technology Devices International, a.k.a FTDI.
 
-![There's a hero on your desktop.]({% img_url debug-tools/ftdi-cable.jpeg  %})
+![There's a hero on your desktop.](/img/debug-tools/ftdi-cable.jpeg)
 
 ### Feeling Talkative, Developer Inquires?
 
@@ -314,7 +314,7 @@ converts USB signals to UART, and vice versa. That's it! (Here's
 [a really neat interview Adafruit did with Fred Dart](https://blog.adafruit.com/2016/02/08/exclusive-interview-with-fred-dart-ceo-of-ftdi-ftdichip-ftdi-adafruit/),
 one of the founders of FTDI. A fascinating look at some semiconductor history!)
 
-![Pay attention to this drawing.]({% img_url debug-tools/ftdi-pinout.jpeg  %})
+![Pay attention to this drawing.](/img/debug-tools/ftdi-pinout.jpeg)
 
 One of the most useful things about the FTDI cable is its ability to provide
 target power in addition to comms. Each cable exposes a handy 5V output tapped

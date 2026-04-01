@@ -1,4 +1,5 @@
 ---
+date: "2020-09-08"
 title: "Secure firmware updates with code signing"
 description:
   Firmware update signing is the cornerstone of a modern firmware update system.
@@ -8,32 +9,33 @@ author: francois
 tags: [firmware-update, mcu]
 ---
 
-[Previously]({% post_url 2020-06-23-device-firmware-update-cookbook %}), we
-wrote about implementing firmware update for our devices. One important detail
-we did not cover is firmware update security.
+[Previously](/blog/device-firmware-update-cookbook), we wrote about implementing
+firmware update for our devices. One important detail we did not cover is
+firmware update security.
 
 Much can be done - and written - about firmware update security, but perhaps the
 most important bit is firmware signing. Other security measures are not much use
 if we cannot verify the authenticity of a firmware update!
 
 <!-- excerpt start -->
+
 In this post, we explain why firmware signing is important, how it works, and
 what algorithm should be used to implement it. We also detail a full
 implementation built with open source, cross platform libraries.
+
 <!-- excerpt end -->
 
-> If you'd rather listen to me present this information and see some demos in action, watch
-> [this webinar recording](https://hubs.la/Q02hgRrk0)
+> If you'd rather listen to me present this information and see some demos in
+> action, watch [this webinar recording](https://hubs.la/Q02hgRrk0)
 
-{% include newsletter.html %}
-{% include toc.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
+<div id="toc"></div>
 
 ## Firmware Signing Explained
 
 > Note: the next few sections provide an overview of code signing, why it
 > matters, and how it works. If you'd like to skip straight to implementation,
-> click
-> [here](#firmware-signing-implementation).
+> click [here](#firmware-signing-implementation).
 
 Code signing is a method of proving a file was created by a trusted source and
 has not been tampered with. This is achieved by creating a signature for the
@@ -59,20 +61,20 @@ with.
 
 ### Why sign our firmware
 
-By implementing signature verification in our bootloader we can identify
-whether or not a given firmware update was provided by the manufacturer, or if
-it has been tampered with. The bootloader can then decide to either warn the
-user, void the device's warranty, or simply refuse to run the unauthenticated
-binary.
+By implementing signature verification in our bootloader we can identify whether
+or not a given firmware update was provided by the manufacturer, or if it has
+been tampered with. The bootloader can then decide to either warn the user, void
+the device's warranty, or simply refuse to run the unauthenticated binary.
 
 With more and more devices connected to the internet, security is an
 increasingly hot topic in firmware development. A device which accepts firmware
 updates over the wireless or internet connectivity but does not verify it opens
 itself to compromise. By feeding it with a malicious firmware image, an attacker
 might:
-* Brick the device, or the whole fleet
-* Snoop on end users and compromise their privacy and security
-* Strategically malfunction at a critical time
+
+- Brick the device, or the whole fleet
+- Snoop on end users and compromise their privacy and security
+- Strategically malfunction at a critical time
 
 These are highly undesirable outcomes, which can be effected at scale due to the
 internet of things. In 2020, it is reckless to implement firmware update for our
@@ -81,9 +83,9 @@ systems without some form of authentication.
 > **What signing is not**: code signing is an important component of firmware
 > security, it is not by itself sufficient to build secure systems. Secure
 > coding, static analysis, hardware tamper detection, JTAG locking, and many
-> more techniques should be implemented as well.
-> Code signing also does nothing to protect against reverse engineering. It is a
-> distinct technique from firmware encryption.
+> more techniques should be implemented as well. Code signing also does nothing
+> to protect against reverse engineering. It is a distinct technique from
+> firmware encryption.
 
 ### ECDSA
 
@@ -92,28 +94,29 @@ In this post, we focus on ECDSA for a few reasons:
 
 1. Security: ECDSA is the latest and greatest in terms of signature algorithms.
    While standard DSA is considered broken by most, ECDSA is expected to remain
-secure until quantum computing becomes widely available.
+   secure until quantum computing becomes widely available.
 2. Popularity: ECDSA is used extensively in applications ranging from
    cryptocurrencies (bitcoin) to secure messaging. With popularity comes battle
-tested implementations and credibility.
+   tested implementations and credibility.
 3. Availability: Open source implementations of ECDSA are available for
    microcontrollers, including mbedtls[^mbedtls], wolfssl[^wolfssl], and
-micro-ecc.
+   micro-ecc.
 4. Small Footprint: ECDSA implementations are very small (single digit kB), and
    require smaller keys than RSA or DSA for similar levels of security. This
-saves both code space and RAM and makes ECDSA well suited to embedded
-environments.
+   saves both code space and RAM and makes ECDSA well suited to embedded
+   environments.
 
 Understanding the math behind ECDSA is outside of the scope of this article, but
 here is a high level overview of how the process works:
-1. A cryptographic hash of the firmware  binary is created. Any cryptographic
+
+1. A cryptographic hash of the firmware binary is created. Any cryptographic
    hashing algorithm should work, though SHA-2 family hashes are recommended. In
-the case of SHA-256, this yields a 32-byte number.
-2. A signature is generated using a private key and the cryptographic hash.
-   This signature is distributed alongside the firmware and a public key. The
-signature may not be deterministic, so don't fret if multiple invocations of
-your ECDSA code yield different signatures. This signature is a pair of
-integers, each 32 bytes long.
+   the case of SHA-256, this yields a 32-byte number.
+2. A signature is generated using a private key and the cryptographic hash. This
+   signature is distributed alongside the firmware and a public key. The
+   signature may not be deterministic, so don't fret if multiple invocations of
+   your ECDSA code yield different signatures. This signature is a pair of
+   integers, each 32 bytes long.
 3. To verify the binary, a SHA-256 hash is once again computed for our firmware
    binary.
 4. The public key and the hash can be used to verify the signature was generated
@@ -121,14 +124,17 @@ integers, each 32 bytes long.
 
 ## Firmware Signing Implementation
 
-Our implementation builds upon the code we wrote for our [firmware update
-architecture post]({% post_url 2020-06-23-device-firmware-update-cookbook%} ).
-You may find that code on Github at [interrupt@20ec4ba](https://github.com/memfault/interrupt/tree/20ec4ba2d0def6214aa808717446cdbaced1c352/example/fwup-architecture).
+Our implementation builds upon the code we wrote for our
+[firmware update architecture post](/blog/device-firmware-update-cookbook). You
+may find that code on Github at
+[interrupt@20ec4ba](https://github.com/memfault/interrupt/tree/20ec4ba2d0def6214aa808717446cdbaced1c352/example/fwup-architecture).
 
 ### Setup
 
-Like we did our previous post, the [Firmware Update Cookbook]({% post_url 2020-06-23-device-firmware-update-cookbook%}), we use [Renode]({% post_url
-2020-03-23-intro-to-renode %}) to run the examples in this post. The previous post contains detailed instructions, but in short:
+Like we did our previous post, the
+[Firmware Update Cookbook](/blog/device-firmware-update-cookbook), we use
+[Renode](/blog/intro-to-renode) to run the examples in this post. The previous
+post contains detailed instructions, but in short:
 
 ```
 # Clone the repository & navigate to the example
@@ -198,43 +204,12 @@ As a reminder, this is what our device firmware update architecture looks like:
     margin-right: auto;
 }
 </style>
-{% blockdiag size:120x40 %}
-blockdiag {
-    span_width = 100;
-    // Set labels to nodes.
-    C [label = "Bootloader"];
-    A [label = "App Loader"];
-    B [label = "Application"];
-    C -> A [label = "Loads", fontsize=8];
-    A -> B [label = "Ld, Updt", fontsize=8];
-
-    E [label = "Updater"];
-    A -> E [label = "Ld, Updt", fontsize=8];
-    E -> A [label = "Updates", fontsize=8];
-    C -> E [label = "Loads", style=dashed, fontsize=8];
-
-    group {
-        label = "Slot 0";
-        color = "PaleGreen";
-        C;
-    }
-    group {
-        label = "Slot 1";
-        color = "LightPink";
-        A;
-    }
-    group {
-        label = "Slot 2";
-        color = "LemonChiffon";
-        B; E;
-    }
-}
-{% endblockdiag %}{:.diag4}
+<!-- blockdiag diagram removed -->{:.diag4}
 
 With the following functionality for each block:
 
-1. Bootloader: a simple program whose sole job is to load the Loader, and fallback
-   to another image if the Loader is invalid.
+1. Bootloader: a simple program whose sole job is to load the Loader, and
+   fallback to another image if the Loader is invalid.
 2. Loader: a program that can verify our Application image, load it, and update
    it.
 3. Application: our main code, which does not do any updates itself
@@ -250,18 +225,20 @@ signature verification algorithm, in our case that's the Loader and the Updater.
 Before we can begin, we must generate a pair of keys. Our **private key**, also
 known as a **signing key**, is used to create the signatures, and should be kept
 private. Anyone with access to the key will be able to sign firmware on your
-behalf. Our **public key**, also known as a **validation key**, is used to verify
-the signature. It can be freely distributed.
+behalf. Our **public key**, also known as a **validation key**, is used to
+verify the signature. It can be freely distributed.
 
 Several tools can be used to generate our key pair but the simplest is
 `openssl`, a cross platform cryptography toolset.
 
 First, we generate our private key:
+
 ```bash
 $ openssl ecparam -name secp256k1 -genkey -noout -out private.pem
 ```
 
 Then we create a public key to go with this private key:
+
 ```bash
 $ openssl ec -in private.pem -pubout -out public.pem
 ```
@@ -335,14 +312,15 @@ def gen_binary_signature(data, key_filename):
 ```
 
 A few things to note:
+
 1. We use SHA-256 as our hashing function, so we must specify it when we
    generate the signature
 2. The `sigencode` parameter is used to specify the format of the signature. By
    default, a DER file a generated (this is what openssl uses as well), but by
-using `sigencode_string` we tell the library to generate a flat string that
-contains the binary representation of both signature integers one after another.
-This is a simpler format and will save us from implementing a DER parser in
-our firmware.
+   using `sigencode_string` we tell the library to generate a flat string that
+   contains the binary representation of both signature integers one after
+   another. This is a simpler format and will save us from implementing a DER
+   parser in our firmware.
 
 We then update our `patch_binary_payload` function to invoke
 `gen_binary_signature`:
@@ -422,6 +400,7 @@ Now that our firmware builds are signed, let's verify those signatures in our
 Loader!
 
 Remember that the process takes two steps:
+
 1. Compute the SHA-256 hash of our firmware binary
 2. Verify the signature with the hash and the public key
 
@@ -430,9 +409,9 @@ rule of crypto is "don't roll your own crypto" so you'll want a battle-tested
 library implemented by experts. There are a few good options, but we chose
 micro-ecc[^micro-ecc] as we are most familiar with it and it is extremely small.
 
-micro-ecc is extremely easy to add to a project: it consists of a single
-`.c` (uECC.c) and a single `.h` (uECC.h) file. Add the source file to your list of sources, and
-the header file to your include path.
+micro-ecc is extremely easy to add to a project: it consists of a single `.c`
+(uECC.c) and a single `.h` (uECC.h) file. Add the source file to your list of
+sources, and the header file to your include path.
 
 We then add our public key to our firmware. micro-ecc expects our keys to be
 "represented in standard format, but without the 0x04
@@ -493,8 +472,9 @@ computing the SHA-256, and using `uECC_verify`.
 
 Many MCUs have hardware implementations of SHA-256, but in our case, we used a
 software implementation provided by a library called CIFRA[^cifra]. We only need
-to add two files from CIFRA to our build: `cifra/src/sha256.c` and `cifra/src/blockwise.c`,
-as well as two paths to our include path: `cifra/src` and `cifra/src/ext`.
+to add two files from CIFRA to our build: `cifra/src/sha256.c` and
+`cifra/src/blockwise.c`, as well as two paths to our include path: `cifra/src`
+and `cifra/src/ext`.
 
 With that, I implemented a simple sha256 wrapper function which computes the
 hash of a given buffer:
@@ -650,6 +630,7 @@ Since the private key can be used to create build that look like they are coming
 from you, it is important to keep it private.
 
 Your key storage system needs to:
+
 1. Put the key out of reach of most employees / partners
 2. Make it easy to sign a release build you actually want signed
 3. Be resilient. If you lose the key, you won't be able to distribute additional
@@ -661,14 +642,14 @@ fails to meet rule (1) and is considered poor practice (in fact, Github will
 warn you if it detects something that looks like a private key in your
 repository).
 
-Instead, it is better to store your key alongside your [CI system]({% post_url
-2019-09-17-continuous-integration-for-firmware %}) and let it handle signing of
-release builds. Make sure only select users have access to the private key, by
-restricting permissions in your CI system. Most systems support this use case
-one way or another. For example, CircleCI offers [Restricted
-Contexts](https://circleci.com/docs/2.0/contexts/#restricting-a-context) which
-can be set up such that only administrator level users can see a private key,
-and their approval is needed to trigger a release build.
+Instead, it is better to store your key alongside your
+[CI system](/blog/continuous-integration-for-firmware) and let it handle signing
+of release builds. Make sure only select users have access to the private key,
+by restricting permissions in your CI system. Most systems support this use case
+one way or another. For example, CircleCI offers
+[Restricted Contexts](https://circleci.com/docs/2.0/contexts/#restricting-a-context)
+which can be set up such that only administrator level users can see a private
+key, and their approval is needed to trigger a release build.
 
 You may take key storage a step further and use a specialized Secrets Management
 Systems such as Hashicorp Vault[^vault] or Amazon Key Management Service[^kms].
@@ -683,16 +664,17 @@ backups should be inaccessible most of the time.
 
 In the event a private key gets compromised, we need the ability to rotate it.
 This involves generating a new public / private key pair, and updating the
-public key hardcoded in the firmware.  Thankfully, this is a relatively simple
+public key hardcoded in the firmware. Thankfully, this is a relatively simple
 process with our current architecture. Since the public key is hardcoded in
 updateable components, we simply update them!
 
 Here are the step-by-step details:
+
 1. Generate a new private/public key pair with `openssl`
-2. Hardcode  the new public key in our Updater and Loader firmware
-3. Build a new Updater, sign it with the *old* private key
-4. Build a new Loader, sign it with the *new* private key
-5. Build a new Application, sign it with the *new* private key
+2. Hardcode the new public key in our Updater and Loader firmware
+3. Build a new Updater, sign it with the _old_ private key
+4. Build a new Loader, sign it with the _new_ private key
+5. Build a new Application, sign it with the _new_ private key
 6. Load the new Updater on your devices. Because it is signed with the old key,
    the current Loader will accept it.
 7. Load the new Loader on your devices via the new Updater
@@ -703,7 +685,7 @@ reason.
 
 ### Development Keys
 
-Since we've taken great pains to make sure our engineers do *not* have direct
+Since we've taken great pains to make sure our engineers do _not_ have direct
 access to the key, how can we enable them to load custom firmware images on
 their development devices?
 
@@ -738,13 +720,14 @@ process? Let us know! And if you see anything you'd like to change, don't
 hesitate to submit a pull request or open an issue on
 [Github](https://github.com/memfault/interrupt)
 
-> Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
+> Interested in learning more device firmware update best practices?
+> [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

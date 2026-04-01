@@ -1,4 +1,5 @@
 ---
+date: "2019-08-27"
 title: Building a CLI for Firmware Projects using Invoke
 description:
   "A walkthrough on how to build a command line interface (CLI) for a firmware
@@ -18,7 +19,7 @@ how to think about a project's CLI and implementing one using the
 
 <!-- excerpt end -->
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## A Project CLI?
 
@@ -56,7 +57,7 @@ $ invoke flash
 A web service's REST API needs to be **stable, easy to use, and self
 documenting**. Your project's CLI should meet the same requirements.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 ### When to Build a Project CLI
 
@@ -220,9 +221,10 @@ SDK "Blinky" project.
 ### Installing Invoke
 
 I highly recommend using a virtual environment[^4], which is a way to sandbox
-your python environment for your project. [This guide](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv) is a good starting
-point. In this example, I will be using Python 3.6, which has the `virtualenv`
-command available already.
+your python environment for your project.
+[This guide](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
+is a good starting point. In this example, I will be using Python 3.6, which has
+the `virtualenv` command available already.
 
 ```
 $ virtualenv venv
@@ -522,7 +524,7 @@ tasks and features:
   installed using `pre` tasks
 - We can run `inv --list` and `inv <command> --help` for help menus.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 ## Final Thoughts
 
@@ -536,7 +538,8 @@ nature of the commands is indispensable.
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/invoke-basic/)._
-{% include submit-pr.html %}
+
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 
@@ -557,7 +560,13 @@ _All the code used in this blog post is available on
 
 ## Reference & Links
 
-[^1]: [Invoke Configuration Docs](http://docs.pyinvoke.org/en/0.11.1/concepts/configuration.html)
-[^2]: [Invoke Argument Docs](http://docs.pyinvoke.org/en/0.11.1/concepts/cli/intro.html#tasks-and-task-options)
+[^1]:
+    [Invoke Configuration Docs](http://docs.pyinvoke.org/en/0.11.1/concepts/configuration.html)
+
+[^2]:
+    [Invoke Argument Docs](http://docs.pyinvoke.org/en/0.11.1/concepts/cli/intro.html#tasks-and-task-options)
+
 [^3]: [Python pdb Docs](https://docs.python.org/3/library/pdb.html)
-[^4]: [Virtualenv Tutorial](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)
+
+[^4]:
+    [Virtualenv Tutorial](https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv)

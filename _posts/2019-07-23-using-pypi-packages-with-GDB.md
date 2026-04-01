@@ -1,8 +1,9 @@
 ---
+date: "2019-07-23"
 title: "Using Python PyPi Packages within GDB/LLDB"
 description:
-  "How to setup GDB/LLDB, virtualenv, and Python to use PyPi packages in GDB/LLDB
-  scripts"
+  "How to setup GDB/LLDB, virtualenv, and Python to use PyPi packages in
+  GDB/LLDB scripts"
 author: tyler
 tags: [python, gdb]
 ---
@@ -14,10 +15,8 @@ tags: [python, gdb]
 
 <!-- excerpt start -->
 
-[In a previous
-post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}), we
-discussed how to automate some of the more tedious parts of debugging firmware
-using
+[In a previous post](/blog/automate-debugging-with-gdb-python-api), we discussed
+how to automate some of the more tedious parts of debugging firmware using
 [Python in GDB Scripts](https://sourceware.org/gdb/onlinedocs/gdb/Python-API.html).
 To make these commands more powerful, one could use third-party packages from
 Python's [PyPi](https://pypi.org/) repository. In this post, we will discuss how
@@ -27,11 +26,11 @@ party package installed through PyPi.
 
 <!-- excerpt end -->
 
-In the post [Automate Debugging with GDB Python
-API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}), Chris
-worked through an example Python GDB command which printed UUIDs stored in a
-Linked List. In this post, we want to expand upon this `uuid_list_dump` command
-and make the output more readable for humans using the
+In the post
+[Automate Debugging with GDB Python API](/blog/automate-debugging-with-gdb-python-api),
+Chris worked through an example Python GDB command which printed UUIDs stored in
+a Linked List. In this post, we want to expand upon this `uuid_list_dump`
+command and make the output more readable for humans using the
 [PTable](https://pypi.org/project/PTable/) package from PyPi. We will print the
 contents in an ASCII formatted table.
 
@@ -88,7 +87,7 @@ print(x)
 
 Let's go ahead and try it out!
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 ## Setting up GDB's Python and PyPi
 
@@ -351,11 +350,11 @@ editing our initial UUID Linked List printer to use PrettyTable. We will start
 with the previous implementation located on
 [Github](https://github.com/memfault/interrupt/blob/master/example/gdb-python-post/custom_pretty_printers.py#L47-L89)
 and we will use the same `.c` example located
-[here]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}#example-usage)
+[here](/blog/automate-debugging-with-gdb-python-api#example-usage)
 
 > If you need to get the previous `.c` file compiled and running to test out the
-> following commands, refer to the [previous
-> post]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) for
+> following commands, refer to the
+> [previous post](/blog/automate-debugging-with-gdb-python-api) for
 > instructions.
 
 Below, I've removed some of the previous code and added comments about what
@@ -473,11 +472,10 @@ Found a Linked List with 10 nodes:
 
 ## Closing
 
-As we've said
-[before]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) and
-will continue to stress, using the GDB Python API takes debugging to another
-level by allowed one to automate tedious tasks and make complex ones
-reproducible and shareable across teams.
+As we've said [before](/blog/automate-debugging-with-gdb-python-api) and will
+continue to stress, using the GDB Python API takes debugging to another level by
+allowed one to automate tedious tasks and make complex ones reproducible and
+shareable across teams.
 
 The above steps will get any GDB up and running using third-party PyPi packages.
 If you want a simple snippet to use or share with teammates about how to set up
@@ -488,4 +486,5 @@ If you use `lldb`, here is an
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/gdb-python-pypi-post/)._
-{% include submit-pr.html %}
+
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>

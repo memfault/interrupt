@@ -1,4 +1,5 @@
 ---
+date: "2024-04-25"
 title: Standout Exhibits at Embedded World 2024
 description:
   A recap of the noteworthy exhibits from Embedded World 2024, including
@@ -35,15 +36,15 @@ interesting.
 
 <!-- excerpt end -->
 
-![]({% img_url embedded-world-2024/memfault-booth.jpg %})
+![](/img/embedded-world-2024/memfault-booth.jpg)
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Rust, front & center
 
-![]({% img_url embedded-world-2024/hightec.jpg %})
+![](/img/embedded-world-2024/hightec.jpg)
 
 This year, Rust seems to have broken through in the embedded community. Nowhere
 was it more evident than at the Hightec[^hightec] booth. For those of you who
@@ -55,16 +56,16 @@ to see serious ecosystem players like Hightec make such a huge bet on Rust, as I
 believe it is a better language and runtime for the embedded world.
 
 This was not the only Rust I saw at the show. For example, I had a great chat
-with engineers at Bluewind[^bluewind-rust] about their use of Rust. We also had many
-booth visitors ask us whether or not Memfault supports Rust - we do and were
-glad to share our experience building some of our SDKs in Rust at Memfault.
+with engineers at Bluewind[^bluewind-rust] about their use of Rust. We also had
+many booth visitors ask us whether or not Memfault supports Rust - we do and
+were glad to share our experience building some of our SDKs in Rust at Memfault.
 We've known for a while that Rust is growing in use in embedded - several of our
 customers use the language in their products - but it was encouraging to hear so
 much about it at a serious industry event.
 
 ## RISC-V continues to gain popularity
 
-![]({% img_url embedded-world-2024/risc-v.jpg %})
+![](/img/embedded-world-2024/risc-v.jpg)
 
 RISC-V had a huge booth hosting multiple ecosystem players. SiFive was there of
 course, but I found it notable to see industrial heavyweights such as Siemens
@@ -79,7 +80,7 @@ at the show about their use of the standard.
 
 ## Everybody wants to do AI
 
-![]({% img_url embedded-world-2024/tinyml.jpg %})
+![](/img/embedded-world-2024/tinyml.jpg)
 
 Perhaps the most popular topic of conversation at Embedded World this year was,
 unsurprisingly, AI at the Edge. The TinyML foundation (pictured above) is
@@ -96,7 +97,7 @@ for healthcare use cases.
 
 ## Zephyr is winning hearts & minds
 
-![]({% img_url embedded-world-2024/zephyr.jpg %})
+![](/img/embedded-world-2024/zephyr.jpg)
 
 Every year, the Zephyr booth is bigger, showing off more sponsors, and busier.
 2024 was no exception. I’m thrilled to see the energy behind this open source
@@ -112,7 +113,7 @@ companies, adding support for Zephyr in their SDKs.
 
 ## Exciting new startups are sprouting
 
-![]({% img_url embedded-world-2024/exein.jpg %})
+![](/img/embedded-world-2024/exein.jpg)
 
 Exein[^exein] is a new startup in the embedded security space. They have built
 an agent for embedded Linux devices which collects security signal from the
@@ -121,7 +122,7 @@ And yes, their agent is written in Rust! I think we’ve done too little for too
 long to secure IoT devices, and am glad to see startups like Exein take up the
 challenge of IoT security.
 
-![]({% img_url embedded-world-2024/emproof.jpg %})
+![](/img/embedded-world-2024/emproof.jpg)
 
 Another security startup, Emproof[^emproof] provides firmware hardening services
 to device makers. Their clever solution scans and rewrites firmware binaries to
@@ -133,7 +134,7 @@ will make you safer. But I think the approach of automatically adding security
 features such as stack guards, address randomization, and others to firmware has
 a lot of potential.
 
-![]({% img_url embedded-world-2024/incari.jpg %})
+![](/img/embedded-world-2024/incari.jpg)
 
 I was surprised by the number of Embedded GUI solutions (they call themselves
 “Human Machine Interface” - HMI platforms) that exist. Qt of course had a large
@@ -147,7 +148,7 @@ directly for your device. That’s a pretty cool workflow! Unlike Qt it won’t 
 on your MCU, however, as it requires 256MB and a higher level OS (QNX, Linux,
 …).
 
-![]({% img_url embedded-world-2024/embedd.jpg %})
+![](/img/embedded-world-2024/embedd.jpg)
 
 Last but not least, I had a chance to chat with Michael at Embedd[^embedd]. They
 have built an AI system that can parse a data sheet provided as PDF and spit out
@@ -169,9 +170,9 @@ in Austin this October!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

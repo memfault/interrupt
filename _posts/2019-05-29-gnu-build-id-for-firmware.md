@@ -1,22 +1,27 @@
 ---
+date: "2019-05-29"
 title: "GNU Build IDs for Firmware"
-description: "An overview of firmware versions and how to enable and use GNU Build IDs to uniquely identify a firmware build or binary"
+description:
+  "An overview of firmware versions and how to enable and use GNU Build IDs to
+  uniquely identify a firmware build or binary"
 author: francois
 tags: [best-practices]
 ---
 
 <!-- excerpt start -->
-In this post, we demonstrate how to use the GNU Build ID to uniquely
-identify a build. We explain what the GNU build ID is, how it is enabled,
-and how it is used in a firmware context.
+
+In this post, we demonstrate how to use the GNU Build ID to uniquely identify a
+build. We explain what the GNU build ID is, how it is enabled, and how it is
+used in a firmware context.
+
 <!-- excerpt end -->
 
 Much has been written on how to craft a firmware version. From Embedded
-Artistry's excellent [blog
-post](https://embeddedartistry.com/blog/2016/10/27/giving-you-build-a-version),
+Artistry's excellent
+[blog post](https://embeddedartistry.com/blog/2016/10/27/giving-you-build-a-version),
 to Wolfram Rösler's [how to](https://gitlab.com/wolframroesler/version).
 
-Versions are a great way to identify a *release*: a set of interfaces and
+Versions are a great way to identify a _release_: a set of interfaces and
 capabilities bundled together.
 
 Versions do not - however - identify a specific binary all that well. For
@@ -27,9 +32,9 @@ For this, we need something else. This is where the GNU build ID comes in.
 
 Why would we want to identify a specific binary? A few cases:
 
-* To match a set of debug symbols to a given binary when trying to debug a
+- To match a set of debug symbols to a given binary when trying to debug a
   device
-* To verify that two binaries are in fact the same build
+- To verify that two binaries are in fact the same build
 
 ## What is the GNU Build ID
 
@@ -62,15 +67,16 @@ Each note section entry has the following layout:
 ```
 
 In the case of the GNU build ID:
-* `name` is `"GNU\0"`, which gives us `namesz` = 4
-* `desc` is our 160-bit SHA1 value, which gives us `descsz` = 20
-* `type` is 3
+
+- `name` is `"GNU\0"`, which gives us `namesz` = 4
+- `desc` is our 160-bit SHA1 value, which gives us `descsz` = 20
+- `type` is 3
 
 ## Adding the GNU build ID to your builds
 
 **Note**: all of our example are based on the
-[minimal](https://github.com/memfault/zero-to-main/tree/master/minimal) program from our Zero to main()
-series.
+[minimal](https://github.com/memfault/zero-to-main/tree/master/minimal) program
+from our Zero to main() series.
 
 In GCC, you can enable build IDs with the `-Wl,--build-id` which passes the
 `--build-id` flag to the linker. You can then read it back by dumping the notes
@@ -90,6 +96,7 @@ francois-mba:minimal francois$ arm-none-eabi-readelf -n build/minimal.elf
 ```
 
 But a small change to the CFLAGS is all it takes:
+
 ```terminal
 francois-mba:minimal francois$ CFLAGS="-Wl,--build-id" make clean all
 build/minimal.elf
@@ -116,12 +123,14 @@ Firmware on the other hand typically deals with binaries which are assembled by
 copying relevant sections of the elf at the right offset in a file.
 
 This is typically accomplished with objcopy:
+
 ```terminal
 $ arm-none-eabi-objcopy firmware.elf firmware.bin -O binary
 ```
 
-This takes every elf section earmarked to be loaded and places them at
-the correct offset in the bin file. In the process, most debug sections are stripped out.
+This takes every elf section earmarked to be loaded and places them at the
+correct offset in the bin file. In the process, most debug sections are stripped
+out.
 
 Dumping the elf sections of the resulting `minimal.elf` gives us:
 
@@ -163,8 +172,8 @@ Idx Name          Size      VMA       LMA       File off  Algn
 ```
 
 As you can see, the `.text`, `.bss`, `.data`, `.stack` sections each have the
-`LOAD` attribute, all others (including our `.note.gnu.build-id`) do not and will be
-discarded.
+`LOAD` attribute, all others (including our `.note.gnu.build-id`) do not and
+will be discarded.
 
 To add a section to our binary, we must specify an address for it in our linker
 script. Assuming your linker script declares the following memory layout:
@@ -271,6 +280,7 @@ void print_build_id(void) {
 ```
 
 Calling this code on boot, we get:
+
 ```
 ...
 Build ID: 8d7aec8b900dce6c14afe557dc8889230518be3e
@@ -278,14 +288,12 @@ Build ID: 8d7aec8b900dce6c14afe557dc8889230518be3e
 ```
 
 > Update: A prior version of the above code was incorrect: `g_note_build_id` was
-> declared as a pointer which would lead to random data being read in the best case,
-> and a crash in the worst case. Thanks to [Simon
-> Doppler](https://github.com/dopsi) for reporting the
-> problem.
+> declared as a pointer which would lead to random data being read in the best
+> case, and a crash in the worst case. Thanks to
+> [Simon Doppler](https://github.com/dopsi) for reporting the problem.
 
 ## References
 
 - [Original build ID proposal](https://fedoraproject.org/wiki/RolandMcGrath/BuildID)
 - [Elf Note section description](https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter6-18048.html)
-- [GNU LD source code for Build
-  ID](https://github.com/bminor/binutils-gdb/blob/4de283e4b5f21207fe12f99913d1f28d4f07843c/ld/emultempl/elf32.em#L1165)
+- [GNU LD source code for Build ID](https://github.com/bminor/binutils-gdb/blob/4de283e4b5f21207fe12f99913d1f28d4f07843c/ld/emultempl/elf32.em#L1165)

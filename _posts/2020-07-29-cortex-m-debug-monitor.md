@@ -1,4 +1,5 @@
 ---
+date: "2020-07-29"
 title: "Step-through debugging with no debugger on Cortex-M"
 description: "An exploration of how to debug running devices by taking advantage of debug monitor
 mode on ARM Cortex-M MCUs"
@@ -7,80 +8,94 @@ tag: [cortex-m, arm, mcu, debugging, gdb]
 author: chris
 ---
 
-Debugging an MCU requires attaching a debugger via JTAG and halting the core. Or does it?
+Debugging an MCU requires attaching a debugger via JTAG and halting the core. Or
+does it?
 
 There are many situations where this debug strategy is not feasible such as on
 
 - production units where JTAG has been disabled.
 - systems where halting the core causes the subsystem you are trying to debug to
-  fault. (i.e Asserts from the NRF52 SoftDevice after halting at a breakpoint[^6])
+  fault. (i.e Asserts from the NRF52 SoftDevice after halting at a
+  breakpoint[^6])
 - remote systems where only a UART or network interface is exposed.
 
 Fortunately, ARM Cortex-M's have us covered!
 
 <!-- excerpt start -->
 
-This week we explore how to debug running systems with ARM Cortex-M's DebugMonitor
-exception handler. We cover how to configure the MCU to operate in this mode and walk through an
-example of installing breakpoints and single-stepping on a running device!
+This week we explore how to debug running systems with ARM Cortex-M's
+DebugMonitor exception handler. We cover how to configure the MCU to operate in
+this mode and walk through an example of installing breakpoints and
+single-stepping on a running device!
 
 <!-- excerpt end -->
 
-> In my opinion, DebugMonitor handling is an underutilized feature that can be applied creatively
-> for a variety of debug use cases. I hope by the end of this article I can convince you of this as well!
+> In my opinion, DebugMonitor handling is an underutilized feature that can be
+> applied creatively for a variety of debug use cases. I hope by the end of this
+> article I can convince you of this as well!
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Basic Terminology
 
 ARM Cortex-M's support several "levels" of debug:
 
-- **Halting debug** - This is the typical configuration you use with a debugger like GDB. In this mode, the core is
-  halted while debugging. This mode requires access to the **Debug Port** via JTAG or SWD. We've
-  walked through an overview of how ARM debug interfaces work in [this article]({% post_url
-  2019-08-06-a-deep-dive-into-arm-cortex-m-debug-interfaces %}).
-- Tracing via the **[ITM]({% post_url 2020-06-02-profiling-firmware-on-cortex-m %})**,
-  **DWT** & **ETM** - These peripherals let you stream instruction execution and data
-  accesses while the system is running. Tools such as Lauterbach's Trace32[^8] and SEGGER's JTrace[^9]
-  can decode these streams and present results in a GUI on your desktop.
-- **Debug monitor mode** - Enables debug on running systems via the DebugMonitor exception
-  handler. This can be helpful in scenarios where halting the core will cause timing
-  sensitive subsystems to fail or for use cases where connecting a debugger is not feasible.
+- **Halting debug** - This is the typical configuration you use with a debugger
+  like GDB. In this mode, the core is halted while debugging. This mode requires
+  access to the **Debug Port** via JTAG or SWD. We've walked through an overview
+  of how ARM debug interfaces work in
+  [this article](/blog/a-deep-dive-into-arm-cortex-m-debug-interfaces).
+- Tracing via the **[ITM](/blog/profiling-firmware-on-cortex-m)**, **DWT** &
+  **ETM** - These peripherals let you stream instruction execution and data
+  accesses while the system is running. Tools such as Lauterbach's Trace32[^8]
+  and SEGGER's JTrace[^9] can decode these streams and present results in a GUI
+  on your desktop.
+- **Debug monitor mode** - Enables debug on running systems via the DebugMonitor
+  exception handler. This can be helpful in scenarios where halting the core
+  will cause timing sensitive subsystems to fail or for use cases where
+  connecting a debugger is not feasible.
 
-> It's worth noting that debug monitor support is not available for the ARMv6-M architecture
-> (Cortex-M0). However, it is implemented for all other Cortex-M architectures.
+> It's worth noting that debug monitor support is not available for the ARMv6-M
+> architecture (Cortex-M0). However, it is implemented for all other Cortex-M
+> architectures.
 
 ## Example Project Setup
 
-In the following sections, we will explore how to set up Debug monitor mode with a very simple bare-metal application running on a nRF52 using the following tooling:
+In the following sections, we will explore how to set up Debug monitor mode with
+a very simple bare-metal application running on a nRF52 using the following
+tooling:
 
 - a nRF52840-DK[^1] (ARM Cortex-M4F) as our development board
 - SEGGER JLinkGDBServer[^2] as our GDBServer (V6.80b)
 - GCC 9.3.1 / GNU Arm Embedded Toolchain as our compiler[^3]
 - GNU Make as our build system
-- the simple CLI shell [we built up in a previous post]({% post_url 2020-06-09-firmware-shell %}).
-- PySerial's `miniterm.py`[^miniterm] to connect to the serial console on the nRF52.
+- the simple CLI shell [we built up in a previous post](/blog/firmware-shell).
+- PySerial's `miniterm.py`[^miniterm] to connect to the serial console on the
+  nRF52.
 
-In this article, we will extend upon the [example app we built to explore how breakpoints work]({% post_url 2020-06-17-cortex-m-breakpoints %}).
+In this article, we will extend upon the
+[example app we built to explore how breakpoints work](/blog/cortex-m-breakpoints).
 
 ## Enabling the DebugMonitor Exception
 
-Debug monitor mode based debugging works by triggering an exception known as the "DebugMonitor
-Exception" when debug events take place. We'll explore how to configure the handler in the
-following sections.
+Debug monitor mode based debugging works by triggering an exception known as the
+"DebugMonitor Exception" when debug events take place. We'll explore how to
+configure the handler in the following sections.
 
 ### Debug Halting Control and Status Register (DHCSR), 0xE000EDF0
 
-![]({% img_url debugmon/dhcsr.png %})
+![](/img/debugmon/dhcsr.png)
 
-Monitor Mode Debug only works if halting debug is disabled. Notably, the `C_DEBUGEN` setting
-above must be cleared. This bit can _only_ be set via the JTAG/SWD connection and is _only_ reset when a full
-Power-On-Reset (POR) occurs or a debugger clears the bit on exit.
+Monitor Mode Debug only works if halting debug is disabled. Notably, the
+`C_DEBUGEN` setting above must be cleared. This bit can _only_ be set via the
+JTAG/SWD connection and is _only_ reset when a full Power-On-Reset (POR) occurs
+or a debugger clears the bit on exit.
 
-If you are trying to use Monitor Mode Debug, I recommend adding a check on boot for
-this. Otherwise, you are bound to confuse yourself when you are trying to test the feature and have a debugger connected via JTAG/SWD:
+If you are trying to use Monitor Mode Debug, I recommend adding a check on boot
+for this. Otherwise, you are bound to confuse yourself when you are trying to
+test the feature and have a debugger connected via JTAG/SWD:
 
 ```c
 bool debug_monitor_enable(void) {
@@ -96,59 +111,64 @@ bool debug_monitor_enable(void) {
 
 #### TIP: Disabling Halting Debug from GDB
 
-If you are using GDB, Halting Mode debug can be disabled manually by clearing `C_DEBUGEN` and setting
-the appropriate value for `DBGKEY` (0xA05F):
+If you are using GDB, Halting Mode debug can be disabled manually by clearing
+`C_DEBUGEN` and setting the appropriate value for `DBGKEY` (0xA05F):
 
 ```
 (gdb) set *(uint32_t*)0xE000EDF0=(0xA05F<<16)
 ```
 
-This can also be a useful way to keep an active GDB session open and probe its state while
-the system is running!
+This can also be a useful way to keep an active GDB session open and probe its
+state while the system is running!
 
 ### Debug Exception and Monitor Control Register (DEMCR), 0xE000EDFC
 
-The core configuration for the DebugMonitor exception is controlled in the upper 16 bits of the
-`DEMCR` register:
+The core configuration for the DebugMonitor exception is controlled in the upper
+16 bits of the `DEMCR` register:
 
-![]({% img_url debugmon/demcr.png %})
+![](/img/debugmon/demcr.png)
 
 where:
 
-- `MON_EN` - Controls whether the DebugMonitor exception is enabled or not. When enabled, debug
-  "events" will cause the exception to fire.
-- `MON_PEND` - Can be used to trigger a DebugMonitor exception irrespective of whether or not
-  `MON_EN` is set to 1.
-- `MON_REQ` - Not used by the MCU. Software can use this bit to convey state about monitor mode.
+- `MON_EN` - Controls whether the DebugMonitor exception is enabled or not. When
+  enabled, debug "events" will cause the exception to fire.
+- `MON_PEND` - Can be used to trigger a DebugMonitor exception irrespective of
+  whether or not `MON_EN` is set to 1.
+- `MON_REQ` - Not used by the MCU. Software can use this bit to convey state
+  about monitor mode.
 - `MON_STEP` - Can be toggled from the DebugMonitor exception to enable hardware
-  single-stepping. When set, upon return from the exception handler, the core will execute a single instruction and then return to the DebugMonitor exception.
+  single-stepping. When set, upon return from the exception handler, the core
+  will execute a single instruction and then return to the DebugMonitor
+  exception.
 
-> NOTE: The lower bits (`VC_HARDERR`, etc) controls whether or not a debug trap occurs automatically when
-> various types of exceptions take place. These _only_ take effect when using **halting debug**
-> mode. They allow you to guarantee the system is halted any time an exception path is hit which can be useful
-> when trying to debug!
+> NOTE: The lower bits (`VC_HARDERR`, etc) controls whether or not a debug trap
+> occurs automatically when various types of exceptions take place. These _only_
+> take effect when using **halting debug** mode. They allow you to guarantee the
+> system is halted any time an exception path is hit which can be useful when
+> trying to debug!
 
 #### DebugMonitor Exception Configuration Nuances
 
-The DebugMonitor exception will only be triggered for debug events when the group priority of the
-exception is greater than the current execution priority.
+The DebugMonitor exception will only be triggered for debug events when the
+group priority of the exception is greater than the current execution priority.
 
-This can be a useful feature to guarantee that certain high priority operations (i.e Bluetooth
-radio scheduling) continue to run while you step through the code in other parts of the system.
+This can be a useful feature to guarantee that certain high priority operations
+(i.e Bluetooth radio scheduling) continue to run while you step through the code
+in other parts of the system.
 
-An important consequence however is it does mean any interrupts running above this priority of the
-DebugMonitor exception will not be debuggable when using debug monitor support.
+An important consequence however is it does mean any interrupts running above
+this priority of the DebugMonitor exception will not be debuggable when using
+debug monitor support.
 
-Configuring the DebugMonitor exception priority will require updating `SHPR3`. More details can be
-found in [our post about ARM Cortex-M exception handling]({% post_url
-2019-09-04-arm-cortex-m-exceptions-and-nvic
-%}#system-handler-priority-register-shpr1-shpr3---0xe000ed18---0xe000ed20).
+Configuring the DebugMonitor exception priority will require updating `SHPR3`.
+More details can be found in
+[our post about ARM Cortex-M exception handling](/blog/arm-cortex-m-exceptions-and-nvic#system-handler-priority-register-shpr1-shpr3---0xe000ed18---0xe000ed20).
 
 ### C Code to Enable the DebugMonitor Exception
 
-For simplicity in our example app we will set the DebugMonitor exception to the lowest configurable
-interrupt priority. This means all other interrupts will be able to run while debugging code not
-running from an interrupt.
+For simplicity in our example app we will set the DebugMonitor exception to the
+lowest configurable interrupt priority. This means all other interrupts will be
+able to run while debugging code not running from an interrupt.
 
 Putting it all together, we have:
 
@@ -178,9 +198,10 @@ bool debug_monitor_enable(void) {
 
 ## A minimal DebugMonitor Handler
 
-We can use the same handler we put together in [our post about fault handling]({% post_url
-2019-11-20-cortex-m-hardfault-debug %}#halting--determining-core-register-state) to dump register state
-about the code which caused the DebugMonitor exception to be invoked:
+We can use the same handler we put together in
+[our post about fault handling](/blog/cortex-m-hardfault-debug#halting--determining-core-register-state)
+to dump register state about the code which caused the DebugMonitor exception to
+be invoked:
 
 ```c
 typedef struct __attribute__((packed)) ContextStateFrame {
@@ -213,23 +234,26 @@ void DebugMon_Handler(void) {
 
 ### Debug Fault Status Register, DFSR, 0xE000ED30
 
-When the DebugMonitor Exception fires, the DFSR can be inspected for information about what debug
-event took place:
+When the DebugMonitor Exception fires, the DFSR can be inspected for information
+about what debug event took place:
 
-![]({% img_url debugmon/dfsr.png %})
+![](/img/debugmon/dfsr.png)
 
-Some of the events are only possible when using a **halting debug**. For the DebugMonitor the
-states of interest are:
+Some of the events are only possible when using a **halting debug**. For the
+DebugMonitor the states of interest are:
 
-- `DWTTRAP` Indicates the a debug event was generated due to a configuration in the DWT.
-- `BKPT` Indicates one or more breakpoint event took place (either via the FPB or a BKPT instruction).
+- `DWTTRAP` Indicates the a debug event was generated due to a configuration in
+  the DWT.
+- `BKPT` Indicates one or more breakpoint event took place (either via the FPB
+  or a BKPT instruction).
 - `HALTED` Indicates the core was halted due to a MON_STEP request.
 
 > NOTE: DFSR bits are sticky and you have to write 1 to the value to clear them
 
 #### Example C Code For DebugMon_Handler
 
-Let's extend `debug_monitor_handler_c` to dump some of the state we are collecting:
+Let's extend `debug_monitor_handler_c` to dump some of the state we are
+collecting:
 
 ```c
 void debug_monitor_handler_c(sContextStateFrame *frame) {
@@ -266,7 +290,8 @@ void debug_monitor_handler_c(sContextStateFrame *frame) {
 
 #### Triggering a breakpoint
 
-To test things out we can create a super simple CLI command that issues a breakpoint instruction:
+To test things out we can create a super simple CLI command that issues a
+breakpoint instruction:
 
 ```c
 static int prv_issue_breakpoint(int argc, char *argv[]) {
@@ -329,18 +354,19 @@ Register Dump
  ...
 ```
 
-As expected we see bit 1 in `DFSR` is set indicating a breakpoint debug event was generated.
-We can use GDB to inspect the instruction located at`0x000009d4` and confirm it is indeed a breakpoint
-instruction:
+As expected we see bit 1 in `DFSR` is set indicating a breakpoint debug event
+was generated. We can use GDB to inspect the instruction located at`0x000009d4`
+and confirm it is indeed a breakpoint instruction:
 
 ```
 (gdb) x/i 0x000009d4
   0x9d4 <prv_issue_breakpoint>:	bkpt	0x0001
 ```
 
-We can also dump the instruction and confirm it matches the BKPT instruction encoding (`0xbe..`):
+We can also dump the instruction and confirm it matches the BKPT instruction
+encoding (`0xbe..`):
 
-![]({% img_url breakpoint/bkpt-instruction-cortex-m.png %})
+![](/img/breakpoint/bkpt-instruction-cortex-m.png)
 
 ```
 (gdb) p/x *(uint16_t*)0x000009d4
@@ -349,12 +375,13 @@ $4 = 0xbe01
 
 ### Programmatically installing Breakpoints with the FPB
 
-In the FPB we can program one of the`FP_COMP` register to hold the address we would like to break
-on.
+In the FPB we can program one of the`FP_COMP` register to hold the address we
+would like to break on.
 
-The layout of the `FP_COMP` register is a little odd but basically for a given `instr_addr`, `FP_COMP[31:30]` map
-`instr_addr[1:0]`, `FP_COMP[28:2]` map to `instr_addr[28:2]`, and the lowest bit `FP_COMP[0]` controls
-whether the breakpoint is enabled or not.
+The layout of the `FP_COMP` register is a little odd but basically for a given
+`instr_addr`, `FP_COMP[31:30]` map `instr_addr[1:0]`, `FP_COMP[28:2]` map to
+`instr_addr[28:2]`, and the lowest bit `FP_COMP[0]` controls whether the
+breakpoint is enabled or not.
 
 For the NRF52, we can transcribe the logic into code as follows:
 
@@ -374,11 +401,13 @@ bool fpb_set_breakpoint(size_t comp_id, uint32_t instr_addr) {
 }
 ```
 
-> For more details on how to configure the Flash Patch And Breakpoint (**FPB**) unit,
-> [check out our "How do breakpoints even work?" post]({% post_url 2020-06-17-cortex-m-breakpoints %}#flash-patch--breakpoint-unit)!
+> For more details on how to configure the Flash Patch And Breakpoint (**FPB**)
+> unit,
+> [check out our "How do breakpoints even work?" post](/blog/cortex-m-breakpoints#flash-patch--breakpoint-unit)!
 
-To facilitate breakpoint testing, I've added `dummy_function_1` through `dummy_function_9` to my
-program. All the functions do is print the name of the function being executed:
+To facilitate breakpoint testing, I've added `dummy_function_1` through
+`dummy_function_9` to my program. All the functions do is print the name of the
+function being executed:
 
 ```c
 void dummy_function_3(void) {
@@ -386,10 +415,12 @@ void dummy_function_3(void) {
 }
 ```
 
-We will be calling these functions to test out our debug monitor mode implementation.
+We will be calling these functions to test out our debug monitor mode
+implementation.
 
-I've also added a few CLI commands to the shell to help us configure the DebugMonitor exception
-handler, enable breakpoints, and call the dummy functions:
+I've also added a few CLI commands to the shell to help us configure the
+DebugMonitor exception handler, enable breakpoints, and call the dummy
+functions:
 
 ```bash
 shell> help
@@ -402,7 +433,8 @@ dump_dummy_funcs: Print first instruction of each dummy function
 help: Lists all commands
 ```
 
-Let's try configuring a breakpoint for `dummy_function_4`, address `0x270`, and see what happens:
+Let's try configuring a breakpoint for `dummy_function_4`, address `0x270`, and
+see what happens:
 
 ```bash
 shell> dump_dummy_funcs
@@ -438,14 +470,15 @@ Register Dump
  xpsr=0x010f0000
 ```
 
-As expected we see our `DebugMon_Handler` has been invoked on address `pc =0x00000270` which
-is where we installed the breakpoint!
+As expected we see our `DebugMon_Handler` has been invoked on address
+`pc =0x00000270` which is where we installed the breakpoint!
 
 #### Adding a CLI to the DebugMonitor Exception
 
-To add a CLI for DebugMonitor handling, all we need is a way to read in bytes over a UART from a ISR. This
-can be done by either polling the peripheral or by using an interrupt that is configured to run at
-a higher priority than the DebugMonitor exception to do the reading.
+To add a CLI for DebugMonitor handling, all we need is a way to read in bytes
+over a UART from a ISR. This can be done by either polling the peripheral or by
+using an interrupt that is configured to run at a higher priority than the
+DebugMonitor exception to do the reading.
 
 In our example app, we will add two commands:
 
@@ -495,19 +528,25 @@ void debug_monitor_handler_c(sContextStateFrame *frame) {
 
 Stepping over a breakpoint is a several step process:
 
-1. If it's a `bkpt` instruction, we need to advance the program counter by the size of the instruction (2
-   bytes).
-2. If a `bkpt` event was generated from a breakpoint configured in the FPB, we need to:
-   - Disable the FPB. Otherwise, any attempt to continue will just hit the breakpoint again.
+1. If it's a `bkpt` instruction, we need to advance the program counter by the
+   size of the instruction (2 bytes).
+2. If a `bkpt` event was generated from a breakpoint configured in the FPB, we
+   need to:
+   - Disable the FPB. Otherwise, any attempt to continue will just hit the
+     breakpoint again.
    - Single-Step one instruction.
-   - Re-enable the FPB and disable single-stepping in order to resume program execution.
+   - Re-enable the FPB and disable single-stepping in order to resume program
+     execution.
 
 In our `DebugMon_Handler`, we can:
 
-- inspect the `pc` from the `frame` parameter passed to `debug_monitor_handler_c` to figure out
-  whether or not the debug event was caused by executing a breakpoint instruction.
-- Disable/Enable the FPB by clearing & setting the `ENABLE` bit in the FPB `FP_CTRL` register.
-- Enable/Disable single-step functionality by setting and clearing the `MON_STEP` bit in the `DEMCR`.
+- inspect the `pc` from the `frame` parameter passed to
+  `debug_monitor_handler_c` to figure out whether or not the debug event was
+  caused by executing a breakpoint instruction.
+- Disable/Enable the FPB by clearing & setting the `ENABLE` bit in the FPB
+  `FP_CTRL` register.
+- Enable/Disable single-step functionality by setting and clearing the
+  `MON_STEP` bit in the `DEMCR`.
 
 #### C Code Additions for DebugMonitor Breakpoint & Single-Step Handling
 
@@ -554,7 +593,8 @@ Let's implement the logic described above in code:
 
 Now we can test out the single-step feature for `dummy_function_4`.
 
-We can use `disassemble` in GDB to determine what we expect to see if things are working.
+We can use `disassemble` in GDB to determine what we expect to see if things are
+working.
 
 ```
 (gdb) disass dummy_function_4
@@ -569,8 +609,9 @@ Dump of assembler code for function dummy_function_4:
 End of assembler dump.
 ```
 
-We will install a breakpoint at address `0x270`, so if we single step after that we shold see, `0x272`,
-`0x274` and then a branch to `0x6c0` executed by the processor.
+We will install a breakpoint at address `0x270`, so if we single step after that
+we shold see, `0x272`, `0x274` and then a branch to `0x6c0` executed by the
+processor.
 
 ```bash
 shell> debug_mon_en
@@ -628,51 +669,74 @@ stub function 'dummy_function_ram' called
 
 Nice, it works!
 
-> At this point, to make the DebugMonitor CLI interface more useful, we could extend the shell to
-> dump the contents of the stack or other memory regions.
+> At this point, to make the DebugMonitor CLI interface more useful, we could
+> extend the shell to dump the contents of the stack or other memory regions.
 
 ## Applications
 
-There's a couple projects online today that make use of the debug monitor functionality. Notably,
+There's a couple projects online today that make use of the debug monitor
+functionality. Notably,
 
-- SEGGER ships an SDK[^4] that you compile into your project to enable Monitor Mode Debug support
-  with SEGGER's tools. There's quite a few articles about how to make use of it on the NRF5x
-  series[^5]. On the NRF52, this let's you set breakpoints in application code without triggering
-  asserts in the Soft Device (because all that code runs from a higher priority interrupt).
-- The Monitor For Remote Inspection Project on GitHub [^6] exposes a DebugMonitor port which
-  implements the GDB Remote Serial Protocol[^7]. When compiled into a project, you can connect GDB
-  directly to your board via the UART connection!
+- SEGGER ships an SDK[^4] that you compile into your project to enable Monitor
+  Mode Debug support with SEGGER's tools. There's quite a few articles about how
+  to make use of it on the NRF5x series[^5]. On the NRF52, this let's you set
+  breakpoints in application code without triggering asserts in the Soft Device
+  (because all that code runs from a higher priority interrupt).
+- The Monitor For Remote Inspection Project on GitHub [^6] exposes a
+  DebugMonitor port which implements the GDB Remote Serial Protocol[^7]. When
+  compiled into a project, you can connect GDB directly to your board via the
+  UART connection!
 
-There's a lot of additional use cases you may want to include an
-implementation for in your system as well. Some of my favorites include:
+There's a lot of additional use cases you may want to include an implementation
+for in your system as well. Some of my favorites include:
 
-- exposing a debug interface for third party developers
-  on an embedded platform.
-- debugging of sealed units where there is only a UART or network interface exposed
-- debugging power consumption issues where maintaining a SWD/JTAG connection would ruin attempts
-  to monitor the quiescent current because the debug interface itself consumes a lot of power.
+- exposing a debug interface for third party developers on an embedded platform.
+- debugging of sealed units where there is only a UART or network interface
+  exposed
+- debugging power consumption issues where maintaining a SWD/JTAG connection
+  would ruin attempts to monitor the quiescent current because the debug
+  interface itself consumes a lot of power.
 
 ## Final Thoughts
 
-I hope this article taught you a little bit about ARM debug monitor mode handling and got you thinking
-about creative ways the feature can be leveraged.
+I hope this article taught you a little bit about ARM debug monitor mode
+handling and got you thinking about creative ways the feature can be leveraged.
 
-Have you used the monitor mode debugging for any projects you've worked on. If so, we'd love to hear
-what you used it for in the discussion area below!
+Have you used the monitor mode debugging for any projects you've worked on. If
+so, we'd love to hear what you used it for in the discussion area below!
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 
 ## References
 
-[^1]: [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
-[^2]: [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
-[^3]: [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
-[^4]: [SEGGERs Monitor Mode Debugging](https://www.segger.com/products/debug-probes/j-link/technology/monitor-mode-debugging/)
-[^5]: [Monitor Mode Debugging on the NRF5 Series](https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/monitor-mode-debugging-with-j-link-and-gdbeclipse)
-[^6]: [Monitor For Remote Inspection Github Project](https://github.com/adamgreen/mri)
-[^7]: [Official GDB Remote Serial Protocol Docs](https://sourceware.org/gdb/onlinedocs/gdb/Remote-Protocol.html) & [Informative Unofficial Doc](https://www.embecosm.com/appnotes/ean4/embecosm-howto-rsp-server-ean4-issue-2.html)
+[^1]:
+    [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
+
+[^2]:
+    [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
+
+[^3]:
+    [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+
+[^4]:
+    [SEGGERs Monitor Mode Debugging](https://www.segger.com/products/debug-probes/j-link/technology/monitor-mode-debugging/)
+
+[^5]:
+    [Monitor Mode Debugging on the NRF5 Series](https://devzone.nordicsemi.com/nordic/nordic-blog/b/blog/posts/monitor-mode-debugging-with-j-link-and-gdbeclipse)
+
+[^6]:
+    [Monitor For Remote Inspection Github Project](https://github.com/adamgreen/mri)
+
+[^7]:
+    [Official GDB Remote Serial Protocol Docs](https://sourceware.org/gdb/onlinedocs/gdb/Remote-Protocol.html)
+    &
+    [Informative Unofficial Doc](https://www.embecosm.com/appnotes/ean4/embecosm-howto-rsp-server-ean4-issue-2.html)
+
 [^8]: [Lauterbach TRACE32](https://www.lauterbach.com/frames.html?home.html)
+
 [^9]: [SEGGER J-Trace](https://www.segger.com/products/debug-probes/j-trace/)
-[^miniterm]: [PySerial Miniterm](https://pyserial.readthedocs.io/en/latest/tools.html#module-serial.tools.miniterm)
+
+[^miniterm]:
+    [PySerial Miniterm](https://pyserial.readthedocs.io/en/latest/tools.html#module-serial.tools.miniterm)

@@ -1,4 +1,5 @@
 ---
+date: "2023-02-14"
 title: "A Guide to Using ARM Stack Limit Registers"
 description:
   "A step-by-step guide on configuring and leveraging the ARMv8 MSP and PSP
@@ -25,9 +26,9 @@ for scenarios that the MSPLIM and PSPLIM features fall short.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Basic Terminology
 
@@ -49,7 +50,7 @@ Having hardware protection for the PSP and MSP allows flexibility within an OS.
 For example, we can protect the MSP during exceptions and interrupts. We can
 also switch out the PSPLIM value on a context switch to safeguard each task's
 stack. If you need a refresher on context switching, check a previous post
-[here]({% post_url 2019-10-30-cortex-m-rtos-context-switching %}).
+[here](/blog/cortex-m-rtos-context-switching).
 
 If no RTOS is present, we can still monitor the MSP, as this will protect your
 whole application.

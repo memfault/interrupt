@@ -1,4 +1,5 @@
 ---
+date: "2024-03-22"
 title: Diving into JTAG — Boundary Scan (Part 3)
 description:
   "This article dives into JTAG Boundary Scan, a method for testing
@@ -19,9 +20,9 @@ one!
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## The Principle of Boundary-Scan
 
@@ -29,7 +30,7 @@ The principle of operation is that special cells — scan cells — are inserted
 between the physical pins of the chip and its internal logic.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part3/boundary-scan-overview.png %}" alt="Boundary Scan Architecture Overview" />
+  <img width="650" src="/img/jtag-part3/boundary-scan-overview.png" alt="Boundary Scan Architecture Overview" />
 </p>
 
 In normal mode, these cells are transparent and the core is connected to I/O
@@ -74,7 +75,7 @@ functions, such as transmitting or receiving data, allowing you to test
 connections between chips without having to physically access the pins.
 
 <p align="center">
-  <img width="250" src="{% img_url jtag-part3/boundary-scan-cell-ios.png %}" alt="Boundary Scan Cell Inputs/Outputs" />
+  <img width="250" src="/img/jtag-part3/boundary-scan-cell-ios.png" alt="Boundary Scan Cell Inputs/Outputs" />
 </p>
 
 Each boundary-scan cell can:
@@ -96,7 +97,6 @@ Scan cells can be categorized by functionality into the following types:
 - **Input Cells:** Used to monitor input signals.
 
 - **Output Cells:** Used to control the output signals:
-
   - `Output2`: This cell type does not support three-state logic. It can set the
     pin to state "`0`" or "`1`".
   - `Output3`: This cell type supports three-state logic, allowing a pin to be
@@ -106,7 +106,6 @@ Scan cells can be categorized by functionality into the following types:
   type typically support three-state logic.
 
 - **Control Cells**: Used to control other cell types:
-
   - `Control`: This cell type can control the functionality of one or more other
     cells, for example, by switching them between input and output modes. This
     cell is not connected to the chip pins
@@ -124,7 +123,7 @@ transferring data to other cells, etc.
 In general, a scan cell can be represented by the following scheme:
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part3/boundary-scan-cell-scheme.png %}" alt="Boundary Scan Cell Scheme" />
+  <img width="650" src="/img/jtag-part3/boundary-scan-cell-scheme.png" alt="Boundary Scan Cell Scheme" />
 </p>
 
 A Boundary Scan cell's internal architecture can be highly different. In its
@@ -162,7 +161,7 @@ IO scan cells are usually combined into a single multi-function cell called a
 `BC_7`.
 
 <p align="center">
-  <img width="250" src="{% img_url jtag-part3/boundary-scan-cell-example.png %}" alt="Boundary Scan Cell Example" />
+  <img width="250" src="/img/jtag-part3/boundary-scan-cell-example.png" alt="Boundary Scan Cell Example" />
 </p>
 
 ## The Boundary Scan Register (`BSR`)
@@ -175,7 +174,7 @@ and/or by other layout constraints. The boundary-scan register is selected by
 the `EXTEST`, `SAMPLE`, `PRELOAD`, and `INTEST` instructions.
 
 <p align="center">
-  <img width="450" src="{% img_url jtag-part3/jtag-registers.png %}" alt="JTAG registers" />
+  <img width="450" src="/img/jtag-part3/jtag-registers.png" alt="JTAG registers" />
 </p>
 
 During scan operations, data is shifted BSR in the direction from `TDI` to
@@ -226,7 +225,7 @@ the chip during normal operation. In other words, with this instruction, we can
 read signals from the microcontroller output without disturbing its operation.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part3/jtag-sample-instruction.gif %}" alt="JTAG SAMPLE instruction" />
+  <img width="650" src="/img/jtag-part3/jtag-sample-instruction.gif" alt="JTAG SAMPLE instruction" />
 </p>
 
 In step 3, when the `SAMPLE` instruction is loaded into the `IR` register, the
@@ -243,7 +242,7 @@ This command allows you to preload certain values into Boundary-Scan Cells for
 later testing or other operations.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part3/jtag-preload-instruction.gif %}" alt="JTAG preload instruction" />
+  <img width="650" src="/img/jtag-part3/jtag-preload-instruction.gif" alt="JTAG preload instruction" />
 </p>
 
 Here, everything is simple. After writing the command `PRELOAD`, we just need to
@@ -262,7 +261,7 @@ Again, after the `SAMPLE/PRELOAD` instruction is completed, has no effect on the
 pins themselves.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part3/jtag-sample-preload-instruction.gif %}" alt="JTAG SAMPLE/PRELOAD instruction" />
+  <img width="650" src="/img/jtag-part3/jtag-sample-preload-instruction.gif" alt="JTAG SAMPLE/PRELOAD instruction" />
 </p>
 
 Typically, the `SAMPLE/PRELOAD` command is the first command to be executed
@@ -284,7 +283,7 @@ This command is the one for which we wrote values to the scan cells in the
 values of the signals stored in them to the output.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part3/jtag-extest-instruction.gif %}" alt="JTAG EXTEST instruction" />
+  <img width="650" src="/img/jtag-part3/jtag-extest-instruction.gif" alt="JTAG EXTEST instruction" />
 </p>
 
 > _After using this command, the I/O pins are disconnected from the internal
@@ -300,7 +299,7 @@ testing of the internal functionality to identify defects such as the wrong
 variant of a device or to detect some gross internal defect.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part3/jtag-intest-instruction.gif %}" alt="JTAG INTEST instruction" />
+  <img width="650" src="/img/jtag-part3/jtag-intest-instruction.gif" alt="JTAG INTEST instruction" />
 </p>
 
 ## Test Example
@@ -315,7 +314,7 @@ that a solder bridge has formed between pins `D1:6,7` and `D2:2,3`. The
 described situation is presented in the figure 11.
 
 <p align="center">
-  <img width="650" src="{% img_url jtag-part3/boundary-scan-test-example.gif %}" alt="Boundary scan test example" />
+  <img width="650" src="/img/jtag-part3/boundary-scan-test-example.gif" alt="Boundary scan test example" />
 </p>
 
 So what can be done using JTAG to check the connection of chips `D1` and `D2`:
@@ -342,9 +341,9 @@ hearing from you!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

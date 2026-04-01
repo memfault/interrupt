@@ -1,4 +1,5 @@
 ---
+date: "2020-06-02"
 title: "Profiling Firmware on Cortex-M"
 description: "An exploration of profiling techniques on Cortex-M
 microcontrollers, ranging from sampling profilers, ITM, and function timing via
@@ -21,16 +22,17 @@ Today, modern microcontrollers implement multiple features to enable advanced
 profiling techniques. All you need is a debugger and a laptop to get started.
 
 <!-- excerpt start -->
+
 In this post, we explore different techniques that can be used to profile
 firmware applications running on ARM Cortex-M microcontrollers. To profile our
 Mandelbrot application on STM32, we start with a naive debugger-based sampling
 method, and eventually discover ITM, DWT cycle counters, and more!
+
 <!-- excerpt end -->
 
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include newsletter.html %}
-
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Setup
 
@@ -43,8 +45,8 @@ As in previous blog posts, we use the excellent openocd tool[^openocd] to
 interface with the board on our laptop. Openocd allows us to flash, debug, and
 profile the board over USB using the STLink protocol. Since it has built it
 support for our Discovery board, we simply need to connect our board to our
-laptop over USB via the "USB-STLINK" port, and run the following command on
-a recent version of the tool:
+laptop over USB via the "USB-STLINK" port, and run the following command on a
+recent version of the tool:
 
 ```bash
 $ openocd -f board/stm32f429disc1.cfg
@@ -56,10 +58,10 @@ Note that the SWO pin is not connected by default on the Discovery board.
 Instead, a solder bridge is used to enable the functionality per the User
 Manual, Section 6.13[^disco-um].
 
-Simply grab a soldering iron and bridge the two pads labeled "SB9" with a bit
-of solder or a 0-ohm resistor. Here is my handywork:
+Simply grab a soldering iron and bridge the two pads labeled "SB9" with a bit of
+solder or a 0-ohm resistor. Here is my handywork:
 
-<img width="450" src="{% img_url profiling/solder-bridge.jpg %}"/>
+<img width="450" src="/img/profiling/solder-bridge.jpg"/>
 
 ### Code Under Test
 
@@ -108,7 +110,7 @@ $ arm-none-eabi-gdb mandel.elf
 You should now be seeing the Mandelbrot fractal on the LCD of the Discovery
 board. Here it is!
 
-![]({% img_url profiling/mandelbrot.jpg %})
+![](/img/profiling/mandelbrot.jpg)
 
 ## Poor Man's Profiler
 
@@ -123,24 +125,24 @@ instrumenting your code can yield more precise results, but risk changing the
 behavior of the program.
 
 So how can we sample our program counter at a regular interval? Using our
-debugger! This is a common approach, sometimes dubbed the [poor man's
-profiler](https://poormansprofiler.org/).
+debugger! This is a common approach, sometimes dubbed the
+[poor man's profiler](https://poormansprofiler.org/).
 
 The concept is simple: we write a script which executes our debugger in a loop
 and dumps the current backtrace. After we've collected enough data points, we
 parse the backtraces and match them up to get aggregate values.
 
 To do this we must run `arm-none-eabi-gdb` in batch mode: we want it to start,
-connect, run our command, and exit without user input. This is supported with the
-`-batch` flag. Here's the invocation:
+connect, run our command, and exit without user input. This is supported with
+the `-batch` flag. Here's the invocation:
 
 ```
 $ arm-none-eabi-gdb -ex "set pagination off" -ex "target remote :3333" -ex "thread apply all bt" -batch $elf
 ```
 
-This will start GDB, disable pagination (it requires user input), run `target
-remote :3333` to connect to OpenOCD, run `thread apply all bt` to get the
-backtrace of every thread, and exits.
+This will start GDB, disable pagination (it requires user input), run
+`target remote :3333` to connect to OpenOCD, run `thread apply all bt` to get
+the backtrace of every thread, and exits.
 
 To parse the data, I've adapted the `awk` script provided at
 poormansprofiler.org to handle the specific output of `arm-none-eabi-gdb`.
@@ -206,16 +208,16 @@ Aparicio's [excellent post on the topic](https://blog.japaric.io/itm/).
 Where ITM really shines is its ability to output data generated directly by the
 hardware. As of this writing, ITM supports the following hardware data sources:
 
-1. Event counter wrapping: When enabled, an event is generated when DWT
-   event counters overflow. This includes clock cycle counters, folded
-instruction  counters, sleep cycle counters, and more[^dwt].
+1. Event counter wrapping: When enabled, an event is generated when DWT event
+   counters overflow. This includes clock cycle counters, folded instruction
+   counters, sleep cycle counters, and more[^dwt].
 2. Exception tracing: When enabled, an event is generated whenever an exception
    (i.e. Interrupt) occurs.
 3. PC sampling: When enabled, an event is generated at a regular interval
    containing the current PC.
 4. DWT Data trace: When enabled, events are generated when a specific data
    address (or range of addresses) is accessed. The events contain the PC, the
-data address, and the data value.
+   data address, and the data value.
 
 This information can be read over the TRACE pins of your MCU if you have a
 trace-enabled debugger (e.g. a J-Trace or a Lauterbach TRACE32), alternatively
@@ -253,14 +255,17 @@ tpiu config (disable | ((external | internal (filename | -)) (sync port_width | 
 ```
 
 Here is what we want to do here:
+
 1. Set TRACELCKIN_FREQ to our core frequency (168MHz for the STM32F429). This is
    important as you will get corrupted data on your SWO pin otherwise.
 2. Redirect the ITM data to a file with `internal <filename>`. Using `external`
    would require we use an adapter to read the data directly from the pin with
-e.g. a UART to USB adapter
+   e.g. a UART to USB adapter
 3. Use UART rather than Manchester encoding to make it easy to decode the data
 
-From GDB, we use `monitor` to send commands to OpenOCD, so we get the following command:
+From GDB, we use `monitor` to send commands to OpenOCD, so we get the following
+command:
+
 ```
 (gdb) monitor tpiu config internal itm.fifo uart off 168000000
 ```
@@ -271,9 +276,10 @@ Next, we configure our MCU to output PC Sampling events. This is done using the
 DWT Control Register. The register is at address `0xE0001000`, I've reproduced
 its layout below:
 
-![]({% img_url profiling/dwt-control-register.png %})
+![](/img/profiling/dwt-control-register.png)
 
 For our use case, we care about the following bits:
+
 - Bit 12: PCSAMPLEENA. Setting this to 1 will enable PC sampling events.
 - Bit 0: CYCCNTENA. This enables the CYCCNT counter which is required for PC
   sampling.
@@ -291,12 +297,12 @@ POSTPRESET value. When that counter hits 0, a PC sampling event is generated.
 Here's a practical example: if CYCTAP is set to 0 and POSTPRESET is set to 4, we
 tap the 6th bit of the cycle counter. This means that the tap is toggled every
 64 (or 2^6) cycles. After 4 tap toggles, a PC sample event is generated which
-works out to 256 (4 * 64) cycles. In other words, the PC sampling rate is 0.65MHz
-(168MHz / 256).
+works out to 256 (4 \* 64) cycles. In other words, the PC sampling rate is
+0.65MHz (168MHz / 256).
 
 We are limited by the speed of our debug adapter, so in my case, I tapped the
-10th bit (CYCTAP = 1), and set POPRESET to 3. This means that we are
-sampling the PC every 3,072 cycles, or at 50KHz.
+10th bit (CYCTAP = 1), and set POPRESET to 3. This means that we are sampling
+the PC every 3,072 cycles, or at 50KHz.
 
 Using OpenOCD, we write the register so that PCSAMPLEENA = 1, CYCCNTENA = 1,
 CYCTAP = 1, and POSTPRESET = 3. This requires the following command:
@@ -316,9 +322,10 @@ Last but not least, we enable ITM port 0 which is a built in openOCD feature:
 If all went well, we now have a file named `itm.fifo` which contains binary ITM
 data. We must now decode it!
 
-The packet format is specified in detail in the [ARM v7m Architecture Reference
-Manual](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf). Thankfully,
-others have gone through the trouble of implementing decoders for us.
+The packet format is specified in detail in the
+[ARM v7m Architecture Reference Manual](https://static.docs.arm.com/ddi0403/eb/DDI0403E_B_armv7m_arm.pdf).
+Thankfully, others have gone through the trouble of implementing decoders for
+us.
 
 My favorite tool here is the `itm-tools` suite from Jorge Aparicio, which is
 [available on Github](https://github.com/japaric/itm-tools). You will need a
@@ -400,13 +407,12 @@ $ ~/code/itm-tools/target/debug/pcsampl itm.fifo -e mandel.elf 2>/dev/null
 
 As you can see, this data is much more detailed than what we got with the Poor
 Man's Profiler approach. In fact, we can see that we are spending most of our
-time in the `mandel` function, and not in the `spi_xfer` function as we
-thought.
+time in the `mandel` function, and not in the `spi_xfer` function as we thought.
 
-> Note: In the process of writing this blog post, I stumbled upon the [Orbuculum
-> project](https://github.com/orbcode/orbuculum). While this looks very
-> promising for ITM/ETM and other debugging, I was not able to get it to work on
-> MacOS.
+> Note: In the process of writing this blog post, I stumbled upon the
+> [Orbuculum project](https://github.com/orbcode/orbuculum). While this looks
+> very promising for ITM/ETM and other debugging, I was not able to get it to
+> work on MacOS.
 
 ### Profiling Individual Functions
 
@@ -431,6 +437,7 @@ int main(void) {
 ```
 
 What does our macro need to do? At a high level:
+
 1. Enable PC sampling
 2. Execute the code being profiled
 3. Disable PC sampling
@@ -446,10 +453,11 @@ We can start filling in our macro:
 ```
 
 To enable or disable PC sampling, we need to write to the DWT Control Register.
-Thankfully, libopencm3 has a definition for this register[^libopencm3-dwt] and its fields which
-makes our life easy.
+Thankfully, libopencm3 has a definition for this register[^libopencm3-dwt] and
+its fields which makes our life easy.
 
 To enable PC sampling:
+
 ```c
 DWT_CTRL &= ~DWT_CTRL_POSTPRESET;
 DWT_CTRL |= 0x3 << DWT_CTRL_POSTPRESET_SHIFT;
@@ -560,10 +568,10 @@ and as expected `spi_xfer` takes the lion's share.
 
 ## Timing Code With the Cycle Counter
 
-Our sampling profiler is able to tell us the relative time spent in one
-function versus another. However, it does not tell us anything about absolute
-time spent. If we want to optimize our `mandel` function, we will need a way to
-measure how long it executes for.
+Our sampling profiler is able to tell us the relative time spent in one function
+versus another. However, it does not tell us anything about absolute time spent.
+If we want to optimize our `mandel` function, we will need a way to measure how
+long it executes for.
 
 This is where the `CYCCNT` register (address: `0xE0001004`) comes in. As noted
 earlier, the cycle counter is a free running 32-bit cycle counter which is used
@@ -574,7 +582,7 @@ To use the `CYCCNT` to time a function, we simply need to read it before and
 after the function executes, and compute the delta.
 
 > Note: since the CYCCNT register is 32-bit wide, it can not be used to measure
-> time periods longer than `cycle_period` * 2^32. Given our 168MHz clock speed,
+> time periods longer than `cycle_period` \* 2^32. Given our 168MHz clock speed,
 > this comes to about ~25 seconds in our case.
 
 We already know how to enable the cycle counter: we set the CYCCNTENA bit in the
@@ -671,17 +679,34 @@ with an open source tool such as openOCD and a single pin!
 Are there profiling tools or methods you've used to great effect? Let us know in
 the comments below!
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 
 ## References
 
-[^disco]: [STM32F429i Discovery Kit](https://www.st.com/en/evaluation-tools/32f429idiscovery.html)
+[^disco]:
+    [STM32F429i Discovery Kit](https://www.st.com/en/evaluation-tools/32f429idiscovery.html)
+
 [^libopencm3]: [Libopencm3 on GitHub](https://github.com/libopencm3/libopencm3)
-[^tpui]: More info on the TPIU on [ARM's website](https://developer.arm.com/docs/100166/latest/trace-port-interface-unit/about-the-tpiu)
-[^openocd]: More information on getting OpenOCD at [http://openocd.org](http://openocd.org).
-[^disco-um]: [STM32F429i Discovery User Manual](https://www.st.com/resource/en/user_manual/dm00093903-discovery-kit-with-stm32f429zi-mcu-stmicroelectronics.pdf)
-[^dwt]: You can read more about DWT counters on [ARM's Website](https://developer.arm.com/docs/ddi0337/e/system-debug/dwt)
-[^tpiu_config]: [OpenOCD docs on tpiu config](http://openocd.org/doc/html/Architecture-and-Core-Commands.html#index-tpiu-config)
-[^libopencm3-dwt]: [dwt.h in libopencm3](https://github.com/libopencm3/libopencm3/blob/master/include/libopencm3/cm3/dwt.h)
+
+[^tpui]:
+    More info on the TPIU on
+    [ARM's website](https://developer.arm.com/docs/100166/latest/trace-port-interface-unit/about-the-tpiu)
+
+[^openocd]:
+    More information on getting OpenOCD at
+    [http://openocd.org](http://openocd.org).
+
+[^disco-um]:
+    [STM32F429i Discovery User Manual](https://www.st.com/resource/en/user_manual/dm00093903-discovery-kit-with-stm32f429zi-mcu-stmicroelectronics.pdf)
+
+[^dwt]:
+    You can read more about DWT counters on
+    [ARM's Website](https://developer.arm.com/docs/ddi0337/e/system-debug/dwt)
+
+[^tpiu_config]:
+    [OpenOCD docs on tpiu config](http://openocd.org/doc/html/Architecture-and-Core-Commands.html#index-tpiu-config)
+
+[^libopencm3-dwt]:
+    [dwt.h in libopencm3](https://github.com/libopencm3/libopencm3/blob/master/include/libopencm3/cm3/dwt.h)

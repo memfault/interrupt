@@ -1,4 +1,5 @@
 ---
+date: "2025-02-28"
 title: The Android Developer's Journey into Hardware Observability
 description:
   An introduction to the technical decisions Android developers will have to
@@ -16,9 +17,9 @@ an Android app developer working on AOSP hardware.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Introduction to Android hardware observability
 
@@ -44,7 +45,7 @@ minimum, you're responsible for a device that's running parts of your own
 Android apps, parts of your ODM's customizations, and the whole of AOSP, which
 is also running a customized version of Linux.
 
-![AOSP Component Stack]({% img_url aosp-observability/aosp-components.png  %})
+![AOSP Component Stack](/img/aosp-observability/aosp-components.png)
 
 To make things even more complicated, if your team ordered the Android hardware
 from an ODM, you might not contractually have access to the source code of the
@@ -81,7 +82,7 @@ report and then emailing it to the engineering team.
 
 <figure>
     <a href="https://github.com/mattprecious/telescope" align="center">
-        <img width="400" src="{% img_url aosp-observability/telescope.gif %}" alt="Telescope GitHub library" />
+        <img width="400" src="/img/aosp-observability/telescope.gif" alt="Telescope GitHub library" />
     </a>
     <figcaption>Telescope GitHub library</figcaption>
 </figure>
@@ -250,9 +251,9 @@ experience with observability at scale, I'd love to hear from you.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

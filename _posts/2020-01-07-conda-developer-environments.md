@@ -1,4 +1,5 @@
 ---
+date: "2020-01-07"
 title: "Managing Developer Environments with Conda"
 description:
   "How to use Conda for managing build, test, and debug environments and
@@ -15,7 +16,7 @@ longer installed. This can be a major pain, and people have come up with several
 ways around it.
 
 In previous posts,
-[we have used virtualenv]({% post_url 2019-07-23-using-pypi-packages-with-GDB %}#virtual-environment)
+[we have used virtualenv](/blog/using-pypi-packages-with-GDB#virtual-environment)
 to manage our Python packages. What if you would like to easily manage non
 Python dependencies? This is where Conda comes into play.
 
@@ -28,9 +29,9 @@ environment.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Who Is This Post For?
 
@@ -38,8 +39,8 @@ Every developer should build, debug, and test the firmware using the **exact
 same versions** of the compiler, build system, and other tools. The specific
 tools used should also be in lock-step with the code base revision being worked
 on. This ensures that there is one way to do all everyday tasks and they
-**always work**. It's also a critical step towards having [reproducible
-builds]({% post_url 2019-12-11-reproducible-firmware-builds %}).
+**always work**. It's also a critical step towards having
+[reproducible builds](/blog/reproducible-firmware-builds).
 
 If you or your teammates have experienced any of the following more than once,
 it may be time to consider using Conda or similar environment manager.
@@ -58,7 +59,7 @@ it may be time to consider using Conda or similar environment manager.
 
 ## What is Conda?
 
-![Conda]({% img_url conda-developer-environments/conda.png %})
+![Conda](/img/conda-developer-environments/conda.png)
 
 Conda is a "package, dependency and environment management for any
 language"[^1]. It is most popular in the world of data science, but it can
@@ -160,9 +161,9 @@ Docker can even be used _together_, where Docker manages the system image and
 low-level setup, and Conda manages all of the packages required to build and
 test the firmware.
 
-Check out [this previous Interrupt
-post]({% post_url 2019-09-17-continuous-integration-for-firmware %}) for how to
-get up and running quickly with Docker and continuous integration.
+Check out
+[this previous Interrupt post](/blog/continuous-integration-for-firmware) for
+how to get up and running quickly with Docker and continuous integration.
 
 #### Included System Package Managers
 
@@ -178,8 +179,7 @@ different firmware projects in flight. This could be a legacy project and a
 newer one. I imagine the following wouldn't be far off:
 
 **Old Project Dependencies:** GNU Make 4.1, GCC 5.4.1, GDB 7.11, Python
-3.5<br />
-**New Project Dependencies:** GNU Make 4.2.1, GCC 8.3.1, GDB 8.3,
+3.5<br /> **New Project Dependencies:** GNU Make 4.2.1, GCC 8.3.1, GDB 8.3,
 Python 3.6
 
 In the above example, to be able to go back and forth between these two
@@ -432,8 +432,7 @@ entry for `ccache` in our `environment.yml` and this becomes trivial.
 ```yaml
 dependencies:
   # System Packages
-  ...
-  - ccache
+  ... - ccache
 ```
 
 The next time a developer runs `conda env update`, they'll have `ccache`
@@ -707,10 +706,9 @@ CppUTest[^4]
 
 I'm still learning more and more about Conda each month, but ever since using it
 a few years ago at my previous job, I haven't looked back. I believe using Conda
-and [setting up
-Invoke]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}) for
-projects were two amazing ways we were able to 2x our teams productivity with
-minimal effort.
+and [setting up Invoke](/blog/building-a-cli-for-firmware-projects) for projects
+were two amazing ways we were able to 2x our teams productivity with minimal
+effort.
 
 Have you found something that works well for you and your team? I'd be curious
 to hear what other people have found success with to keep developer environments
@@ -721,6 +719,10 @@ in sync.
 ## References
 
 [^1]: [Conda](https://docs.conda.io/en/latest/)
+
 [^2]: [Virtualenv](https://virtualenv.pypa.io/en/latest/)
-[^3]: [Docker Volume Mount Filesystem Performance](https://docs.docker.com/docker-for-mac/osxfs-caching/)
+
+[^3]:
+    [Docker Volume Mount Filesystem Performance](https://docs.docker.com/docker-for-mac/osxfs-caching/)
+
 [^4]: [CppUTest](http://cpputest.github.io/)

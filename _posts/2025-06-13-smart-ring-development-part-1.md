@@ -1,9 +1,10 @@
 ---
+date: "2025-06-13"
 title: "Smart Ring Development  (Part 1) － Research and Prototype"
 description: "Introducing Open Smart Ring project with a series of articles"
 author: stawiski
 tags:
- [wearable, ring, oura, teardown, development, prototype, bluetooth, hardware]
+  [wearable, ring, oura, teardown, development, prototype, bluetooth, hardware]
 ---
 
 <!-- excerpt start -->
@@ -56,7 +57,7 @@ on the market at that time, there were "other Smart Rings," and this family of
 wearables had faced the same challenges we were about to encounter: how do you
 fit all the necessary electronics in there?
 
-![A sneak peek of the Open Ring hardware!]({% img_url smart-ring/open-ring-pcba-final.jpg %})
+![A sneak peek of the Open Ring hardware!](/img/smart-ring/open-ring-pcba-final.jpg)
 
 ## What's inside a Smart Ring?
 
@@ -112,18 +113,18 @@ Just from Oura's FCC filings, we inferred that their product used:
 
 - Grepow batteries (from Shenzhen Grepow Battery)
 - Different antenna matching circuits per ring size (means it's part of the
- trouble to support sizes from US6 to US13 ring size)
+  trouble to support sizes from US6 to US13 ring size)
 - Macronix or GD FLASH memory
 - Rigid flex PCB as seen on photos from gen 2
 - Open pads on the PCB (standard mass production technique for testing the
- hardware and flashing the firmware)
+  hardware and flashing the firmware)
 
 From iFixit teardown, we got more crucial information:
 
 - There is a PCB pattern that looks like capacitive sense, so probably ring wear
- detection, which made sense for the Cypress chip they used (X-Ray photo)
+  detection, which made sense for the Cypress chip they used (X-Ray photo)
 - Antenna is a PCB antenna, very tightly routed through the ring and even
- through a microvia (X-Ray photo)
+  through a microvia (X-Ray photo)
 - Wireless charging coil design (X-Ray photo)
 - BLE SoC was Cypress
 - Texas Instruments BQ series battery charger
@@ -132,16 +133,16 @@ A big part of Oura's design is, of course, the whole LED and photodetector setup
 for heart measurement, which included optical lenses made out of the ring's
 housing.
 
-![Oura ring teardown]({% img_url smart-ring/oura-ring-gen3-teardown.jpg %})
+![Oura ring teardown](/img/smart-ring/oura-ring-gen3-teardown.jpg)
 
 From our own teardown, we additionally learned that:
 
 - Induction charger used 6.8 MHz (half of 13.56 MHz, known for RFID)
 - The charger base works by sensing the current in the coil. When the current
- gets low enough, the charger is going into "looking for a ring" state
+  gets low enough, the charger is going into "looking for a ring" state
 - There is no communication between the charger and the ring; the only
- "information" is the load current of the ring, which affects the primary coil
- current
+  "information" is the load current of the ring, which affects the primary coil
+  current
 
 ### Amazon Echo Loop
 
@@ -152,12 +153,12 @@ also featured innovative haptic feedback design using piezo.
 
 Here's an exploded photo of the ring from Amazon itself:
 
-![Exploded Amazon Echo Loop]({% img_url smart-ring/amazon-echo-loop-assembly-exploded.jpg %})
+![Exploded Amazon Echo Loop](/img/smart-ring/amazon-echo-loop-assembly-exploded.jpg)
 
 There were no known teardowns of this ring at the time, so we did our own:
 
-![Amazon Echo Loop Teardown - main board]({% img_url smart-ring/amazon-echo-loop-pcba.jpg %})
-![Amazon Echo Loop Teardown - battery]({% img_url smart-ring/amazon-echo-loop-battery.jpg %})
+![Amazon Echo Loop Teardown - main board](/img/smart-ring/amazon-echo-loop-pcba.jpg)
+![Amazon Echo Loop Teardown - battery](/img/smart-ring/amazon-echo-loop-battery.jpg)
 
 Learnings:
 
@@ -173,8 +174,8 @@ design are mechanical, wear and tear, and industrial design.
 
 ## Prototype
 
-Having learned a ton from other products in the market, it was time to
-put together a plan for making our own Smart Ring. Our requirements were:
+Having learned a ton from other products in the market, it was time to put
+together a plan for making our own Smart Ring. Our requirements were:
 
 - Normal-sized ring, similar to a typical wedding band (nothing bulky!)
 - A touch pad for gestures
@@ -210,9 +211,9 @@ came up with a clever idea to 3D print all the PCB components from their STLs
 and play with them like LEGO bricks to make it fit, which you can see in the
 pictures below:
 
-![3D printed components]({% img_url smart-ring/open-ring-3d-printed-components.jpg %})
+![3D printed components](/img/smart-ring/open-ring-3d-printed-components.jpg)
 
-![3D printed ring housing]({% img_url smart-ring/open-ring-3d-printed-housing.jpg %})
+![3D printed ring housing](/img/smart-ring/open-ring-3d-printed-housing.jpg)
 
 ## Conclusion
 
@@ -230,9 +231,9 @@ In the next article, we will dive into the hardware design of
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

@@ -1,18 +1,25 @@
 ---
+date: "2020-03-03"
 title: "A Shallow Dive into GNU Make"
-description: "A brief overview of GNU Make and its features, Makefile syntax, and how to use Make to build C/C++ software and firmware"
+description:
+  "A brief overview of GNU Make and its features, Makefile syntax, and how to
+  use Make to build C/C++ software and firmware"
 author: noah
 image: /img/gnu-make-guidelines/gnu-make.png
 tags: [toolchain, c]
 ---
 
-GNU Make is a popular and commonly used program for building C language software. It is used when [building the Linux
-kernel](https://wiki.archlinux.org/index.php/Kernel/Traditional_compilation#Compilation)
+GNU Make is a popular and commonly used program for building C language
+software. It is used when
+[building the Linux kernel](https://wiki.archlinux.org/index.php/Kernel/Traditional_compilation#Compilation)
 and other frequently used GNU/Linux programs and software libraries.
 
-Most embedded software developers will work with GNU Make at some point in their career, either using it to compile small libraries or building an entire project. Though there are [many, many
-alternatives to Make](https://en.wikipedia.org/wiki/List_of_build_automation_software),
-it's still commonly chosen as the build system for new software given its feature set and wide support.
+Most embedded software developers will work with GNU Make at some point in their
+career, either using it to compile small libraries or building an entire
+project. Though there are
+[many, many alternatives to Make](https://en.wikipedia.org/wiki/List_of_build_automation_software),
+it's still commonly chosen as the build system for new software given its
+feature set and wide support.
 
 <!-- excerpt start -->
 
@@ -22,51 +29,59 @@ guided tour through some of my favorite/most used Make concepts and features ðŸ¤
 
 <!-- excerpt end -->
 
-If you feel like you already know Make pretty well, feel free to skip the tutorial portion and [jump to my personal recommendations](#recommendations).
+If you feel like you already know Make pretty well, feel free to skip the
+tutorial portion and [jump to my personal recommendations](#recommendations).
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What is GNU Make?
 
 [GNU Make](https://www.gnu.org/software/make/) is a program that automates the
-running of shell commands and helps with repetitive tasks. It is typically used to transform files into some other form, e.g. compiling
-source code files into programs or libraries.
+running of shell commands and helps with repetitive tasks. It is typically used
+to transform files into some other form, e.g. compiling source code files into
+programs or libraries.
 
-It does this by tracking **prerequisites** and executing a hierarchy of commands to
-produce **targets**.
+It does this by tracking **prerequisites** and executing a hierarchy of commands
+to produce **targets**.
 
-Although the GNU Make manual is lengthy, I suggest giving it a read as it is the best reference I've found:
+Although the GNU Make manual is lengthy, I suggest giving it a read as it is the
+best reference I've found:
 [https://www.gnu.org/software/make/manual/html_node/index.html](https://www.gnu.org/software/make/manual/html_node/index.html)
 
 Let's dive in!
 
 ## When to choose Make
 
-Make is suitable for building small C/C++ projects or libraries that would
-be included in another project's build system. Most build systems will have a
-way to integrate Make-based sub-projects.
+Make is suitable for building small C/C++ projects or libraries that would be
+included in another project's build system. Most build systems will have a way
+to integrate Make-based sub-projects.
 
-For larger projects, you will find a more modern build system easier to work with.
+For larger projects, you will find a more modern build system easier to work
+with.
 
 I would suggest a build system other than Make in the following situations:
 
-- When the number of targets (or files) being built is (or will eventually be) in the hundreds.
-- A "configure" step is desired, which sets up and persists variables, target definitions, and environment configurations.
-- The project is going to remain internal or private and will not need to be built by end users.
+- When the number of targets (or files) being built is (or will eventually be)
+  in the hundreds.
+- A "configure" step is desired, which sets up and persists variables, target
+  definitions, and environment configurations.
+- The project is going to remain internal or private and will not need to be
+  built by end users.
 - You find debugging a frustrating exercise.
-- You need the build to be cross platform that can build on macOS, Linux, and Windows.
+- You need the build to be cross platform that can build on macOS, Linux, and
+  Windows.
 
-In these situations, you might find using
-[CMake](https://cmake.org/), [Bazel](https://bazel.build/),
-[Meson](https://mesonbuild.com/), or another modern build system a more pleasurable experience.
+In these situations, you might find using [CMake](https://cmake.org/),
+[Bazel](https://bazel.build/), [Meson](https://mesonbuild.com/), or another
+modern build system a more pleasurable experience.
 
 ## Invoking Make
 
-Running `make`  will load a file named `Makefile` from the current directory
-and attempt to update the default **goal** (more on goals later).
+Running `make` will load a file named `Makefile` from the current directory and
+attempt to update the default **goal** (more on goals later).
 
-> Make will search for files named `GNUmakefile`, `makefile`, and `Makefile`, in that
-> order
+> Make will search for files named `GNUmakefile`, `makefile`, and `Makefile`, in
+> that order
 
 You can specify a particular makefile with the `-f/--file` argument:
 
@@ -74,14 +89,15 @@ You can specify a particular makefile with the `-f/--file` argument:
 $ make -f foo.mk
 ```
 
-You can specify any number of *goals* by listing them as positional arguments:
+You can specify any number of _goals_ by listing them as positional arguments:
 
 ```bash
 # typical goals
 $ make clean all
 ```
 
-You can pass Make a directory with the `-C` argument, and this will run Make as if it first `cd`'d into that directory.
+You can pass Make a directory with the `-C` argument, and this will run Make as
+if it first `cd`'d into that directory.
 
 ```bash
 $ make -C some/sub/directory
@@ -106,8 +122,8 @@ limit" option, vs. the `-j` "jobs" option. YMMV though!
 There are a few ways to programmatically find the CPU count for the current
 machine. One easy option is to use the python `multiprocessing.cpu_count()`
 function to get the number of threads supported by the system (note on a system
-with hyper-threading, this will use up a lot of your machine's resources,
-but is probably preferable to letting Make spawn an unlimited number of jobs).
+with hyper-threading, this will use up a lot of your machine's resources, but is
+probably preferable to letting Make spawn an unlimited number of jobs).
 
 ```bash
 # call the python cpu_count() function in a subshell
@@ -119,18 +135,20 @@ $ make -l $(python -c "import multiprocessing; print(multiprocessing.cpu_count()
 #### Output During Parallel Invocation
 
 If you have a lot of output from the commands Make is executing in parallel, you
-might see output interleaved on `stdout`. To handle this, Make has the option [`--output-sync`](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html).
+might see output interleaved on `stdout`. To handle this, Make has the option
+[`--output-sync`](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html).
 
 I recommend using **`--output-sync=recurse`**, which will print the entire
 output of each target's recipe when it completes, without interspersing other
 recipe output.
 
-It also will output an entire recursive Make's output together if your recipe
-is using recursive make.
+It also will output an entire recursive Make's output together if your recipe is
+using recursive make.
 
 ## Anatomy of a Makefile
 
-A Makefile contains **rules** used to produce **targets**. Some basic components of a Makefile are shown below:
+A Makefile contains **rules** used to produce **targets**. Some basic components
+of a Makefile are shown below:
 
 ```makefile
 # Comments are prefixed with the '#' symbol
@@ -159,7 +177,8 @@ Let's take a look at each part of the example above.
 
 Variables are used with the syntax `$(FOO)`, where `FOO` is the variable name.
 
-Variables contain purely strings as Make does not have other data types. Appending to a variable will add a space and the new content:
+Variables contain purely strings as Make does not have other data types.
+Appending to a variable will add a space and the new content:
 
 ```makefile
 FOO = one
@@ -175,10 +194,9 @@ FOO = $(FOO)two
 
 In GNU Make syntax, variables are assigned with two "**flavors**":
 
-1. *recursive expansion*: `variable = expression`
-   The expression on the right hand side is assigned verbatim to the variable-
-   this behaves much like a macro in C/C++, where the expression is evaluated
-   when the variable is used:
+1. _recursive expansion_: `variable = expression` The expression on the right
+   hand side is assigned verbatim to the variable- this behaves much like a
+   macro in C/C++, where the expression is evaluated when the variable is used:
    ```makefile
    FOO = 1
    BAR = $(FOO)
@@ -186,9 +204,9 @@ In GNU Make syntax, variables are assigned with two "**flavors**":
    # prints BAR=2
    $(info BAR=$(BAR))
    ```
-2. *simple expansion*: `variable := expression`
-   This assigns the *result* of an expression to a variable; the expression is
-   expanded at the time of assignment:
+2. _simple expansion_: `variable := expression` This assigns the _result_ of an
+   expression to a variable; the expression is expanded at the time of
+   assignment:
    ```makefile
    FOO = 1
    BAR := $(FOO)
@@ -198,7 +216,7 @@ In GNU Make syntax, variables are assigned with two "**flavors**":
    ```
 
 > Note: the `$(info ...)` function is being used above to print expressions and
-can be handy when debugging makefiles!*`
+> can be handy when debugging makefiles!\*`
 
 Variables which are not explicitly,
 [implicitly](https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html),
@@ -215,7 +233,8 @@ the following makefile for example:
 $(info YOLO variable = $(YOLO))
 ```
 
-If we set the variable `YOLO` in the shell command when running `make`, we'll set the value:
+If we set the variable `YOLO` in the shell command when running `make`, we'll
+set the value:
 
 ```bash
 $ YOLO="hello there!" make
@@ -224,7 +243,7 @@ make: *** No targets.  Stop.
 ```
 
 > Note: Make prints the "No targets" error because our makefile had no targets
-listed!
+> listed!
 
 If you use the `?=` assignment syntax, Make will only assign that value if the
 variable doesn't already have a value:
@@ -286,7 +305,8 @@ Overriding variables can be confusing, and should be used with caution!
 
 #### Target-Specific Variables
 
-These variables are only available in the recipe context. They also apply to any prerequisite recipe!
+These variables are only available in the recipe context. They also apply to any
+prerequisite recipe!
 
 ```makefile
 # set the -g value to CFLAGS
@@ -359,7 +379,8 @@ default goal if you need to).
 
 #### Phony Targets
 
-Sometimes it's useful to have meta-targets like `all`, `clean`, `test`, etc. In these cases, you don't want Make to check for a file named `all`/`clean` etc.
+Sometimes it's useful to have meta-targets like `all`, `clean`, `test`, etc. In
+these cases, you don't want Make to check for a file named `all`/`clean` etc.
 
 Make provides the `.PHONY` target syntax to mark a target as not pointing to a
 file:
@@ -407,8 +428,8 @@ test: build
 ```
 
 > **NOTE!!! `.PHONY` targets are ALWAYS considered out-of-date, so Make will
-ALWAYS run the recipe for those targets (and therefore any target that has a
-`.PHONY` prerequisite!). Use with caution!!**
+> ALWAYS run the recipe for those targets (and therefore any target that has a
+> `.PHONY` prerequisite!). Use with caution!!**
 
 #### Implicit Rules
 
@@ -457,8 +478,8 @@ program: $(OBJ_FILES)
 
 ### Prerequisites
 
-As seen above, these are targets that Make will check before running a rule. They
-can be files or other targets.
+As seen above, these are targets that Make will check before running a rule.
+They can be files or other targets.
 
 If any prerequisite is newer (modified-time) than the target, Make will run the
 target rule.
@@ -524,8 +545,8 @@ $(OUTPUT_DIR):
 
 ### Recipe
 
-The "recipe" is the list of shell commands to be executed to create the target. They are
-passed into a sub-shell (`/bin/sh` by default). The rule is considered
+The "recipe" is the list of shell commands to be executed to create the target.
+They are passed into a sub-shell (`/bin/sh` by default). The rule is considered
 successful if the target is updated after the recipe runs (but is not an error
 if this doesn't happen).
 
@@ -589,8 +610,8 @@ where `arguments` is a comma-delimited list of arguments.
 
 #### Built-in Functions
 
-There are several functions provided by Make. The most common ones I use are for text
-manipulation:
+There are several functions provided by Make. The most common ones I use are for
+text manipulation:
 [https://www.gnu.org/software/make/manual/html_node/Text-Functions.html](https://www.gnu.org/software/make/manual/html_node/Text-Functions.html)
 [https://www.gnu.org/software/make/manual/html_node/File-Name-Functions.html](https://www.gnu.org/software/make/manual/html_node/File-Name-Functions.html)
 
@@ -639,7 +660,7 @@ TODAYS_DATE=$(shell date --iso-8601)
 I'm cautious when using this feature, though; it adds a dependency on whatever
 programs you use, so if you're calling more exotic programs, make sure your
 build environment is controlled (e.g. in a container or with
-[Conda]({% post_url 2020-01-07-conda-developer-environments %})).
+[Conda](/blog/conda-developer-environments)).
 
 ### Conditionals
 
@@ -705,7 +726,8 @@ somelib.a:
 	$(MAKE) -C path/to/somelib/directory
 ```
 
-This is often used when building external libraries. It's also used heavily in Kconfig builds (e.g. when building the Linux kernel).
+This is often used when building external libraries. It's also used heavily in
+Kconfig builds (e.g. when building the Linux kernel).
 
 Note that this approach has some pitfalls:
 
@@ -821,14 +843,15 @@ tools-unpacked.dummy: $(TOOLS_ARCHIVE)
 	# use the touch command to record completion in a dummy file
 	touch $@
 ```
+
 I recommend avoiding the use of `touch`. However there are some cases where it
 might be unavoidable.
 
 ## Debugging Makefiles
 
 I typically use the Make equivalent of `printf`, the `$(info/warning/error)`
-functions, for **small problems**, for example when checking conditional paths that
-aren't working:
+functions, for **small problems**, for example when checking conditional paths
+that aren't working:
 
 ```makefile
 ifeq ($(CC),clang)
@@ -836,8 +859,8 @@ $(error whoops, clang not supported!)
 endif
 ```
 
-For **debugging** why a rule is running when it shouldn't (or vice versa), you can
-use the `--debug` options:
+For **debugging** why a rule is running when it shouldn't (or vice versa), you
+can use the `--debug` options:
 [https://www.gnu.org/software/make/manual/html_node/Options-Summary.html](https://www.gnu.org/software/make/manual/html_node/Options-Summary.html)
 
 I recommend redirecting stdout to a file when using this option, it can produce
@@ -852,7 +875,7 @@ times), this tool can be useful:
 
 Check out the tips here for compilation-related performance improvements:
 
-[https://interrupt.memfault.com/blog/improving-compilation-times-c-cpp-projects]({% post_url 2020-02-11-improving-compilation-times-c-cpp-projects %})
+[https://interrupt.memfault.com/blog/improving-compilation-times-c-cpp-projects](/blog/improving-compilation-times-c-cpp-projects)
 
 ### Using a Verbose Flag
 
@@ -1009,16 +1032,16 @@ A list of recommendations for getting the most of Make:
 I hope this article has provided a few useful pointers around GNU Make!
 
 Make remains common in C language projects, most likely due to its usage in the
-Linux kernel. Many recently developed statically compiled programming
-languages, such as Rust or Go, provide their own build infrastructure. However, when
+Linux kernel. Many recently developed statically compiled programming languages,
+such as Rust or Go, provide their own build infrastructure. However, when
 integrating Make-based software into those languages, for example when building
 a C library to be called from Rust, it can be surprisingly helpful to understand
 some Make concepts!
 
 You may also encounter [automake](https://www.gnu.org/software/automake/) in
 open source projects (look for a `./configure` script). This is a related tool
-that generates Makefiles, and is worth a look (especially if you are writing
-C software that needs to be very widely portable).
+that generates Makefiles, and is worth a look (especially if you are writing C
+software that needs to be very widely portable).
 
 There are many competitors to GNU Make available today, I encourage everyone to
 look into them. Some examples:

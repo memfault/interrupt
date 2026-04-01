@@ -1,4 +1,5 @@
 ---
+date: "2024-06-12"
 title: Diving into JTAG — Usage Scenarios (Part 5)
 description: "Some examples of JTAG usage"
 author: zamuhrishka
@@ -15,9 +16,9 @@ bring-up and reverse engineering.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Getting Started
 
@@ -46,14 +47,14 @@ To start working with TopJTAG Probe, we need to create a new project. To do
 this, go to the _File->New Project Wizard_ menu.
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part5/topjtag-create-new-prj-step-1.png %}" alt="TOPJtag new project creation step 1" />
+ <img width="100%" src="/img/jtag-part5/topjtag-create-new-prj-step-1.png" alt="TOPJtag new project creation step 1" />
 </p>
 
 In the next window, select the required JTAG Probe and frequency. In my case, it
 is SEGGER J-Link and 12 MHz.
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part5/topjtag-create-new-prj-step-2.png %}" alt="TOPJtag new project creation step 2" />
+ <img width="100%" src="/img/jtag-part5/topjtag-create-new-prj-step-2.png" alt="TOPJtag new project creation step 2" />
 </p>
 
 Click _Next_.
@@ -64,7 +65,7 @@ The program will scan our JTAG circuit and display a list of available TAP IDs.
 > this step to go well
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part5/topjtag-create-new-prj-step-3.png %}" alt="TOPJtag new project creation step 3" />
+ <img width="100%" src="/img/jtag-part5/topjtag-create-new-prj-step-3.png" alt="TOPJtag new project creation step 3" />
 </p>
 
 Click _Next_.
@@ -73,13 +74,13 @@ At this point, you must specify .BSD files for each detected TAP. If you do not
 specify a .BSD file for a TAP, it will be put into the `BYPASS` state.
 
 We specify
-[STM32F405\_415\_407\_417\_LQFP100.bsd](https://bsdl.info/details.htm?sid=61a8799988cb03f688ca59b002289d77)
+[STM32F405_415_407_417_LQFP100.bsd](https://bsdl.info/details.htm?sid=61a8799988cb03f688ca59b002289d77)
 file for the first TAP - SGS/Thomson (`06413041h`) as it is responsible for
 Boundary Scan. We leave the second TAP in `BYPASS`. To select a file, click the
 _CLICK HERE TO SET_ link and select the desired file.
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part5/topjtag-create-new-prj-step-4.png %}" alt="TOPJtag new project creation step 4" />
+ <img width="100%" src="/img/jtag-part5/topjtag-create-new-prj-step-4.png" alt="TOPJtag new project creation step 4" />
 </p>
 
 After that, press _Finish_, and the program is ready.
@@ -87,7 +88,7 @@ After that, press _Finish_, and the program is ready.
 Appearance of the program:
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part5/topjtag-main-view.png %}" alt="TOPJtag the main window" />
+ <img width="100%" src="/img/jtag-part5/topjtag-main-view.png" alt="TOPJtag the main window" />
 </p>
 
 `1` - Pins Window. The _Pins window_ lists all pins belonging to the selected
@@ -200,13 +201,13 @@ transmission of the symbol "**U**" (which has a code equal to `0x55`) through
 UART at 1200 baud looks like:
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part5/topjtag-uart-1200-baudrate-view.png %}" alt="TOPJtag uart 1200-baudrate-view" />
+ <img width="100%" src="/img/jtag-part5/topjtag-uart-1200-baudrate-view.png" alt="TOPJtag uart 1200-baudrate-view" />
 </p>
 
 and at 2400 baud:
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part5/topjtag-uart-2400-baudrate-view.png %}" alt="TOPJtag uart 2400-baudrate-view" />
+ <img width="100%" src="/img/jtag-part5/topjtag-uart-2400-baudrate-view.png" alt="TOPJtag uart 2400-baudrate-view" />
 </p>
 
 As you can see, even at 2400 baud, the signal is distorted (2 bits were lost).
@@ -214,7 +215,7 @@ As you can see, even at 2400 baud, the signal is distorted (2 bits were lost).
 And here is what the SPI signal looks like with baudrate of 250 KBits/sec:
 
 <p align="center">
- <img width="100%" src="{% img_url jtag-part5/topjtag-spi-view.png %}" alt="TOPJtag spi waveform" />
+ <img width="100%" src="/img/jtag-part5/topjtag-spi-view.png" alt="TOPJtag spi waveform" />
 </p>
 
 As you can see, it is hard to recognize SPI from this waveform, especially if
@@ -252,9 +253,9 @@ JTAG interface and also ways to bypass these restrictions.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

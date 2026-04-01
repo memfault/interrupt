@@ -1,4 +1,5 @@
 ---
+date: "2019-11-05"
 title: "Using Asserts in Embedded Systems"
 description:
   "Asserts are a quick and proven way to prevent bugs in embedded systems. An
@@ -28,8 +29,8 @@ device, all while keeping the code size usage to a minimum.
 
 <!-- excerpt end -->
 
-> **Why you shouldn't compile asserts out in production builds**
-> Many of the popular embedded platforms have options to
+> **Why you shouldn't compile asserts out in production builds** Many of the
+> popular embedded platforms have options to
 > [compile](https://github.com/aws/amazon-freertos/blob/master/vendors/nordic/nRF5_SDK_15.2.0/components/libraries/util/nrf_assert.h#L78-L115)
 > [out](https://github.com/espressif/esp-idf/blob/master/components/esp_common/include/esp_err.h#L104-L124)
 > [error](https://github.com/ARMmbed/mbed-os/blob/master/platform/mbed_error.h#L191-L202)
@@ -42,7 +43,7 @@ device, all while keeping the code size usage to a minimum.
 > worse: the system could behave in unpredictable way and perform poorly, lose
 > customer information, …etc.
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ### Article Disclaimers
 
@@ -56,7 +57,7 @@ device, all while keeping the code size usage to a minimum.
 - The examples below are implemented for the ARM Cortex-M series of MCUs. Many
   of the concepts can be generalized to other architectures.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 ## Making the Most of Asserts
 
@@ -644,16 +645,33 @@ only one piece of this puzzle, and they need to be paired with solid debugging
 infrastructure such as logging, postmortem backtrace and coredump collection,
 and automated analysis of these diagnostics.
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 ## Reference Links
 
-[^1]: [MyNewt Coredump Documentation](https://mynewt.apache.org/latest/tutorials/tooling/error_diagnostics.html#coredump)
-[^2]: [ESP32 Coredump Documentation](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/core_dump.html#esp32-core-dump)
-[^3]: [Memfault Error Analysis](https://memfault.com/features/error-analysis.html?utm_source=interrupt&utm_medium=link&utm_campaign=debugging-asserts)
-[^4]: [FreeRTOS - xTaskCreateStatic](https://github.com/FreeRTOS/FreeRTOS-Kernel/blob/7c67f18ceebd48ae751693377166df0c52f4a562/tasks.c#L589-L605)
-[^5]: [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
-[^6]: [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
-[^7]: [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
-[^8]: [Zephyr `sys/assert.h`](https://github.com/zephyrproject-rtos/zephyr/blob/b8add4aa0b20b3b15c989ee1a03443ba154d06a7/include/sys/__assert.h#L54-L60)
-[^9]: [MyNewt `OS_CRASH()`](https://github.com/apache/mynewt-core/blob/f598bc4bf0b28aaa51f0bf7f9b9318848cef8c77/kernel/os/include/os/os_fault.h#L32-L36)
+[^1]:
+    [MyNewt Coredump Documentation](https://mynewt.apache.org/latest/tutorials/tooling/error_diagnostics.html#coredump)
+
+[^2]:
+    [ESP32 Coredump Documentation](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/core_dump.html#esp32-core-dump)
+
+[^3]:
+    [Memfault Error Analysis](https://memfault.com/features/error-analysis.html?utm_source=interrupt&utm_medium=link&utm_campaign=debugging-asserts)
+
+[^4]:
+    [FreeRTOS - xTaskCreateStatic](https://github.com/FreeRTOS/FreeRTOS-Kernel/blob/7c67f18ceebd48ae751693377166df0c52f4a562/tasks.c#L589-L605)
+
+[^5]:
+    [nRF52840 Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits/nRF52840-DK)
+
+[^6]:
+    [JLinkGDBServer](https://www.segger.com/products/debug-probes/j-link/tools/j-link-gdb-server/about-j-link-gdb-server/)
+
+[^7]:
+    [GNU ARM Embedded toolchain for download](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+
+[^8]:
+    [Zephyr `sys/assert.h`](https://github.com/zephyrproject-rtos/zephyr/blob/b8add4aa0b20b3b15c989ee1a03443ba154d06a7/include/sys/__assert.h#L54-L60)
+
+[^9]:
+    [MyNewt `OS_CRASH()`](https://github.com/apache/mynewt-core/blob/f598bc4bf0b28aaa51f0bf7f9b9318848cef8c77/kernel/os/include/os/os_fault.h#L32-L36)

@@ -1,4 +1,5 @@
 ---
+date: "2020-03-23"
 title: "Cortex-M MCU Emulation with Renode"
 description:
   "An overview of how Renode can be used to emulate Cortex-M series MCUs, speed
@@ -24,9 +25,9 @@ through integrated tests, and shorten the iteration cycle of development.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What is Renode?
 
@@ -35,9 +36,9 @@ Today, it supports x86 (Intel Quark), Cortex-A (NVIDIA Tegra), Cortex-M, SPARC
 (Leon), and RISC-V based platforms.
 
 Renode can take the same firmware you are running in production, and run it
-against emulated cores, peripherals, and even sensors and actuators. Better
-yet, its extensive networking support and multi-system emulation make it a shoe
-in for testing systems made up of multiple devices talking together.
+against emulated cores, peripherals, and even sensors and actuators. Better yet,
+its extensive networking support and multi-system emulation make it a shoe in
+for testing systems made up of multiple devices talking together.
 
 With Renode, you can start development before your hardware is ready, test your
 firmware without deploying racks of hardware, and shorten your iteration cycles
@@ -61,11 +62,13 @@ This guide was written on MacOS, though it is not OS specific.
 
 To verify your Renode installation, you can run one of the examples:
 
-1. Open Renode, on MacOS I prefer to use the command line directly with `$ sh /Applications/Renode.app/Contents/MacOS/macos_run.command`
-2. A Renode terminal window will open. Load the example with `start @scripts/single-node/stm32f4_discovery.resc`
-   ![]({% img_url intro-to-renode/renode-first-demo-start.png %})
+1. Open Renode, on MacOS I prefer to use the command line directly with
+   `$ sh /Applications/Renode.app/Contents/MacOS/macos_run.command`
+2. A Renode terminal window will open. Load the example with
+   `start @scripts/single-node/stm32f4_discovery.resc`
+   ![](/img/intro-to-renode/renode-first-demo-start.png)
 3. A second terminal window should open, displaying serial output
-   ![]({% img_url intro-to-renode/renode-first-demo-output.png %})
+   ![](/img/intro-to-renode/renode-first-demo-output.png)
 
 ## Running our firmware in Renode
 
@@ -277,8 +280,8 @@ The easiest way to modify our Machine to add the CCM RAM is to write a Renode
 Platform (or "repl") file. Repl files use YAML-like syntax to define
 peripherals, including their type, address, and size.
 
-You can read more about the Platform Description file format in the [Renode
-Documentation](https://renode.readthedocs.io/en/latest/advanced/platform_description_format.html)
+You can read more about the Platform Description file format in the
+[Renode Documentation](https://renode.readthedocs.io/en/latest/advanced/platform_description_format.html)
 Adding our CCM region requires the following:
 
 ```
@@ -308,7 +311,7 @@ Putting it all together we have:
 
 And voila, we now have `hello world!` string in the analyzer!
 
-![]({% img_url intro-to-renode/renode-hello-world.png %})
+![](/img/intro-to-renode/renode-hello-world.png)
 
 ### Automating setup with a `.resc` script
 
@@ -318,7 +321,8 @@ files come in.
 Not much documentation can be found on `.resc` files, but here are a few things
 I was able to figure out:
 
-1. variables can be created with `$` and assigned with `=`. For example: `$hello = "world"`.
+1. variables can be created with `$` and assigned with `=`. For example:
+   `$hello = "world"`.
 2. renode are executed in the order written
 3. macros can be defined with the keyword `macro`, and start and end with `"""`
 
@@ -355,10 +359,10 @@ sh /Applications/Renode.app/Contents/MacOS/macos_run.command renode-config.resc
 ```
 
 > **Reset macro**: Renode looks for a macro named "reset", and uses it to reset
-> the machine when the `machine Reset` or `machine RequestReset` are issued. In our script,
-> we use that macro to reload our elf file every time, so we do not have to do
-> it manually between resets. This also guarantees that the latest elf file is
-> picked up and allows us to iterate on code quickly.
+> the machine when the `machine Reset` or `machine RequestReset` are issued. In
+> our script, we use that macro to reload our elf file every time, so we do not
+> have to do it manually between resets. This also guarantees that the latest
+> elf file is picked up and allows us to iterate on code quickly.
 
 ### Managing machine lifecycle
 
@@ -445,10 +449,11 @@ First, we enable the GDB server and bind it to port 3333:
 (machine-0)
 ```
 
-> Note: For the example config we have added this to renode-config.resc so it happens automatically
-> when spinning up the environment
+> Note: For the example config we have added this to renode-config.resc so it
+> happens automatically when spinning up the environment
 
-In a separate terminal window, we start GDB and connect to the server on port 3333.
+In a separate terminal window, we start GDB and connect to the server on
+port 3333.
 
 ```
 $ arm-none-eabi-gdb renode-example.elf
@@ -618,7 +623,7 @@ Tests finished successfully :)
 
 Success! As a bonus, the robot framework generates some pretty HTML reports:
 
-![]({% img_url intro-to-renode/renode-test-result.png %})
+![](/img/intro-to-renode/renode-test-result.png)
 
 ## Closing
 
@@ -630,13 +635,18 @@ custom Platform Description files and some Python peripheral implementations.
 
 All the code used in this blog post is aavailable on
 [Github](https://github.com/memfault/interrupt/tree/master/example/renode).
-{% include submit-pr.html %}
+
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 
 ## References
 
 [^1]: https://github.com/libopencm3/libopencm3
+
 [^2]: https://github.com/libopencm3/libopencm3-template
+
 [^3]: https://robotframework.org/
-[^4]: https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html
+
+[^4]:
+    https://renode.readthedocs.io/en/latest/advanced/building_from_sources.html

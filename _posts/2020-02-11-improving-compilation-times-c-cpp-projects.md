@@ -1,4 +1,5 @@
 ---
+date: "2020-02-11"
 title: "Improving Compilation Time of C/C++ Projects"
 description:
   "Strategies for improving up C/C++ compile times for embedded software
@@ -27,9 +28,9 @@ couple extra tips for those using the GNU GCC compiler.
 
 Hold on tight, as there is a lot to talk about.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Why Speed Up Firmware Build?
 
@@ -43,16 +44,15 @@ Although we commonly run up against slow build times when trying to move
 quickly, there are many other pieces of "infrastructure" (or lack thereof) that
 can slow down the productivity of a firmware team.
 
-- Manually verifying the build succeeds for all targets ([continuous
-  integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}))
-- Manual and rigorous testing ([unit
-  testing]({% post_url 2019-10-08-unit-testing-basics %}))
-- Painstaking and repetitive debugging ([automated
-  debugging]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}))
-- Poor developer environment management ([using an environment
-  manager]({% post_url 2020-01-07-conda-developer-environments %}))
-- Inability to reproduce a build ([reproducible
-  builds]({% post_url 2019-12-11-reproducible-firmware-builds %}))
+- Manually verifying the build succeeds for all targets
+  ([continuous integration](/blog/continuous-integration-for-firmware))
+- Manual and rigorous testing ([unit testing](/blog/unit-testing-basics))
+- Painstaking and repetitive debugging
+  ([automated debugging](/blog/automate-debugging-with-gdb-python-api))
+- Poor developer environment management
+  ([using an environment manager](/blog/conda-developer-environments))
+- Inability to reproduce a build
+  ([reproducible builds](/blog/reproducible-firmware-builds))
 
 Despite the important topics listed above, I believe that the build system is
 one of the most important pieces of "infrastructure". The build system needs
@@ -91,13 +91,11 @@ isn't satisfied, I'd start there.
 - The build shouldn't require a "clean" before each "build", nor should changing
   one file trigger a rebuild of most of the files in your project.
 - Ensure no timestamps are injected into the build which would force rebuilds.
-- Try [not to enable link-time optimizations
-  (LTO)]({% post_url 2019-10-22-best-and-worst-gcc-clang-compiler-flags %}#-flto)
+- Try
+  [not to enable link-time optimizations (LTO)](/blog/best-and-worst-gcc-clang-compiler-flags#-flto)
   as the linking step sometimes becomes as slow as the entire build itself! If
   you have enabled it due to code size constraints, I suggest checking out
-  Interrupt's
-  [code size posts]({% tag_url fw-code-size %}) for
-  easy wins.
+  Interrupt's [code size posts](/tag/fw-code-size) for easy wins.
 
 ## Example Build Environment
 
@@ -148,13 +146,12 @@ ensure you and the entire team have enabled this.
 Below are some times recorded compiling the example project with GCC and
 different thread counts.
 
-![comparison of compiler build times with GCC threads]({% img_url faster-compilation/gcc-threads-build-time-comparison.svg %})
+![comparison of compiler build times with GCC threads](/img/faster-compilation/gcc-threads-build-time-comparison.svg)
 
 With Make, it is as simple as invoking Make with the argument `-jN`, where `N`
 is the number of desired threads to use. If you or your team members
 occasionally forget to pass in this parameter, I suggest wrapping the command
-[using
-Invoke]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}#adding-parallel-builds).
+[using Invoke](/blog/building-a-cli-for-firmware-projects#adding-parallel-builds).
 
 If you are calling Make from a Makefile (a.k.a. recursive Make[^15]), verify
 that you are using `$(MAKE)` instead of `make` when using it in a rule, as
@@ -181,7 +178,7 @@ Some compilers are faster than others. The build times of our example project
 shown below were calculated by taking the average time among 5 builds for each
 setup.
 
-![comparison of compiler build times]({% img_url faster-compilation/all-compilers-build-time-comparison.svg %})
+![comparison of compiler build times](/img/faster-compilation/all-compilers-build-time-comparison.svg)
 
 GCC for macOS, Linux, and Windows performed the best regardless of operating
 system, coming in just under 10 seconds. ARM Compiler 6 with Keil then IAR
@@ -200,7 +197,7 @@ its cache and provide that instead of recompiling the input. It is useful when
 switching branches often and in CI systems where subsequent builds are very
 similar. It's not uncommon to see 10x speedups for large projects.
 
-![comparison of compile build times with ccache]({% img_url faster-compilation/ccache-build-time-comparison.svg %})
+![comparison of compile build times with ccache](/img/faster-compilation/ccache-build-time-comparison.svg)
 
 Some people question whether ccache is safe to use in production due to the risk
 of an accidental cache hit. The ccache homepage
@@ -349,7 +346,7 @@ Check out the dependency graph below for the file `FreeRTOSConfig.h` mentioned
 above:
 
 <p align="center">
-  <img width="600" src="{% img_url faster-compilation/aws-freertos-nrf52-dependencies.svg %}" alt="AWS FreeRTOS nrf52 config dependency issues" />
+  <img width="600" src="/img/faster-compilation/aws-freertos-nrf52-dependencies.svg" alt="AWS FreeRTOS nrf52 config dependency issues" />
 </p>
 
 You can see that, while the `FreeRTOSConfig.h` header should have little to no
@@ -620,23 +617,46 @@ firmware builds? I'd love to hear them!
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/)._
-{% include submit-pr.html %}
+
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 
 ## References
 
 [^1]: [ccache](https://ccache.dev/)
+
 [^2]: [icecc - IceCream](https://github.com/icecc/icecream)
+
 [^3]: [Mozilla sccache](https://github.com/mozilla/sccache)
-[^4]: [STM32Cube LwIP_HTTP_Server_Netconn_RTOS](https://github.com/STMicroelectronics/STM32CubeF4/tree/master/Projects/STM32F429ZI-Nucleo/Applications/LwIP/LwIP_HTTP_Server_Netconn_RTOS)
+
+[^4]:
+    [STM32Cube LwIP_HTTP_Server_Netconn_RTOS](https://github.com/STMicroelectronics/STM32CubeF4/tree/master/Projects/STM32F429ZI-Nucleo/Applications/LwIP/LwIP_HTTP_Server_Netconn_RTOS)
+
 [^6]: [Include What You Use](https://include-what-you-use.org/)
-[^7]: [Make Auto Dependency Generation](http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/)
-[^8]: [Make Manual - Functions for String Substitution and Analysis](https://www.gnu.org/software/make/manual/html_node/Text-Functions.html#Text-Functions)
-[^9]: [GNU ARM Embedded Toolchain 8-2019-q3](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+
+[^7]:
+    [Make Auto Dependency Generation](http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/)
+
+[^8]:
+    [Make Manual - Functions for String Substitution and Analysis](https://www.gnu.org/software/make/manual/html_node/Text-Functions.html#Text-Functions)
+
+[^9]:
+    [GNU ARM Embedded Toolchain 8-2019-q3](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+
 [^10]: [stm32cube-gcc](https://github.com/stv0g/stm32cube-gcc)
-[^11]: [Forward Declarations Blog Post](https://gieseanw.wordpress.com/2018/02/25/the-joys-of-forward-declarations-results-from-the-real-world/)
-[^12]: [GCC - Using Precompiled Headers](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Precompiled-Headers.html)
-[^13]: [Make - Parallel Output](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html)
-[^14]: [Portability of #pragma once](https://en.wikipedia.org/wiki/Pragma_once#Portability)
-[^15]: [Recursive Make](https://www.gnu.org/software/make/manual/html_node/Recursion.html)
+
+[^11]:
+    [Forward Declarations Blog Post](https://gieseanw.wordpress.com/2018/02/25/the-joys-of-forward-declarations-results-from-the-real-world/)
+
+[^12]:
+    [GCC - Using Precompiled Headers](https://gcc.gnu.org/onlinedocs/gcc-12.2.0/gcc/Precompiled-Headers.html)
+
+[^13]:
+    [Make - Parallel Output](https://www.gnu.org/software/make/manual/html_node/Parallel-Output.html)
+
+[^14]:
+    [Portability of #pragma once](https://en.wikipedia.org/wiki/Pragma_once#Portability)
+
+[^15]:
+    [Recursive Make](https://www.gnu.org/software/make/manual/html_node/Recursion.html)

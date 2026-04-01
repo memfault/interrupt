@@ -1,4 +1,5 @@
 ---
+date: "2023-09-20"
 title: Exploring printf on Cortex-M
 description:
   Diving into the various ways to get printf on Cortex-M microcontrollers
@@ -14,11 +15,11 @@ microcontrollers.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 {::options toc_levels="1..4" /}
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## `printf`
 
@@ -27,8 +28,7 @@ Ah, the first and last of debugging techniques!
 Let's first explore what happens when printf runs. Here's a simplified flowchart
 showing what happens when `printf` is called:
 
-{% blockdiag size:120x40 %} blockdiag { A [label = "printf"]; B [label =
-"vprintf"]; C [label = "_write syscall"]; A -> B -> C; } {% endblockdiag %}
+<!-- blockdiag diagram removed -->
 
 Going call by call:
 
@@ -544,9 +544,9 @@ either in the comments here or in the Interrupt community Slack!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 
@@ -556,8 +556,8 @@ either in the comments here or in the Interrupt community Slack!
 
 <!-- prettier-ignore-start -->
 
-- [Interrupt: Introduction to ARM Semihosting]({% post_url 2021-02-16-arm-semihosting %})
-- [Interrupt: From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
+- [Interrupt: Introduction to ARM Semihosting](/blog/arm-semihosting)
+- [Interrupt: From Zero to main(): Bootstrapping libc with Newlib](/blog/boostrapping-libc-with-newlib)
 - [libc `setvbuf()` stdlib reference](http://www.cplusplus.com/reference/cstdio/setvbuf/)
 - [Newlib `reent.h` header](https://github.com/bminor/newlib/blob/6226bad0eafe762b811c62d1dc096bc0858b0d1a/newlib/libc/include/reent.h)
 - [Reentrancy in Newlib](https://www.codeinsideout.com/blog/freertos/reentrant/)

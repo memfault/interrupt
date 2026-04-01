@@ -1,36 +1,39 @@
 ---
+date: "2019-06-06"
 title: "Tools for Firmware Code Size Optimization"
-description: "Overview of useful tools such as GNU size, nm, and puncover to help reduce code size usage of an ARM firmware binary"
+description:
+  "Overview of useful tools such as GNU size, nm, and puncover to help reduce
+  code size usage of an ARM firmware binary"
 author: francois
 tags: [fw-code-size, toolchain]
 ---
 
 Every firmware engineer has run out of code space at some point or another.
 Whether they are trying to cram in another feature, or to make enough space for
-[A/B firmware
-updates](https://sbabic.github.io/swupdate/overview.html#double-copy-with-fall-back)
+[A/B firmware updates](https://sbabic.github.io/swupdate/overview.html#double-copy-with-fall-back)
 more code space is always better.
 
 <!-- excerpt start -->
 
-In this [series of posts]({% tag_url fw-code-size %}), we'll explore ways to save code space and ways not to
-do it. We will cover compiler options, coding style, logging, as well as
-desperate hacks when all you need is another 24 bytes.
+In this [series of posts](/tag/fw-code-size), we'll explore ways to save code
+space and ways not to do it. We will cover compiler options, coding style,
+logging, as well as desperate hacks when all you need is another 24 bytes.
 
 But first, let's talk about measuring code size.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Why measure?
 
 Optimization is often counter intuitive. Don't take my word for it: this is one
-of the topics [Microsoft's Raymond
-Chen](https://devblogs.microsoft.com/oldnewthing/20041216-00/?p=36973) and [Unix
-programmers](https://homepage.cs.uri.edu/~thenry/resources/unix_art/ch12s02.html)
+of the topics
+[Microsoft's Raymond Chen](https://devblogs.microsoft.com/oldnewthing/20041216-00/?p=36973)
+and
+[Unix programmers](https://homepage.cs.uri.edu/~thenry/resources/unix_art/ch12s02.html)
 agree on!
 
 So before you do anything, measure where your code size is going. You may be
@@ -90,8 +93,8 @@ collect2: error: ld returned 1 exit status
 make: *** [build/with-libc.elf] Error 1
 ```
 
-The 104 bytes overflow hints at the cause: we are overflowing our flash by
-the size of our `data` section. This is because initialization values for our
+The 104 bytes overflow hints at the cause: we are overflowing our flash by the
+size of our `data` section. This is because initialization values for our
 initialized static variables are stored in flash as well.
 
 To avoid confusion, I prefer to use a small script to compute the sizes:
@@ -147,11 +150,12 @@ Flash used: 10904 / 262144 (4%)
 RAM used: 8376 / 32768 (25%)
 ```
 
-Stick that in your Makefiles, and you'll have the size as you build
-your firmware.
+Stick that in your Makefiles, and you'll have the size as you build your
+firmware.
 
-Note that an alternative to running `size` is to add the `-Wl,--print-memory-usage`
-link-time flag which will give you something that looks like this:
+Note that an alternative to running `size` is to add the
+`-Wl,--print-memory-usage` link-time flag which will give you something that
+looks like this:
 
 ```terminal
 Memory region         Used Size  Region Size  %age Used
@@ -214,25 +218,25 @@ $ arm-none-eabi-nm --print-size --size-sort --radix=d build/with-libc.elf | tail
 
 Note: you can also add `-l` to get filename & line # for each symbol.
 
-Here we see that our largest symbol is `_usart_set_config` which uses 692
-bytes of flash.
+Here we see that our largest symbol is `_usart_set_config` which uses 692 bytes
+of flash.
 
 ## Puncover
 
 Although you can get quite far with the ARM GNU tools, my favorite tool for code
-size analysis by far is [Puncover](https://github.com/memfault/puncover).
-It was built by [Heiko Behrens](https://heikobehrens.net/), my former
-coworker at Pebble.
+size analysis by far is [Puncover](https://github.com/memfault/puncover). It was
+built by [Heiko Behrens](https://heikobehrens.net/), my former coworker at
+Pebble.
 
 Puncover will give you a full hierarchical view of both code size and static
 memory per module, file, and function. See the screenshot below:
 
-![]({% img_url code-size-1/puncover-1.png %})
+![](/img/code-size-1/puncover-1.png)
 
 It also shows you details for each function, including callers, callees, and
 disassembly.
 
-![]({% img_url code-size-1/puncover-2.png %})
+![](/img/code-size-1/puncover-2.png)
 
 Truly, it is a firmware analysis swiss army knife!
 
@@ -331,7 +335,9 @@ that!
 
 ### Puncover in Zephyr
 
-The Zephyr RTOS project has the ability to [run puncover directly within West](https://docs.zephyrproject.org/latest/develop/optimizations/tools.html#build-target-puncover). It's slick!
+The Zephyr RTOS project has the ability to
+[run puncover directly within West](https://docs.zephyrproject.org/latest/develop/optimizations/tools.html#build-target-puncover).
+It's slick!
 
 You can do so by running the following:
 
@@ -356,5 +362,5 @@ between two ELFs which would be very useful for a CI system.
 What tools and techniques do you use to debug code size? Let us know in the
 comments!
 
-Next in the series, we'll talk about [compiler settings you can use to optimize
-for code size]({% post_url 2019-08-20-code-size-optimization-gcc-flags %}).
+Next in the series, we'll talk about
+[compiler settings you can use to optimize for code size](/blog/code-size-optimization-gcc-flags).

@@ -1,4 +1,5 @@
 ---
+date: "2022-08-03"
 title: "Tools we use: installing GDB for ARM"
 description: Demonstrate a few methods of installing gdb for ARM
 author: noah
@@ -13,9 +14,9 @@ getting a copy of GDB installed for debugging ARM chips.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Introduction
 
@@ -95,10 +96,10 @@ The same tools can also easily be used in whatever CI system you are using.
 Note that these packages are the officially supported toolchain from ARM itself.
 
 There is one gotcha with these packages, though- the Python support is whatever
-was configured at build time by ARM. This means if you're using [GDB's Python
-API]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}), you'll
-need to make sure your Python scripts/dependencies/interpreter matches the
-interpreter embedded into GDB.
+was configured at build time by ARM. This means if you're using
+[GDB's Python API](/blog/automate-debugging-with-gdb-python-api), you'll need to
+make sure your Python scripts/dependencies/interpreter matches the interpreter
+embedded into GDB.
 
 And in the latest release, Python support was dropped in the Mac release:
 
@@ -232,8 +233,7 @@ There are a few downsides to using a package manager to install the tools:
 [Conda](https://conda.io/) is a cross-platform package manager, which we've
 written about before on Interrupt:
 
-- [Managing Developer Environments with
-  Conda]({% post_url 2020-01-07-conda-developer-environments %})
+- [Managing Developer Environments with Conda](/blog/conda-developer-environments)
 
 It behaves quite similarly to system package managers, but can be used on
 different hosts (Linux/Mac/Windows), so a development team can standardize
@@ -331,8 +331,8 @@ Disadvantages:
 
 ### Build from source
 
-[Building a custom copy of GDB]({% post_url 2020-04-08-gnu-binutils %}) is one
-way to enable support for the necessary architecture.
+[Building a custom copy of GDB](/blog/gnu-binutils) is one way to enable support
+for the necessary architecture.
 
 You might for example build GDB enabling all targets:
 
@@ -537,8 +537,8 @@ Thanks so much for reading!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->

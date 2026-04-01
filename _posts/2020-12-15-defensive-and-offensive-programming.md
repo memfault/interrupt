@@ -1,4 +1,5 @@
 ---
+date: "2020-12-15"
 title: Defensive Programming - Friend or Foe?
 description:
   Embedded systems can benefit from defensive and offensive programming with the
@@ -44,11 +45,12 @@ track down those 1 in 1,000-hour bugs, efficiently root cause them, and keep
 your end-users happy. And, as a bonus, keep your sanity.
 
 > To learn more about offensive and defensive programming best practices and ask
-> me questions live, register for our [webinar on Febraury 24, 2022](https://hubs.la/Q013SXmN0).
+> me questions live, register for our
+> [webinar on Febraury 24, 2022](https://hubs.la/Q013SXmN0).
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Defensive Programming
 
@@ -90,7 +92,7 @@ inside the walls should be more aggressively checking for errors and yelling at
 developers when they do the wrong thing.
 
 <p align="center">
-  <img width="600" src="{% img_url defensive-and-offensive-programming/internal-software.png %}" alt="internal-software" />
+  <img width="600" src="/img/defensive-and-offensive-programming/internal-software.png" alt="internal-software" />
   If code paths originate from or pass through the red zones, then defensive programming is a good approach.
 </p>
 
@@ -140,8 +142,7 @@ can be a useful approach to surface bugs that might otherwise take weeks to
 reproduce or never be found.
 
 Offensive programming can take many forms inside of software, but the most
-common way is to use
-[assertions]({% post_url 2019-11-05-asserts-in-embedded-systems %}) liberally
+common way is to use [assertions](/blog/asserts-in-embedded-systems) liberally
 and creatively against developer errors and system state behavior.
 
 Let's run through a few hypothetical situations and how you could use offensive
@@ -149,9 +150,9 @@ programming. If your embedded system is experiencing:
 
 - **Performance issues** - such as the GUI freezing or slow response times to
   button presses, you can use
-  [watchdogs]({% post_url 2020-02-18-firmware-watchdog-best-practices %}) or
-  timers and assertions to crash the system when the system stalls so that a
-  developer can figure out what exactly was consuming CPU time.
+  [watchdogs](/blog/firmware-watchdog-best-practices) or timers and assertions
+  to crash the system when the system stalls so that a developer can figure out
+  what exactly was consuming CPU time.
 - **Memory issues** - such as high stack usage, no free heap memory, or
   excessive fragmentation, trigger a crash of the system when these states are
   detected and capture the relevant parts for analysis by a developer to figure
@@ -162,8 +163,8 @@ programming. If your embedded system is experiencing:
   a `mutex_lock` and `queue_put`. Setting a low timeout will cause the system to
   crash if the operation did not succeed in the allotted time, again allowing a
   developer to further inspect what was the root issue. You can also choose to
-  spin indefinitely and have the watchdog [clean
-  up]({% post_url 2020-02-18-firmware-watchdog-best-practices %}).
+  spin indefinitely and have the watchdog
+  [clean up](/blog/firmware-watchdog-best-practices).
 
 This is just scratching the surface of offensive programming techniques, but I
 hope you now have an idea of what this article is all about!
@@ -293,11 +294,10 @@ void critical_event(void) {
 ```
 
 To help with the debugging process of a queue full, I highly suggest writing a
-[Python GDB
-script]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}) to
-dump the contents of the queue. Then, when the system is halted or you have a
-core dump allowing you to find out what events were consuming the majority of
-the space in the queue!
+[Python GDB script](/blog/automate-debugging-with-gdb-python-api) to dump the
+contents of the queue. Then, when the system is halted or you have a core dump
+allowing you to find out what events were consuming the majority of the space in
+the queue!
 
 ```
 (gdb) queue_print s_event_queue
@@ -331,8 +331,8 @@ out. The worst part about these issues is that they often aren't brought to
 developers' attention until it's too late.
 
 To help catch these issues before pushing firmware to external users, you can
-create and configure your [task
-watchdogs]({% post_url 2020-02-18-firmware-watchdog-best-practices %}#adding-a-task-watchdog)
+create and configure your
+[task watchdogs](/blog/firmware-watchdog-best-practices#adding-a-task-watchdog)
 to be more aggressive, set up timers to assert after a few seconds during
 potentially long operations, and make sure to set timeouts on your threading
 system calls.
@@ -351,8 +351,8 @@ void timing_sensitive_task(void) {
 }
 ```
 
-Or, if a [task
-watchdog]({% post_url 2020-02-18-firmware-watchdog-best-practices %}#adding-a-task-watchdog)
+Or, if a
+[task watchdog](/blog/firmware-watchdog-best-practices#adding-a-task-watchdog)
 is configured to detect stalls, you can just wait indefinitely!
 
 ```c
@@ -384,14 +384,14 @@ debug.
 <!-- prettier-ignore-start -->
 > If you are struggling with memory corruption issues, you might want to read
 > [this section on catching memory corruption
-> bugs]({% post_url 2020-09-16-cortex-m-watchpoints %}#memory-corruption) from a
+> bugs](/blog/cortex-m-watchpoints#memory-corruption) from a
 > previous post.
 <!-- prettier-ignore-end -->
 
 One way to help prevent use-after-free bugs is to scrub the entire contents of
 the memory with an invalid address that, when accessed, would cause a
-[HardFault]({% post_url 2019-11-20-cortex-m-hardfault-debug %}) on our Cortex-M4 and
-ultimately halt the system or capture a core dump.
+[HardFault](/blog/cortex-m-hardfault-debug) on our Cortex-M4 and ultimately halt
+the system or capture a core dump.
 
 ```c
 void my_free(void *p) {
@@ -581,13 +581,15 @@ I'd love to hear about any other strategies that you all take to surface bugs
 that are hidden in your firmware! Come find me in the
 [Interrupt Slack](https://interrupt-slack.herokuapp.com/).
 
-> Interested in learning more offensive and defensive programming best practices? Register for our [webinar on Febraury 24, 2022](https://hubs.la/Q013SXmN0).
+> Interested in learning more offensive and defensive programming best
+> practices? Register for our
+> [webinar on Febraury 24, 2022](https://hubs.la/Q013SXmN0).
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

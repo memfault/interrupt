@@ -1,4 +1,5 @@
 ---
+date: "2021-10-27"
 title: Automatically format and lint code with pre-commit
 description:
   How to use pre-commit for automated linting, formatting, and styling firmware
@@ -14,11 +15,11 @@ same love and passion for tidy codebases, especially when we're pressed for time
 trying to get a new firmware build released.
 
 This is where automated formatting and linting tools come in. These tools are
-generally run in [continuous integration]({% post_url
-2019-09-17-continuous-integration-for-firmware %}) to make sure that all code
-committed to the main branch follows the team's agreed-upon format and
-structure. We can do one better and hook up these tools to run locally on any
-commit or update to a version-controlled branch by using git hooks.
+generally run in
+[continuous integration](/blog/continuous-integration-for-firmware) to make sure
+that all code committed to the main branch follows the team's agreed-upon format
+and structure. We can do one better and hook up these tools to run locally on
+any commit or update to a version-controlled branch by using git hooks.
 
 I'm here to talk about one of my favorite tools that is built upon git hooks,
 [pre-commit](https://pre-commit.com/), and specifically to detail how you can
@@ -33,9 +34,9 @@ on firmware code.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 > Note: jump to [Using `pre-commit`](#using-pre-commit) for the TLDR!
 
@@ -388,13 +389,15 @@ no required setup outside of `pre-commit`! If you're managing your own
 
 To configure `clang-format`, either add a `.clang-format` file to the repo (the
 [default](https://github.com/pre-commit/mirrors-clang-format/blob/ca42fca/.pre-commit-hooks.yaml#L6)),
-or specify command-line options in the hook config (eg `args: ["-style=Google", "-i"]`).
+or specify command-line options in the hook config (eg
+`args: ["-style=Google", "-i"]`).
 
 Note that `clang-format` has a lot of configuration options. Recommendations for
 how to tune a config is outside the scope of this article, but here's some
 starting guidance:
 
-- documentation: <https://releases.llvm.org/15.0.0/tools/clang/docs/ClangFormatStyleOptions.html>
+- documentation:
+  <https://releases.llvm.org/15.0.0/tools/clang/docs/ClangFormatStyleOptions.html>
 - interactive configurator: <https://zed0.co.uk/clang-format-configurator/>
 - generate a stub config with ex:
   `clang-format --style=Google --dump-config > .clang-format` (this will dump
@@ -421,8 +424,8 @@ value.
 [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) is a powerful C/C++
 linter that can catch a lot of straightforward errors (ex: forgetting to
 `close()` an open file descriptor). While not as sophisticated as full static
-analysis checkers, such as [Code Checker]({% post_url
-2021-05-19-static-analysis-with-codechecker %}), it's quite useful.
+analysis checkers, such as
+[Code Checker](/blog/static-analysis-with-codechecker), it's quite useful.
 
 Using it is a little complicated, depending on how your project is set up.
 Generally, you'll need the following steps:
@@ -491,9 +494,9 @@ system (`sudo apt install cppcheck` on Ubuntu) - note the `- repo: local` and
 
 ### Dockerfiles
 
-If you're using Docker (eg for [reproducible builds]({% post_url
-2019-12-11-reproducible-firmware-builds %}) or CI), this provides a lot of nice
-recommendations for Dockerfiles:
+If you're using Docker (eg for
+[reproducible builds](/blog/reproducible-firmware-builds) or CI), this provides
+a lot of nice recommendations for Dockerfiles:
 
 ```yaml
 - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
@@ -543,8 +546,8 @@ If you're using Python type annotations, you can have mypy run in `pre-commit`:
 
 ## Continuous Integration (CI)
 
-An article on tooling would hardly be complete without discussing [continuous
-integration]({% post_url 2019-09-17-continuous-integration-for-firmware %}) 😄
+An article on tooling would hardly be complete without discussing
+[continuous integration](/blog/continuous-integration-for-firmware) 😄
 
 Here's a couple of examples of how `pre-commit` could be used in CI:
 
@@ -559,7 +562,7 @@ Here's a couple of examples of how `pre-commit` could be used in CI:
 2. If you want to only lint the _changes_ to files (for example, if you're
    incrementally linting/formatting files rather than in One Big Commit), you
    can set the `${TARGET_BRANCH}` from your CI provider (in GitHub Actions, this
-   would be {% raw %}`${{ github.event.pull_request.base.ref }}`{% endraw %}
+   would be `${{ github.event.pull_request.base.ref }}`
 
    ```bash
    pre-commit run --from-ref $(git merge-base ${TARGET_BRANCH}) --to-ref HEAD
@@ -567,9 +570,9 @@ Here's a couple of examples of how `pre-commit` could be used in CI:
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 
@@ -579,6 +582,5 @@ Here's a couple of examples of how `pre-commit` could be used in CI:
 
 <!-- prettier-ignore-start -->
 
-- [Yelp announcement of
-pre-commit](https://engineeringblog.yelp.com/2014/08/announcing-pre-commit-yelps-multi-language-package-manager-for-pre-commit-hooks.html)
+- [Yelp announcement of pre-commit](https://engineeringblog.yelp.com/2014/08/announcing-pre-commit-yelps-multi-language-package-manager-for-pre-commit-hooks.html)
 <!-- prettier-ignore-end -->

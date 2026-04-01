@@ -1,4 +1,5 @@
 ---
+date: "2022-10-04"
 title: "Pocket article: Debugging ccache misses"
 description: Fixing cache misses when using the ccache compiler cache
 author: noah
@@ -13,16 +14,15 @@ keep your C/C++ build nice and snappy!
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## ccache: The C Compiler Cache
 
 We've written about the excellent `ccache` tool on Interrupt before:
 
-["Improving Compilation Time of C/C++ Projects"]({% post_url
-2020-02-11-improving-compilation-times-c-cpp-projects %})
+["Improving Compilation Time of C/C++ Projects"](/blog/improving-compilation-times-c-cpp-projects)
 
 `ccache` provides a wrapper around C/C++ compiler calls that _caches_ the output
 object file, so that future calls with unmodified source files will just copy
@@ -32,8 +32,7 @@ for the same result.
 Getting the most out of `ccache` has a lot of overlap with Reproducible Builds,
 which we've also covered on Interrupt:
 
-[Reproducible Firmware Builds]({% post_url
-2019-12-11-reproducible-firmware-builds %})
+[Reproducible Firmware Builds](/blog/reproducible-firmware-builds)
 
 Using `ccache` can improve compilations times _dramatically_; often a 25x
 speedup or faster, depending on the project. Keeping `ccache` working well can
@@ -123,9 +122,9 @@ personally I use `meld`:
 ❯ meld ccache-debug-1 ccache-debug-2
 ```
 
-![]({% img_url ccache-debugging/meld-dirs.png %})
+![](/img/ccache-debugging/meld-dirs.png)
 
-![]({% img_url ccache-debugging/meld-input-text.png %})
+![](/img/ccache-debugging/meld-input-text.png)
 
 Using `diff`, the output looks like this:
 
@@ -380,9 +379,9 @@ env:
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

@@ -1,4 +1,5 @@
 ---
+date: "2024-11-14"
 title: Sequential-storage － Efficiently Store Data in Flash
 description:
   A discussion of a sequential storage crate which can be used in Rust projects
@@ -19,9 +20,9 @@ blog post I'd like to go over what it is, why I created it and what it does.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 Sequential-storage implements low-level NOR flash memory management so you can
 store fifo queues and key-value maps in memory. This makes the crate very
@@ -167,9 +168,9 @@ sequential-storage? Let me know! I might be able to implement it.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

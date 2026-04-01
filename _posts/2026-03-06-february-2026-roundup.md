@@ -1,4 +1,5 @@
 ---
+date: "2026-03-06"
 title: "What we've been reading in February (2026)"
 description:
   Here are the articles, videos, and tools we've been excited about in February

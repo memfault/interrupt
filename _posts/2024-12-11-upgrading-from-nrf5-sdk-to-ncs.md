@@ -1,4 +1,5 @@
 ---
+date: "2024-12-11"
 title:
   How to Transition from nRF5 SDK to Zephyr NCS － Lessons from Ultrahuman’s
   Journey
@@ -34,9 +35,9 @@ technology to improve their health and fitness.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## The Vision Behind the Transition
 
@@ -106,7 +107,8 @@ The process works like this:
 
 ### 1\. Bootloader Update for Migration Support
 
-The following code changes, noted as commented out lines, needed to be made to the relevant bootloader files:
+The following code changes, noted as commented out lines, needed to be made to
+the relevant bootloader files:
 
 `nrf_dfu_validation.c`
 
@@ -161,7 +163,7 @@ static uint32_t sd_activate(void)
     if (SD_MAGIC_NUMBER_GET(src_addr) != SD_MAGIC_NUMBER)
     {
         NRF_LOG_ERROR("Source address does not contain a valid SoftDevice.")
-        
+
         // Protection removed for bootloader migration
         // return NRF_ERROR_INTERNAL;
     }
@@ -199,11 +201,11 @@ static uint32_t sd_activate(void)
 The memory layout should match the below process:
 
 <p align="center">
- <img width="80%" src="{% img_url nrf5-sdk-to-ncs/matching-mem-layout.png %}" alt="Memory layout diagram" />
+ <img width="80%" src="/img/nrf5-sdk-to-ncs/matching-mem-layout.png" alt="Memory layout diagram" />
 </p>
 
 <p align="center">
- <img width="50%" src="{% img_url nrf5-sdk-to-ncs/flash-primary.png %}" alt="flash primary layout" />
+ <img width="50%" src="/img/nrf5-sdk-to-ncs/flash-primary.png" alt="flash primary layout" />
 </p>
 
 ### 3\. Signing NCS Image
@@ -560,9 +562,9 @@ Ultrahuman is set to transform lives worldwide.
 **To all our users who’ve joined us on this journey: thank you. The impossible
 was only possible because of you. Together, we’re building a healthier world.**
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 

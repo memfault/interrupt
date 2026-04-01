@@ -1,4 +1,5 @@
 ---
+date: "2024-10-17"
 title: Embedded World North America 2024 Recap
 description: A recap of Embedded World 2024
 author: gminn
@@ -20,12 +21,12 @@ understand what is top of mind for them.
 <!-- excerpt end -->
 
 <p align="center">
-  <img width="700" src="{% img_url embedded-world-na-2024/memfault-booth.jpg %}"/>
+  <img width="700" src="/img/embedded-world-na-2024/memfault-booth.jpg"/>
 </p>
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 Three major themes stood out to us at this conference while perusing the booths
 and talking to developers at our booth: Security, AI, and Zephyr.
@@ -50,7 +51,7 @@ with the new standards!
 ## More AI at the edge and LLM-based tooling
 
 <p align="center">
-  <img width="500" src="{% img_url embedded-world-na-2024/edge-impulse-cat.jpg %}"/>
+  <img width="500" src="/img/embedded-world-na-2024/edge-impulse-cat.jpg"/>
 </p>
 
 Unsurprisingly, AI continues to be a hot topic, with nearly every semiconductor
@@ -92,9 +93,9 @@ together this post: Chris, Eric, Jon, François, JP and Jesse._
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

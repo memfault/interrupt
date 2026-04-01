@@ -1,4 +1,5 @@
 ---
+date: "2019-11-12"
 title: "From Zero to main(): Bootstrapping libc with Newlib"
 description:
   "Newlib is most commonly used C standard library in ARM-based embedded
@@ -9,10 +10,10 @@ tags: [zero-to-main, toolchain, cortex-m, arm]
 image: /img/zero-to-main/newlib.png
 ---
 
-This is the fourth post in our [Zero to main() series]({% tag_url zero-to-main %}), where we worked methodically to demystify what happens to
-firmware before the main() function is called. So far, we bootstrapped a C
-environment, wrote a linker script from scratch, and implemented our own
-bootloader.
+This is the fourth post in our [Zero to main() series](/tag/zero-to-main), where
+we worked methodically to demystify what happens to firmware before the main()
+function is called. So far, we bootstrapped a C environment, wrote a linker
+script from scratch, and implemented our own bootloader.
 
 And yet, we cannot even write a hello world program! Consider the following
 `main.c` file:
@@ -25,10 +26,11 @@ int main() {
   while (1) {}
 }
 ```
-Compiling this using our Makefile and linker script from [previous]({% post_url
-2019-05-14-zero-to-main-1 %}) [posts]({% post_url
-2019-06-25-how-to-write-linker-scripts-for-firmware %}), we hit
-the following error:
+
+Compiling this using our Makefile and linker script from
+[previous](/blog/zero-to-main-1)
+[posts](/blog/how-to-write-linker-scripts-for-firmware), we hit the following
+error:
 
 ```shell
 $ make
@@ -41,7 +43,7 @@ make: *** [build/minimal.elf] Error 1
 ```
 
 Undefined reference to `printf`! How could this be? Our firmware’s C environment
-is still missing a key component: a working C standard library.  This means that
+is still missing a key component: a working C standard library. This means that
 commonly used functions such as `printf`, `memcpy`, or `strncpy` are all out of
 reach of our program so far.
 
@@ -51,22 +53,24 @@ we’ll have to port a `printf` implementation alongside a C standard library if
 we want to use it.
 
 <!-- excerpt start -->
+
 In this post, we will add RedHat’s Newlib to our firmware and highlight some of
 its features. We will implement syscalls, learn about constructors, and finally
 print out “Hello, World”! We will also learn how to replace parts or all of the
 standard C library.
+
 <!-- excerpt end -->
 
-{% include toc.html %}
-
+<div id="toc"></div>
 
 ## Setup
+
 As we did in our previous posts, we are using Adafruit’s Metro M0 development
 board to run our examples. We use a cheap CMSIS-DAP adapter and openOCD to
 program it.
 
-You can find a step by step guide [in our previous
-post]({% post_url 2019-04-25-getting-started-with-ibdap-and-atsamd21g18 %}).
+You can find a step by step guide
+[in our previous post](/blog/getting-started-with-ibdap-and-atsamd21g18).
 
 As with previous examples, we start with our “minimal” example which you can
 find [on GitHub](https://github.com/memfault/zero-to-main/tree/master/minimal).
@@ -99,6 +103,7 @@ int main() {
 ```
 
 ## Implementing Newlib
+
 ### Why Newlib?
 
 There are several implementations of the C Standard Library, starting with the
@@ -106,19 +111,18 @@ venerable `glibc` found on most GNU/Linux systems. Alternative implementations
 include Musl libc[^2], Bionic libc[^3], ucLibc[^4], and dietlibc[^5].
 
 Newlib is an implementation of the C Standard Library targeted at bare-metal
-embedded systems that is maintained by RedHat. It has become the de-facto standard
-in embedded software because it is complete, has optimizations for a wide range
-of architectures, and produces relatively small code.
+embedded systems that is maintained by RedHat. It has become the de-facto
+standard in embedded software because it is complete, has optimizations for a
+wide range of architectures, and produces relatively small code.
 
-Today Newlib is bundled alongside toolchains and SDK provided by vendors such as ARM
-(`arm-none-eabi-gcc`) and Espressif (ESP-IDF for ESP32).
+Today Newlib is bundled alongside toolchains and SDK provided by vendors such as
+ARM (`arm-none-eabi-gcc`) and Espressif (ESP-IDF for ESP32).
 
-> Note: when code-size constrained, you may choose to use
-> a variant of newlib, called newlib-nano, which does away with some C99
-> features, and some `printf` bells and whistles to deliver a more compact
-> standard library. Newlib-nano is enabled with the `—specs=nano.specs` CFLAG.
-> You can read more about it in our [code size blog
-> post]({% post_url 2019-08-20-code-size-optimization-gcc-flags %}#c-library)
+> Note: when code-size constrained, you may choose to use a variant of newlib,
+> called newlib-nano, which does away with some C99 features, and some `printf`
+> bells and whistles to deliver a more compact standard library. Newlib-nano is
+> enabled with the `—specs=nano.specs` CFLAG. You can read more about it in our
+> [code size blog post](/blog/code-size-optimization-gcc-flags#c-library)
 
 ### Enabling Newlib
 
@@ -154,7 +158,7 @@ int main() {
 ```
 
 We added no new `#include`, nor any call to C library functions. Yet if we
-compile this code with `-nostdlib`,  we’ll get the following error:
+compile this code with `-nostdlib`, we’ll get the following error:
 
 ```shell
 ...
@@ -182,10 +186,9 @@ really be this simple?
 > Note: the variant of Newlib bundled with `arm-none-eabi-gcc` is not compiled
 > with `-g`, which can make debugging difficult. For that reason, you may chose
 > to replace it with your own build of Newlib. You can read more about that
-> process in the [Implementing our own C standard library
-> section](#implementing-our-own-c-standard-library) of this
-> article.
-
+> process in the
+> [Implementing our own C standard library section](#implementing-our-own-c-standard-library)
+> of this article.
 
 ### System Calls
 
@@ -230,7 +233,7 @@ collect2: error: ld returned 1 exit status
 Specifically, the compiler is asking for `_fstat`, `_read`, `_lseek`, `_close`,
 `_write`, and `_sbrk`.
 
-The newlib documentation[^6] calls these functions “system calls”.  In short,
+The newlib documentation[^6] calls these functions “system calls”. In short,
 they are the handful of things newlib expects the underlying “operating system”.
 The complete list of them is provided below:
 
@@ -244,8 +247,10 @@ process control. These do not make much sense in a firmware context, so we’ll
 often simply provide a stub that returns an error code.
 
 Let’s look at the ones our “Hello, World” example requires.
+
 #### fstat
-`fstat`  returns the status of an open file.  The minimal version of this should
+
+`fstat` returns the status of an open file. The minimal version of this should
 identify all files as character special devices. This forces one-byte-read at a
 time.
 
@@ -338,7 +343,7 @@ int main() {
 
 #### read
 
-`read`  attempts to read up to `count` bytes from file descriptor `fd` into the
+`read` attempts to read up to `count` bytes from file descriptor `fd` into the
 buffer at `buf`.
 
 Similarly to `write`, we want `read` to read bytes from serial:
@@ -365,9 +370,8 @@ What does `printf` have to do with the heap, you will justly ask? It turns out
 that newlib’s `printf` implementations allocates data on the heap and depends on
 a working `malloc` implementation.
 
-The source for `printf` is hard to follow, but you will find that indeed [it
-calls
-malloc](https://github.com/bminor/newlib/blob/6497fdfaf41d47e835fdefc78ecb0a934875d7cf/newlib/libc/stdio/vfprintf.c#L226)!
+The source for `printf` is hard to follow, but you will find that indeed
+[it calls malloc](https://github.com/bminor/newlib/blob/6497fdfaf41d47e835fdefc78ecb0a934875d7cf/newlib/libc/stdio/vfprintf.c#L226)!
 
 Here’s a simple implementation of `sbrk`:
 
@@ -382,8 +386,8 @@ void *_sbrk(int incr) {
 
 More often than not, we want the heap to use all the RAM not used by anything
 else. We therefore set `HEAP_START` to the first address not spoken for in our
-linker script. In our [previous
-post]({% post_url 2019-06-25-how-to-write-linker-scripts-for-firmware %}#complete-linker-script),
+linker script. In our
+[previous post](/blog/how-to-write-linker-scripts-for-firmware#complete-linker-script),
 we had added the `_end` variable in our linker script to that end.
 
 We replace `HEAP_START` with `_end` and get:
@@ -582,8 +586,8 @@ get anything for free. This is where newlib comes in.
 By default, GCC will put every constructor into an array in their own section of
 flash. Newlib then offers a function, `__libc_init_array` which iterates over
 the array and invokes every constructor. You can find out more about it by
-reading [the source
-code](https://github.com/bminor/newlib/blob/master/newlib/libc/misc/init.c).
+reading
+[the source code](https://github.com/bminor/newlib/blob/master/newlib/libc/misc/init.c).
 
 All we need to do is call `__libc_init_array` prior to `main` in our
 `Reset_Handler`, and we are good to go.
@@ -612,7 +616,7 @@ environment.
 
 #### `_impure_ptr` and the `_reent` struct
 
-Most Newlib functions are *reentrant*. This means that they can be called by
+Most Newlib functions are _reentrant_. This means that they can be called by
 multiple processes safely.
 
 For the functions that cannot be easily made re-entrant, newlib depends on the
@@ -649,7 +653,8 @@ code.
 
 For example, we may want to replace Newlib’s `printf` implementation, either
 because it is too large or because it depends on dynamic memory management.
-Using Marco Paland’s excellent alternative[^7] is as simple as a Makefile change.
+Using Marco Paland’s excellent alternative[^7] is as simple as a Makefile
+change.
 
 We first clone it in our firmware’s folder under `lib/printf`, and update our
 Makefile to reflect the change:
@@ -712,26 +717,35 @@ include ../common-standalone.mk
 ## Closing
 
 We hope reading this post has given you an understanding of how standard C
-functions come to be available in firmware code. As with previous posts,
-code examples are available in the [Zero to Main Github
-repository](https://github.com/memfault/zero-to-main).
+functions come to be available in firmware code. As with previous posts, code
+examples are available in the
+[Zero to Main Github repository](https://github.com/memfault/zero-to-main).
 
-Got a favorite libc implementation? Tell us all about it in the comments,
-or at [interrupt@memfault.com](mailto:interrupt@memfault.com).
+Got a favorite libc implementation? Tell us all about it in the comments, or at
+[interrupt@memfault.com](mailto:interrupt@memfault.com).
 
 Next time in the series, we'll talk about Rust!
 
-_EDIT: Post written!_ - [From Zero to main(): Bare metal Rust]({% post_url 2019-12-17-zero-to-main-rust-1 %})
+_EDIT: Post written!_ -
+[From Zero to main(): Bare metal Rust](/blog/zero-to-main-rust-1)
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 ## Reference Links
 
-[^1]: [\_\_malloc_lock documentation](https://sourceware.org/newlib/libc.html#g_t_005f_005fmalloc_005flock)
+[^1]:
+    [\_\_malloc_lock documentation](https://sourceware.org/newlib/libc.html#g_t_005f_005fmalloc_005flock)
+
 [^2]: [musl libc](https://www.musl-libc.org/)
+
 [^3]: [bionic libc](https://android.googlesource.com/platform/bionic/)
+
 [^4]: [ucLibc](https://www.uclibc.org/)
+
 [^5]: [dietlibc](https://www.fefe.de/dietlibc/)
+
 [^6]: [newlib documentation](https://sourceware.org/newlib/libc.html#Syscalls)
+
 [^7]: [Marco Paland's printf](https://github.com/mpaland/printf)
+
 [^8]: [Embedded Artistry's libc](https://github.com/embeddedartistry/libc)

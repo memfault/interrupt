@@ -1,4 +1,5 @@
 ---
+date: "2020-03-18"
 title: "Tracking Firmware Code Size"
 description:
   "Tracking code size for embedded software projects can prevent surprises,
@@ -30,7 +31,7 @@ immensely helpful when our team at Pebble was trying to
 Below is an example of a type of dashboard we had. When we approached 5kB
 remaining in our firmware image, we knew what to do.
 
-![]({% img_url code-size-deltas/running-out-code-space.png %})
+![](/img/code-size-deltas/running-out-code-space.png)
 
 <!-- excerpt start -->
 
@@ -44,9 +45,9 @@ calculate code size deltas on every pull requests to keep it to a minimum.
 > this example
 > [code size dashboard for the Zephyr Project](https://zephyr-codesizes.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default).
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Why Track Code Size?
 
@@ -104,8 +105,7 @@ dependencies.
 We won't be covering how to initially set up building the Zephyr project, as
 there are detailed instructions[^zephyr_instructions] about how to get started.
 I can't help but feel the setup would have been simpler and quicker if they had
-taken advantage of
-[Conda]({% post_url 2020-01-07-conda-developer-environments %}). It would also
+taken advantage of [Conda](/blog/conda-developer-environments). It would also
 have the benefit of being cross-platform and version controlled within the
 codebase.
 
@@ -188,12 +188,11 @@ $ arm-none-eabi-size zephyr/zephyr.elf
  130780    3356   21167  155303   25ea7 build/zephyr/zephyr.elf
 ```
 
-There are a [number of ways to
-capture]({% post_url 2019-06-06-best-firmware-size-tools %}) this data,
-and some projects or teams want to track other data important to them. These
-might include specific linker region sizes, resource pack size (fonts, images,
-etc), or possibly the largest 10 files or symbols in the codebase. Whatever is
-important to you and your team, track it!
+There are a [number of ways to capture](/blog/best-firmware-size-tools) this
+data, and some projects or teams want to track other data important to them.
+These might include specific linker region sizes, resource pack size (fonts,
+images, etc), or possibly the largest 10 files or symbols in the codebase.
+Whatever is important to you and your team, track it!
 
 ### Organizing the Sizes
 
@@ -435,12 +434,12 @@ pretty quick and useful visualizations!
 Here is a chart of the code size of the `.text` region for the last 2,500
 commits:
 
-![]({% img_url code-size-deltas/zephyr-codesize-chart.png %})
+![](/img/code-size-deltas/zephyr-codesize-chart.png)
 
 and here is a way to show the extent of each commit's impact on the overall code
 size:
 
-![]({% img_url code-size-deltas/zephyr-codesize-table.png %})
+![](/img/code-size-deltas/zephyr-codesize-table.png)
 
 If you want to see this data live, check out the
 [Redash instance on Heroku](https://zephyr-codesizes.herokuapp.com/public/dashboards/rsertKgwMwqHWzE24G4QUvbZhEe72x4hhsqMSqts?org_slug=default)!
@@ -448,9 +447,8 @@ If you want to see this data live, check out the
 Having these visualizations allow developers to dive into why code space has
 disappeared in the past and see where the code size is trending. If you ever
 need to find 500 bytes of code space and you have already taken the approaches
-listed in the [GCC flags
-post]({% post_url 2019-08-20-code-size-optimization-gcc-flags %}), this is a
-good place to start.
+listed in the [GCC flags post](/blog/code-size-optimization-gcc-flags), this is
+a good place to start.
 
 ## Keeping the Code Size to a Minimum
 
@@ -566,7 +564,7 @@ This is the end of the tutorial, but I wanted to share with you what I found
 works best at the previous companies I've worked for.
 
 - Using Github Actions or the Github API, post a comment on each pull request.
-  Something like: ![]({% img_url code-size-deltas/github-comment.png %})
+  Something like: ![](/img/code-size-deltas/github-comment.png)
 - Automatically add a firmware lead if the code size delta crosses a set
   threshold.
 - Start tracking now. When you run out, it's too late to make changes quickly.
@@ -582,16 +580,15 @@ Show-stopping code space outages don't have to be a surprise.
 For those trying to investigate into their own code space usage further, here
 are a list of the resources I would start with:
 
-- [Code Size Optimization: GCC Compiler
-  Flags]({% post_url 2019-08-20-code-size-optimization-gcc-flags %})
-- [Tools for Firmware Code Size
-  Optimization]({% post_url 2019-06-06-best-firmware-size-tools %})
+- [Code Size Optimization: GCC Compiler Flags](/blog/code-size-optimization-gcc-flags)
+- [Tools for Firmware Code Size Optimization](/blog/best-firmware-size-tools)
 - [Google Bloaty](https://github.com/google/bloaty)
 - [Puncover](https://github.com/HBehrens/puncover)
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/faster-compilation/)._
-{% include submit-pr.html %}
+
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 

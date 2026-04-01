@@ -1,6 +1,10 @@
 ---
+date: "2020-04-14"
 title: "gdbundle - GDB and LLDB's Missing Plugin Manager"
-description: "Introducing gdbundle, a minimalist plugin manager for GDB and LLDB, which enables developers to easily GDB and LLDB extensions, packages, and Python scripts from PyPi"
+description:
+  "Introducing gdbundle, a minimalist plugin manager for GDB and LLDB, which
+  enables developers to easily GDB and LLDB extensions, packages, and Python
+  scripts from PyPi"
 author: tyler
 image: /img/gdbundle-plugin-manager/gdbundle.png
 tags: [gdb, python, debugging]
@@ -13,8 +17,8 @@ GDB's Python API[^gdb_python_api].
 
 On one of our bi-weekly hack-days, one of the firmware engineers wrote a script
 to pretty-print a summary of the heap for a device connected to GDB using its
-Python API ([similar to
-this]({% post_url 2019-07-02-automate-debugging-with-gdb-python-api %}#adding-a-custom-gdb-command-with-gdb-python)).
+Python API
+([similar to this](/blog/automate-debugging-with-gdb-python-api#adding-a-custom-gdb-command-with-gdb-python)).
 It was **awesome**. But, using this script with GDB wasn't without problems. We
 slowly grew it into a collection of scripts and improved our workflows. A few
 notable improvements were:
@@ -24,10 +28,9 @@ notable improvements were:
 - Instead of just printing the heap allocations, expose the heap through a
   Python Class. e.g.
   `heap = Heap(g_heap); total_size = sum([b.size] for b in heap.iter_blocks()])`.
-- [Wrapping the GDB
-  invocation]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %})
-  and loading GDB Python scripts automatically so every developer on the team
-  had them loaded and ready to use at all times.
+- [Wrapping the GDB invocation](/blog/building-a-cli-for-firmware-projects) and
+  loading GDB Python scripts automatically so every developer on the team had
+  them loaded and ready to use at all times.
 
 This was back in 2015 or so. As I've moved to other companies, I've had the joy
 to spread the love of GDB scripting to other embedded software developers. It's
@@ -64,9 +67,9 @@ for you.
 > [gdbundle](https://github.com/memfault/gdbundle) works perfectly with LLDB as
 > well.
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Why Does GDB Need a Plugin Manager?
 
@@ -211,9 +214,8 @@ Hello World from .py
 ```
 
 If you don't want to keep typing `--command ...` every time you launch GDB, or
-trying to convince or remind your co-workers to do the same, I suggest [wrapping
-the GDB invocation with a
-CLI]({% post_url 2019-08-27-building-a-cli-for-firmware-projects %}).
+trying to convince or remind your co-workers to do the same, I suggest
+[wrapping the GDB invocation with a CLI](/blog/building-a-cli-for-firmware-projects).
 
 ### objfile-gdb.ext File
 
@@ -271,8 +273,8 @@ wrote above.
 
 While I admit that this functionality is clever, it means that the information
 is hard-coded in the ELF file and cannot be easily changed at a later date.
-Adding a filename or fixing a bug in an embedded script would require [creative
-uses of GNU binutils]({% post_url 2020-04-08-gnu-binutils %}) and some work
+Adding a filename or fixing a bug in an embedded script would require
+[creative uses of GNU binutils](/blog/gnu-binutils) and some work
 re-distributing the ELF files.
 
 ## `gdbundle` - Plugin Manager for GDB/LLDB
@@ -488,7 +490,8 @@ looking forward to any feature requests or issues that you can think of!
 
 _All the code used in this blog post is available on
 [Github](https://github.com/memfault/interrupt/tree/master/example/gdbundle-plugin-manager/)._
-{% include submit-pr.html %}
+
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 {:.no_toc}
 

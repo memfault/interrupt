@@ -1,4 +1,5 @@
 ---
+date: "2024-01-18"
 title: Building Nordic nRF-Connect SDK Projects with GitHub Actions
 description:
   Strategies for building nRF-Connect SDK projects using GitHub Actions
@@ -15,16 +16,15 @@ building nRF-Connect SDK projects.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Project Setup and Building Locally
 
 > Note: This article assumes some familiarity with the nRF-Connect SDK and
 > Zephyr build setup. If you're new to the nRF-Connect SDK, check out the
-> [Nordic
-> documentation](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrf/installation.html)
+> [Nordic documentation](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrf/installation.html)
 > for details on how to set up a local build environment.
 
 To get started, first we need to set up an nRF-Connect SDK project. We'll use
@@ -86,8 +86,8 @@ setting up our GitHub Actions workflow.
 
 It's not required, but if this were a real project we'd want to split our sample
 project into its own repository. We'll need to add a `west.yml` Zephyr manifest,
-making our project the manifest repository. See the [Zephyr
-documentation](https://docs.zephyrproject.org/3.5.0/develop/west/workspaces.html#t2-star-topology-application-is-the-manifest-repository)
+making our project the manifest repository. See the
+[Zephyr documentation](https://docs.zephyrproject.org/3.5.0/develop/west/workspaces.html#t2-star-topology-application-is-the-manifest-repository)
 which describes some of the "workspace topologies" Zephyr supports; we're going
 to be using a "T2" topology.
 
@@ -113,7 +113,6 @@ I edited the `west.yml` file to contain the following:
 manifest:
   version: "0.10"
   projects:
-
     # Specify the nRF-Connect SDK as a project dependency.
     - name: sdk-nrf
       path: nrf
@@ -140,23 +139,23 @@ manifest:
 > required. It looks something like this:
 >
 > ```yaml
->     - name: sdk-nrf
->       path: nrf
->       url: https://github.com/nrfconnect/sdk-nrf.git
->       revision: v2.5.1
->       import:
->         name-allowlist:
->           - hostap
->           - zephyr
->           - mcuboot
->           - mbedtls
->           - nrfxlib
->           - cmsis
->           - hal_nordic
+> - name: sdk-nrf
+>   path: nrf
+>   url: https://github.com/nrfconnect/sdk-nrf.git
+>   revision: v2.5.1
+>   import:
+>     name-allowlist:
+>       - hostap
+>       - zephyr
+>       - mcuboot
+>       - mbedtls
+>       - nrfxlib
+>       - cmsis
+>       - hal_nordic
 > ```
 >
-> It can be a little tricky to figure out which projects are required. The `west
-> manifest --resolve` command can be helpful to print out all the projects
+> It can be a little tricky to figure out which projects are required. The
+> `west manifest --resolve` command can be helpful to print out all the projects
 > selected by the manifest. I recommend saving the full list to a file, then
 > start pruning and rebuilding the workspace until the minimal set is found.
 
@@ -178,8 +177,8 @@ contents:
 ```markdown
 # Memfault nRF-Connect SDK CI Example
 
-Sample project based on the [nRF-Connect SDK Memfault
-Sample](https://github.com/nrfconnect/sdk-nrf/tree/v2.5.1/samples/debug/memfault)
+Sample project based on the
+[nRF-Connect SDK Memfault Sample](https://github.com/nrfconnect/sdk-nrf/tree/v2.5.1/samples/debug/memfault)
 ```
 
 Save and push that too:
@@ -283,14 +282,15 @@ on:
 This can be useful for testing changes without requiring a commit, for example
 if we're iterating on a custom Docker image used by the workflow. You can
 manually trigger the run from the GitHub Actions UI (instructions
-[here](https://docs.github.com/en/actions/using-workflows/manually-running-a-workflow)), or the `gh` cli also supports triggering the workflow:
+[here](https://docs.github.com/en/actions/using-workflows/manually-running-a-workflow)),
+or the `gh` cli also supports triggering the workflow:
 
 ```bash
 $ gh workflow run ci.yml
 ```
 
-After pushing `ci.yml`, we can go to the "Actions" tab in our GitHub repository, and we should see our
-workflow successfully run:
+After pushing `ci.yml`, we can go to the "Actions" tab in our GitHub repository,
+and we should see our workflow successfully run:
 
 ![](/img/ncs-github-actions/basic-actions-success.png)
 
@@ -305,17 +305,17 @@ tools we need are:
 - Zephyr SDK toolchain (this is the C compiler, linker, libc, etc.)
 - the `west` Python tool
 
-I followed the details in the [Zephyr Getting Started
-Guide](https://docs.zephyrproject.org/3.5.0/develop/getting_started/index.html)
+I followed the details in the
+[Zephyr Getting Started Guide](https://docs.zephyrproject.org/3.5.0/develop/getting_started/index.html)
 for installing these dependencies.
 
-> Note: Nordic provides a ["toolchain manager"
-> GUI](https://docs.nordicsemi.com/bundle/ncs-2.5.1/page/nrf/installation/installing.html)
+> Note: Nordic provides a
+> ["toolchain manager" GUI](https://docs.nordicsemi.com/bundle/ncs-2.5.1/page/nrf/installation/installing.html)
 > for installing nRF-Connect SDK dependencies. This isn't suitable for CI, where
 > we need to install dependencies non-interactively. Nordic also conveniently
 > provides a command-line version of the toolchain manager, called `nrfutil`;
-> see the [nrfutil
-> documentation](https://docs.nordicsemi.com/bundle/nrfutil/page/guides/getting_started.html)
+> see the
+> [nrfutil documentation](https://docs.nordicsemi.com/bundle/nrfutil/page/guides/getting_started.html)
 > for details.
 >
 > **However**, we're going to install the normal Zephyr build dependencies
@@ -327,7 +327,7 @@ for installing these dependencies.
 > we ever need to.
 >
 > Note that Martin's article
-> ["Practical Zephyr - Zephyr Basics (Part 1)"]({% post_url 2024-01-10-practical_zephyr_basics %}#setup-using-nordics-toolchain-manager)
+> ["Practical Zephyr - Zephyr Basics (Part 1)"](/blog/practical_zephyr_basics#setup-using-nordics-toolchain-manager)
 > has a great rundown of these options, check it out!
 
 Below find the updated workflow file, with the Zephyr build dependencies
@@ -419,11 +419,11 @@ another day. For now, we'll just save the build artifacts as a GitHub Action
 artifact:
 
 ```yaml
-      - name: 📦 Save Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: zephyr-workspace/build
+- name: 📦 Save Build Artifacts
+  uses: actions/upload-artifact@v4
+  with:
+    name: build-artifacts
+    path: zephyr-workspace/build
 ```
 
 In practice we might only be interested in certain files in the build folder,
@@ -462,8 +462,8 @@ several gigabytes in size.
 ### Caching Build Artifacts
 
 We can use `ccache` to cache the compiler output (see Tyler's article about
-[Improving Compilation Times]({% post_url
-2020-02-11-improving-compilation-times-c-cpp-projects %}) for details).
+[Improving Compilation Times](/blog/improving-compilation-times-c-cpp-projects)
+for details).
 
 Zephyr's build system will automatically detect and use `ccache`, so all we have
 to do here is save and restore the `ccache` cache directory, and we'll get
@@ -487,7 +487,6 @@ described above. I also made 2 other performance tweaks:
 
 Here's the updated workflow file:
 
-{% raw %}
 ```yaml
 on:
   pull_request:
@@ -506,7 +505,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: zephyr-workspace
-          key: zephyr-workspace-v1-${{ runner.os }}-${{ hashFiles('zephyr-workspace/nrfconnect-ci-app/west.yml') }}
+          key:
+            zephyr-workspace-v1-${{ runner.os }}-${{
+            hashFiles('zephyr-workspace/nrfconnect-ci-app/west.yml') }}
           restore-keys: |
             zephyr-workspace-v1-${{ runner.os }}-
 
@@ -524,7 +525,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.venv
-          key: venv-${{ runner.os }}-${{ hashFiles('zephyr-workspace/zephyr/scripts/requirements.txt') }}
+          key:
+            venv-${{ runner.os }}-${{
+            hashFiles('zephyr-workspace/zephyr/scripts/requirements.txt') }}
           restore-keys: |
             venv-${{ runner.os }}-
 
@@ -572,7 +575,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/ccache
-          key: ccache-v1-${{ runner.os }}-${{ hashFiles('zephyr-workspace/nrfconnect-ci-app/west.yml') }}
+          key:
+            ccache-v1-${{ runner.os }}-${{
+            hashFiles('zephyr-workspace/nrfconnect-ci-app/west.yml') }}
           restore-keys: |
             ccache-v1-${{ runner.os }}-
 
@@ -589,7 +594,6 @@ jobs:
           # print detailed ccache statistics
           ccache -sv
 ```
-{% endraw %}
 
 After all that, our total build time as reported by GitHub Actions goes down to
 `1m43s`, or `34%` faster. Honestly not that much faster, but it's a start!
@@ -625,7 +629,6 @@ build our project, documented here:
 We can make use of this image by specifying it as the runner in our GitHub
 Actions workflow:
 
-{% raw %}
 ```yaml
 on:
   pull_request:
@@ -665,7 +668,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/ccache
-          key: ccache-v1-${{ runner.os }}-${{ hashFiles('zephyr-workspace/nrfconnect-ci-app/west.yml') }}
+          key:
+            ccache-v1-${{ runner.os }}-${{
+            hashFiles('zephyr-workspace/nrfconnect-ci-app/west.yml') }}
           restore-keys: |
             ccache-v1-${{ runner.os }}-
 
@@ -680,7 +685,6 @@ jobs:
               -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"1234\"
           ccache -sv
 ```
-{% endraw %}
 
 Let's run that and see how it goes:
 
@@ -691,12 +695,13 @@ didn't have to install anything- all the tools were pre-installed in the Docker
 image, so they won't change (unless we update to a different image). This is a
 really good property for CI!
 
-This is the same image the Zephyr project uses for [their
-CI](https://github.com/zephyrproject-rtos/zephyr/blob/f669e156d4a7d1f8cea6448896aa4b0226a891ce/.github/workflows/twister.yaml#L27),
+This is the same image the Zephyr project uses for
+[their CI](https://github.com/zephyrproject-rtos/zephyr/blob/f669e156d4a7d1f8cea6448896aa4b0226a891ce/.github/workflows/twister.yaml#L27),
 which is a nice benefit- we can be sure that our project will build in the same
 environment that the Zephyr project uses.
 
-> From the [Practical Zephyr - Zephyr Basics (Part 1) article]({% post_url 2024-01-10-practical_zephyr_basics %}),
+> From the
+> [Practical Zephyr - Zephyr Basics (Part 1) article](/blog/practical_zephyr_basics),
 > there's another example of using the Zephyr CI Docker image, which can be
 > found here:
 >
@@ -732,10 +737,10 @@ There's images there for building Zephyr projects and nRF-Connect SDK projects.
 We can use those images as reference as we go to create our own custom image.
 
 Fortunately, we already have all the pieces we need to construct our docker
-image, from the section above where we installed all the [dependencies
-on-the-fly](#runtime-environment-setup). We add all those pieces to a docker
-image and upload it to the GitHub Container Registry, then use the image in our
-build.
+image, from the section above where we installed all the
+[dependencies on-the-fly](#runtime-environment-setup). We add all those pieces
+to a docker image and upload it to the GitHub Container Registry, then use the
+image in our build.
 
 Here's the Dockerfile defining the image:
 
@@ -819,45 +824,45 @@ $ docker push ghcr.io/noahp/memfault-nrfconnect-ci-app:2024-01-17
 Once the image is uploaded to the GitHub container registry, we can use it in
 our job:
 
-{% raw %}
 ```yaml
-  custom-docker-image:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/noahp/memfault-nrfconnect-ci-app:2024-01-17
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # Clone the repo to a subdirectory, so we can initialize the Zephyr
-          # workspace in the parent directory.
-          path: zephyr-workspace/nrfconnect-ci-app
+custom-docker-image:
+  runs-on: ubuntu-latest
+  container:
+    image: ghcr.io/noahp/memfault-nrfconnect-ci-app:2024-01-17
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        # Clone the repo to a subdirectory, so we can initialize the Zephyr
+        # workspace in the parent directory.
+        path: zephyr-workspace/nrfconnect-ci-app
 
-      - name: ♻️ Initialize Zephyr Workspace
-        run: |
-          cd zephyr-workspace
-          west init -l nrfconnect-ci-app
-          west update --narrow -o=--depth=1 --path-cache /zephyr-workspace-cache
+    - name: ♻️ Initialize Zephyr Workspace
+      run: |
+        cd zephyr-workspace
+        west init -l nrfconnect-ci-app
+        west update --narrow -o=--depth=1 --path-cache /zephyr-workspace-cache
 
-      - name: 💾 Cache ~/.cache/ccache
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/ccache
-          key: ccache-v2-${{ runner.os }}-${{ hashFiles('zephyr-workspace/nrfconnect-ci-app/west.yml') }}
-          restore-keys: |
-            ccache-v2-${{ runner.os }}-
+    - name: 💾 Cache ~/.cache/ccache
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/ccache
+        key:
+          ccache-v2-${{ runner.os }}-${{
+          hashFiles('zephyr-workspace/nrfconnect-ci-app/west.yml') }}
+        restore-keys: |
+          ccache-v2-${{ runner.os }}-
 
-      - name: 🔨 Build Project
-        run: |
-          cd zephyr-workspace
-          ccache -z
-          west build \
-              --board nrf7002dk_nrf5340_cpuapp \
-              --pristine=always nrfconnect-ci-app \
-              -- \
-              -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"1234\"
-          ccache -sv
+    - name: 🔨 Build Project
+      run: |
+        cd zephyr-workspace
+        ccache -z
+        west build \
+            --board nrf7002dk_nrf5340_cpuapp \
+            --pristine=always nrfconnect-ci-app \
+            -- \
+            -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"1234\"
+        ccache -sv
 ```
-{% endraw %}
 
 ![](/img/ncs-github-actions/custom-docker-image-success.png)
 
@@ -916,9 +921,9 @@ through in this article 😄:
 [![](https://imgs.xkcd.com/comics/containers.png)](https://xkcd.com/1988/)
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}
@@ -926,6 +931,7 @@ through in this article 😄:
 ## References
 
 <!-- prettier-ignore-start -->
+
 - [Nordic nRF-Connect SDK](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/nrf/index.html)
 - [Zephyr Getting Started Guide](https://docs.zephyrproject.org/3.5.0/develop/getting_started/index.html)
 - [GitHub Actions Quickstart](https://docs.github.com/en/actions/quickstart)

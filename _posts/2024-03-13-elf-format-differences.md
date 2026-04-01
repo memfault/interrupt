@@ -1,4 +1,5 @@
 ---
+date: "2024-03-13"
 title: Differences Between ELF-32 and ELF-64
 description:
   A quick reference post for the differences between ELF-32 and ELF-64 object
@@ -23,9 +24,9 @@ differences.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## ELF Background
 

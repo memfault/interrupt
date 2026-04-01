@@ -1,15 +1,15 @@
 ---
+date: "2020-12-08"
 title: Seamless firmware development with PlatformIO
 description:
-    An overview of PlatformIO, as well as a getting started example on STM32.
+  An overview of PlatformIO, as well as a getting started example on STM32.
 author: francois
 tags: [build-system, toolchain]
 ---
 
-A few weeks ago, [I wrote about MCU SDKs]({% post_url
-2020-11-10-the-best-and-worst-mcu-sdks %}) and how frustrating I sometimes found
-it to be confronted with one Eclipse-based IDE after another. If you haven't
-read my latest updates to that post, check it out!
+A few weeks ago, [I wrote about MCU SDKs](/blog/the-best-and-worst-mcu-sdks) and
+how frustrating I sometimes found it to be confronted with one Eclipse-based IDE
+after another. If you haven't read my latest updates to that post, check it out!
 
 But what if I told you that there exists an embedded project management tool
 which ties you neither to a toolchain, nor to a development environment? Did I
@@ -18,7 +18,7 @@ mention it is available for Windows, Linux, and Mac?
 <!-- excerpt start -->
 
 In this post, I'd like to introduce PlatformIO. I will go over what PlatformIO
-is, how you can use it for your project, and what it is good at.  I also
+is, how you can use it for your project, and what it is good at. I also
 highlight a few shortcomings worth keeping in mind.
 
 <!-- excerpt end -->
@@ -28,18 +28,20 @@ projects, it works very well for specific platforms and RTOS-es. Most
 importantly, it proposes an approach to library and toolchain management for
 embedded that is the best I've seen yet. I hope you will give it a whirl!
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## What is PlatformIO?
 
-<a href="https://platformio.org/" target="_blank">PlatformIO</a> is a set of open source tools targetted at professional embedded
-developers.  Foremost of those tools is the PlatformIO Plugin for VSCode which
-is used by hundreds of thousands of embedded developers to create, compile,
-debug, and test embedded projects.
+<a href="https://platformio.org/" target="_blank">PlatformIO</a> is a set of
+open source tools targetted at professional embedded developers. Foremost of
+those tools is the PlatformIO Plugin for VSCode which is used by hundreds of
+thousands of embedded developers to create, compile, debug, and test embedded
+projects.
 
 At its core, PlatformIO is made up of the following subsystems:
+
 1. Project management: a tool to create, configure, and manage projects
 2. Package management: a registry and a client to host libraries for embedded
    systems and easily add or remove them from a project
@@ -58,15 +60,16 @@ However, the set of supported targets can be hit or miss.
 ### Supported Targets
 
 PlatformIO defines targets as a combination as three components:
+
 1. The "platform", which is the MCU family. For example, both the STM32 and the
    nRF52 are supported platforms.
 2. The "framework", which is the SDK being used on the project. This includes
    vendor SDK, such as the STM32Cube, as well as RTOS-es such as Zephyr or
-FreeRTOS, true frameworks such as Arduino, and alternative APIs such as
-libopencm3 and CMSIS.
+   FreeRTOS, true frameworks such as Arduino, and alternative APIs such as
+   libopencm3 and CMSIS.
 3. The "board" which defines the specific board you are using. PlatformIO comes
    with hundreds of board configuration for popular development boards like the
-STM32 Discovery boards.
+   STM32 Discovery boards.
 
 The headline numbers are impressive: 41 platforms, 23 frameworks, and 924 boards
 as of this writing.
@@ -76,11 +79,12 @@ covered, others have very little support.
 
 One important example is official vendor SDK. PlatformIO only supports the
 vendor SDKs for the following MCUs, which it considers individual "frameworks":
-* Espressif family (ESP8266, ESP32)
-* Kendryte K210
-* STM32
-* Gigadevice GD32V
-* SiFive FE310 and FU540
+
+- Espressif family (ESP8266, ESP32)
+- Kendryte K210
+- STM32
+- Gigadevice GD32V
+- SiFive FE310 and FU540
 
 If you are able to piggy back on an RTOS, things look a bit better. For example,
 you can create a Zephyr project with PlatformIO for Atmel SAM, Freescale
@@ -143,9 +147,9 @@ building a project with it is seamless. Simply add your project source under
 `src`, your header files under `include`, and your private libraries under
 `lib`. Run `pio run`, and you're cooking with gas!
 
-Under the hood, it uses the SCons[^scons] build system. Most of the
-time, this is of no consequence to the user as plenty of configuration options
-are exposed via the `platformio.ini` file used to configure each project.
+Under the hood, it uses the SCons[^scons] build system. Most of the time, this
+is of no consequence to the user as plenty of configuration options are exposed
+via the `platformio.ini` file used to configure each project.
 
 For example, you can change compiler and linker flags by adding the
 `build_flags` variable to your `platformio.ini`:
@@ -172,9 +176,9 @@ still like my Makefiles - SCons is a mature and powerful build system.
 
 ## Getting Started with the PlatformIO CLI
 
-My favorite way to use PlatformIO is with the CLI, also known as "PlatformIO Core".
-Although some people swear by the VSCode plugin, I prefer my PlatformIO separate
-from my IDE so I can use trusty old Vim.
+My favorite way to use PlatformIO is with the CLI, also known as "PlatformIO
+Core". Although some people swear by the VSCode plugin, I prefer my PlatformIO
+separate from my IDE so I can use trusty old Vim.
 
 In this next section, I will walk you through installing the CLI, starting a
 project, adding some libraries, and compiling your work. All code is available
@@ -185,13 +189,14 @@ under `example/platformio`.
 
 Installing the PlatformIO CLI is easy. On some platform, you can use your
 package manager. For example, on mac:
+
 ```
 $ brew install platformio
 ```
 
 For all other platforms, you can use the `get-platformio.py` script, available
-on their website[^get-platformio]. Download it and run it with `python
-get-platformio.py`.
+on their website[^get-platformio]. Download it and run it with
+`python get-platformio.py`.
 
 At this point, you should have `platformio` available as a CLI utility, as well
 as a `pio` alias for faster use.
@@ -202,6 +207,7 @@ The `pio` tool comes with project management commands. Let's say we want to
 start a new project for our STM32F429zi discovery board.
 
 First, we'll create a folder:
+
 ```
 $ mkdir my-project
 $ cd my-project
@@ -244,9 +250,9 @@ The `platform_packages` variable is more complicated. This option lets you
 override the version of built-in packages, such as the support for different
 Frameworks, specific toolchains, or built-in tools like OpenOCD.
 
-Tool Packages can be downloaded from Github, or from Bintray where the PlatformIO
-project hosts many of its binaries. For example, you can the list of available
-builds of GCC at
+Tool Packages can be downloaded from Github, or from Bintray where the
+PlatformIO project hosts many of its binaries. For example, you can the list of
+available builds of GCC at
 https://bintray.com/platformio/tool-packages/toolchain-gccarmnoneeabi-darwin_x86_64#files.[^gcc-versions]
 
 In my case, I specified "toolchain-gccarmnoneeabi@1.40804.0" which is GCC 4.8.4
@@ -331,7 +337,8 @@ Flash: [          ]   0.1% (used 1296 bytes from 2097152 bytes)
 
 Here's everything PlatformIO does for us here:
 
-1. Download the library and framework files (e.g. chip SDK, RTOS, ...) for our project
+1. Download the library and framework files (e.g. chip SDK, RTOS, ...) for our
+   project
 2. Build all C, C++, and assembly files in our `src` folder
 3. Build all the private libraries in `lib` and create static libraries for them
 4. Link everything into an ELF
@@ -342,13 +349,14 @@ All with minimal configuration!
 
 ### Unit Tests
 
-Regular readers of Interrupt will know that we are [big fans of unit
-testing]({% post_url 2019-10-08-unit-testing-basics %}). PlatformIO has built in supports for running tests on your
-host or on target.
+Regular readers of Interrupt will know that we are
+[big fans of unit testing](/blog/unit-testing-basics). PlatformIO has built in
+supports for running tests on your host or on target.
 
 For a simple example, consider this trivial library:
 
 Header:
+
 ```c
 // lib/add/src/add .h
 #pragma once
@@ -357,6 +365,7 @@ int add(int a, int b);
 ```
 
 C:
+
 ```c
 // lib/add/src/add.c
 #include "add.h"
@@ -434,8 +443,8 @@ There's a lot to like about PlatformIO. It's an open source cross platform tool
 that makes it easy to setup, build, and test an embedded project no matter what
 IDE you use or what OS you run on your laptop.
 
-Best of all, having a package manager for embedded project is fantastic and
-will I hope further encourage people to collaborate and leverage excellent open
+Best of all, having a package manager for embedded project is fantastic and will
+I hope further encourage people to collaborate and leverage excellent open
 source libraries like mbedTLS.
 
 At the same time, the low number of supported vendor SDKs ("frameworks") makes
@@ -453,9 +462,9 @@ wait to use it for a future project. Look our for `platformio.ini` files in
 future Interrupt examples!
 
 <!-- Interrupt Keep START -->
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 <!-- Interrupt Keep END -->
 
 {:.no_toc}

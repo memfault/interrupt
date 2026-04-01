@@ -1,4 +1,5 @@
 ---
+date: "2024-07-24"
 title: Considerations when Building Embedded Databases
 description:
   Diving into the challenges of persisting device state to flash memory.
@@ -12,9 +13,9 @@ look at some of the pitfalls and how they may be avoided.
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Why You Should Care About NVS (Non-Volatile Storage)
 
@@ -187,9 +188,9 @@ enough to experience a decade of feature creep.
 #### How important is resilience to power loss during write operations?
 
 Data loss and corruption is incredibly frustrating for customers and expensive
-in terms of customer support and reputation. So, your embedded database
-should not lose data if power is lost at an inopportune time (such as during a
-program or erase operation).
+in terms of customer support and reputation. So, your embedded database should
+not lose data if power is lost at an inopportune time (such as during a program
+or erase operation).
 
 #### Are you storing just one record, or many records?
 
@@ -354,9 +355,9 @@ hardware failure or catastrophic firmware issues.
 ## Remote Monitoring of Database Statistics
 
 Lastly, building and deploying an embedded database requires some way of
-monitoring performance. [Memfault's
-metrics](https://memfault.com/customers/bond-home-case-study/) can be used for
-this purpose.
+monitoring performance.
+[Memfault's metrics](https://memfault.com/customers/bond-home-case-study/) can
+be used for this purpose.
 
 These are a few things you may want to keep an eye on:
 
@@ -406,9 +407,9 @@ underestimate the limitations of flash memory.
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 

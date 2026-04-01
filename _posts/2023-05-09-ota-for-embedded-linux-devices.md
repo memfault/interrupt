@@ -1,4 +1,5 @@
 ---
+date: "2023-05-09"
 title: "OTA for Embedded Linux Devices: A practical introduction"
 author: tsarlandie
 tags: [linux, ota, swupdate, memfault]
@@ -32,7 +33,7 @@ confidence. In particular:
 > This topic was also the subject of a
 > [Memfault webinar: OTA for embedded Linux Devices](https://hubs.la/Q01M97730).
 
-{% include toc.html %}
+<div id="toc"></div>
 
 As you will see, many components collaborate to update your embedded Linux
 systems. Our goal in this blog post is to walk you through a complete update

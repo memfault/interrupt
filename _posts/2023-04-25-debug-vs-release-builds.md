@@ -1,4 +1,5 @@
 ---
+date: "2023-04-25"
 title: "Pocket article: Debug vs. Release Builds Considered Harmful"
 # title: "Pocket article: Debug vs. Release Builds and why you shouldn't separate them"
 description: "Why having separate Debug/Release builds should be avoided"
@@ -17,7 +18,7 @@ practice, and why it might make sense to consolidate to a single build!
 
 <!-- excerpt end -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
 > 🌶️🔥 Warning! this article is taking a strong position on debug-vs-release
 > builds. I'm hoping to highlight a few pitfalls you may run into, but it's not
@@ -25,7 +26,7 @@ practice, and why it might make sense to consolidate to a single build!
 > builds (despite the clickbait title)! Please enjoy and as always comments are
 > greatly appreciated 🙏
 
-{% include toc.html %}
+<div id="toc"></div>
 
 ## Debug vs. Release Builds for Embedded Applications
 
@@ -58,8 +59,8 @@ Since enabling debug info has no impact on the final loaded executable, the only
 downsides to enabling it are:
 
 - _Slightly_ longer build times (can be ~10%, but difficult to measure, and
-  negligible if you're using [build caching]({% post_url
-  2020-02-11-improving-compilation-times-c-cpp-projects %})!)
+  negligible if you're using
+  [build caching](/blog/improving-compilation-times-c-cpp-projects)!)
 - Much larger symbol file size (can go from approximately the on-target size of
   the program, to many megabytes). This is generally not a problem, except for
   some C++ projects, where the type information can grow dramatically (for
@@ -67,8 +68,8 @@ downsides to enabling it are:
   [exceed 4GiB](https://randomascii.wordpress.com/2023/03/08/when-debug-symbols-get-large/)
   ❗)
 
-A quick example demonstrating that compiling with debug info has **zero**
-impact on the final program:
+A quick example demonstrating that compiling with debug info has **zero** impact
+on the final program:
 
 ```bash
 # a simple hello world program
@@ -173,19 +174,17 @@ production builds:
      units can be extremely useful when diagnosing faulty customer units that
      have been returned for analysis!
 3. Enabling **signed/encrypted builds**
-   - Also very tricky! Best practice is to verify the
-     signing/encryption implementation works throughout the development and test
-     cycle, instead of causing surprises at the end (execute-in-place encryption
-     too slow, key management not actually production ready, etc).
+   - Also very tricky! Best practice is to verify the signing/encryption
+     implementation works throughout the development and test cycle, instead of
+     causing surprises at the end (execute-in-place encryption too slow, key
+     management not actually production ready, etc).
    - It might make the most sense to have a separate "development" key for
-     signing/encrypting development builds. A key that is separate and has different
-     security concerns than the production key.
+     signing/encrypting development builds. A key that is separate and has
+     different security concerns than the production key.
 4. Disabling **runtime asserts**
-    - If your system can tolerate a reset due
-   to an `ASSERT` condition, these are _stupendously_ valuable in production
-   builds- see [this
-   post]({% post_url 2019-11-05-asserts-in-embedded-systems %}) for more
-   details
+   - If your system can tolerate a reset due to an `ASSERT` condition, these are
+     _stupendously_ valuable in production builds- see
+     [this post](/blog/asserts-in-embedded-systems) for more details
 
 I've seen the `DEBUG` flag used pretty aggressively to cut out entire subsystems
 that aren't strictly required for production. This can cause a lot of confusion,
@@ -228,8 +227,8 @@ is great!
 Avoid separate "Debug" and "Release" builds at all costs!
 
 More seriously, there are many downsides(complexity, wasted time, etc) if a
-different build is used during development vs. production. There are
-few cases where this is actually required!
+different build is used during development vs. production. There are few cases
+where this is actually required!
 
 My advice is to consider very carefully if you need a separate Release build,
 and make sure you're ready to commit to supporting it.
@@ -242,9 +241,9 @@ audited later. Avoid "Noah's laptop" builds making it to manufacturing 😅!
 
 <!-- Interrupt Keep START -->
 
-{% include newsletter.html %}
+<div class="newsletter"><p class="newsletter-content">Like Interrupt? <a class="newsletter-link" href="https://go.memfault.com/interrupt-subscribe" target="_blank"><b>Subscribe</b></a> to get our latest posts straight to your inbox.</p></div>
 
-{% include submit-pr.html %}
+<div class="submit-pr"><p class="submit-pr-content">See anything you'd like to change? Submit a pull request or open an issue on our <a class="submit-pr-link" href="https://github.com/memfault/interrupt" target="_blank">GitHub</a></p></div>
 
 <!-- Interrupt Keep END -->
 
