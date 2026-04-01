@@ -4,9 +4,6 @@ set -e
 # Install Node dependencies
 npm install
 
-# Preprocess Jekyll posts (converts Liquid tags to plain HTML/URLs)
-node scripts/preprocess-posts.js
-
 # Build Gatsby site (outputs to public/)
 gatsby build
 

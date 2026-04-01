@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "develop": "node scripts/preprocess-posts.js && gatsby develop",
-    "build": "node scripts/preprocess-posts.js && gatsby build",
+    "develop": "gatsby develop",
+    "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "lint:prettier": "prettier --check _posts _drafts",
@@ -34,5 +34,6 @@
     "lefthook": "^1.6.16",
     "prettier": "^3.3.2",
     "typos-rs-npm": "dalisoft/typos-rs-npm"
-  }
+  },
+  "packageManager": "yarn@4.13.0"
 }

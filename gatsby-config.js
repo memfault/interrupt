@@ -1,44 +1,44 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   siteMetadata: {
-    title: 'Interrupt',
-    description: 'A community and blog for embedded software makers',
-    siteUrl: 'https://interrupt.memfault.com',
+    title: "Interrupt",
+    description: "A community and blog for embedded software makers",
+    siteUrl: "https://interrupt.memfault.com",
     author: {
-      name: 'Memfault',
-      email: 'interrupt@memfault.com',
+      name: "Memfault",
+      email: "interrupt@memfault.com",
     },
-    googleSiteVerification: '2qyLRd8BiI5o3XnqssLvbzPDJ-2S6ytb9iLoNoz1Z9M',
+    googleSiteVerification: "2qyLRd8BiI5o3XnqssLvbzPDJ-2S6ytb9iLoNoz1Z9M",
   },
   plugins: [
     // Source posts from preprocessed directory
     {
-      resolve: 'gatsby-source-filesystem',
+      resolve: "gatsby-source-filesystem",
       options: {
-        name: 'posts',
-        path: path.join(__dirname, '_posts_processed'),
+        name: "posts",
+        path: path.join(__dirname, "_posts"),
       },
     },
     // Source images (for gatsby-remark-images)
     {
-      resolve: 'gatsby-source-filesystem',
+      resolve: "gatsby-source-filesystem",
       options: {
-        name: 'images',
-        path: path.join(__dirname, 'img'),
+        name: "images",
+        path: path.join(__dirname, "img"),
       },
     },
     // Markdown transformer
     {
-      resolve: 'gatsby-transformer-remark',
+      resolve: "gatsby-transformer-remark",
       options: {
-        excerpt_separator: '<!-- excerpt end -->',
+        excerpt_separator: "<!-- excerpt end -->",
         plugins: [
-          'gatsby-remark-autolink-headers',
+          "gatsby-remark-autolink-headers",
           {
-            resolve: 'gatsby-remark-prismjs',
+            resolve: "gatsby-remark-prismjs",
             options: {
-              classPrefix: 'language-',
+              classPrefix: "language-",
               inlineCodeMarker: null,
               aliases: {},
               showLineNumbers: false,
@@ -49,24 +49,24 @@ module.exports = {
       },
     },
     // Image handling
-    'gatsby-plugin-sharp',
-    'gatsby-transformer-sharp',
-    'gatsby-plugin-image',
+    "gatsby-plugin-sharp",
+    "gatsby-transformer-sharp",
+    "gatsby-plugin-image",
     // SCSS support (includes _sass directory in load path)
     {
-      resolve: 'gatsby-plugin-sass',
+      resolve: "gatsby-plugin-sass",
       options: {
         sassOptions: {
-          includePaths: [path.join(__dirname, '_sass')],
+          includePaths: [path.join(__dirname, "_sass")],
           quietDeps: true,
         },
       },
     },
     // Sitemap
     {
-      resolve: 'gatsby-plugin-sitemap',
+      resolve: "gatsby-plugin-sitemap",
       options: {
-        output: '/',
+        output: "/",
         query: `
           {
             site {
@@ -85,14 +85,14 @@ module.exports = {
         resolvePages: ({ allSitePage: { nodes: pages } }) => pages,
         serialize: ({ path: pagePath }) => ({
           url: pagePath,
-          changefreq: 'weekly',
+          changefreq: "weekly",
           priority: 0.7,
         }),
       },
     },
     // RSS Feed
     {
-      resolve: 'gatsby-plugin-feed',
+      resolve: "gatsby-plugin-feed",
       options: {
         query: `
           {
@@ -108,13 +108,13 @@ module.exports = {
         feeds: [
           {
             serialize: ({ query: { site, allMarkdownRemark } }) => {
-              return allMarkdownRemark.nodes.map(node => ({
+              return allMarkdownRemark.nodes.map((node) => ({
                 title: node.frontmatter.title,
                 date: node.frontmatter.date,
                 url: `${site.siteMetadata.siteUrl}${node.fields.slug}`,
                 guid: `${site.siteMetadata.siteUrl}${node.fields.slug}`,
                 description: node.excerpt,
-                custom_elements: [{ 'content:encoded': node.html }],
+                custom_elements: [{ "content:encoded": node.html }],
               }));
             },
             query: `
@@ -133,8 +133,8 @@ module.exports = {
                 }
               }
             `,
-            output: '/feed.xml',
-            title: 'Interrupt RSS Feed',
+            output: "/feed.xml",
+            title: "Interrupt RSS Feed",
           },
         ],
       },

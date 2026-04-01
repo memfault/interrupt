@@ -7,7 +7,6 @@ _site/
 # Gatsby
 .cache/
 public/
-_posts_processed/
 
 .DS_Store
 /vendor
