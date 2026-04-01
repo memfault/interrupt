@@ -2,7 +2,7 @@
 set -e
 
 # Install Node dependencies
-npm install
+yarn install
 
 # Build Gatsby site (outputs to public/)
 gatsby build
