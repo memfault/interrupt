@@ -10,7 +10,7 @@ author: francois
 tags: [matter, thread, iot, nrf54]
 ---
 
-I've been digging into Matter lately (see [my last post]({% post_url 2026-03-23-matter-internet-connectivity %}) on internet connectivity from Thread devices). It's a neat protocol! The promise of "one standard for the smart home" is compelling, especially considering how clunky WiFi provisioning is today.
+I've been digging into Matter lately (see [my last post]({% post_url 2026-03-24-matter-internet-connectivity %}) on internet connectivity from Thread devices). It's a neat protocol! The promise of "one standard for the smart home" is compelling, especially considering how clunky WiFi provisioning is today.
 
 In order to learn more about the standard, I decided to write a simple Matter application. Hope you will enjoy coming along for the ride.
 
