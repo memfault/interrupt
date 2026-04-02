@@ -4,7 +4,7 @@ description:
   Matter devices need firmware updates, but the standard DCL-based approach
   offers limited control and slow iteration. This post walks through
   implementing direct OTA updates using CoAP block transfers over DTLS,
-  with nRF Cloud as the OTA backend,
+  with nRF Cloud as the OTA backend.
   on the nRF54LM20 DK.
 author: francois
 tags: [matter, firmware-update, iot, nrf54, ota]
@@ -350,7 +350,7 @@ memfault upload-ota-payload \
   build/zephyr/app_update.bin
 ```
 
-Once uploaded, create a release and activate it for your cohort. See the [Memfault OTA documentation][^memfault_ota] for details on staged rollouts and cohort targeting.
+Once uploaded, create a release and activate it for your cohort. See the Memfault OTA documentation[^memfault_ota] for details on staged rollouts and cohort targeting.
 
 With the image uploaded, let's see it in action. First, a quick update check:
 
