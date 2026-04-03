@@ -1,0 +1,27 @@
+publish: [article name]
+
+ ### Summary
+
+[article name] is ready to publish! 🎉 Thank you to @[author handle] for
+submitting.
+
+ ### Test Plan
+
+ <details>
+ <summary>Publishing checklist</summary>
+
+- [ ] Is the date correct?
+- [ ] Is the URL correct?
+- [ ] Is the markdown file name correct? (date and article)
+- [ ] Is the title optimized for SEO?
+- [ ] Are there tags added?
+- [ ] Is the meta description added?
+- [ ] Do we have full author info?
+- [ ] Is the excerpt correct?
+- [ ] Do all links work?
+- [ ] Have all images rendered correctly?
+- [ ] Have all code snippets rendered correctly?
+- [ ] Have we cross linked to all relevant preexisting articles?
+      (i.e. related content, other articles in a series, etc.)
+
+ </details>
