@@ -569,7 +569,7 @@ Dump of assembler code for function dummy_function_4:
 End of assembler dump.
 ```
 
-We will install a breakpoint at address `0x270`, so if we single step after that we shold see, `0x272`,
+We will install a breakpoint at address `0x270`, so if we single step after that we should see, `0x272`,
 `0x274` and then a branch to `0x6c0` executed by the processor.
 
 ```bash

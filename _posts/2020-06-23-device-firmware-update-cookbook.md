@@ -568,7 +568,7 @@ const image_hdr_t *image_get_header(image_slot_t slot) {
 To validate the image, we compute its CRC and compare it with the value written
 in the header. This will allow you to catch data corruption or bit errors, and
 save you some trouble down the line. Note that verifying CRC on boot is not
-appropriate for every applicaton, as it can slow down boot significantly.
+appropriate for every application, as it can slow down boot significantly.
 
 ```c
 int image_validate(image_slot_t slot, const image_hdr_t *hdr) {

@@ -53,7 +53,7 @@ $ arm-none-eabi-size build/with-libc.elf
 So in this program we have:
 
 - 10800 bytes of `text`, which is code
-- 104 bytes of `data`, which is statically initalized memory
+- 104 bytes of `data`, which is statically initialized memory
 - 8272 bytes of `bss`, which is zero-initialized memory
 
 Unfortunately, the output of this tool is a little misleading. You may think

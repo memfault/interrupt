@@ -34,7 +34,7 @@ embedded that is the best I've seen yet. I hope you will give it a whirl!
 
 ## What is PlatformIO?
 
-<a href="https://platformio.org/" target="_blank">PlatformIO</a> is a set of open source tools targetted at professional embedded
+<a href="https://platformio.org/" target="_blank">PlatformIO</a> is a set of open source tools targeted at professional embedded
 developers.  Foremost of those tools is the PlatformIO Plugin for VSCode which
 is used by hundreds of thousands of embedded developers to create, compile,
 debug, and test embedded projects.

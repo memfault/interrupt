@@ -620,7 +620,7 @@ or at [interrupt@memfault.com](mailto:interrupt@memfault.com).
 
 Next time in the series, we'll talk about bootstrapping the C library!
 
-_EDIT: Post written!_ - [Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
+_EDIT: Post written!_ - [Bootstrapping libc with Newlib]({% post_url 2019-11-12-bootstrapping-libc-with-newlib %})
 
 > Interested in learning more device firmware update best practices? [Watch this webinar recording](https://hubs.la/Q02hgRrk0)
 

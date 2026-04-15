@@ -122,7 +122,7 @@ to fit in one LL packet) but the size can be negotiated via the _Exchange MTU Re
 
 Per the Bluetooth Core Specification, the maximum allowed length of an attribute value (the ATT payload) is 512
 bytes[^11]. While this technically means the MTU size can be slightly larger than 512 bytes (to
-accomodate for the ATT protocol overhead), most bluetooth stacks support a maximum MTU value of 512 bytes.
+accommodate for the ATT protocol overhead), most bluetooth stacks support a maximum MTU value of 512 bytes.
 
 The packet looks like this:
 
@@ -170,7 +170,7 @@ As part of the 5.0 Bluetooth Core Specification revision, a new feature known as
 
 ![]({% img_url ble-throughput/ble-throughput-dple-and-2m-phy.png %})
 
-We can calculate this throughput and see the modification yields almost a _4x_ improvement over the original maximal raw data speed that could be achived with BLE 4.0:
+We can calculate this throughput and see the modification yields almost a _4x_ improvement over the original maximal raw data speed that could be achieved with BLE 4.0:
 
 `251 bytes / 1400μs = 179.3 kBytes/sec = ~1.434 Mbps`
 
@@ -241,7 +241,7 @@ Many devices only support a subset of the valid connection parameter range (7.5m
 
 > ![]({% img_url ble-throughput/apple-connection-parameters.png %})
 
-A longer connection event in itself isn't necessarily a problem for throughput. Some devices will send and recieve data for an entire connection event so if you are streaming data continuously the same throughput can be realized even if you are using a 30ms interval instead of a 15ms interval.
+A longer connection event in itself isn't necessarily a problem for throughput. Some devices will send and receive data for an entire connection event so if you are streaming data continuously the same throughput can be realized even if you are using a 30ms interval instead of a 15ms interval.
 
 What the connection interval _does_ impact is latency. Many higher layer protocols have messages which need to be acknowledged by higher level software components. The longer the connection interval, the longer it will take for these round trips to complete
 

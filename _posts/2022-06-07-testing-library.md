@@ -222,7 +222,7 @@ Once the test is executed (the controller tells the reactor to execute it), it i
 The testing code should use the record to get any data from the controller, collect any data during the test, and primarily, provide information whenever the test failed or succeeded.
 
 In the example, you can see the usage of all the primitives:
- - `rec.get_arg<int>("product_id")` tells the reactor to ask the controller for an argument with key `product_id` and retreive it as integer type
+ - `rec.get_arg<int>("product_id")` tells the reactor to ask the controller for an argument with key `product_id` and retrieve it as integer type
  - `rec.expect( product_id < MAX_PRODUCTS_N )` is a form checking properties in the test - if `false` is passed to the `expect(bool)` method the test is marked as failed.
  - `rec.collect("released: ", product_id )` collects the data `product_id` with key `released: ` and sends it to the controller.
 

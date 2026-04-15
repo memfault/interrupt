@@ -263,4 +263,4 @@ JTAG interface and also ways to bypass these restrictions.
 ## Links
 
 - [TopJTAG Probe Official Site](http://www.topjtag.com/probe/)
-- [Segger Offical Site](https://www.segger.com/)
+- [Segger Official Site](https://www.segger.com/)

@@ -331,7 +331,7 @@ Compile a new application with some kind of change so you can easily confirm it 
 --- a/example/mcuboot/application/src/main.c
 +++ b/example/mcuboot/application/src/main.c
 @@ -39,7 +39,8 @@ int main(void) {
-   // succesfully completed init, mark image as stable
+   // successfully completed init, mark image as stable
    boot_set_confirmed();
 
    EXAMPLE_LOG("==Main Application Booted==");
@@ -679,7 +679,7 @@ make 2>&1 | rg ": undefined.*" -o | sort -u
 
 Examining the missing symbols we have three classes:
 
-1. Missing Newlib platform dependency implementations. (We've seen these before in [our post about porting newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})).
+1. Missing Newlib platform dependency implementations. (We've seen these before in [our post about porting newlib]({% post_url 2019-11-12-bootstrapping-libc-with-newlib %})).
 2. The `tc_sha256_*` are missing implementations for the Tincrypt backend we are using.
 3. The `flash_*` dependency functions defined in `flash_map_backend.h` need to be filled in.
 

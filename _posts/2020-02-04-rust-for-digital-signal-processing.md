@@ -126,7 +126,7 @@ As a C programmer, I was tempted to write the Rust code using an imperative
 style. Instead, I decided to leverage Rust's syntax for functional programming,
 as it maps neatly to digital signal processing concepts. While this is beyond
 the scope of this article, I found that using a functional rather than
-itterative approach yielded a ~2x improvement in performance in this case.
+iterative approach yielded a ~2x improvement in performance in this case.
 
 We filled in `src/lib.rs`, the file cargo auto-generated for us. It creates a
 function `dsp_process_rs` which we will expose to our C code.

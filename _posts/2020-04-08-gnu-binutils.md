@@ -511,7 +511,7 @@ my_library_function  lib_v2.c:6: Version 1
 The behavior we observed above is because `ar`, unlike other Binutil commands, _appends_ to a
 pre-existing file if it exists. With embedded software, since creating a new archive is very fast,
 I recommend just deleting any pre-existing archive when a new one gets generated. For example, we
-achieve this in the Make fule below by adding `rm -f $@` before the `ar` invocation:
+achieve this in the Make rule below by adding `rm -f $@` before the `ar` invocation:
 
 ```bash
 $(MYLIB_TARGET): $(MYLIB_OBJ_FILES)
@@ -779,7 +779,7 @@ $ arm-none-eabi-readelf -S nrf52_example/build/nrf52.elf | grep debug
 
 `objcopy` is most commonly used as the last stage of a build to generate the `.bin` or `.hex` file which
 can be flashed onto a device. Unlike an operating system where there is a "dynamic loader" that
-resolves addresses and loads libaries at runtime, on embedded devices all of the memory locations
+resolves addresses and loads libraries at runtime, on embedded devices all of the memory locations
 are typically resolved at link time.
 
 ```bash
@@ -824,7 +824,7 @@ arm-none-eabi-nm -S -l my_binary.o
 - `-a` To show the address which was decoded. This can be useful when decoding multiple addresses
   at once or using `addr2line` in a batch processing mode.
 - `-f` To display the function name the address is in
-- `-e <ELF>` To specify the excutable to decode. (Otherwise, `addr2line` checks for `a.out` in the
+- `-e <ELF>` To specify the executable to decode. (Otherwise, `addr2line` checks for `a.out` in the
   working directory and uses that.)
 
 #### Example Usage

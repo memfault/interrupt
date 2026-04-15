@@ -397,7 +397,7 @@ infinite_loop () at ./main.c:157
 157       __asm("bkpt 6");
 ```
 
-We can dump the dissasembly of this loop to get a sense of what we expect to be recorded by the MTB:
+We can dump the disassembly of this loop to get a sense of what we expect to be recorded by the MTB:
 
 ```
 (gdb) disassemble infinite_loop
@@ -450,7 +450,7 @@ Begin Trace Session
 
 Neat, what we are looking at here is a trace of the entire instruction flow up to the breakpoint.
 
-If we want to view the exact instructions executed we can take the destination address from the previous packet and the source from the next packet and dissasemble the range with gdb. We see the `0x20000348` we identified above has been recorded in the trace.
+If we want to view the exact instructions executed we can take the destination address from the previous packet and the source from the next packet and disassemble the range with gdb. We see the `0x20000348` we identified above has been recorded in the trace.
 
 For example for the first `D` -> `S` transition we have above:
 

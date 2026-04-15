@@ -130,7 +130,7 @@ francois-mba:zero-to-main francois$ xxd build/minimal/minimal.bin  | head
 00000090: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 ```
 
-If I'm reading this correctly, our inital SP is `0x20002000`, and our start
+If I'm reading this correctly, our initial SP is `0x20002000`, and our start
 address pointer is `0x000000c1`.
 
 Let's dump our symbols to see which one is at `0x000000c1`.
@@ -323,7 +323,7 @@ More complex programs often require a more complicated `Reset_Handler`. For
 example:
 1. Relocatable code must be copied over
 2. If our program relies on libc, we must initialize it
-  _EDIT: Post written!_ - [From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
+  _EDIT: Post written!_ - [From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-bootstrapping-libc-with-newlib %})
 3. More complex memory layouts can add a few copy / zero loops
 
 We'll cover all of them in future posts. But before that,

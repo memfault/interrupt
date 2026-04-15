@@ -626,7 +626,7 @@ custom `sleep_for()` to busy wait or to yield:
 enum class SleepStrategy {
     Default,            // Platform decides when to use busy wait vs. yield
     PreciseBusyWait,    // Busy wait, which is usually very precise
-    EfficientYield      // Efficently yield to other threads, but will often sleep longer than specified
+    EfficientYield      // Efficiently yield to other threads, but will often sleep longer than specified
 };
 
 template<typename _Rep, typename _Period>
