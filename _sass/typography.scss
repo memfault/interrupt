@@ -1,3 +1,6 @@
+@use "sass:color";
+@use "variables" as *;
+
 /*- Typography -*/
 //
 // Based on the typographic scale: 12, 14, 16, 18, 21, 24, 36, 48, 60, 72.
@@ -102,7 +105,7 @@ blockquote {
 	   -moz-border-radius: 4px;
 	    -ms-border-radius: 4px;
           border-radius: 4px;
-	background-color: darken($background-color, 5%);
+	background-color: color.adjust($background-color, $lightness: -5%);
 	padding: 0 1.5em; /* 24px/18px */
 	p, ul, ol {
 		padding: 1.5em 0; /* 24px/18px */
