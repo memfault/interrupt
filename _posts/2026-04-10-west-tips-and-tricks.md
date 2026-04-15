@@ -83,7 +83,7 @@ you don't need.
 
 Two manifest options that help a lot here:
 
-**`name-allowlist`** — Only import the named projects from the upstream
+**`name-allowlist`** - Only import the named projects from the upstream
 manifest:
 
 ```yaml
@@ -105,7 +105,7 @@ This is
 and is probably the most useful thing you can do to keep workspace
 initialization fast.
 
-**`path-prefix`** — Put all imported projects under a common subdirectory
+**`path-prefix`** - Put all imported projects under a common subdirectory
 instead of the workspace root. Keeps things tidy:
 
 ```yaml
@@ -276,8 +276,8 @@ make a contribution upstream!
 ## Resolving the manifest to exact SHAs
 
 West manifests typically reference branches or tags, which can drift over time.
-To capture a fully-resolved snapshot with exact commit SHAs — useful for
-reproducible builds or auditing — use:
+To capture a fully-resolved snapshot with exact commit SHAs - useful for
+reproducible builds or auditing - use:
 
 ```bash
 west manifest --resolve
