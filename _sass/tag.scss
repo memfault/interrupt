@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 .post-tag {
   display: inline-block;
   background: rgba($theme-color, 0.15);

@@ -2,9 +2,14 @@
 # Front matter comment to ensure Jekyll properly reads file.
 ---
 
-//Import
-@import "base", "mixin", "typography", "tag", "layout", "syntax.scss", "custom.scss";
-@import "modules/toc";
-@import "modules/newsletter";
-@import "modules/submit_pr";
-@import "modules/dark-mode";
+@use "base";
+@use "mixin";
+@use "typography";
+@use "tag";
+@use "layout";
+@use "syntax";
+@use "custom";
+@use "modules/toc";
+@use "modules/newsletter";
+@use "modules/submit_pr";
+@use "modules/dark-mode";

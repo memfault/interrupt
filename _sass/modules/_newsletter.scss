@@ -1,3 +1,5 @@
+@use "../mixin" as *;
+
 .newsletter {
   @include setFeatured(newsletter);
 }

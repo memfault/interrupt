@@ -1,3 +1,7 @@
+@use "sass:color";
+@use "variables" as *;
+@use "mixin" as *;
+
 /* -- General Layout -- */
 
 /* Required for footer to stick to the bottom */
@@ -18,7 +22,7 @@ html, body {
       font-size: 1em;
     }
     &:hover {
-      background-color: lighten($main-color, 5%);
+      background-color: color.adjust($main-color, $lightness: 5%);
     }
   }
   span {
@@ -68,7 +72,7 @@ html, body {
 #menu {
   height: 4px;
   width: 1.5em;
-  background-color: lighten($text-color, 35%);
+  background-color: color.adjust($text-color, $lightness: 35%);
   margin-top: 8px;
   &:after, &:before {
     content: "";
@@ -76,7 +80,7 @@ html, body {
     position: relative;
     height: 4px;
     width: 1.5em;
-    background-color: lighten($text-color, 35%);
+    background-color: color.adjust($text-color, $lightness: 35%);
     transition: all 0.3s ease-in;
   }
   &:before {
@@ -202,7 +206,7 @@ html, body {
     width: 5rem;
     height: 1px;
     margin: 23px auto;
-    background-color: lighten($text-color, 70%);
+    background-color: color.adjust($text-color, $lightness: 70%);
   }
 }
 
@@ -233,13 +237,12 @@ html, body {
     width: 5rem;
     height: 1px;
     margin: 23px auto;
-    background-color: lighten($text-color, 70%);
+    background-color: color.adjust($text-color, $lightness: 70%);
   }
 
 .by-line {
   display: block;
-  color: lighten($text-color, 25%);
-  line-height: 1.5em; /* 24px/16px */
+  color: color.adjust($text-color, $lightness: 25%);
   margin-bottom: 1.5em; /* 24px/16px */
   font-weight: 200;
 
@@ -265,7 +268,7 @@ img {
 }
 
 code {
-  color: lighten($text-color, 35%);
+  color: color.adjust($text-color, $lightness: 35%);
 }
 
 /* Pages */
@@ -280,15 +283,15 @@ code {
   text-align: center;
   margin: 2.666668em;
   span {
-    background-color: darken($background-color, 5%);
+    background-color: color.adjust($background-color, $lightness: -5%);
     color: $text-color;
   }
 	a:hover,
 	a:visited,
 	a:focus,
 	a:active {
-		background-color: lighten($main-color, 5%);
-		color: darken($background-color, 20%);
+		background-color: color.adjust($main-color, $lightness: 5%);
+		color: color.adjust($background-color, $lightness: -20%);
 	}
 }
 .page-item {
@@ -331,7 +334,7 @@ footer {
     font-weight: 500;
     &:hover,
     &:focus {
-      color: darken($background-color, 20%);
+      color: color.adjust($background-color, $lightness: -20%);
     }
   }
 }
@@ -391,7 +394,7 @@ footer {
     width: 5rem;
     height: 1px;
     margin: 23px auto;
-    background-color: lighten($text-color, 70%);
+    background-color: color.adjust($text-color, $lightness: 70%);
   }
 }
 
@@ -431,7 +434,7 @@ footer {
       width: 5rem;
       height: 1px;
       margin: 23px auto;
-      background-color: lighten($text-color, 70%);
+      background-color: color.adjust($text-color, $lightness: 70%);
     }
 
     h3 {
@@ -454,7 +457,7 @@ footer {
 
     .hs_email {
       label {
-        color: lighten($text-color, 25%);
+        color: color.adjust($text-color, $lightness: 25%);
         line-height: 1.5em;
         font-weight: 200;
       }

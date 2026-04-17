@@ -1,4 +1,4 @@
-FROM ruby:3.2.2-slim-bullseye
+FROM ruby:3.3.8-slim-bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -14,6 +14,7 @@ WORKDIR /memfault/interrupt
 COPY Gemfile .
 COPY Gemfile.lock .
 RUN bundle config force_ruby_platform true
+RUN gem install bundler -v 4.0.10
 RUN bundle install
 
 COPY requirements.txt .
