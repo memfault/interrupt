@@ -153,9 +153,9 @@ Let's walk through the implementation.
 
 ## Implementation
 
-All the code shown here runs on an nRF54LM20 DK[^nrf54lm20] using the nRF
+All the code shown here runs on an nRF54LM20 DK[^nrf54lm20dk] using the nRF
 Connect SDK[^ncs]. The complete project is available on
-[GitHub](https://github.com/memfault/interrupt-matter-ota).
+[GitHub](https://github.com/memfault/ncs-example-matter-over-thread).
 
 ### Configuration
 
@@ -418,7 +418,7 @@ if (!boot_is_img_confirmed()) {
 
 Once confirmed, the new image is permanent.
 
-> *Note* you may chose to confirm the image after e.g. a connection was
+> _Note_ you may chose to confirm the image after e.g. a connection was
 > successfully established.
 
 ## Trying It Out
@@ -508,12 +508,12 @@ would benefit from a faster transport.
 
 nRF Cloud provides the fleet management features that Matter's DCL lacks: staged
 rollouts, cohort targeting, and version management with a fast development loop.
-It offers a free tier for up to 10 devices, and pay-as-you-go pricing after 
+It offers a free tier for up to 10 devices, and pay-as-you-go pricing after
 that[^nrfcloud_pricing].
 
 The complete project is available on
-[GitHub](https://github.com/memfault/interrupt-matter-ota). We would love to
-hear about your experience in the comments.
+[GitHub](https://github.com/memfault/ncs-example-matter-over-thread). We would
+love to hear about your experience in the comments.
 
 <!-- Interrupt Keep START -->
 
@@ -533,7 +533,7 @@ hear about your experience in the comments.
 [^memfault_ota]: [Memfault OTA Releases Integration Guide](https://docs.memfault.com/docs/mcu/releases-integration-guide)
 [^mcuboot]: [MCUboot](https://docs.mcuboot.com/)
 [^block2_rfc]: [RFC 7959: Block-Wise Transfers in the Constrained Application Protocol](https://datatracker.ietf.org/doc/html/rfc7959)
-[^nrf54lm20]: [nRF54LM20 Product Page](https://www.nordicsemi.com/Products/nRF54LM20)
+[^nrf54lm20dk]: [nRF54LM20-DK Product Page](https://www.nordicsemi.com/Products/Development-hardware/nRF54LM20-DK)
 [^ncs]: [nRF Connect SDK](https://www.nordicsemi.com/Products/Development-software/nRF-Connect-SDK)
-[^nrfcloud_pricing]: https://nrfcloud.com/pricing
+[^nrfcloud_pricing]: [nRF Cloud Pricing](https://nrfcloud.com/pricing)
 <!-- prettier-ignore-end -->
