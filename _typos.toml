@@ -1,12 +1,105 @@
 # See config documentation here:
 # https://github.com/crate-ci/typos/blob/master/docs/reference.md
+
 [default.extend-words]
+# "preemptable" is a valid alternate spelling of "preemptible" in CS contexts
+preemptable = "preemptable"
 
 [default]
-# extend-ignore-re list operates on sequences, not identifiers, so we can
-# have very targeted ignores
-extend-ignore-re = []
+# extend-ignore-re matches against raw text, so patterns can target specific
+# contexts rather than blanket-ignoring a word everywhere.
+extend-ignore-re = [
+    # ser = serial.Serial(...) / ser = Serial(...) — Python serial port variable
+    # ser.readline() / ser, ser) — serial port used in calls and as argument
+    # ser2net — tool name
+    # ser-mk — GitHub username in author data
+    "ser\\s*=\\s*[Ss]erial|\\bser[.,\\s()=]|ser2net|ser-mk",
+
+    # rsource "..." — Zephyr Kconfig file-include directive
+    "rsource\\s+\"",
+
+    # FP_COMPn, DWT_COMPn — ARM Cortex-M register names with n-index suffix
+    # DWT_FUNCTIONn — same pattern, covers FUNCTIO false positive
+    "COMPn\\b",
+    "FUNCTIONn\\b",
+
+    # LFS_O_WRONLY, O_WRONLY — standard POSIX/littlefs file-open flag
+    "O_WRONLY",
+
+    # .rela.dyn, .rela.plt — ELF relocation section names
+    "\\.rela\\.",
+
+    # [**T**rice **I**D **L**ist] — markdown bold-letter formatting of "List"
+    # produces bare "ist" as a token
+    "\\*\\*L\\*\\*ist",
+
+    # EXTI.fpr(...) — STM32 EXTI falling-pending register
+    "\\.fpr\\(",
+
+    # RTOSs, RTOSes — plural of RTOS
+    "RTOSs\\b|RTOSes\\b",
+
+    "000000ba g     F .text  00000006 HardFault_Handler",
+
+    # ded7 1b8d ... — 4-char hex groups in memory dump output; require at least
+    # one digit to avoid matching prose words like "dead", "cafe", "face"
+    # ue.. — ASCII column in xxd-style hex dump
+    # "\\b(?:[0-9][0-9a-f]{3}|[0-9a-f][0-9][0-9a-f]{2}|[0-9a-f]{2}[0-9][0-9a-f]|[0-9a-f]{3}[0-9])\\b",
+    "00000060: ded7 1b8d ffe0 5356 61e7 847a 0000 0000",
+    "2730 75650000 41737365 72742069 6e206061  ue..Assert in",
+
+    # DEVICE_DT_GET_2nd, DT_DRV_INST_2nd — Zephyr DT macro ordinal suffix
+    "_2nd\\b",
+
+    # System on Module (SOM) — standard embedded acronym
+    "\\(SOM\\)",
+
+    # 1NCE — IoT connectivity provider name
+    "1NCE",
+
+    # SleepStrategy strat — C++ parameter variable in sleep_for code example
+    "SleepStrategy\\s+strat|strat\\s*[=!]=",
+
+    # "is datas" — GDB info files output showing a section type
+    "is datas\\b",
+
+    # pre-empted — valid hyphenated form
+    "pre-empted",
+
+    # author: mabe — author shortname slug in post frontmatter
+    "author: mabe",
+
+    # "Nothin' but a J Thang" — deliberate informal song-title spelling
+    "Nothin'",
+
+    # Embedd — company name (embedd.it startup)
+    # embedd.it / embedd.jpg — URL and image references
+    # [^embedd] — footnote reference
+    "Embedd\\b|embedd\\.|\\^embedd",
+
+    # je ne sais quoi — French phrase
+    "ne sais",
+
+    # .debug_aranges — DWARF debug section name
+    "debug_aranges",
+
+    # 899ede2be378 — Medium article URL hash
+    "899ede2be378",
+]
 
 [files]
 # list of files to exclude
-extend-exclude = []
+extend-exclude = [
+    "example/",
+    "misc/",
+    # Non-prose directories: images, stylesheets, structured data
+    "img/",
+    "_sass/",
+    "_data/",
+    # Heavy use of OpenThread API prefix (ot/OT) throughout
+    "_posts/2026-03-24-matter-internet-connectivity.md",
+    # AddressInterceptor (ADIN) LLVM pass — adin/ADIN pervades the whole post
+    "_posts/2023-10-11-mcu-peripheral-forwarding.md",
+    # LTE User Equipment (UE) acronym used throughout
+    "_posts/2023-12-13-lte-and-iot.md",
+]

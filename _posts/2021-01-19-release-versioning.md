@@ -61,7 +61,7 @@ Example: 1.0.0 → 2.0.0
 
 For most firmware projects, the MAJOR field might *never* be incremented. If I'm writing firmware for an nRF52, and it is the only MCU in my hardware product, it doesn't have to interact or communicate with many other pieces of software or hardware, so there shouldn't be any incompatible API changes!
 
-There is one occassion where I would seriously consider incrementing the MAJOR field, and that is when our firmware becomes **incompatible with a version of itself**. Let me explain.
+There is one occasion where I would seriously consider incrementing the MAJOR field, and that is when our firmware becomes **incompatible with a version of itself**. Let me explain.
 
 Normal software packages can be updated at any time, with almost no repercussions. If incompatibility arises, just revert the change and continue. However, on firmware devices, the firmware updates itself. If there is an incompatibility, it might require a re-install, a factory reset, or in the worst of cases, the device might be bricked!
 

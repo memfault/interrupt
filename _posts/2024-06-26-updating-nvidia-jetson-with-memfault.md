@@ -258,7 +258,7 @@ $ sudo -E ROOTFS_AB=1 ./tools/ota_tools/version_upgrade/l4t_generate_ota_package
 
 This will generate the `bootloader/jetson-orin-nano-devkit/ota_payload_package.tar.gz` file.
 
-Our `update-instaler` also needs the OTA tools so we will include them in each release.
+Our `update-installer` also needs the OTA tools so we will include them in each release.
 
 ```bash
 $ cd ~/nvidia/Linux_for_Tegra/bootloader/jetson-orin-nano-devkit

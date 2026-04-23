@@ -715,7 +715,7 @@ are responsible for providing locations of the standard libraries in this scenar
   implemented but Clang makes every effort to match the exact subset required by GCC.
 
 Fortunately, for ARM Cortex-M development, the official GNU Arm toolchain[^1] bundles pre-compiled
-variants of [Newlib's libc and libm]({% post_url 2019-11-12-boostrapping-libc-with-newlib %}).
+variants of [Newlib's libc and libm]({% post_url 2019-11-12-bootstrapping-libc-with-newlib %}).
 
 When you compile a project with the GNU Arm toolchain, `libc.a` & `libm.a` from the pre-compiled
 Newlib as well as GCC's `libgcc.a` will be linked into your project automatically.

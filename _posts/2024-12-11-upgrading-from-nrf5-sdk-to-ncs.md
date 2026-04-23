@@ -405,7 +405,7 @@ void service_changed_work_handle(struct k_work *item)
 {
   int err;
   static struct bt_gatt_indicate_params indicate_params;
-  /* Harcode the attribute handle for SC characteristic from nRF5 SDK application (12 in this
+  /* Hardcode the attribute handle for SC characteristic from nRF5 SDK application (12 in this
    * case). CONFIG_BT_GATT_ENFORCE_SUBSCRIPTION must be disabled in project configuration to
    * allow the indication to be sent, as the Zephyr host has know way of knowing if the client
    * was subscribed to this characteristic.

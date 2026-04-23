@@ -110,7 +110,7 @@ them to binaries that can be flashed to the correct addresses. Instead, we
 settled on creating IHEX files since they exactly meet our requirements, are
 simple to generate and come with lots of great tooling.
 
-### Building HEX File Programatically
+### Building HEX File Programmatically
 
 Hex files consist of lines of hexadecimal data, called records, that specify
 both an address and the data to write at this address. The

@@ -62,7 +62,7 @@ reading in the comments or [on the Interrupt Slack](https://interrupt-slack.hero
 ## Tools & Projects
 
 - [elfshaker/elfshaker: elfshaker stores binary objects efficiently](https://github.com/elfshaker/elfshaker)<br>
-  An incredibly neat tool that takes many binary files and compresses them effeciently in a custom format. Since binary ELF files don't change often with rebuilds, and because normal compression like gzip doesn't work well on binaries, this tool can produce amazing results. They claim a 0.01% compression ratio when it's snapshotting many binaries at once! To prove their point, they also have [elfshaker/manyclangs](https://github.com/elfshaker/manyclangs), which is a GitHub repo of all LLVM builds ever, stored in 100MB. Impressive!
+  An incredibly neat tool that takes many binary files and compresses them efficiently in a custom format. Since binary ELF files don't change often with rebuilds, and because normal compression like gzip doesn't work well on binaries, this tool can produce amazing results. They claim a 0.01% compression ratio when it's snapshotting many binaries at once! To prove their point, they also have [elfshaker/manyclangs](https://github.com/elfshaker/manyclangs), which is a GitHub repo of all LLVM builds ever, stored in 100MB. Impressive!
 - [nadavrot/memset_benchmark](https://github.com/nadavrot/memset_benchmark)<br>
   `memcpy` and `memset` implements which outperform the folly and glibc versions.
 - [Dirbaio/rzcobs](https://github.com/dirbaio/rzcobs)<br>

@@ -509,7 +509,7 @@ static void prv_sha256(const void *buf, uint32_t size, uint8_t *hash_out)
 }
 ```
 
-Note that `cf_sha256_update` can be called mutliple times, so if you are
+Note that `cf_sha256_update` can be called multiple times, so if you are
 validating a binary that isn't memory mapped you can calculate the hash
 iteratively rather than all at once. For example, here's an implementation that
 reads from a POSIX file:

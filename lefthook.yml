@@ -13,4 +13,5 @@ pre-commit:
       stage_fixed: true
     typos:
       glob: "*.md"
+      exclude: "^(example|misc)/|matter-internet-connectivity|mcu-peripheral-forwarding|lte-and-iot"
       run: yarn typos --config _typos.toml {staged_files}

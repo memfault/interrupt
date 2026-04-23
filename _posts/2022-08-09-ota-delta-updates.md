@@ -495,7 +495,7 @@ janpatch_ctx ctx = {
 };
 ```
 
-Finally, we need to invoke the `janpatch` method itself. It acccepts three
+Finally, we need to invoke the `janpatch` method itself. It accepts three
 `JANPATCH_STREAM`:
 
 - `source`, here that is our App image in slot 2.

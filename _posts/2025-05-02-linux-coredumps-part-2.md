@@ -51,7 +51,7 @@ slim coredump:
 - Remove heap allocations
 - Capture metadata needed for debuggers.
 
-By fullfilling the above requirements, we'll have a coredump that stripped down
+By fulfilling the above requirements, we'll have a coredump that stripped down
 to just the essentials. This does, however, have two major tradeoffs. For one,
 any heap-allocated values on the stack will not be resolved if they're on the
 stack, and obviously, we will not be able to look at heap-allocated values at
@@ -126,7 +126,7 @@ GDB, however, it wouldn't work. That's because we're missing some vital bits of
 debug information. Let's take a look at what these sections are, and how we can
 identify them.
 
-### `r_debug` - Debug Rendevous Structure
+### `r_debug` - Debug Rendezvous Structure
 
 Dynamic linking allows programs to call code from shared libraries on the
 system. For example, this can allow a single `libopenssl` binary to handle
@@ -144,7 +144,7 @@ program. You can probably already see how this presents a problem for us. If the
 address is randomized at every load, how do we translate the fixed address in
 the debug info to the random address at load time?
 
-This is where the `r_debug`[^r_debug], or debug rendevous structure comes in.
+This is where the `r_debug`[^r_debug], or debug rendezvous structure comes in.
 While it has many functions, the main reason we need it here is the mapping it
 provides from compile time address to runtime address. Below, we can see the
 layout of the `r_debug` structure:

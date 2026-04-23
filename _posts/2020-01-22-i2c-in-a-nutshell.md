@@ -35,7 +35,7 @@ signalling).
 2. It supports up to 127 devices on a bus with only two pins.
 3. It has transfer rates up to 400Kbps, which is fast enough for many human
    interfaces as well as fan control, temperature sensing and other low-speed
-contol loops.
+control loops.
 4. Historically, it has been less onerous for manufacturers to include than
    competing protocols like Maxim's 1-wire protocol[^4].
 
@@ -242,7 +242,7 @@ device attempts to hold the clock down.
 
 ## Debugging I2C
 
-While I2C is a robust and simple protocol, firmware engineers find themslves
+While I2C is a robust and simple protocol, firmware engineers find themselves
 debugging unresponsive devices on most projects.
 
 Consider the following scenario: you just received a new board and are doing
@@ -408,7 +408,7 @@ below!
 
 [^1]: [TotalPhase: 10-bit vs 7-bit I2C](https://www.totalphase.com/support/articles/200349176)
 [^2]: [Salae: How to Analyze I2C](https://support.saleae.com/tutorials/example-projects/how-to-analyze-i2c)
-[^3]: [StackExchange: What happens if I omit the pullup resitors?](https://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-line://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-lines)
+[^3]: [StackExchange: What happens if I omit the pullup resistors?](https://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-line://electronics.stackexchange.com/questions/102611/what-happens-if-i-omit-the-pullup-resistors-on-i2c-lines)
 [^4]: [Wikipedia: 1-Wire](https://en.wikipedia.org/wiki/1-Wire)
 [^5]: [Wikipedia: SPI](https://en.wikipedia.org/wiki/Serial_Peripheral_Interface)
 [^6]: [Wikipedia: CAN](https://en.wikipedia.org/wiki/Controller_area_network)

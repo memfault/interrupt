@@ -42,7 +42,7 @@ Building a target is done as follows:
 ```bash
 bazel build //<package>:<target>
 ```
-Where `<package>` is the path of the package to be built and `<target>` specifies one or more targets. For example `bazel build //my_dir:hello`, will build the target named `hello`, within the directory `my_dir`, or `bazel build //my_dir/...` will build all targets within the directory `my_dir`. Various declinations of this syntax make it less verbose, for example, the leading `//` can be omitted, and if the target name is the same as the package name, it can also be omited.
+Where `<package>` is the path of the package to be built and `<target>` specifies one or more targets. For example `bazel build //my_dir:hello`, will build the target named `hello`, within the directory `my_dir`, or `bazel build //my_dir/...` will build all targets within the directory `my_dir`. Various declinations of this syntax make it less verbose, for example, the leading `//` can be omitted, and if the target name is the same as the package name, it can also be omitted.
 
 Similarly, all tests targets can be tested with:
 ```bash
@@ -58,12 +58,12 @@ An executable target is any Bazel rule that can be executed, so it also includes
 
 Note that running `bazel test` or `bazel run` will also run `bazel build` if the target was not built or if any of the input files of the target have been altered.
 
-Flags can also be used to change the behavior of a command. These flags can be passed as command line arguments, such as `bazel test //:my_target --runs_per_test=10` to execute a specific test 10 times, or `bazel build /:my_trarget --platforms=//platforms:esp32` to cross-compile a target for esp32.
+Flags can also be used to change the behavior of a command. These flags can be passed as command line arguments, such as `bazel test //:my_target --runs_per_test=10` to execute a specific test 10 times, or `bazel build /:my_target --platforms=//platforms:esp32` to cross-compile a target for esp32.
 
 These flags can be combined and can add up to a very verbose command line which makes it difficult to remember, type or even share. That is where the `.bazelrc` file comes in handy. Here is an example of a `.bazelrc` file:
 
 ```bash
-# All options comming from this file will be announced on the terminal.
+# All options coming from this file will be announced on the terminal.
 common --announce_rc
 
 # If the file `.bazelrc.local`, exists it will be imported.

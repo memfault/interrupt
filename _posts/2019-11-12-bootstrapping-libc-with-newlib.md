@@ -625,7 +625,7 @@ functions being used by that thread.
 
 Some standard library functions depend on global memory which would not make
 sense to hold in the `_reent` struct. This is especially important when using
-`malloc` to allocate memory out of the heap. If mutliple threads try modifying
+`malloc` to allocate memory out of the heap. If multiple threads try modifying
 the heap at the same time, they risk corrupting it.
 
 To allow multiple threads to call `malloc`, Newlib provides the `__malloc_lock`

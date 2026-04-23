@@ -557,7 +557,7 @@ either in the comments here or in the Interrupt community Slack!
 <!-- prettier-ignore-start -->
 
 - [Interrupt: Introduction to ARM Semihosting]({% post_url 2021-02-16-arm-semihosting %})
-- [Interrupt: From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-boostrapping-libc-with-newlib %})
+- [Interrupt: From Zero to main(): Bootstrapping libc with Newlib]({% post_url 2019-11-12-bootstrapping-libc-with-newlib %})
 - [libc `setvbuf()` stdlib reference](http://www.cplusplus.com/reference/cstdio/setvbuf/)
 - [Newlib `reent.h` header](https://github.com/bminor/newlib/blob/6226bad0eafe762b811c62d1dc096bc0858b0d1a/newlib/libc/include/reent.h)
 - [Reentrancy in Newlib](https://www.codeinsideout.com/blog/freertos/reentrant/)

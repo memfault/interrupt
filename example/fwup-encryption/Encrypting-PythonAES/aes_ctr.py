@@ -58,7 +58,7 @@ def main():
     
     PlainFirmware  = BinaryFile(sys.argv[1],'rb')
     CipherFirmware = BinaryFile(sys.argv[2],'wb') 
-    CrytoFirmware  = EncryptionCTR(mykey,myiv)
+    CryptoFirmware  = EncryptionCTR(mykey,myiv)
 
     bytes_remaining = 0
     bytes_so_far_cryted = 0
@@ -69,9 +69,9 @@ def main():
 
     while(bytes_remaining):
         Plainbytes = PlainFirmware.ReadFile(BYTES_READ)
-        PlainbytesLittle = CrytoFirmware.SwapLittleEndian(Plainbytes)
-        Cipherbytes = CrytoFirmware.EncryptCtr(PlainbytesLittle)
-        CipherbytesLittle = CrytoFirmware.SwapLittleEndian(Cipherbytes)
+        PlainbytesLittle = CryptoFirmware.SwapLittleEndian(Plainbytes)
+        Cipherbytes = CryptoFirmware.EncryptCtr(PlainbytesLittle)
+        CipherbytesLittle = CryptoFirmware.SwapLittleEndian(Cipherbytes)
         CipherFirmware.WriteFile(CipherbytesLittle)
 
         print( PlainbytesLittle )

@@ -171,7 +171,7 @@ Let's describe the most important states. But since `IR` path and DR path have i
 - **Capture-DR** — In this state, there is a parallel loading of the value stored in the selected DR register into the shift register if you follow the Select-DR-Scan state branch and loading of a special pattern if we follow the Select-IR-Scan state path, the value 0x01 is usually selected as the pattern.
 
 <p align="center">
-  <img width="400" src="{% img_url jtag-part1/capture-dr-state-dr.gif %}" alt="DR register during catpure-DR state" />
+  <img width="400" src="{% img_url jtag-part1/capture-dr-state-dr.gif %}" alt="DR register during capture-DR state" />
 </p>
 
 - **Shift-DR** — register shifts data from `TDI` one step forward `TDO`. The Shift-DR and Shift-IR states are the main states for serial-loading data into either data registers or the instruction register.

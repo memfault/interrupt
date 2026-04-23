@@ -468,7 +468,7 @@ end
 document xxd
   Runs xxd on a memory ADDR and LENGTH
 
-  xxd ADDR LENTH
+  xxd ADDR LENGTH
 end
 ```
 

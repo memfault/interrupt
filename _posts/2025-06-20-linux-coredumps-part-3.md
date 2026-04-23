@@ -287,7 +287,7 @@ the same instructions we previously saw in our `CIE`. Note that our total set of
 instructions are the ones present in the `CIE` in addition to those defined in
 the `FDE`.
 
-#### Cannonical Frame Address (`CFA`)
+#### Canonical Frame Address (`CFA`)
 
 Alright, we're almost done defining acronyms, I promise! You may have noticed
 `CFA` mentioned in all of our unwind rules defined in both the `CIE` and `FDE`.

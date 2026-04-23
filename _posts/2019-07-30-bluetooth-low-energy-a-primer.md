@@ -55,7 +55,7 @@ Every technology has its own benefits and limitations, and BLE is no exception. 
 
 ### Benefits
 - Lower power consumption even when compared to other low power technologies.
-  This is achived by keeping the radio off as much as possible and sending small amounts of data at low transfer speeds.
+  This is achieved by keeping the radio off as much as possible and sending small amounts of data at low transfer speeds.
 - No cost to access the official specification documents. With most other wireless protocols and technologies, you would have to be a member of the official group or consortium for that technology in order to access the specification.
 - Lower cost of modules and chipsets, even when compared to other similar technologies.
 - Most importantly, its existence in most smartphones in the market.

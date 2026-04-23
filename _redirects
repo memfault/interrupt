@@ -5,6 +5,7 @@
 /blog/swig-for-c-and-lua-copy /blog/swig-for-c-and-lua
 /blog/drafting-a-c-dev-environment /blog/a-modern-c-dev-env
 /blog/mcu-periphral-forwarding /blog/mcu-peripheral-forwarding
+/blog/boostrapping-libc-with-newlib /blog/bootstrapping-libc-with-newlib
 
 /blog/authors/* /authors/:splat
 

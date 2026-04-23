@@ -328,7 +328,7 @@ Furthermore, we now have a variable we can read stack info from and a C function
 
 #### Instrumenting the code
 
-Many Real Time Operating Systems (**RTOS**) targetting Cortex-M devices will add options to dump
+Many Real Time Operating Systems (**RTOS**) targeting Cortex-M devices will add options to dump
 verbose fault register information to the console upon crash. Some examples include Arm Mbed OS[^2]
 and Zephyr[^3]. For example, with Zephyr, the `illegal_instruction_execution()` crash looks like:
 
