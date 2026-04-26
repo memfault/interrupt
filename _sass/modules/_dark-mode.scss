@@ -142,6 +142,15 @@
     border-radius: 4px;
     padding: 2px;
   }
+
+  // SVG diagrams commonly have dark text on transparent backgrounds, which
+  // becomes invisible against the dark page background. Give them a white
+  // backdrop. Targets only SVGs (diagrams), not photos (jpg/png).
+  article .content img[src$=".svg"] {
+    background-color: white;
+    border-radius: 4px;
+    padding: 4px;
+  }
 }
 
 // System preference: apply dark theme only when no explicit choice is saved.
