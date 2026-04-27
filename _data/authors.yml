@@ -424,3 +424,11 @@ meysam:
     is an embedded systems engineer who enjoys the freedom to manipulate every
     single bit and byte in a digital system, enabling him to do amazing things.
     He is currently working at Tractive.
+edwardv:
+  name: Edward Viaene
+  email: edward.viaene@embeddedci.com
+  image: /img/author/edwardv.jpg
+  blurb: is building EmbeddedCI.com — CI/CD for embedded teams.
+  linkedin: https://www.linkedin.com/in/wardviaene
+  github: wardviaene
+
