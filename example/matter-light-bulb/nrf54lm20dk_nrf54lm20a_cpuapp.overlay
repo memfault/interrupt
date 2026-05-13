@@ -1,0 +1,59 @@
+#include <zephyr/dt-bindings/pwm/pwm.h>
+
+/ {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+
+	aliases {
+		watchdog0 = &wdt31;
+	};
+
+	/* PWM-driven LEDs for dimmable light (LED1-LED3) */
+	pwmleds {
+		compatible = "pwm-leds";
+		pwm_led1: pwm_led_1 {
+			pwms = <&pwm20 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+		pwm_led2: pwm_led_2 {
+			pwms = <&pwm20 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+		pwm_led3: pwm_led_3 {
+			pwms = <&pwm20 2 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+	};
+};
+
+/* Override pinctrl to add PWM channels for LED2 and LED3 */
+&pinctrl {
+	pwm20_default: pwm20_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 25)>,  /* LED1: P1.25 */
+				<NRF_PSEL(PWM_OUT1, 1, 27)>,  /* LED2: P1.27 */
+				<NRF_PSEL(PWM_OUT2, 1, 28)>;  /* LED3: P1.28 */
+		};
+	};
+	pwm20_sleep: pwm20_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 25)>,
+				<NRF_PSEL(PWM_OUT1, 1, 27)>,
+				<NRF_PSEL(PWM_OUT2, 1, 28)>;
+			low-power-enable;
+		};
+	};
+};
+
+&rram_controller {
+	cpuapp_rram: rram@0 {
+		reg = <0x0 DT_SIZE_K(2036)>;
+		ranges = <0x0 0x0 DT_SIZE_K(2036)>;
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+};
+
+&wdt31 {
+	status = "okay";
+};
