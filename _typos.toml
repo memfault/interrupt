@@ -85,6 +85,12 @@ extend-ignore-re = [
 
     # 899ede2be378 — Medium article URL hash
     "899ede2be378",
+
+    # ELEMNT - Wahoo product name
+    "ELEMNT",
+
+    # BA2015 - model number of a battery pack
+    "BA2015",
 ]
 
 [files]
