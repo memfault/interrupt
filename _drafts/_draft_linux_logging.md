@@ -12,7 +12,7 @@
 
 title: Embedded Linux Logging
 description:
- "A look at embedded Linux logging challenges around collecting relevant kernel and user space informatio for device debugging while balancing flash wear and RAM pressure on resource-constrained devices."
+ "A look at embedded Linux logging challenges around collecting relevant kernel and user space information for device debugging while balancing flash wear and RAM pressure on resource-constrained devices."
 author: grace
 ---
 
@@ -80,7 +80,7 @@ BusyBox does offer the ability to configure the syslogd to only log messages int
 ```
 This can be invoked by running syslogd with -C flag. This capability allows you to clamp your RAM footprint to the buffer size only and gives you flexibility to implement your own log storage and forwarding functionality. The only caveat around this capability is that since it is a ring buffer on highly verbose systems the oldest entries will be lost and overwritten, but for some devices with limited memory space this is the best option available.
 
-BusyBox syslogd also implements simple filter by severity capabilities (-l LEVEL) drops anything less urgent than the given priority. But it has none of the content-based filtering or rate-limiting functionality that some of the larger daemons like rsyslog and syslog-ng provide.
+BusyBox syslogd also implements simple severity filtering (-l LEVEL), which drops anything less urgent than the given priority. But it has none of the content-based filtering or rate-limiting functionality that some of the larger daemons like rsyslog and syslog-ng provide.
 
 Since syslogd writes continuously to one file, syslogd should always be paired with some sort of log rotation utility to keep `/var/log` from growing without bounds. Most daemons have some level of log rotation included in the configuration but it is critical to set strict caps on maximum log size and age, compress and rotate the logs into persistent storage for debug capabilities. 
 
@@ -88,7 +88,7 @@ syslogd is a good fit for low-to-moderate verbosity systems with tight resource 
 
 ### journald 
 
-journald has become increasingly popular of the last few years. journald is inherently tied to systemd and can only be used on systemd systems. Its main advantage over syslog is that it's designed for higher log volume. Instead of storing human-readable text, journald stores logs in a binary, structured, indexed format, which is faster to query `journalctl -u <unit>` than grepping through large text files.
+journald has become increasingly popular over the last few years. journald is inherently tied to systemd and can only be used on systemd systems. Its main advantage over syslog is that it's designed for higher log volume. Instead of storing human-readable text, journald stores logs in a binary, structured, indexed format, which is faster to query `journalctl -u <unit>` than grepping through large text files.
 
 `journald.conf`:
 
@@ -104,7 +104,7 @@ RateLimitBurst=1000     # drop messages beyond this burst within the interval
 ForwardToSyslog=no
 ```
 
-journald allows you to store logs in a few different places in memory: 
+journald allows you to store logs in a few different places on the device: 
 
 -  `persistent` writes to flash in file path: `/var/log/journal`
 -  `volatile` writes to tmpfs/RAM in file path: `/run/log/journal`
