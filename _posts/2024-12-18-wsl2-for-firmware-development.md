@@ -3,6 +3,7 @@ title: WSL2 for Firmware Development
 description: Tutorial for setting up embedded firmware development in WSL2.
 author: jphutchins
 tags: [zephyr, wsl, wsl2, linux, windows, windows subsystem for linux, usb]
+last_modified_at: 2026-08-07
 ---
 
 <!-- excerpt start -->
@@ -21,9 +22,11 @@ summary is that WSL2 is about 2x the speed of Windows and similar to "bare
 metal" Linux. Setup time for WSL2 will vary based on your Windows configuration,
 typically taking 10 to 30 minutes.
 
+> Updated August 2026 by Elias Calzado Carvajal
+
 > This article is based on a living document maintained by
 > [Intercreate](https://www.intercreate.io/) and we would welcome feedback and
-> contributions at
+> contributions on
 > [GitHub](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md)!
 
 {% include newsletter.html %}
@@ -94,7 +97,7 @@ Take a look at the official
 [installation documentation](https://github.com/microsoft/terminal#installing-and-running-windows-terminal)
 for more info.
 
-### Ubuntu 24.04 LTS on Windows Subsystem for Linux (WSL2)
+### Ubuntu 26.04 LTS on Windows Subsystem for Linux (WSL2)
 
 > These days, WSL2 is the default instead of WSL1. If you are on a fresh
 > install, you can assume that WSL2 is being used. If you are worried that you
@@ -121,9 +124,8 @@ To view the Linux distros available from Microsoft:
 wsl --list --online
 ```
 
-Of the available Linux distros, I recommend Ubuntu 24.04 for its long-term
-support (LTS). Likewise, when it's past April of 2026, I will recommend Ubuntu
-26.04, unless something radically changes in the Linux distro landscape. You can
+Of the available Linux distros, I recommend Ubuntu 26.04 for its long-term
+support (LTS). You can
 install and use multiple distros simultaneously; because they all run on the
 same WSL2 kernel, storage usage is efficient, only using space for each distro's
 apps and home folder. For example, I've found that it's convenient to have both
@@ -131,7 +133,7 @@ Ubuntu 22.04 and 24.04 instances available because some of my ongoing projects
 are locked to Ubuntu 22.04 in CI/CD.
 
 ```powershell
-wsl --install -d Ubuntu-24.04 --web-download
+wsl --install -d Ubuntu-26.04 --web-download
 ```
 
 > Although the Microsoft documentation claims this is done automatically, you
@@ -147,6 +149,13 @@ wsl --install -d Ubuntu-24.04 --web-download
 Microsoft maintains
 [WSL2 installation documentation](https://learn.microsoft.com/en-us/windows/wsl/install)
 that may answer further questions.
+
+> The WSL2 kernel now ships through the Microsoft Store (it used to
+> come via Microsoft Update). Run `wsl --update` to update it. Note this only
+> refreshes the **WSL**, **Kernel**, and **WSLg** versions shown by `wsl --version`;
+> the other entries are Windows components that update independently.
+> Add `--pre-release` for pre-release builds, or `--web-download` to pull from
+> GitHub instead of the Store.
 
 ### USBIPD Installation using the WSL USB GUI
 
@@ -183,13 +192,17 @@ Microsoft Store yet, but it's on the roadmap, and we'd welcome more users and
 contributors!
 
 > While it is possible to forward all USB devices to WSL2, it does not
-> necessarily mean that they will "just work". In the firmware development
-> domain, an example of this issue is found when forwarding BLE adapters to
-> WSL2. The default WSL2 kernel is not compiled with Bluetooth support, so the
-> USBIPD community maintains a thread explaining how to compile your own WSL2
-> kernel (it's fast!) and get your Bluetooth device working.
+> necessarily mean that they will "just work". For example, at the time of writing, the default
+> WSL2 kernel does not ship with support for MediaTek Bluetooth dongles. We distribute
+> a patched kernel image with support for more Bluetooth dongles on our fork.
+>
+> An issue tracking this gap in coverage is open at [microsoft/WSL#41107](https://github.com/microsoft/WSL/issues/41107).
+>
+> The USBIPD community maintains a thread explaining how to compile your own WSL2
+> kernel (it's fast!).
 >
 > The [GitHub thread](https://github.com/dorssel/usbipd-win/discussions/310).
+> Our [WSL kernel release](https://github.com/intercreate/WSL2-Linux-Kernel/releases/tag/latest).
 
 ### VSCode
 
@@ -212,7 +225,7 @@ Windows.
 
 ### Launch and Create a User
 
-Open WSL2 by right-clicking on Terminal and selecting Ubuntu 24.04 LTS. I
+Open WSL2 by right-clicking on Terminal and selecting Ubuntu 26.04 LTS. I
 recommend choosing a short, simple username, such as your first name in
 lowercase. Additionally, I'll offer that the password can be very simple since
 your WSL2 instance is already protected by your Windows account login and full
@@ -253,17 +266,17 @@ sudo apt install --no-install-recommends git cmake ninja-build gperf \
 To demonstrate launching graphical Linux applications in WSL2, we'll install and
 test the Firefox browser.
 
-To install Firefox in WSL2:
+To install Firefox in Ubuntu:
 
 ```bash
-sudo apt install firefox
+sudo snap install firefox
 ```
 
 > You can also
 > [install Chrome](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md#google-chrome),
 > but it's more involved since it's not in the package manager.
 
-And to run it:
+To run it, re-open the terminal and type:
 
 ```bash
 firefox
@@ -333,28 +346,49 @@ attached device in the list.
 > If you do not see the USB root hubs in `lsusb`, then you may be on a version
 > of the WSL2 kernel that does not enable USBIP support by default.
 >
-> Run this command to load the kernel module:
+> Execute this command to write a modules-load.d configuration :
 >
 > ```bash
-> sudo modprobe vhci-hcd
+> sudo nano /etc/modules-load.d/usbip.conf
 > ```
 >
-> Then check `lsusb` again and you should see the root hubs.
->
-> To enable `vhci-hcd` on every boot of WSL2, add the following to
-> `/etc/wsl.conf` under the `[boot]` section:
+> Add this line :
 >
 > ```ini
-> command = modprobe vhci-hcd
+> vhci-hcd
 > ```
 >
-> For example, it might look like this:
+> Ensure systemd is enabled in WSL configuration :
+>
+> ```bash
+> cat /etc/wsl.conf
+> ```
+>
+> You should see :
 >
 > ```ini
 > [boot]
-> systemd = true
-> command = modprobe vhci-hcd
+> systemd=true
 > ```
+>
+> If `systemd=true` is not present, add it under the `[boot]` section!
+>
+> After restarting WSL using `wsl --shutdown`, then `wsl` from powershell, 
+> the `lsusb` command should return something!
+
+### Auto Mounting USB Mass Media and Enabling Bluetooth
+
+This section is for the stuff referred to earlier that may not "just work". The good news is it's a one-time set up that is fairly quick!
+
+#### USB Drive Auto Mounting
+
+USBIPD forwards USB drives as internal storage drives. Our [auto-mounting instructions](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md#setup-usb-drive-auto-mounting) explain how to set up `udiskie` and allow for mounting of internal drives.
+
+#### Bluetooth
+
+Bluetooth is hit-or-miss. Depending on the manufacturer for your Bluetooth module/adapter it may work. However, the current WSL kernel doesn't include the drivers for MediaTek adapters, and fails to load firmware for Realtek and MediaTek devices.
+
+We have a [Bluetooth setup](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md#setup-bluetooth) section in the WSL documentation which explains how to forward and test your Bluetooth adapter. If it does not work, our section on [troubleshooting Bluetooth](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md#troubleshooting-bluetooth) will guide you through using [our distribution of the WSL kernel](https://github.com/intercreate/WSL2-Linux-Kernel/releases/tag/latest), plus making the necessary firmware available to the kernel.
 
 ### Install Segger J-Link Software
 
@@ -399,8 +433,8 @@ I hope that this has demystified the process of setting up WSL2 for embedded
 systems firmware development. This guide is based on a tutorial maintained by
 [Intercreate](https://www.intercreate.io/)
 [on GitHub](https://github.com/intercreate/docs/blob/main/Windows/wsl2.md), with
-contributions from Michael Brust, Alden Haase, JP Hutchins, Ishani Raha, and
-Gabriel Tétar. If you're running through first-time setup, the step-by-step
+contributions from Michael Brust, Elias Calzado Carvajal, Alden Haase, JP Hutchins,
+Ishani Raha, and Gabriel Tétar. If you're running through first-time setup, the step-by-step
 format of that page may provide further assistance. Also, if you're starting to
 dig into some more complicated use cases, I highly recommend reviewing Craig
 Buckler's [Complete Tutorial at sitepoint](https://www.sitepoint.com/wsl2/).
