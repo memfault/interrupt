@@ -18,7 +18,7 @@ author: grace
 
 <!-- excerpt start -->
 
-Embedded Linux offers developers a flexible platform to develop intricate and complex systems. By nature, embedded systems are memory and resource constrained and require more consideration around how to optimize usage of the resources that are available. When it comes to device observability in the field, there are lots of questions around how to balance gathering enough critical information to debug systems without consuming too many resources and harming your overall system performance. This article will walk through various types of embedded Linux logging platforms and consider various tradeoffs between logging storage media, compression, and verbosity to enhance device debugging without eating into your limited resource budget.
+This article will walk through various types of embedded Linux logging platforms and consider various tradeoffs between logging storage media, compression, and verbosity to enhance device debugging without eating into your limited resource budget.
 
 <!-- excerpt end -->
 
@@ -28,7 +28,7 @@ Embedded Linux offers developers a flexible platform to develop intricate and co
 
 ## Introduction to Embedded Linux Logging 
 
-Log messages are a valuable tool that an engineer has when debugging device issues, and they're typically a good first place to look when triaging a problem. As the complexity and number of devices enter the field, log files start to become cumbersome and hard to filter through to capture meaningful insights. Furthermore, as embedded systems are becoming more sophisticated, the logging architecture and design are playing a more critical role in overall system performance. Simply put, as compute is added more at the edge, log verbosity climbs, and memory writes climb with it. If this is not properly managed, it can lead to overall degradation of your system's performance.
+Log messages are a valuable tool that an engineer has when debugging device issues, and they're typically a good first place to look when triaging a problem. As the complexity and number of devices entering the field increases, log files start to become cumbersome and hard to filter through to capture meaningful insights. Furthermore, as embedded systems are becoming more sophisticated, the logging architecture and design are playing a more critical role in overall system performance. Simply put, as compute is added more at the edge, log verbosity climbs, and memory writes climb with it. If this is not properly managed, it can lead to overall degradation of your system's performance.
 
 Gathering diagnostic data on your systems involves a set of tradeoffs. If every single event is logged, you will flood your memory with writes and hand the next engineer thousands of lines of logs to dig through to diagnose an issue. Conversely, if you log too little, you are now left with nothing useful to further investigate. These challenges are only amplified when running on resource-constrained devices. For embedded Linux devices, flash wear is a major concern for device longevity in the field. Every log line that reaches persistent storage is a write, and on NAND Flash/eMMC that starts to eat into your flash lifetime. 
 
@@ -70,13 +70,13 @@ Above the kernel sits the user space, which requires its own logging implementat
 
 ### Syslog
 
-Syslog historically has been the standard protocol used for log collection on Linux systems. A syslog daemon aggregates logs and pipes them into human-readable text in `/var/log/`. The main advantage of syslog is that the logs are easy to read and search via tools like `grep`. On standard Linux distros, `/var/log` is mounted to persistent storage, however, for embedded distros, it is more common to mount `/var` on tmpfs (RAM) to help preserve flash writes. Some common syslog daemons are rsyslog, syslog-ng, and for embedded Linux applications in particular, BusyBox syslogd. BusyBox is an open-source set of lightweight Unix utilities that is designed specifically for embedded systems. 
+Syslog historically has been the standard protocol used for log collection on Linux systems. A syslog daemon aggregates logs and pipes them into human-readable text in `/var/log/`. The main advantage of syslog is that the logs are easy to read and search via tools like `grep`. On standard Linux distros, `/var/log` is mounted to persistent storage, however, for embedded distros, it is more common to mount `/var` on tmpfs (RAM) to help preserve flash writes. Some common syslog daemons are rsyslog, syslog-ng, and for embedded Linux applications in particular, BusyBox syslogd. BusyBox is an open-source set of lightweight Unix utilities that is designed specifically for embedded systems [^2]. 
 
 BusyBox syslogd, by default, does not hold logs in a large in-memory buffer. Instead, it writes each message straight through to its log file `/var/log/messages` as it arrives. This means that where those writes actually go is entirely a function of where `/var/log` is mounted, either on persistent storage, where every log line is pushed to the cache for a flash write, or on tmpfs as a RAM write that won't survive a reboot. 
 
 BusyBox does offer the ability to configure syslogd to only log messages into a small shared-memory ring buffer in RAM that you can leverage to read back with logread. The required configurations at compile time are shown below: 
 
-```
+```bash
  CONFIG_FEATURE_IPC_SYSLOG=y
  CONFIG_FEATURE_IPC_SYSLOG_BUFFER_SIZE=16
  CONFIG_LOGREAD=y
@@ -87,11 +87,11 @@ BusyBox syslogd also implements simple severity filtering (-l LEVEL), which drop
 
 Since syslogd writes continuously to one file, syslogd should always be paired with some sort of log rotation utility to keep `/var/log` from growing without bounds. Busybox syslogd does include some rotation ability, but generally speaking, syslogd relies on logrotate for rotation. Either way, it is critical to set strict caps on maximum log size and age, compress and rotate the logs into persistent storage for debugging purposes. 
 
-syslogd is a good fit for low-to-moderate verbosity systems with tight resource budgets; however, due to syslogd's limited configuration capabilities, its performance is not as desirable as some other logging systems that have finer filtering and rotation capabilities configured out of the box. If `/var/log` is mounted on flash, a noisy system will wear the flash. Conversely, with `/var/log` on tmpfs, high-volume logs can put pressure on RAM. Either way, if you need finer control over what gets written, you'll want to consider heavier log filtering layers or logs to metrics, which can help alleviate some logging storage pressure. [^2]
+syslogd is a good fit for low-to-moderate verbosity systems with tight resource budgets; however, due to syslogd's limited configuration capabilities, its performance is not as desirable as some other logging systems that have finer filtering and rotation capabilities configured out of the box. If `/var/log` is mounted on flash, a noisy system will wear the flash. Conversely, with `/var/log` on tmpfs, high-volume logs can put pressure on RAM. Either way, if you need finer control over what gets written, you'll want to consider heavier log filtering layers or logs to metrics, which can help alleviate some logging storage pressure. 
 
 ### journald 
 
-journald has become increasingly popular over the last few years and is inherently tied to systemd and can only be used on systemd-based systems. Its main advantage over syslog is that it's designed for higher log volume. Instead of storing human-readable text, journald stores logs in a binary, structured, indexed format, which you can query faster with `journalctl -u <unit>` than by grepping through large text files. 
+journald has become increasingly popular over the last few years and is inherently tied to systemd and can only be used on systemd-based systems. Its main advantage over syslog is that it's designed for higher log volume. Instead of storing human-readable text, journald stores logs in a binary, structured, indexed format, which you can query faster with `journalctl -u <unit>` than by grepping through large text files [^3]. 
 
 `journald.conf`:
 
@@ -118,7 +118,7 @@ As mentioned before, for embedded Linux, `/var` is most likely mounted to `tmpfs
 
 Enforcing size limits on your log files will directly impact how much you are storing. Things like **`Compress=`** will reduce the physical bytes written for the same logical log volume. Utilizing configurations like **`SystemMaxUse=` / `RuntimeMaxUse=`** provides hard caps on the overall size impact in Flash + RAM. Other configurations for tweaking the overall storage strategy of these logs can be found in journald.conf. 
 
-journald also includes rate limiting and write amplification optimizations. The **`SyncIntervalSec=`** batches writes and doesn't `fsync()` on every message, except for the CRIT/ALERT/EMERG messages. A longer sync interval typically means, on average, fewer, larger physical writes for the same log volume, which will correlate with less flash wear impact, at the cost of losing more of the tail of the log if power is lost between syncs. The **`RateLimitIntervalSec=` / `RateLimitBurst=`** cap how many messages per interval will get accepted by journald at all, so a single noisy service can't flood your logs with useless information [^3].
+journald also includes rate limiting and write amplification optimizations. The **`SyncIntervalSec=`** batches writes and doesn't `fsync()` on every message, except for the CRIT/ALERT/EMERG messages. A longer sync interval typically means, on average, fewer, larger physical writes for the same log volume, which will correlate with less flash wear impact, at the cost of losing more of the tail of the log if power is lost between syncs. The **`RateLimitIntervalSec=` / `RateLimitBurst=`** cap how many messages per interval will get accepted by journald at all, so a single noisy service can't flood your logs with useless information.
 
 ## Reducing What You Store
 
@@ -154,7 +154,7 @@ The last tool you can leverage to optimize information captured from your device
 
 Converting log events to metrics can allow you to filter out textual noise while still gaining meaningful insights. Most log-to-metrics tools are simple to implement and require you to write regular expressions to match against incoming log lines. There are applications that will hook into your logging daemon and increment local metrics of critical events instead of (or in addition to) passing the log through. Both Fluent Bit and memfaultd have easy integrations that let you configure which regex patterns in your logs should increment metrics. 
 
-For example, in memfaultd, if we want to track the number of times the OOM killer has terminated a process, we can increment a counter metric: `OOMKill_<ProcessName>` that increments whenever a we see a log line resembling the following:
+At Memfault, memaultd is a linux daemon that collects observability data and forwards it up to the cloud. In memfaultd, if we want to track the number of times the OOM killer has terminated a process, we can increment a counter metric: `OOMKill_<ProcessName>` that increments whenever a we see a log line resembling the following:
 
 ```
 {

@@ -424,3 +424,10 @@ meysam:
     is an embedded systems engineer who enjoys the freedom to manipulate every
     single bit and byte in a digital system, enabling him to do amazing things.
     He is currently working at Tractive.
+grace:
+  name: Grace Henderson
+  linkedin: https://www.linkedin.com/in/grace-henderson-78744415b/
+  image: /img/author/graec.jpg
+  blurb:
+    is a field engineer at Nordic nrf Cloud. Grace previously worked on
+    embedded software applications teams in the IoT networking space.
