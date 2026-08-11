@@ -18,7 +18,7 @@ author: grace
 
 <!-- excerpt start -->
 
-This article will walk through various types of embedded Linux logging platforms and consider various tradeoffs between logging storage media, compression, and verbosity to enhance device debugging without eating into your limited resource budget.
+This article will walk through various types of embedded Linux logging platforms and consider tradeoffs between logging storage media, compression, and verbosity to enhance device debugging without eating into your limited resource budget.
 
 <!-- excerpt end -->
 
@@ -41,9 +41,9 @@ Most embedded Linux systems use eMMC (Embedded MultiMediaCard) for persistent st
 
 Another option is to just write all logs to RAM and prevent inducing any flash wear impact. However, if all logs are stored in RAM, none will persist after a reboot, so you lose critical debug information when a system malfunctions. Embedded devices also have finite amounts of RAM, and writing to RAM is not free. If the logs start to use up too much of your RAM, the kernel is left to try its best to free up memory, which can start to create performance latency in the device. Ultimately, if memory pressure gets too tight, the kernel will escalate to the OOM (out-of-memory) killer to try to kill off processes consuming too much RAM, which can start causing all sorts of unpredictable device behavior. 
 
-A third option, and a happy middle ground between the two storage options, consists of a combination of both. A better-balanced approach to log storage is to consider writing logs to RAM with periodic rotation to flash or, better yet, push the logs up to the cloud. The greatest advantage of this approach is it allows you to limit flash writes and still gaining persistenet storage while not eating into too much of your RAM budget. 
+A third option, and a happy middle ground between the two storage options, consists of a combination of both. A better-balanced approach to log storage is to consider writing logs to RAM with periodic rotation to flash or, better yet, push the logs up to the cloud. The greatest advantage of this approach is it allows you to limit flash writes and still gain persistenet storage while not eating into too much of your RAM budget. 
 
-In the end, many of the Linux logging daemons that exist today are tasked to try to balance these various tradeoffs to log and store enough information to be useful, but not more than necessary to preserve critical resources for optimal performance. For every log configuration option, the most important questions to keep in mind are **How much data is stored? How often does this write to physical flash? And how large is each write?** 
+In the end, many of the Linux logging daemons that exist today are tasked to try to balance these various tradeoffs to log and store enough information to be useful, but not more than necessary to preserve critical resources for optimal performance. For every log configuration option, the most important questions to keep in mind are **How much data is stored? How often does this write to physical flash?** and **How large is each write?** 
 
 ## Kernel Logging
 
@@ -81,13 +81,13 @@ BusyBox does offer the ability to configure syslogd to only log messages into a 
  CONFIG_FEATURE_IPC_SYSLOG_BUFFER_SIZE=16
  CONFIG_LOGREAD=y
 ```
-This can be invoked by running syslogd with the `-C` flag. This capability allows you to clamp your RAM footprint to the buffer size only and gives you flexibility to implement your own log storage and forwarding functionality. The only caveat around this capability is that, since it is a ring buffer, on highly verbose systems the oldest entries will be lost and overwritten, but for some devices with limited memory space, this is the best option available.
+This can be invoked by running syslogd with the `-C` flag. This capability allows you to clamp your RAM footprint to the buffer size only and gives you flexibility to implement your own log storage and forwarding functionality. The only caveat around this configuration is that, since it is a ring buffer, on highly verbose systems the oldest entries will be lost and overwritten. For devices with limited memory space, this is may be the best option available.
 
-BusyBox syslogd also implements simple severity filtering (-l LEVEL), which drops anything less urgent than the given priority. But it has none of the content-based filtering or rate-limiting functionality that some of the larger daemons like rsyslog and syslog-ng provide.
+BusyBox syslogd also implements simple severity filtering (-l LEVEL), which drops anything less urgent than the given priority, but it has none of the content-based filtering or rate-limiting functionality that some of the larger daemons like rsyslog and syslog-ng provide.
 
-Since syslogd writes continuously to one file, syslogd should always be paired with some sort of log rotation utility to keep `/var/log` from growing without bounds. Busybox syslogd does include some rotation ability, but generally speaking, syslogd relies on logrotate for rotation. Either way, it is critical to set strict caps on maximum log size and age, compress and rotate the logs into persistent storage for debugging purposes. 
+Since syslogd writes continuously to one file, syslogd should always be paired with some sort of log rotation utility to keep `/var/log` from growing without bounds. Busybox syslogd does include some rotation ability, but generally speaking, syslogd relies on logrotate for rotation. Either way, it is critical to set strict limitations on maximum size and age, compress, and rotate the logs into persistent storage. 
 
-syslogd is a good fit for low-to-moderate verbosity systems with tight resource budgets; however, due to syslogd's limited configuration capabilities, its performance is not as desirable as some other logging systems that have finer filtering and rotation capabilities configured out of the box. If `/var/log` is mounted on flash, a noisy system will wear the flash. Conversely, with `/var/log` on tmpfs, high-volume logs can put pressure on RAM. Either way, if you need finer control over what gets written, you'll want to consider heavier log filtering layers or logs to metrics, which can help alleviate some logging storage pressure. 
+syslogd is a good fit for low-to-moderate verbose systems with tight resource budgets; however, due to syslogd's limited configuration capabilities, the performance is not as desirable as some other logging systems that have finer filtering and rotation capabilities out of the box. If `/var/log` is mounted on flash, a noisy system will wear the flash. Conversely, with `/var/log` on tmpfs, high-volume logs can put pressure on RAM. Either way, if you need finer control over what gets written, you'll want to consider heavier log filtering layers or logs to metrics, which can help alleviate some logging storage pressure. 
 
 ### journald 
 
@@ -114,17 +114,17 @@ journald allows you to store logs in a few different places on the device:
 -  `auto` will use persistent storage if `/var/log/journal` already exists, otherwise, it falls back to volatile. 
 -  `none` disables the on-disk/in-memory journal entirely and only forwards the logs to whatever `ForwardTo*=` targets are enabled. 
 
-As mentioned before, for embedded Linux, `/var` is most likely mounted to `tmpfs`, so it is always worth confirming your mounting scheme is configured as desired. Storing logs in volatile storage is the strongest wear-reduction option available if you don't need logs to survive a reboot, as RAM writes cost zero flash P/E cycles. However, for the majority of logging use cases, this won't gather meaningful insights on what your system is doing and defeats the purpose of including logs in the program in the first place. If you are using other log forwarding to cloud storage, or logs to metrics, then you may be able to leverage either `none` or `volatile` storage, since most of your logs will be stored off device. 
+As mentioned before, for embedded Linux, `/var` is most likely mounted to `tmpfs`, so it is always worth confirming your mounting scheme is configured as desired. Storing logs in volatile storage is the strongest wear-reduction option available if you don't need logs to survive a reboot, as RAM writes cost zero flash P/E cycles. However, for the majority of logging use cases, this won't gather meaningful insights on what your system is doing and defeats the purpose of including logs in the program in the first place. If you are leveraging forwarding logs to the cloud and/or implementing logs to metrics, then you may be able to use either `none` or `volatile` storage, since most of your logs will be stored off device. 
 
 Enforcing size limits on your log files will directly impact how much you are storing. Things like **`Compress=`** will reduce the physical bytes written for the same logical log volume. Utilizing configurations like **`SystemMaxUse=` / `RuntimeMaxUse=`** provides hard caps on the overall size impact in Flash + RAM. Other configurations for tweaking the overall storage strategy of these logs can be found in journald.conf. 
 
-journald also includes rate limiting and write amplification optimizations. The **`SyncIntervalSec=`** batches writes and doesn't `fsync()` on every message, except for the CRIT/ALERT/EMERG messages. A longer sync interval typically means, on average, fewer, larger physical writes for the same log volume, which will correlate with less flash wear impact, at the cost of losing more of the tail of the log if power is lost between syncs. The **`RateLimitIntervalSec=` / `RateLimitBurst=`** cap how many messages per interval will get accepted by journald at all, so a single noisy service can't flood your logs with useless information.
+journald also includes rate limiting and write amplification optimizations. The **`SyncIntervalSec=`** batches writes and doesn't `fsync()` on every message, except for the CRIT/ALERT/EMERG messages. A longer sync interval typically means, on average, fewer, larger physical writes for the same log volume, which will correlate with less flash wear impact. This is at the cost of losing more of the tail of the log if power is lost between syncs. The **`RateLimitIntervalSec=` / `RateLimitBurst=`** limit how many messages per interval will get accepted by journald at all, so a single noisy service can't flood your logs with useless information.
 
 ## Reducing What You Store
 
 ### Log Centralization and Processing
 
-As the number of deployed devices in the field increase, it is worth thinking beyond common logging tools to consider log centralization and processing to optimize what information you need to store. What if everything landing in journald (or syslog) could be tweaked to only save critical information? This is where tools like `Fluent Bit` can come in and start to filter out logs from important processes. Fluent Bit or a similar application can listen to log streams you configure to apply filters and forward only messages you care about.
+As the number of deployed devices in the field increase, it is worth thinking beyond common logging tools and consider log centralization and processing to optimize what information you need to store. What if everything landing in journald (or syslog) could be tweaked to only save critical information? This is where tools like `Fluent Bit` can come in and start to filter out logs from important processes. Fluent Bit or a similar application can listen to log streams you configure to apply filters and forward only messages you care about [^4].
 
 Below is a very simple example of a `fluent-bit.conf`:
 
@@ -146,15 +146,15 @@ Below is a very simple example of a `fluent-bit.conf`:
 	Port 5170
 ```
 
-This current configuration ingests all the kernel logs hitting systemd, listens for logs that discuss things like power and battery channels, and pushes any relevant log to a tcp port. This is a very simple use of filtering, but it can be quite powerful when applied across different application logs entering the system. The various output configurations give flexibility for other applications to ingest this information, which could do further log processing and/or send the critical logs up to the cloud for device monitoring purposes [^4]. 
+This current configuration ingests all the kernel logs hitting systemd, listens for logs that discuss things like power and battery channels, and pushes any relevant log to a tcp port. This is a very simple use of filtering, but it can be quite powerful when applied across different application logs entering the system. The various output configurations give flexibility for other applications to ingest this information, which could do further log processing and/or send the critical logs up to the cloud for device monitoring purposes. 
 
 ### Logs to Metrics
 
-The last tool you can leverage to optimize information captured from your devices in the field is to convert Logs to Metrics. What if, instead of storing hundreds of lines of logs for thousands of deployed devices in the field, you counted occurrences of the critical states the device enters? Instead of persisting every Ethernet TX failure as a log line that has to be searched and aggregated on the backend, you could just increment a counter each time this event occurs. Now you can answer questions like "How often is this issue happening?" and gauge issue severity without needing to store all these log lines.
+Another tool you can leverage to optimize information captured from your devices in the field is to convert log messages to metrics. What if, instead of storing hundreds of lines of logs for thousands of deployed devices in the field, you counted occurrences of the critical states the device enters? Instead of persisting every Ethernet TX failure as a log line that has to be searched and aggregated on the backend, you could just increment a counter each time this event occurs. Now you can answer questions like "How often is this issue happening?" and gauge issue severity without needing to store all these log lines.
 
-Converting log events to metrics can allow you to filter out textual noise while still gaining meaningful insights. Most log-to-metrics tools are simple to implement and require you to write regular expressions to match against incoming log lines. There are applications that will hook into your logging daemon and increment local metrics of critical events instead of (or in addition to) passing the log through. Both Fluent Bit and memfaultd have easy integrations that let you configure which regex patterns in your logs should increment metrics. 
+Converting log events to metrics can allow you to filter out textual noise while still gaining meaningful insights. Most log to metrics tools are simple to implement and require you to write regular expressions to match against incoming log lines. There are applications that will hook into your logging daemon and increment local metrics of critical events instead of (or in addition to) passing the log through. Both Fluent Bit and memfaultd have easy integrations that let you configure which regex patterns in your logs should increment metrics. 
 
-At Memfault, memaultd is a linux daemon that collects observability data and forwards it up to the cloud. In memfaultd, if we want to track the number of times the OOM killer has terminated a process, we can increment a counter metric: `OOMKill_<ProcessName>` that increments whenever a we see a log line resembling the following:
+At Memfault, memaultd is a linux daemon that collects observability data and forwards it up to the cloud. If we want to track the number of times the OOM killer has terminated a process, we can increment a counter metric: `OOMKill_<ProcessName>` that increments whenever it sees a log line resembling the following:
 
 ```
 {
@@ -164,7 +164,7 @@ At Memfault, memaultd is a linux daemon that collects observability data and for
 }
 ```
 
-This now converts textual information into a quick snapshot of the system's state, which can be easily scraped or forwarded to the cloud. When these kinds of metrics compounded over a large number of devices over time,  they help capture a snapshot of failure rates and overall device health, which is critical when addressing field performance. 
+This now converts textual information into a quick snapshot of the system's state, which can be easily scraped or forwarded to the cloud. When these kinds of metrics compound over a large number of devices over time, they help capture a snapshot of failure rates and overall device health, which is critical when addressing field performance. 
 
 ## Conclusion
 
