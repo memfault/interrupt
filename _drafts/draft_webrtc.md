@@ -1,7 +1,9 @@
 ---
 title: Real Time Video with Embedded Linux Cameras
 description:
- "An overview of different types of Linux IP Camera Applications, a deep-dive on real time video streaming systems using WebRTC, and how to monitor and optimize their performance."
+  "An overview of different types of Linux IP Camera Applications, a deep-dive
+  on real time video streaming systems using WebRTC, and how to monitor and
+  optimize their performance."
 author: jakegwood
 ---
 
@@ -109,19 +111,20 @@ viewer), Memfault can be used to monitor and optimize your TTFF, insofar as your
 embedded device sees it, and break down the various aspects of that KPI, so you
 can identify and resolve bottlenecks.
 
-At https://github.com/jakegwood/gst-webrtc-camera-demo/commits/master/, I've
-implemented a very stripped-down, highly simplified WebRTC system that can be
-used to demonstrate this on an RPi _on your LAN_ with a connected webcam, plus
-your personal machine. Real-life systems are of course more complex than this,
-with many of these services running on different machines, on different LANs,
-but this showcases some key concepts and components. If you'd like to follow
-along, hands-on, simply follow the steps in the README there, to get that
-service, and Memfault, set up on your RPi, and try it out while Memfault sends
-performance data. Otherwise, if you can't (or don't want to) follow along,
-that's fine; you'll simply have to trust the data I collected, and understand
-that data for your system may vary. Below, I include a diagram of the system,
-and a description of the points that are being monitored by Memfault, as well as
-a screenshot of the very simple web UI.
+At
+[https://github.com/jakegwood/gst-webrtc-camera-demo/commits/master/](https://github.com/jakegwood/gst-webrtc-camera-demo/commits/master/),
+I've implemented a very stripped-down, highly simplified WebRTC system that can
+be used to demonstrate this on an RPi with a connected webcam, plus your
+personal machine, while _all on the same LAN_. Real-life systems are of course
+more complex than this, with many of these services running on different
+machines, on different LANs, but this showcases some key concepts and
+components. If you'd like to follow along, hands-on, simply follow the steps in
+the README there, to get that service, and Memfault, set up on your RPi, and try
+it out while Memfault sends performance data. Otherwise, if you can't (or don't
+want to) follow along, that's fine; you'll simply have to trust the data I
+collected, and understand that data for your system may vary. Below, I include a
+diagram of the system, and a description of the points that are being monitored
+by Memfault, as well as a screenshot of the very simple web UI.
 
 ![Architecture for the proof-of-concept WebRTC architecture](/img/webrtc/samplearch.png)
 
