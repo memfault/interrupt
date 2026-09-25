@@ -1,3 +1,10 @@
+---
+title: Real Time Video with Embedded Linux Cameras
+description:
+ "An overview of different types of Linux IP Camera Applications, a deep-dive on real time video streaming systems using WebRTC, and how to monitor and optimize their performance."
+author: jakegwood
+---
+
 <!-- excerpt start -->
 
 The purpose of this article is to give readers an overview of various video
