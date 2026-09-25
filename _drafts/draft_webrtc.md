@@ -67,13 +67,13 @@ camera that's inside their home.
    of video encodings, quality, frame rates, security protocols, etc.
 
 WebRTC is a common, standardized framework (W3C's "WebRTC: Real-Time
-Communication in Browsers", or IETF RFC8825), with numerous implementations for
-embedded devices (webrtcbin, liburtc, libpeer, metaRTC), that defines a system
-to solve these problems. It establishes handshakes and coordination to inform
-each peer - e.g. camera and PC web app - how the other can be accessed, what
-capabilities exist, and how the state of the link is changing. Below, is an
-architecture diagram of the devices and servers involved, as well as a
-description of the flow of information between those parties.
+Communication in Browsers"[^1], or IETF RFC8825[^2]), with numerous
+implementations for embedded devices (webrtcbin[^3], liburtc, libpeer, metaRTC),
+that defines a system to solve these problems. It establishes handshakes and
+coordination to inform each peer - e.g. camera and PC web app - how the other
+can be accessed, what capabilities exist, and how the state of the link is
+changing. Below, is an architecture diagram of the devices and servers involved,
+as well as a description of the flow of information between those parties.
 
 ![System diagram of a standard webrtc setup](/img/webrtc/webrtc.png)
 
@@ -169,13 +169,13 @@ iterations, with the following results:
 One obvious standout from this data that I realized (I swear, I genuinely
 learned this right alongside you - this wasn't planned for the blog post!) is
 that the negotiation - which is the time the camera daemons take to negotiate
-with the V4L2 Linux drivers, and establish the GStreamer pipeline - is the clear
-bottleneck. To resolve that, I modified the system to establish the pipeline
-during the first streaming session, and then keep it up instead of tearing it
-down and re-establishing it, each time. For those following along, I wrapped
-these changes in ENV variable flags, so you, too, could see the difference with
-and without them. Stop the service with `stop.sh` and restart it with
-`start.sh --keep-alive` to enable these changes.
+with the V4L2[^4] Linux drivers, and establish the GStreamer pipeline - is the
+clear bottleneck. To resolve that, I modified the system to establish the
+pipeline during the first streaming session, and then keep it up instead of
+tearing it down and re-establishing it, each time. For those following along, I
+wrapped these changes in ENV variable flags, so you, too, could see the
+difference with and without them. Stop the service with `stop.sh` and restart it
+with `start.sh --keep-alive` to enable these changes.
 
 Again, connecting/disconnecting five times, I collected the following data.
 
