@@ -105,11 +105,11 @@ client <-> router interaction.**
 As discussed in the first section, TTFF is of primary concern to many real time
 applications. Generally speaking, users easily become impatient with slow,
 unresponsive interfaces, and more saliently, if you get a notification that a
-burglar is breaking into your home, you want to click in and see what's going on
-_right away_. While it generally wouldn't monitor your Web or Mobile App (the
-viewer), Memfault can be used to monitor and optimize your TTFF, insofar as your
-embedded device sees it, and break down the various aspects of that KPI, so you
-can identify and resolve bottlenecks.
+burglar is breaking into your home, you want to instantly see what's going on.
+While it generally wouldn't monitor your Web or Mobile App (the viewer),
+Memfault can be used to monitor and optimize your TTFF, insofar as your embedded
+device sees it, and break down the various aspects of that KPI, so you can
+identify and resolve bottlenecks.
 
 At
 [https://github.com/jakegwood/gst-webrtc-camera-demo/commits/master/](https://github.com/jakegwood/gst-webrtc-camera-demo/commits/master/),
@@ -119,12 +119,11 @@ personal machine, while _all on the same LAN_. Real-life systems are of course
 more complex than this, with many of these services running on different
 machines, on different LANs, but this showcases some key concepts and
 components. If you'd like to follow along, hands-on, simply follow the steps in
-the README there, to get that service, and Memfault, set up on your RPi, and try
-it out while Memfault sends performance data. Otherwise, if you can't (or don't
-want to) follow along, that's fine; you'll simply have to trust the data I
-collected, and understand that data for your system may vary. Below, I include a
-diagram of the system, and a description of the points that are being monitored
-by Memfault, as well as a screenshot of the very simple web UI.
+the README in the repo. Otherwise, if you can't (or don't want to) follow along,
+that's fine; you'll simply have to trust the data I collected, and understand
+that data for your system may vary. Below, I include a diagram of the system,
+and a description of the points that are being monitored by Memfault, as well as
+a screenshot of the very simple web UI.
 
 ![Architecture for the proof-of-concept WebRTC architecture](/img/webrtc/samplearch.png)
 
@@ -238,17 +237,17 @@ Clearly, the round trip to the Signaling Server was impacted. In real life, an
 increase like this could represent a poor cellular network (a single streaming
 event), a congested home Wi-Fi network (all devices belonging to a single user),
 or an overloaded server (all devices in your fleet), depending on how it
-manifests. This is a powerful concept: while Memfault is not a cloud
+manifests. This is a powerful concept: while Memfault is not _directly_ a cloud
 observability tool, it does allow you to turn your fleet of thousands or
-millions of IoT devices into external, independent observers of your cloud's
-performance, identifying service or infrastructure issues that, (a) you _aren't_
-measuring, or (b) your cloud _can't_ measure introspectively. While the
-Signaling Server runs on the Pi for this demo, in reality, that is a separate
-cloud service that _all of your devices_ are wholly dependent on for streaming.
-Even if your cloud service and observability tools "think it's fine," anything
-that causes delays between your devices and that service is a key careabout for
-your business - something your devices, using Memfault, can alert on or use to
-trigger other workflows.
+millions of IoT devices into external, independent observers. This fleet can
+track your cloud's performance, identifying service or infrastructure issues
+that, (a) you _aren't_ measuring, or (b) your cloud _can't_ measure
+introspectively. While the Signaling Server runs on the Pi for this demo, in
+reality, that is a separate cloud service that _all of your devices_ are wholly
+dependent on for streaming. Even if your cloud service and observability tools
+"think it's fine," anything that causes delays between your devices and that
+service is a key careabout for your business - something your devices, using
+Memfault, can alert on or use to trigger other workflows.
 
 Like all interesting problems in IoT, real time video - and TTFF in particular -
 is not something you can measure once on the bench and forget. It is dependent
