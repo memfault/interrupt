@@ -218,18 +218,12 @@ Again, connecting/disconnecting five times, I collected the following data.
 You can see that the first iteration still pays a one-time startup cost, but
 subsequently, the improvement is stark. Frames start leaving the
 device over _one full second_ sooner. That's a
-game-changing improvement for a critical customer KPI.
-
-Keep-alive isn't free, though: it trades power for latency. The camera sensor
-and encoder run continuously, whether or not anyone is watching, and on hardware
-with an activity LED tied to the sensor, that LED stays lit. For a wired,
-mains-powered camera, that's usually a worthwhile trade; for a battery-powered
-camera, it's usually the wrong one.
+game-changing improvement for a critical customer KPI. Keep-alive isn't free, of course, as the the sensor, encoder, and various software components remain running all the time, whether or not they are actually needed, all consuming power, and making it a poor fit for battery-constrained devices. For devices with line-power, though, it is the obvious choice.
 
 While that improvement resolved an issue with _device_ behavior, there are
 plenty of delays and bugs that can happen as a result of cloud service
 dependencies. In this example I simulated delay between the camera and the
-Signaling Server with the following command:
+Signaling Server with the following commands:
 
 ```bash
 # prio leaves class 1:4 free; anything not matched below is untouched
@@ -263,9 +257,8 @@ and then, still in keep-alive mode, collected the following results:
 Clearly, the round trip to the Signaling Server was impacted: average TTFF rose
 by 500 ms over the keep-alive baseline (349.2 → 849.2 ms), matching the two
 250 ms delays added to the signaling path. In real life, an
-increase like this could represent a poor cellular network (a single streaming
-event), a congested home Wi-Fi network (all devices belonging to a single user),
-or an overloaded server (all devices in your fleet), depending on how it
+increase like this could represent a poor cellular connection, a congested home Wi-Fi network,
+or an overloaded server, depending on how it
 manifests. This is a powerful concept: while Memfault is not _directly_ a cloud
 observability tool, it does allow you to turn your fleet of thousands or
 millions of IoT devices into external, independent observers. This fleet can
@@ -273,9 +266,9 @@ track your cloud's performance, identifying service or infrastructure issues
 that, (a) you _aren't_ measuring, or (b) your cloud _can't_ measure
 introspectively. While the Signaling Server runs on the Pi for this demo, in
 reality, that is a separate cloud service that _all of your devices_ are wholly
-dependent on for streaming. Even if your cloud service and observability tools
-"think it's fine," anything that causes delays between your devices and that
-service is a key concern for your business - something your devices, using
+dependent on for streaming. Even if your cloud observability tools
+indicate a healthy instance, anything that causes delays between your devices and that
+service - whether or not inherent to the service itself - is a key concern for your business - something your devices, using
 Memfault, can alert on or use to trigger other workflows.
 
 Like all interesting problems in IoT, real time video - and TTFF in particular -
