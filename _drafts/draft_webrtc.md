@@ -245,7 +245,8 @@ sudo tc filter add dev lo protocol ip parent 1: prio 1 u32 \
 sudo tc filter add dev lo protocol ip parent 1: prio 2 u32 \
     match ip protocol 6 0xff match ip sport 8443 0xffff flowid 1:4
 
-# when finished, remove the delay
+# after you've finished running tests with delay, don't forget to remove it
+# with this command!
 sudo tc qdisc del dev lo root
 ```
 
@@ -271,13 +272,15 @@ while Memfault is not _directly_ a cloud observability tool, it does allow you
 to turn your fleet of thousands or millions of IoT devices into external,
 independent observers. This fleet can track your cloud's performance,
 identifying service or infrastructure issues that, (a) you _aren't_ measuring,
-or (b) your cloud _can't_ measure introspectively. While the Signaling Server
-runs on the Pi for this demo, in reality, that is a separate cloud service that
-_all of your devices_ are wholly dependent on for streaming. Even if your cloud
-observability tools indicate a healthy instance, anything that causes delays
-between your devices and that service - whether or not inherent to the service
-itself - is a key concern for your business - something your devices, using
-Memfault, can alert on or use to trigger other workflows.
+or (b) your cloud _can't_ measure introspectively.
+
+While the Signaling Server runs on the Pi for this demo, in reality - as
+illustrated in Figure 1 - that is a separate cloud service that _all of your
+devices_ are wholly dependent on for streaming. Even if your cloud observability
+tools indicate a healthy instance, anything that causes delays between your
+devices and that service - whether or not inherent to the service itself - is a
+key concern for your business - something your devices, using Memfault, can
+alert on or use to trigger other workflows.
 
 Like all interesting problems in IoT, real time video - and TTFF in particular -
 is not something you can measure once on the bench and forget. It is dependent
