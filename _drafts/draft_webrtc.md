@@ -135,8 +135,11 @@ LAN. While this simplifies and omits some components (such as the TURN server)
 not needed on a LAN, it still demonstrates some of the key handshakes in WebRTC
 streaming and link management. The table below provides names and descriptions
 for the times that are measured by the camera sender and reported to Memfault.
-"Source" points you to where these are implemented in the repo linked above, as
-a sample you can leverage in your project.**
+Each metric is the time between two named marks (shown in parentheses in the
+Description), as defined in
+[`memfault_metrics.py:26-33`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L26-L33);
+"Source" links to where those marks are recorded in the repo linked above, as a
+sample you can leverage in your project.**
 
 | Metric                         | Description                                                                                                                                                                                                                                                                                                                                                | Label | Source                                                                                                                                                                                                                                                                                                                                     |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
