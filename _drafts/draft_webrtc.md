@@ -44,7 +44,7 @@ Recording applications have the opposite goal: they can afford extra processing
 time to preserve resolution and frame rate since nobody is waiting on the
 first frame.
 
-Additionally, a single device _can_ support both modes, by streaming video
+However, a single device _could_ support both modes by streaming video
 through different pipelines that optimize for different constraints. A common
 example is an IP Camera for home security. Using a single device, a user may
 want to see their home in real-time to communicate with a person at their front
