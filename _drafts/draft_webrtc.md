@@ -35,11 +35,14 @@ There are two main categories that most camera applications fit into:
    delays - users may need to wait until video capture is complete to view
    _anything_.
 
-As the list above notes, these two application groups are generally at odds with
-each other - prioritizing a quick TTFF means that the first video frame must
-make it out of an encoder, and over a remote, IP link ASAP - of course, a
-smaller (in terms of file size), low resolution frame can get over the wire
-faster than a larger, high resolution one.
+These two categories are generally at odds with each other because they pull
+the design in opposite directions. Prioritizing a quick TTFF means the first
+video frame must be encoded and sent over a remote IP link as fast as possible.
+A smaller, lower-resolution frame is quicker to encode and transmit than a
+larger, high-resolution one, so optimizing for TTFF pushes the design toward lower quality.
+Recording applications have the opposite goal: they can afford extra processing
+time to preserve resolution and frame rate since nobody is waiting on the
+first frame.
 
 Additionally, a single device _can_ support both modes, by streaming video
 through different pipelines that optimize for different constraints. A common
