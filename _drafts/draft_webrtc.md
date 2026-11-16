@@ -35,22 +35,21 @@ There are two main categories that most camera applications fit into:
    delays - users may need to wait until video capture is complete to view
    _anything_.
 
-These two categories are generally at odds with each other because they pull
-the design in opposite directions. Prioritizing a quick TTFF means the first
-video frame must be encoded and sent over a remote IP link as fast as possible.
-A smaller, lower-resolution frame is quicker to encode and transmit than a
-larger, high-resolution one, so optimizing for TTFF pushes the design toward lower quality.
-Recording applications have the opposite goal: they can afford extra processing
-time to preserve resolution and frame rate since nobody is waiting on the
-first frame.
+These two categories are generally at odds with each other because they pull the
+design in opposite directions. Prioritizing a quick TTFF means the first video
+frame must be encoded and sent over a remote IP link as fast as possible. A
+smaller, lower-resolution frame is quicker to encode and transmit than a larger,
+high-resolution one, so optimizing for TTFF pushes the design toward lower
+quality. Recording applications have the opposite goal: they can afford extra
+processing time to preserve resolution and frame rate since nobody is waiting on
+the first frame.
 
-However, a single device _could_ support both modes by streaming video
-through different pipelines that optimize for different constraints. A common
-example is an IP Camera for home security. Using a single device, a user may
-want to see their home in real-time to communicate with a person at their front
-door _right now_, or they may need high quality video from that same camera, to
-use as evidence in legal proceedings in the weeks or months following a
-break-in.
+However, a single device _could_ support both modes by streaming video through
+different pipelines that optimize for different constraints. A common example is
+an IP Camera for home security. Using a single device, a user may want to see
+their home in real-time to communicate with a person at their front door _right
+now_, or they may need high quality video from that same camera, to use as
+evidence in legal proceedings in the weeks or months following a break-in.
 
 The remainder of this article will focus on real time streaming, and how to
 monitor the related services.
@@ -89,11 +88,12 @@ as well as a description of the flow of information between those parties.
 
 ![System diagram of a standard webrtc setup](/img/webrtc/webrtc.png)
 
-**Figure 1: A standard System Diagram of the components involved in a WebRTC
-session/negotiation. Note that the routers themselves are not actively doing any
-work here; they are merely forwarding messages to and from their LAN devices,
-per the NAT traversal policies - just like any other client <-> router
-interaction.**
+> Figure 1: A standard System Diagram of the components involved in a WebRTC
+> session/negotiation.
+
+> **Note**: the routers themselves are not actively doing any work here; they
+> are merely forwarding messages to and from their LAN devices, per the NAT
+> traversal policies - just like any other client <-> router interaction.
 
 | Step | Description                                                                                                                                                                                                                                                                                                                                      |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -132,17 +132,20 @@ by Memfault, as well as a screenshot of the very simple web UI.
 
 ![Architecture for the proof-of-concept WebRTC architecture](/img/webrtc/samplearch.png)
 
-**Figure 2: Block diagram for the highly simplified WebRTC system I implemented
-on a single RPi, to be used on the same LAN with a personal computer on the same
-LAN. While this simplifies and omits some components (such as the TURN server)
-not needed on a LAN, it still demonstrates some of the key handshakes in WebRTC
-streaming and link management. The table below provides names and descriptions
-for the times that are measured by the camera sender and reported to Memfault.
-Each metric is the time between two named marks (shown in parentheses in the
-Description), as defined in
+> Figure 2: Block diagram for the highly simplified WebRTC system I implemented
+> on a single RPi, to be used on the same LAN with a personal computer on the
+> same LAN.
+
+> **Note**: while this simplifies and omits some components (such as the TURN
+> server) not needed on a LAN, it still demonstrates some of the key handshakes
+> in WebRTC streaming and link management.
+
+The table below provides names and descriptions for the times that are measured
+by the camera sender and reported to Memfault. Each metric is the time between
+two named marks (shown in parentheses in the Description), as defined in
 [`memfault_metrics.py:26-33`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L26-L33);
 "Source" links to where those marks are recorded in the repo linked above, as a
-sample you can leverage in your project.**
+sample you can leverage in your project.
 
 | Metric                         | Description                                                                                                                                                                                                                                                                                                                                                | Label | Source                                                                                                                                                                                                                                                                                                                                     |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -161,14 +164,14 @@ a user requests to view a live stream from their camera.
 
 ![Screenshot of the sample web app streaming video from the RPi3 in my office](/img/webrtc/webapp.png)
 
-**Figure 3: If you set up the system locally on your RPi, it will host a page
-you can navigate to and view a video stream coming from the webcam connected to
-your RPi, as you can see here (in Firefox).**
+> Figure 3: If you set up the system locally on your RPi, it will host a page
+> you can navigate to and view a video stream coming from the webcam connected
+> to your RPi, as you can see here (in Firefox).
 
 ![Screenshot of the Memfault Web App displaying these metrics for a few iterations on a specific camera](/img/webrtc/memfault.png)
 
-**Figure 4: A sample screenshot of my Memfault _Timeline_ view after clicking
-connect/disconnect in the above web UI for a few iterations.**
+> Figure 4: A sample screenshot of my Memfault _Timeline_ view after clicking
+> connect/disconnect in the above web UI for a few iterations.
 
 With this system up and running on my RPi3 (streaming 640×480 MJPEG from the
 webcam, encoded to VP8 in software), and Firefox open to the page, I clicked
