@@ -116,19 +116,14 @@ identify and resolve bottlenecks.
 
 I've published a very stripped-down, highly simplified WebRTC demo at
 [https://github.com/jakegwood/gst-webrtc-camera-demo](https://github.com/jakegwood/gst-webrtc-camera-demo)
-that can be used to demonstrate this on an RPi with a connected webcam, plus
-your personal machine, while _all on the same LAN_. For simplicity, the demo's
-signaling and web page are served over plaintext and unauthenticated (the video
-itself is still DTLS-SRTP encrypted). It still needs internet access, for
-Google's public STUN server and a JavaScript library that the web page loads.
-Real-life systems are of course more complex than this, with many of these
-services running on different machines, on different LANs, but this showcases
-some key concepts and components. If you'd like to follow along, hands-on,
-simply follow the steps in the README in the repo. Otherwise, if you can't (or
-don't want to) follow along, that's fine; you'll simply have to trust the data I
-collected, and understand that data for your system may vary. Below, I include a
-diagram of the system, and a description of the points that are being monitored
-by Memfault, as well as a screenshot of the very simple web UI.
+which runs on an RPi.
+More details can be found in [the README](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/master/README.md), but the major simplifications are as follows:
+- Signaling server, web page server, and camera sender service run on the same RPi hardware
+- Assumes all systems, (except the STUN server and some webpage js dependencies) are on the LAN
+- Signaling and the web-page server (which communicate on the LAN) use plaintext, and are unauthencated
+
+Below, I include a diagram of the system, and a description of the points that are being monitored
+by Memfault, as well as a screenshot of the very simple web UI. Following along with the demo, hand-on, is optional.
 
 ![Architecture for the proof-of-concept WebRTC architecture](/img/webrtc/samplearch.png)
 
