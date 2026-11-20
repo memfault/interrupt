@@ -91,6 +91,33 @@ browser:
 $ bundle exec jekyll serve --drafts --livereload --open-url --future
 ```
 
+## Agent Skills
+
+Skills for AI coding agents live in `.agents/skills/`. Each skill is a folder
+with a `SKILL.md` describing what it does and the steps it follows.
+
+| Skill             | What it does                                                                                                                                                                            |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `publish-article` | Moves a draft from `_drafts/` to `_posts/`, auditing it against the checklist in `.gitmessage-publish-article` and proposing fixes. Every change needs your approval before it is made. |
+
+### Hooking up a skill
+
+Claude Code only discovers project skills in `.claude/skills/`, so each skill is
+symlinked there from `.agents/skills/`:
+
+```bash
+$ mkdir -p .claude/skills
+$ ln -s ../../.agents/skills/publish-article .claude/skills/publish-article
+```
+
+The symlink for `publish-article` is already committed. When you add a new
+skill, add it under `.agents/skills/<name>/` and create the matching symlink.
+Other agents that read `.agents/skills/` directly need no extra setup.
+
+Once hooked up, run the skill in Claude Code with `/publish-article <draft>`,
+for example `/publish-article draft_webrtc.md`, or ask Claude to publish a
+draft.
+
 ## Acknowledgements
 
 Interrupt is based on the Emerald theme by
