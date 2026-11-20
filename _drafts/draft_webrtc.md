@@ -232,7 +232,10 @@ obvious choice.
 While that improvement resolved an issue with _device_ behavior, there are
 plenty of delays and bugs that can happen as a result of cloud service
 dependencies. In this example I simulated delay between the camera and the
-Signaling Server with the following commands:
+Signaling Server using [`tc`](https://man7.org/linux/man-pages/man8/tc.8.html)
+and its [`netem`](https://man7.org/linux/man-pages/man8/tc-netem.8.html)
+(network emulator) qdisc, which adds 250 ms of delay to traffic going to and
+from the Signaling Server:
 
 ```bash
 # prio leaves class 1:4 free; anything not matched below is untouched
