@@ -305,9 +305,11 @@ is not something you can measure once on the bench and forget. It is dependent
 on numerous different services, local wireless environments, various clients -
 such as browsers or mobile apps - that users use, and much, much more. Hopefully
 this overview helps you understand the components worth monitoring and how they
-can be used to drive optimizations in your system. For another look at embedded
-Linux observability, see [A Practical Guide to Embedded Linux
-Logging]({% post_url 2026-08-13-linux-logging %}).
+can be used to drive optimizations in your system.
+
+> **Further reading**: for another look at embedded Linux observability, see [A
+> > Practical Guide to Embedded Linux >
+> Logging]({% post_url 2026-08-13-linux-logging %}).
 
 <!-- Interrupt Keep START -->
 
