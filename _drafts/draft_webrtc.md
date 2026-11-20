@@ -283,6 +283,7 @@ devices and that service - whether or not inherent to the service itself - is a
 key concern for your business - something your devices, using Memfault, can
 alert on or use to trigger other workflows.
 
+## Conclusion
 Like all interesting problems in IoT, real time video - and TTFF in particular -
 is not something you can measure once on the bench and forget. It is dependent
 on numerous different services, local wireless environments, various clients -
