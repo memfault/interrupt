@@ -1,10 +1,11 @@
 ---
-title: Real Time Video with Embedded Linux Cameras
+title: Real-Time Video on Embedded Linux Cameras with WebRTC
 description:
   "An overview of different types of Linux IP Camera Applications, a deep-dive
   on real time video streaming systems using WebRTC, and how to monitor and
   optimize their performance."
 author: jakegwood
+tags: [linux, webrtc, monitoring, observability, memfault]
 ---
 
 <!-- excerpt start -->
@@ -99,7 +100,7 @@ as well as a description of the flow of information between those parties.
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 0    | (precondition) The IP Camera and viewer Web App - which are usually provided by the same manufacturer - open a connection to the Signaling Server, which is also generally owned/controlled/contracted by the product manufacturer. This gives devices an intermediary through which to communicate, despite being behind NATs.                  |
 | 1    | The user on the PC Web App requests to start a stream - the request is sent from the PC to the Signaling Server, which then sends it to the IP Camera; this exchange also includes Session Description Protocol (SDP) Offer/Answers, which include information about supported media features, security protocols, and more.                     |
-| 2    | Leveraging the STUN servers - which are simple services that devices can call from behind a NAT to determine their own public-IP identity - devices gather and send information (Interactive Connectivity Establish, or "ICE" candidates) about how they can be reached, again, to each other via the Signaling Server.                          |
+| 2    | Leveraging the STUN servers - which are simple services that devices can call from behind a NAT to determine their own public-IP identity - devices gather and send information (Interactive Connectivity Establishment, or "ICE" candidates) about how they can be reached, again, to each other via the Signaling Server.                      |
 | 3    | Devices negotiate a pathway (which may be UDP-based, hence avoiding the term "connection") via which to stream; preference is given to a direct, peer-to-peer connection, if NAT-traversal is possible; otherwise, the TURN relay is used to forward packets via existing connections initiated from respective peer devices to the TURN server. |
 | 4    | Using the negotiated connectivity method, video data begins flowing from the camera to the PC!                                                                                                                                                                                                                                                   |
 
@@ -110,20 +111,28 @@ applications. Generally speaking, users easily become impatient with slow,
 unresponsive interfaces, and more saliently, if you get a notification that a
 burglar is breaking into your home, you want to instantly see what's going on.
 While it generally wouldn't monitor your Web or Mobile App (the viewer),
-Memfault can be used to monitor and optimize your TTFF, insofar as your embedded
-device sees it, and break down the various aspects of that KPI, so you can
-identify and resolve bottlenecks.
+Memfault (see [Integrating Memfault into an Embedded Linux
+Project]({% post_url 2023-01-18-embedded-linux-with-memfault %}) for setup on a
+Raspberry Pi) can be used to monitor and optimize your TTFF, insofar as your
+embedded device sees it, and break down the various aspects of that KPI, so you
+can identify and resolve bottlenecks.
 
 I've published a very stripped-down, highly simplified WebRTC demo at
 [https://github.com/jakegwood/gst-webrtc-camera-demo](https://github.com/jakegwood/gst-webrtc-camera-demo)
-which runs on an RPi.
-More details can be found in [the README](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/master/README.md), but the major simplifications are as follows:
-- Signaling server, web page server, and camera sender service run on the same RPi hardware
-- Assumes all systems, (except the STUN server and some webpage js dependencies) are on the LAN
-- Signaling and the web-page server (which communicate on the LAN) use plaintext, and are unauthencated
+which runs on an RPi. More details can be found in
+[the README](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/master/README.md),
+but the major simplifications are as follows:
 
-Below, I include a diagram of the system, and a description of the points that are being monitored
-by Memfault, as well as a screenshot of the very simple web UI. Following along with the demo, hand-on, is optional.
+- Signaling server, web page server, and camera sender service run on the same
+  RPi hardware
+- Assumes all systems, (except the STUN server and some webpage js dependencies)
+  are on the LAN
+- Signaling and the web-page server (which communicate on the LAN) use
+  plaintext, and are unauthenticated
+
+Below, I include a diagram of the system, and a description of the points that
+are being monitored by Memfault, as well as a screenshot of the very simple web
+UI. Following along with the demo hands-on is optional.
 
 ![Architecture for the proof-of-concept WebRTC architecture](/img/webrtc/samplearch.png)
 
@@ -142,20 +151,22 @@ two named marks (shown in parentheses in the Description), as defined in
 "Source" links to where those marks are recorded in the repo linked above, as a
 sample you can leverage in your project.
 
-| Metric                         | Description                                                                                                                                                                                                                                                                                                                                                | Label | Source                                                                                                                                                                                                                                                                                                                                     |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `negotiation_setup_ms`         | Pipeline creation + VP8 encoder init (t0 → offer_created)                                                                                                                                                                                                                                                                                                  |   1   | [`webrtc_sendrecv.py:241`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L241)                                                                                                                                                                         |
-| `signaling_rtt_ms`             | Signaling round-trip as seen by Camera Sender: offer sent → answer received (includes browser processing + relay hops)                                                                                                                                                                                                                                     |   2   | [`webrtc_sendrecv.py:227`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L227), [`webrtc_sendrecv.py:535`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L535)     |
-| `ice_ms`                       | ICE candidate exchange + connectivity checks (answer_received → ice_connected)                                                                                                                                                                                                                                                                             |   3   | [`webrtc_sendrecv.py:291`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L291)                                                                                                                                                                         |
-| `dtls_ms`                      | DTLS-SRTP handshake (ice_connected → dtls_connected)                                                                                                                                                                                                                                                                                                       |   4   | [`webrtc_sendrecv.py:298`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L298)                                                                                                                                                                         |
-| `media_start_ms`               | First RTP packet observed as sent, via a `webrtcbin` stats poll every 10 ms (dtls_connected → first_rtp)                                                                                                                                                                                                                                                   |   5   | [`webrtc_sendrecv.py:325`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L325)                                                                                                                                                                         |
-| `ttff_total_ms`                | Device-side total time-to-first-frame (t0 → first_rtp); **NB: the segments above are contiguous and never overlap, but the short interval between creating and sending the offer (offer_created → offer_sent) is not tracked as its own segment, so the segments always sum to slightly _less_ than the total (by 1.5–9.4 ms in the following examples).** |  1–5  | [`memfault_metrics.py:32`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L32)                                                                                                                                                                         |
-| `video_bitrate_kbps`, `rtt_ms` | Ongoing streaming stats, sampled from `webrtcbin` every 2 s during the stream and sent to memfaultd over StatsD; Memfault aggregates them over the session                                                                                                                                                                                                 |   6   | [`memfault_metrics.py:142`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L142), [`memfault_metrics.py:149`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L149) |
-| (all of the above)             | Session metrics: the TTFF segments are written with `memfaultctl write-metrics`, and memfaultd uploads everything in the session to Memfault Cloud                                                                                                                                                                                                         |   7   | [`memfault_metrics.py:123`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L123)                                                                                                                                                                       |
+| Metric                         | Description                                                                                                                                                                                                                                                                                                                                                      | Label | Source                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `negotiation_setup_ms`         | Pipeline creation + VP8 encoder init (t0 → offer_created)                                                                                                                                                                                                                                                                                                        |   1   | [`webrtc_sendrecv.py:241`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L241)                                                                                                                                                                         |
+| `signaling_rtt_ms`             | Signaling round-trip as seen by Camera Sender: offer sent → answer received (includes browser processing + relay hops)                                                                                                                                                                                                                                           |   2   | [`webrtc_sendrecv.py:227`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L227), [`webrtc_sendrecv.py:535`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L535)     |
+| `ice_ms`                       | ICE candidate exchange + connectivity checks (answer_received → ice_connected)                                                                                                                                                                                                                                                                                   |   3   | [`webrtc_sendrecv.py:291`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L291)                                                                                                                                                                         |
+| `dtls_ms`                      | DTLS-SRTP handshake (ice_connected → dtls_connected)                                                                                                                                                                                                                                                                                                             |   4   | [`webrtc_sendrecv.py:298`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L298)                                                                                                                                                                         |
+| `media_start_ms`               | First RTP packet observed as sent, via a `webrtcbin` stats poll every 10 ms (dtls_connected → first_rtp)                                                                                                                                                                                                                                                         |   5   | [`webrtc_sendrecv.py:325`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/webrtc_sendrecv.py#L325)                                                                                                                                                                         |
+| `ttff_total_ms`                | Device-side total time-to-first-frame (t0 → `first_rtp`); **NB: the segments above are contiguous and never overlap, but the short interval between creating and sending the offer (`offer_created` → `offer_sent`) is not tracked as its own segment, so the segments always sum to slightly _less_ than the total (by 1.5–9.4 ms in the following examples).** |  1–5  | [`memfault_metrics.py:32`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L32)                                                                                                                                                                         |
+| `video_bitrate_kbps`, `rtt_ms` | Ongoing streaming stats, sampled from `webrtcbin` every 2 s during the stream and sent to memfaultd over StatsD; Memfault aggregates them over the session                                                                                                                                                                                                       |   6   | [`memfault_metrics.py:142`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L142), [`memfault_metrics.py:149`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L149) |
+| (all of the above)             | Session metrics: the TTFF segments are written with `memfaultctl write-metrics`, and memfaultd uploads everything in the session to Memfault Cloud                                                                                                                                                                                                               |   7   | [`memfault_metrics.py:123`](https://github.com/jakegwood/gst-webrtc-camera-demo/blob/032dc6f94ead0b95b195fcbfa437ffe9709be7a7/sendrecv/gst/memfault_metrics.py#L123)                                                                                                                                                                       |
 
 All of these metrics will be reported to Memfault as part of a Memfault
 _session_ named `live-view`, so statistics are intuitively grouped by each time
-a user requests to view a live stream from their camera.
+a user requests to view a live stream from their camera. For more on choosing
+device-side KPIs, see [Counting Crashes to Improve Device
+Reliability]({% post_url 2023-11-08-device-reliability-metrics %}).
 
 ![Screenshot of the sample web app streaming video from the RPi3 in my office](/img/webrtc/webapp.png)
 
@@ -223,7 +234,7 @@ Again, connecting/disconnecting five times, I collected the following data.
 You can see that the first iteration still pays a one-time startup cost, but
 subsequently, the improvement is stark. Frames start leaving the device over
 _one full second_ sooner. That's a game-changing improvement for a critical
-customer KPI. Keep-alive isn't free, of course, as the the sensor, encoder, and
+customer KPI. Keep-alive isn't free, of course, as the sensor, encoder, and
 various software components remain running all the time, whether or not they are
 actually needed, all consuming power, and making it a poor fit for
 battery-constrained devices. For devices with line-power, though, it is the
@@ -243,10 +254,10 @@ sudo tc qdisc add dev lo root handle 1: prio bands 4
 # delay everything in queue 1:4 by 250 ms
 sudo tc qdisc add dev lo parent 1:4 handle 40: netem delay 250ms
 
-# Messages from "Camera Sender" to "Signalling Server"
+# Messages from "Camera Sender" to "Signaling Server"
 sudo tc filter add dev lo protocol ip parent 1: prio 1 u32 \
     match ip protocol 6 0xff match ip dport 8443 0xffff flowid 1:4
-# Messages from "Signalling Server" to "Camera Sender" 
+# Messages from "Signaling Server" to "Camera Sender"
 sudo tc filter add dev lo protocol ip parent 1: prio 2 u32 \
     match ip protocol 6 0xff match ip sport 8443 0xffff flowid 1:4
 
@@ -288,6 +299,7 @@ key concern for your business - something your devices, using Memfault, can
 alert on or use to trigger other workflows.
 
 ## Conclusion
+
 Like all interesting problems in IoT, real time video - and TTFF in particular -
 is not something you can measure once on the bench and forget. It is dependent
 on numerous different services, local wireless environments, various clients -
@@ -295,10 +307,15 @@ such as browsers or mobile apps - that users use, and much, much more. Hopefully
 this overview helps you understand the components worth monitoring and how they
 can be used to drive optimizations in your system.
 
+> **Further reading**: for another look at embedded Linux observability, see
+> [A Practical Guide to Embedded Linux Logging]({% post_url 2026-08-13-linux-logging %}).
+
 <!-- Interrupt Keep START -->
+
 {% include newsletter.html %}
 
 {% include submit-pr.html %}
+
 <!-- Interrupt Keep END -->
 
 {:.no_toc}
