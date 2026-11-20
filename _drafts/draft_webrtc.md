@@ -240,6 +240,7 @@ from the Signaling Server:
 ```bash
 # create an empty queue (1:4) for the traffic we want to delay
 sudo tc qdisc add dev lo root handle 1: prio bands 4
+# delay everything in queue 1:4 by 250 ms
 sudo tc qdisc add dev lo parent 1:4 handle 40: netem delay 250ms
 
 # sender -> signalling
