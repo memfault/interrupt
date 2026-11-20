@@ -238,7 +238,7 @@ and its [`netem`](https://man7.org/linux/man-pages/man8/tc-netem.8.html)
 from the Signaling Server:
 
 ```bash
-# prio leaves class 1:4 free; anything not matched below is untouched
+# create an empty queue (1:4) for the traffic we want to delay
 sudo tc qdisc add dev lo root handle 1: prio bands 4
 sudo tc qdisc add dev lo parent 1:4 handle 40: netem delay 250ms
 
