@@ -243,10 +243,10 @@ sudo tc qdisc add dev lo root handle 1: prio bands 4
 # delay everything in queue 1:4 by 250 ms
 sudo tc qdisc add dev lo parent 1:4 handle 40: netem delay 250ms
 
-# sender -> signalling
+# Messages from "Camera Sender" to "Signalling Server"
 sudo tc filter add dev lo protocol ip parent 1: prio 1 u32 \
     match ip protocol 6 0xff match ip dport 8443 0xffff flowid 1:4
-# signalling -> sender
+# Messages from "Signalling Server" to "Camera Sender" 
 sudo tc filter add dev lo protocol ip parent 1: prio 2 u32 \
     match ip protocol 6 0xff match ip sport 8443 0xffff flowid 1:4
 
